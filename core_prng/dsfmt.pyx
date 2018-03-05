@@ -1,3 +1,4 @@
+import operator
 from libc.stdlib cimport malloc, free
 from cpython.pycapsule cimport PyCapsule_New
 
@@ -142,6 +143,51 @@ cdef class DSFMT:
         cdef Py_ssize_t i
         for i in range(cnt):
             self._prng.next_uint64(self._prng.state)
+
+
+    def seed(self, seed=None):
+        """
+        seed(seed=None, stream=None)
+
+        Seed the generator.
+
+        This method is called when ``RandomState`` is initialized. It can be
+        called again to re-seed the generator. For details, see
+        ``RandomState``.
+
+        Parameters
+        ----------
+        seed : int, optional
+            Seed for ``RandomState``.
+
+        Raises
+        ------
+        ValueError
+            If seed values are out of range for the PRNG.
+        """
+        cdef np.ndarray obj
+        try:
+            if seed is None:
+                try:
+                    seed = random_entropy(1)
+                except RuntimeError:
+                    seed = random_entropy(1, 'fallback')
+                dsfmt_init_gen_rand(self.rng_state.state, seed)
+            else:
+                if hasattr(seed, 'squeeze'):
+                    seed = seed.squeeze()
+                idx = operator.index(seed)
+                if idx > int(2**32 - 1) or idx < 0:
+                    raise ValueError("Seed must be between 0 and 2**32 - 1")
+                dsfmt_init_gen_rand(self.rng_state.state, seed)
+        except TypeError:
+            obj = np.asarray(seed).astype(np.int64, casting='safe').ravel()
+            if ((obj > int(2**32 - 1)) | (obj < 0)).any():
+                raise ValueError("Seed must be between 0 and 2**32 - 1")
+            obj = obj.astype(np.uint32, casting='unsafe', order='C')
+            dsfmt_init_by_array(self.rng_state.state,
+                                <uint32_t *>obj.data,
+                                np.PyArray_DIM(obj, 0))
 
     def seed(self, seed=None):
         """
