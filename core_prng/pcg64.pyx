@@ -11,9 +11,7 @@ cimport entropy
 
 np.import_array()
 
-DEF PCG_EMULATED_MATH=0
-
-IF PCG_EMULATED_MATH:
+IF PCG_EMULATED_MATH==1:
     cdef extern from "src/pcg64/pcg64.h":
 
         ctypedef struct pcg128_t:
@@ -179,7 +177,7 @@ cdef class PCG64:
             state = state.view(np.uint64)
         else:
             state = entropy.seed_by_array(seed, 2)
-        IF PCG_EMULATED_MATH:
+        IF PCG_EMULATED_MATH==1:
             self.rng_state.pcg_state.state.high = <uint64_t>int(state[0])
             self.rng_state.pcg_state.state.low = <uint64_t>int(state[1])
             self.rng_state.pcg_state.inc.high = inc // 2**64
@@ -192,7 +190,7 @@ cdef class PCG64:
     @property
     def state(self):
         """Get or set the PRNG state"""
-        IF PCG_EMULATED_MATH:
+        IF PCG_EMULATED_MATH==1:
             state = 2 **64 * self.rng_state.pcg_state.state.high
             state += self.rng_state.pcg_state.state.low
             inc = 2 **64 * self.rng_state.pcg_state.inc.high
@@ -214,7 +212,7 @@ cdef class PCG64:
         if prng != self.__class__.__name__:
             raise ValueError('state must be for a {0} '
                              'PRNG'.format(self.__class__.__name__))
-        IF PCG_EMULATED_MATH:
+        IF PCG_EMULATED_MATH==1:
             self.rng_state.pcg_state.state.high = value['state']['state'] // 2 ** 64
             self.rng_state.pcg_state.state.low = value['state']['state'] % 2 ** 64
             self.rng_state.pcg_state.inc.high = value['state']['inc'] // 2 ** 64
