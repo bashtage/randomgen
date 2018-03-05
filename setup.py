@@ -13,9 +13,12 @@ Cython.Compiler.Options.annotate = True
 
 MOD_DIR = './core_prng'
 
+
+PCG_EMULATED_MATH = False
 EXTRA_LINK_ARGS = []
 if os.name == 'nt':
     EXTRA_LINK_ARGS = ['/LTCG', '/OPT:REF', 'Advapi32.lib', 'Kernel32.lib']
+    PCG_EMULATED_MATH = True
 
 extensions = [Extension('core_prng.entropy',
                         sources=[join(MOD_DIR, 'entropy.pyx'),
@@ -38,7 +41,8 @@ extensions = [Extension('core_prng.entropy',
                          join(MOD_DIR, 'src', 'pcg64',
                               'pcg64.c')],
                         include_dirs=[np.get_include(),
-                                      join(MOD_DIR, 'src', 'pcg64')]),
+                                      join(MOD_DIR, 'src', 'pcg64')],
+                        cython_compile_time_env={'PCG_EMULATED_MATH':PCG_EMULATED_MATH}),
               Extension("core_prng.threefry",
                         ["core_prng/threefry.pyx",
                          join(MOD_DIR, 'src', 'threefry', 'threefry.c')],
