@@ -30,5 +30,5 @@ int main() {
       sum += out.v[j];
     }
   }
-  printf("%" PRIu64 "\n", sum);
+  printf("0x%" PRIx64 "\n", sum);
 }
