@@ -1,6 +1,8 @@
 /*
- * cl xorshift1024-benchmark.c xorshift2014.orig.c ../splitmix64/splitmix64.c
- * /Ox Measure-Command { .\xorshift1024-benchmark.exe }
+ * cl xorshift1024-benchmark.c xorshift2014.orig.c
+ *     ../splitmix64/splitmix64.c /Ox
+ *
+ * Measure-Command { .\xorshift1024-benchmark.exe }
  *
  * gcc -O3 xorshift1024-benchmark.c xorshift2014.orig.c /
  * ../splitmix64/splitmix64.c -o xorshift1024-benchmark time
