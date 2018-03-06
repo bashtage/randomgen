@@ -3,23 +3,18 @@
  *
  * GCC only
  *
- *  gcc xoroshiro128-test-data-gen.c xoroshiro128plus.orig.c /
- * ../splitmix64/splitmix64.c -o xoroshiro128-test-data-gen
- *  ./xoroshiro128-test-data-gen
- *
+ * gcc  pcg64-test-data-gen.c pcg64.orig.c ../splitmix64/splitmix64.c -o pgc64-test-data-gen
  */
 
-#include "../splitmix64/splitmix64.h"
 #include "pcg64.orig.h"
+#include "../splitmix64/splitmix64.h"
 #include <inttypes.h>
 #include <stdio.h>
 
 #define N 1000
 
-typedef uint64_t __uint128_t;
-
 int main() {
-  pcg64_random_t c;
+  pcg64_random_t rng;
   uint64_t state, seed = 0xDEADBEAF;
   state = seed;
   __uint128_t temp;
@@ -30,7 +25,6 @@ int main() {
   uint64_t store[N];
   for (i = 0; i < N; i++) {
     store[i] = pcg64_random_r(&rng);
-    ;
   }
 
   FILE *fp;
@@ -48,16 +42,14 @@ int main() {
   }
   fclose(fp);
 
-  uint64_t state, seed = 0;
-  state = seed;
+  state = seed = 0;
   rng.state =
       (__uint128_t)splitmix64_next(&state) << 64 | splitmix64_next(&state);
   rng.inc = (__uint128_t)1;
   for (i = 0; i < N; i++) {
     store[i] = pcg64_random_r(&rng);
-    ;
   }
-  fp = fopen("xoroshiro128-testset-2.csv", "w");
+  fp = fopen("pcg64-testset-2.csv", "w");
   if (fp == NULL) {
     printf("Couldn't open file\n");
     return -1;
