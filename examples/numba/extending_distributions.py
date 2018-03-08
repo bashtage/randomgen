@@ -1,5 +1,4 @@
 """
-
 On *nix, execute in core_prng/src/distributions
 
 export PYTHON_INCLUDE=#path to Python's include folder, usually ${PYTHON_HOME}/include/python${PYTHON_VERSION}m
