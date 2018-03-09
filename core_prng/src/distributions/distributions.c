@@ -7,7 +7,7 @@ static NPY_INLINE float next_float(prng_t *prng_state) {
          (1.0f / 8388608.0f);
 }
 
-uint32_t random_uint32(prng_t *prng_state) {
+static NPY_INLINE uint32_t random_uint32(prng_t *prng_state) {
   return prng_state->next_uint32(prng_state->state);
 }
 

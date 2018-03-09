@@ -78,6 +78,12 @@ cdef class MT19937:
         free(self._prng.binomial)
         free(self._prng)
 
+    cdef _reset_state_variables(self):
+        self._prng.has_gauss = 0
+        self._prng.has_gauss_f = 0
+        self._prng.gauss = 0.0
+        self._prng.gauss_f = 0.0
+
     # Pickling support:
     def __getstate__(self):
         return self.state
@@ -167,6 +173,7 @@ cdef class MT19937:
                 raise ValueError("Seed must be between 0 and 2**32 - 1")
             obj = obj.astype(np.uint32, casting='unsafe', order='C')
             mt19937_init_by_array(self.rng_state, <uint32_t*> obj.data, np.PyArray_DIM(obj, 0))
+        self._reset_state_variables()
 
     def jump(self):
         mt19937_jump(self.rng_state)
