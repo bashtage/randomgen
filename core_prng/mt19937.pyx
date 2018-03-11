@@ -191,6 +191,17 @@ cdef class MT19937:
 
     @state.setter
     def state(self, value):
+        if isinstance(value, tuple):
+            if value[0] != 'MT19937' or len(value) not in (3,5):
+                    raise ValueError('state is not a legacy MT19937 state')
+            self._reset_state_variables()
+            if len(value) == 5:
+                self._prng.has_gauss = value[3]
+                self._prng.gauss = value[4]
+            value ={'prng': 'MT19937',
+                    'state':{'key': value[1], 'pos': value[2]}
+                    }
+
         if not isinstance(value, dict):
             raise TypeError('state must be a dict')
         prng = value.get('prng', '')

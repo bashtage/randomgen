@@ -218,8 +218,8 @@ static inline uint32_t pcg64_next32(pcg64_state *state) {
   }
   next = pcg64_random_r(state->pcg_state);
   state->has_uint32 = 1;
-  state->uinteger = (uint32_t)(next & 0xffffffff);
-  return (uint32_t)(next >> 32);
+  state->uinteger = (uint32_t)(next >> 32);
+  return (uint32_t)(next & 0xffffffff);
 }
 
 void pcg64_advance(pcg64_state *state, uint64_t *step);

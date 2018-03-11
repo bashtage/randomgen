@@ -106,11 +106,14 @@ cdef class RandomGenerator:
 
     @state.setter
     def state(self, value):
+        self.__core_prng.state = value
+        if isinstance(value, tuple):
+            # Legacy MT19937 state
+            return
         self._prng.has_gauss = value['has_gauss']
         self._prng.has_gauss_f = value['has_gauss_f']
         self._prng.gauss = value['gauss']
         self._prng.gauss_f = value['gauss_f']
-        self.__core_prng.state = value
 
     def random_uintegers(self, size=None, int bits=64):
         """
