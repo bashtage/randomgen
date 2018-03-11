@@ -8,14 +8,12 @@ from numpy.testing import (
     run_module_suite, assert_, assert_raises, assert_equal,
     assert_warns, assert_no_warnings, assert_array_equal,
     assert_array_almost_equal)
-from numpy.testing import suppress_warnings
-
 import pytest
+
+from core_prng._testing import suppress_warnings
 from core_prng import RandomGenerator, MT19937
 
 random = mt19937 = RandomGenerator(MT19937())
-
-
 
 class TestSeed(object):
     def test_scalar(self):
