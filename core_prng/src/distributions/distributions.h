@@ -14,6 +14,7 @@ typedef int bool;
 #include <stdint.h>
 #endif
 
+#include "Python.h"
 #include "numpy/npy_common.h"
 #include <math.h>
 

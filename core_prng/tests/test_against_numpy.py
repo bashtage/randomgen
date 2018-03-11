@@ -23,7 +23,8 @@ def compare_1_input(f1, f2, is_small=False, core_prng_kwargs=None):
               ((np.array([a] * 10),), {'size': (100, 10)})]
     for i in inputs:
         v1 = f1(*i[0], **i[1])
-        v2 = f2(*i[0], **i[1], **core_prng_kwargs)
+        i[1].update(core_prng_kwargs)
+        v2 = f2(*i[0], **i[1])
         assert_allclose(v1, v2)
 
 
@@ -51,7 +52,8 @@ def compare_2_input(f1, f2, is_np=False, is_scalar=False, core_prng_kwargs=None)
 
     for i in inputs:
         v1 = f1(*i[0], **i[1])
-        v2 = f2(*i[0], **i[1], **core_prng_kwargs)
+        i[1].update(core_prng_kwargs)
+        v2 = f2(*i[0], **i[1])
         assert_allclose(v1, v2)
 
 

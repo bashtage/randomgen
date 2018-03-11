@@ -32,7 +32,7 @@ def uniform32_from_uint63(x):
 
 
 def uniform32_from_uint53(x):
-    x = np.uint64(x)
+    x = np.uint64(x) >> np.uint64(16)
     x = np.uint32(x & np.uint64(0xffffffff))
     out = (x >> np.uint32(9)) * (1.0 / 2 ** 23)
     return out.astype(np.float32)
@@ -193,10 +193,10 @@ class Base(object):
         rs = RandomGenerator(self.prng(*self.data1['seed']))
         assert_raises(self.seed_error_type, rs.seed, np.array([np.pi]))
         assert_raises(self.seed_error_type, rs.seed, np.array([-np.pi]))
-        assert_raises(self.seed_error_type, rs.seed, np.array([np.pi, -np.pi]))
-        assert_raises(self.seed_error_type, rs.seed, np.array([0, np.pi]))
-        assert_raises(self.seed_error_type, rs.seed, [np.pi])
-        assert_raises(self.seed_error_type, rs.seed, [0, np.pi])
+        assert_raises(ValueError, rs.seed, np.array([np.pi, -np.pi]))
+        assert_raises(TypeError, rs.seed, np.array([0, np.pi]))
+        assert_raises(TypeError, rs.seed, [np.pi])
+        assert_raises(TypeError, rs.seed, [0, np.pi])
 
     def test_seed_out_of_range(self):
         # GH #82
@@ -335,3 +335,39 @@ class TestDSFMT(Base):
         gauss = rs.standard_normal(25, method='bm')
         assert_allclose(gauss,
                         gauss_from_uint(self.data2['data'], n, 'dsfmt'))
+
+    def test_seed_out_of_range_array(self):
+        # GH #82
+        rs = RandomGenerator(self.prng(*self.data1['seed']))
+        assert_raises(ValueError, rs.seed, [2 ** (self.bits + 1)])
+        assert_raises(ValueError, rs.seed, [-1])
+        assert_raises(TypeError, rs.seed, [2 ** (2 * self.bits + 1)])
+
+    def test_seed_float(self):
+        # GH #82
+        rs = RandomGenerator(self.prng(*self.data1['seed']))
+        assert_raises(TypeError, rs.seed, np.pi)
+        assert_raises(TypeError, rs.seed, -np.pi)
+
+    def test_seed_float_array(self):
+        # GH #82
+        rs = RandomGenerator(self.prng(*self.data1['seed']))
+        assert_raises(TypeError, rs.seed, np.array([np.pi]))
+        assert_raises(TypeError, rs.seed, np.array([-np.pi]))
+        assert_raises(TypeError, rs.seed, np.array([np.pi, -np.pi]))
+        assert_raises(TypeError, rs.seed, np.array([0, np.pi]))
+        assert_raises(TypeError, rs.seed, [np.pi])
+        assert_raises(TypeError, rs.seed, [0, np.pi])
+
+    def test_uniform_float(self):
+        rs = RandomGenerator(self.prng(*self.data1['seed']))
+        vals = uniform32_from_uint(self.data1['data'], self.bits)
+        uniforms = rs.random_sample(len(vals), dtype=np.float32)
+        assert_allclose(uniforms, vals)
+        assert_equal(uniforms.dtype, np.float32)
+
+        rs = RandomGenerator(self.prng(*self.data2['seed']))
+        vals = uniform32_from_uint(self.data2['data'], self.bits)
+        uniforms = rs.random_sample(len(vals), dtype=np.float32)
+        assert_allclose(uniforms, vals)
+        assert_equal(uniforms.dtype, np.float32)

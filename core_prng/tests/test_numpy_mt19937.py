@@ -4,7 +4,6 @@ import sys
 import warnings
 
 import numpy as np
-import randomstate as random
 from numpy.testing import (
     run_module_suite, assert_, assert_raises, assert_equal,
     assert_warns, assert_no_warnings, assert_array_equal,
@@ -14,7 +13,8 @@ from numpy.testing import suppress_warnings
 import pytest
 from core_prng import RandomGenerator, MT19937
 
-mt19937 = RandomGenerator(MT19937())
+random = mt19937 = RandomGenerator(MT19937())
+
 
 
 class TestSeed(object):
@@ -1098,12 +1098,12 @@ class TestBroadcast(object):
                             1.8417114045748335])
 
         self.set_seed()
-        actual = normal(loc * 3, scale)
+        actual = normal(loc * 3, scale, method='bm')
         assert_array_almost_equal(actual, desired, decimal=14)
         assert_raises(ValueError, normal, loc * 3, bad_scale)
 
         self.set_seed()
-        actual = normal(loc, scale * 3)
+        actual = normal(loc, scale * 3, method='bm')
         assert_array_almost_equal(actual, desired, decimal=14)
         assert_raises(ValueError, normal, loc, bad_scale * 3)
 
@@ -1151,7 +1151,7 @@ class TestBroadcast(object):
                             0.71243813125891797])
 
         self.set_seed()
-        actual = std_gamma(shape * 3)
+        actual = std_gamma(shape * 3, method='inv')
         assert_array_almost_equal(actual, desired, decimal=14)
         assert_raises(ValueError, std_gamma, bad_shape * 3)
 
