@@ -1134,8 +1134,8 @@ long random_hypergeometric(prng_t *prng_state, long good, long bad,
   }
 }
 
-unsigned long random_interval(prng_t *prng_state, unsigned long max) {
-  unsigned long mask, value;
+uint64_t random_interval(prng_t *prng_state, uint64_t max) {
+  uint64_t mask, value;
   if (max == 0) {
     return 0;
   }
@@ -1148,12 +1148,9 @@ unsigned long random_interval(prng_t *prng_state, unsigned long max) {
   mask |= mask >> 4;
   mask |= mask >> 8;
   mask |= mask >> 16;
-#if ULONG_MAX > 0xffffffffUL
   mask |= mask >> 32;
-#endif
 
-/* Search a random value in [0..mask] <= max */
-#if ULONG_MAX > 0xffffffffUL
+  /* Search a random value in [0..mask] <= max */
   if (max <= 0xffffffffUL) {
     while ((value = (random_uint32(prng_state) & mask)) > max)
       ;
@@ -1161,10 +1158,6 @@ unsigned long random_interval(prng_t *prng_state, unsigned long max) {
     while ((value = (random_uint64(prng_state) & mask)) > max)
       ;
   }
-#else
-  while ((value = (random_uint32(prng_state) & mask)) > max)
-    ;
-#endif
   return value;
 }
 

@@ -37,7 +37,6 @@ before_install:
   - PKGS="${PKGS} numpy"; if [ ${NUMPY} ]; then PKGS="${PKGS}=${NUMPY}"; fi
   - PKGS="${PKGS} Cython"; if [ ${CYTHON} ]; then PKGS="${PKGS}=${CYTHON}"; fi
   - PKGS="${PKGS} pandas"; if [ ${PANDAS} ]; then PKGS="${PKGS}=${PANDAS}"; fi
-  - export BUILD_DIR=$PWD
   - conda create -n core-prng-test ${PKGS} pytest setuptools nose --quiet
   - source activate core-prng-test
   - pip install tempita -q
@@ -49,7 +48,6 @@ script:
   - set -e
   - pytest core_prng
   - |
-    if [ -z ${NUMPY} ]; then
-      cd ${BUILD_DIR}
+    if [[ -z ${NUMPY} ]]; then
       python benchmark.py;
     fi
