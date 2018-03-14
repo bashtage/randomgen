@@ -39,7 +39,7 @@ before_install:
   - PKGS="${PKGS} pandas"; if [ ${PANDAS} ]; then PKGS="${PKGS}=${PANDAS}"; fi
   - conda create -n randomgen-test ${PKGS} pytest setuptools nose --quiet
   - source activate randomgen-test
-  - pip install tempita -q
+  - pip install tempita sphinx guzzle_sphinx_theme ipython pandas doctr coverage coveralls pytest-cov codecov -q
 
 install:
   - python setup.py develop
@@ -51,3 +51,14 @@ script:
     if [[ -z ${NUMPY} ]]; then
       python benchmark.py;
     fi
+  - |
+    if [ ${PYTHON} = 3.5 ]; then
+      cd ${BUILD_DIR}/doc
+      make html
+      make html
+      cd ${BUILD_DIR}
+      doctr deploy doc
+      if [[ ${TRAVIS_TAG}} ]]; then
+        doctr deploy doc --no-require-master
+      fi;
+    fi;
