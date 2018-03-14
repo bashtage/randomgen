@@ -237,9 +237,9 @@ cdef class DSFMT:
                                 <uint32_t *>obj.data,
                                 np.PyArray_DIM(obj, 0))
 
-    def jump(self, np.npy_intp iter):
+    def jump(self, np.npy_intp iter=1):
         """
-        jump(iter = 1)
+        jump(iter=1)
 
         Jumps the state of the random number generator as-if 2**128 random numbers
         have been generated.
