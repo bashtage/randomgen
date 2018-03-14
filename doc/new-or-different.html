@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>What’s New or Different &mdash; RandomGen v0.1+1.gb812f02 documentation</title>
+  <title>What’s New or Different &mdash; RandomGen v0.1+1.gad9efc6 documentation</title>
   
 
   
@@ -35,7 +35,7 @@
         <link rel="index" title="Index"
               href="genindex.html"/>
         <link rel="search" title="Search" href="search.html"/>
-    <link rel="top" title="RandomGen v0.1+1.gb812f02 documentation" href="index.html"/>
+    <link rel="top" title="RandomGen v0.1+1.gad9efc6 documentation" href="index.html"/>
         <link rel="next" title="System Entropy" href="entropy.html"/>
         <link rel="prev" title="Multithreaded Generation" href="multithreading.html"/> 
 
@@ -205,8 +205,8 @@ Cython.</li>
 <span class="gp">   ...: </span><span class="kn">from</span> <span class="nn">numpy.random</span> <span class="kn">import</span> <span class="n">standard_normal</span>
 <span class="gp">   ...: </span><span class="o">%</span><span class="k">timeit</span> standard_normal(1000000)
 <span class="gp">   ...: </span>
-<span class="go">13.1 ms +- 225 us per loop (mean +- std. dev. of 7 runs, 100 loops each)</span>
-<span class="go">51 ms +- 2.38 ms per loop (mean +- std. dev. of 7 runs, 10 loops each)</span>
+<span class="go">13.3 ms +- 277 us per loop (mean +- std. dev. of 7 runs, 100 loops each)</span>
+<span class="go">51.9 ms +- 1.12 ms per loop (mean +- std. dev. of 7 runs, 10 loops each)</span>
 </pre></div>
 </div>
 <div class="highlight-ipython notranslate"><div class="highlight"><pre><span></span><span class="gp">In [6]: </span><span class="kn">from</span> <span class="nn">randomgen</span> <span class="kn">import</span> <span class="n">Xoroshiro128</span>
@@ -217,8 +217,8 @@ Cython.</li>
 <span class="gp">   ...: </span><span class="kn">from</span> <span class="nn">numpy.random</span> <span class="kn">import</span> <span class="n">standard_exponential</span>
 <span class="gp">   ...: </span><span class="o">%</span><span class="k">timeit</span> standard_exponential(1000000)
 <span class="gp">   ...: </span>
-<span class="go">8.07 ms +- 538 us per loop (mean +- std. dev. of 7 runs, 100 loops each)</span>
-<span class="go">62.3 ms +- 1.68 ms per loop (mean +- std. dev. of 7 runs, 10 loops each)</span>
+<span class="go">7.97 ms +- 217 us per loop (mean +- std. dev. of 7 runs, 100 loops each)</span>
+<span class="go">63.3 ms +- 1.6 ms per loop (mean +- std. dev. of 7 runs, 10 loops each)</span>
 </pre></div>
 </div>
 <div class="highlight-ipython notranslate"><div class="highlight"><pre><span></span><span class="gp">In [11]: </span><span class="kn">from</span> <span class="nn">randomgen</span> <span class="kn">import</span> <span class="n">Xoroshiro128</span>
@@ -229,8 +229,8 @@ Cython.</li>
 <span class="gp">   ....: </span><span class="kn">from</span> <span class="nn">numpy.random</span> <span class="kn">import</span> <span class="n">standard_gamma</span>
 <span class="gp">   ....: </span><span class="o">%</span><span class="k">timeit</span> standard_gamma(3.0, 1000000)
 <span class="gp">   ....: </span>
-<span class="go">30.7 ms +- 184 us per loop (mean +- std. dev. of 7 runs, 10 loops each)</span>
-<span class="go">81.1 ms +- 454 us per loop (mean +- std. dev. of 7 runs, 10 loops each)</span>
+<span class="go">34.3 ms +- 1.35 ms per loop (mean +- std. dev. of 7 runs, 10 loops each)</span>
+<span class="go">91.7 ms +- 3.55 ms per loop (mean +- std. dev. of 7 runs, 10 loops each)</span>
 </pre></div>
 </div>
 <ul class="simple">
@@ -251,13 +251,13 @@ select distributions<ul>
 <span class="gp">In [17]: </span><span class="n">rg</span> <span class="o">=</span> <span class="n">Xoroshiro128</span><span class="p">()</span><span class="o">.</span><span class="n">generator</span>
 
 <span class="gp">In [18]: </span><span class="n">rg</span><span class="o">.</span><span class="n">seed</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
-<span class="gh">Out[18]: </span><span class="go">RandomGenerator(Xoroshiro128) at 0x2AF4070C7228</span>
+<span class="gh">Out[18]: </span><span class="go">RandomGenerator(Xoroshiro128) at 0x2B78B108B098</span>
 
 <span class="gp">In [19]: </span><span class="n">rg</span><span class="o">.</span><span class="n">random_sample</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="s1">&#39;d&#39;</span><span class="p">)</span>
 <span class="go">                                                         Out[19]: array([0.31483881, 0.00208035, 0.06399498])</span>
 
 <span class="gp">In [20]: </span><span class="n">rg</span><span class="o">.</span><span class="n">seed</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
-<span class="go">                                                                                                              Out[20]: RandomGenerator(Xoroshiro128) at 0x2AF4070C7228</span>
+<span class="go">                                                                                                              Out[20]: RandomGenerator(Xoroshiro128) at 0x2B78B108B098</span>
 
 <span class="gp">In [21]: </span><span class="n">rg</span><span class="o">.</span><span class="n">random_sample</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="s1">&#39;f&#39;</span><span class="p">)</span>
 <span class="go">                                                                                                                                                                       Out[21]: array([0.11265862, 0.31483877, 0.6936537 ], dtype=float32)</span>
@@ -335,7 +335,7 @@ PRNGs in parallel.</p>
     <script type="text/javascript">
         var DOCUMENTATION_OPTIONS = {
             URL_ROOT:'./',
-            VERSION:'v0.1+1.gb812f02',
+            VERSION:'v0.1+1.gad9efc6',
             COLLAPSE_INDEX:false,
             FILE_SUFFIX:'.html',
             HAS_SOURCE:  true,
