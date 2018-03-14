@@ -7,7 +7,7 @@ generator be be changed.
 Introduction
 ------------
 RandomGen takes a different approach to producing random numbers from the
-:class:`~numpy.random.RandomState` object used in NumPy.  Random number
+:class:`numpy.random.RandomState` object used in NumPy.  Random number
 generation is separated into two components, a basic RNG and a random
 generator.
 
@@ -68,7 +68,7 @@ What's New or Different
   select distributions
 * Simulate from the complex normal distribution
   (:meth:`~randomgen.generator.RandomGenerator.complex_normal`)
-* :func:`randomgen.entropy.random_entropy` provides access to the system
+* :func:`~randomgen.entropy.random_entropy` provides access to the system
   source of randomness that is used in cryptographic applications (e.g.,
   ``/dev/urandom`` on Unix).
 * All basic random generators functions to produce doubles, uint64s and
@@ -97,7 +97,7 @@ generators, 'in addition' to the standard PRNG in NumPy.  The included PRNGs are
 
 * MT19937 - The standard NumPy generator.  Produces identical results to NumPy
   using the same seed/state. Adds a jump function that advances the generator
-  as-if 2**128 draws have been made (:meth:`randomstate.prng.mt19937.jump`).
+  as-if 2**128 draws have been made (:meth:`~randomgen.mt19937.MT19937.jump`).
   See `NumPy's documentation`_.
 * dSFMT - SSE2 enabled versions of the MT19937 generator.  Theoretically
   the same, but with a different state and so it is not possible to produce a
@@ -106,18 +106,18 @@ generators, 'in addition' to the standard PRNG in NumPy.  The included PRNGs are
 * XoroShiro128+ - Improved version of XorShift128+ with better performance
   and statistical quality. Like the XorShift generators, it can be jumped
   to produce multiple streams in parallel applications. See
-  :meth:`randomgen.xoroshiro128.Xoroshiro128.jump` for details.
+  :meth:`~randomgen.xoroshiro128.Xoroshiro128.jump` for details.
   More information about this PRNG is available at the
   `xorshift and xoroshiro authors' page`_.
 * XorShift1024*φ - Vast fast generator based on the XSadd
   generator. Supports ``jump`` and so can be used in
   parallel applications. See the documentation for
-  :meth:`randomgen.xorshift1024.Xorshift1024.jump` for details. More information
+  :meth:`~randomgen.xorshift1024.Xorshift1024.jump` for details. More information
   about these PRNGs is available at the
   `xorshift and xoroshiro authors' page`_.
 * PCG-64 - Fast generator that support many parallel streams and
   can be advanced by an arbitrary amount. See the documentation for
-  :meth:`randomgen.pcg64.PCG64.advance`. PCG-64 has a period of
+  :meth:`~randomgen.pcg64.PCG64.advance`. PCG-64 has a period of
   :math:`2^{128}`. See the `PCG author's page`_ for more details about
   this class of PRNG.
 * ThreeFry and Philox - counter-based generators capable of being advanced an

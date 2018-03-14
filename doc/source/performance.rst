@@ -1,7 +1,7 @@
 Performance
 -----------
 
-.. py:module:: randomstate
+.. py:module:: randomgen
 
 Recommendation
 **************
@@ -17,10 +17,10 @@ the best choices.
 Timings
 *******
 
-The timings below are ns/random value.  The fastest generator is the
-raw generator (`random_raw`) which does not make any transformation
-to the underlying random value.  `xoroshiro128+` is the fastest, followed by
-`xorshift1024*` and the two SIMD aware MT generators.  The original MT19937
+The timings below are the time in ms to produce 1,000,000 random values from a
+specific distribution.  :class:`~randomgen.xoroshiro128.Xoroshiro128` is the
+fastest, followed by :class:`~randomgen.xorshift1024.Xorshift1024` and
+:class:`~randomgen.pcg64.PCG64`.  The original :class:`~randomgen.mt19937.MT19937`
 generator is much slower since it requires 2 32-bit values to equal the output
 of the faster generators.
 
@@ -28,9 +28,11 @@ Integer performance has a similar ordering although `dSFMT` is slower since
 it generates 53-bit floating point values rather than integer values. On the
 other hand, it is very fast for uniforms, although slower than `xoroshiro128+`.
 
-The patterm is similar for other, more complex generators. The normal
+The pattern is similar for other, more complex generators. The normal
 performance of NumPy's MT19937 is much lower than the other since it
-uses the Box-Muller transformation rather than the Ziggurat generator.
+uses the Box-Muller transformation rather than the Ziggurat generator. The
+performance gap for Exponentials is also large due to the cost of computing
+the log function to invert the CDF.
 
 .. csv-table::
     :header: ,Xoroshiro128,Xorshift1024,PCG64,DSFMT,MT19937,Philox,ThreeFry,NumPy
