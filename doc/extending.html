@@ -1,0 +1,418 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Extending &mdash; RandomGen 0+untagged.60.g7808de1 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+        <link rel="index" title="Index"
+              href="genindex.html"/>
+        <link rel="search" title="Search" href="search.html"/>
+    <link rel="top" title="RandomGen 0+untagged.60.g7808de1 documentation" href="index.html"/>
+        <link rel="next" title="Random Generator" href="generator.html"/>
+        <link rel="prev" title="Performance" href="performance.html"/> 
+
+  
+  <script src="_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="index.html" class="icon icon-home"> RandomGen
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.+
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="parallel.html">Parallel Applications</a></li>
+<li class="toctree-l1"><a class="reference internal" href="multithreading.html">Multithreaded Generation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="new-or-different.html">What’s New or Different</a></li>
+<li class="toctree-l1"><a class="reference internal" href="entropy.html">Reading System Entropy</a></li>
+<li class="toctree-l1"><a class="reference internal" href="performance.html">Comparing Performance</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Extending</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#numba">Numba</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#cython">Cython</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#new-basic-rngs">New Basic RNGs</a></li>
+</ul>
+</li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="generator.html">Random Generator</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="brng/index.html">Basic Random Number Generators</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="change-log.html">Change Log</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">RandomGen</a>
+        
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html">Docs</a> &raquo;</li>
+        
+      <li>Extending</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="_sources/extending.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="extending">
+<h1>Extending<a class="headerlink" href="#extending" title="Permalink to this headline">¶</a></h1>
+<p>The basic RNGs have been designed to be extendable using standard tools for
+high-performance Python – numba and Cython.
+The <a class="reference internal" href="generator.html#randomgen.generator.RandomGenerator" title="randomgen.generator.RandomGenerator"><code class="xref py py-class docutils literal notranslate"><span class="pre">randomgen.generator.RandomGenerator</span></code></a> object can also be used with
+user-provided basic RNGs as long as these export a small set of required
+functions.</p>
+<div class="section" id="numba">
+<h2>Numba<a class="headerlink" href="#numba" title="Permalink to this headline">¶</a></h2>
+<p>Numba can be used with either CTypes or CFFI.  The current iteration of the
+basic RNGs all export a small set of functions through both interfaces.</p>
+<p>This example shows how numba can be used to produce Box-Muller normals using
+a pure Python implementation which is then compiled.  The random numbers are
+provided by <code class="docutils literal notranslate"><span class="pre">ctypes.next_double</span></code>.</p>
+<div class="highlight-ipython notranslate"><div class="highlight"><pre><span></span><span class="gp">In [1]: </span><span class="kn">from</span> <span class="nn">randomgen</span> <span class="kn">import</span> <span class="n">Xoroshiro128</span>
+
+<span class="gp">In [2]: </span><span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
+
+<span class="gp">In [3]: </span><span class="kn">import</span> <span class="nn">numba</span> <span class="kn">as</span> <span class="nn">nb</span>
+
+<span class="gp">In [4]: </span><span class="n">x</span> <span class="o">=</span> <span class="n">Xoroshiro128</span><span class="p">()</span>
+
+<span class="gp">In [5]: </span><span class="n">f</span> <span class="o">=</span> <span class="n">x</span><span class="o">.</span><span class="n">ctypes</span><span class="o">.</span><span class="n">next_double</span>
+
+<span class="gp">In [6]: </span><span class="n">s</span> <span class="o">=</span> <span class="n">x</span><span class="o">.</span><span class="n">ctypes</span><span class="o">.</span><span class="n">state</span>
+
+<span class="gp">In [7]: </span><span class="n">state_addr</span> <span class="o">=</span> <span class="n">x</span><span class="o">.</span><span class="n">ctypes</span><span class="o">.</span><span class="n">state_address</span>
+
+<span class="gp">In [8]: </span><span class="k">def</span> <span class="nf">normals</span><span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="n">state</span><span class="p">):</span>
+<span class="gp">   ...: </span>    <span class="n">out</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">(</span><span class="n">n</span><span class="p">)</span>
+<span class="gp">   ...: </span>    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">((</span><span class="n">n</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span><span class="o">//</span><span class="mi">2</span><span class="p">):</span>
+<span class="gp">   ...: </span>        <span class="n">x1</span> <span class="o">=</span> <span class="mf">2.0</span><span class="o">*</span><span class="n">f</span><span class="p">(</span><span class="n">state</span><span class="p">)</span> <span class="o">-</span> <span class="mf">1.0</span>
+<span class="gp">   ...: </span>        <span class="n">x2</span> <span class="o">=</span> <span class="mf">2.0</span><span class="o">*</span><span class="n">f</span><span class="p">(</span><span class="n">state</span><span class="p">)</span> <span class="o">-</span> <span class="mf">1.0</span>
+<span class="gp">   ...: </span>        <span class="n">r2</span> <span class="o">=</span> <span class="n">x1</span><span class="o">*</span><span class="n">x1</span> <span class="o">+</span> <span class="n">x2</span><span class="o">*</span><span class="n">x2</span>
+<span class="gp">   ...: </span>        <span class="k">while</span> <span class="n">r2</span> <span class="o">&gt;=</span> <span class="mf">1.0</span> <span class="ow">or</span> <span class="n">r2</span> <span class="o">==</span> <span class="mf">0.0</span><span class="p">:</span>
+<span class="gp">   ...: </span>            <span class="n">x1</span> <span class="o">=</span> <span class="mf">2.0</span><span class="o">*</span><span class="n">f</span><span class="p">(</span><span class="n">state</span><span class="p">)</span> <span class="o">-</span> <span class="mf">1.0</span>
+<span class="gp">   ...: </span>            <span class="n">x2</span> <span class="o">=</span> <span class="mf">2.0</span><span class="o">*</span><span class="n">f</span><span class="p">(</span><span class="n">state</span><span class="p">)</span> <span class="o">-</span> <span class="mf">1.0</span>
+<span class="gp">   ...: </span>            <span class="n">r2</span> <span class="o">=</span> <span class="n">x1</span><span class="o">*</span><span class="n">x1</span> <span class="o">+</span> <span class="n">x2</span><span class="o">*</span><span class="n">x2</span>
+<span class="gp">   ...: </span>        <span class="n">g</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="o">-</span><span class="mf">2.0</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">r2</span><span class="p">)</span><span class="o">/</span><span class="n">r2</span><span class="p">)</span>
+<span class="gp">   ...: </span>        <span class="n">out</span><span class="p">[</span><span class="mi">2</span><span class="o">*</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">g</span><span class="o">*</span><span class="n">x1</span>
+<span class="gp">   ...: </span>        <span class="k">if</span> <span class="mi">2</span><span class="o">*</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span> <span class="o">&lt;</span> <span class="n">n</span><span class="p">:</span>
+<span class="gp">   ...: </span>            <span class="n">out</span><span class="p">[</span><span class="mi">2</span><span class="o">*</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">g</span><span class="o">*</span><span class="n">x2</span>
+<span class="gp">   ...: </span>    <span class="k">return</span> <span class="n">out</span>
+<span class="gp">   ...: </span>
+
+<span class="go"># Compile using Numba</span>
+<span class="gp">In [9]: </span><span class="k">print</span><span class="p">(</span><span class="n">normals</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="n">s</span><span class="p">)</span><span class="o">.</span><span class="n">var</span><span class="p">())</span>
+<span class="go">0.9214768766191843</span>
+
+<span class="go"># Warm up</span>
+<span class="gp">In [10]: </span><span class="n">normalsj</span> <span class="o">=</span> <span class="n">nb</span><span class="o">.</span><span class="n">jit</span><span class="p">(</span><span class="n">normals</span><span class="p">,</span> <span class="n">nopython</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+
+<span class="go"># Must use state address not state with numba</span>
+<span class="gp">In [11]: </span><span class="n">normalsj</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">state_addr</span><span class="p">)</span>
+<span class="gh">Out[11]: </span><span class="go">array([0.55691162])</span>
+
+<span class="gp">In [12]: </span><span class="o">%</span><span class="k">timeit</span> normalsj(1000000, state_addr)
+<span class="gp">   ....: </span><span class="k">print</span><span class="p">(</span><span class="s1">&#39;1,000,000 Box-Muller (numba/Xoroshiro128) randoms&#39;</span><span class="p">)</span>
+<span class="gp">   ....: </span><span class="o">%</span><span class="k">timeit</span> np.random.standard_normal(1000000)
+<span class="gp">   ....: </span><span class="k">print</span><span class="p">(</span><span class="s1">&#39;1,000,000 Box-Muller (NumPy) randoms&#39;</span><span class="p">)</span>
+<span class="gp">   ....: </span>
+<span class="go">                             41 ms +- 466 us per loop (mean +- std. dev. of 7 runs, 10 loops each)</span>
+<span class="go">1,000,000 Box-Muller (numba/Xoroshiro128) randoms</span>
+<span class="go">48.8 ms +- 1.34 ms per loop (mean +- std. dev. of 7 runs, 10 loops each)</span>
+<span class="go">1,000,000 Box-Muller (NumPy) randoms</span>
+</pre></div>
+</div>
+<p>Both CTypes and CFFI allow the more complicated distributions to be used
+directly in Numba after compiling the file distributions.c into a DLL or so.
+An example showing the use of a more complicated distribution is in the
+examples folder.</p>
+</div>
+<div class="section" id="cython">
+<h2>Cython<a class="headerlink" href="#cython" title="Permalink to this headline">¶</a></h2>
+<p>Cython can be used to unpack the <code class="docutils literal notranslate"><span class="pre">PyCapsule</span></code> provided by a basic RNG.
+This example uses <a class="reference internal" href="brng/xoroshiro128.html#randomgen.xoroshiro128.Xoroshiro128" title="randomgen.xoroshiro128.Xoroshiro128"><code class="xref py py-class docutils literal notranslate"><span class="pre">Xoroshiro128</span></code></a> and
+<code class="docutils literal notranslate"><span class="pre">random_gauss_zig</span></code>, the Ziggurat-based generator for normals, to fill an
+array.  The usual caveats for writing high-performance code using Cython –
+removing bounds checks and wrap around, providing array alignment information
+– still apply.</p>
+<div class="highlight-cython notranslate"><div class="highlight"><pre><span></span> <span class="k">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+ <span class="k">cimport</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+ <span class="k">cimport</span> <span class="nn">cython</span>
+ <span class="k">from</span> <span class="nn">cpython.pycapsule</span> <span class="k">cimport</span> <span class="n">PyCapsule_IsValid</span><span class="p">,</span> <span class="n">PyCapsule_GetPointer</span>
+ <span class="k">from</span> <span class="nn">randomgen.common</span> <span class="k">cimport</span> <span class="o">*</span>
+ <span class="k">from</span> <span class="nn">randomgen.distributions</span> <span class="k">import</span> <span class="n">random_gauss_zig</span>
+ <span class="k">from</span> <span class="nn">randomgen.xoroshiro128</span> <span class="k">import</span> <span class="n">Xoroshiro128</span>
+
+
+<span class="nd">@cython</span><span class="o">.</span><span class="n">boundscheck</span><span class="p">(</span><span class="bp">False</span><span class="p">)</span>
+<span class="nd">@cython</span><span class="o">.</span><span class="n">wraparound</span><span class="p">(</span><span class="bp">False</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">normals_zig</span><span class="p">(</span><span class="n">Py_ssize_t</span> <span class="n">n</span><span class="p">):</span>
+    <span class="k">cdef</span> <span class="kt">Py_ssize_t</span> <span class="nf">i</span>
+    <span class="k">cdef</span> <span class="kt">brng_t</span> *<span class="nf">rng</span>
+    <span class="k">cdef</span> <span class="kt">const</span> <span class="kt">char</span> *<span class="nf">capsule_name</span> <span class="o">=</span> <span class="s">&quot;BasicRNG&quot;</span>
+    <span class="k">cdef</span> <span class="kt">double</span>[<span class="p">::</span><span class="mf">1</span><span class="p">]</span> <span class="n">random_values</span>
+
+    <span class="n">x</span> <span class="o">=</span> <span class="n">Xoroshiro128</span><span class="p">()</span>
+    <span class="n">capsule</span> <span class="o">=</span> <span class="n">x</span><span class="o">.</span><span class="n">capsule</span>
+    <span class="c"># Optional check that the capsule if from a Basic RNG</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">PyCapsule_IsValid</span><span class="p">(</span><span class="n">capsule</span><span class="p">,</span> <span class="n">capsule_name</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s">&quot;Invalid pointer to anon_func_state&quot;</span><span class="p">)</span>
+    <span class="c"># Cast the pointer</span>
+    <span class="n">rng</span> <span class="o">=</span> <span class="o">&lt;</span><span class="n">brng_t</span> <span class="o">*&gt;</span> <span class="n">PyCapsule_GetPointer</span><span class="p">(</span><span class="n">capsule</span><span class="p">,</span> <span class="n">capsule_name</span><span class="p">)</span>
+    <span class="n">random_values</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">(</span><span class="n">n</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n</span><span class="p">):</span>
+        <span class="c"># Call the function</span>
+        <span class="n">random_values</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">random_gauss_zig</span><span class="p">(</span><span class="n">rng</span><span class="p">)</span>
+    <span class="n">randoms</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">random_values</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">randoms</span>
+</pre></div>
+</div>
+<p>The basic RNG can also be directly accessed using the members of the basic
+RNG structure.</p>
+<div class="highlight-cython notranslate"><div class="highlight"><pre><span></span><span class="nd">@cython</span><span class="o">.</span><span class="n">boundscheck</span><span class="p">(</span><span class="bp">False</span><span class="p">)</span>
+<span class="nd">@cython</span><span class="o">.</span><span class="n">wraparound</span><span class="p">(</span><span class="bp">False</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">uniforms</span><span class="p">(</span><span class="n">Py_ssize_t</span> <span class="n">n</span><span class="p">):</span>
+    <span class="k">cdef</span> <span class="kt">Py_ssize_t</span> <span class="nf">i</span>
+    <span class="k">cdef</span> <span class="kt">brng_t</span> *<span class="nf">rng</span>
+    <span class="k">cdef</span> <span class="kt">const</span> <span class="kt">char</span> *<span class="nf">capsule_name</span> <span class="o">=</span> <span class="s">&quot;BasicRNG&quot;</span>
+    <span class="k">cdef</span> <span class="kt">double</span>[<span class="p">::</span><span class="mf">1</span><span class="p">]</span> <span class="n">random_values</span>
+
+    <span class="n">x</span> <span class="o">=</span> <span class="n">Xoroshiro128</span><span class="p">()</span>
+    <span class="n">capsule</span> <span class="o">=</span> <span class="n">x</span><span class="o">.</span><span class="n">capsule</span>
+    <span class="c"># Optional check that the capsule if from a Basic RNG</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">PyCapsule_IsValid</span><span class="p">(</span><span class="n">capsule</span><span class="p">,</span> <span class="n">capsule_name</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s">&quot;Invalid pointer to anon_func_state&quot;</span><span class="p">)</span>
+    <span class="c"># Cast the pointer</span>
+    <span class="n">rng</span> <span class="o">=</span> <span class="o">&lt;</span><span class="n">brng_t</span> <span class="o">*&gt;</span> <span class="n">PyCapsule_GetPointer</span><span class="p">(</span><span class="n">capsule</span><span class="p">,</span> <span class="n">capsule_name</span><span class="p">)</span>
+    <span class="n">random_values</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">(</span><span class="n">n</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n</span><span class="p">):</span>
+        <span class="c"># Call the function</span>
+        <span class="n">random_values</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">rng</span><span class="o">.</span><span class="n">next_double</span><span class="p">(</span><span class="n">rng</span><span class="o">.</span><span class="n">state</span><span class="p">)</span>
+    <span class="n">randoms</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">random_values</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">randoms</span>
+</pre></div>
+</div>
+<p>These functions along with a minimal setup file are included in the
+examples folder.</p>
+</div>
+<div class="section" id="new-basic-rngs">
+<h2>New Basic RNGs<a class="headerlink" href="#new-basic-rngs" title="Permalink to this headline">¶</a></h2>
+<p><a class="reference internal" href="generator.html#randomgen.generator.RandomGenerator" title="randomgen.generator.RandomGenerator"><code class="xref py py-class docutils literal notranslate"><span class="pre">RandomGenerator</span></code></a> can be used with other
+user-provided basic RNGs.  The simplest way to write a new basic RNG is to
+examine the pyx file of one of the existing basic RNGs. The key structure
+that must be provided is the <code class="docutils literal notranslate"><span class="pre">capsule</span></code> which contains a <code class="docutils literal notranslate"><span class="pre">PyCapsule</span></code> to a
+struct pointer of type <code class="docutils literal notranslate"><span class="pre">brng_t</span></code>,</p>
+<div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="k">typedef</span> <span class="k">struct</span> <span class="n">brng</span> <span class="p">{</span>
+  <span class="kt">void</span> <span class="o">*</span><span class="n">state</span><span class="p">;</span>
+  <span class="kt">uint64_t</span> <span class="p">(</span><span class="o">*</span><span class="n">next_uint64</span><span class="p">)(</span><span class="kt">void</span> <span class="o">*</span><span class="n">st</span><span class="p">);</span>
+  <span class="kt">uint32_t</span> <span class="p">(</span><span class="o">*</span><span class="n">next_uint32</span><span class="p">)(</span><span class="kt">void</span> <span class="o">*</span><span class="n">st</span><span class="p">);</span>
+  <span class="kt">double</span> <span class="p">(</span><span class="o">*</span><span class="n">next_double</span><span class="p">)(</span><span class="kt">void</span> <span class="o">*</span><span class="n">st</span><span class="p">);</span>
+  <span class="kt">uint64_t</span> <span class="p">(</span><span class="o">*</span><span class="n">next_raw</span><span class="p">)(</span><span class="kt">void</span> <span class="o">*</span><span class="n">st</span><span class="p">);</span>
+<span class="p">}</span> <span class="n">brng_t</span><span class="p">;</span>
+</pre></div>
+</div>
+<p>which provides 5 pointers. The first is an opaque pointer to the data structure
+used by the basic RNG.  The next three are function pointers which return the
+next 64- and 32-bit unsigned integers, the next random double and the next
+raw value.  This final function is used for testing and so can be set to
+the next 64-bit unsigned integer function if not needed. Functions inside
+<a class="reference internal" href="generator.html#randomgen.generator.RandomGenerator" title="randomgen.generator.RandomGenerator"><code class="xref py py-class docutils literal notranslate"><span class="pre">RandomGenerator</span></code></a> use this structure as in</p>
+<div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="n">brng_state</span><span class="o">-&gt;</span><span class="n">next_uint64</span><span class="p">(</span><span class="n">brng_state</span><span class="o">-&gt;</span><span class="n">state</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+
+
+           </div>
+           <div class="articleComments">
+            
+           </div>
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="generator.html" class="btn btn-neutral float-right" title="Random Generator" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="performance.html" class="btn btn-neutral" title="Performance" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2018, Kevin Sheppard.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'./',
+            VERSION:'0+untagged.60.g7808de1',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
+        };
+    </script>
+      <script type="text/javascript" src="_static/jquery.js"></script>
+      <script type="text/javascript" src="_static/underscore.js"></script>
+      <script type="text/javascript" src="_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

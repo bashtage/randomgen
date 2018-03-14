@@ -1,0 +1,6 @@
+randomgen.philox.Philox.seed
+============================
+
+.. currentmodule:: randomgen.philox
+
+.. automethod:: Philox.seed

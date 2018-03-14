@@ -1,0 +1,6 @@
+randomgen.generator.RandomGenerator.rayleigh
+============================================
+
+.. currentmodule:: randomgen.generator
+
+.. automethod:: RandomGenerator.rayleigh

@@ -1,0 +1,6 @@
+randomgen.pcg32.PCG32.state
+===========================
+
+.. currentmodule:: randomgen.pcg32
+
+.. autoattribute:: PCG32.state

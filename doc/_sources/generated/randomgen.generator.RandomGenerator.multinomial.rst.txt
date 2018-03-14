@@ -1,0 +1,6 @@
+randomgen.generator.RandomGenerator.multinomial
+===============================================
+
+.. currentmodule:: randomgen.generator
+
+.. automethod:: RandomGenerator.multinomial

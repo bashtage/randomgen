@@ -1,0 +1,6 @@
+randomgen.generator.RandomGenerator.gamma
+=========================================
+
+.. currentmodule:: randomgen.generator
+
+.. automethod:: RandomGenerator.gamma

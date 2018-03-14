@@ -1,0 +1,6 @@
+randomgen.pcg64.PCG64.seed
+==========================
+
+.. currentmodule:: randomgen.pcg64
+
+.. automethod:: PCG64.seed
