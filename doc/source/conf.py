@@ -16,8 +16,8 @@
 # import sys
 # sys.path.insert(0, os.path.abspath('.'))
 from distutils.version import LooseVersion
-# import guzzle_sphinx_theme
-import sphinx_rtd_theme
+import guzzle_sphinx_theme
+# import sphinx_rtd_theme
 import randomgen
 
 # -- Project information -----------------------------------------------------
@@ -89,13 +89,25 @@ pygments_style = 'sphinx'
 # a list of builtin themes.
 #
 # html_theme = 'alabaster'
-html_theme = 'sphinx_rtd_theme'
-html_theme_path = ["_themes", ]
+# html_theme = 'sphinx_rtd_theme'
+# html_theme_path = ["_themes", ]
 # Theme options are theme-specific and customize the look and feel of a theme
 # further.  For a list of options available for each theme, see the
 # documentation.
 #
 # html_theme_options = {}
+
+html_theme_path = guzzle_sphinx_theme.html_theme_path()
+html_theme = 'guzzle_sphinx_theme'
+
+# Register the theme as an extension to generate a sitemap.xml
+extensions.append("guzzle_sphinx_theme")
+
+# Guzzle theme options (see theme.conf for more information)
+html_theme_options = {
+    # Set the name of the project to appear in the sidebar
+    "project_nav_name": project + u" " + version,
+}
 
 # Add any paths that contain custom static files (such as style sheets) here,
 # relative to this directory. They are copied after the builtin static files,
@@ -111,6 +123,9 @@ html_static_path = ['_static']
 # 'searchbox.html']``.
 #
 # html_sidebars = {}
+html_sidebars = {
+    '**': ['logo-text.html', 'globaltoc.html', 'searchbox.html']
+}
 
 
 # -- Options for HTMLHelp output ---------------------------------------------
