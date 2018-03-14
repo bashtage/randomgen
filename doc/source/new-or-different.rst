@@ -11,7 +11,7 @@ What's New or Different
   normal such as the gamma or student's t.
 
 
-* :func:`randomgen.entropy.random_entropy` provides access to the system
+* :func:`~randomgen.entropy.random_entropy` provides access to the system
   source of randomness that is used in cryptographic applications (e.g.,
   ``/dev/urandom`` on Unix).
 * Simulate from the complex normal distribution
