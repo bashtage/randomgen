@@ -1,0 +1,445 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>RandomGen &mdash; RandomGen v0.1+1.gb812f02 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+        <link rel="index" title="Index"
+              href="genindex.html"/>
+        <link rel="search" title="Search" href="search.html"/>
+    <link rel="top" title="RandomGen v0.1+1.gb812f02 documentation" href="#"/>
+        <link rel="next" title="Parallel Random Number Generation" href="parallel.html"/> 
+
+  
+  <script src="_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="#" class="icon icon-home"> RandomGen
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                v.0
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="parallel.html">Parallel Applications</a></li>
+<li class="toctree-l1"><a class="reference internal" href="multithreading.html">Multithreaded Generation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="new-or-different.html">What’s New or Different</a></li>
+<li class="toctree-l1"><a class="reference internal" href="entropy.html">Reading System Entropy</a></li>
+<li class="toctree-l1"><a class="reference internal" href="performance.html">Comparing Performance</a></li>
+<li class="toctree-l1"><a class="reference internal" href="extending.html">Extending</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="generator.html">Random Generator</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="brng/index.html">Basic Random Number Generators</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="change-log.html">Change Log</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="#">RandomGen</a>
+        
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="#">Docs</a> &raquo;</li>
+        
+      <li>RandomGen</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="_sources/index.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="randomgen">
+<h1>RandomGen<a class="headerlink" href="#randomgen" title="Permalink to this headline">¶</a></h1>
+<p>This package contains replacements for the NumPy
+<a class="reference external" href="https://docs.scipy.org/doc/numpy/reference/generated/numpy.random.RandomState.html#numpy.random.RandomState" title="(in NumPy v1.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">RandomState</span></code></a> object that allows the core random number
+generator be be changed.</p>
+<div class="section" id="introduction">
+<h2>Introduction<a class="headerlink" href="#introduction" title="Permalink to this headline">¶</a></h2>
+<p>RandomGen takes a different approach to producing random numbers from the
+<a class="reference external" href="https://docs.scipy.org/doc/numpy/reference/generated/numpy.random.RandomState.html#numpy.random.RandomState" title="(in NumPy v1.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">numpy.random.RandomState</span></code></a> object used in NumPy.  Random number
+generation is separated into two components, a basic RNG and a random
+generator.</p>
+<p>The basic RNG has a limited set of responsibilities – it manages the
+underlying RNG state and provides functions to produce random doubles and
+random unsigned 32- and 64-bit values. The basic random generator also handles
+all seeding since this varies when using alternative basic RNGs.</p>
+<p>The random generator (<a class="reference internal" href="generator.html#randomgen.generator.RandomGenerator" title="randomgen.generator.RandomGenerator"><code class="xref py py-class docutils literal notranslate"><span class="pre">RandomGenerator</span></code></a>) takes the
+basic RNG-provided functions and transforms them into more useful
+distributions, e.g., simulated normal random values. This structure allows
+alternative basic RNGs to be used without code duplication.</p>
+<p>The <a class="reference internal" href="generator.html#randomgen.generator.RandomGenerator" title="randomgen.generator.RandomGenerator"><code class="xref py py-class docutils literal notranslate"><span class="pre">RandomGenerator</span></code></a> is the user-facing object
+that is nearly identical to <a class="reference external" href="https://docs.scipy.org/doc/numpy/reference/generated/numpy.random.RandomState.html#numpy.random.RandomState" title="(in NumPy v1.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">RandomState</span></code></a>. The canonical
+method to initialize a generator passes a basic RNG –
+<a class="reference internal" href="brng/mt19937.html#randomgen.mt19937.MT19937" title="randomgen.mt19937.MT19937"><code class="xref py py-class docutils literal notranslate"><span class="pre">MT19937</span></code></a>, the underlying RNG in NumPy  – as the
+sole argument. Note that the basic RNG must be instantized.</p>
+<div class="highlight-ipython notranslate"><div class="highlight"><pre><span></span><span class="gp">In [1]: </span><span class="kn">from</span> <span class="nn">randomgen</span> <span class="kn">import</span> <span class="n">RandomGenerator</span><span class="p">,</span> <span class="n">MT19937</span>
+
+<span class="gp">In [2]: </span><span class="n">rg</span> <span class="o">=</span> <span class="n">RandomGenerator</span><span class="p">(</span><span class="n">MT19937</span><span class="p">())</span>
+
+<span class="gp">In [3]: </span><span class="n">rg</span><span class="o">.</span><span class="n">random_sample</span><span class="p">()</span>
+<span class="gh">Out[3]: </span><span class="go">0.09481920961741319</span>
+</pre></div>
+</div>
+<p>Seed information is directly passed to the basic RNG.</p>
+<div class="highlight-ipython notranslate"><div class="highlight"><pre><span></span><span class="gp">In [4]: </span><span class="n">rg</span> <span class="o">=</span> <span class="n">RandomGenerator</span><span class="p">(</span><span class="n">MT19937</span><span class="p">(</span><span class="mi">12345</span><span class="p">))</span>
+
+<span class="gp">In [5]: </span><span class="n">rg</span><span class="o">.</span><span class="n">random_sample</span><span class="p">()</span>
+<span class="gh">Out[5]: </span><span class="go">0.9296160928171479</span>
+</pre></div>
+</div>
+<p>A shorthand method is also available which uses the
+<a class="reference internal" href="brng/generated/randomgen.mt19937.MT19937.generator.html#randomgen.mt19937.MT19937.generator" title="randomgen.mt19937.MT19937.generator"><code class="xref py py-meth docutils literal notranslate"><span class="pre">generator()</span></code></a> property from a basic RNG to
+access an embedded random generator.</p>
+<div class="highlight-ipython notranslate"><div class="highlight"><pre><span></span><span class="gp">In [6]: </span><span class="n">rg</span> <span class="o">=</span> <span class="n">MT19937</span><span class="p">(</span><span class="mi">12345</span><span class="p">)</span><span class="o">.</span><span class="n">generator</span>
+
+<span class="gp">In [7]: </span><span class="n">rg</span><span class="o">.</span><span class="n">random_sample</span><span class="p">()</span>
+<span class="gh">Out[7]: </span><span class="go">0.9296160928171479</span>
+</pre></div>
+</div>
+<div class="section" id="what-s-new-or-different">
+<h3>What’s New or Different<a class="headerlink" href="#what-s-new-or-different" title="Permalink to this headline">¶</a></h3>
+<div class="admonition warning">
+<p class="first admonition-title">Warning</p>
+<p class="last">The Box-Muller method used to produce NumPy’s normals is no longer available.
+It is not possible to exactly reproduce the random values produced from NumPy
+for the normal distribution or any other distribution that relies on the
+normal such as the gamma or student’s t.</p>
+</div>
+<ul class="simple">
+<li>The normal, exponential and gamma generators use 256-step Ziggurat
+methods which are 2-10 times faster than NumPy’s Box-Muller or inverse CDF
+implementations.</li>
+<li>Optional <code class="docutils literal notranslate"><span class="pre">dtype</span></code> argument that accepts <code class="docutils literal notranslate"><span class="pre">np.float32</span></code> or <code class="docutils literal notranslate"><span class="pre">np.float64</span></code>
+to produce either single or double prevision uniform random variables for
+select distributions</li>
+<li>Optional <code class="docutils literal notranslate"><span class="pre">out</span></code> argument that allows existing arrays to be filled for
+select distributions</li>
+<li>Simulate from the complex normal distribution
+(<a class="reference internal" href="generated/randomgen.generator.RandomGenerator.complex_normal.html#randomgen.generator.RandomGenerator.complex_normal" title="randomgen.generator.RandomGenerator.complex_normal"><code class="xref py py-meth docutils literal notranslate"><span class="pre">complex_normal()</span></code></a>)</li>
+<li><a class="reference internal" href="entropy.html#randomgen.entropy.random_entropy" title="randomgen.entropy.random_entropy"><code class="xref py py-func docutils literal notranslate"><span class="pre">random_entropy()</span></code></a> provides access to the system
+source of randomness that is used in cryptographic applications (e.g.,
+<code class="docutils literal notranslate"><span class="pre">/dev/urandom</span></code> on Unix).</li>
+<li>All basic random generators functions to produce doubles, uint64s and
+uint32s via CTypes (<a class="reference internal" href="brng/generated/randomgen.xoroshiro128.Xoroshiro128.ctypes.html#randomgen.xoroshiro128.Xoroshiro128.ctypes" title="randomgen.xoroshiro128.Xoroshiro128.ctypes"><code class="xref py py-meth docutils literal notranslate"><span class="pre">ctypes()</span></code></a>)
+and CFFI (<a class="reference internal" href="brng/generated/randomgen.xoroshiro128.Xoroshiro128.cffi.html#randomgen.xoroshiro128.Xoroshiro128.cffi" title="randomgen.xoroshiro128.Xoroshiro128.cffi"><code class="xref py py-meth docutils literal notranslate"><span class="pre">cffi()</span></code></a>).  This allows
+these basic RNGs to be used in numba.</li>
+<li>The basic random number generators can be used in downstream projects via
+Cython.</li>
+</ul>
+<p>See <a class="reference internal" href="new-or-different.html#new-or-different"><span class="std std-ref">What’s New or Different</span></a> for a complete list of improvements and
+differences.</p>
+</div>
+<div class="section" id="parallel-generation">
+<h3>Parallel Generation<a class="headerlink" href="#parallel-generation" title="Permalink to this headline">¶</a></h3>
+<p>The included generators can be used in parallel, distributed applications in
+one of two ways:</p>
+<ul class="simple">
+<li><a class="reference internal" href="parallel.html#independent-streams"><span class="std std-ref">Independent Streams</span></a></li>
+<li><a class="reference internal" href="parallel.html#jump-and-advance"><span class="std std-ref">Jump/Advance the PRNG state</span></a></li>
+</ul>
+</div>
+</div>
+<div class="section" id="supported-generators">
+<h2>Supported Generators<a class="headerlink" href="#supported-generators" title="Permalink to this headline">¶</a></h2>
+<p>The main innovation is the inclusion of a number of alternative pseudo-random number
+generators, ‘in addition’ to the standard PRNG in NumPy.  The included PRNGs are:</p>
+<ul class="simple">
+<li>MT19937 - The standard NumPy generator.  Produces identical results to NumPy
+using the same seed/state. Adds a jump function that advances the generator
+as-if 2**128 draws have been made (<a class="reference internal" href="brng/generated/randomgen.mt19937.MT19937.jump.html#randomgen.mt19937.MT19937.jump" title="randomgen.mt19937.MT19937.jump"><code class="xref py py-meth docutils literal notranslate"><span class="pre">jump()</span></code></a>).
+See <a class="reference external" href="https://docs.scipy.org/doc/numpy/reference/routines.random.html">NumPy’s documentation</a>.</li>
+<li>dSFMT - SSE2 enabled versions of the MT19937 generator.  Theoretically
+the same, but with a different state and so it is not possible to produce a
+sequence identical to MT19937. Supports <code class="docutils literal notranslate"><span class="pre">jump</span></code> and so can
+be used in parallel applications. See the <a class="reference external" href="http://www.math.sci.hiroshima-u.ac.jp/~m-mat/MT/SFMT/">dSFMT authors’ page</a>.</li>
+<li>XoroShiro128+ - Improved version of XorShift128+ with better performance
+and statistical quality. Like the XorShift generators, it can be jumped
+to produce multiple streams in parallel applications. See
+<a class="reference internal" href="brng/generated/randomgen.xoroshiro128.Xoroshiro128.jump.html#randomgen.xoroshiro128.Xoroshiro128.jump" title="randomgen.xoroshiro128.Xoroshiro128.jump"><code class="xref py py-meth docutils literal notranslate"><span class="pre">jump()</span></code></a> for details.
+More information about this PRNG is available at the
+<a class="reference external" href="http://xoroshiro.di.unimi.it/">xorshift and xoroshiro authors’ page</a>.</li>
+<li>XorShift1024*φ - Vast fast generator based on the XSadd
+generator. Supports <code class="docutils literal notranslate"><span class="pre">jump</span></code> and so can be used in
+parallel applications. See the documentation for
+<a class="reference internal" href="brng/generated/randomgen.xorshift1024.Xorshift1024.jump.html#randomgen.xorshift1024.Xorshift1024.jump" title="randomgen.xorshift1024.Xorshift1024.jump"><code class="xref py py-meth docutils literal notranslate"><span class="pre">jump()</span></code></a> for details. More information
+about these PRNGs is available at the
+<a class="reference external" href="http://xoroshiro.di.unimi.it/">xorshift and xoroshiro authors’ page</a>.</li>
+<li>PCG-64 - Fast generator that support many parallel streams and
+can be advanced by an arbitrary amount. See the documentation for
+<a class="reference internal" href="brng/generated/randomgen.pcg64.PCG64.advance.html#randomgen.pcg64.PCG64.advance" title="randomgen.pcg64.PCG64.advance"><code class="xref py py-meth docutils literal notranslate"><span class="pre">advance()</span></code></a>. PCG-64 has a period of
+<span class="math notranslate">\(2^{128}\)</span>. See the <a class="reference external" href="http://www.pcg-random.org/">PCG author’s page</a> for more details about
+this class of PRNG.</li>
+<li>ThreeFry and Philox - counter-based generators capable of being advanced an
+arbitrary number of steps or generating independent streams. See the
+<a class="reference external" href="https://www.deshawresearch.com/resources_random123.html">Random123</a> page for more details about this class of PRNG.</li>
+</ul>
+</div>
+<div class="section" id="new-features">
+<h2>New Features<a class="headerlink" href="#new-features" title="Permalink to this headline">¶</a></h2>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="parallel.html">Parallel Applications</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="parallel.html#independent-streams">Independent Streams</a></li>
+<li class="toctree-l2"><a class="reference internal" href="parallel.html#jump-advance-the-prng-state">Jump/Advance the PRNG state</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="multithreading.html">Multithreaded Generation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="new-or-different.html">What’s New or Different</a></li>
+<li class="toctree-l1"><a class="reference internal" href="entropy.html">Reading System Entropy</a></li>
+<li class="toctree-l1"><a class="reference internal" href="performance.html">Comparing Performance</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="performance.html#recommendation">Recommendation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="performance.html#timings">Timings</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="extending.html">Extending</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="extending.html#numba">Numba</a></li>
+<li class="toctree-l2"><a class="reference internal" href="extending.html#cython">Cython</a></li>
+<li class="toctree-l2"><a class="reference internal" href="extending.html#new-basic-rngs">New Basic RNGs</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+<div class="section" id="random-generator">
+<h2>Random Generator<a class="headerlink" href="#random-generator" title="Permalink to this headline">¶</a></h2>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="generator.html">Random Generator</a></li>
+</ul>
+</div>
+</div>
+<div class="section" id="basic-random-number-generators">
+<h2>Basic Random Number Generators<a class="headerlink" href="#basic-random-number-generators" title="Permalink to this headline">¶</a></h2>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="brng/index.html">Basic Random Number Generators</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="brng/index.html#stable-rngs">Stable RNGs</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="brng/dsfmt.html">DSFMT</a></li>
+<li class="toctree-l3"><a class="reference internal" href="brng/mt19937.html">MT19937</a></li>
+<li class="toctree-l3"><a class="reference internal" href="brng/pcg64.html">PCG64</a></li>
+<li class="toctree-l3"><a class="reference internal" href="brng/philox.html">Philox</a></li>
+<li class="toctree-l3"><a class="reference internal" href="brng/threefry.html">ThreeFry</a></li>
+<li class="toctree-l3"><a class="reference internal" href="brng/xoroshiro128.html">XoroShiro128+</a></li>
+<li class="toctree-l3"><a class="reference internal" href="brng/xorshift1024.html">Xorshift1024*φ</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="brng/index.html#experimental-rngs">Experimental RNGs</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="brng/pcg32.html">PCG32</a></li>
+<li class="toctree-l3"><a class="reference internal" href="brng/threefry32.html">ThreeFry32</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</div>
+<div class="section" id="changes">
+<h3>Changes<a class="headerlink" href="#changes" title="Permalink to this headline">¶</a></h3>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="change-log.html">Change Log</a></li>
+</ul>
+</div>
+</div>
+<div class="section" id="indices-and-tables">
+<h3>Indices and tables<a class="headerlink" href="#indices-and-tables" title="Permalink to this headline">¶</a></h3>
+<ul class="simple">
+<li><a class="reference internal" href="genindex.html"><span class="std std-ref">Index</span></a></li>
+<li><a class="reference internal" href="py-modindex.html"><span class="std std-ref">Module Index</span></a></li>
+<li><a class="reference internal" href="search.html"><span class="std std-ref">Search Page</span></a></li>
+</ul>
+</div>
+</div>
+</div>
+
+
+           </div>
+           <div class="articleComments">
+            
+           </div>
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="parallel.html" class="btn btn-neutral float-right" title="Parallel Random Number Generation" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2018, Kevin Sheppard.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'./',
+            VERSION:'v0.1+1.gb812f02',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
+        };
+    </script>
+      <script type="text/javascript" src="_static/jquery.js"></script>
+      <script type="text/javascript" src="_static/underscore.js"></script>
+      <script type="text/javascript" src="_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

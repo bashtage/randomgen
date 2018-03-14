@@ -1,0 +1,438 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Philox Counter-based RNG &mdash; RandomGen v0.1+1.gb812f02 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+        <link rel="index" title="Index"
+              href="../genindex.html"/>
+        <link rel="search" title="Search" href="../search.html"/>
+    <link rel="top" title="RandomGen v0.1+1.gb812f02 documentation" href="../index.html"/>
+        <link rel="up" title="Basic Random Number Generators" href="index.html"/>
+        <link rel="next" title="randomgen.philox.Philox.seed" href="generated/randomgen.philox.Philox.seed.html"/>
+        <link rel="prev" title="randomgen.pcg64.PCG64.ctypes" href="generated/randomgen.pcg64.PCG64.ctypes.html"/> 
+
+  
+  <script src="../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../index.html" class="icon icon-home"> RandomGen
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                v.0
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../parallel.html">Parallel Applications</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../multithreading.html">Multithreaded Generation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../new-or-different.html">What’s New or Different</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../entropy.html">Reading System Entropy</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../performance.html">Comparing Performance</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../extending.html">Extending</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../generator.html">Random Generator</a></li>
+</ul>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">Basic Random Number Generators</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="index.html#stable-rngs">Stable RNGs</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="dsfmt.html">DSFMT</a></li>
+<li class="toctree-l3"><a class="reference internal" href="mt19937.html">MT19937</a></li>
+<li class="toctree-l3"><a class="reference internal" href="pcg64.html">PCG64</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">Philox</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#random-generator">Random generator</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#parallel-generation">Parallel generation</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id3">Random Generator</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#extending">Extending</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="threefry.html">ThreeFry</a></li>
+<li class="toctree-l3"><a class="reference internal" href="xoroshiro128.html">XoroShiro128+</a></li>
+<li class="toctree-l3"><a class="reference internal" href="xorshift1024.html">Xorshift1024*φ</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="index.html#experimental-rngs">Experimental RNGs</a></li>
+</ul>
+</li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../change-log.html">Change Log</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">RandomGen</a>
+        
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="index.html">Basic Random Number Generators</a> &raquo;</li>
+        
+      <li>Philox Counter-based RNG</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="../_sources/brng/philox.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="module-randomgen.philox">
+<span id="philox-counter-based-rng"></span><h1>Philox Counter-based RNG<a class="headerlink" href="#module-randomgen.philox" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="random-generator">
+<h2>Random generator<a class="headerlink" href="#random-generator" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="randomgen.philox.Philox">
+<em class="property">class </em><code class="descclassname">randomgen.philox.</code><code class="descname">Philox</code><span class="sig-paren">(</span><em>seed=None</em>, <em>counter=None</em>, <em>key=None</em><span class="sig-paren">)</span><a class="headerlink" href="#randomgen.philox.Philox" title="Permalink to this definition">¶</a></dt>
+<dd><p>Container for the Philox (4x64) pseudo-random number generator.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>seed</strong> (<em>{None</em><em>, </em><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.6)"><em>int</em></a><em>, </em><em>array_like}</em><em>, </em><em>optional</em>) – Random seed initializing the pseudo-random number generator.
+Can be an integer in [0, 2**64-1], array of integers in
+[0, 2**64-1] or <code class="docutils literal notranslate"><span class="pre">None</span></code> (the default). If <cite>seed</cite> is <code class="docutils literal notranslate"><span class="pre">None</span></code>,
+data will be read from <code class="docutils literal notranslate"><span class="pre">/dev/urandom</span></code> (or the Windows analog)
+if available.  If unavailable, a hash of the time and process ID is
+used.</li>
+<li><strong>counter</strong> (<em>{None</em><em>, </em><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.6)"><em>int</em></a><em>, </em><em>array_like}</em><em>, </em><em>optional</em>) – Counter to use in the Philox state. Can be either
+a Python int (long in 2.x) in [0, 2**256) or a 4-element uint64 array.
+If not provided, the RNG is initialized at 0.</li>
+<li><strong>key</strong> (<em>{None</em><em>, </em><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.6)"><em>int</em></a><em>, </em><em>array_like}</em><em>, </em><em>optional</em>) – Key to use in the Philox state.  Unlike seed, which is run through
+another RNG before use, the value in key is directly set. Can be either
+a Python int (long in 2.x) in [0, 2**128) or a 2-element uint64 array.
+key and seed cannot both be used.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Notes</p>
+<p>Philox is a 64-bit PRNG that uses a counter-based design based on weaker
+(and faster) versions of cryptographic functions <a class="footnote-reference" href="#id2" id="id1">[1]</a>. Instances using
+different values of the key produce independent sequences.  Philox has a
+period of <span class="math notranslate">\(2^{256} - 1\)</span> and supports arbitrary advancing and jumping
+the sequence in increments of <span class="math notranslate">\(2^{128}\)</span>. These features allow
+multiple non-overlapping sequences to be generated.</p>
+<p><code class="docutils literal notranslate"><span class="pre">Philox</span></code> exposes no user-facing API except <code class="docutils literal notranslate"><span class="pre">generator</span></code>,
+<code class="docutils literal notranslate"><span class="pre">state</span></code>, <code class="docutils literal notranslate"><span class="pre">cffi</span></code> and <code class="docutils literal notranslate"><span class="pre">ctypes</span></code>. Designed for use in a
+<code class="docutils literal notranslate"><span class="pre">RandomGenerator</span></code> object.</p>
+<p><strong>Compatibility Guarantee</strong></p>
+<p><code class="docutils literal notranslate"><span class="pre">Philox</span></code> guarantees that a fixed seed will always produce the
+same results.</p>
+<p>See <code class="docutils literal notranslate"><span class="pre">Philox</span></code> for a closely related PRNG implementation.</p>
+<p><strong>Parallel Features</strong></p>
+<p><code class="docutils literal notranslate"><span class="pre">Philox</span></code> can be used in parallel applications by
+calling the method <code class="docutils literal notranslate"><span class="pre">jump</span></code> which advances the state as-if
+<span class="math notranslate">\(2^{128}\)</span> random numbers have been generated. Alternatively,
+<code class="docutils literal notranslate"><span class="pre">advance</span></code> can be used to advance the counter for an abritrary number of
+positive steps in [0, 2**256). When using <code class="docutils literal notranslate"><span class="pre">jump</span></code>, all generators should
+be initialized with the same seed to ensure that the segments come from
+the same sequence. Alternatively, <code class="docutils literal notranslate"><span class="pre">Philox</span></code> can be used
+in parallel applications by using a sequence of distinct keys where each
+instance uses different key.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">randomgen</span> <span class="k">import</span> <span class="n">RandomGenerator</span><span class="p">,</span> <span class="n">Philox</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">rg</span> <span class="o">=</span> <span class="p">[</span><span class="n">RandomGenerator</span><span class="p">(</span><span class="n">Philox</span><span class="p">(</span><span class="mi">1234</span><span class="p">))</span> <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">10</span><span class="p">)]</span>
+<span class="go"># Advance rs[i] by i jumps</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">10</span><span class="p">):</span>
+<span class="gp">... </span>    <span class="n">rg</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">jump</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Using distinct keys produces independent streams</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">key</span> <span class="o">=</span> <span class="mi">2</span><span class="o">**</span><span class="mi">196</span> <span class="o">+</span> <span class="mi">2</span><span class="o">**</span><span class="mi">132</span> <span class="o">+</span> <span class="mi">2</span><span class="o">**</span><span class="mi">65</span> <span class="o">+</span> <span class="mi">2</span><span class="o">**</span><span class="mi">33</span> <span class="o">+</span> <span class="mi">2</span><span class="o">**</span><span class="mi">17</span> <span class="o">+</span> <span class="mi">2</span><span class="o">**</span><span class="mi">9</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">rg</span> <span class="o">=</span> <span class="p">[</span><span class="n">RandomGenerator</span><span class="p">(</span><span class="n">Philox</span><span class="p">(</span><span class="n">key</span><span class="o">=</span><span class="n">key</span><span class="o">+</span><span class="n">i</span><span class="p">))</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">10</span><span class="p">)]</span>
+</pre></div>
+</div>
+<p><strong>State and Seeding</strong></p>
+<p>The <code class="docutils literal notranslate"><span class="pre">Philox</span></code> state vector consists of a 256-bit counter encoded as a
+4-element uint64 array and a 128-bit key encoded as a 2-element uint64
+array. The counter is incremented by 1 for every 4 64-bit randoms
+produced.  The key determines the sequence produced.  Using different
+keys produces independent sequences.</p>
+<p><code class="docutils literal notranslate"><span class="pre">Philox</span></code> is seeded using either a single 64-bit unsigned integer
+or a vector of 64-bit unsigned integers.  In either case, the input seed is
+used as an input (or inputs) for another simple random number generator,
+Splitmix64, and the output of this PRNG function is used as the initial state.
+Using a single 64-bit value for the seed can only initialize a small range of
+the possible initial state values.  When using an array, the SplitMix64 state
+for producing the ith component of the initial state is XORd with the ith
+value of the seed array until the seed array is exhausted. When using an array
+the initial state for the SplitMix64 state is 0 so that using a single element
+array and using the same value as a scalar will produce the same initial state.</p>
+<p class="rubric">Examples</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">randomgen</span> <span class="k">import</span> <span class="n">RandomGenerator</span><span class="p">,</span> <span class="n">Philox</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">rg</span> <span class="o">=</span> <span class="n">RandomGenerator</span><span class="p">(</span><span class="n">Philox</span><span class="p">(</span><span class="mi">1234</span><span class="p">))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">rg</span><span class="o">.</span><span class="n">standard_normal</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>Identical method using only Philox</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">rg</span> <span class="o">=</span> <span class="n">Philox</span><span class="p">(</span><span class="mi">1234</span><span class="p">)</span><span class="o">.</span><span class="n">generator</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">rg</span><span class="o">.</span><span class="n">standard_normal</span><span class="p">()</span>
+</pre></div>
+</div>
+<p class="rubric">References</p>
+<table class="docutils footnote" frame="void" id="id2" rules="none">
+<colgroup><col class="label" /><col /></colgroup>
+<tbody valign="top">
+<tr><td class="label"><a class="fn-backref" href="#id1">[1]</a></td><td>John K. Salmon, Mark A. Moraes, Ron O. Dror, and David E. Shaw,
+“Parallel Random Numbers: As Easy as 1, 2, 3,” Proceedings of
+the International Conference for High Performance Computing,
+Networking, Storage and Analysis (SC11), New York, NY: ACM, 2011.</td></tr>
+</tbody>
+</table>
+</dd></dl>
+
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="generated/randomgen.philox.Philox.seed.html#randomgen.philox.Philox.seed" title="randomgen.philox.Philox.seed"><code class="xref py py-obj docutils literal notranslate"><span class="pre">seed</span></code></a>([seed,&nbsp;counter,&nbsp;key])</td>
+<td>Seed the generator.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="generated/randomgen.philox.Philox.state.html#randomgen.philox.Philox.state" title="randomgen.philox.Philox.state"><code class="xref py py-obj docutils literal notranslate"><span class="pre">state</span></code></a></td>
+<td>Get or set the PRNG state</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="parallel-generation">
+<h2>Parallel generation<a class="headerlink" href="#parallel-generation" title="Permalink to this headline">¶</a></h2>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="generated/randomgen.philox.Philox.advance.html#randomgen.philox.Philox.advance" title="randomgen.philox.Philox.advance"><code class="xref py py-obj docutils literal notranslate"><span class="pre">advance</span></code></a>(delta)</td>
+<td>Advance the underlying RNG as-if delta draws have occurred.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="generated/randomgen.philox.Philox.jump.html#randomgen.philox.Philox.jump" title="randomgen.philox.Philox.jump"><code class="xref py py-obj docutils literal notranslate"><span class="pre">jump</span></code></a>([iter])</td>
+<td>Jumps the state of the random number generator as-if 2**128 random numbers have been generated.</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="id3">
+<h2>Random Generator<a class="headerlink" href="#id3" title="Permalink to this headline">¶</a></h2>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="generated/randomgen.philox.Philox.generator.html#randomgen.philox.Philox.generator" title="randomgen.philox.Philox.generator"><code class="xref py py-obj docutils literal notranslate"><span class="pre">generator</span></code></a></td>
+<td>Return a RandomGenerator object</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="extending">
+<h2>Extending<a class="headerlink" href="#extending" title="Permalink to this headline">¶</a></h2>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="generated/randomgen.philox.Philox.cffi.html#randomgen.philox.Philox.cffi" title="randomgen.philox.Philox.cffi"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cffi</span></code></a></td>
+<td>CFFI interface</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="generated/randomgen.philox.Philox.ctypes.html#randomgen.philox.Philox.ctypes" title="randomgen.philox.Philox.ctypes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ctypes</span></code></a></td>
+<td>Cytpes interface</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+
+
+           </div>
+           <div class="articleComments">
+            
+           </div>
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="generated/randomgen.philox.Philox.seed.html" class="btn btn-neutral float-right" title="randomgen.philox.Philox.seed" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="generated/randomgen.pcg64.PCG64.ctypes.html" class="btn btn-neutral" title="randomgen.pcg64.PCG64.ctypes" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2018, Kevin Sheppard.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../',
+            VERSION:'v0.1+1.gb812f02',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
+        };
+    </script>
+      <script type="text/javascript" src="../_static/jquery.js"></script>
+      <script type="text/javascript" src="../_static/underscore.js"></script>
+      <script type="text/javascript" src="../_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

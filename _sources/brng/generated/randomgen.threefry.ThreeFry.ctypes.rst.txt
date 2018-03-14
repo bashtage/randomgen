@@ -1,0 +1,6 @@
+randomgen.threefry.ThreeFry.ctypes
+==================================
+
+.. currentmodule:: randomgen.threefry
+
+.. automethod:: ThreeFry.ctypes

@@ -1,0 +1,363 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>randomgen.generator.RandomGenerator.complex_normal &mdash; RandomGen v0.1+1.gb812f02 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+        <link rel="index" title="Index"
+              href="../genindex.html"/>
+        <link rel="search" title="Search" href="../search.html"/>
+    <link rel="top" title="RandomGen v0.1+1.gb812f02 documentation" href="../index.html"/>
+        <link rel="up" title="Random Generator" href="../generator.html"/>
+        <link rel="next" title="randomgen.generator.RandomGenerator.dirichlet" href="randomgen.generator.RandomGenerator.dirichlet.html"/>
+        <link rel="prev" title="randomgen.generator.RandomGenerator.chisquare" href="randomgen.generator.RandomGenerator.chisquare.html"/> 
+
+  
+  <script src="../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../index.html" class="icon icon-home"> RandomGen
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                v.0
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../parallel.html">Parallel Applications</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../multithreading.html">Multithreaded Generation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../new-or-different.html">What’s New or Different</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../entropy.html">Reading System Entropy</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../performance.html">Comparing Performance</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../extending.html">Extending</a></li>
+</ul>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="../generator.html">Random Generator</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../generator.html#id1">Random generator</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../generator.html#simple-random-data">Simple random data</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../generator.html#permutations">Permutations</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="../generator.html#distributions">Distributions</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="randomgen.generator.RandomGenerator.beta.html">randomgen.generator.RandomGenerator.beta</a></li>
+<li class="toctree-l3"><a class="reference internal" href="randomgen.generator.RandomGenerator.binomial.html">randomgen.generator.RandomGenerator.binomial</a></li>
+<li class="toctree-l3"><a class="reference internal" href="randomgen.generator.RandomGenerator.chisquare.html">randomgen.generator.RandomGenerator.chisquare</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">randomgen.generator.RandomGenerator.complex_normal</a></li>
+<li class="toctree-l3"><a class="reference internal" href="randomgen.generator.RandomGenerator.dirichlet.html">randomgen.generator.RandomGenerator.dirichlet</a></li>
+<li class="toctree-l3"><a class="reference internal" href="randomgen.generator.RandomGenerator.exponential.html">randomgen.generator.RandomGenerator.exponential</a></li>
+<li class="toctree-l3"><a class="reference internal" href="randomgen.generator.RandomGenerator.f.html">randomgen.generator.RandomGenerator.f</a></li>
+<li class="toctree-l3"><a class="reference internal" href="randomgen.generator.RandomGenerator.gamma.html">randomgen.generator.RandomGenerator.gamma</a></li>
+<li class="toctree-l3"><a class="reference internal" href="randomgen.generator.RandomGenerator.geometric.html">randomgen.generator.RandomGenerator.geometric</a></li>
+<li class="toctree-l3"><a class="reference internal" href="randomgen.generator.RandomGenerator.gumbel.html">randomgen.generator.RandomGenerator.gumbel</a></li>
+<li class="toctree-l3"><a class="reference internal" href="randomgen.generator.RandomGenerator.hypergeometric.html">randomgen.generator.RandomGenerator.hypergeometric</a></li>
+<li class="toctree-l3"><a class="reference internal" href="randomgen.generator.RandomGenerator.laplace.html">randomgen.generator.RandomGenerator.laplace</a></li>
+<li class="toctree-l3"><a class="reference internal" href="randomgen.generator.RandomGenerator.logistic.html">randomgen.generator.RandomGenerator.logistic</a></li>
+<li class="toctree-l3"><a class="reference internal" href="randomgen.generator.RandomGenerator.lognormal.html">randomgen.generator.RandomGenerator.lognormal</a></li>
+<li class="toctree-l3"><a class="reference internal" href="randomgen.generator.RandomGenerator.logseries.html">randomgen.generator.RandomGenerator.logseries</a></li>
+<li class="toctree-l3"><a class="reference internal" href="randomgen.generator.RandomGenerator.multinomial.html">randomgen.generator.RandomGenerator.multinomial</a></li>
+<li class="toctree-l3"><a class="reference internal" href="randomgen.generator.RandomGenerator.multivariate_normal.html">randomgen.generator.RandomGenerator.multivariate_normal</a></li>
+<li class="toctree-l3"><a class="reference internal" href="randomgen.generator.RandomGenerator.negative_binomial.html">randomgen.generator.RandomGenerator.negative_binomial</a></li>
+<li class="toctree-l3"><a class="reference internal" href="randomgen.generator.RandomGenerator.noncentral_chisquare.html">randomgen.generator.RandomGenerator.noncentral_chisquare</a></li>
+<li class="toctree-l3"><a class="reference internal" href="randomgen.generator.RandomGenerator.noncentral_f.html">randomgen.generator.RandomGenerator.noncentral_f</a></li>
+<li class="toctree-l3"><a class="reference internal" href="randomgen.generator.RandomGenerator.normal.html">randomgen.generator.RandomGenerator.normal</a></li>
+<li class="toctree-l3"><a class="reference internal" href="randomgen.generator.RandomGenerator.pareto.html">randomgen.generator.RandomGenerator.pareto</a></li>
+<li class="toctree-l3"><a class="reference internal" href="randomgen.generator.RandomGenerator.poisson.html">randomgen.generator.RandomGenerator.poisson</a></li>
+<li class="toctree-l3"><a class="reference internal" href="randomgen.generator.RandomGenerator.power.html">randomgen.generator.RandomGenerator.power</a></li>
+<li class="toctree-l3"><a class="reference internal" href="randomgen.generator.RandomGenerator.rayleigh.html">randomgen.generator.RandomGenerator.rayleigh</a></li>
+<li class="toctree-l3"><a class="reference internal" href="randomgen.generator.RandomGenerator.standard_cauchy.html">randomgen.generator.RandomGenerator.standard_cauchy</a></li>
+<li class="toctree-l3"><a class="reference internal" href="randomgen.generator.RandomGenerator.standard_exponential.html">randomgen.generator.RandomGenerator.standard_exponential</a></li>
+<li class="toctree-l3"><a class="reference internal" href="randomgen.generator.RandomGenerator.standard_gamma.html">randomgen.generator.RandomGenerator.standard_gamma</a></li>
+<li class="toctree-l3"><a class="reference internal" href="randomgen.generator.RandomGenerator.standard_normal.html">randomgen.generator.RandomGenerator.standard_normal</a></li>
+<li class="toctree-l3"><a class="reference internal" href="randomgen.generator.RandomGenerator.standard_t.html">randomgen.generator.RandomGenerator.standard_t</a></li>
+<li class="toctree-l3"><a class="reference internal" href="randomgen.generator.RandomGenerator.triangular.html">randomgen.generator.RandomGenerator.triangular</a></li>
+<li class="toctree-l3"><a class="reference internal" href="randomgen.generator.RandomGenerator.uniform.html">randomgen.generator.RandomGenerator.uniform</a></li>
+<li class="toctree-l3"><a class="reference internal" href="randomgen.generator.RandomGenerator.vonmises.html">randomgen.generator.RandomGenerator.vonmises</a></li>
+<li class="toctree-l3"><a class="reference internal" href="randomgen.generator.RandomGenerator.wald.html">randomgen.generator.RandomGenerator.wald</a></li>
+<li class="toctree-l3"><a class="reference internal" href="randomgen.generator.RandomGenerator.weibull.html">randomgen.generator.RandomGenerator.weibull</a></li>
+<li class="toctree-l3"><a class="reference internal" href="randomgen.generator.RandomGenerator.zipf.html">randomgen.generator.RandomGenerator.zipf</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../brng/index.html">Basic Random Number Generators</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../change-log.html">Change Log</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">RandomGen</a>
+        
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="../generator.html">Random Generator</a> &raquo;</li>
+        
+      <li>randomgen.generator.RandomGenerator.complex_normal</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="../_sources/generated/randomgen.generator.RandomGenerator.complex_normal.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="randomgen-generator-randomgenerator-complex-normal">
+<h1>randomgen.generator.RandomGenerator.complex_normal<a class="headerlink" href="#randomgen-generator-randomgenerator-complex-normal" title="Permalink to this headline">¶</a></h1>
+<dl class="method">
+<dt id="randomgen.generator.RandomGenerator.complex_normal">
+<code class="descclassname">RandomGenerator.</code><code class="descname">complex_normal</code><span class="sig-paren">(</span><em>loc=0.0</em>, <em>gamma=1.0</em>, <em>relation=0.0</em>, <em>size=None</em><span class="sig-paren">)</span><a class="headerlink" href="#randomgen.generator.RandomGenerator.complex_normal" title="Permalink to this definition">¶</a></dt>
+<dd><p>Draw random samples from a complex normal (Gaussian) distribution.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>loc</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#complex" title="(in Python v3.6)"><em>complex</em></a><em> or </em><em>array_like of complex</em>) – Mean of the distribution.</li>
+<li><strong>gamma</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.6)"><em>float</em></a><em>, </em><a class="reference external" href="https://docs.python.org/3/library/functions.html#complex" title="(in Python v3.6)"><em>complex</em></a><em> or </em><em>array_like of float</em><em> or </em><a class="reference external" href="https://docs.python.org/3/library/functions.html#complex" title="(in Python v3.6)"><em>complex</em></a>) – Variance of the distribution</li>
+<li><strong>relation</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.6)"><em>float</em></a><em>, </em><a class="reference external" href="https://docs.python.org/3/library/functions.html#complex" title="(in Python v3.6)"><em>complex</em></a><em> or </em><em>array_like of float</em><em> or </em><a class="reference external" href="https://docs.python.org/3/library/functions.html#complex" title="(in Python v3.6)"><em>complex</em></a>) – Relation between the two component normals</li>
+<li><strong>size</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.6)"><em>int</em></a><em> or </em><em>tuple of ints</em><em>, </em><em>optional</em>) – Output shape.  If the given shape is, e.g., <code class="docutils literal notranslate"><span class="pre">(m,</span> <span class="pre">n,</span> <span class="pre">k)</span></code>, then
+<code class="docutils literal notranslate"><span class="pre">m</span> <span class="pre">*</span> <span class="pre">n</span> <span class="pre">*</span> <span class="pre">k</span></code> samples are drawn.  If size is <code class="docutils literal notranslate"><span class="pre">None</span></code> (default),
+a single value is returned if <code class="docutils literal notranslate"><span class="pre">loc</span></code>, <code class="docutils literal notranslate"><span class="pre">gamma</span></code> and <code class="docutils literal notranslate"><span class="pre">relation</span></code>
+are all scalars. Otherwise,
+<code class="docutils literal notranslate"><span class="pre">np.broadcast(loc,</span> <span class="pre">gamma,</span> <span class="pre">relation).size</span></code> samples are drawn.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>out</strong> – Drawn samples from the parameterized complex normal distribution.</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">ndarray or scalar</p>
+</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition seealso">
+<p class="first admonition-title">See also</p>
+<dl class="last docutils">
+<dt><code class="xref py py-meth docutils literal notranslate"><span class="pre">numpy.random.normal()</span></code></dt>
+<dd>random values from a real-valued normal distribution</dd>
+</dl>
+</div>
+<p class="rubric">Notes</p>
+<p><strong>EXPERIMENTAL</strong> Not part of official NumPy RandomState, may change until
+formal release on PyPi.</p>
+<p>Complex normals are generated from a bivariate normal where the
+variance of the real component is 0.5 Re(gamma + relation), the
+variance of the imaginary component is 0.5 Re(gamma - relation), and
+the covariance between the two is 0.5 Im(relation).  The implied
+covariance matrix must be positive semi-definite and so both variances
+must be zero and the covariance must be weakly smaller than the
+product of the two standard deviations.</p>
+<p class="rubric">References</p>
+<table class="docutils footnote" frame="void" id="id1" rules="none">
+<colgroup><col class="label" /><col /></colgroup>
+<tbody valign="top">
+<tr><td class="label">[1]</td><td>Wikipedia, “Complex normal distribution”,
+<a class="reference external" href="https://en.wikipedia.org/wiki/Complex_normal_distribution">https://en.wikipedia.org/wiki/Complex_normal_distribution</a></td></tr>
+</tbody>
+</table>
+<table class="docutils footnote" frame="void" id="id2" rules="none">
+<colgroup><col class="label" /><col /></colgroup>
+<tbody valign="top">
+<tr><td class="label">[2]</td><td>Leigh J. Halliwell, “Complex Random Variables” in “Casualty
+Actuarial Society E-Forum”, Fall 2015.</td></tr>
+</tbody>
+</table>
+<p class="rubric">Examples</p>
+<p>Draw samples from the distribution:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">s</span> <span class="o">=</span> <span class="n">randomgen</span><span class="o">.</span><span class="n">complex_normal</span><span class="p">(</span><span class="n">size</span><span class="o">=</span><span class="mi">1000</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+</div>
+
+
+           </div>
+           <div class="articleComments">
+            
+           </div>
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="randomgen.generator.RandomGenerator.dirichlet.html" class="btn btn-neutral float-right" title="randomgen.generator.RandomGenerator.dirichlet" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="randomgen.generator.RandomGenerator.chisquare.html" class="btn btn-neutral" title="randomgen.generator.RandomGenerator.chisquare" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2018, Kevin Sheppard.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../',
+            VERSION:'v0.1+1.gb812f02',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
+        };
+    </script>
+      <script type="text/javascript" src="../_static/jquery.js"></script>
+      <script type="text/javascript" src="../_static/underscore.js"></script>
+      <script type="text/javascript" src="../_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

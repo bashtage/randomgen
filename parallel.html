@@ -1,0 +1,410 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Parallel Random Number Generation &mdash; RandomGen v0.1+1.gb812f02 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+        <link rel="index" title="Index"
+              href="genindex.html"/>
+        <link rel="search" title="Search" href="search.html"/>
+    <link rel="top" title="RandomGen v0.1+1.gb812f02 documentation" href="index.html"/>
+        <link rel="next" title="Multithreaded Generation" href="multithreading.html"/>
+        <link rel="prev" title="RandomGen" href="index.html"/> 
+
+  
+  <script src="_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="index.html" class="icon icon-home"> RandomGen
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                v.0
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul class="current">
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Parallel Applications</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#independent-streams">Independent Streams</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#jump-advance-the-prng-state">Jump/Advance the PRNG state</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#jump">Jump</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#advance">Advance</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="multithreading.html">Multithreaded Generation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="new-or-different.html">What’s New or Different</a></li>
+<li class="toctree-l1"><a class="reference internal" href="entropy.html">Reading System Entropy</a></li>
+<li class="toctree-l1"><a class="reference internal" href="performance.html">Comparing Performance</a></li>
+<li class="toctree-l1"><a class="reference internal" href="extending.html">Extending</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="generator.html">Random Generator</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="brng/index.html">Basic Random Number Generators</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="change-log.html">Change Log</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">RandomGen</a>
+        
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html">Docs</a> &raquo;</li>
+        
+      <li>Parallel Random Number Generation</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="_sources/parallel.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="parallel-random-number-generation">
+<h1>Parallel Random Number Generation<a class="headerlink" href="#parallel-random-number-generation" title="Permalink to this headline">¶</a></h1>
+<p>There are three strategies implemented that can be used to produce
+repeatable pseudo-random numbers across multiple processes (local
+or distributed).</p>
+<div class="section" id="independent-streams">
+<span id="id1"></span><h2>Independent Streams<a class="headerlink" href="#independent-streams" title="Permalink to this headline">¶</a></h2>
+<p><a class="reference internal" href="brng/pcg64.html#randomgen.pcg64.PCG64" title="randomgen.pcg64.PCG64"><code class="xref py py-class docutils literal notranslate"><span class="pre">PCG64</span></code></a>, <a class="reference internal" href="brng/threefry.html#randomgen.threefry.ThreeFry" title="randomgen.threefry.ThreeFry"><code class="xref py py-class docutils literal notranslate"><span class="pre">ThreeFry</span></code></a>
+and <a class="reference internal" href="brng/philox.html#randomgen.philox.Philox" title="randomgen.philox.Philox"><code class="xref py py-class docutils literal notranslate"><span class="pre">Philox</span></code></a> support independent streams.  This
+example shows how many streams can be created by passing in different index
+values in the second input while using the same seed in the first.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">randomgen.entropy</span> <span class="kn">import</span> <span class="n">random_entropy</span>
+<span class="kn">from</span> <span class="nn">randomgen</span> <span class="kn">import</span> <span class="n">PCG64</span>
+
+<span class="n">entropy</span> <span class="o">=</span> <span class="n">random_entropy</span><span class="p">(</span><span class="mi">4</span><span class="p">)</span>
+<span class="c1"># 128-bit number as a seed</span>
+<span class="n">seed</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">([</span><span class="nb">int</span><span class="p">(</span><span class="n">entropy</span><span class="p">[</span><span class="n">i</span><span class="p">])</span> <span class="o">*</span> <span class="mi">2</span> <span class="o">**</span> <span class="p">(</span><span class="mi">32</span> <span class="o">*</span> <span class="n">i</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">4</span><span class="p">)])</span>
+<span class="n">streams</span> <span class="o">=</span> <span class="p">[</span><span class="n">PCG64</span><span class="p">(</span><span class="n">seed</span><span class="p">,</span> <span class="n">stream</span><span class="p">)</span> <span class="k">for</span> <span class="n">stream</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">10</span><span class="p">)]</span>
+</pre></div>
+</div>
+<p><a class="reference internal" href="brng/philox.html#randomgen.philox.Philox" title="randomgen.philox.Philox"><code class="xref py py-class docutils literal notranslate"><span class="pre">Philox</span></code></a> and <a class="reference internal" href="brng/threefry.html#randomgen.threefry.ThreeFry" title="randomgen.threefry.ThreeFry"><code class="xref py py-class docutils literal notranslate"><span class="pre">ThreeFry</span></code></a> are
+counter-based RNGs which use a counter and key.  Different keys can be used
+to produce independent streams.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
+<span class="kn">from</span> <span class="nn">randomgen</span> <span class="kn">import</span> <span class="n">ThreeFry</span>
+
+<span class="n">key</span> <span class="o">=</span> <span class="n">random_entropy</span><span class="p">(</span><span class="mi">8</span><span class="p">)</span>
+<span class="n">key</span> <span class="o">=</span> <span class="n">key</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">uint64</span><span class="p">)</span>
+<span class="n">key</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
+<span class="n">step</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">uint64</span><span class="p">)</span>
+<span class="n">step</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span>
+<span class="n">streams</span> <span class="o">=</span> <span class="p">[</span><span class="n">ThreeFry</span><span class="p">(</span><span class="n">key</span><span class="o">=</span><span class="n">key</span> <span class="o">+</span> <span class="n">stream</span> <span class="o">*</span> <span class="n">step</span><span class="p">)</span> <span class="k">for</span> <span class="n">stream</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">10</span><span class="p">)]</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="jump-advance-the-prng-state">
+<span id="jump-and-advance"></span><h2>Jump/Advance the PRNG state<a class="headerlink" href="#jump-advance-the-prng-state" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="jump">
+<h3>Jump<a class="headerlink" href="#jump" title="Permalink to this headline">¶</a></h3>
+<p><code class="docutils literal notranslate"><span class="pre">jump</span></code> advances the state of the PRNG <em>as-if</em> a large number of random
+numbers have been drawn.  The specific number of draws varies by PRNG, and
+ranges from <span class="math notranslate">\(2^{64}\)</span> to <span class="math notranslate">\(2^{512}\)</span>.  Additionally, the <em>as-if</em>
+draws also depend on the size of the default random number produced by the
+specific PRNG.  The PRNGs that support <code class="docutils literal notranslate"><span class="pre">jump</span></code>, along with the period of
+the PRNG, the size of the jump and the bits in the default unsigned random
+are listed below.</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="18%" />
+<col width="27%" />
+<col width="27%" />
+<col width="27%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">PRNG</th>
+<th class="head">Period</th>
+<th class="head">Jump Size</th>
+<th class="head">Bits</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>DSFMT</td>
+<td><span class="math notranslate">\(2^{19937}\)</span></td>
+<td><span class="math notranslate">\(2^{128}\)</span></td>
+<td>53</td>
+</tr>
+<tr class="row-odd"><td>MT19937</td>
+<td><span class="math notranslate">\(2^{19937}\)</span></td>
+<td><span class="math notranslate">\(2^{128}\)</span></td>
+<td>32</td>
+</tr>
+<tr class="row-even"><td>PCG64</td>
+<td><span class="math notranslate">\(2^{128}\)</span></td>
+<td><span class="math notranslate">\(2^{64}\)</span></td>
+<td>64</td>
+</tr>
+<tr class="row-odd"><td>Philox</td>
+<td><span class="math notranslate">\(2^{256}\)</span></td>
+<td><span class="math notranslate">\(2^{128}\)</span></td>
+<td>64</td>
+</tr>
+<tr class="row-even"><td>ThreeFry</td>
+<td><span class="math notranslate">\(2^{256}\)</span></td>
+<td><span class="math notranslate">\(2^{128}\)</span></td>
+<td>64</td>
+</tr>
+<tr class="row-odd"><td>Xoroshiro128</td>
+<td><span class="math notranslate">\(2^{128}\)</span></td>
+<td><span class="math notranslate">\(2^{64}\)</span></td>
+<td>64</td>
+</tr>
+<tr class="row-even"><td>Xorshift1024</td>
+<td><span class="math notranslate">\(2^{1024}\)</span></td>
+<td><span class="math notranslate">\(2^{512}\)</span></td>
+<td>64</td>
+</tr>
+</tbody>
+</table>
+<p><code class="docutils literal notranslate"><span class="pre">jump</span></code> can be used to produce long blocks which should be long enough to not
+overlap.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">randomgen.entropy</span> <span class="kn">import</span> <span class="n">random_entropy</span>
+<span class="kn">from</span> <span class="nn">randomgen</span> <span class="kn">import</span> <span class="n">Xorshift1024</span>
+
+<span class="n">entropy</span> <span class="o">=</span> <span class="n">random_entropy</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">uint64</span><span class="p">)</span>
+<span class="c1"># 64-bit number as a seed</span>
+<span class="n">seed</span> <span class="o">=</span> <span class="n">entropy</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">*</span> <span class="mi">2</span><span class="o">**</span><span class="mi">32</span> <span class="o">+</span> <span class="n">entropy</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+<span class="n">blocked_rng</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">10</span><span class="p">):</span>
+    <span class="n">rng</span> <span class="o">=</span> <span class="n">Xorshift1024</span><span class="p">(</span><span class="n">seed</span><span class="p">)</span>
+    <span class="n">rng</span><span class="o">.</span><span class="n">jump</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
+    <span class="n">blocked_rng</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">rng</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="advance">
+<h3>Advance<a class="headerlink" href="#advance" title="Permalink to this headline">¶</a></h3>
+<p><code class="docutils literal notranslate"><span class="pre">advance</span></code> can be used to jump the state an arbitrary number of steps, and so
+is a more general approach than <code class="docutils literal notranslate"><span class="pre">jump</span></code>.  <a class="reference internal" href="brng/pcg64.html#randomgen.pcg64.PCG64" title="randomgen.pcg64.PCG64"><code class="xref py py-class docutils literal notranslate"><span class="pre">PCG64</span></code></a>,
+<a class="reference internal" href="brng/threefry.html#randomgen.threefry.ThreeFry" title="randomgen.threefry.ThreeFry"><code class="xref py py-class docutils literal notranslate"><span class="pre">ThreeFry</span></code></a> and <a class="reference internal" href="brng/philox.html#randomgen.philox.Philox" title="randomgen.philox.Philox"><code class="xref py py-class docutils literal notranslate"><span class="pre">Philox</span></code></a>
+support <code class="docutils literal notranslate"><span class="pre">advance</span></code>, and since these also support independent
+streams, it is not usually necessary to use <code class="docutils literal notranslate"><span class="pre">advance</span></code>.</p>
+<p>Advancing a PRNG updates the underlying PRNG state as-if a given number of
+calls to the underlying PRNG have been made. In general there is not a
+one-to-one relationship between the number output random values from a
+particular distribution and the number of draws from the core PRNG.
+This occurs for two reasons:</p>
+<ul class="simple">
+<li>The random values are simulated using a rejection-based method
+and so, on average, more than one value from the underlying
+PRNG is required to generate an single draw.</li>
+<li>The number of bits required to generate a simulated value
+differs from the number of bits generated by the underlying
+PRNG.  For example, two 16-bit integer values can be simulated
+from a single draw of a 32-bit PRNG.</li>
+</ul>
+<p>Advancing the PRNG state resets any pre-computed random numbers. This is
+required to ensure exact reproducibility.</p>
+<p>This example uses <code class="docutils literal notranslate"><span class="pre">advance</span></code> to advance a <a class="reference internal" href="brng/pcg64.html#randomgen.pcg64.PCG64" title="randomgen.pcg64.PCG64"><code class="xref py py-class docutils literal notranslate"><span class="pre">PCG64</span></code></a>
+generator 2 ** 127 steps to set a sequence of random number generators.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">randomgen</span> <span class="kn">import</span> <span class="n">PCG64</span>
+<span class="n">brng</span> <span class="o">=</span> <span class="n">PCG64</span><span class="p">()</span>
+<span class="n">brng_copy</span> <span class="o">=</span> <span class="n">PCG64</span><span class="p">()</span>
+<span class="n">brng_copy</span><span class="o">.</span><span class="n">state</span> <span class="o">=</span> <span class="n">brng</span><span class="o">.</span><span class="n">state</span>
+
+<span class="n">advance</span> <span class="o">=</span> <span class="mi">2</span><span class="o">**</span><span class="mi">127</span>
+<span class="n">brngs</span> <span class="o">=</span> <span class="p">[</span><span class="n">brng</span><span class="p">]</span>
+<span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">9</span><span class="p">):</span>
+    <span class="n">brng_copy</span><span class="o">.</span><span class="n">advance</span><span class="p">(</span><span class="n">advance</span><span class="p">)</span>
+    <span class="n">brng</span> <span class="o">=</span> <span class="n">PCG64</span><span class="p">()</span>
+    <span class="n">brng</span><span class="o">.</span><span class="n">state</span> <span class="o">=</span> <span class="n">brng_copy</span><span class="o">.</span><span class="n">state</span>
+    <span class="n">brngs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">brng</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+
+
+           </div>
+           <div class="articleComments">
+            
+           </div>
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="multithreading.html" class="btn btn-neutral float-right" title="Multithreaded Generation" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="index.html" class="btn btn-neutral" title="RandomGen" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2018, Kevin Sheppard.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'./',
+            VERSION:'v0.1+1.gb812f02',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
+        };
+    </script>
+      <script type="text/javascript" src="_static/jquery.js"></script>
+      <script type="text/javascript" src="_static/underscore.js"></script>
+      <script type="text/javascript" src="_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

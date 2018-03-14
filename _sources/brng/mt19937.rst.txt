@@ -1,0 +1,40 @@
+Mersenne Twister (MT19937) 
+--------------------------
+
+.. module:: randomgen.mt19937
+
+.. currentmodule:: randomgen.mt19937
+
+Random generator
+================
+.. autoclass:: MT19937
+
+.. autosummary::
+   :toctree: generated/
+
+   ~MT19937.seed
+   ~MT19937.state
+
+Parallel generation
+===================
+.. autosummary::
+   :toctree: generated/
+
+   ~MT19937.jump
+
+Random Generator
+================
+.. autosummary::
+   :toctree: generated/
+
+   ~MT19937.generator
+
+Extending
+=========
+.. autosummary::
+   :toctree: generated/
+
+   ~MT19937.cffi
+   ~MT19937.ctypes
+
+

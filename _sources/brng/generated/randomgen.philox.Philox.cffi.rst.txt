@@ -1,0 +1,6 @@
+randomgen.philox.Philox.cffi
+============================
+
+.. currentmodule:: randomgen.philox
+
+.. autoattribute:: Philox.cffi

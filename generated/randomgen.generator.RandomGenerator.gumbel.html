@@ -1,0 +1,408 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>randomgen.generator.RandomGenerator.gumbel &mdash; RandomGen v0.1+1.gb812f02 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+        <link rel="index" title="Index"
+              href="../genindex.html"/>
+        <link rel="search" title="Search" href="../search.html"/>
+    <link rel="top" title="RandomGen v0.1+1.gb812f02 documentation" href="../index.html"/>
+        <link rel="up" title="Random Generator" href="../generator.html"/>
+        <link rel="next" title="randomgen.generator.RandomGenerator.hypergeometric" href="randomgen.generator.RandomGenerator.hypergeometric.html"/>
+        <link rel="prev" title="randomgen.generator.RandomGenerator.geometric" href="randomgen.generator.RandomGenerator.geometric.html"/> 
+
+  
+  <script src="../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../index.html" class="icon icon-home"> RandomGen
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                v.0
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../parallel.html">Parallel Applications</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../multithreading.html">Multithreaded Generation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../new-or-different.html">What’s New or Different</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../entropy.html">Reading System Entropy</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../performance.html">Comparing Performance</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../extending.html">Extending</a></li>
+</ul>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="../generator.html">Random Generator</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../generator.html#id1">Random generator</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../generator.html#simple-random-data">Simple random data</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../generator.html#permutations">Permutations</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="../generator.html#distributions">Distributions</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="randomgen.generator.RandomGenerator.beta.html">randomgen.generator.RandomGenerator.beta</a></li>
+<li class="toctree-l3"><a class="reference internal" href="randomgen.generator.RandomGenerator.binomial.html">randomgen.generator.RandomGenerator.binomial</a></li>
+<li class="toctree-l3"><a class="reference internal" href="randomgen.generator.RandomGenerator.chisquare.html">randomgen.generator.RandomGenerator.chisquare</a></li>
+<li class="toctree-l3"><a class="reference internal" href="randomgen.generator.RandomGenerator.complex_normal.html">randomgen.generator.RandomGenerator.complex_normal</a></li>
+<li class="toctree-l3"><a class="reference internal" href="randomgen.generator.RandomGenerator.dirichlet.html">randomgen.generator.RandomGenerator.dirichlet</a></li>
+<li class="toctree-l3"><a class="reference internal" href="randomgen.generator.RandomGenerator.exponential.html">randomgen.generator.RandomGenerator.exponential</a></li>
+<li class="toctree-l3"><a class="reference internal" href="randomgen.generator.RandomGenerator.f.html">randomgen.generator.RandomGenerator.f</a></li>
+<li class="toctree-l3"><a class="reference internal" href="randomgen.generator.RandomGenerator.gamma.html">randomgen.generator.RandomGenerator.gamma</a></li>
+<li class="toctree-l3"><a class="reference internal" href="randomgen.generator.RandomGenerator.geometric.html">randomgen.generator.RandomGenerator.geometric</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">randomgen.generator.RandomGenerator.gumbel</a></li>
+<li class="toctree-l3"><a class="reference internal" href="randomgen.generator.RandomGenerator.hypergeometric.html">randomgen.generator.RandomGenerator.hypergeometric</a></li>
+<li class="toctree-l3"><a class="reference internal" href="randomgen.generator.RandomGenerator.laplace.html">randomgen.generator.RandomGenerator.laplace</a></li>
+<li class="toctree-l3"><a class="reference internal" href="randomgen.generator.RandomGenerator.logistic.html">randomgen.generator.RandomGenerator.logistic</a></li>
+<li class="toctree-l3"><a class="reference internal" href="randomgen.generator.RandomGenerator.lognormal.html">randomgen.generator.RandomGenerator.lognormal</a></li>
+<li class="toctree-l3"><a class="reference internal" href="randomgen.generator.RandomGenerator.logseries.html">randomgen.generator.RandomGenerator.logseries</a></li>
+<li class="toctree-l3"><a class="reference internal" href="randomgen.generator.RandomGenerator.multinomial.html">randomgen.generator.RandomGenerator.multinomial</a></li>
+<li class="toctree-l3"><a class="reference internal" href="randomgen.generator.RandomGenerator.multivariate_normal.html">randomgen.generator.RandomGenerator.multivariate_normal</a></li>
+<li class="toctree-l3"><a class="reference internal" href="randomgen.generator.RandomGenerator.negative_binomial.html">randomgen.generator.RandomGenerator.negative_binomial</a></li>
+<li class="toctree-l3"><a class="reference internal" href="randomgen.generator.RandomGenerator.noncentral_chisquare.html">randomgen.generator.RandomGenerator.noncentral_chisquare</a></li>
+<li class="toctree-l3"><a class="reference internal" href="randomgen.generator.RandomGenerator.noncentral_f.html">randomgen.generator.RandomGenerator.noncentral_f</a></li>
+<li class="toctree-l3"><a class="reference internal" href="randomgen.generator.RandomGenerator.normal.html">randomgen.generator.RandomGenerator.normal</a></li>
+<li class="toctree-l3"><a class="reference internal" href="randomgen.generator.RandomGenerator.pareto.html">randomgen.generator.RandomGenerator.pareto</a></li>
+<li class="toctree-l3"><a class="reference internal" href="randomgen.generator.RandomGenerator.poisson.html">randomgen.generator.RandomGenerator.poisson</a></li>
+<li class="toctree-l3"><a class="reference internal" href="randomgen.generator.RandomGenerator.power.html">randomgen.generator.RandomGenerator.power</a></li>
+<li class="toctree-l3"><a class="reference internal" href="randomgen.generator.RandomGenerator.rayleigh.html">randomgen.generator.RandomGenerator.rayleigh</a></li>
+<li class="toctree-l3"><a class="reference internal" href="randomgen.generator.RandomGenerator.standard_cauchy.html">randomgen.generator.RandomGenerator.standard_cauchy</a></li>
+<li class="toctree-l3"><a class="reference internal" href="randomgen.generator.RandomGenerator.standard_exponential.html">randomgen.generator.RandomGenerator.standard_exponential</a></li>
+<li class="toctree-l3"><a class="reference internal" href="randomgen.generator.RandomGenerator.standard_gamma.html">randomgen.generator.RandomGenerator.standard_gamma</a></li>
+<li class="toctree-l3"><a class="reference internal" href="randomgen.generator.RandomGenerator.standard_normal.html">randomgen.generator.RandomGenerator.standard_normal</a></li>
+<li class="toctree-l3"><a class="reference internal" href="randomgen.generator.RandomGenerator.standard_t.html">randomgen.generator.RandomGenerator.standard_t</a></li>
+<li class="toctree-l3"><a class="reference internal" href="randomgen.generator.RandomGenerator.triangular.html">randomgen.generator.RandomGenerator.triangular</a></li>
+<li class="toctree-l3"><a class="reference internal" href="randomgen.generator.RandomGenerator.uniform.html">randomgen.generator.RandomGenerator.uniform</a></li>
+<li class="toctree-l3"><a class="reference internal" href="randomgen.generator.RandomGenerator.vonmises.html">randomgen.generator.RandomGenerator.vonmises</a></li>
+<li class="toctree-l3"><a class="reference internal" href="randomgen.generator.RandomGenerator.wald.html">randomgen.generator.RandomGenerator.wald</a></li>
+<li class="toctree-l3"><a class="reference internal" href="randomgen.generator.RandomGenerator.weibull.html">randomgen.generator.RandomGenerator.weibull</a></li>
+<li class="toctree-l3"><a class="reference internal" href="randomgen.generator.RandomGenerator.zipf.html">randomgen.generator.RandomGenerator.zipf</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../brng/index.html">Basic Random Number Generators</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../change-log.html">Change Log</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">RandomGen</a>
+        
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="../generator.html">Random Generator</a> &raquo;</li>
+        
+      <li>randomgen.generator.RandomGenerator.gumbel</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="../_sources/generated/randomgen.generator.RandomGenerator.gumbel.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="randomgen-generator-randomgenerator-gumbel">
+<h1>randomgen.generator.RandomGenerator.gumbel<a class="headerlink" href="#randomgen-generator-randomgenerator-gumbel" title="Permalink to this headline">¶</a></h1>
+<dl class="method">
+<dt id="randomgen.generator.RandomGenerator.gumbel">
+<code class="descclassname">RandomGenerator.</code><code class="descname">gumbel</code><span class="sig-paren">(</span><em>loc=0.0</em>, <em>scale=1.0</em>, <em>size=None</em><span class="sig-paren">)</span><a class="headerlink" href="#randomgen.generator.RandomGenerator.gumbel" title="Permalink to this definition">¶</a></dt>
+<dd><p>Draw samples from a Gumbel distribution.</p>
+<p>Draw samples from a Gumbel distribution with specified location and
+scale.  For more information on the Gumbel distribution, see
+Notes and References below.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>loc</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.6)"><em>float</em></a><em> or </em><em>array_like of floats</em><em>, </em><em>optional</em>) – The location of the mode of the distribution. Default is 0.</li>
+<li><strong>scale</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.6)"><em>float</em></a><em> or </em><em>array_like of floats</em><em>, </em><em>optional</em>) – The scale parameter of the distribution. Default is 1.</li>
+<li><strong>size</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.6)"><em>int</em></a><em> or </em><em>tuple of ints</em><em>, </em><em>optional</em>) – Output shape.  If the given shape is, e.g., <code class="docutils literal notranslate"><span class="pre">(m,</span> <span class="pre">n,</span> <span class="pre">k)</span></code>, then
+<code class="docutils literal notranslate"><span class="pre">m</span> <span class="pre">*</span> <span class="pre">n</span> <span class="pre">*</span> <span class="pre">k</span></code> samples are drawn.  If size is <code class="docutils literal notranslate"><span class="pre">None</span></code> (default),
+a single value is returned if <code class="docutils literal notranslate"><span class="pre">loc</span></code> and <code class="docutils literal notranslate"><span class="pre">scale</span></code> are both scalars.
+Otherwise, <code class="docutils literal notranslate"><span class="pre">np.broadcast(loc,</span> <span class="pre">scale).size</span></code> samples are drawn.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>out</strong> – Drawn samples from the parameterized Gumbel distribution.</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">ndarray or scalar</p>
+</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition seealso">
+<p class="first admonition-title">See also</p>
+<p class="last"><code class="xref py py-meth docutils literal notranslate"><span class="pre">scipy.stats.gumbel_l()</span></code>, <code class="xref py py-meth docutils literal notranslate"><span class="pre">scipy.stats.gumbel_r()</span></code>, <code class="xref py py-meth docutils literal notranslate"><span class="pre">scipy.stats.genextreme()</span></code>, <a class="reference internal" href="randomgen.generator.RandomGenerator.weibull.html#randomgen.generator.RandomGenerator.weibull" title="randomgen.generator.RandomGenerator.weibull"><code class="xref py py-meth docutils literal notranslate"><span class="pre">weibull()</span></code></a></p>
+</div>
+<p class="rubric">Notes</p>
+<p>The Gumbel (or Smallest Extreme Value (SEV) or the Smallest Extreme
+Value Type I) distribution is one of a class of Generalized Extreme
+Value (GEV) distributions used in modeling extreme value problems.
+The Gumbel is a special case of the Extreme Value Type I distribution
+for maximums from distributions with “exponential-like” tails.</p>
+<p>The probability density for the Gumbel distribution is</p>
+<div class="math notranslate">
+\[p(x) = \frac{e^{-(x - \mu)/ \beta}}{\beta} e^{ -e^{-(x - \mu)/
+\beta}},\]</div>
+<p>where <span class="math notranslate">\(\mu\)</span> is the mode, a location parameter, and
+<span class="math notranslate">\(\beta\)</span> is the scale parameter.</p>
+<p>The Gumbel (named for German mathematician Emil Julius Gumbel) was used
+very early in the hydrology literature, for modeling the occurrence of
+flood events. It is also used for modeling maximum wind speed and
+rainfall rates.  It is a “fat-tailed” distribution - the probability of
+an event in the tail of the distribution is larger than if one used a
+Gaussian, hence the surprisingly frequent occurrence of 100-year
+floods. Floods were initially modeled as a Gaussian process, which
+underestimated the frequency of extreme events.</p>
+<p>It is one of a class of extreme value distributions, the Generalized
+Extreme Value (GEV) distributions, which also includes the Weibull and
+Frechet.</p>
+<p>The function has a mean of <span class="math notranslate">\(\mu + 0.57721\beta\)</span> and a variance
+of <span class="math notranslate">\(\frac{\pi^2}{6}\beta^2\)</span>.</p>
+<p class="rubric">References</p>
+<table class="docutils footnote" frame="void" id="id1" rules="none">
+<colgroup><col class="label" /><col /></colgroup>
+<tbody valign="top">
+<tr><td class="label">[1]</td><td>Gumbel, E. J., “Statistics of Extremes,”
+New York: Columbia University Press, 1958.</td></tr>
+</tbody>
+</table>
+<table class="docutils footnote" frame="void" id="id2" rules="none">
+<colgroup><col class="label" /><col /></colgroup>
+<tbody valign="top">
+<tr><td class="label">[2]</td><td>Reiss, R.-D. and Thomas, M., “Statistical Analysis of Extreme
+Values from Insurance, Finance, Hydrology and Other Fields,”
+Basel: Birkhauser Verlag, 2001.</td></tr>
+</tbody>
+</table>
+<p class="rubric">Examples</p>
+<p>Draw samples from the distribution:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">mu</span><span class="p">,</span> <span class="n">beta</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="mf">0.1</span> <span class="c1"># location and scale</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">s</span> <span class="o">=</span> <span class="n">randomgen</span><span class="o">.</span><span class="n">gumbel</span><span class="p">(</span><span class="n">mu</span><span class="p">,</span> <span class="n">beta</span><span class="p">,</span> <span class="mi">1000</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Display the histogram of the samples, along with
+the probability density function:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">count</span><span class="p">,</span> <span class="n">bins</span><span class="p">,</span> <span class="n">ignored</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">hist</span><span class="p">(</span><span class="n">s</span><span class="p">,</span> <span class="mi">30</span><span class="p">,</span> <span class="n">normed</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">bins</span><span class="p">,</span> <span class="p">(</span><span class="mi">1</span><span class="o">/</span><span class="n">beta</span><span class="p">)</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="p">(</span><span class="n">bins</span> <span class="o">-</span> <span class="n">mu</span><span class="p">)</span><span class="o">/</span><span class="n">beta</span><span class="p">)</span>
+<span class="gp">... </span>         <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span> <span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span> <span class="o">-</span><span class="p">(</span><span class="n">bins</span> <span class="o">-</span> <span class="n">mu</span><span class="p">)</span> <span class="o">/</span><span class="n">beta</span><span class="p">)</span> <span class="p">),</span>
+<span class="gp">... </span>         <span class="n">linewidth</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;r&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>Show how an extreme value distribution can arise from a Gaussian process
+and compare to a Gaussian:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">means</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">maxima</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">1000</span><span class="p">)</span> <span class="p">:</span>
+<span class="gp">... </span>   <span class="n">a</span> <span class="o">=</span> <span class="n">randomgen</span><span class="o">.</span><span class="n">normal</span><span class="p">(</span><span class="n">mu</span><span class="p">,</span> <span class="n">beta</span><span class="p">,</span> <span class="mi">1000</span><span class="p">)</span>
+<span class="gp">... </span>   <span class="n">means</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">a</span><span class="o">.</span><span class="n">mean</span><span class="p">())</span>
+<span class="gp">... </span>   <span class="n">maxima</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">a</span><span class="o">.</span><span class="n">max</span><span class="p">())</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">count</span><span class="p">,</span> <span class="n">bins</span><span class="p">,</span> <span class="n">ignored</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">hist</span><span class="p">(</span><span class="n">maxima</span><span class="p">,</span> <span class="mi">30</span><span class="p">,</span> <span class="n">normed</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">beta</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">std</span><span class="p">(</span><span class="n">maxima</span><span class="p">)</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="mi">6</span><span class="p">)</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">mu</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">maxima</span><span class="p">)</span> <span class="o">-</span> <span class="mf">0.57721</span><span class="o">*</span><span class="n">beta</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">bins</span><span class="p">,</span> <span class="p">(</span><span class="mi">1</span><span class="o">/</span><span class="n">beta</span><span class="p">)</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="p">(</span><span class="n">bins</span> <span class="o">-</span> <span class="n">mu</span><span class="p">)</span><span class="o">/</span><span class="n">beta</span><span class="p">)</span>
+<span class="gp">... </span>         <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="p">(</span><span class="n">bins</span> <span class="o">-</span> <span class="n">mu</span><span class="p">)</span><span class="o">/</span><span class="n">beta</span><span class="p">)),</span>
+<span class="gp">... </span>         <span class="n">linewidth</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;r&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">bins</span><span class="p">,</span> <span class="mi">1</span><span class="o">/</span><span class="p">(</span><span class="n">beta</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">))</span>
+<span class="gp">... </span>         <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="p">(</span><span class="n">bins</span> <span class="o">-</span> <span class="n">mu</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span> <span class="o">/</span> <span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="n">beta</span><span class="o">**</span><span class="mi">2</span><span class="p">)),</span>
+<span class="gp">... </span>         <span class="n">linewidth</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;g&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+</dd></dl>
+
+</div>
+
+
+           </div>
+           <div class="articleComments">
+            
+           </div>
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="randomgen.generator.RandomGenerator.hypergeometric.html" class="btn btn-neutral float-right" title="randomgen.generator.RandomGenerator.hypergeometric" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="randomgen.generator.RandomGenerator.geometric.html" class="btn btn-neutral" title="randomgen.generator.RandomGenerator.geometric" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2018, Kevin Sheppard.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../',
+            VERSION:'v0.1+1.gb812f02',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
+        };
+    </script>
+      <script type="text/javascript" src="../_static/jquery.js"></script>
+      <script type="text/javascript" src="../_static/underscore.js"></script>
+      <script type="text/javascript" src="../_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

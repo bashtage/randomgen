@@ -1,0 +1,6 @@
+randomgen.dsfmt.DSFMT.ctypes
+============================
+
+.. currentmodule:: randomgen.dsfmt
+
+.. autoattribute:: DSFMT.ctypes

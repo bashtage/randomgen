@@ -1,0 +1,6 @@
+randomgen.dsfmt.DSFMT.state
+===========================
+
+.. currentmodule:: randomgen.dsfmt
+
+.. autoattribute:: DSFMT.state

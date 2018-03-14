@@ -1,0 +1,6 @@
+randomgen.generator.RandomGenerator.normal
+==========================================
+
+.. currentmodule:: randomgen.generator
+
+.. automethod:: RandomGenerator.normal

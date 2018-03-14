@@ -1,0 +1,6 @@
+randomgen.dsfmt.DSFMT.generator
+===============================
+
+.. currentmodule:: randomgen.dsfmt
+
+.. autoattribute:: DSFMT.generator
