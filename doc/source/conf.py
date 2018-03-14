@@ -27,10 +27,13 @@ copyright = '2018, Kevin Sheppard'
 author = 'Kevin Sheppard'
 
 # The short X.Y version.
-version = '.'.join(map(str, LooseVersion(randomgen.__version__).version[:2]))
+
+version = randomgen.__version__
+if '+' in version:
+    version = version.split('+')
+    version = ''.join((version[0], ' (+', version[1].split('.')[0], ')'))
 # The full version, including alpha/beta/rc tags.
 release = randomgen.__version__
-
 
 # -- General configuration ---------------------------------------------------
 
