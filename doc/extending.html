@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Extending &mdash; RandomGen 0+untagged.60.g7808de1 documentation</title>
+  <title>Extending &mdash; RandomGen v0.1+1.gb812f02 documentation</title>
   
 
   
@@ -35,7 +35,7 @@
         <link rel="index" title="Index"
               href="genindex.html"/>
         <link rel="search" title="Search" href="search.html"/>
-    <link rel="top" title="RandomGen 0+untagged.60.g7808de1 documentation" href="index.html"/>
+    <link rel="top" title="RandomGen v0.1+1.gb812f02 documentation" href="index.html"/>
         <link rel="next" title="Random Generator" href="generator.html"/>
         <link rel="prev" title="Performance" href="performance.html"/> 
 
@@ -66,7 +66,7 @@
             
             
               <div class="version">
-                0.+
+                v.0
               </div>
             
           
@@ -221,23 +221,23 @@ provided by <code class="docutils literal notranslate"><span class="pre">ctypes.
 
 <span class="go"># Compile using Numba</span>
 <span class="gp">In [9]: </span><span class="k">print</span><span class="p">(</span><span class="n">normals</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="n">s</span><span class="p">)</span><span class="o">.</span><span class="n">var</span><span class="p">())</span>
-<span class="go">0.9214768766191843</span>
+<span class="go">0.6559091160197311</span>
 
 <span class="go"># Warm up</span>
 <span class="gp">In [10]: </span><span class="n">normalsj</span> <span class="o">=</span> <span class="n">nb</span><span class="o">.</span><span class="n">jit</span><span class="p">(</span><span class="n">normals</span><span class="p">,</span> <span class="n">nopython</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
 
 <span class="go"># Must use state address not state with numba</span>
 <span class="gp">In [11]: </span><span class="n">normalsj</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">state_addr</span><span class="p">)</span>
-<span class="gh">Out[11]: </span><span class="go">array([0.55691162])</span>
+<span class="gh">Out[11]: </span><span class="go">array([-0.37802051])</span>
 
 <span class="gp">In [12]: </span><span class="o">%</span><span class="k">timeit</span> normalsj(1000000, state_addr)
 <span class="gp">   ....: </span><span class="k">print</span><span class="p">(</span><span class="s1">&#39;1,000,000 Box-Muller (numba/Xoroshiro128) randoms&#39;</span><span class="p">)</span>
 <span class="gp">   ....: </span><span class="o">%</span><span class="k">timeit</span> np.random.standard_normal(1000000)
 <span class="gp">   ....: </span><span class="k">print</span><span class="p">(</span><span class="s1">&#39;1,000,000 Box-Muller (NumPy) randoms&#39;</span><span class="p">)</span>
 <span class="gp">   ....: </span>
-<span class="go">                             41 ms +- 466 us per loop (mean +- std. dev. of 7 runs, 10 loops each)</span>
+<span class="go">                              45.1 ms +- 316 us per loop (mean +- std. dev. of 7 runs, 10 loops each)</span>
 <span class="go">1,000,000 Box-Muller (numba/Xoroshiro128) randoms</span>
-<span class="go">48.8 ms +- 1.34 ms per loop (mean +- std. dev. of 7 runs, 10 loops each)</span>
+<span class="go">51 ms +- 1.55 ms per loop (mean +- std. dev. of 7 runs, 10 loops each)</span>
 <span class="go">1,000,000 Box-Muller (NumPy) randoms</span>
 </pre></div>
 </div>
@@ -386,7 +386,7 @@ the next 64-bit unsigned integer function if not needed. Functions inside
     <script type="text/javascript">
         var DOCUMENTATION_OPTIONS = {
             URL_ROOT:'./',
-            VERSION:'0+untagged.60.g7808de1',
+            VERSION:'v0.1+1.gb812f02',
             COLLAPSE_INDEX:false,
             FILE_SUFFIX:'.html',
             HAS_SOURCE:  true,
