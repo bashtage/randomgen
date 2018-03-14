@@ -205,8 +205,8 @@ Cython.</li>
 <span class="gp">   ...: </span><span class="kn">from</span> <span class="nn">numpy.random</span> <span class="kn">import</span> <span class="n">standard_normal</span>
 <span class="gp">   ...: </span><span class="o">%</span><span class="k">timeit</span> standard_normal(1000000)
 <span class="gp">   ...: </span>
-<span class="go">16.1 ms +- 559 us per loop (mean +- std. dev. of 7 runs, 100 loops each)</span>
-<span class="go">56.3 ms +- 2.57 ms per loop (mean +- std. dev. of 7 runs, 10 loops each)</span>
+<span class="go">12 ms +- 27.5 us per loop (mean +- std. dev. of 7 runs, 100 loops each)</span>
+<span class="go">46.8 ms +- 19.9 us per loop (mean +- std. dev. of 7 runs, 10 loops each)</span>
 </pre></div>
 </div>
 <div class="highlight-ipython notranslate"><div class="highlight"><pre><span></span><span class="gp">In [6]: </span><span class="kn">from</span> <span class="nn">randomgen</span> <span class="kn">import</span> <span class="n">Xoroshiro128</span>
@@ -217,8 +217,8 @@ Cython.</li>
 <span class="gp">   ...: </span><span class="kn">from</span> <span class="nn">numpy.random</span> <span class="kn">import</span> <span class="n">standard_exponential</span>
 <span class="gp">   ...: </span><span class="o">%</span><span class="k">timeit</span> standard_exponential(1000000)
 <span class="gp">   ...: </span>
-<span class="go">11 ms +- 193 us per loop (mean +- std. dev. of 7 runs, 100 loops each)</span>
-<span class="go">67.8 ms +- 796 us per loop (mean +- std. dev. of 7 runs, 10 loops each)</span>
+<span class="go">6.8 ms +- 28.4 us per loop (mean +- std. dev. of 7 runs, 100 loops each)</span>
+<span class="go">59.5 ms +- 164 us per loop (mean +- std. dev. of 7 runs, 10 loops each)</span>
 </pre></div>
 </div>
 <div class="highlight-ipython notranslate"><div class="highlight"><pre><span></span><span class="gp">In [11]: </span><span class="kn">from</span> <span class="nn">randomgen</span> <span class="kn">import</span> <span class="n">Xoroshiro128</span>
@@ -229,8 +229,8 @@ Cython.</li>
 <span class="gp">   ....: </span><span class="kn">from</span> <span class="nn">numpy.random</span> <span class="kn">import</span> <span class="n">standard_gamma</span>
 <span class="gp">   ....: </span><span class="o">%</span><span class="k">timeit</span> standard_gamma(3.0, 1000000)
 <span class="gp">   ....: </span>
-<span class="go">40.3 ms +- 1.12 ms per loop (mean +- std. dev. of 7 runs, 10 loops each)</span>
-<span class="go">99 ms +- 5.4 ms per loop (mean +- std. dev. of 7 runs, 10 loops each)</span>
+<span class="go">29.5 ms +- 34.2 us per loop (mean +- std. dev. of 7 runs, 10 loops each)</span>
+<span class="go">78.7 ms +- 52.2 us per loop (mean +- std. dev. of 7 runs, 10 loops each)</span>
 </pre></div>
 </div>
 <ul class="simple">
@@ -251,13 +251,13 @@ select distributions<ul>
 <span class="gp">In [17]: </span><span class="n">rg</span> <span class="o">=</span> <span class="n">Xoroshiro128</span><span class="p">()</span><span class="o">.</span><span class="n">generator</span>
 
 <span class="gp">In [18]: </span><span class="n">rg</span><span class="o">.</span><span class="n">seed</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
-<span class="gh">Out[18]: </span><span class="go">RandomGenerator(Xoroshiro128) at 0x2B3D236B56D8</span>
+<span class="gh">Out[18]: </span><span class="go">RandomGenerator(Xoroshiro128) at 0x2B7034E6DA48</span>
 
 <span class="gp">In [19]: </span><span class="n">rg</span><span class="o">.</span><span class="n">random_sample</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="s1">&#39;d&#39;</span><span class="p">)</span>
 <span class="go">                                                         Out[19]: array([0.31483881, 0.00208035, 0.06399498])</span>
 
 <span class="gp">In [20]: </span><span class="n">rg</span><span class="o">.</span><span class="n">seed</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
-<span class="go">                                                                                                              Out[20]: RandomGenerator(Xoroshiro128) at 0x2B3D236B56D8</span>
+<span class="go">                                                                                                              Out[20]: RandomGenerator(Xoroshiro128) at 0x2B7034E6DA48</span>
 
 <span class="gp">In [21]: </span><span class="n">rg</span><span class="o">.</span><span class="n">random_sample</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="s1">&#39;f&#39;</span><span class="p">)</span>
 <span class="go">                                                                                                                                                                       Out[21]: array([0.11265862, 0.31483877, 0.6936537 ], dtype=float32)</span>
