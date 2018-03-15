@@ -84,7 +84,7 @@ cdef class DSFMT:
     Notes
     -----
     ``DSFMT`` directly provides generators for doubles, and unsigned 32 and 64-
-    bit integers [1]_ . These are not firectly available and must b consumed
+    bit integers [1]_ . These are not firectly available and must be consumed
     via a ``RandomGenerator`` object.
 
     The Python stdlib module "random" also contains a Mersenne Twister

@@ -506,8 +506,8 @@ cdef class RandomGenerator:
 
         Examples
         --------
-        >>> RS = randomgen.mtrand.RandomState() # need a RandomState object
-        >>> RS.tomaxint((2,2,2))
+        >>> rg = randomgen.RandomGenerator() # need a RandomGenerator object
+        >>> rg.tomaxint((2,2,2))
         array([[[1170048599, 1600360186],
                 [ 739731006, 1947757578]],
                [[1871712945,  752307660],
@@ -515,7 +515,7 @@ cdef class RandomGenerator:
         >>> import sys
         >>> sys.maxint
         2147483647
-        >>> RS.tomaxint((2,2,2)) < sys.maxint
+        >>> rg.tomaxint((2,2,2)) < sys.maxint
         array([[[ True,  True],
                 [ True,  True]],
                [[ True,  True],

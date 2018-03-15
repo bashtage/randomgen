@@ -222,14 +222,14 @@ cdef class ThreeFry:
 
         Seed the generator.
 
-        This method is called when ``RandomState`` is initialized. It can be
+        This method is called when ``ThreeFry`` is initialized. It can be
         called again to re-seed the generator. For details, see
-        ``RandomState``.
+        ``ThreeFry``.
 
         Parameters
         ----------
         seed : int, optional
-            Seed for ``RandomState``.
+            Seed for ``ThreeFry``.
         counter : {None, int array}, optional
             Positive integer less than 2**256 containing the counter position
             or a 4 element array of uint64 containing the counter
