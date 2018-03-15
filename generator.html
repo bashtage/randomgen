@@ -15,7 +15,7 @@
   <link rel="stylesheet" type="text/css" href="_static/css/bootstrap-theme.min.css" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-    <title>Random Generator &#8212; RandomGen v0.3 documentation</title>
+    <title>Random Generator &#8212; RandomGen v1.14 documentation</title>
     <link rel="stylesheet" href="_static/guzzle.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <script type="text/javascript" src="_static/documentation_options.js"></script>
@@ -26,7 +26,7 @@
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
     <link rel="next" title="randomgen.generator.RandomGenerator.rand" href="generated/randomgen.generator.RandomGenerator.rand.html" />
-    <link rel="prev" title="Extending" href="extending.html" />
+    <link rel="prev" title="RandomGen" href="index.html" />
   
    
 
@@ -44,9 +44,9 @@
           <a href="generated/randomgen.generator.RandomGenerator.rand.html" title="randomgen.generator.RandomGenerator.rand"
              accesskey="N">next</a> |</li>
         <li class="right" >
-          <a href="extending.html" title="Extending"
+          <a href="index.html" title="RandomGen"
              accesskey="P">previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="index.html">RandomGen v0.3 documentation</a> &#187;</li> 
+        <li class="nav-item nav-item-0"><a href="index.html">RandomGen v1.14 documentation</a> &#187;</li> 
       </ul>
     </div>
     <div class="container-wrapper">
@@ -56,7 +56,7 @@
       </div>
   <div id="left-column">
     <div class="sphinxsidebar"><a href="
-    index.html" class="text-logo">RandomGen v0.3</a>
+    index.html" class="text-logo">RandomGen v1.14</a>
 <div class="sidebar-block">
   <div class="sidebar-wrapper">
     <h2>Table Of Contents</h2>
@@ -64,17 +64,8 @@
   <div class="sidebar-toc">
     
     
-      <ul>
-<li class="toctree-l1"><a class="reference internal" href="parallel.html">Parallel Applications</a></li>
-<li class="toctree-l1"><a class="reference internal" href="multithreading.html">Multithreaded Generation</a></li>
-<li class="toctree-l1"><a class="reference internal" href="new-or-different.html">What’s New or Different</a></li>
-<li class="toctree-l1"><a class="reference internal" href="entropy.html">Reading System Entropy</a></li>
-<li class="toctree-l1"><a class="reference internal" href="performance.html">Comparing Performance</a></li>
-<li class="toctree-l1"><a class="reference internal" href="extending.html">Extending</a></li>
-</ul>
-<ul class="current">
+      <ul class="current">
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Random Generator</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="#id1">Random generator</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#simple-random-data">Simple random data</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#permutations">Permutations</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#distributions">Distributions</a></li>
@@ -83,6 +74,14 @@
 </ul>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="brng/index.html">Basic Random Number Generators</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="parallel.html">Parallel Applications</a></li>
+<li class="toctree-l1"><a class="reference internal" href="multithreading.html">Multithreaded Generation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="new-or-different.html">What’s New or Different</a></li>
+<li class="toctree-l1"><a class="reference internal" href="performance.html">Comparing Performance</a></li>
+<li class="toctree-l1"><a class="reference internal" href="extending.html">Extending</a></li>
+<li class="toctree-l1"><a class="reference internal" href="entropy.html">Reading System Entropy</a></li>
 </ul>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="change-log.html">Change Log</a></li>
@@ -121,8 +120,17 @@
             
   <div class="section" id="random-generator">
 <h1>Random Generator<a class="headerlink" href="#random-generator" title="Permalink to this headline">¶</a></h1>
-<div class="section" id="id1">
-<h2>Random generator<a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h2>
+<p>The <a class="reference internal" href="#randomgen.generator.RandomGenerator" title="randomgen.generator.RandomGenerator"><code class="xref py py-class docutils literal notranslate"><span class="pre">RandomGenerator</span></code></a> provides access to
+a wide range of distributions, and served as a replacement for
+<a class="reference external" href="https://docs.scipy.org/doc/numpy/reference/generated/numpy.random.RandomState.html#numpy.random.RandomState" title="(in NumPy v1.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">RandomState</span></code></a>.  The main difference between
+the two is that <a class="reference internal" href="#randomgen.generator.RandomGenerator" title="randomgen.generator.RandomGenerator"><code class="xref py py-class docutils literal notranslate"><span class="pre">RandomGenerator</span></code></a> relies
+on an additional basic RNG to manage state and generate the random
+bits which are then transformed into random values from useful
+distributions. The default basic RNG used by
+<a class="reference internal" href="#randomgen.generator.RandomGenerator" title="randomgen.generator.RandomGenerator"><code class="xref py py-class docutils literal notranslate"><span class="pre">RandomGenerator</span></code></a> is
+<a class="reference internal" href="brng/xoroshiro128.html#randomgen.xoroshiro128.Xoroshiro128" title="randomgen.xoroshiro128.Xoroshiro128"><code class="xref py py-class docutils literal notranslate"><span class="pre">Xoroshiro128</span></code></a>.  The basic RNG can be
+changed by passing an instantized basic RNG to
+<a class="reference internal" href="#randomgen.generator.RandomGenerator" title="randomgen.generator.RandomGenerator"><code class="xref py py-class docutils literal notranslate"><span class="pre">RandomGenerator</span></code></a>.</p>
 <dl class="class">
 <dt id="randomgen.generator.RandomGenerator">
 <em class="property">class </em><code class="descclassname">randomgen.generator.</code><code class="descname">RandomGenerator</code><span class="sig-paren">(</span><em>brng=None</em><span class="sig-paren">)</span><a class="headerlink" href="#randomgen.generator.RandomGenerator" title="Permalink to this definition">¶</a></dt>
@@ -173,7 +181,6 @@ of probability distributions to choose from.</p>
 </div>
 </dd></dl>
 
-</div>
 <div class="section" id="simple-random-data">
 <h2>Simple random data<a class="headerlink" href="#simple-random-data" title="Permalink to this headline">¶</a></h2>
 <table border="1" class="longtable docutils">
@@ -356,7 +363,7 @@ of probability distributions to choose from.</p>
   <div class="footer-relations">
     
       <div class="pull-left">
-        <a class="btn btn-default" href="extending.html" title="previous chapter (use the left arrow)">Extending</a>
+        <a class="btn btn-default" href="index.html" title="previous chapter (use the left arrow)">RandomGen</a>
       </div>
     
       <div class="pull-right">
@@ -381,9 +388,9 @@ of probability distributions to choose from.</p>
           <a href="generated/randomgen.generator.RandomGenerator.rand.html" title="randomgen.generator.RandomGenerator.rand"
              >next</a> |</li>
         <li class="right" >
-          <a href="extending.html" title="Extending"
+          <a href="index.html" title="RandomGen"
              >previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="index.html">RandomGen v0.3 documentation</a> &#187;</li> 
+        <li class="nav-item nav-item-0"><a href="index.html">RandomGen v1.14 documentation</a> &#187;</li> 
       </ul>
     </div>
 <script type="text/javascript">

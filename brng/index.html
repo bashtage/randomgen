@@ -15,7 +15,7 @@
   <link rel="stylesheet" type="text/css" href="../_static/css/bootstrap-theme.min.css" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-    <title>Basic Random Number Generators &#8212; RandomGen v0.3 documentation</title>
+    <title>Basic Random Number Generators &#8212; RandomGen v1.14 documentation</title>
     <link rel="stylesheet" href="../_static/guzzle.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     <script type="text/javascript" src="../_static/documentation_options.js"></script>
@@ -46,7 +46,7 @@
         <li class="right" >
           <a href="../generated/randomgen.generator.RandomGenerator.zipf.html" title="randomgen.generator.RandomGenerator.zipf"
              accesskey="P">previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../index.html">RandomGen v0.3 documentation</a> &#187;</li> 
+        <li class="nav-item nav-item-0"><a href="../index.html">RandomGen v1.14 documentation</a> &#187;</li> 
       </ul>
     </div>
     <div class="container-wrapper">
@@ -56,7 +56,7 @@
       </div>
   <div id="left-column">
     <div class="sphinxsidebar"><a href="
-    ../index.html" class="text-logo">RandomGen v0.3</a>
+    ../index.html" class="text-logo">RandomGen v1.14</a>
 <div class="sidebar-block">
   <div class="sidebar-wrapper">
     <h2>Table Of Contents</h2>
@@ -65,14 +65,6 @@
     
     
       <ul>
-<li class="toctree-l1"><a class="reference internal" href="../parallel.html">Parallel Applications</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../multithreading.html">Multithreaded Generation</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../new-or-different.html">What’s New or Different</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../entropy.html">Reading System Entropy</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../performance.html">Comparing Performance</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../extending.html">Extending</a></li>
-</ul>
-<ul>
 <li class="toctree-l1"><a class="reference internal" href="../generator.html">Random Generator</a></li>
 </ul>
 <ul class="current">
@@ -81,6 +73,14 @@
 <li class="toctree-l2"><a class="reference internal" href="#experimental-rngs">Experimental RNGs</a></li>
 </ul>
 </li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../parallel.html">Parallel Applications</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../multithreading.html">Multithreaded Generation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../new-or-different.html">What’s New or Different</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../performance.html">Comparing Performance</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../extending.html">Extending</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../entropy.html">Reading System Entropy</a></li>
 </ul>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../change-log.html">Change Log</a></li>
@@ -119,6 +119,12 @@
             
   <div class="section" id="basic-random-number-generators">
 <h1>Basic Random Number Generators<a class="headerlink" href="#basic-random-number-generators" title="Permalink to this headline">¶</a></h1>
+<p>The random values produced by <a class="reference internal" href="../generator.html#randomgen.generator.RandomGenerator" title="randomgen.generator.RandomGenerator"><code class="xref py py-class docutils literal notranslate"><span class="pre">RandomGenerator</span></code></a>
+are produced by a basic RNG.  These basic RNGs do not directly provide
+random numbers and only contains methods used for seeding, getting or
+setting the state, jumping or advancing the state, and for accessing
+low-level wrappers for consumption by code that can efficiently
+access the functions provided, e.g., <a class="reference external" href="https://numba.pydata.org">numba</a>.</p>
 <div class="section" id="stable-rngs">
 <h2>Stable RNGs<a class="headerlink" href="#stable-rngs" title="Permalink to this headline">¶</a></h2>
 <p>These RNGs will be included in future releases.</p>
@@ -180,7 +186,7 @@ permanent.</p>
         <li class="right" >
           <a href="../generated/randomgen.generator.RandomGenerator.zipf.html" title="randomgen.generator.RandomGenerator.zipf"
              >previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../index.html">RandomGen v0.3 documentation</a> &#187;</li> 
+        <li class="nav-item nav-item-0"><a href="../index.html">RandomGen v1.14 documentation</a> &#187;</li> 
       </ul>
     </div>
 <script type="text/javascript">
