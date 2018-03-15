@@ -31,6 +31,9 @@ except ImportError:
 
 import versioneer
 
+with open('requirements.txt') as f:
+    required = f.read().splitlines()
+
 Cython.Compiler.Options.annotate = True
 
 USE_SSE2 = True if not '--no-sse2' in sys.argv else False
@@ -249,5 +252,6 @@ setup(
               'random numbers', 'parallel random numbers', 'PCG',
               'XorShift', 'dSFMT', 'MT19937', 'Random123', 'ThreeFry',
               'Philox'],
-    zip_safe=False
+    zip_safe=False,
+    install_requires=required
 )
