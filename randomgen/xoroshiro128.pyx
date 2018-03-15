@@ -213,8 +213,7 @@ cdef class Xoroshiro128:
         """
         jump(iter=1)
 
-        Jumps the state of the random number generator as-if 2**64 random numbers
-        have been generated.
+        Jumps the state as-if 2**64 random numbers have been generated.
 
         Parameters
         ----------

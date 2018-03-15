@@ -241,8 +241,7 @@ cdef class DSFMT:
         """
         jump(iter=1)
 
-        Jumps the state of the random number generator as-if 2**128 random numbers
-        have been generated.
+        Jumps the state as-if 2**128 random numbers have been generated.
 
         Parameters
         ----------
