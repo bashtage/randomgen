@@ -30,6 +30,7 @@ cdef extern from "src/aligned_malloc/aligned_malloc.h":
     cdef void *PyArray_calloc_aligned(size_t n, size_t s);
     cdef void PyArray_free_aligned(void *p);
 
+ctypedef double (*random_double_fill)(brng_t *state, np.npy_intp count, double* out) nogil
 ctypedef double (*random_double_0)(brng_t *state) nogil
 ctypedef double (*random_double_1)(brng_t *state, double a) nogil
 ctypedef double (*random_double_2)(brng_t *state, double a, double b) nogil
