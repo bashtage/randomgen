@@ -207,7 +207,7 @@ setup(
     author_email='kevin.k.sheppard@gmail.com',
     distclass=BinaryDistribution,
     description='Random generator supporting multiple PRNGs',
-    url='https://github.com/bashtage/core-prng',
+    url='https://github.com/bashtage/randomgen',
     keywords=['pseudo random numbers', 'PRNG', 'Python'],
     zip_safe=False
 )
