@@ -47,6 +47,9 @@ release = randomgen.__version__
 extensions = [
     'sphinx.ext.napoleon',
     'sphinx.ext.autodoc',
+    'sphinx.ext.extlinks',
+    'sphinx.ext.todo',
+    'sphinx.ext.doctest',
     'sphinx.ext.intersphinx',
     'sphinx.ext.autosummary',
     'sphinx.ext.mathjax',
@@ -97,6 +100,7 @@ pygments_style = 'sphinx'
 #
 # html_theme_options = {}
 
+html_translator_class = 'guzzle_sphinx_theme.HTMLTranslator'
 html_theme_path = guzzle_sphinx_theme.html_theme_path()
 html_theme = 'guzzle_sphinx_theme'
 
@@ -127,6 +131,8 @@ html_sidebars = {
     '**': ['logo-text.html', 'globaltoc.html', 'searchbox.html']
 }
 
+# If false, no module index is generated.
+html_domain_indices = True
 
 # -- Options for HTMLHelp output ---------------------------------------------
 
@@ -180,7 +186,7 @@ man_pages = [
 #  dir menu entry, description, category)
 texinfo_documents = [
     (master_doc, 'RandomGen', 'RandomGen Documentation',
-     author, 'RandomGen', 'One line description of project.',
+     author, 'RandomGen', 'Alternative random number generators for Python.',
      'Miscellaneous'),
 ]
 
