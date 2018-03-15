@@ -15,7 +15,7 @@
   <link rel="stylesheet" type="text/css" href="_static/css/bootstrap-theme.min.css" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-    <title>RandomGen &#8212; RandomGen v0.3+1.g850cad5 documentation</title>
+    <title>RandomGen &#8212; RandomGen v0.3+2.g3d361ac documentation</title>
     <link rel="stylesheet" href="_static/guzzle.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <script type="text/javascript" src="_static/documentation_options.js"></script>
@@ -25,7 +25,7 @@
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="Parallel Random Number Generation" href="parallel.html" />
+    <link rel="next" title="Random Generator" href="generator.html" />
   
    
 
@@ -40,9 +40,9 @@
           <a href="py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="right" >
-          <a href="parallel.html" title="Parallel Random Number Generation"
+          <a href="generator.html" title="Random Generator"
              accesskey="N">next</a> |</li>
-        <li class="nav-item nav-item-0"><a href="#">RandomGen v0.3+1.g850cad5 documentation</a> &#187;</li> 
+        <li class="nav-item nav-item-0"><a href="#">RandomGen v0.3+2.g3d361ac documentation</a> &#187;</li> 
       </ul>
     </div>
     <div class="container-wrapper">
@@ -52,7 +52,7 @@
       </div>
   <div id="left-column">
     <div class="sphinxsidebar"><a href="
-    #" class="text-logo">RandomGen v0.3 (+1)</a>
+    #" class="text-logo">RandomGen v0.3 (+2)</a>
 <div class="sidebar-block">
   <div class="sidebar-wrapper">
     <h2>Table Of Contents</h2>
@@ -61,18 +61,18 @@
     
     
       <ul>
-<li class="toctree-l1"><a class="reference internal" href="parallel.html">Parallel Applications</a></li>
-<li class="toctree-l1"><a class="reference internal" href="multithreading.html">Multithreaded Generation</a></li>
-<li class="toctree-l1"><a class="reference internal" href="new-or-different.html">What’s New or Different</a></li>
-<li class="toctree-l1"><a class="reference internal" href="entropy.html">Reading System Entropy</a></li>
-<li class="toctree-l1"><a class="reference internal" href="performance.html">Comparing Performance</a></li>
-<li class="toctree-l1"><a class="reference internal" href="extending.html">Extending</a></li>
-</ul>
-<ul>
 <li class="toctree-l1"><a class="reference internal" href="generator.html">Random Generator</a></li>
 </ul>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="brng/index.html">Basic Random Number Generators</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="parallel.html">Parallel Applications</a></li>
+<li class="toctree-l1"><a class="reference internal" href="multithreading.html">Multithreaded Generation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="new-or-different.html">What’s New or Different</a></li>
+<li class="toctree-l1"><a class="reference internal" href="performance.html">Comparing Performance</a></li>
+<li class="toctree-l1"><a class="reference internal" href="extending.html">Extending</a></li>
+<li class="toctree-l1"><a class="reference internal" href="entropy.html">Reading System Entropy</a></li>
 </ul>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="change-log.html">Change Log</a></li>
@@ -114,6 +114,36 @@
 <p>This package contains replacements for the NumPy
 <a class="reference external" href="https://docs.scipy.org/doc/numpy/reference/generated/numpy.random.RandomState.html#numpy.random.RandomState" title="(in NumPy v1.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">RandomState</span></code></a> object that allows the core random number
 generator be be changed.</p>
+<div class="section" id="quick-start">
+<h2>Quick Start<a class="headerlink" href="#quick-start" title="Permalink to this headline">¶</a></h2>
+<p>Like <code class="xref py py-mod docutils literal notranslate"><span class="pre">numpy.random</span></code>, RandomGen can be used at the module level.
+This uses the default <a class="reference internal" href="generator.html#randomgen.generator.RandomGenerator" title="randomgen.generator.RandomGenerator"><code class="xref py py-class docutils literal notranslate"><span class="pre">RandomGenerator</span></code></a> which
+uses normals provided by <a class="reference internal" href="brng/xoroshiro128.html#randomgen.xoroshiro128.Xoroshiro128" title="randomgen.xoroshiro128.Xoroshiro128"><code class="xref py py-class docutils literal notranslate"><span class="pre">Xoroshiro128</span></code></a>.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># As replacement for numpy.random</span>
+<span class="kn">import</span> <span class="nn">randomgen.generator</span> <span class="kn">as</span> <span class="nn">random</span>
+<span class="n">random</span><span class="o">.</span><span class="n">standard_normal</span><span class="p">()</span>
+</pre></div>
+</div>
+<p><a class="reference internal" href="generator.html#randomgen.generator.RandomGenerator" title="randomgen.generator.RandomGenerator"><code class="xref py py-class docutils literal notranslate"><span class="pre">RandomGenerator</span></code></a> can also be used as a
+replacement for <a class="reference external" href="https://docs.scipy.org/doc/numpy/reference/generated/numpy.random.RandomState.html#numpy.random.RandomState" title="(in NumPy v1.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">RandomState</span></code></a>, although the random
+values are generated by <a class="reference internal" href="brng/xoroshiro128.html#randomgen.xoroshiro128.Xoroshiro128" title="randomgen.xoroshiro128.Xoroshiro128"><code class="xref py py-class docutils literal notranslate"><span class="pre">Xoroshiro128</span></code></a>. It
+also isn’t possible to directly seed a
+<a class="reference internal" href="generator.html#randomgen.generator.RandomGenerator" title="randomgen.generator.RandomGenerator"><code class="xref py py-class docutils literal notranslate"><span class="pre">RandomGenerator</span></code></a>.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># As replacement for RandomState()</span>
+<span class="kn">from</span> <span class="nn">randomgen</span> <span class="kn">import</span> <span class="n">RandomGenerator</span>
+<span class="n">rg</span> <span class="o">=</span> <span class="n">RandomGenerator</span><span class="p">()</span>
+<span class="n">rg</span><span class="o">.</span><span class="n">standard_normal</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>Seeds can be passed to any of the basic RNGs. Here <a class="reference internal" href="brng/mt19937.html#randomgen.mt19937.MT19937" title="randomgen.mt19937.MT19937"><code class="xref py py-class docutils literal notranslate"><span class="pre">MT19937</span></code></a>
+is used and the <a class="reference internal" href="generator.html#randomgen.generator.RandomGenerator" title="randomgen.generator.RandomGenerator"><code class="xref py py-class docutils literal notranslate"><span class="pre">RandomGenerator</span></code></a> is accessed via
+the property <a class="reference internal" href="brng/generated/randomgen.mt19937.MT19937.generator.html#randomgen.mt19937.MT19937.generator" title="randomgen.mt19937.MT19937.generator"><code class="xref py py-attr docutils literal notranslate"><span class="pre">generator</span></code></a>.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">randomgen</span> <span class="kn">import</span> <span class="n">MT19937</span>
+<span class="n">rg</span> <span class="o">=</span> <span class="n">MT19937</span><span class="p">(</span><span class="mi">12345</span><span class="p">)</span><span class="o">.</span><span class="n">generator</span>
+<span class="n">rg</span><span class="o">.</span><span class="n">standard_normal</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
 <div class="section" id="introduction">
 <h2>Introduction<a class="headerlink" href="#introduction" title="Permalink to this headline">¶</a></h2>
 <p>RandomGen takes a different approach to producing random numbers from the
@@ -133,28 +163,21 @@ that is nearly identical to <a class="reference external" href="https://docs.sci
 method to initialize a generator passes a basic RNG –
 <a class="reference internal" href="brng/mt19937.html#randomgen.mt19937.MT19937" title="randomgen.mt19937.MT19937"><code class="xref py py-class docutils literal notranslate"><span class="pre">MT19937</span></code></a>, the underlying RNG in NumPy  – as the
 sole argument. Note that the basic RNG must be instantized.</p>
-<div class="highlight-ipython notranslate"><div class="highlight"><pre><span></span><span class="gp">In [1]: </span><span class="kn">from</span> <span class="nn">randomgen</span> <span class="kn">import</span> <span class="n">RandomGenerator</span><span class="p">,</span> <span class="n">MT19937</span>
-
-<span class="gp">In [2]: </span><span class="n">rg</span> <span class="o">=</span> <span class="n">RandomGenerator</span><span class="p">(</span><span class="n">MT19937</span><span class="p">())</span>
-
-<span class="gp">In [3]: </span><span class="n">rg</span><span class="o">.</span><span class="n">random_sample</span><span class="p">()</span>
-<span class="gh">Out[3]: </span><span class="go">0.549346259502162</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">randomgen</span> <span class="kn">import</span> <span class="n">RandomGenerator</span><span class="p">,</span> <span class="n">MT19937</span>
+<span class="n">rg</span> <span class="o">=</span> <span class="n">RandomGenerator</span><span class="p">(</span><span class="n">MT19937</span><span class="p">())</span>
+<span class="n">rg</span><span class="o">.</span><span class="n">random_sample</span><span class="p">()</span>
 </pre></div>
 </div>
 <p>Seed information is directly passed to the basic RNG.</p>
-<div class="highlight-ipython notranslate"><div class="highlight"><pre><span></span><span class="gp">In [4]: </span><span class="n">rg</span> <span class="o">=</span> <span class="n">RandomGenerator</span><span class="p">(</span><span class="n">MT19937</span><span class="p">(</span><span class="mi">12345</span><span class="p">))</span>
-
-<span class="gp">In [5]: </span><span class="n">rg</span><span class="o">.</span><span class="n">random_sample</span><span class="p">()</span>
-<span class="gh">Out[5]: </span><span class="go">0.9296160928171479</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">rg</span> <span class="o">=</span> <span class="n">RandomGenerator</span><span class="p">(</span><span class="n">MT19937</span><span class="p">(</span><span class="mi">12345</span><span class="p">))</span>
+<span class="n">rg</span><span class="o">.</span><span class="n">random_sample</span><span class="p">()</span>
 </pre></div>
 </div>
 <p>A shorthand method is also available which uses the
 <a class="reference internal" href="brng/generated/randomgen.mt19937.MT19937.generator.html#randomgen.mt19937.MT19937.generator" title="randomgen.mt19937.MT19937.generator"><code class="xref py py-meth docutils literal notranslate"><span class="pre">generator()</span></code></a> property from a basic RNG to
 access an embedded random generator.</p>
-<div class="highlight-ipython notranslate"><div class="highlight"><pre><span></span><span class="gp">In [6]: </span><span class="n">rg</span> <span class="o">=</span> <span class="n">MT19937</span><span class="p">(</span><span class="mi">12345</span><span class="p">)</span><span class="o">.</span><span class="n">generator</span>
-
-<span class="gp">In [7]: </span><span class="n">rg</span><span class="o">.</span><span class="n">random_sample</span><span class="p">()</span>
-<span class="gh">Out[7]: </span><span class="go">0.9296160928171479</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">rg</span> <span class="o">=</span> <span class="n">MT19937</span><span class="p">(</span><span class="mi">12345</span><span class="p">)</span><span class="o">.</span><span class="n">generator</span>
+<span class="n">rg</span><span class="o">.</span><span class="n">random_sample</span><span class="p">()</span>
 </pre></div>
 </div>
 <div class="section" id="what-s-new-or-different">
@@ -235,32 +258,6 @@ arbitrary number of steps or generating independent streams. See the
 <a class="reference external" href="https://www.deshawresearch.com/resources_random123.html">Random123</a> page for more details about this class of PRNG.</li>
 </ul>
 </div>
-<div class="section" id="new-features">
-<h2>New Features<a class="headerlink" href="#new-features" title="Permalink to this headline">¶</a></h2>
-<div class="toctree-wrapper compound">
-<ul>
-<li class="toctree-l1"><a class="reference internal" href="parallel.html">Parallel Applications</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="parallel.html#independent-streams">Independent Streams</a></li>
-<li class="toctree-l2"><a class="reference internal" href="parallel.html#jump-advance-the-prng-state">Jump/Advance the PRNG state</a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="multithreading.html">Multithreaded Generation</a></li>
-<li class="toctree-l1"><a class="reference internal" href="new-or-different.html">What’s New or Different</a></li>
-<li class="toctree-l1"><a class="reference internal" href="entropy.html">Reading System Entropy</a></li>
-<li class="toctree-l1"><a class="reference internal" href="performance.html">Comparing Performance</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="performance.html#recommendation">Recommendation</a></li>
-<li class="toctree-l2"><a class="reference internal" href="performance.html#timings">Timings</a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="extending.html">Extending</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="extending.html#numba">Numba</a></li>
-<li class="toctree-l2"><a class="reference internal" href="extending.html#cython">Cython</a></li>
-<li class="toctree-l2"><a class="reference internal" href="extending.html#new-basic-rngs">New Basic RNGs</a></li>
-</ul>
-</li>
-</ul>
-</div>
-</div>
 <div class="section" id="random-generator">
 <h2>Random Generator<a class="headerlink" href="#random-generator" title="Permalink to this headline">¶</a></h2>
 <div class="toctree-wrapper compound">
@@ -293,6 +290,32 @@ arbitrary number of steps or generating independent streams. See the
 </li>
 </ul>
 </div>
+</div>
+<div class="section" id="new-features">
+<h2>New Features<a class="headerlink" href="#new-features" title="Permalink to this headline">¶</a></h2>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="parallel.html">Parallel Applications</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="parallel.html#independent-streams">Independent Streams</a></li>
+<li class="toctree-l2"><a class="reference internal" href="parallel.html#jump-advance-the-prng-state">Jump/Advance the PRNG state</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="multithreading.html">Multithreaded Generation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="new-or-different.html">What’s New or Different</a></li>
+<li class="toctree-l1"><a class="reference internal" href="performance.html">Comparing Performance</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="performance.html#recommendation">Recommendation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="performance.html#timings">Timings</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="extending.html">Extending</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="extending.html#numba">Numba</a></li>
+<li class="toctree-l2"><a class="reference internal" href="extending.html#cython">Cython</a></li>
+<li class="toctree-l2"><a class="reference internal" href="extending.html#new-basic-rngs">New Basic RNGs</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="entropy.html">Reading System Entropy</a></li>
+</ul>
+</div>
 <div class="section" id="changes">
 <h3>Changes<a class="headerlink" href="#changes" title="Permalink to this headline">¶</a></h3>
 <div class="toctree-wrapper compound">
@@ -318,7 +341,7 @@ arbitrary number of steps or generating independent streams. See the
   <div class="footer-relations">
     
       <div class="pull-right">
-        <a class="btn btn-default" href="parallel.html" title="next chapter (use the right arrow)">Parallel Random Number Generation</a>
+        <a class="btn btn-default" href="generator.html" title="next chapter (use the right arrow)">Random Generator</a>
       </div>
     </div>
     <div class="clearer"></div>
@@ -336,9 +359,9 @@ arbitrary number of steps or generating independent streams. See the
           <a href="py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="right" >
-          <a href="parallel.html" title="Parallel Random Number Generation"
+          <a href="generator.html" title="Random Generator"
              >next</a> |</li>
-        <li class="nav-item nav-item-0"><a href="#">RandomGen v0.3+1.g850cad5 documentation</a> &#187;</li> 
+        <li class="nav-item nav-item-0"><a href="#">RandomGen v0.3+2.g3d361ac documentation</a> &#187;</li> 
       </ul>
     </div>
 <script type="text/javascript">

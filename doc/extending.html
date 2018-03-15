@@ -15,7 +15,7 @@
   <link rel="stylesheet" type="text/css" href="_static/css/bootstrap-theme.min.css" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-    <title>Extending &#8212; RandomGen v0.3+1.g850cad5 documentation</title>
+    <title>Extending &#8212; RandomGen v0.3+2.g3d361ac documentation</title>
     <link rel="stylesheet" href="_static/guzzle.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <script type="text/javascript" src="_static/documentation_options.js"></script>
@@ -25,7 +25,7 @@
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="Random Generator" href="generator.html" />
+    <link rel="next" title="System Entropy" href="entropy.html" />
     <link rel="prev" title="Performance" href="performance.html" />
   
    
@@ -41,12 +41,12 @@
           <a href="py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="right" >
-          <a href="generator.html" title="Random Generator"
+          <a href="entropy.html" title="System Entropy"
              accesskey="N">next</a> |</li>
         <li class="right" >
           <a href="performance.html" title="Performance"
              accesskey="P">previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="index.html">RandomGen v0.3+1.g850cad5 documentation</a> &#187;</li> 
+        <li class="nav-item nav-item-0"><a href="index.html">RandomGen v0.3+2.g3d361ac documentation</a> &#187;</li> 
       </ul>
     </div>
     <div class="container-wrapper">
@@ -56,7 +56,7 @@
       </div>
   <div id="left-column">
     <div class="sphinxsidebar"><a href="
-    index.html" class="text-logo">RandomGen v0.3 (+1)</a>
+    index.html" class="text-logo">RandomGen v0.3 (+2)</a>
 <div class="sidebar-block">
   <div class="sidebar-wrapper">
     <h2>Table Of Contents</h2>
@@ -64,11 +64,16 @@
   <div class="sidebar-toc">
     
     
-      <ul class="current">
+      <ul>
+<li class="toctree-l1"><a class="reference internal" href="generator.html">Random Generator</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="brng/index.html">Basic Random Number Generators</a></li>
+</ul>
+<ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="parallel.html">Parallel Applications</a></li>
 <li class="toctree-l1"><a class="reference internal" href="multithreading.html">Multithreaded Generation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="new-or-different.html">What’s New or Different</a></li>
-<li class="toctree-l1"><a class="reference internal" href="entropy.html">Reading System Entropy</a></li>
 <li class="toctree-l1"><a class="reference internal" href="performance.html">Comparing Performance</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Extending</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#numba">Numba</a></li>
@@ -76,12 +81,7 @@
 <li class="toctree-l2"><a class="reference internal" href="#new-basic-rngs">New Basic RNGs</a></li>
 </ul>
 </li>
-</ul>
-<ul>
-<li class="toctree-l1"><a class="reference internal" href="generator.html">Random Generator</a></li>
-</ul>
-<ul>
-<li class="toctree-l1"><a class="reference internal" href="brng/index.html">Basic Random Number Generators</a></li>
+<li class="toctree-l1"><a class="reference internal" href="entropy.html">Reading System Entropy</a></li>
 </ul>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="change-log.html">Change Log</a></li>
@@ -165,23 +165,23 @@ provided by <code class="docutils literal notranslate"><span class="pre">ctypes.
 
 <span class="go"># Compile using Numba</span>
 <span class="gp">In [9]: </span><span class="k">print</span><span class="p">(</span><span class="n">normals</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="n">s</span><span class="p">)</span><span class="o">.</span><span class="n">var</span><span class="p">())</span>
-<span class="go">1.0409883713699934</span>
+<span class="go">0.5443302245883673</span>
 
 <span class="go"># Warm up</span>
 <span class="gp">In [10]: </span><span class="n">normalsj</span> <span class="o">=</span> <span class="n">nb</span><span class="o">.</span><span class="n">jit</span><span class="p">(</span><span class="n">normals</span><span class="p">,</span> <span class="n">nopython</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
 
 <span class="go"># Must use state address not state with numba</span>
 <span class="gp">In [11]: </span><span class="n">normalsj</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">state_addr</span><span class="p">)</span>
-<span class="gh">Out[11]: </span><span class="go">array([0.93963159])</span>
+<span class="gh">Out[11]: </span><span class="go">array([-0.34055106])</span>
 
 <span class="gp">In [12]: </span><span class="o">%</span><span class="k">timeit</span> normalsj(1000000, state_addr)
 <span class="gp">   ....: </span><span class="k">print</span><span class="p">(</span><span class="s1">&#39;1,000,000 Box-Muller (numba/Xoroshiro128) randoms&#39;</span><span class="p">)</span>
 <span class="gp">   ....: </span><span class="o">%</span><span class="k">timeit</span> np.random.standard_normal(1000000)
 <span class="gp">   ....: </span><span class="k">print</span><span class="p">(</span><span class="s1">&#39;1,000,000 Box-Muller (NumPy) randoms&#39;</span><span class="p">)</span>
 <span class="gp">   ....: </span>
-<span class="go">                             47 ms +- 1.99 ms per loop (mean +- std. dev. of 7 runs, 10 loops each)</span>
+<span class="go">                              40.6 ms +- 717 us per loop (mean +- std. dev. of 7 runs, 10 loops each)</span>
 <span class="go">1,000,000 Box-Muller (numba/Xoroshiro128) randoms</span>
-<span class="go">53.1 ms +- 1.58 ms per loop (mean +- std. dev. of 7 runs, 10 loops each)</span>
+<span class="go">53.3 ms +- 2.09 ms per loop (mean +- std. dev. of 7 runs, 10 loops each)</span>
 <span class="go">1,000,000 Box-Muller (NumPy) randoms</span>
 </pre></div>
 </div>
@@ -296,7 +296,7 @@ the next 64-bit unsigned integer function if not needed. Functions inside
       </div>
     
       <div class="pull-right">
-        <a class="btn btn-default" href="generator.html" title="next chapter (use the right arrow)">Random Generator</a>
+        <a class="btn btn-default" href="entropy.html" title="next chapter (use the right arrow)">System Entropy</a>
       </div>
     </div>
     <div class="clearer"></div>
@@ -314,12 +314,12 @@ the next 64-bit unsigned integer function if not needed. Functions inside
           <a href="py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="right" >
-          <a href="generator.html" title="Random Generator"
+          <a href="entropy.html" title="System Entropy"
              >next</a> |</li>
         <li class="right" >
           <a href="performance.html" title="Performance"
              >previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="index.html">RandomGen v0.3+1.g850cad5 documentation</a> &#187;</li> 
+        <li class="nav-item nav-item-0"><a href="index.html">RandomGen v0.3+2.g3d361ac documentation</a> &#187;</li> 
       </ul>
     </div>
 <script type="text/javascript">
