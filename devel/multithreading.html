@@ -185,7 +185,7 @@ the time required to generate using a single thread.</p>
 <span class="go">2</span>
 
 <span class="gp">In [6]: </span><span class="o">%</span><span class="k">timeit</span> mrng.fill()
-<span class="go">  116 ms +- 573 us per loop (mean +- std. dev. of 7 runs, 10 loops each)</span>
+<span class="go">  111 ms +- 555 us per loop (mean +- std. dev. of 7 runs, 10 loops each)</span>
 </pre></div>
 </div>
 <p>The single threaded call directly uses the PRNG.</p>
@@ -194,7 +194,7 @@ the time required to generate using a single thread.</p>
 <span class="gp">In [8]: </span><span class="n">rg</span> <span class="o">=</span> <span class="n">Xorshift1024</span><span class="p">()</span><span class="o">.</span><span class="n">generator</span>
 
 <span class="gp">In [9]: </span><span class="o">%</span><span class="k">timeit</span> rg.standard_normal(out=values)
-<span class="go">158 ms +- 3.64 ms per loop (mean +- std. dev. of 7 runs, 10 loops each)</span>
+<span class="go">168 ms +- 3.73 ms per loop (mean +- std. dev. of 7 runs, 10 loops each)</span>
 </pre></div>
 </div>
 <p>The gains are substantial and the scaling is reasonable even for large that
@@ -203,7 +203,7 @@ that does not use an existing array due to array creation overhead.</p>
 <div class="highlight-ipython notranslate"><div class="highlight"><pre><span></span><span class="gp">In [10]: </span><span class="n">rg</span> <span class="o">=</span> <span class="n">Xorshift1024</span><span class="p">()</span><span class="o">.</span><span class="n">generator</span>
 
 <span class="gp">In [11]: </span><span class="o">%</span><span class="k">timeit</span> rg.standard_normal(10000000)
-<span class="go">182 ms +- 1.65 ms per loop (mean +- std. dev. of 7 runs, 10 loops each)</span>
+<span class="go">197 ms +- 20.1 ms per loop (mean +- std. dev. of 7 runs, 1 loop each)</span>
 </pre></div>
 </div>
 </div>
