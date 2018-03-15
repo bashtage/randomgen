@@ -1,97 +1,71 @@
 
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
-<!DOCTYPE html>
-<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
-<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
-<head>
-  <meta charset="utf-8">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
   
+  <!-- Licensed under the Apache 2.0 License -->
+  <link rel="stylesheet" type="text/css" href="../_static/fonts/open-sans/stylesheet.css" />
+  <!-- Licensed under the SIL Open Font License -->
+  <link rel="stylesheet" type="text/css" href="../_static/fonts/source-serif-pro/source-serif-pro.css" />
+  <link rel="stylesheet" type="text/css" href="../_static/css/bootstrap.min.css" />
+  <link rel="stylesheet" type="text/css" href="../_static/css/bootstrap-theme.min.css" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>randomgen.generator.RandomGenerator.negative_binomial &mdash; RandomGen v0.2 documentation</title>
+    <title>randomgen.generator.RandomGenerator.negative_binomial &#8212; RandomGen v0.2+2.gc6770fe documentation</title>
+    <link rel="stylesheet" href="../_static/guzzle.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <script type="text/javascript" src="../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="randomgen.generator.RandomGenerator.noncentral_chisquare" href="randomgen.generator.RandomGenerator.noncentral_chisquare.html" />
+    <link rel="prev" title="randomgen.generator.RandomGenerator.multivariate_normal" href="randomgen.generator.RandomGenerator.multivariate_normal.html" />
   
-
-  
-  
-  
-  
-
-  
-
-  
-  
-    
-
-  
-
-  
-  
-    <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
-  
-
-  
-
-  
-        <link rel="index" title="Index"
-              href="../genindex.html"/>
-        <link rel="search" title="Search" href="../search.html"/>
-    <link rel="top" title="RandomGen v0.2 documentation" href="../index.html"/>
-        <link rel="up" title="Random Generator" href="../generator.html"/>
-        <link rel="next" title="randomgen.generator.RandomGenerator.noncentral_chisquare" href="randomgen.generator.RandomGenerator.noncentral_chisquare.html"/>
-        <link rel="prev" title="randomgen.generator.RandomGenerator.multivariate_normal" href="randomgen.generator.RandomGenerator.multivariate_normal.html"/> 
-
-  
-  <script src="../_static/js/modernizr.min.js"></script>
-
-</head>
-
-<body class="wy-body-for-nav" role="document">
-
    
-  <div class="wy-grid-for-nav">
 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="randomgen.generator.RandomGenerator.noncentral_chisquare.html" title="randomgen.generator.RandomGenerator.noncentral_chisquare"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="randomgen.generator.RandomGenerator.multivariate_normal.html" title="randomgen.generator.RandomGenerator.multivariate_normal"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">RandomGen v0.2+2.gc6770fe documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../generator.html" accesskey="U">Random Generator</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="container-wrapper">
+
+      <div id="mobile-toggle">
+        <a href="#"><span class="glyphicon glyphicon-align-justify" aria-hidden="true"></span></a>
+      </div>
+  <div id="left-column">
+    <div class="sphinxsidebar"><a href="
+    ../index.html" class="text-logo">RandomGen v0.2 (+2)</a>
+<div class="sidebar-block">
+  <div class="sidebar-wrapper">
+    <h2>Table Of Contents</h2>
+  </div>
+  <div class="sidebar-toc">
     
-    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
-      <div class="wy-side-scroll">
-        <div class="wy-side-nav-search">
-          
-
-          
-            <a href="../index.html" class="icon icon-home"> RandomGen
-          
-
-          
-          </a>
-
-          
-            
-            
-              <div class="version">
-                v0.2
-              </div>
-            
-          
-
-          
-<div role="search">
-  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
-    <input type="text" name="q" placeholder="Search docs" />
-    <input type="hidden" name="check_keywords" value="yes" />
-    <input type="hidden" name="area" value="default" />
-  </form>
-</div>
-
-          
-        </div>
-
-        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
-          
-            
-            
-              
-            
-            
-              <ul>
+    
+      <ul>
 <li class="toctree-l1"><a class="reference internal" href="../parallel.html">Parallel Applications</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../multithreading.html">Multithreaded Generation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../new-or-different.html">What’s New or Different</a></li>
@@ -104,45 +78,7 @@
 <li class="toctree-l2"><a class="reference internal" href="../generator.html#id1">Random generator</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../generator.html#simple-random-data">Simple random data</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../generator.html#permutations">Permutations</a></li>
-<li class="toctree-l2 current"><a class="reference internal" href="../generator.html#distributions">Distributions</a><ul class="current">
-<li class="toctree-l3"><a class="reference internal" href="randomgen.generator.RandomGenerator.beta.html">randomgen.generator.RandomGenerator.beta</a></li>
-<li class="toctree-l3"><a class="reference internal" href="randomgen.generator.RandomGenerator.binomial.html">randomgen.generator.RandomGenerator.binomial</a></li>
-<li class="toctree-l3"><a class="reference internal" href="randomgen.generator.RandomGenerator.chisquare.html">randomgen.generator.RandomGenerator.chisquare</a></li>
-<li class="toctree-l3"><a class="reference internal" href="randomgen.generator.RandomGenerator.complex_normal.html">randomgen.generator.RandomGenerator.complex_normal</a></li>
-<li class="toctree-l3"><a class="reference internal" href="randomgen.generator.RandomGenerator.dirichlet.html">randomgen.generator.RandomGenerator.dirichlet</a></li>
-<li class="toctree-l3"><a class="reference internal" href="randomgen.generator.RandomGenerator.exponential.html">randomgen.generator.RandomGenerator.exponential</a></li>
-<li class="toctree-l3"><a class="reference internal" href="randomgen.generator.RandomGenerator.f.html">randomgen.generator.RandomGenerator.f</a></li>
-<li class="toctree-l3"><a class="reference internal" href="randomgen.generator.RandomGenerator.gamma.html">randomgen.generator.RandomGenerator.gamma</a></li>
-<li class="toctree-l3"><a class="reference internal" href="randomgen.generator.RandomGenerator.geometric.html">randomgen.generator.RandomGenerator.geometric</a></li>
-<li class="toctree-l3"><a class="reference internal" href="randomgen.generator.RandomGenerator.gumbel.html">randomgen.generator.RandomGenerator.gumbel</a></li>
-<li class="toctree-l3"><a class="reference internal" href="randomgen.generator.RandomGenerator.hypergeometric.html">randomgen.generator.RandomGenerator.hypergeometric</a></li>
-<li class="toctree-l3"><a class="reference internal" href="randomgen.generator.RandomGenerator.laplace.html">randomgen.generator.RandomGenerator.laplace</a></li>
-<li class="toctree-l3"><a class="reference internal" href="randomgen.generator.RandomGenerator.logistic.html">randomgen.generator.RandomGenerator.logistic</a></li>
-<li class="toctree-l3"><a class="reference internal" href="randomgen.generator.RandomGenerator.lognormal.html">randomgen.generator.RandomGenerator.lognormal</a></li>
-<li class="toctree-l3"><a class="reference internal" href="randomgen.generator.RandomGenerator.logseries.html">randomgen.generator.RandomGenerator.logseries</a></li>
-<li class="toctree-l3"><a class="reference internal" href="randomgen.generator.RandomGenerator.multinomial.html">randomgen.generator.RandomGenerator.multinomial</a></li>
-<li class="toctree-l3"><a class="reference internal" href="randomgen.generator.RandomGenerator.multivariate_normal.html">randomgen.generator.RandomGenerator.multivariate_normal</a></li>
-<li class="toctree-l3 current"><a class="current reference internal" href="#">randomgen.generator.RandomGenerator.negative_binomial</a></li>
-<li class="toctree-l3"><a class="reference internal" href="randomgen.generator.RandomGenerator.noncentral_chisquare.html">randomgen.generator.RandomGenerator.noncentral_chisquare</a></li>
-<li class="toctree-l3"><a class="reference internal" href="randomgen.generator.RandomGenerator.noncentral_f.html">randomgen.generator.RandomGenerator.noncentral_f</a></li>
-<li class="toctree-l3"><a class="reference internal" href="randomgen.generator.RandomGenerator.normal.html">randomgen.generator.RandomGenerator.normal</a></li>
-<li class="toctree-l3"><a class="reference internal" href="randomgen.generator.RandomGenerator.pareto.html">randomgen.generator.RandomGenerator.pareto</a></li>
-<li class="toctree-l3"><a class="reference internal" href="randomgen.generator.RandomGenerator.poisson.html">randomgen.generator.RandomGenerator.poisson</a></li>
-<li class="toctree-l3"><a class="reference internal" href="randomgen.generator.RandomGenerator.power.html">randomgen.generator.RandomGenerator.power</a></li>
-<li class="toctree-l3"><a class="reference internal" href="randomgen.generator.RandomGenerator.rayleigh.html">randomgen.generator.RandomGenerator.rayleigh</a></li>
-<li class="toctree-l3"><a class="reference internal" href="randomgen.generator.RandomGenerator.standard_cauchy.html">randomgen.generator.RandomGenerator.standard_cauchy</a></li>
-<li class="toctree-l3"><a class="reference internal" href="randomgen.generator.RandomGenerator.standard_exponential.html">randomgen.generator.RandomGenerator.standard_exponential</a></li>
-<li class="toctree-l3"><a class="reference internal" href="randomgen.generator.RandomGenerator.standard_gamma.html">randomgen.generator.RandomGenerator.standard_gamma</a></li>
-<li class="toctree-l3"><a class="reference internal" href="randomgen.generator.RandomGenerator.standard_normal.html">randomgen.generator.RandomGenerator.standard_normal</a></li>
-<li class="toctree-l3"><a class="reference internal" href="randomgen.generator.RandomGenerator.standard_t.html">randomgen.generator.RandomGenerator.standard_t</a></li>
-<li class="toctree-l3"><a class="reference internal" href="randomgen.generator.RandomGenerator.triangular.html">randomgen.generator.RandomGenerator.triangular</a></li>
-<li class="toctree-l3"><a class="reference internal" href="randomgen.generator.RandomGenerator.uniform.html">randomgen.generator.RandomGenerator.uniform</a></li>
-<li class="toctree-l3"><a class="reference internal" href="randomgen.generator.RandomGenerator.vonmises.html">randomgen.generator.RandomGenerator.vonmises</a></li>
-<li class="toctree-l3"><a class="reference internal" href="randomgen.generator.RandomGenerator.wald.html">randomgen.generator.RandomGenerator.wald</a></li>
-<li class="toctree-l3"><a class="reference internal" href="randomgen.generator.RandomGenerator.weibull.html">randomgen.generator.RandomGenerator.weibull</a></li>
-<li class="toctree-l3"><a class="reference internal" href="randomgen.generator.RandomGenerator.zipf.html">randomgen.generator.RandomGenerator.zipf</a></li>
-</ul>
-</li>
+<li class="toctree-l2 current"><a class="reference internal" href="../generator.html#distributions">Distributions</a></li>
 </ul>
 </li>
 </ul>
@@ -153,68 +89,38 @@
 <li class="toctree-l1"><a class="reference internal" href="../change-log.html">Change Log</a></li>
 </ul>
 
-            
-          
-        </div>
-      </div>
-    </nav>
-
-    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
-
-      
-      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
-        
-          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
-          <a href="../index.html">RandomGen</a>
-        
-      </nav>
-
-
-      
-      <div class="wy-nav-content">
-        <div class="rst-content">
-          
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-<div role="navigation" aria-label="breadcrumbs navigation">
-
-  <ul class="wy-breadcrumbs">
     
-      <li><a href="../index.html">Docs</a> &raquo;</li>
-        
-          <li><a href="../generator.html">Random Generator</a> &raquo;</li>
-        
-      <li>randomgen.generator.RandomGenerator.negative_binomial</li>
-    
-    
-      <li class="wy-breadcrumbs-aside">
-        
-            
-            <a href="../_sources/generated/randomgen.generator.RandomGenerator.negative_binomial.rst.txt" rel="nofollow"> View page source</a>
-          
-        
-      </li>
-    
-  </ul>
-
-  
-  <hr/>
+  </div>
 </div>
-          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
-           <div itemprop="articleBody">
+<div class="sidebar-block">
+  <div class="sidebar-wrapper">
+    <div id="main-search">
+      <form class="form-inline" action="../search.html" method="GET" role="form">
+        <div class="input-group">
+          <input name="q" type="text" class="form-control" placeholder="Search...">
+        </div>
+        <input type="hidden" name="check_keywords" value="yes" />
+        <input type="hidden" name="area" value="default" />
+      </form>
+    </div>
+  </div>
+</div>
+      
+    </div>
+  </div>
+        <div id="right-column">
+          
+          <div role="navigation" aria-label="breadcrumbs navigation">
+            <ol class="breadcrumb">
+              <li><a href="../index.html">Docs</a></li>
+              
+                <li><a href="../generator.html">Random Generator</a></li>
+              
+              <li>randomgen.generator.RandomGenerator.negative_binomial</li>
+            </ol>
+          </div>
+          
+          <div class="document clearer body">
             
   <div class="section" id="randomgen-generator-randomgenerator-negative-binomial">
 <h1>randomgen.generator.RandomGenerator.negative_binomial<a class="headerlink" href="#randomgen-generator-randomgenerator-negative-binomial" title="Permalink to this headline">¶</a></h1>
@@ -297,76 +203,50 @@ single success after drilling 5 wells, after 6 wells, etc.?</p>
 </div>
 
 
-           </div>
-           <div class="articleComments">
-            
-           </div>
           </div>
-          <footer>
-  
-    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
-      
-        <a href="randomgen.generator.RandomGenerator.noncentral_chisquare.html" class="btn btn-neutral float-right" title="randomgen.generator.RandomGenerator.noncentral_chisquare" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
-      
-      
-        <a href="randomgen.generator.RandomGenerator.multivariate_normal.html" class="btn btn-neutral" title="randomgen.generator.RandomGenerator.multivariate_normal" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
-      
-    </div>
-  
-
-  <hr/>
-
-  <div role="contentinfo">
-    <p>
-        &copy; Copyright 2018, Kevin Sheppard.
-
-    </p>
-  </div>
-  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
-
-</footer>
-
-        </div>
+            
+  <div class="footer-relations">
+    
+      <div class="pull-left">
+        <a class="btn btn-default" href="randomgen.generator.RandomGenerator.multivariate_normal.html" title="previous chapter (use the left arrow)">randomgen.generator.RandomGenerator.multivariate_normal</a>
       </div>
-
-    </section>
-
+    
+      <div class="pull-right">
+        <a class="btn btn-default" href="randomgen.generator.RandomGenerator.noncentral_chisquare.html" title="next chapter (use the right arrow)">randomgen.generator.RandomGenerator.noncentral_chisquare</a>
+      </div>
+    </div>
+    <div class="clearer"></div>
+  
+        </div>
+        <div class="clearfix"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="randomgen.generator.RandomGenerator.noncentral_chisquare.html" title="randomgen.generator.RandomGenerator.noncentral_chisquare"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="randomgen.generator.RandomGenerator.multivariate_normal.html" title="randomgen.generator.RandomGenerator.multivariate_normal"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">RandomGen v0.2+2.gc6770fe documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../generator.html" >Random Generator</a> &#187;</li> 
+      </ul>
+    </div>
+<script type="text/javascript">
+  $("#mobile-toggle a").click(function () {
+    $("#left-column").toggle();
+  });
+</script>
+<script type="text/javascript" src="../_static/js/bootstrap.js"></script>
+  <div class="footer">
+    &copy; Copyright 2018, Kevin Sheppard. Created using <a href="http://sphinx.pocoo.org/">Sphinx</a>.
   </div>
-  
-
-
-  
-
-    <script type="text/javascript">
-        var DOCUMENTATION_OPTIONS = {
-            URL_ROOT:'../',
-            VERSION:'v0.2',
-            COLLAPSE_INDEX:false,
-            FILE_SUFFIX:'.html',
-            HAS_SOURCE:  true,
-            SOURCELINK_SUFFIX: '.txt'
-        };
-    </script>
-      <script type="text/javascript" src="../_static/jquery.js"></script>
-      <script type="text/javascript" src="../_static/underscore.js"></script>
-      <script type="text/javascript" src="../_static/doctools.js"></script>
-      <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
-
-  
-
-  
-  
-    <script type="text/javascript" src="../_static/js/theme.js"></script>
-  
-
-  
-  
-  <script type="text/javascript">
-      jQuery(function () {
-          SphinxRtdTheme.StickyNav.enable();
-      });
-  </script>
-   
-
-</body>
+  </body>
 </html>
