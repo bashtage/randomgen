@@ -142,8 +142,10 @@ The version matched the latest version of NumPy where
 Documentation
 -------------
 
-An occasionally updated build of the documentation is available on `my
-GitHub pages <http://bashtage.github.io/randomgen/>`__.
+| Documentation for the latest release is available on `my GitHub
+  pages <http://bashtage.github.io/randomgen/>`__. Documentation for the
+  latest commit (unreleased) is available under
+| `devel <http://bashtage.github.io/randomgen/devel/>`__.
 
 Plans
 -----
