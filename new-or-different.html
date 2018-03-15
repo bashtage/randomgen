@@ -15,7 +15,7 @@
   <link rel="stylesheet" type="text/css" href="_static/css/bootstrap-theme.min.css" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-    <title>What’s New or Different &#8212; RandomGen v0.2+4.g50fa528 documentation</title>
+    <title>What’s New or Different &#8212; RandomGen v0.3 documentation</title>
     <link rel="stylesheet" href="_static/guzzle.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <script type="text/javascript" src="_static/documentation_options.js"></script>
@@ -46,7 +46,7 @@
         <li class="right" >
           <a href="multithreading.html" title="Multithreaded Generation"
              accesskey="P">previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="index.html">RandomGen v0.2+4.g50fa528 documentation</a> &#187;</li> 
+        <li class="nav-item nav-item-0"><a href="index.html">RandomGen v0.3 documentation</a> &#187;</li> 
       </ul>
     </div>
     <div class="container-wrapper">
@@ -56,7 +56,7 @@
       </div>
   <div id="left-column">
     <div class="sphinxsidebar"><a href="
-    index.html" class="text-logo">RandomGen v0.2 (+4)</a>
+    index.html" class="text-logo">RandomGen v0.3</a>
 <div class="sidebar-block">
   <div class="sidebar-wrapper">
     <h2>Table Of Contents</h2>
@@ -149,8 +149,8 @@ Cython.</li>
 <span class="gp">   ...: </span><span class="kn">from</span> <span class="nn">numpy.random</span> <span class="kn">import</span> <span class="n">standard_normal</span>
 <span class="gp">   ...: </span><span class="o">%</span><span class="k">timeit</span> standard_normal(1000000)
 <span class="gp">   ...: </span>
-<span class="go">12.2 ms +- 44.3 us per loop (mean +- std. dev. of 7 runs, 100 loops each)</span>
-<span class="go">48.5 ms +- 813 us per loop (mean +- std. dev. of 7 runs, 10 loops each)</span>
+<span class="go">12.2 ms +- 35.4 us per loop (mean +- std. dev. of 7 runs, 100 loops each)</span>
+<span class="go">47.3 ms +- 159 us per loop (mean +- std. dev. of 7 runs, 10 loops each)</span>
 </pre></div>
 </div>
 <div class="highlight-ipython notranslate"><div class="highlight"><pre><span></span><span class="gp">In [6]: </span><span class="kn">from</span> <span class="nn">randomgen</span> <span class="kn">import</span> <span class="n">Xoroshiro128</span>
@@ -161,8 +161,8 @@ Cython.</li>
 <span class="gp">   ...: </span><span class="kn">from</span> <span class="nn">numpy.random</span> <span class="kn">import</span> <span class="n">standard_exponential</span>
 <span class="gp">   ...: </span><span class="o">%</span><span class="k">timeit</span> standard_exponential(1000000)
 <span class="gp">   ...: </span>
-<span class="go">7.08 ms +- 42.9 us per loop (mean +- std. dev. of 7 runs, 100 loops each)</span>
-<span class="go">60.4 ms +- 458 us per loop (mean +- std. dev. of 7 runs, 10 loops each)</span>
+<span class="go">6.83 ms +- 89.1 us per loop (mean +- std. dev. of 7 runs, 100 loops each)</span>
+<span class="go">60.2 ms +- 177 us per loop (mean +- std. dev. of 7 runs, 10 loops each)</span>
 </pre></div>
 </div>
 <div class="highlight-ipython notranslate"><div class="highlight"><pre><span></span><span class="gp">In [11]: </span><span class="kn">from</span> <span class="nn">randomgen</span> <span class="kn">import</span> <span class="n">Xoroshiro128</span>
@@ -173,8 +173,8 @@ Cython.</li>
 <span class="gp">   ....: </span><span class="kn">from</span> <span class="nn">numpy.random</span> <span class="kn">import</span> <span class="n">standard_gamma</span>
 <span class="gp">   ....: </span><span class="o">%</span><span class="k">timeit</span> standard_gamma(3.0, 1000000)
 <span class="gp">   ....: </span>
-<span class="go">30.6 ms +- 447 us per loop (mean +- std. dev. of 7 runs, 10 loops each)</span>
-<span class="go">80.4 ms +- 1.41 ms per loop (mean +- std. dev. of 7 runs, 10 loops each)</span>
+<span class="go">30.4 ms +- 416 us per loop (mean +- std. dev. of 7 runs, 10 loops each)</span>
+<span class="go">79.8 ms +- 145 us per loop (mean +- std. dev. of 7 runs, 10 loops each)</span>
 </pre></div>
 </div>
 <ul class="simple">
@@ -195,13 +195,13 @@ select distributions<ul>
 <span class="gp">In [17]: </span><span class="n">rg</span> <span class="o">=</span> <span class="n">Xoroshiro128</span><span class="p">()</span><span class="o">.</span><span class="n">generator</span>
 
 <span class="gp">In [18]: </span><span class="n">rg</span><span class="o">.</span><span class="n">seed</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
-<span class="gh">Out[18]: </span><span class="go">RandomGenerator(Xoroshiro128) at 0x2B17231A5228</span>
+<span class="gh">Out[18]: </span><span class="go">RandomGenerator(Xoroshiro128) at 0x2AFB12B9DEA8</span>
 
 <span class="gp">In [19]: </span><span class="n">rg</span><span class="o">.</span><span class="n">random_sample</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="s1">&#39;d&#39;</span><span class="p">)</span>
 <span class="go">                                                         Out[19]: array([0.31483881, 0.00208035, 0.06399498])</span>
 
 <span class="gp">In [20]: </span><span class="n">rg</span><span class="o">.</span><span class="n">seed</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
-<span class="go">                                                                                                              Out[20]: RandomGenerator(Xoroshiro128) at 0x2B17231A5228</span>
+<span class="go">                                                                                                              Out[20]: RandomGenerator(Xoroshiro128) at 0x2AFB12B9DEA8</span>
 
 <span class="gp">In [21]: </span><span class="n">rg</span><span class="o">.</span><span class="n">random_sample</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="s1">&#39;f&#39;</span><span class="p">)</span>
 <span class="go">                                                                                                                                                                       Out[21]: array([0.11265862, 0.31483877, 0.6936537 ], dtype=float32)</span>
@@ -268,7 +268,7 @@ PRNGs in parallel.</p>
         <li class="right" >
           <a href="multithreading.html" title="Multithreaded Generation"
              >previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="index.html">RandomGen v0.2+4.g50fa528 documentation</a> &#187;</li> 
+        <li class="nav-item nav-item-0"><a href="index.html">RandomGen v0.3 documentation</a> &#187;</li> 
       </ul>
     </div>
 <script type="text/javascript">
