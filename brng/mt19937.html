@@ -15,7 +15,7 @@
   <link rel="stylesheet" type="text/css" href="../_static/css/bootstrap-theme.min.css" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-    <title>Mersenne Twister (MT19937) &#8212; RandomGen v0.2+2.gc6770fe documentation</title>
+    <title>Mersenne Twister (MT19937) &#8212; RandomGen v0.2+3.gda79347 documentation</title>
     <link rel="stylesheet" href="../_static/guzzle.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     <script type="text/javascript" src="../_static/documentation_options.js"></script>
@@ -46,7 +46,7 @@
         <li class="right" >
           <a href="generated/randomgen.dsfmt.DSFMT.ctypes.html" title="randomgen.dsfmt.DSFMT.ctypes"
              accesskey="P">previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../index.html">RandomGen v0.2+2.gc6770fe documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">RandomGen v0.2+3.gda79347 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="index.html" accesskey="U">Basic Random Number Generators</a> &#187;</li> 
       </ul>
     </div>
@@ -57,7 +57,7 @@
       </div>
   <div id="left-column">
     <div class="sphinxsidebar"><a href="
-    ../index.html" class="text-logo">RandomGen v0.2 (+2)</a>
+    ../index.html" class="text-logo">RandomGen v0.2 (+3)</a>
 <div class="sidebar-block">
   <div class="sidebar-wrapper">
     <h2>Table Of Contents</h2>
@@ -126,19 +126,76 @@
 <h2>Random generator<a class="headerlink" href="#random-generator" title="Permalink to this headline">¶</a></h2>
 <dl class="class">
 <dt id="randomgen.mt19937.MT19937">
-<em class="property">class </em><code class="descclassname">randomgen.mt19937.</code><code class="descname">MT19937</code><a class="headerlink" href="#randomgen.mt19937.MT19937" title="Permalink to this definition">¶</a></dt>
-<dd><p>Prototype Basic RNG using MT19937</p>
+<em class="property">class </em><code class="descclassname">randomgen.mt19937.</code><code class="descname">MT19937</code><span class="sig-paren">(</span><em>seed=None</em><span class="sig-paren">)</span><a class="headerlink" href="#randomgen.mt19937.MT19937" title="Permalink to this definition">¶</a></dt>
+<dd><p>Container for the Mersenne Twister pseudo-random number generator.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>seed</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.6)"><em>int</em></a><em>, </em><em>array of int</em>) – Integer or array of integers between 0 and 2**64 - 1</td>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>seed</strong> (<em>{None</em><em>, </em><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.6)"><em>int</em></a><em>, </em><em>array_like}</em><em>, </em><em>optional</em>) – Random seed used to initialize the pseudo-random number generator.  Can
+be any integer between 0 and 2**32 - 1 inclusive, an array (or other
+sequence) of such integers, or <code class="docutils literal notranslate"><span class="pre">None</span></code> (the default).  If <cite>seed</cite> is
+<code class="docutils literal notranslate"><span class="pre">None</span></code>, then will attempt to read data from <code class="docutils literal notranslate"><span class="pre">/dev/urandom</span></code>
+(or the Windows analog) if available or seed from the clock otherwise.</td>
 </tr>
 </tbody>
 </table>
 <p class="rubric">Notes</p>
-<p>Exposes no user-facing API except <cite>state</cite>. Designed for use in a
-<cite>RandomGenerator</cite> object.</p>
+<p><code class="docutils literal notranslate"><span class="pre">MT19937</span></code> directly provides generators for doubles, and unsigned 32 and 64-
+bit integers <a class="footnote-reference" href="#id4" id="id1">[1]</a> . These are not firectly available and must be consumed
+via a <code class="docutils literal notranslate"><span class="pre">RandomGenerator</span></code> object.</p>
+<p>The Python stdlib module “random” also contains a Mersenne Twister
+pseudo-random number generator.</p>
+<p><strong>State and Seeding</strong></p>
+<p>The <code class="docutils literal notranslate"><span class="pre">MT19937</span></code> state vector consists of a 768 element array of
+32-bit unsigned integers plus a single integer value between 0 and 768
+indicating  the current position within the main array.</p>
+<p><code class="docutils literal notranslate"><span class="pre">MT19937</span></code> is seeded using either a single 32-bit unsigned integer
+or a vector of 32-bit unsigned integers.  In either case, the input seed is
+used as an input (or inputs) for a hashing function, and the output of the
+hashing function is used as the initial state. Using a single 32-bit value
+for the seed can only initialize a small range of the possible initial
+state values.</p>
+<p><strong>Compatibility Guarantee</strong></p>
+<p><code class="docutils literal notranslate"><span class="pre">MT19937</span></code> make a compatibility guarantee. A fixed seed and a fixed
+series of calls to <code class="docutils literal notranslate"><span class="pre">MT19937</span></code> methods will always produce the same
+results up to roundoff error except when the values were incorrect.
+Incorrect values will be fixed and the version in which the fix was
+made will be noted in the relevant docstring.</p>
+<p><strong>Parallel Features</strong></p>
+<p><code class="docutils literal notranslate"><span class="pre">MT19937</span></code> can be used in parallel applications by
+calling the method <code class="docutils literal notranslate"><span class="pre">jump</span></code> which advances the state as-if <span class="math notranslate">\(2^{128}\)</span>
+random numbers have been generated (<a class="footnote-reference" href="#id4" id="id2">[1]</a>, <a class="footnote-reference" href="#id5" id="id3">[2]</a>). This allows the original sequence to
+be split so that distinct segments can be used in each worker process.  All
+generators should be initialized with the same seed to ensure that the
+segments come from the same sequence.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">randomgen.entropy</span> <span class="k">import</span> <span class="n">random_entropy</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">randomgen</span> <span class="k">import</span> <span class="n">RandomGenerator</span><span class="p">,</span> <span class="n">MT19937</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">seed</span> <span class="o">=</span> <span class="n">random_entropy</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">rs</span> <span class="o">=</span> <span class="p">[</span><span class="n">RandomGenerator</span><span class="p">(</span><span class="n">MT19937</span><span class="p">(</span><span class="n">seed</span><span class="p">)</span> <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">10</span><span class="p">)]</span>
+<span class="go"># Advance rs[i] by i jumps</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">10</span><span class="p">):</span>
+<span class="go">        rs[i].jump(i)</span>
+</pre></div>
+</div>
+<p class="rubric">References</p>
+<table class="docutils footnote" frame="void" id="id4" rules="none">
+<colgroup><col class="label" /><col /></colgroup>
+<tbody valign="top">
+<tr><td class="label">[1]</td><td><em>(<a class="fn-backref" href="#id1">1</a>, <a class="fn-backref" href="#id2">2</a>)</em> Hiroshi Haramoto, Makoto Matsumoto, and Pierre L’Ecuyer, “A Fast
+Jump Ahead Algorithm for Linear Recurrences in a Polynomial Space”,
+Sequences and Their Applications - SETA, 290–298, 2008.</td></tr>
+</tbody>
+</table>
+<table class="docutils footnote" frame="void" id="id5" rules="none">
+<colgroup><col class="label" /><col /></colgroup>
+<tbody valign="top">
+<tr><td class="label"><a class="fn-backref" href="#id3">[2]</a></td><td>Hiroshi Haramoto, Makoto Matsumoto, Takuji Nishimura, François
+Panneton, Pierre L’Ecuyer, “Efficient Jump Ahead for F2-Linear
+Random Number Generators”, INFORMS JOURNAL ON COMPUTING, Vol. 20,
+No. 3, Summer 2008, pp. 385-390.</td></tr>
+</tbody>
+</table>
 </dd></dl>
 
 <table border="1" class="longtable docutils">
@@ -147,7 +204,7 @@
 <col width="90%" />
 </colgroup>
 <tbody valign="top">
-<tr class="row-odd"><td><a class="reference internal" href="generated/randomgen.mt19937.MT19937.seed.html#randomgen.mt19937.MT19937.seed" title="randomgen.mt19937.MT19937.seed"><code class="xref py py-obj docutils literal notranslate"><span class="pre">seed</span></code></a>([seed,&nbsp;stream])</td>
+<tr class="row-odd"><td><a class="reference internal" href="generated/randomgen.mt19937.MT19937.seed.html#randomgen.mt19937.MT19937.seed" title="randomgen.mt19937.MT19937.seed"><code class="xref py py-obj docutils literal notranslate"><span class="pre">seed</span></code></a>([seed])</td>
 <td>Seed the generator.</td>
 </tr>
 <tr class="row-even"><td><a class="reference internal" href="generated/randomgen.mt19937.MT19937.state.html#randomgen.mt19937.MT19937.state" title="randomgen.mt19937.MT19937.state"><code class="xref py py-obj docutils literal notranslate"><span class="pre">state</span></code></a></td>
@@ -164,14 +221,14 @@
 <col width="90%" />
 </colgroup>
 <tbody valign="top">
-<tr class="row-odd"><td><a class="reference internal" href="generated/randomgen.mt19937.MT19937.jump.html#randomgen.mt19937.MT19937.jump" title="randomgen.mt19937.MT19937.jump"><code class="xref py py-obj docutils literal notranslate"><span class="pre">jump</span></code></a></td>
-<td></td>
+<tr class="row-odd"><td><a class="reference internal" href="generated/randomgen.mt19937.MT19937.jump.html#randomgen.mt19937.MT19937.jump" title="randomgen.mt19937.MT19937.jump"><code class="xref py py-obj docutils literal notranslate"><span class="pre">jump</span></code></a>([iter])</td>
+<td>Jumps the state of the random number generator as-if 2**128 random numbers have been generated.</td>
 </tr>
 </tbody>
 </table>
 </div>
-<div class="section" id="id1">
-<h2>Random Generator<a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="id6">
+<h2>Random Generator<a class="headerlink" href="#id6" title="Permalink to this headline">¶</a></h2>
 <table border="1" class="longtable docutils">
 <colgroup>
 <col width="10%" />
@@ -236,7 +293,7 @@
         <li class="right" >
           <a href="generated/randomgen.dsfmt.DSFMT.ctypes.html" title="randomgen.dsfmt.DSFMT.ctypes"
              >previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../index.html">RandomGen v0.2+2.gc6770fe documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">RandomGen v0.2+3.gda79347 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="index.html" >Basic Random Number Generators</a> &#187;</li> 
       </ul>
     </div>

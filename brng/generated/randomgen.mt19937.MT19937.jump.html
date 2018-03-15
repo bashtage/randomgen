@@ -15,7 +15,7 @@
   <link rel="stylesheet" type="text/css" href="../../_static/css/bootstrap-theme.min.css" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-    <title>randomgen.mt19937.MT19937.jump &#8212; RandomGen v0.2+2.gc6770fe documentation</title>
+    <title>randomgen.mt19937.MT19937.jump &#8212; RandomGen v0.2+3.gda79347 documentation</title>
     <link rel="stylesheet" href="../../_static/guzzle.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
     <script type="text/javascript" src="../../_static/documentation_options.js"></script>
@@ -46,7 +46,7 @@
         <li class="right" >
           <a href="randomgen.mt19937.MT19937.state.html" title="randomgen.mt19937.MT19937.state"
              accesskey="P">previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../../index.html">RandomGen v0.2+2.gc6770fe documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">RandomGen v0.2+3.gda79347 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="../index.html" >Basic Random Number Generators</a> &#187;</li>
           <li class="nav-item nav-item-2"><a href="../mt19937.html" accesskey="U">Mersenne Twister (MT19937)</a> &#187;</li> 
       </ul>
@@ -58,7 +58,7 @@
       </div>
   <div id="left-column">
     <div class="sphinxsidebar"><a href="
-    ../../index.html" class="text-logo">RandomGen v0.2 (+2)</a>
+    ../../index.html" class="text-logo">RandomGen v0.2 (+3)</a>
 <div class="sidebar-block">
   <div class="sidebar-wrapper">
     <h2>Table Of Contents</h2>
@@ -127,8 +127,22 @@
 <h1>randomgen.mt19937.MT19937.jump<a class="headerlink" href="#randomgen-mt19937-mt19937-jump" title="Permalink to this headline">¶</a></h1>
 <dl class="method">
 <dt id="randomgen.mt19937.MT19937.jump">
-<code class="descclassname">MT19937.</code><code class="descname">jump</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#randomgen.mt19937.MT19937.jump" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<code class="descclassname">MT19937.</code><code class="descname">jump</code><span class="sig-paren">(</span><em>iter=1</em><span class="sig-paren">)</span><a class="headerlink" href="#randomgen.mt19937.MT19937.jump" title="Permalink to this definition">¶</a></dt>
+<dd><p>Jumps the state of the random number generator as-if 2**128 random numbers
+have been generated.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>iter</strong> (<em>integer</em><em>, </em><em>positive</em>) – Number of times to jump the state of the brng.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><strong>self</strong> – PRNG jumped iter times</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference internal" href="../dsfmt.html#randomgen.dsfmt.DSFMT" title="randomgen.dsfmt.DSFMT">DSFMT</a></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
 
 </div>
 
@@ -165,7 +179,7 @@
         <li class="right" >
           <a href="randomgen.mt19937.MT19937.state.html" title="randomgen.mt19937.MT19937.state"
              >previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../../index.html">RandomGen v0.2+2.gc6770fe documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">RandomGen v0.2+3.gda79347 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="../index.html" >Basic Random Number Generators</a> &#187;</li>
           <li class="nav-item nav-item-2"><a href="../mt19937.html" >Mersenne Twister (MT19937)</a> &#187;</li> 
       </ul>

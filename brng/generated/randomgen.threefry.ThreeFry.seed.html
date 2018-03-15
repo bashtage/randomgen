@@ -15,7 +15,7 @@
   <link rel="stylesheet" type="text/css" href="../../_static/css/bootstrap-theme.min.css" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-    <title>randomgen.threefry.ThreeFry.seed &#8212; RandomGen v0.2+2.gc6770fe documentation</title>
+    <title>randomgen.threefry.ThreeFry.seed &#8212; RandomGen v0.2+3.gda79347 documentation</title>
     <link rel="stylesheet" href="../../_static/guzzle.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
     <script type="text/javascript" src="../../_static/documentation_options.js"></script>
@@ -46,7 +46,7 @@
         <li class="right" >
           <a href="../threefry.html" title="ThreeFry Counter-based RNG"
              accesskey="P">previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../../index.html">RandomGen v0.2+2.gc6770fe documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">RandomGen v0.2+3.gda79347 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="../index.html" >Basic Random Number Generators</a> &#187;</li>
           <li class="nav-item nav-item-2"><a href="../threefry.html" accesskey="U">ThreeFry Counter-based RNG</a> &#187;</li> 
       </ul>
@@ -58,7 +58,7 @@
       </div>
   <div id="left-column">
     <div class="sphinxsidebar"><a href="
-    ../../index.html" class="text-logo">RandomGen v0.2 (+2)</a>
+    ../../index.html" class="text-logo">RandomGen v0.2 (+3)</a>
 <div class="sidebar-block">
   <div class="sidebar-wrapper">
     <h2>Table Of Contents</h2>
@@ -129,15 +129,15 @@
 <dt id="randomgen.threefry.ThreeFry.seed">
 <code class="descclassname">ThreeFry.</code><code class="descname">seed</code><span class="sig-paren">(</span><em>seed=None</em>, <em>counter=None</em>, <em>key=None</em><span class="sig-paren">)</span><a class="headerlink" href="#randomgen.threefry.ThreeFry.seed" title="Permalink to this definition">¶</a></dt>
 <dd><p>Seed the generator.</p>
-<p>This method is called when <code class="docutils literal notranslate"><span class="pre">RandomState</span></code> is initialized. It can be
+<p>This method is called when <code class="docutils literal notranslate"><span class="pre">ThreeFry</span></code> is initialized. It can be
 called again to re-seed the generator. For details, see
-<code class="docutils literal notranslate"><span class="pre">RandomState</span></code>.</p>
+<code class="docutils literal notranslate"><span class="pre">ThreeFry</span></code>.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>seed</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.6)"><em>int</em></a><em>, </em><em>optional</em>) – Seed for <code class="docutils literal notranslate"><span class="pre">RandomState</span></code>.</li>
+<li><strong>seed</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.6)"><em>int</em></a><em>, </em><em>optional</em>) – Seed for <code class="docutils literal notranslate"><span class="pre">ThreeFry</span></code>.</li>
 <li><strong>counter</strong> (<em>{None</em><em>, </em><em>int array}</em><em>, </em><em>optional</em>) – Positive integer less than 2**256 containing the counter position
 or a 4 element array of uint64 containing the counter</li>
 <li><strong>key</strong> (<em>{None</em><em>, </em><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.6)"><em>int</em></a><em>, </em><em>array}</em><em>, </em><em>optional</em>) – Positive integer less than 2**256 containing the key
@@ -191,7 +191,7 @@ array[i] = (value // 2**(64*i)) % 2**64.</p>
         <li class="right" >
           <a href="../threefry.html" title="ThreeFry Counter-based RNG"
              >previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../../index.html">RandomGen v0.2+2.gc6770fe documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">RandomGen v0.2+3.gda79347 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="../index.html" >Basic Random Number Generators</a> &#187;</li>
           <li class="nav-item nav-item-2"><a href="../threefry.html" >ThreeFry Counter-based RNG</a> &#187;</li> 
       </ul>
