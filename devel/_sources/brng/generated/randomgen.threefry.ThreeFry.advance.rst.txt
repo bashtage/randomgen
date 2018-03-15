@@ -1,0 +1,6 @@
+randomgen.threefry.ThreeFry.advance
+===================================
+
+.. currentmodule:: randomgen.threefry
+
+.. automethod:: ThreeFry.advance

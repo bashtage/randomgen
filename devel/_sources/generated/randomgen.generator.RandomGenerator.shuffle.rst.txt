@@ -1,0 +1,6 @@
+randomgen.generator.RandomGenerator.shuffle
+===========================================
+
+.. currentmodule:: randomgen.generator
+
+.. automethod:: RandomGenerator.shuffle

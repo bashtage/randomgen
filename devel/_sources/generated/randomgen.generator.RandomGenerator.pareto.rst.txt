@@ -1,0 +1,6 @@
+randomgen.generator.RandomGenerator.pareto
+==========================================
+
+.. currentmodule:: randomgen.generator
+
+.. automethod:: RandomGenerator.pareto

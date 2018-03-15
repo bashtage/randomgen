@@ -1,0 +1,455 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  
+  <!-- Licensed under the Apache 2.0 License -->
+  <link rel="stylesheet" type="text/css" href="_static/fonts/open-sans/stylesheet.css" />
+  <!-- Licensed under the SIL Open Font License -->
+  <link rel="stylesheet" type="text/css" href="_static/fonts/source-serif-pro/source-serif-pro.css" />
+  <link rel="stylesheet" type="text/css" href="_static/css/bootstrap.min.css" />
+  <link rel="stylesheet" type="text/css" href="_static/css/bootstrap-theme.min.css" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+    <title>Performance &#8212; RandomGen v0.3+4.g744a744 documentation</title>
+    <link rel="stylesheet" href="_static/guzzle.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <script type="text/javascript" src="_static/documentation_options.js"></script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Extending" href="extending.html" />
+    <link rel="prev" title="What’s New or Different" href="new-or-different.html" />
+  
+   
+
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="extending.html" title="Extending"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="new-or-different.html" title="What’s New or Different"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">RandomGen v0.3+4.g744a744 documentation</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="container-wrapper">
+
+      <div id="mobile-toggle">
+        <a href="#"><span class="glyphicon glyphicon-align-justify" aria-hidden="true"></span></a>
+      </div>
+  <div id="left-column">
+    <div class="sphinxsidebar"><a href="
+    index.html" class="text-logo">RandomGen v0.3 (+4)</a>
+<div class="sidebar-block">
+  <div class="sidebar-wrapper">
+    <h2>Table Of Contents</h2>
+  </div>
+  <div class="sidebar-toc">
+    
+    
+      <ul>
+<li class="toctree-l1"><a class="reference internal" href="generator.html">Random Generator</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="brng/index.html">Basic Random Number Generators</a></li>
+</ul>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="parallel.html">Parallel Applications</a></li>
+<li class="toctree-l1"><a class="reference internal" href="multithreading.html">Multithreaded Generation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="new-or-different.html">What’s New or Different</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Comparing Performance</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#recommendation">Recommendation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#timings">Timings</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="extending.html">Extending</a></li>
+<li class="toctree-l1"><a class="reference internal" href="entropy.html">Reading System Entropy</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="change-log.html">Change Log</a></li>
+</ul>
+
+    
+  </div>
+</div>
+<div class="sidebar-block">
+  <div class="sidebar-wrapper">
+    <div id="main-search">
+      <form class="form-inline" action="search.html" method="GET" role="form">
+        <div class="input-group">
+          <input name="q" type="text" class="form-control" placeholder="Search...">
+        </div>
+        <input type="hidden" name="check_keywords" value="yes" />
+        <input type="hidden" name="area" value="default" />
+      </form>
+    </div>
+  </div>
+</div>
+      
+    </div>
+  </div>
+        <div id="right-column">
+          
+          <div role="navigation" aria-label="breadcrumbs navigation">
+            <ol class="breadcrumb">
+              <li><a href="index.html">Docs</a></li>
+              
+              <li>Performance</li>
+            </ol>
+          </div>
+          
+          <div class="document clearer body">
+            
+  <div class="section" id="module-randomgen">
+<span id="performance"></span><h1>Performance<a class="headerlink" href="#module-randomgen" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="recommendation">
+<h2>Recommendation<a class="headerlink" href="#recommendation" title="Permalink to this headline">¶</a></h2>
+<p>The recommended generator for single use is
+<a class="reference internal" href="brng/xoroshiro128.html#randomgen.xoroshiro128.Xoroshiro128" title="randomgen.xoroshiro128.Xoroshiro128"><code class="xref py py-class docutils literal notranslate"><span class="pre">Xoroshiro128</span></code></a>.  The recommended generator
+for use in large-scale parallel applications is
+<a class="reference internal" href="brng/xorshift1024.html#randomgen.xorshift1024.Xorshift1024" title="randomgen.xorshift1024.Xorshift1024"><code class="xref py py-class docutils literal notranslate"><span class="pre">Xorshift1024</span></code></a>
+where the <cite>jump</cite> method is used to advance the state. For very large scale
+applications – requiring 1,000+ independent streams,
+<a class="reference internal" href="brng/pcg64.html#randomgen.pcg64.PCG64" title="randomgen.pcg64.PCG64"><code class="xref py py-class docutils literal notranslate"><span class="pre">PCG64</span></code></a> or <a class="reference internal" href="brng/threefry.html#randomgen.threefry.ThreeFry" title="randomgen.threefry.ThreeFry"><code class="xref py py-class docutils literal notranslate"><span class="pre">ThreeFry</span></code></a> are
+the best choices.</p>
+</div>
+<div class="section" id="timings">
+<h2>Timings<a class="headerlink" href="#timings" title="Permalink to this headline">¶</a></h2>
+<p>The timings below are the time in ms to produce 1,000,000 random values from a
+specific distribution.  <a class="reference internal" href="brng/xoroshiro128.html#randomgen.xoroshiro128.Xoroshiro128" title="randomgen.xoroshiro128.Xoroshiro128"><code class="xref py py-class docutils literal notranslate"><span class="pre">Xoroshiro128</span></code></a> is the
+fastest, followed by <a class="reference internal" href="brng/xorshift1024.html#randomgen.xorshift1024.Xorshift1024" title="randomgen.xorshift1024.Xorshift1024"><code class="xref py py-class docutils literal notranslate"><span class="pre">Xorshift1024</span></code></a> and
+<a class="reference internal" href="brng/pcg64.html#randomgen.pcg64.PCG64" title="randomgen.pcg64.PCG64"><code class="xref py py-class docutils literal notranslate"><span class="pre">PCG64</span></code></a>.  The original <a class="reference internal" href="brng/mt19937.html#randomgen.mt19937.MT19937" title="randomgen.mt19937.MT19937"><code class="xref py py-class docutils literal notranslate"><span class="pre">MT19937</span></code></a>
+generator is much slower since it requires 2 32-bit values to equal the output
+of the faster generators.</p>
+<p>Integer performance has a similar ordering although <cite>dSFMT</cite> is slower since
+it generates 53-bit floating point values rather than integer values. On the
+other hand, it is very fast for uniforms, although slower than <cite>xoroshiro128+</cite>.</p>
+<p>The pattern is similar for other, more complex generators. The normal
+performance of NumPy’s MT19937 is much lower than the other since it
+uses the Box-Muller transformation rather than the Ziggurat generator. The
+performance gap for Exponentials is also large due to the cost of computing
+the log function to invert the CDF.</p>
+<table border="1" class="colwidths-given docutils">
+<colgroup>
+<col width="11%" />
+<col width="11%" />
+<col width="11%" />
+<col width="11%" />
+<col width="11%" />
+<col width="11%" />
+<col width="11%" />
+<col width="11%" />
+<col width="11%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">&#160;</th>
+<th class="head">Xoroshiro128</th>
+<th class="head">Xorshift1024</th>
+<th class="head">PCG64</th>
+<th class="head">DSFMT</th>
+<th class="head">MT19937</th>
+<th class="head">Philox</th>
+<th class="head">ThreeFry</th>
+<th class="head">NumPy</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>32-bit Unsigned Ints</td>
+<td>3.0</td>
+<td>3.0</td>
+<td>3.0</td>
+<td>3.5</td>
+<td>3.7</td>
+<td>6.8</td>
+<td>6.6</td>
+<td>3.3</td>
+</tr>
+<tr class="row-odd"><td>64-bit Unsigned Ints</td>
+<td>2.6</td>
+<td>3.0</td>
+<td>3.1</td>
+<td>3.4</td>
+<td>3.8</td>
+<td>6.9</td>
+<td>6.6</td>
+<td>8.8</td>
+</tr>
+<tr class="row-even"><td>Uniforms</td>
+<td>3.2</td>
+<td>3.8</td>
+<td>4.4</td>
+<td>5.0</td>
+<td>7.4</td>
+<td>8.9</td>
+<td>9.9</td>
+<td>8.8</td>
+</tr>
+<tr class="row-odd"><td>Normals</td>
+<td>11.0</td>
+<td>13.9</td>
+<td>13.7</td>
+<td>15.8</td>
+<td>16.9</td>
+<td>17.8</td>
+<td>18.8</td>
+<td>63.0</td>
+</tr>
+<tr class="row-even"><td>Exponentials</td>
+<td>7.0</td>
+<td>8.4</td>
+<td>9.0</td>
+<td>11.2</td>
+<td>12.5</td>
+<td>14.1</td>
+<td>15.0</td>
+<td>102.2</td>
+</tr>
+<tr class="row-odd"><td>Binomials</td>
+<td>20.9</td>
+<td>22.6</td>
+<td>22.0</td>
+<td>21.2</td>
+<td>26.7</td>
+<td>27.7</td>
+<td>29.2</td>
+<td>26.5</td>
+</tr>
+<tr class="row-even"><td>Complex Normals</td>
+<td>23.2</td>
+<td>28.7</td>
+<td>29.1</td>
+<td>33.2</td>
+<td>35.4</td>
+<td>37.6</td>
+<td>38.6</td>
+<td>&#160;</td>
+</tr>
+<tr class="row-odd"><td>Gammas</td>
+<td>35.3</td>
+<td>38.6</td>
+<td>39.2</td>
+<td>41.3</td>
+<td>46.7</td>
+<td>49.4</td>
+<td>51.2</td>
+<td>98.8</td>
+</tr>
+<tr class="row-even"><td>Laplaces</td>
+<td>97.8</td>
+<td>99.9</td>
+<td>99.8</td>
+<td>96.2</td>
+<td>104.1</td>
+<td>104.6</td>
+<td>104.8</td>
+<td>104.1</td>
+</tr>
+<tr class="row-odd"><td>Poissons</td>
+<td>104.8</td>
+<td>113.2</td>
+<td>113.3</td>
+<td>107.6</td>
+<td>129.7</td>
+<td>135.6</td>
+<td>138.1</td>
+<td>131.9</td>
+</tr>
+</tbody>
+</table>
+<p>The next table presents the performance relative to <cite>xoroshiro128+</cite> in
+percentage. The overall performance was computed using a geometric mean.</p>
+<table border="1" class="colwidths-given docutils">
+<colgroup>
+<col width="13%" />
+<col width="13%" />
+<col width="13%" />
+<col width="13%" />
+<col width="13%" />
+<col width="13%" />
+<col width="13%" />
+<col width="13%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">&#160;</th>
+<th class="head">Xorshift1024</th>
+<th class="head">PCG64</th>
+<th class="head">DSFMT</th>
+<th class="head">MT19937</th>
+<th class="head">Philox</th>
+<th class="head">ThreeFry</th>
+<th class="head">NumPy</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>32-bit Unsigned Ints</td>
+<td>102</td>
+<td>99</td>
+<td>118</td>
+<td>125</td>
+<td>229</td>
+<td>221</td>
+<td>111</td>
+</tr>
+<tr class="row-odd"><td>64-bit Unsigned Ints</td>
+<td>114</td>
+<td>116</td>
+<td>129</td>
+<td>143</td>
+<td>262</td>
+<td>248</td>
+<td>331</td>
+</tr>
+<tr class="row-even"><td>Uniforms</td>
+<td>116</td>
+<td>137</td>
+<td>156</td>
+<td>231</td>
+<td>275</td>
+<td>306</td>
+<td>274</td>
+</tr>
+<tr class="row-odd"><td>Normals</td>
+<td>126</td>
+<td>124</td>
+<td>143</td>
+<td>153</td>
+<td>161</td>
+<td>170</td>
+<td>572</td>
+</tr>
+<tr class="row-even"><td>Exponentials</td>
+<td>121</td>
+<td>130</td>
+<td>161</td>
+<td>179</td>
+<td>203</td>
+<td>215</td>
+<td>1467</td>
+</tr>
+<tr class="row-odd"><td>Binomials</td>
+<td>108</td>
+<td>105</td>
+<td>101</td>
+<td>128</td>
+<td>133</td>
+<td>140</td>
+<td>127</td>
+</tr>
+<tr class="row-even"><td>Complex Normals</td>
+<td>124</td>
+<td>125</td>
+<td>143</td>
+<td>153</td>
+<td>162</td>
+<td>166</td>
+<td>&#160;</td>
+</tr>
+<tr class="row-odd"><td>Gammas</td>
+<td>109</td>
+<td>111</td>
+<td>117</td>
+<td>132</td>
+<td>140</td>
+<td>145</td>
+<td>280</td>
+</tr>
+<tr class="row-even"><td>Laplaces</td>
+<td>102</td>
+<td>102</td>
+<td>98</td>
+<td>106</td>
+<td>107</td>
+<td>107</td>
+<td>106</td>
+</tr>
+<tr class="row-odd"><td>Poissons</td>
+<td>108</td>
+<td>108</td>
+<td>103</td>
+<td>124</td>
+<td>129</td>
+<td>132</td>
+<td>126</td>
+</tr>
+<tr class="row-even"><td>Overall</td>
+<td>113</td>
+<td>115</td>
+<td>125</td>
+<td>144</td>
+<td>172</td>
+<td>177</td>
+<td>251</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">All timings were taken using Linux on a i5-3570 processor.</p>
+</div>
+</div>
+</div>
+
+
+          </div>
+            
+  <div class="footer-relations">
+    
+      <div class="pull-left">
+        <a class="btn btn-default" href="new-or-different.html" title="previous chapter (use the left arrow)">What’s New or Different</a>
+      </div>
+    
+      <div class="pull-right">
+        <a class="btn btn-default" href="extending.html" title="next chapter (use the right arrow)">Extending</a>
+      </div>
+    </div>
+    <div class="clearer"></div>
+  
+        </div>
+        <div class="clearfix"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="extending.html" title="Extending"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="new-or-different.html" title="What’s New or Different"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">RandomGen v0.3+4.g744a744 documentation</a> &#187;</li> 
+      </ul>
+    </div>
+<script type="text/javascript">
+  $("#mobile-toggle a").click(function () {
+    $("#left-column").toggle();
+  });
+</script>
+<script type="text/javascript" src="_static/js/bootstrap.js"></script>
+  <div class="footer">
+    &copy; Copyright 2018, Kevin Sheppard. Created using <a href="http://sphinx.pocoo.org/">Sphinx</a>.
+  </div>
+  </body>
+</html>

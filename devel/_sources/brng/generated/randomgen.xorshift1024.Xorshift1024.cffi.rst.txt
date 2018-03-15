@@ -1,0 +1,6 @@
+randomgen.xorshift1024.Xorshift1024.cffi
+========================================
+
+.. currentmodule:: randomgen.xorshift1024
+
+.. autoattribute:: Xorshift1024.cffi

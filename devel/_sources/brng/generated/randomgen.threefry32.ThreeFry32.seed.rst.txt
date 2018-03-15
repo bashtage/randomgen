@@ -1,0 +1,6 @@
+randomgen.threefry32.ThreeFry32.seed
+====================================
+
+.. currentmodule:: randomgen.threefry32
+
+.. automethod:: ThreeFry32.seed

@@ -1,0 +1,6 @@
+randomgen.threefry.ThreeFry.cffi
+================================
+
+.. currentmodule:: randomgen.threefry
+
+.. autoattribute:: ThreeFry.cffi

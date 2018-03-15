@@ -1,0 +1,6 @@
+randomgen.generator.RandomGenerator.standard\_exponential
+=========================================================
+
+.. currentmodule:: randomgen.generator
+
+.. automethod:: RandomGenerator.standard_exponential

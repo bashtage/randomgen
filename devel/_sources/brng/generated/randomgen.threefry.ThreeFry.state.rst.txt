@@ -1,0 +1,6 @@
+randomgen.threefry.ThreeFry.state
+=================================
+
+.. currentmodule:: randomgen.threefry
+
+.. autoattribute:: ThreeFry.state

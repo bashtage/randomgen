@@ -1,0 +1,6 @@
+randomgen.generator.RandomGenerator.triangular
+==============================================
+
+.. currentmodule:: randomgen.generator
+
+.. automethod:: RandomGenerator.triangular
