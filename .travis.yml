@@ -53,6 +53,8 @@ before_install:
   - export BUILD_DIR=${PWD}
   - if [[ ${DOCBUILD} == true ]]; then pip install sphinx sphinx_rtd_theme guzzle_sphinx_theme ipython doctr -q; fi
   - if [[ ${DOCBUILD} == true ]]; then conda install numba pandas matplotlib --quiet; fi
+  - gcc --version || true
+  - clang --version || true
 
 install:
   - python setup.py develop
