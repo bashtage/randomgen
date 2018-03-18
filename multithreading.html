@@ -15,7 +15,7 @@
   <link rel="stylesheet" type="text/css" href="_static/css/bootstrap-theme.min.css" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-    <title>Multithreaded Generation &#8212; RandomGen v1.14 documentation</title>
+    <title>Multithreaded Generation &#8212; RandomGen v1.14.1 documentation</title>
     <link rel="stylesheet" href="_static/guzzle.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <script type="text/javascript" src="_static/documentation_options.js"></script>
@@ -46,7 +46,7 @@
         <li class="right" >
           <a href="parallel.html" title="Parallel Random Number Generation"
              accesskey="P">previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="index.html">RandomGen v1.14 documentation</a> &#187;</li> 
+        <li class="nav-item nav-item-0"><a href="index.html">RandomGen v1.14.1 documentation</a> &#187;</li> 
       </ul>
     </div>
     <div class="container-wrapper">
@@ -56,7 +56,7 @@
       </div>
   <div id="left-column">
     <div class="sphinxsidebar"><a href="
-    index.html" class="text-logo">RandomGen v1.14</a>
+    index.html" class="text-logo">RandomGen v1.14.1</a>
 <div class="sidebar-block">
   <div class="sidebar-wrapper">
     <h2>Table Of Contents</h2>
@@ -185,7 +185,7 @@ the time required to generate using a single thread.</p>
 <span class="go">2</span>
 
 <span class="gp">In [6]: </span><span class="o">%</span><span class="k">timeit</span> mrng.fill()
-<span class="go">  111 ms +- 555 us per loop (mean +- std. dev. of 7 runs, 10 loops each)</span>
+<span class="go">  80.5 ms +- 153 us per loop (mean +- std. dev. of 7 runs, 10 loops each)</span>
 </pre></div>
 </div>
 <p>The single threaded call directly uses the PRNG.</p>
@@ -194,7 +194,7 @@ the time required to generate using a single thread.</p>
 <span class="gp">In [8]: </span><span class="n">rg</span> <span class="o">=</span> <span class="n">Xorshift1024</span><span class="p">()</span><span class="o">.</span><span class="n">generator</span>
 
 <span class="gp">In [9]: </span><span class="o">%</span><span class="k">timeit</span> rg.standard_normal(out=values)
-<span class="go">168 ms +- 3.73 ms per loop (mean +- std. dev. of 7 runs, 10 loops each)</span>
+<span class="go">124 ms +- 1.18 ms per loop (mean +- std. dev. of 7 runs, 10 loops each)</span>
 </pre></div>
 </div>
 <p>The gains are substantial and the scaling is reasonable even for large that
@@ -203,7 +203,7 @@ that does not use an existing array due to array creation overhead.</p>
 <div class="highlight-ipython notranslate"><div class="highlight"><pre><span></span><span class="gp">In [10]: </span><span class="n">rg</span> <span class="o">=</span> <span class="n">Xorshift1024</span><span class="p">()</span><span class="o">.</span><span class="n">generator</span>
 
 <span class="gp">In [11]: </span><span class="o">%</span><span class="k">timeit</span> rg.standard_normal(10000000)
-<span class="go">197 ms +- 20.1 ms per loop (mean +- std. dev. of 7 runs, 1 loop each)</span>
+<span class="go">137 ms +- 1.14 ms per loop (mean +- std. dev. of 7 runs, 10 loops each)</span>
 </pre></div>
 </div>
 </div>
@@ -241,7 +241,7 @@ that does not use an existing array due to array creation overhead.</p>
         <li class="right" >
           <a href="parallel.html" title="Parallel Random Number Generation"
              >previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="index.html">RandomGen v1.14 documentation</a> &#187;</li> 
+        <li class="nav-item nav-item-0"><a href="index.html">RandomGen v1.14.1 documentation</a> &#187;</li> 
       </ul>
     </div>
 <script type="text/javascript">
