@@ -22,23 +22,23 @@ import randomgen.pickle
 
 np.import_array()
 
-cdef class LegacyGenerator:
+cdef class _LegacyGenerator:
     """
-    LegacyGenerator(brng=None)
+    _LegacyGenerator(brng=None)
 
     Container providing legacy generators.
 
-    ``LegacyGenerator`` exposes a number of methods for generating random
+    ``_LegacyGenerator`` exposes a number of methods for generating random
     numbers for a set of distributions where the method used to produce random
-    samples has changed. Three core generators have changed: normals, exponentials
-    and gammas. These have been replaced by fster Ziggurat-based methds in 
-    ``RadnomGenerator``. ``LegacyGenerator`` retains the slower methods
+    samples has changed. Three core generators have changed: normal, exponential
+    and gamma. These have been replaced by faster Ziggurat-based methods in 
+    ``RadnomGenerator``. ``_LegacyGenerator`` retains the slower methods
     to produce samples from these distributions as well as from distributions
     that depend on these such as the Chi-square, power or Weibull.
      
     **No Compatibility Guarantee**
 
-    ``LegacyGenerator`` is evolving and so it isn't possible to provide a
+    ``_LegacyGenerator`` is evolving and so it isn't possible to provide a
     compatibility guarantee like NumPy does. In particular, better algorithms
     have already been added. This will change once ``RandomGenerator``
     stabilizes.
@@ -53,15 +53,15 @@ cdef class LegacyGenerator:
     Examples
     --------
     Exactly reproducing a NumPy stream requires both a ``RandomGenerator``
-    and a ``LegacyGenerator``.  These must share a common ``MT19937`` basic 
+    and a ``_LegacyGenerator``.  These must share a common ``MT19937`` basic 
     RNG. Functions that are available in LegacyGenerator must be called 
-    from ``LegacyGenerator``, and other functions must be called from 
+    from ``_LegacyGenerator``, and other functions must be called from 
     ``RandomGenerator``.
 
     >>> from randomgen import RandomGenerator, MT19937
-    >>> from randomgen.legacy import LegacyGenerator
+    >>> from randomgen.legacy._legacy import _LegacyGenerator
     >>> mt = MT19937(12345)
-    >>> lg = LegacyGenerator(mt)
+    >>> lg = _LegacyGenerator(mt)
     >>> rg = RandomGenerator(mt)
     >>> x = lg.standard_normal(10)
     >>> rg.shuffle(x)
@@ -118,7 +118,7 @@ cdef class LegacyGenerator:
         self.state = state
 
     def __reduce__(self):
-        return (randomgen.pickle.__generator_ctor,
+        return (randomgen.pickle.__legacy_ctor,
                 (self.state['brng'],),
                 self.state)
 
