@@ -1,0 +1,6 @@
+randomgen.legacy.LegacyGenerator.wald
+=====================================
+
+.. currentmodule:: randomgen.legacy
+
+.. automethod:: LegacyGenerator.wald

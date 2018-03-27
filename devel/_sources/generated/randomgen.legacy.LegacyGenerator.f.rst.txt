@@ -1,0 +1,6 @@
+randomgen.legacy.LegacyGenerator.f
+==================================
+
+.. currentmodule:: randomgen.legacy
+
+.. automethod:: LegacyGenerator.f

@@ -15,7 +15,7 @@
   <link rel="stylesheet" type="text/css" href="_static/css/bootstrap-theme.min.css" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-    <title>Multithreaded Generation &#8212; RandomGen v1.14.1+4.g8899e27 documentation</title>
+    <title>Multithreaded Generation &#8212; RandomGen v1.14.1+6.g21d35c8 documentation</title>
     <link rel="stylesheet" href="_static/guzzle.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <script type="text/javascript" src="_static/documentation_options.js"></script>
@@ -46,7 +46,7 @@
         <li class="right" >
           <a href="parallel.html" title="Parallel Random Number Generation"
              accesskey="P">previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="index.html">RandomGen v1.14.1+4.g8899e27 documentation</a> &#187;</li> 
+        <li class="nav-item nav-item-0"><a href="index.html">RandomGen v1.14.1+6.g21d35c8 documentation</a> &#187;</li> 
       </ul>
     </div>
     <div class="container-wrapper">
@@ -56,7 +56,7 @@
       </div>
   <div id="left-column">
     <div class="sphinxsidebar"><a href="
-    index.html" class="text-logo">RandomGen v1.14.1 (+4)</a>
+    index.html" class="text-logo">RandomGen v1.14.1 (+6)</a>
 <div class="sidebar-block">
   <div class="sidebar-wrapper">
     <h2>Table Of Contents</h2>
@@ -65,7 +65,8 @@
     
     
       <ul>
-<li class="toctree-l1"><a class="reference internal" href="generator.html">Random Generator</a></li>
+<li class="toctree-l1"><a class="reference internal" href="generator.html">Random Generation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="legacy.html">Legacy Random Generation</a></li>
 </ul>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="brng/index.html">Basic Random Number Generators</a></li>
@@ -126,7 +127,7 @@ require any additional overheads from thread creation. The underlying PRNG is
 xorshift2014 which is fast, has a long period and supports using <code class="docutils literal notranslate"><span class="pre">jump</span></code> to
 advance the state. The random numbers generated are reproducible in the sense
 that the same seed will produce the same outputs.</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">randomgen</span> <span class="kn">import</span> <span class="n">Xorshift1024</span>
+<div class="highlight-ipython notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">randomgen</span> <span class="kn">import</span> <span class="n">Xorshift1024</span>
 <span class="kn">import</span> <span class="nn">multiprocessing</span>
 <span class="kn">import</span> <span class="nn">concurrent.futures</span>
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
@@ -157,7 +158,11 @@ that the same seed will produce the same outputs.</p>
 
         <span class="n">futures</span> <span class="o">=</span> <span class="p">{}</span>
         <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">threads</span><span class="p">):</span>
-            <span class="n">args</span> <span class="o">=</span> <span class="p">(</span><span class="n">_fill</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_random_generators</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">values</span><span class="p">,</span> <span class="n">i</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">step</span><span class="p">,</span> <span class="p">(</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">step</span><span class="p">)</span>
+            <span class="n">args</span> <span class="o">=</span> <span class="p">(</span><span class="n">_fill</span><span class="p">,</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">_random_generators</span><span class="p">[</span><span class="n">i</span><span class="p">],</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">values</span><span class="p">,</span>
+                    <span class="n">i</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">step</span><span class="p">,</span>
+                    <span class="p">(</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">step</span><span class="p">)</span>
             <span class="n">futures</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">executor</span><span class="o">.</span><span class="n">submit</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">)]</span> <span class="o">=</span> <span class="n">i</span>
         <span class="n">concurrent</span><span class="o">.</span><span class="n">futures</span><span class="o">.</span><span class="n">wait</span><span class="p">(</span><span class="n">futures</span><span class="p">)</span>
 
@@ -168,42 +173,37 @@ that the same seed will produce the same outputs.</p>
 <p>The multithreaded random number generator can be used to fill an array.
 The <code class="docutils literal notranslate"><span class="pre">values</span></code> attributes shows the zero-value before the fill and the
 random value after.</p>
-<div class="highlight-ipython notranslate"><div class="highlight"><pre><span></span><span class="gp">In [1]: </span><span class="n">mrng</span> <span class="o">=</span> <span class="n">MultithreadedRNG</span><span class="p">(</span><span class="mi">10000000</span><span class="p">,</span> <span class="n">seed</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
-
-<span class="gp">In [2]: </span><span class="k">print</span><span class="p">(</span><span class="n">mrng</span><span class="o">.</span><span class="n">values</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
+<div class="highlight-ipython notranslate"><div class="highlight"><pre><span></span><span class="gp">In [2]: </span><span class="n">mrng</span> <span class="o">=</span> <span class="n">MultithreadedRNG</span><span class="p">(</span><span class="mi">10000000</span><span class="p">,</span> <span class="n">seed</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+<span class="go">...: print(mrng.values[-1])</span>
 <span class="go">0.0</span>
 
 <span class="gp">In [3]: </span><span class="n">mrng</span><span class="o">.</span><span class="n">fill</span><span class="p">()</span>
-
-<span class="gp">In [4]: </span><span class="k">print</span><span class="p">(</span><span class="n">mrng</span><span class="o">.</span><span class="n">values</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
-<span class="go">-0.36767789759368147</span>
+<span class="go">    ...: print(mrng.values[-1])</span>
+<span class="go">3.296046120254392</span>
 </pre></div>
 </div>
 <p>The time required to produce using multiple threads can be compared to
 the time required to generate using a single thread.</p>
-<div class="highlight-ipython notranslate"><div class="highlight"><pre><span></span><span class="gp">In [5]: </span><span class="k">print</span><span class="p">(</span><span class="n">mrng</span><span class="o">.</span><span class="n">threads</span><span class="p">)</span>
-<span class="go">2</span>
-
-<span class="gp">In [6]: </span><span class="o">%</span><span class="k">timeit</span> mrng.fill()
-<span class="go">  89 ms +- 1.1 ms per loop (mean +- std. dev. of 7 runs, 10 loops each)</span>
+<div class="highlight-ipython notranslate"><div class="highlight"><pre><span></span><span class="gp">In [4]: </span><span class="k">print</span><span class="p">(</span><span class="n">mrng</span><span class="o">.</span><span class="n">threads</span><span class="p">)</span>
+<span class="go">    ...: %timeit mrng.fill()</span>
+<span class="go">4</span>
+<span class="go">42.9 ms ± 2.55 ms per loop (mean ± std. dev. of 7 runs, 10 loops each)</span>
 </pre></div>
 </div>
 <p>The single threaded call directly uses the PRNG.</p>
-<div class="highlight-ipython notranslate"><div class="highlight"><pre><span></span><span class="gp">In [7]: </span><span class="n">values</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">(</span><span class="mi">10000000</span><span class="p">)</span>
-
-<span class="gp">In [8]: </span><span class="n">rg</span> <span class="o">=</span> <span class="n">Xorshift1024</span><span class="p">()</span><span class="o">.</span><span class="n">generator</span>
-
-<span class="gp">In [9]: </span><span class="o">%</span><span class="k">timeit</span> rg.standard_normal(out=values)
-<span class="go">145 ms +- 4.55 ms per loop (mean +- std. dev. of 7 runs, 10 loops each)</span>
+<div class="highlight-ipython notranslate"><div class="highlight"><pre><span></span><span class="gp">In [5]: </span><span class="n">values</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">(</span><span class="mi">10000000</span><span class="p">)</span>
+<span class="go">    ...: rg = Xorshift1024().generator</span>
+<span class="go">    ...: %timeit rg.standard_normal(out=values)</span>
+<span class="go">220 ms ± 27.3 ms per loop (mean ± std. dev. of 7 runs, 10 loops each)</span>
 </pre></div>
 </div>
 <p>The gains are substantial and the scaling is reasonable even for large that
 are only moderately large.  The gains are even larger when compared to a call
 that does not use an existing array due to array creation overhead.</p>
-<div class="highlight-ipython notranslate"><div class="highlight"><pre><span></span><span class="gp">In [10]: </span><span class="n">rg</span> <span class="o">=</span> <span class="n">Xorshift1024</span><span class="p">()</span><span class="o">.</span><span class="n">generator</span>
-
-<span class="gp">In [11]: </span><span class="o">%</span><span class="k">timeit</span> rg.standard_normal(10000000)
-<span class="go">153 ms +- 3.93 ms per loop (mean +- std. dev. of 7 runs, 10 loops each)</span>
+<div class="highlight-ipython notranslate"><div class="highlight"><pre><span></span><span class="gp">In [6]: </span><span class="n">rg</span> <span class="o">=</span> <span class="n">Xorshift1024</span><span class="p">()</span><span class="o">.</span><span class="n">generator</span>
+<span class="go">    ...: %timeit rg.standard_normal(10000000)</span>
+<span class="go">    ...:</span>
+<span class="go">256 ms ± 41.8 ms per loop (mean ± std. dev. of 7 runs, 10 loops each)</span>
 </pre></div>
 </div>
 </div>
@@ -241,7 +241,7 @@ that does not use an existing array due to array creation overhead.</p>
         <li class="right" >
           <a href="parallel.html" title="Parallel Random Number Generation"
              >previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="index.html">RandomGen v1.14.1+4.g8899e27 documentation</a> &#187;</li> 
+        <li class="nav-item nav-item-0"><a href="index.html">RandomGen v1.14.1+6.g21d35c8 documentation</a> &#187;</li> 
       </ul>
     </div>
 <script type="text/javascript">
