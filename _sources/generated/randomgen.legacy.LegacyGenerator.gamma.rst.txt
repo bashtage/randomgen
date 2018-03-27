@@ -1,0 +1,6 @@
+randomgen.legacy.LegacyGenerator.gamma
+======================================
+
+.. currentmodule:: randomgen.legacy
+
+.. automethod:: LegacyGenerator.gamma
