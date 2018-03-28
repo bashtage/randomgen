@@ -1,6 +1,0 @@
-randomgen.legacy.LegacyGenerator.negative\_binomial
-===================================================
-
-.. currentmodule:: randomgen.legacy
-
-.. automethod:: LegacyGenerator.negative_binomial

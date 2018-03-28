@@ -1,0 +1,6 @@
+randomgen.legacy.legacy.LegacyGenerator.logseries
+=================================================
+
+.. currentmodule:: randomgen.legacy.legacy
+
+.. automethod:: LegacyGenerator.logseries

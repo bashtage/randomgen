@@ -1,6 +1,0 @@
-randomgen.legacy.LegacyGenerator.exponential
-============================================
-
-.. currentmodule:: randomgen.legacy
-
-.. automethod:: LegacyGenerator.exponential

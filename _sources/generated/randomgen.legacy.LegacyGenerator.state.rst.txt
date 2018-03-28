@@ -1,6 +1,0 @@
-randomgen.legacy.LegacyGenerator.state
-======================================
-
-.. currentmodule:: randomgen.legacy
-
-.. autoattribute:: LegacyGenerator.state
