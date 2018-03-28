@@ -1,0 +1,6 @@
+randomgen.legacy.LegacyGenerator.poisson
+========================================
+
+.. currentmodule:: randomgen.legacy
+
+.. automethod:: LegacyGenerator.poisson

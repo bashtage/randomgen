@@ -1,0 +1,6 @@
+randomgen.legacy.LegacyGenerator.gumbel
+=======================================
+
+.. currentmodule:: randomgen.legacy
+
+.. automethod:: LegacyGenerator.gumbel

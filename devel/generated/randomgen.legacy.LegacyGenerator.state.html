@@ -15,7 +15,7 @@
   <link rel="stylesheet" type="text/css" href="../_static/css/bootstrap-theme.min.css" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-    <title>randomgen.legacy.LegacyGenerator.state &#8212; RandomGen v1.14.2+2.g10c5580 documentation</title>
+    <title>randomgen.legacy.LegacyGenerator.state &#8212; RandomGen v1.14.2+4.gff025bd documentation</title>
     <link rel="stylesheet" href="../_static/guzzle.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     <script type="text/javascript" src="../_static/documentation_options.js"></script>
@@ -25,7 +25,7 @@
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="randomgen.legacy.LegacyGenerator.randn" href="randomgen.legacy.LegacyGenerator.randn.html" />
+    <link rel="next" title="randomgen.legacy.LegacyGenerator.rand" href="randomgen.legacy.LegacyGenerator.rand.html" />
     <link rel="prev" title="Legacy Random Generation" href="../legacy.html" />
   
    
@@ -41,12 +41,12 @@
           <a href="../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="right" >
-          <a href="randomgen.legacy.LegacyGenerator.randn.html" title="randomgen.legacy.LegacyGenerator.randn"
+          <a href="randomgen.legacy.LegacyGenerator.rand.html" title="randomgen.legacy.LegacyGenerator.rand"
              accesskey="N">next</a> |</li>
         <li class="right" >
           <a href="../legacy.html" title="Legacy Random Generation"
              accesskey="P">previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../index.html">RandomGen v1.14.2+2.g10c5580 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">RandomGen v1.14.2+4.gff025bd documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="../legacy.html" accesskey="U">Legacy Random Generation</a> &#187;</li> 
       </ul>
     </div>
@@ -57,7 +57,7 @@
       </div>
   <div id="left-column">
     <div class="sphinxsidebar"><a href="
-    ../index.html" class="text-logo">RandomGen v1.14.2 (+2)</a>
+    ../index.html" class="text-logo">RandomGen v1.14.2 (+4)</a>
 <div class="sidebar-block">
   <div class="sidebar-wrapper">
     <h2>Table Of Contents</h2>
@@ -70,6 +70,7 @@
 <li class="toctree-l1 current"><a class="reference internal" href="../legacy.html">Legacy Random Generation</a><ul class="current">
 <li class="toctree-l2 current"><a class="reference internal" href="../legacy.html#seeding-and-state">Seeding and State</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../legacy.html#simple-random-data">Simple random data</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../legacy.html#permutations">Permutations</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../legacy.html#distributions">Distributions</a></li>
 </ul>
 </li>
@@ -127,16 +128,13 @@
 <dl class="attribute">
 <dt id="randomgen.legacy.LegacyGenerator.state">
 <code class="descclassname">LegacyGenerator.</code><code class="descname">state</code><a class="headerlink" href="#randomgen.legacy.LegacyGenerator.state" title="Permalink to this definition">¶</a></dt>
-<dd><p>Get or set the augmented state</p>
-<p>Returns the basic RNGs state as well as two values added to track
-normal generation using the Box-Muller method.</p>
+<dd><p>Get or set the Basic RNG’s state</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><strong>state</strong> – Dictionary containing the information required to describe the
-state of the Basic RNG with two additional fields, gauss and
-has_gauss, required to store generated Box-Muller normals.</td>
+state of the Basic RNG</td>
 </tr>
 <tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.6)">dict</a></td>
 </tr>
@@ -156,7 +154,7 @@ has_gauss, required to store generated Box-Muller normals.</td>
       </div>
     
       <div class="pull-right">
-        <a class="btn btn-default" href="randomgen.legacy.LegacyGenerator.randn.html" title="next chapter (use the right arrow)">randomgen.legacy.LegacyGenerator.randn</a>
+        <a class="btn btn-default" href="randomgen.legacy.LegacyGenerator.rand.html" title="next chapter (use the right arrow)">randomgen.legacy.LegacyGenerator.rand</a>
       </div>
     </div>
     <div class="clearer"></div>
@@ -174,12 +172,12 @@ has_gauss, required to store generated Box-Muller normals.</td>
           <a href="../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="right" >
-          <a href="randomgen.legacy.LegacyGenerator.randn.html" title="randomgen.legacy.LegacyGenerator.randn"
+          <a href="randomgen.legacy.LegacyGenerator.rand.html" title="randomgen.legacy.LegacyGenerator.rand"
              >next</a> |</li>
         <li class="right" >
           <a href="../legacy.html" title="Legacy Random Generation"
              >previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../index.html">RandomGen v1.14.2+2.g10c5580 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">RandomGen v1.14.2+4.gff025bd documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="../legacy.html" >Legacy Random Generation</a> &#187;</li> 
       </ul>
     </div>

@@ -1,0 +1,6 @@
+randomgen.legacy.LegacyGenerator.permutation
+============================================
+
+.. currentmodule:: randomgen.legacy
+
+.. automethod:: LegacyGenerator.permutation

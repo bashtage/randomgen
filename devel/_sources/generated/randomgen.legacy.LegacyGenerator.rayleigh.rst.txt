@@ -1,0 +1,6 @@
+randomgen.legacy.LegacyGenerator.rayleigh
+=========================================
+
+.. currentmodule:: randomgen.legacy
+
+.. automethod:: LegacyGenerator.rayleigh
