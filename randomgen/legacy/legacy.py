@@ -4,7 +4,38 @@ from randomgen.legacy._legacy import _LegacyGenerator
 import randomgen.pickle
 
 
-class LegacyGenerator(RandomGenerator):
+_LEGACY_ATTRIBUTES = tuple(a for a in dir(
+    _LegacyGenerator) if not a.startswith('_'))
+
+_LEGACY_ATTRIBUTES += ('__getstate__', '__setstate__', '__reduce__')
+
+
+def with_metaclass(meta, *bases):
+    """Create a base class with a metaclass."""
+    # This requires a bit of explanation: the basic idea is to make a dummy
+    # metaclass for one level of class instantiation that replaces itself with
+    # the actual metaclass.
+
+    # From six, https://raw.githubusercontent.com/benjaminp/six
+    class metaclass(type):
+
+        def __new__(cls, name, this_bases, d):
+            return meta(name, bases, d)
+
+        @classmethod
+        def __prepare__(cls, name, this_bases):
+            return meta.__prepare__(name, bases)
+    return type.__new__(metaclass, 'temporary_class', (), {})
+
+
+class LegacyGeneratorType(type):
+    def __getattribute__(self, name):
+        if name in _LEGACY_ATTRIBUTES:
+            return object.__getattribute__(_LegacyGenerator, name)
+        return object.__getattribute__(RandomGenerator, name)
+
+
+class LegacyGenerator(with_metaclass(LegacyGeneratorType, RandomGenerator)):
     """
     LegacyGenerator(brng=None)
 
@@ -57,8 +88,6 @@ class LegacyGenerator(RandomGenerator):
     >>> rs.standard_exponential()
     1.6465621229906502
     """
-    _LEGACY_ATTRIBUTES = tuple(a for a in dir(
-        _LegacyGenerator) if not a.startswith('_'))
 
     def __init__(self, brng=None):
         if brng is None:
@@ -67,7 +96,7 @@ class LegacyGenerator(RandomGenerator):
         self.__legacy = _LegacyGenerator(brng)
 
     def __getattribute__(self, name):
-        if name in LegacyGenerator._LEGACY_ATTRIBUTES:
+        if name in _LEGACY_ATTRIBUTES:
             return self.__legacy.__getattribute__(name)
         return object.__getattribute__(self, name)
 
