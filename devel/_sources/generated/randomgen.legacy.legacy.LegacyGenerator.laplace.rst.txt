@@ -1,0 +1,6 @@
+randomgen.legacy.legacy.LegacyGenerator.laplace
+===============================================
+
+.. currentmodule:: randomgen.legacy.legacy
+
+.. automethod:: LegacyGenerator.laplace

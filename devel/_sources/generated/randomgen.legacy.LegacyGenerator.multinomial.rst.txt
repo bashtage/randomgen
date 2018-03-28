@@ -1,6 +1,0 @@
-randomgen.legacy.LegacyGenerator.multinomial
-============================================
-
-.. currentmodule:: randomgen.legacy
-
-.. automethod:: LegacyGenerator.multinomial

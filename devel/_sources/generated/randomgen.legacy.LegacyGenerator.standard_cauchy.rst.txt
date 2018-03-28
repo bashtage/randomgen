@@ -1,6 +1,0 @@
-randomgen.legacy.LegacyGenerator.standard\_cauchy
-=================================================
-
-.. currentmodule:: randomgen.legacy
-
-.. automethod:: LegacyGenerator.standard_cauchy

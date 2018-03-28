@@ -1,6 +1,0 @@
-randomgen.legacy.LegacyGenerator.vonmises
-=========================================
-
-.. currentmodule:: randomgen.legacy
-
-.. automethod:: LegacyGenerator.vonmises

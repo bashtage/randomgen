@@ -1,6 +1,0 @@
-randomgen.legacy.LegacyGenerator.hypergeometric
-===============================================
-
-.. currentmodule:: randomgen.legacy
-
-.. automethod:: LegacyGenerator.hypergeometric

@@ -1,6 +1,0 @@
-randomgen.legacy.LegacyGenerator.zipf
-=====================================
-
-.. currentmodule:: randomgen.legacy
-
-.. automethod:: LegacyGenerator.zipf

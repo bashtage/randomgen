@@ -1,6 +1,0 @@
-randomgen.legacy.LegacyGenerator.logistic
-=========================================
-
-.. currentmodule:: randomgen.legacy
-
-.. automethod:: LegacyGenerator.logistic

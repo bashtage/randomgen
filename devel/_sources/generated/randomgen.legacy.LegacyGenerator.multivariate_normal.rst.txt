@@ -1,6 +1,0 @@
-randomgen.legacy.LegacyGenerator.multivariate\_normal
-=====================================================
-
-.. currentmodule:: randomgen.legacy
-
-.. automethod:: LegacyGenerator.multivariate_normal

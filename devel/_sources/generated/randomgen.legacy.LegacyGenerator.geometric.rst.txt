@@ -1,6 +1,0 @@
-randomgen.legacy.LegacyGenerator.geometric
-==========================================
-
-.. currentmodule:: randomgen.legacy
-
-.. automethod:: LegacyGenerator.geometric
