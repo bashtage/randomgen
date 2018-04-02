@@ -34,7 +34,7 @@ cdef class _LegacyGenerator:
     numbers for a set of distributions where the method used to produce random
     samples has changed. Three core generators have changed: normal, exponential
     and gamma. These have been replaced by faster Ziggurat-based methods in 
-    ``RadnomGenerator``. ``_LegacyGenerator`` retains the slower methods
+    ``RandomGenerator``. ``_LegacyGenerator`` retains the slower methods
     to produce samples from these distributions as well as from distributions
     that depend on these such as the Chi-square, power or Weibull.
      
