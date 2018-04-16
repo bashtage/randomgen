@@ -43,11 +43,12 @@ class LegacyGenerator(with_metaclass(LegacyGeneratorType, RandomGenerator)):
 
     ``LegacyGenerator`` exposes a number of methods for generating random
     numbers for a set of distributions where the method used to produce random
-    samples has changed. Three core generators have changed: normal, exponential
-    and gamma. These have been replaced by faster Ziggurat-based methods in 
-    ``RadnomGenerator``. ``LegacyGenerator`` retains the slower methods
-    to produce samples from these distributions as well as from distributions
-    that depend on these such as the Chi-square, power or Weibull.
+    samples has changed. Three core generators have changed: normal,
+    exponential and gamma. These have been replaced by faster Ziggurat-based
+    methods in ``RadnomGenerator``. ``LegacyGenerator`` retains the slower
+    methods to produce samples from these distributions as well as from
+    distributions that depend on these such as the Chi-square, power or
+    Weibull.
 
     **No Compatibility Guarantee**
 
@@ -65,7 +66,7 @@ class LegacyGenerator(with_metaclass(LegacyGeneratorType, RandomGenerator)):
 
     Examples
     --------
-    Exactly reproducing a NumPy stream requires using ``MT19937`` as 
+    Exactly reproducing a NumPy stream requires using ``MT19937`` as
     the Basic RNG.
 
     >>> from randomgen import MT19937
