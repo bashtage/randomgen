@@ -15,7 +15,7 @@
   <link rel="stylesheet" type="text/css" href="../_static/css/bootstrap-theme.min.css" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-    <title>ThreeFry32 Counter-based RNG &#8212; RandomGen v1.14.4+4.g8dbe909 documentation</title>
+    <title>ThreeFry32 Counter-based RNG &#8212; RandomGen v1.14.4+6.g5f91ad6 documentation</title>
     <link rel="stylesheet" href="../_static/guzzle.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     <script type="text/javascript" src="../_static/documentation_options.js"></script>
@@ -46,7 +46,7 @@
         <li class="right" >
           <a href="generated/randomgen.pcg32.PCG32.ctypes.html" title="randomgen.pcg32.PCG32.ctypes"
              accesskey="P">previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../index.html">RandomGen v1.14.4+4.g8dbe909 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">RandomGen v1.14.4+6.g5f91ad6 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="index.html" accesskey="U">Basic Random Number Generators</a> &#187;</li> 
       </ul>
     </div>
@@ -57,7 +57,7 @@
       </div>
   <div id="left-column">
     <div class="sphinxsidebar"><a href="
-    ../index.html" class="text-logo">RandomGen v1.14.4 (+4)</a>
+    ../index.html" class="text-logo">RandomGen v1.14.4 (+6)</a>
 <div class="sidebar-block">
   <div class="sidebar-wrapper">
     <h2>Table Of Contents</h2>
@@ -154,8 +154,8 @@ key and seed cannot both be used.</li>
 <p>ThreeFry32 is a 32-bit PRNG that uses a counter-based design based on
 weaker (and faster) versions of cryptographic functions <a class="footnote-reference" href="#id2" id="id1">[1]</a>. Instances
 using different values of the key produce independent sequences.  ThreeFry32
-has a period of <span class="math notranslate">\(2^{128} - 1\)</span> and supports arbitrary advancing and
-jumping the sequence in increments of <span class="math notranslate">\(2^{64}\)</span>. These features allow
+has a period of <span class="math notranslate nohighlight">\(2^{128} - 1\)</span> and supports arbitrary advancing and
+jumping the sequence in increments of <span class="math notranslate nohighlight">\(2^{64}\)</span>. These features allow
 multiple non-overlapping sequences to be generated.</p>
 <p><code class="docutils literal notranslate"><span class="pre">ThreeFry32</span></code> exposes no user-facing API except <code class="docutils literal notranslate"><span class="pre">generator</span></code>,
 <code class="docutils literal notranslate"><span class="pre">state</span></code>, <code class="docutils literal notranslate"><span class="pre">cffi</span></code> and <code class="docutils literal notranslate"><span class="pre">ctypes</span></code>. Designed for use in a
@@ -167,7 +167,7 @@ same results.</p>
 <p><strong>Parallel Features</strong></p>
 <p><code class="docutils literal notranslate"><span class="pre">ThreeFry32</span></code> can be used in parallel applications by
 calling the method <code class="docutils literal notranslate"><span class="pre">jump</span></code> which advances the state as-if
-<span class="math notranslate">\(2^{64}\)</span> random numbers have been generated. Alternatively,
+<span class="math notranslate nohighlight">\(2^{64}\)</span> random numbers have been generated. Alternatively,
 <code class="docutils literal notranslate"><span class="pre">advance</span></code> can be used to advance the counter for an arbitrary number of
 positive steps in [0, 2**128). When using <code class="docutils literal notranslate"><span class="pre">jump</span></code>, all generators should
 be initialized with the same seed to ensure that the segments come from
@@ -326,7 +326,7 @@ Networking, Storage and Analysis (SC11), New York, NY: ACM, 2011.</td></tr>
         <li class="right" >
           <a href="generated/randomgen.pcg32.PCG32.ctypes.html" title="randomgen.pcg32.PCG32.ctypes"
              >previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../index.html">RandomGen v1.14.4+4.g8dbe909 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">RandomGen v1.14.4+6.g5f91ad6 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="index.html" >Basic Random Number Generators</a> &#187;</li> 
       </ul>
     </div>

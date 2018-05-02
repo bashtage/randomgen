@@ -15,7 +15,7 @@
   <link rel="stylesheet" type="text/css" href="_static/css/bootstrap-theme.min.css" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-    <title>Parallel Random Number Generation &#8212; RandomGen v1.14.4+4.g8dbe909 documentation</title>
+    <title>Parallel Random Number Generation &#8212; RandomGen v1.14.4+6.g5f91ad6 documentation</title>
     <link rel="stylesheet" href="_static/guzzle.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <script type="text/javascript" src="_static/documentation_options.js"></script>
@@ -46,7 +46,7 @@
         <li class="right" >
           <a href="brng/generated/randomgen.threefry32.ThreeFry32.ctypes.html" title="randomgen.threefry32.ThreeFry32.ctypes"
              accesskey="P">previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="index.html">RandomGen v1.14.4+4.g8dbe909 documentation</a> &#187;</li> 
+        <li class="nav-item nav-item-0"><a href="index.html">RandomGen v1.14.4+6.g5f91ad6 documentation</a> &#187;</li> 
       </ul>
     </div>
     <div class="container-wrapper">
@@ -56,7 +56,7 @@
       </div>
   <div id="left-column">
     <div class="sphinxsidebar"><a href="
-    index.html" class="text-logo">RandomGen v1.14.4 (+4)</a>
+    index.html" class="text-logo">RandomGen v1.14.4 (+6)</a>
 <div class="sidebar-block">
   <div class="sidebar-wrapper">
     <h2>Table Of Contents</h2>
@@ -159,7 +159,7 @@ to produce independent streams.</p>
 <h3>Jump<a class="headerlink" href="#jump" title="Permalink to this headline">¶</a></h3>
 <p><code class="docutils literal notranslate"><span class="pre">jump</span></code> advances the state of the PRNG <em>as-if</em> a large number of random
 numbers have been drawn.  The specific number of draws varies by PRNG, and
-ranges from <span class="math notranslate">\(2^{64}\)</span> to <span class="math notranslate">\(2^{512}\)</span>.  Additionally, the <em>as-if</em>
+ranges from <span class="math notranslate nohighlight">\(2^{64}\)</span> to <span class="math notranslate nohighlight">\(2^{512}\)</span>.  Additionally, the <em>as-if</em>
 draws also depend on the size of the default random number produced by the
 specific PRNG.  The PRNGs that support <code class="docutils literal notranslate"><span class="pre">jump</span></code>, along with the period of
 the PRNG, the size of the jump and the bits in the default unsigned random
@@ -180,38 +180,38 @@ are listed below.</p>
 </thead>
 <tbody valign="top">
 <tr class="row-even"><td>DSFMT</td>
-<td><span class="math notranslate">\(2^{19937}\)</span></td>
-<td><span class="math notranslate">\(2^{128}\)</span></td>
+<td><span class="math notranslate nohighlight">\(2^{19937}\)</span></td>
+<td><span class="math notranslate nohighlight">\(2^{128}\)</span></td>
 <td>53</td>
 </tr>
 <tr class="row-odd"><td>MT19937</td>
-<td><span class="math notranslate">\(2^{19937}\)</span></td>
-<td><span class="math notranslate">\(2^{128}\)</span></td>
+<td><span class="math notranslate nohighlight">\(2^{19937}\)</span></td>
+<td><span class="math notranslate nohighlight">\(2^{128}\)</span></td>
 <td>32</td>
 </tr>
 <tr class="row-even"><td>PCG64</td>
-<td><span class="math notranslate">\(2^{128}\)</span></td>
-<td><span class="math notranslate">\(2^{64}\)</span></td>
+<td><span class="math notranslate nohighlight">\(2^{128}\)</span></td>
+<td><span class="math notranslate nohighlight">\(2^{64}\)</span></td>
 <td>64</td>
 </tr>
 <tr class="row-odd"><td>Philox</td>
-<td><span class="math notranslate">\(2^{256}\)</span></td>
-<td><span class="math notranslate">\(2^{128}\)</span></td>
+<td><span class="math notranslate nohighlight">\(2^{256}\)</span></td>
+<td><span class="math notranslate nohighlight">\(2^{128}\)</span></td>
 <td>64</td>
 </tr>
 <tr class="row-even"><td>ThreeFry</td>
-<td><span class="math notranslate">\(2^{256}\)</span></td>
-<td><span class="math notranslate">\(2^{128}\)</span></td>
+<td><span class="math notranslate nohighlight">\(2^{256}\)</span></td>
+<td><span class="math notranslate nohighlight">\(2^{128}\)</span></td>
 <td>64</td>
 </tr>
 <tr class="row-odd"><td>Xoroshiro128</td>
-<td><span class="math notranslate">\(2^{128}\)</span></td>
-<td><span class="math notranslate">\(2^{64}\)</span></td>
+<td><span class="math notranslate nohighlight">\(2^{128}\)</span></td>
+<td><span class="math notranslate nohighlight">\(2^{64}\)</span></td>
 <td>64</td>
 </tr>
 <tr class="row-even"><td>Xorshift1024</td>
-<td><span class="math notranslate">\(2^{1024}\)</span></td>
-<td><span class="math notranslate">\(2^{512}\)</span></td>
+<td><span class="math notranslate nohighlight">\(2^{1024}\)</span></td>
+<td><span class="math notranslate nohighlight">\(2^{512}\)</span></td>
 <td>64</td>
 </tr>
 </tbody>
@@ -308,7 +308,7 @@ generator 2 ** 127 steps to set a sequence of random number generators.</p>
         <li class="right" >
           <a href="brng/generated/randomgen.threefry32.ThreeFry32.ctypes.html" title="randomgen.threefry32.ThreeFry32.ctypes"
              >previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="index.html">RandomGen v1.14.4+4.g8dbe909 documentation</a> &#187;</li> 
+        <li class="nav-item nav-item-0"><a href="index.html">RandomGen v1.14.4+6.g5f91ad6 documentation</a> &#187;</li> 
       </ul>
     </div>
 <script type="text/javascript">
