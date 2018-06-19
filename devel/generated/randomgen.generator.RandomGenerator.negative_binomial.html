@@ -15,7 +15,7 @@
   <link rel="stylesheet" type="text/css" href="../_static/css/bootstrap-theme.min.css" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-    <title>randomgen.generator.RandomGenerator.negative_binomial &#8212; RandomGen v1.14.4+11.g2e099da documentation</title>
+    <title>randomgen.generator.RandomGenerator.negative_binomial &#8212; RandomGen v1.14.4+12.gbf99695 documentation</title>
     <link rel="stylesheet" href="../_static/guzzle.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
@@ -46,7 +46,7 @@
         <li class="right" >
           <a href="randomgen.generator.RandomGenerator.multivariate_normal.html" title="randomgen.generator.RandomGenerator.multivariate_normal"
              accesskey="P">previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../index.html">RandomGen v1.14.4+11.g2e099da documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">RandomGen v1.14.4+12.gbf99695 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="../generator.html" accesskey="U">Random Generator</a> &#187;</li> 
       </ul>
     </div>
@@ -57,7 +57,7 @@
       </div>
   <div id="left-column">
     <div class="sphinxsidebar"><a href="
-    ../index.html" class="text-logo">RandomGen v1.14.4 (+11)</a>
+    ../index.html" class="text-logo">RandomGen v1.14.4 (+12)</a>
 <div class="sidebar-block">
   <div class="sidebar-wrapper">
     <h2>Table Of Contents</h2>
@@ -130,7 +130,7 @@
 <code class="descclassname">RandomGenerator.</code><code class="descname">negative_binomial</code><span class="sig-paren">(</span><em>n</em>, <em>p</em>, <em>size=None</em><span class="sig-paren">)</span><a class="headerlink" href="#randomgen.generator.RandomGenerator.negative_binomial" title="Permalink to this definition">¶</a></dt>
 <dd><p>Draw samples from a negative binomial distribution.</p>
 <p>Samples are drawn from a negative binomial distribution with specified
-parameters, <cite>n</cite> trials and <cite>p</cite> probability of failure where <cite>n</cite> is an
+parameters, <cite>n</cite> successes and <cite>p</cite> probability of success where <cite>n</cite> is an
 integer &gt; 0 and <cite>p</cite> is in the interval [0, 1].</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -148,8 +148,8 @@ Otherwise, <code class="docutils literal notranslate"><span class="pre">np.broad
 </td>
 </tr>
 <tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>out</strong> – Drawn samples from the parameterized negative binomial distribution,
-where each sample is equal to N, the number of successes that
-occurred before n failures, and a failure on the (N + n)th trial.</p>
+where each sample is equal to N, the number of failures that
+occurred before a total of n successes was reached.</p>
 </td>
 </tr>
 <tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">ndarray or scalar</p>
@@ -162,10 +162,9 @@ occurred before n failures, and a failure on the (N + n)th trial.</p>
 <div class="math notranslate nohighlight">
 \[P(N;n,p) = \binom{N+n-1}{N}p^{n}(1-p)^{N},\]</div>
 <p>where <span class="math notranslate nohighlight">\(n\)</span> is the number of successes, <span class="math notranslate nohighlight">\(p\)</span> is the
-probability of failure, and <span class="math notranslate nohighlight">\(N+n\)</span> is the number of trials.
-The negative binomial distribution gives the probability of n
-successes and N failures in N+n trials, and a success on the (N+n)th
-trial.</p>
+probability of success, and <span class="math notranslate nohighlight">\(N+n\)</span> is the number of trials.
+The negative binomial distribution gives the probability of N
+failures given n successes, with a success on the last trial.</p>
 <p>If one throws a die repeatedly until the third time a “1” appears,
 then the probability distribution of the number of non-“1”s that
 appear before the third “1” is a negative binomial distribution.</p>
@@ -182,7 +181,7 @@ MathWorld–A Wolfram Web Resource.
 <colgroup><col class="label" /><col /></colgroup>
 <tbody valign="top">
 <tr><td class="label">[2]</td><td>Wikipedia, “Negative binomial distribution”,
-<a class="reference external" href="http://en.wikipedia.org/wiki/Negative_binomial_distribution">http://en.wikipedia.org/wiki/Negative_binomial_distribution</a></td></tr>
+<a class="reference external" href="https://en.wikipedia.org/wiki/Negative_binomial_distribution">https://en.wikipedia.org/wiki/Negative_binomial_distribution</a></td></tr>
 </tbody>
 </table>
 <p class="rubric">Examples</p>
@@ -235,7 +234,7 @@ single success after drilling 5 wells, after 6 wells, etc.?</p>
         <li class="right" >
           <a href="randomgen.generator.RandomGenerator.multivariate_normal.html" title="randomgen.generator.RandomGenerator.multivariate_normal"
              >previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../index.html">RandomGen v1.14.4+11.g2e099da documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">RandomGen v1.14.4+12.gbf99695 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="../generator.html" >Random Generator</a> &#187;</li> 
       </ul>
     </div>
