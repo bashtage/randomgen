@@ -154,22 +154,22 @@ Cython.</li>
 <span class="gp">In [4]: </span><span class="o">%</span><span class="k">timeit</span> rg.standard_normal(100000)
 <span class="gp">   ...: </span><span class="o">%</span><span class="k">timeit</span> numpy.random.standard_normal(100000)
 <span class="gp">   ...: </span>
-<span class="go">955 us +- 29.7 us per loop (mean +- std. dev. of 7 runs, 1000 loops each)</span>
-<span class="go">4.94 ms +- 119 us per loop (mean +- std. dev. of 7 runs, 100 loops each)</span>
+<span class="go">973 us +- 28.4 us per loop (mean +- std. dev. of 7 runs, 1000 loops each)</span>
+<span class="go">5.14 ms +- 80.3 us per loop (mean +- std. dev. of 7 runs, 100 loops each)</span>
 </pre></div>
 </div>
 <div class="highlight-ipython notranslate"><div class="highlight"><pre><span></span><span class="gp">In [6]: </span><span class="o">%</span><span class="k">timeit</span> rg.standard_exponential(100000)
 <span class="gp">   ...: </span><span class="o">%</span><span class="k">timeit</span> numpy.random.standard_exponential(100000)
 <span class="gp">   ...: </span>
-<span class="go">529 us +- 10.9 us per loop (mean +- std. dev. of 7 runs, 1000 loops each)</span>
-<span class="go">6.26 ms +- 181 us per loop (mean +- std. dev. of 7 runs, 100 loops each)</span>
+<span class="go">534 us +- 9.98 us per loop (mean +- std. dev. of 7 runs, 1000 loops each)</span>
+<span class="go">6.37 ms +- 115 us per loop (mean +- std. dev. of 7 runs, 100 loops each)</span>
 </pre></div>
 </div>
 <div class="highlight-ipython notranslate"><div class="highlight"><pre><span></span><span class="gp">In [8]: </span><span class="o">%</span><span class="k">timeit</span> rg.standard_gamma(3.0, 100000)
 <span class="gp">   ...: </span><span class="o">%</span><span class="k">timeit</span> numpy.random.standard_gamma(3.0, 100000)
 <span class="gp">   ...: </span>
-<span class="go">3.12 ms +- 125 us per loop (mean +- std. dev. of 7 runs, 100 loops each)</span>
-<span class="go">8.23 ms +- 101 us per loop (mean +- std. dev. of 7 runs, 100 loops each)</span>
+<span class="go">3.45 ms +- 78.6 us per loop (mean +- std. dev. of 7 runs, 100 loops each)</span>
+<span class="go">8.74 ms +- 302 us per loop (mean +- std. dev. of 7 runs, 100 loops each)</span>
 </pre></div>
 </div>
 <ul class="simple">
@@ -186,13 +186,13 @@ select distributions<ul>
 </li>
 </ul>
 <div class="highlight-ipython notranslate"><div class="highlight"><pre><span></span><span class="gp">In [10]: </span><span class="n">rg</span><span class="o">.</span><span class="n">seed</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
-<span class="gh">Out[10]: </span><span class="go">RandomGenerator(Xoroshiro128) at 0x2AE36BEFBBD8</span>
+<span class="gh">Out[10]: </span><span class="go">RandomGenerator(Xoroshiro128) at 0x2B97FEB70188</span>
 
 <span class="gp">In [11]: </span><span class="n">rg</span><span class="o">.</span><span class="n">random_sample</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="s1">&#39;d&#39;</span><span class="p">)</span>
 <span class="go">                                                         Out[11]: array([0.31483881, 0.00208035, 0.06399498])</span>
 
 <span class="gp">In [12]: </span><span class="n">rg</span><span class="o">.</span><span class="n">seed</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
-<span class="go">                                                                                                              Out[12]: RandomGenerator(Xoroshiro128) at 0x2AE36BEFBBD8</span>
+<span class="go">                                                                                                              Out[12]: RandomGenerator(Xoroshiro128) at 0x2B97FEB70188</span>
 
 <span class="gp">In [13]: </span><span class="n">rg</span><span class="o">.</span><span class="n">random_sample</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="s1">&#39;f&#39;</span><span class="p">)</span>
 <span class="go">                                                                                                                                                                       Out[13]: array([0.11265862, 0.31483877, 0.6936537 ], dtype=float32)</span>
