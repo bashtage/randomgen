@@ -15,14 +15,14 @@
   <link rel="stylesheet" type="text/css" href="../_static/css/bootstrap-theme.min.css" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-    <title>Philox Counter-based RNG &#8212; RandomGen v1.14.4 documentation</title>
+    <title>Philox Counter-based RNG &#8212; RandomGen v1.15.0 documentation</title>
     <link rel="stylesheet" href="../_static/guzzle.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
-    <script type="text/javascript" src="../_static/documentation_options.js"></script>
+    <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
     <script type="text/javascript" src="../_static/jquery.js"></script>
     <script type="text/javascript" src="../_static/underscore.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
-    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="randomgen.philox.Philox.seed" href="generated/randomgen.philox.Philox.seed.html" />
@@ -46,7 +46,7 @@
         <li class="right" >
           <a href="generated/randomgen.pcg64.PCG64.ctypes.html" title="randomgen.pcg64.PCG64.ctypes"
              accesskey="P">previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../index.html">RandomGen v1.14.4 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">RandomGen v1.15.0 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="index.html" accesskey="U">Basic Random Number Generators</a> &#187;</li> 
       </ul>
     </div>
@@ -57,7 +57,7 @@
       </div>
   <div id="left-column">
     <div class="sphinxsidebar"><a href="
-    ../index.html" class="text-logo">RandomGen v1.14.4</a>
+    ../index.html" class="text-logo">RandomGen v1.15.0</a>
 <div class="sidebar-block">
   <div class="sidebar-wrapper">
     <h2>Table Of Contents</h2>
@@ -132,16 +132,16 @@
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>seed</strong> (<em>{None</em><em>, </em><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.6)"><em>int</em></a><em>, </em><em>array_like}</em><em>, </em><em>optional</em>) – Random seed initializing the pseudo-random number generator.
+<li><strong>seed</strong> (<em>{None</em><em>, </em><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a><em>, </em><em>array_like}</em><em>, </em><em>optional</em>) – Random seed initializing the pseudo-random number generator.
 Can be an integer in [0, 2**64-1], array of integers in
 [0, 2**64-1] or <code class="docutils literal notranslate"><span class="pre">None</span></code> (the default). If <cite>seed</cite> is <code class="docutils literal notranslate"><span class="pre">None</span></code>,
 data will be read from <code class="docutils literal notranslate"><span class="pre">/dev/urandom</span></code> (or the Windows analog)
 if available.  If unavailable, a hash of the time and process ID is
 used.</li>
-<li><strong>counter</strong> (<em>{None</em><em>, </em><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.6)"><em>int</em></a><em>, </em><em>array_like}</em><em>, </em><em>optional</em>) – Counter to use in the Philox state. Can be either
+<li><strong>counter</strong> (<em>{None</em><em>, </em><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a><em>, </em><em>array_like}</em><em>, </em><em>optional</em>) – Counter to use in the Philox state. Can be either
 a Python int (long in 2.x) in [0, 2**256) or a 4-element uint64 array.
 If not provided, the RNG is initialized at 0.</li>
-<li><strong>key</strong> (<em>{None</em><em>, </em><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.6)"><em>int</em></a><em>, </em><em>array_like}</em><em>, </em><em>optional</em>) – Key to use in the Philox state.  Unlike seed, which is run through
+<li><strong>key</strong> (<em>{None</em><em>, </em><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a><em>, </em><em>array_like}</em><em>, </em><em>optional</em>) – Key to use in the Philox state.  Unlike seed, which is run through
 another RNG before use, the value in key is directly set. Can be either
 a Python int (long in 2.x) in [0, 2**128) or a 2-element uint64 array.
 key and seed cannot both be used.</li>
@@ -154,8 +154,8 @@ key and seed cannot both be used.</li>
 <p>Philox is a 64-bit PRNG that uses a counter-based design based on weaker
 (and faster) versions of cryptographic functions <a class="footnote-reference" href="#id2" id="id1">[1]</a>. Instances using
 different values of the key produce independent sequences.  Philox has a
-period of <span class="math notranslate">\(2^{256} - 1\)</span> and supports arbitrary advancing and jumping
-the sequence in increments of <span class="math notranslate">\(2^{128}\)</span>. These features allow
+period of <span class="math notranslate nohighlight">\(2^{256} - 1\)</span> and supports arbitrary advancing and jumping
+the sequence in increments of <span class="math notranslate nohighlight">\(2^{128}\)</span>. These features allow
 multiple non-overlapping sequences to be generated.</p>
 <p><code class="docutils literal notranslate"><span class="pre">Philox</span></code> exposes no user-facing API except <code class="docutils literal notranslate"><span class="pre">generator</span></code>,
 <code class="docutils literal notranslate"><span class="pre">state</span></code>, <code class="docutils literal notranslate"><span class="pre">cffi</span></code> and <code class="docutils literal notranslate"><span class="pre">ctypes</span></code>. Designed for use in a
@@ -167,7 +167,7 @@ same results.</p>
 <p><strong>Parallel Features</strong></p>
 <p><code class="docutils literal notranslate"><span class="pre">Philox</span></code> can be used in parallel applications by
 calling the method <code class="docutils literal notranslate"><span class="pre">jump</span></code> which advances the state as-if
-<span class="math notranslate">\(2^{128}\)</span> random numbers have been generated. Alternatively,
+<span class="math notranslate nohighlight">\(2^{128}\)</span> random numbers have been generated. Alternatively,
 <code class="docutils literal notranslate"><span class="pre">advance</span></code> can be used to advance the counter for an abritrary number of
 positive steps in [0, 2**256). When using <code class="docutils literal notranslate"><span class="pre">jump</span></code>, all generators should
 be initialized with the same seed to ensure that the segments come from
@@ -325,7 +325,7 @@ Networking, Storage and Analysis (SC11), New York, NY: ACM, 2011.</td></tr>
         <li class="right" >
           <a href="generated/randomgen.pcg64.PCG64.ctypes.html" title="randomgen.pcg64.PCG64.ctypes"
              >previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../index.html">RandomGen v1.14.4 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">RandomGen v1.15.0 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="index.html" >Basic Random Number Generators</a> &#187;</li> 
       </ul>
     </div>

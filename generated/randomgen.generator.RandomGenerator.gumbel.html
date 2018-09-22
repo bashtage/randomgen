@@ -15,14 +15,14 @@
   <link rel="stylesheet" type="text/css" href="../_static/css/bootstrap-theme.min.css" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-    <title>randomgen.generator.RandomGenerator.gumbel &#8212; RandomGen v1.14.4 documentation</title>
+    <title>randomgen.generator.RandomGenerator.gumbel &#8212; RandomGen v1.15.0 documentation</title>
     <link rel="stylesheet" href="../_static/guzzle.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
-    <script type="text/javascript" src="../_static/documentation_options.js"></script>
+    <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
     <script type="text/javascript" src="../_static/jquery.js"></script>
     <script type="text/javascript" src="../_static/underscore.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
-    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="randomgen.generator.RandomGenerator.hypergeometric" href="randomgen.generator.RandomGenerator.hypergeometric.html" />
@@ -46,7 +46,7 @@
         <li class="right" >
           <a href="randomgen.generator.RandomGenerator.geometric.html" title="randomgen.generator.RandomGenerator.geometric"
              accesskey="P">previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../index.html">RandomGen v1.14.4 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">RandomGen v1.15.0 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="../generator.html" accesskey="U">Random Generator</a> &#187;</li> 
       </ul>
     </div>
@@ -57,7 +57,7 @@
       </div>
   <div id="left-column">
     <div class="sphinxsidebar"><a href="
-    ../index.html" class="text-logo">RandomGen v1.14.4</a>
+    ../index.html" class="text-logo">RandomGen v1.15.0</a>
 <div class="sidebar-block">
   <div class="sidebar-wrapper">
     <h2>Table Of Contents</h2>
@@ -137,9 +137,9 @@ Notes and References below.</p>
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>loc</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.6)"><em>float</em></a><em> or </em><em>array_like of floats</em><em>, </em><em>optional</em>) – The location of the mode of the distribution. Default is 0.</li>
-<li><strong>scale</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.6)"><em>float</em></a><em> or </em><em>array_like of floats</em><em>, </em><em>optional</em>) – The scale parameter of the distribution. Default is 1.</li>
-<li><strong>size</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.6)"><em>int</em></a><em> or </em><em>tuple of ints</em><em>, </em><em>optional</em>) – Output shape.  If the given shape is, e.g., <code class="docutils literal notranslate"><span class="pre">(m,</span> <span class="pre">n,</span> <span class="pre">k)</span></code>, then
+<li><strong>loc</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.7)"><em>float</em></a><em> or </em><em>array_like of floats</em><em>, </em><em>optional</em>) – The location of the mode of the distribution. Default is 0.</li>
+<li><strong>scale</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.7)"><em>float</em></a><em> or </em><em>array_like of floats</em><em>, </em><em>optional</em>) – The scale parameter of the distribution. Default is 1.</li>
+<li><strong>size</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a><em> or </em><em>tuple of ints</em><em>, </em><em>optional</em>) – Output shape.  If the given shape is, e.g., <code class="docutils literal notranslate"><span class="pre">(m,</span> <span class="pre">n,</span> <span class="pre">k)</span></code>, then
 <code class="docutils literal notranslate"><span class="pre">m</span> <span class="pre">*</span> <span class="pre">n</span> <span class="pre">*</span> <span class="pre">k</span></code> samples are drawn.  If size is <code class="docutils literal notranslate"><span class="pre">None</span></code> (default),
 a single value is returned if <code class="docutils literal notranslate"><span class="pre">loc</span></code> and <code class="docutils literal notranslate"><span class="pre">scale</span></code> are both scalars.
 Otherwise, <code class="docutils literal notranslate"><span class="pre">np.broadcast(loc,</span> <span class="pre">scale).size</span></code> samples are drawn.</li>
@@ -165,11 +165,11 @@ Value (GEV) distributions used in modeling extreme value problems.
 The Gumbel is a special case of the Extreme Value Type I distribution
 for maximums from distributions with “exponential-like” tails.</p>
 <p>The probability density for the Gumbel distribution is</p>
-<div class="math notranslate">
+<div class="math notranslate nohighlight">
 \[p(x) = \frac{e^{-(x - \mu)/ \beta}}{\beta} e^{ -e^{-(x - \mu)/
 \beta}},\]</div>
-<p>where <span class="math notranslate">\(\mu\)</span> is the mode, a location parameter, and
-<span class="math notranslate">\(\beta\)</span> is the scale parameter.</p>
+<p>where <span class="math notranslate nohighlight">\(\mu\)</span> is the mode, a location parameter, and
+<span class="math notranslate nohighlight">\(\beta\)</span> is the scale parameter.</p>
 <p>The Gumbel (named for German mathematician Emil Julius Gumbel) was used
 very early in the hydrology literature, for modeling the occurrence of
 flood events. It is also used for modeling maximum wind speed and
@@ -181,8 +181,8 @@ underestimated the frequency of extreme events.</p>
 <p>It is one of a class of extreme value distributions, the Generalized
 Extreme Value (GEV) distributions, which also includes the Weibull and
 Frechet.</p>
-<p>The function has a mean of <span class="math notranslate">\(\mu + 0.57721\beta\)</span> and a variance
-of <span class="math notranslate">\(\frac{\pi^2}{6}\beta^2\)</span>.</p>
+<p>The function has a mean of <span class="math notranslate nohighlight">\(\mu + 0.57721\beta\)</span> and a variance
+of <span class="math notranslate nohighlight">\(\frac{\pi^2}{6}\beta^2\)</span>.</p>
 <p class="rubric">References</p>
 <table class="docutils footnote" frame="void" id="id1" rules="none">
 <colgroup><col class="label" /><col /></colgroup>
@@ -208,7 +208,7 @@ Basel: Birkhauser Verlag, 2001.</td></tr>
 <p>Display the histogram of the samples, along with
 the probability density function:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">count</span><span class="p">,</span> <span class="n">bins</span><span class="p">,</span> <span class="n">ignored</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">hist</span><span class="p">(</span><span class="n">s</span><span class="p">,</span> <span class="mi">30</span><span class="p">,</span> <span class="n">normed</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">count</span><span class="p">,</span> <span class="n">bins</span><span class="p">,</span> <span class="n">ignored</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">hist</span><span class="p">(</span><span class="n">s</span><span class="p">,</span> <span class="mi">30</span><span class="p">,</span> <span class="n">density</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">bins</span><span class="p">,</span> <span class="p">(</span><span class="mi">1</span><span class="o">/</span><span class="n">beta</span><span class="p">)</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="p">(</span><span class="n">bins</span> <span class="o">-</span> <span class="n">mu</span><span class="p">)</span><span class="o">/</span><span class="n">beta</span><span class="p">)</span>
 <span class="gp">... </span>         <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span> <span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span> <span class="o">-</span><span class="p">(</span><span class="n">bins</span> <span class="o">-</span> <span class="n">mu</span><span class="p">)</span> <span class="o">/</span><span class="n">beta</span><span class="p">)</span> <span class="p">),</span>
 <span class="gp">... </span>         <span class="n">linewidth</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;r&#39;</span><span class="p">)</span>
@@ -223,7 +223,7 @@ and compare to a Gaussian:</p>
 <span class="gp">... </span>   <span class="n">a</span> <span class="o">=</span> <span class="n">randomgen</span><span class="o">.</span><span class="n">normal</span><span class="p">(</span><span class="n">mu</span><span class="p">,</span> <span class="n">beta</span><span class="p">,</span> <span class="mi">1000</span><span class="p">)</span>
 <span class="gp">... </span>   <span class="n">means</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">a</span><span class="o">.</span><span class="n">mean</span><span class="p">())</span>
 <span class="gp">... </span>   <span class="n">maxima</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">a</span><span class="o">.</span><span class="n">max</span><span class="p">())</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">count</span><span class="p">,</span> <span class="n">bins</span><span class="p">,</span> <span class="n">ignored</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">hist</span><span class="p">(</span><span class="n">maxima</span><span class="p">,</span> <span class="mi">30</span><span class="p">,</span> <span class="n">normed</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">count</span><span class="p">,</span> <span class="n">bins</span><span class="p">,</span> <span class="n">ignored</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">hist</span><span class="p">(</span><span class="n">maxima</span><span class="p">,</span> <span class="mi">30</span><span class="p">,</span> <span class="n">density</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">beta</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">std</span><span class="p">(</span><span class="n">maxima</span><span class="p">)</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="mi">6</span><span class="p">)</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">mu</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">maxima</span><span class="p">)</span> <span class="o">-</span> <span class="mf">0.57721</span><span class="o">*</span><span class="n">beta</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">bins</span><span class="p">,</span> <span class="p">(</span><span class="mi">1</span><span class="o">/</span><span class="n">beta</span><span class="p">)</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="p">(</span><span class="n">bins</span> <span class="o">-</span> <span class="n">mu</span><span class="p">)</span><span class="o">/</span><span class="n">beta</span><span class="p">)</span>
@@ -272,7 +272,7 @@ and compare to a Gaussian:</p>
         <li class="right" >
           <a href="randomgen.generator.RandomGenerator.geometric.html" title="randomgen.generator.RandomGenerator.geometric"
              >previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../index.html">RandomGen v1.14.4 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">RandomGen v1.15.0 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="../generator.html" >Random Generator</a> &#187;</li> 
       </ul>
     </div>

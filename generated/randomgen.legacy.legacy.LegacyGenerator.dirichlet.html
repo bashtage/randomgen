@@ -15,14 +15,14 @@
   <link rel="stylesheet" type="text/css" href="../_static/css/bootstrap-theme.min.css" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-    <title>randomgen.legacy.legacy.LegacyGenerator.dirichlet &#8212; RandomGen v1.14.4 documentation</title>
+    <title>randomgen.legacy.legacy.LegacyGenerator.dirichlet &#8212; RandomGen v1.15.0 documentation</title>
     <link rel="stylesheet" href="../_static/guzzle.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
-    <script type="text/javascript" src="../_static/documentation_options.js"></script>
+    <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
     <script type="text/javascript" src="../_static/jquery.js"></script>
     <script type="text/javascript" src="../_static/underscore.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
-    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="randomgen.legacy.legacy.LegacyGenerator.exponential" href="randomgen.legacy.legacy.LegacyGenerator.exponential.html" />
@@ -46,7 +46,7 @@
         <li class="right" >
           <a href="randomgen.legacy.legacy.LegacyGenerator.complex_normal.html" title="randomgen.legacy.legacy.LegacyGenerator.complex_normal"
              accesskey="P">previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../index.html">RandomGen v1.14.4 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">RandomGen v1.15.0 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="../legacy.html" accesskey="U">Legacy Random Generation</a> &#187;</li> 
       </ul>
     </div>
@@ -57,7 +57,7 @@
       </div>
   <div id="left-column">
     <div class="sphinxsidebar"><a href="
-    ../index.html" class="text-logo">RandomGen v1.14.4</a>
+    ../index.html" class="text-logo">RandomGen v1.15.0</a>
 <div class="sidebar-block">
   <div class="sidebar-wrapper">
     <h2>Table Of Contents</h2>
@@ -140,7 +140,7 @@ prior of a multinomial in Bayesian inference.</p>
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
 <li><strong>alpha</strong> (<em>array</em>) – Parameter of the distribution (k dimension for sample of
 dimension k).</li>
-<li><strong>size</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.6)"><em>int</em></a><em> or </em><em>tuple of ints</em><em>, </em><em>optional</em>) – Output shape.  If the given shape is, e.g., <code class="docutils literal notranslate"><span class="pre">(m,</span> <span class="pre">n,</span> <span class="pre">k)</span></code>, then
+<li><strong>size</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a><em> or </em><em>tuple of ints</em><em>, </em><em>optional</em>) – Output shape.  If the given shape is, e.g., <code class="docutils literal notranslate"><span class="pre">(m,</span> <span class="pre">n,</span> <span class="pre">k)</span></code>, then
 <code class="docutils literal notranslate"><span class="pre">m</span> <span class="pre">*</span> <span class="pre">n</span> <span class="pre">*</span> <span class="pre">k</span></code> samples are drawn.  Default is None, in which case a
 single value is returned.</li>
 </ul>
@@ -155,12 +155,12 @@ single value is returned.</li>
 </tbody>
 </table>
 <p class="rubric">Notes</p>
-<div class="math notranslate">
+<div class="math notranslate nohighlight">
 \[X \approx \prod_{i=1}^{k}{x^{\alpha_i-1}_i}\]</div>
 <p>Uses the following property for computation: for each dimension,
 draw a random sample y_i from a standard gamma generator of shape
 <cite>alpha_i</cite>, then
-<span class="math notranslate">\(X = \frac{1}{\sum_{i=1}^k{y_i}} (y_1, \ldots, y_n)\)</span> is
+<span class="math notranslate nohighlight">\(X = \frac{1}{\sum_{i=1}^k{y_i}} (y_1, \ldots, y_n)\)</span> is
 Dirichlet distributed.</p>
 <p class="rubric">References</p>
 <table class="docutils footnote" frame="void" id="id1" rules="none">
@@ -230,7 +230,7 @@ the pieces.</p>
         <li class="right" >
           <a href="randomgen.legacy.legacy.LegacyGenerator.complex_normal.html" title="randomgen.legacy.legacy.LegacyGenerator.complex_normal"
              >previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../index.html">RandomGen v1.14.4 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">RandomGen v1.15.0 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="../legacy.html" >Legacy Random Generation</a> &#187;</li> 
       </ul>
     </div>

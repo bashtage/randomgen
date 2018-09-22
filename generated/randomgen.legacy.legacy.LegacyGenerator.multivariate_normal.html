@@ -15,14 +15,14 @@
   <link rel="stylesheet" type="text/css" href="../_static/css/bootstrap-theme.min.css" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-    <title>randomgen.legacy.legacy.LegacyGenerator.multivariate_normal &#8212; RandomGen v1.14.4 documentation</title>
+    <title>randomgen.legacy.legacy.LegacyGenerator.multivariate_normal &#8212; RandomGen v1.15.0 documentation</title>
     <link rel="stylesheet" href="../_static/guzzle.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
-    <script type="text/javascript" src="../_static/documentation_options.js"></script>
+    <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
     <script type="text/javascript" src="../_static/jquery.js"></script>
     <script type="text/javascript" src="../_static/underscore.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
-    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="randomgen.legacy.legacy.LegacyGenerator.negative_binomial" href="randomgen.legacy.legacy.LegacyGenerator.negative_binomial.html" />
@@ -46,7 +46,7 @@
         <li class="right" >
           <a href="randomgen.legacy.legacy.LegacyGenerator.multinomial.html" title="randomgen.legacy.legacy.LegacyGenerator.multinomial"
              accesskey="P">previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../index.html">RandomGen v1.14.4 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">RandomGen v1.15.0 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="../legacy.html" accesskey="U">Legacy Random Generation</a> &#187;</li> 
       </ul>
     </div>
@@ -57,7 +57,7 @@
       </div>
   <div id="left-column">
     <div class="sphinxsidebar"><a href="
-    ../index.html" class="text-logo">RandomGen v1.14.4</a>
+    ../index.html" class="text-logo">RandomGen v1.15.0</a>
 <div class="sidebar-block">
   <div class="sidebar-wrapper">
     <h2>Table Of Contents</h2>
@@ -143,12 +143,12 @@ squared) of the one-dimensional normal distribution.</p>
 <li><strong>mean</strong> (<em>1-D array_like</em><em>, </em><em>of length N</em>) – Mean of the N-dimensional distribution.</li>
 <li><strong>cov</strong> (<em>2-D array_like</em><em>, </em><em>of shape</em><em> (</em><em>N</em><em>, </em><em>N</em><em>)</em>) – Covariance matrix of the distribution. It must be symmetric and
 positive-semidefinite for proper sampling.</li>
-<li><strong>size</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.6)"><em>int</em></a><em> or </em><em>tuple of ints</em><em>, </em><em>optional</em>) – Given a shape of, for example, <code class="docutils literal notranslate"><span class="pre">(m,n,k)</span></code>, <code class="docutils literal notranslate"><span class="pre">m*n*k</span></code> samples are
+<li><strong>size</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a><em> or </em><em>tuple of ints</em><em>, </em><em>optional</em>) – Given a shape of, for example, <code class="docutils literal notranslate"><span class="pre">(m,n,k)</span></code>, <code class="docutils literal notranslate"><span class="pre">m*n*k</span></code> samples are
 generated, and packed in an <cite>m</cite>-by-<cite>n</cite>-by-<cite>k</cite> arrangement.  Because
 each sample is <cite>N</cite>-dimensional, the output shape is <code class="docutils literal notranslate"><span class="pre">(m,n,k,N)</span></code>.
 If no shape is specified, a single (<cite>N</cite>-D) sample is returned.</li>
 <li><strong>check_valid</strong> (<em>{ 'warn'</em><em>, </em><em>'raise'</em><em>, </em><em>'ignore' }</em><em>, </em><em>optional</em>) – Behavior when the covariance matrix is not positive semidefinite.</li>
-<li><strong>tol</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.6)"><em>float</em></a><em>, </em><em>optional</em>) – Tolerance when checking the singular values in covariance matrix.</li>
+<li><strong>tol</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.7)"><em>float</em></a><em>, </em><em>optional</em>) – Tolerance when checking the singular values in covariance matrix.</li>
 </ul>
 </td>
 </tr>
@@ -171,9 +171,9 @@ analogous to the peak of the bell curve for the one-dimensional or
 univariate normal distribution.</p>
 <p>Covariance indicates the level to which two variables vary together.
 From the multivariate normal distribution, we draw N-dimensional
-samples, <span class="math notranslate">\(X = [x_1, x_2, ... x_N]\)</span>.  The covariance matrix
-element <span class="math notranslate">\(C_{ij}\)</span> is the covariance of <span class="math notranslate">\(x_i\)</span> and <span class="math notranslate">\(x_j\)</span>.
-The element <span class="math notranslate">\(C_{ii}\)</span> is the variance of <span class="math notranslate">\(x_i\)</span> (i.e. its
+samples, <span class="math notranslate nohighlight">\(X = [x_1, x_2, ... x_N]\)</span>.  The covariance matrix
+element <span class="math notranslate nohighlight">\(C_{ij}\)</span> is the covariance of <span class="math notranslate nohighlight">\(x_i\)</span> and <span class="math notranslate nohighlight">\(x_j\)</span>.
+The element <span class="math notranslate nohighlight">\(C_{ii}\)</span> is the variance of <span class="math notranslate nohighlight">\(x_i\)</span> (i.e. its
 “spread”).</p>
 <p>Instead of specifying the full covariance matrix, popular
 approximations include:</p>
@@ -267,7 +267,7 @@ standard deviation:</p>
         <li class="right" >
           <a href="randomgen.legacy.legacy.LegacyGenerator.multinomial.html" title="randomgen.legacy.legacy.LegacyGenerator.multinomial"
              >previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../index.html">RandomGen v1.14.4 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">RandomGen v1.15.0 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="../legacy.html" >Legacy Random Generation</a> &#187;</li> 
       </ul>
     </div>

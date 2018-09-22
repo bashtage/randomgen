@@ -15,14 +15,14 @@
   <link rel="stylesheet" type="text/css" href="../_static/css/bootstrap-theme.min.css" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-    <title>randomgen.generator.RandomGenerator.weibull &#8212; RandomGen v1.14.4 documentation</title>
+    <title>randomgen.generator.RandomGenerator.weibull &#8212; RandomGen v1.15.0 documentation</title>
     <link rel="stylesheet" href="../_static/guzzle.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
-    <script type="text/javascript" src="../_static/documentation_options.js"></script>
+    <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
     <script type="text/javascript" src="../_static/jquery.js"></script>
     <script type="text/javascript" src="../_static/underscore.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
-    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="randomgen.generator.RandomGenerator.zipf" href="randomgen.generator.RandomGenerator.zipf.html" />
@@ -46,7 +46,7 @@
         <li class="right" >
           <a href="randomgen.generator.RandomGenerator.wald.html" title="randomgen.generator.RandomGenerator.wald"
              accesskey="P">previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../index.html">RandomGen v1.14.4 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">RandomGen v1.15.0 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="../generator.html" accesskey="U">Random Generator</a> &#187;</li> 
       </ul>
     </div>
@@ -57,7 +57,7 @@
       </div>
   <div id="left-column">
     <div class="sphinxsidebar"><a href="
-    ../index.html" class="text-logo">RandomGen v1.14.4</a>
+    ../index.html" class="text-logo">RandomGen v1.15.0</a>
 <div class="sidebar-block">
   <div class="sidebar-wrapper">
     <h2>Table Of Contents</h2>
@@ -131,18 +131,18 @@
 <dd><p>Draw samples from a Weibull distribution.</p>
 <p>Draw samples from a 1-parameter Weibull distribution with the given
 shape parameter <cite>a</cite>.</p>
-<div class="math notranslate">
+<div class="math notranslate nohighlight">
 \[X = (-ln(U))^{1/a}\]</div>
 <p>Here, U is drawn from the uniform distribution over (0,1].</p>
 <p>The more common 2-parameter Weibull, including a scale parameter
-<span class="math notranslate">\(\lambda\)</span> is just <span class="math notranslate">\(X = \lambda(-ln(U))^{1/a}\)</span>.</p>
+<span class="math notranslate nohighlight">\(\lambda\)</span> is just <span class="math notranslate nohighlight">\(X = \lambda(-ln(U))^{1/a}\)</span>.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>a</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.6)"><em>float</em></a><em> or </em><em>array_like of floats</em>) – Shape of the distribution. Should be greater than zero.</li>
-<li><strong>size</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.6)"><em>int</em></a><em> or </em><em>tuple of ints</em><em>, </em><em>optional</em>) – Output shape.  If the given shape is, e.g., <code class="docutils literal notranslate"><span class="pre">(m,</span> <span class="pre">n,</span> <span class="pre">k)</span></code>, then
+<li><strong>a</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.7)"><em>float</em></a><em> or </em><em>array_like of floats</em>) – Shape of the distribution. Should be greater than zero.</li>
+<li><strong>size</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a><em> or </em><em>tuple of ints</em><em>, </em><em>optional</em>) – Output shape.  If the given shape is, e.g., <code class="docutils literal notranslate"><span class="pre">(m,</span> <span class="pre">n,</span> <span class="pre">k)</span></code>, then
 <code class="docutils literal notranslate"><span class="pre">m</span> <span class="pre">*</span> <span class="pre">n</span> <span class="pre">*</span> <span class="pre">k</span></code> samples are drawn.  If size is <code class="docutils literal notranslate"><span class="pre">None</span></code> (default),
 a single value is returned if <code class="docutils literal notranslate"><span class="pre">a</span></code> is a scalar.  Otherwise,
 <code class="docutils literal notranslate"><span class="pre">np.array(a).size</span></code> samples are drawn.</li>
@@ -168,12 +168,12 @@ distribution) is one of a class of Generalized Extreme Value
 (GEV) distributions used in modeling extreme value problems.
 This class includes the Gumbel and Frechet distributions.</p>
 <p>The probability density for the Weibull distribution is</p>
-<div class="math notranslate">
+<div class="math notranslate nohighlight">
 \[p(x) = \frac{a}
 {\lambda}(\frac{x}{\lambda})^{a-1}e^{-(x/\lambda)^a},\]</div>
-<p>where <span class="math notranslate">\(a\)</span> is the shape and <span class="math notranslate">\(\lambda\)</span> the scale.</p>
+<p>where <span class="math notranslate nohighlight">\(a\)</span> is the shape and <span class="math notranslate nohighlight">\(\lambda\)</span> the scale.</p>
 <p>The function has its peak (the mode) at
-<span class="math notranslate">\(\lambda(\frac{a-1}{a})^{1/a}\)</span>.</p>
+<span class="math notranslate nohighlight">\(\lambda(\frac{a-1}{a})^{1/a}\)</span>.</p>
 <p>When <code class="docutils literal notranslate"><span class="pre">a</span> <span class="pre">=</span> <span class="pre">1</span></code>, the Weibull distribution reduces to the exponential
 distribution.</p>
 <p class="rubric">References</p>
@@ -198,7 +198,7 @@ Wide Applicability”, Journal Of Applied Mechanics ASME Paper
 <colgroup><col class="label" /><col /></colgroup>
 <tbody valign="top">
 <tr><td class="label">[3]</td><td>Wikipedia, “Weibull distribution”,
-<a class="reference external" href="http://en.wikipedia.org/wiki/Weibull_distribution">http://en.wikipedia.org/wiki/Weibull_distribution</a></td></tr>
+<a class="reference external" href="https://en.wikipedia.org/wiki/Weibull_distribution">https://en.wikipedia.org/wiki/Weibull_distribution</a></td></tr>
 </tbody>
 </table>
 <p class="rubric">Examples</p>
@@ -259,7 +259,7 @@ the probability density function:</p>
         <li class="right" >
           <a href="randomgen.generator.RandomGenerator.wald.html" title="randomgen.generator.RandomGenerator.wald"
              >previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../index.html">RandomGen v1.14.4 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">RandomGen v1.15.0 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="../generator.html" >Random Generator</a> &#187;</li> 
       </ul>
     </div>

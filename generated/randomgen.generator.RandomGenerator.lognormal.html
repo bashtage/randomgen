@@ -15,14 +15,14 @@
   <link rel="stylesheet" type="text/css" href="../_static/css/bootstrap-theme.min.css" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-    <title>randomgen.generator.RandomGenerator.lognormal &#8212; RandomGen v1.14.4 documentation</title>
+    <title>randomgen.generator.RandomGenerator.lognormal &#8212; RandomGen v1.15.0 documentation</title>
     <link rel="stylesheet" href="../_static/guzzle.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
-    <script type="text/javascript" src="../_static/documentation_options.js"></script>
+    <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
     <script type="text/javascript" src="../_static/jquery.js"></script>
     <script type="text/javascript" src="../_static/underscore.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
-    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="randomgen.generator.RandomGenerator.logseries" href="randomgen.generator.RandomGenerator.logseries.html" />
@@ -46,7 +46,7 @@
         <li class="right" >
           <a href="randomgen.generator.RandomGenerator.logistic.html" title="randomgen.generator.RandomGenerator.logistic"
              accesskey="P">previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../index.html">RandomGen v1.14.4 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">RandomGen v1.15.0 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="../generator.html" accesskey="U">Random Generator</a> &#187;</li> 
       </ul>
     </div>
@@ -57,7 +57,7 @@
       </div>
   <div id="left-column">
     <div class="sphinxsidebar"><a href="
-    ../index.html" class="text-logo">RandomGen v1.14.4</a>
+    ../index.html" class="text-logo">RandomGen v1.15.0</a>
 <div class="sidebar-block">
   <div class="sidebar-wrapper">
     <h2>Table Of Contents</h2>
@@ -138,10 +138,10 @@ underlying normal distribution it is derived from.</p>
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>mean</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.6)"><em>float</em></a><em> or </em><em>array_like of floats</em><em>, </em><em>optional</em>) – Mean value of the underlying normal distribution. Default is 0.</li>
-<li><strong>sigma</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.6)"><em>float</em></a><em> or </em><em>array_like of floats</em><em>, </em><em>optional</em>) – Standard deviation of the underlying normal distribution. Should
+<li><strong>mean</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.7)"><em>float</em></a><em> or </em><em>array_like of floats</em><em>, </em><em>optional</em>) – Mean value of the underlying normal distribution. Default is 0.</li>
+<li><strong>sigma</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.7)"><em>float</em></a><em> or </em><em>array_like of floats</em><em>, </em><em>optional</em>) – Standard deviation of the underlying normal distribution. Should
 be greater than zero. Default is 1.</li>
-<li><strong>size</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.6)"><em>int</em></a><em> or </em><em>tuple of ints</em><em>, </em><em>optional</em>) – Output shape.  If the given shape is, e.g., <code class="docutils literal notranslate"><span class="pre">(m,</span> <span class="pre">n,</span> <span class="pre">k)</span></code>, then
+<li><strong>size</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a><em> or </em><em>tuple of ints</em><em>, </em><em>optional</em>) – Output shape.  If the given shape is, e.g., <code class="docutils literal notranslate"><span class="pre">(m,</span> <span class="pre">n,</span> <span class="pre">k)</span></code>, then
 <code class="docutils literal notranslate"><span class="pre">m</span> <span class="pre">*</span> <span class="pre">n</span> <span class="pre">*</span> <span class="pre">k</span></code> samples are drawn.  If size is <code class="docutils literal notranslate"><span class="pre">None</span></code> (default),
 a single value is returned if <code class="docutils literal notranslate"><span class="pre">mean</span></code> and <code class="docutils literal notranslate"><span class="pre">sigma</span></code> are both scalars.
 Otherwise, <code class="docutils literal notranslate"><span class="pre">np.broadcast(mean,</span> <span class="pre">sigma).size</span></code> samples are drawn.</li>
@@ -167,10 +167,10 @@ Otherwise, <code class="docutils literal notranslate"><span class="pre">np.broad
 <p>A variable <cite>x</cite> has a log-normal distribution if <cite>log(x)</cite> is normally
 distributed.  The probability density function for the log-normal
 distribution is:</p>
-<div class="math notranslate">
+<div class="math notranslate nohighlight">
 \[p(x) = \frac{1}{\sigma x \sqrt{2\pi}}
 e^{(-\frac{(ln(x)-\mu)^2}{2\sigma^2})}\]</div>
-<p>where <span class="math notranslate">\(\mu\)</span> is the mean and <span class="math notranslate">\(\sigma\)</span> is the standard
+<p>where <span class="math notranslate nohighlight">\(\mu\)</span> is the mean and <span class="math notranslate nohighlight">\(\sigma\)</span> is the standard
 deviation of the normally distributed logarithm of the variable.
 A log-normal distribution results if a random variable is the <em>product</em>
 of a large number of independent, identically-distributed variables in
@@ -184,7 +184,7 @@ variables.</p>
 <tr><td class="label">[1]</td><td>Limpert, E., Stahel, W. A., and Abbt, M., “Log-normal
 Distributions across the Sciences: Keys and Clues,”
 BioScience, Vol. 51, No. 5, May, 2001.
-<a class="reference external" href="http://stat.ethz.ch/~stahel/lognormal/bioscience.pdf">http://stat.ethz.ch/~stahel/lognormal/bioscience.pdf</a></td></tr>
+<a class="reference external" href="https://stat.ethz.ch/~stahel/lognormal/bioscience.pdf">https://stat.ethz.ch/~stahel/lognormal/bioscience.pdf</a></td></tr>
 </tbody>
 </table>
 <table class="docutils footnote" frame="void" id="id2" rules="none">
@@ -203,7 +203,7 @@ Values,” Basel: Birkhauser Verlag, 2001, pp. 31-32.</td></tr>
 <p>Display the histogram of the samples, along with
 the probability density function:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">count</span><span class="p">,</span> <span class="n">bins</span><span class="p">,</span> <span class="n">ignored</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">hist</span><span class="p">(</span><span class="n">s</span><span class="p">,</span> <span class="mi">100</span><span class="p">,</span> <span class="n">normed</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">align</span><span class="o">=</span><span class="s1">&#39;mid&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">count</span><span class="p">,</span> <span class="n">bins</span><span class="p">,</span> <span class="n">ignored</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">hist</span><span class="p">(</span><span class="n">s</span><span class="p">,</span> <span class="mi">100</span><span class="p">,</span> <span class="n">density</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">align</span><span class="o">=</span><span class="s1">&#39;mid&#39;</span><span class="p">)</span>
 </pre></div>
 </div>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="nb">min</span><span class="p">(</span><span class="n">bins</span><span class="p">),</span> <span class="nb">max</span><span class="p">(</span><span class="n">bins</span><span class="p">),</span> <span class="mi">10000</span><span class="p">)</span>
@@ -228,7 +228,7 @@ function.</p>
 </pre></div>
 </div>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">b</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">b</span><span class="p">)</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="n">b</span><span class="p">)</span> <span class="c1"># scale values to be positive</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">count</span><span class="p">,</span> <span class="n">bins</span><span class="p">,</span> <span class="n">ignored</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">hist</span><span class="p">(</span><span class="n">b</span><span class="p">,</span> <span class="mi">100</span><span class="p">,</span> <span class="n">normed</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">align</span><span class="o">=</span><span class="s1">&#39;mid&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">count</span><span class="p">,</span> <span class="n">bins</span><span class="p">,</span> <span class="n">ignored</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">hist</span><span class="p">(</span><span class="n">b</span><span class="p">,</span> <span class="mi">100</span><span class="p">,</span> <span class="n">density</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">align</span><span class="o">=</span><span class="s1">&#39;mid&#39;</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">sigma</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">std</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">b</span><span class="p">))</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">mu</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">b</span><span class="p">))</span>
 </pre></div>
@@ -279,7 +279,7 @@ function.</p>
         <li class="right" >
           <a href="randomgen.generator.RandomGenerator.logistic.html" title="randomgen.generator.RandomGenerator.logistic"
              >previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../index.html">RandomGen v1.14.4 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">RandomGen v1.15.0 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="../generator.html" >Random Generator</a> &#187;</li> 
       </ul>
     </div>

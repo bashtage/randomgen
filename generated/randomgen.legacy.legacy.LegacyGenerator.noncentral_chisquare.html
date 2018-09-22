@@ -15,14 +15,14 @@
   <link rel="stylesheet" type="text/css" href="../_static/css/bootstrap-theme.min.css" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-    <title>randomgen.legacy.legacy.LegacyGenerator.noncentral_chisquare &#8212; RandomGen v1.14.4 documentation</title>
+    <title>randomgen.legacy.legacy.LegacyGenerator.noncentral_chisquare &#8212; RandomGen v1.15.0 documentation</title>
     <link rel="stylesheet" href="../_static/guzzle.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
-    <script type="text/javascript" src="../_static/documentation_options.js"></script>
+    <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
     <script type="text/javascript" src="../_static/jquery.js"></script>
     <script type="text/javascript" src="../_static/underscore.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
-    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="randomgen.legacy.legacy.LegacyGenerator.noncentral_f" href="randomgen.legacy.legacy.LegacyGenerator.noncentral_f.html" />
@@ -46,7 +46,7 @@
         <li class="right" >
           <a href="randomgen.legacy.legacy.LegacyGenerator.negative_binomial.html" title="randomgen.legacy.legacy.LegacyGenerator.negative_binomial"
              accesskey="P">previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../index.html">RandomGen v1.14.4 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">RandomGen v1.15.0 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="../legacy.html" accesskey="U">Legacy Random Generation</a> &#187;</li> 
       </ul>
     </div>
@@ -57,7 +57,7 @@
       </div>
   <div id="left-column">
     <div class="sphinxsidebar"><a href="
-    ../index.html" class="text-logo">RandomGen v1.14.4</a>
+    ../index.html" class="text-logo">RandomGen v1.15.0</a>
 <div class="sidebar-block">
   <div class="sidebar-wrapper">
     <h2>Table Of Contents</h2>
@@ -129,17 +129,17 @@
 <dt id="randomgen.legacy.legacy.LegacyGenerator.noncentral_chisquare">
 <code class="descclassname">LegacyGenerator.</code><code class="descname">noncentral_chisquare</code><span class="sig-paren">(</span><em>df</em>, <em>nonc</em>, <em>size=None</em><span class="sig-paren">)</span><a class="headerlink" href="#randomgen.legacy.legacy.LegacyGenerator.noncentral_chisquare" title="Permalink to this definition">¶</a></dt>
 <dd><p>Draw samples from a noncentral chi-square distribution.</p>
-<p>The noncentral <span class="math notranslate">\(\chi^2\)</span> distribution is a generalisation of
-the <span class="math notranslate">\(\chi^2\)</span> distribution.</p>
+<p>The noncentral <span class="math notranslate nohighlight">\(\chi^2\)</span> distribution is a generalisation of
+the <span class="math notranslate nohighlight">\(\chi^2\)</span> distribution.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>df</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.6)"><em>int</em></a><em> or </em><em>array_like of ints</em>) – Degrees of freedom, should be &gt; 0 as of NumPy 1.10.0,
+<li><strong>df</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a><em> or </em><em>array_like of ints</em>) – Degrees of freedom, should be &gt; 0 as of NumPy 1.10.0,
 should be &gt; 1 for earlier versions.</li>
-<li><strong>nonc</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.6)"><em>float</em></a><em> or </em><em>array_like of floats</em>) – Non-centrality, should be non-negative.</li>
-<li><strong>size</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.6)"><em>int</em></a><em> or </em><em>tuple of ints</em><em>, </em><em>optional</em>) – Output shape.  If the given shape is, e.g., <code class="docutils literal notranslate"><span class="pre">(m,</span> <span class="pre">n,</span> <span class="pre">k)</span></code>, then
+<li><strong>nonc</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.7)"><em>float</em></a><em> or </em><em>array_like of floats</em>) – Non-centrality, should be non-negative.</li>
+<li><strong>size</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a><em> or </em><em>tuple of ints</em><em>, </em><em>optional</em>) – Output shape.  If the given shape is, e.g., <code class="docutils literal notranslate"><span class="pre">(m,</span> <span class="pre">n,</span> <span class="pre">k)</span></code>, then
 <code class="docutils literal notranslate"><span class="pre">m</span> <span class="pre">*</span> <span class="pre">n</span> <span class="pre">*</span> <span class="pre">k</span></code> samples are drawn.  If size is <code class="docutils literal notranslate"><span class="pre">None</span></code> (default),
 a single value is returned if <code class="docutils literal notranslate"><span class="pre">df</span></code> and <code class="docutils literal notranslate"><span class="pre">nonc</span></code> are both scalars.
 Otherwise, <code class="docutils literal notranslate"><span class="pre">np.broadcast(df,</span> <span class="pre">nonc).size</span></code> samples are drawn.</li>
@@ -157,11 +157,11 @@ Otherwise, <code class="docutils literal notranslate"><span class="pre">np.broad
 <p class="rubric">Notes</p>
 <p>The probability density function for the noncentral Chi-square
 distribution is</p>
-<div class="math notranslate">
+<div class="math notranslate nohighlight">
 \[P(x;df,nonc) = \sum^{\infty}_{i=0}
 \frac{e^{-nonc/2}(nonc/2)^{i}}{i!}
 \P_{Y_{df+2i}}(x),\]</div>
-<p>where <span class="math notranslate">\(Y_{q}\)</span> is the Chi-square with q degrees of freedom.</p>
+<p>where <span class="math notranslate nohighlight">\(Y_{q}\)</span> is the Chi-square with q degrees of freedom.</p>
 <p>In Delhi (2007), it is noted that the noncentral chi-square is
 useful in bombing and coverage problems, the probability of
 killing the point target given by the noncentral chi-squared
@@ -186,7 +186,7 @@ Volume 15, Number 1 / December, 1970.</td></tr>
 <p>Draw values from the distribution and plot the histogram</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">values</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">hist</span><span class="p">(</span><span class="n">randomgen</span><span class="o">.</span><span class="n">noncentral_chisquare</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">20</span><span class="p">,</span> <span class="mi">100000</span><span class="p">),</span>
-<span class="gp">... </span>                  <span class="n">bins</span><span class="o">=</span><span class="mi">200</span><span class="p">,</span> <span class="n">normed</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="gp">... </span>                  <span class="n">bins</span><span class="o">=</span><span class="mi">200</span><span class="p">,</span> <span class="n">density</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
 </pre></div>
 </div>
@@ -194,9 +194,9 @@ Volume 15, Number 1 / December, 1970.</td></tr>
 and compare to a chisquare.</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">()</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">values</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">hist</span><span class="p">(</span><span class="n">randomgen</span><span class="o">.</span><span class="n">noncentral_chisquare</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="o">.</span><span class="mi">0000001</span><span class="p">,</span> <span class="mi">100000</span><span class="p">),</span>
-<span class="gp">... </span>                  <span class="n">bins</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mf">0.</span><span class="p">,</span> <span class="mi">25</span><span class="p">,</span> <span class="o">.</span><span class="mi">1</span><span class="p">),</span> <span class="n">normed</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="gp">... </span>                  <span class="n">bins</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mf">0.</span><span class="p">,</span> <span class="mi">25</span><span class="p">,</span> <span class="o">.</span><span class="mi">1</span><span class="p">),</span> <span class="n">density</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">values2</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">hist</span><span class="p">(</span><span class="n">randomgen</span><span class="o">.</span><span class="n">chisquare</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">100000</span><span class="p">),</span>
-<span class="gp">... </span>                   <span class="n">bins</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mf">0.</span><span class="p">,</span> <span class="mi">25</span><span class="p">,</span> <span class="o">.</span><span class="mi">1</span><span class="p">),</span> <span class="n">normed</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="gp">... </span>                   <span class="n">bins</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mf">0.</span><span class="p">,</span> <span class="mi">25</span><span class="p">,</span> <span class="o">.</span><span class="mi">1</span><span class="p">),</span> <span class="n">density</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">values</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="mi">0</span><span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="n">values</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">-</span><span class="n">values2</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="s1">&#39;ob&#39;</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
 </pre></div>
@@ -205,7 +205,7 @@ and compare to a chisquare.</p>
 distribution.</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">()</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">values</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">hist</span><span class="p">(</span><span class="n">randomgen</span><span class="o">.</span><span class="n">noncentral_chisquare</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">20</span><span class="p">,</span> <span class="mi">100000</span><span class="p">),</span>
-<span class="gp">... </span>                  <span class="n">bins</span><span class="o">=</span><span class="mi">200</span><span class="p">,</span> <span class="n">normed</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="gp">... </span>                  <span class="n">bins</span><span class="o">=</span><span class="mi">200</span><span class="p">,</span> <span class="n">density</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
 </pre></div>
 </div>
@@ -246,7 +246,7 @@ distribution.</p>
         <li class="right" >
           <a href="randomgen.legacy.legacy.LegacyGenerator.negative_binomial.html" title="randomgen.legacy.legacy.LegacyGenerator.negative_binomial"
              >previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../index.html">RandomGen v1.14.4 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">RandomGen v1.15.0 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="../legacy.html" >Legacy Random Generation</a> &#187;</li> 
       </ul>
     </div>

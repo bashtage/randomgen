@@ -15,14 +15,14 @@
   <link rel="stylesheet" type="text/css" href="../_static/css/bootstrap-theme.min.css" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-    <title>randomgen.legacy.legacy.LegacyGenerator.chisquare &#8212; RandomGen v1.14.4 documentation</title>
+    <title>randomgen.legacy.legacy.LegacyGenerator.chisquare &#8212; RandomGen v1.15.0 documentation</title>
     <link rel="stylesheet" href="../_static/guzzle.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
-    <script type="text/javascript" src="../_static/documentation_options.js"></script>
+    <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
     <script type="text/javascript" src="../_static/jquery.js"></script>
     <script type="text/javascript" src="../_static/underscore.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
-    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="randomgen.legacy.legacy.LegacyGenerator.complex_normal" href="randomgen.legacy.legacy.LegacyGenerator.complex_normal.html" />
@@ -46,7 +46,7 @@
         <li class="right" >
           <a href="randomgen.legacy.legacy.LegacyGenerator.binomial.html" title="randomgen.legacy.legacy.LegacyGenerator.binomial"
              accesskey="P">previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../index.html">RandomGen v1.14.4 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">RandomGen v1.15.0 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="../legacy.html" accesskey="U">Legacy Random Generation</a> &#187;</li> 
       </ul>
     </div>
@@ -57,7 +57,7 @@
       </div>
   <div id="left-column">
     <div class="sphinxsidebar"><a href="
-    ../index.html" class="text-logo">RandomGen v1.14.4</a>
+    ../index.html" class="text-logo">RandomGen v1.15.0</a>
 <div class="sidebar-block">
   <div class="sidebar-wrapper">
     <h2>Table Of Contents</h2>
@@ -138,8 +138,8 @@ is often used in hypothesis testing.</p>
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>df</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.6)"><em>int</em></a><em> or </em><em>array_like of ints</em>) – Number of degrees of freedom.</li>
-<li><strong>size</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.6)"><em>int</em></a><em> or </em><em>tuple of ints</em><em>, </em><em>optional</em>) – Output shape.  If the given shape is, e.g., <code class="docutils literal notranslate"><span class="pre">(m,</span> <span class="pre">n,</span> <span class="pre">k)</span></code>, then
+<li><strong>df</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a><em> or </em><em>array_like of ints</em>) – Number of degrees of freedom.</li>
+<li><strong>size</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a><em> or </em><em>tuple of ints</em><em>, </em><em>optional</em>) – Output shape.  If the given shape is, e.g., <code class="docutils literal notranslate"><span class="pre">(m,</span> <span class="pre">n,</span> <span class="pre">k)</span></code>, then
 <code class="docutils literal notranslate"><span class="pre">m</span> <span class="pre">*</span> <span class="pre">n</span> <span class="pre">*</span> <span class="pre">k</span></code> samples are drawn.  If size is <code class="docutils literal notranslate"><span class="pre">None</span></code> (default),
 a single value is returned if <code class="docutils literal notranslate"><span class="pre">df</span></code> is a scalar.  Otherwise,
 <code class="docutils literal notranslate"><span class="pre">np.array(df).size</span></code> samples are drawn.</li>
@@ -152,7 +152,7 @@ a single value is returned if <code class="docutils literal notranslate"><span c
 <tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first">ndarray or scalar</p>
 </td>
 </tr>
-<tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><p class="first last"><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#ValueError" title="(in Python v3.6)"><code class="xref py py-exc docutils literal notranslate"><span class="pre">ValueError</span></code></a> – When <cite>df</cite> &lt;= 0 or when an inappropriate <cite>size</cite> (e.g. <code class="docutils literal notranslate"><span class="pre">size=-1</span></code>)
+<tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><p class="first last"><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#ValueError" title="(in Python v3.7)"><code class="xref py py-exc docutils literal notranslate"><span class="pre">ValueError</span></code></a> – When <cite>df</cite> &lt;= 0 or when an inappropriate <cite>size</cite> (e.g. <code class="docutils literal notranslate"><span class="pre">size=-1</span></code>)
 is given.</p>
 </td>
 </tr>
@@ -161,17 +161,17 @@ is given.</p>
 <p class="rubric">Notes</p>
 <p>The variable obtained by summing the squares of <cite>df</cite> independent,
 standard normally distributed random variables:</p>
-<div class="math notranslate">
+<div class="math notranslate nohighlight">
 \[Q = \sum_{i=0}^{\mathtt{df}} X^2_i\]</div>
 <p>is chi-square distributed, denoted</p>
-<div class="math notranslate">
+<div class="math notranslate nohighlight">
 \[Q \sim \chi^2_k.\]</div>
 <p>The probability density function of the chi-squared distribution is</p>
-<div class="math notranslate">
+<div class="math notranslate nohighlight">
 \[p(x) = \frac{(1/2)^{k/2}}{\Gamma(k/2)}
 x^{k/2 - 1} e^{-x/2},\]</div>
-<p>where <span class="math notranslate">\(\Gamma\)</span> is the gamma function,</p>
-<div class="math notranslate">
+<p>where <span class="math notranslate nohighlight">\(\Gamma\)</span> is the gamma function,</p>
+<div class="math notranslate nohighlight">
 \[\Gamma(x) = \int_0^{-\infty} t^{x - 1} e^{-t} dt.\]</div>
 <p class="rubric">References</p>
 <table class="docutils footnote" frame="void" id="id1" rules="none">
@@ -223,7 +223,7 @@ x^{k/2 - 1} e^{-x/2},\]</div>
         <li class="right" >
           <a href="randomgen.legacy.legacy.LegacyGenerator.binomial.html" title="randomgen.legacy.legacy.LegacyGenerator.binomial"
              >previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../index.html">RandomGen v1.14.4 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">RandomGen v1.15.0 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="../legacy.html" >Legacy Random Generation</a> &#187;</li> 
       </ul>
     </div>

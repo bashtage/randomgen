@@ -15,14 +15,14 @@
   <link rel="stylesheet" type="text/css" href="../_static/css/bootstrap-theme.min.css" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-    <title>Mersenne Twister (MT19937) &#8212; RandomGen v1.14.4 documentation</title>
+    <title>Mersenne Twister (MT19937) &#8212; RandomGen v1.15.0 documentation</title>
     <link rel="stylesheet" href="../_static/guzzle.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
-    <script type="text/javascript" src="../_static/documentation_options.js"></script>
+    <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
     <script type="text/javascript" src="../_static/jquery.js"></script>
     <script type="text/javascript" src="../_static/underscore.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
-    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="randomgen.mt19937.MT19937.seed" href="generated/randomgen.mt19937.MT19937.seed.html" />
@@ -46,7 +46,7 @@
         <li class="right" >
           <a href="generated/randomgen.dsfmt.DSFMT.ctypes.html" title="randomgen.dsfmt.DSFMT.ctypes"
              accesskey="P">previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../index.html">RandomGen v1.14.4 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">RandomGen v1.15.0 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="index.html" accesskey="U">Basic Random Number Generators</a> &#187;</li> 
       </ul>
     </div>
@@ -57,7 +57,7 @@
       </div>
   <div id="left-column">
     <div class="sphinxsidebar"><a href="
-    ../index.html" class="text-logo">RandomGen v1.14.4</a>
+    ../index.html" class="text-logo">RandomGen v1.15.0</a>
 <div class="sidebar-block">
   <div class="sidebar-wrapper">
     <h2>Table Of Contents</h2>
@@ -131,7 +131,7 @@
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>seed</strong> (<em>{None</em><em>, </em><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.6)"><em>int</em></a><em>, </em><em>array_like}</em><em>, </em><em>optional</em>) – Random seed used to initialize the pseudo-random number generator.  Can
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>seed</strong> (<em>{None</em><em>, </em><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a><em>, </em><em>array_like}</em><em>, </em><em>optional</em>) – Random seed used to initialize the pseudo-random number generator.  Can
 be any integer between 0 and 2**32 - 1 inclusive, an array (or other
 sequence) of such integers, or <code class="docutils literal notranslate"><span class="pre">None</span></code> (the default).  If <cite>seed</cite> is
 <code class="docutils literal notranslate"><span class="pre">None</span></code>, then will attempt to read data from <code class="docutils literal notranslate"><span class="pre">/dev/urandom</span></code>
@@ -163,7 +163,7 @@ Incorrect values will be fixed and the version in which the fix was
 made will be noted in the relevant docstring.</p>
 <p><strong>Parallel Features</strong></p>
 <p><code class="docutils literal notranslate"><span class="pre">MT19937</span></code> can be used in parallel applications by
-calling the method <code class="docutils literal notranslate"><span class="pre">jump</span></code> which advances the state as-if <span class="math notranslate">\(2^{128}\)</span>
+calling the method <code class="docutils literal notranslate"><span class="pre">jump</span></code> which advances the state as-if <span class="math notranslate nohighlight">\(2^{128}\)</span>
 random numbers have been generated (<a class="footnote-reference" href="#id4" id="id2">[1]</a>, <a class="footnote-reference" href="#id5" id="id3">[2]</a>). This allows the original sequence to
 be split so that distinct segments can be used in each worker process.  All
 generators should be initialized with the same seed to ensure that the
@@ -294,7 +294,7 @@ No. 3, Summer 2008, pp. 385-390.</td></tr>
         <li class="right" >
           <a href="generated/randomgen.dsfmt.DSFMT.ctypes.html" title="randomgen.dsfmt.DSFMT.ctypes"
              >previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../index.html">RandomGen v1.14.4 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">RandomGen v1.15.0 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="index.html" >Basic Random Number Generators</a> &#187;</li> 
       </ul>
     </div>

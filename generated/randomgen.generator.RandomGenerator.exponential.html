@@ -15,14 +15,14 @@
   <link rel="stylesheet" type="text/css" href="../_static/css/bootstrap-theme.min.css" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-    <title>randomgen.generator.RandomGenerator.exponential &#8212; RandomGen v1.14.4 documentation</title>
+    <title>randomgen.generator.RandomGenerator.exponential &#8212; RandomGen v1.15.0 documentation</title>
     <link rel="stylesheet" href="../_static/guzzle.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
-    <script type="text/javascript" src="../_static/documentation_options.js"></script>
+    <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
     <script type="text/javascript" src="../_static/jquery.js"></script>
     <script type="text/javascript" src="../_static/underscore.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
-    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="randomgen.generator.RandomGenerator.f" href="randomgen.generator.RandomGenerator.f.html" />
@@ -46,7 +46,7 @@
         <li class="right" >
           <a href="randomgen.generator.RandomGenerator.dirichlet.html" title="randomgen.generator.RandomGenerator.dirichlet"
              accesskey="P">previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../index.html">RandomGen v1.14.4 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">RandomGen v1.15.0 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="../generator.html" accesskey="U">Random Generator</a> &#187;</li> 
       </ul>
     </div>
@@ -57,7 +57,7 @@
       </div>
   <div id="left-column">
     <div class="sphinxsidebar"><a href="
-    ../index.html" class="text-logo">RandomGen v1.14.4</a>
+    ../index.html" class="text-logo">RandomGen v1.15.0</a>
 <div class="sidebar-block">
   <div class="sidebar-wrapper">
     <h2>Table Of Contents</h2>
@@ -130,10 +130,10 @@
 <code class="descclassname">RandomGenerator.</code><code class="descname">exponential</code><span class="sig-paren">(</span><em>scale=1.0</em>, <em>size=None</em><span class="sig-paren">)</span><a class="headerlink" href="#randomgen.generator.RandomGenerator.exponential" title="Permalink to this definition">¶</a></dt>
 <dd><p>Draw samples from an exponential distribution.</p>
 <p>Its probability density function is</p>
-<div class="math notranslate">
+<div class="math notranslate nohighlight">
 \[f(x; \frac{1}{\beta}) = \frac{1}{\beta} \exp(-\frac{x}{\beta}),\]</div>
-<p>for <code class="docutils literal notranslate"><span class="pre">x</span> <span class="pre">&gt;</span> <span class="pre">0</span></code> and 0 elsewhere. <span class="math notranslate">\(\beta\)</span> is the scale parameter,
-which is the inverse of the rate parameter <span class="math notranslate">\(\lambda = 1/\beta\)</span>.
+<p>for <code class="docutils literal notranslate"><span class="pre">x</span> <span class="pre">&gt;</span> <span class="pre">0</span></code> and 0 elsewhere. <span class="math notranslate nohighlight">\(\beta\)</span> is the scale parameter,
+which is the inverse of the rate parameter <span class="math notranslate nohighlight">\(\lambda = 1/\beta\)</span>.
 The rate parameter is an alternative, widely used parameterization
 of the exponential distribution <a class="footnote-reference" href="#id6" id="id1">[3]</a>.</p>
 <p>The exponential distribution is a continuous analogue of the
@@ -145,8 +145,8 @@ between page requests to Wikipedia <a class="footnote-reference" href="#id5" id=
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>scale</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.6)"><em>float</em></a><em> or </em><em>array_like of floats</em>) – The scale parameter, <span class="math notranslate">\(\beta = 1/\lambda\)</span>.</li>
-<li><strong>size</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.6)"><em>int</em></a><em> or </em><em>tuple of ints</em><em>, </em><em>optional</em>) – Output shape.  If the given shape is, e.g., <code class="docutils literal notranslate"><span class="pre">(m,</span> <span class="pre">n,</span> <span class="pre">k)</span></code>, then
+<li><strong>scale</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.7)"><em>float</em></a><em> or </em><em>array_like of floats</em>) – The scale parameter, <span class="math notranslate nohighlight">\(\beta = 1/\lambda\)</span>.</li>
+<li><strong>size</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a><em> or </em><em>tuple of ints</em><em>, </em><em>optional</em>) – Output shape.  If the given shape is, e.g., <code class="docutils literal notranslate"><span class="pre">(m,</span> <span class="pre">n,</span> <span class="pre">k)</span></code>, then
 <code class="docutils literal notranslate"><span class="pre">m</span> <span class="pre">*</span> <span class="pre">n</span> <span class="pre">*</span> <span class="pre">k</span></code> samples are drawn.  If size is <code class="docutils literal notranslate"><span class="pre">None</span></code> (default),
 a single value is returned if <code class="docutils literal notranslate"><span class="pre">scale</span></code> is a scalar.  Otherwise,
 <code class="docutils literal notranslate"><span class="pre">np.array(scale).size</span></code> samples are drawn.</li>
@@ -173,14 +173,14 @@ Random Signal Principles”, 4th ed, 2001, p. 57.</td></tr>
 <colgroup><col class="label" /><col /></colgroup>
 <tbody valign="top">
 <tr><td class="label"><a class="fn-backref" href="#id3">[2]</a></td><td>Wikipedia, “Poisson process”,
-<a class="reference external" href="http://en.wikipedia.org/wiki/Poisson_process">http://en.wikipedia.org/wiki/Poisson_process</a></td></tr>
+<a class="reference external" href="https://en.wikipedia.org/wiki/Poisson_process">https://en.wikipedia.org/wiki/Poisson_process</a></td></tr>
 </tbody>
 </table>
 <table class="docutils footnote" frame="void" id="id6" rules="none">
 <colgroup><col class="label" /><col /></colgroup>
 <tbody valign="top">
 <tr><td class="label"><a class="fn-backref" href="#id1">[3]</a></td><td>Wikipedia, “Exponential distribution”,
-<a class="reference external" href="http://en.wikipedia.org/wiki/Exponential_distribution">http://en.wikipedia.org/wiki/Exponential_distribution</a></td></tr>
+<a class="reference external" href="https://en.wikipedia.org/wiki/Exponential_distribution">https://en.wikipedia.org/wiki/Exponential_distribution</a></td></tr>
 </tbody>
 </table>
 </dd></dl>
@@ -220,7 +220,7 @@ Random Signal Principles”, 4th ed, 2001, p. 57.</td></tr>
         <li class="right" >
           <a href="randomgen.generator.RandomGenerator.dirichlet.html" title="randomgen.generator.RandomGenerator.dirichlet"
              >previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../index.html">RandomGen v1.14.4 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">RandomGen v1.15.0 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="../generator.html" >Random Generator</a> &#187;</li> 
       </ul>
     </div>
