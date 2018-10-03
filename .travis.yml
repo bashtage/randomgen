@@ -21,17 +21,17 @@ matrix:
   include:
     - os: linux
       env: [PYTHON=2.7, NUMPY=1.10, CYTHON=0.26]
-    - os: linux
-      env: [PYTHON=3.5, NUMPY=1.11]
+#    - os: linux
+#      env: [PYTHON=3.5, NUMPY=1.11]
     - os: linux
       env: [PYTHON=3.6, NUMPY=1.13, CYTHON=0.27]
-    - os: linux
-      env: [PYTHON=3.6, NUMPY=1.13, CYTHON=0.26]
-    - os: linux
-      env: [PYTHON=3.6, DOCBUILD=true]
-    - os: osx
-      language: generic
-      env: [PYTHON=3.6]
+#    - os: linux
+#      env: [PYTHON=3.6, NUMPY=1.13, CYTHON=0.26]
+#    - os: linux
+#      env: [PYTHON=3.6, DOCBUILD=true]
+#    - os: osx
+#      language: generic
+#      env: [PYTHON=3.6]
 
 
 before_install:
