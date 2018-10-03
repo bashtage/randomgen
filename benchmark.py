@@ -93,6 +93,22 @@ def timer_32bit():
     run_timer(dist, command, command_numpy, SETUP, '32-bit unsigned integers')
 
 
+def timer_32bit_bounded():
+    # info = np.iinfo(np.uint32)
+    # min, max = info.min, info.max
+    min, max = 0, 1500
+
+    dist = 'random_uintegers'
+
+    command = 'rg.randint({min}, {max}+1, 1000000, dtype=np.uint32)'
+    command = command.format(min=min, max=max)
+
+    command_numpy = 'rg.randint({min}, {max}+1, 1000000, dtype=np.uint32)'
+    command_numpy = command_numpy.format(min=min, max=max)
+
+    run_timer(dist, command, command_numpy, SETUP, '32-bit bounded unsigned integers')
+
+
 def timer_64bit():
     info = np.iinfo(np.uint64)
     min, max = info.min, info.max
@@ -121,5 +137,6 @@ if __name__ == '__main__':
     if args.full:
         timer_raw()
         timer_32bit()
+        timer_32bit_bounded()
         timer_64bit()
         timer_normal_zig()

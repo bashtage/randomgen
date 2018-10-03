@@ -2,6 +2,12 @@
 #include "ziggurat.h"
 #include "ziggurat_constants.h"
 
+
+/* Only uncomment one of the defines below to choose which interval generator to test. */
+/* #define USE_MASK_BASED_GENERATOR 1 */
+#define USE_LEMIRE_INTERVAL_GENERATOR 1
+
+
 /* Random generators for external use */
 float random_float(brng_t *brng_state) { return next_float(brng_state); }
 
@@ -1225,21 +1231,47 @@ uint64_t random_bounded_uint64(brng_t *brng_state, uint64_t off, uint64_t rng,
   return bounded_uint64(brng_state, off, rng, mask);
 }
 
-static NPY_INLINE uint32_t bounded_uint32(brng_t *brng_state, uint32_t off,
-                                          uint32_t rng, uint32_t mask) {
+static NPY_INLINE uint32_t bounded_mask_uint32(brng_t *brng_state, uint32_t off,
+                                               uint32_t rng, uint32_t mask) {
+  /*
+   * The buffer and buffer count are not used here but are included to allow
+   * this function to be templated with the similar uint8 and uint16
+   * functions
+   */
+  uint32_t val;
+
+  while ((val = (next_uint32(brng_state) & mask)) > rng)
+    ;
+  return off + val;
+}
+
+static NPY_INLINE uint32_t bounded_lemire_uint32(brng_t *brng_state, uint32_t off,
+                                                 uint32_t rng) {
   /*
    * The buffer and buffer count are not used here but are included to allow
    * this function to be templated with the similar uint8 and uint16
    * functions
    */
 
-  uint32_t val;
-  if (rng == 0)
-    return off;
+  if (rng == 0xFFFFFFFF) {
+    return next_uint32(brng_state);
+    /* ToDo: Move this code to caller to prevent this check on each call when generating arrays of numbers. */
+  }
 
-  while ((val = (next_uint32(brng_state) & mask)) > rng)
-    ;
-  return off + val;
+  const uint32_t rng_excl = rng + 1;
+  uint64_t m = ((uint64_t)next_uint32(brng_state)) * rng_excl;
+  uint32_t leftover = m & ((uint32_t)((1ULL << 32) - 1));
+
+  if (leftover < rng_excl) {
+      const uint32_t threshold = ((uint32_t)((1ULL << 32) - rng_excl)) % rng_excl;
+
+      while (leftover < threshold) {
+          m = ((uint64_t)next_uint32(brng_state)) * rng_excl;
+          leftover = m & ((uint32_t)((1ULL << 32) - 1));
+      }
+  }
+
+  return off + (m >> 32);
 }
 
 uint32_t random_buffered_bounded_uint32(brng_t *brng_state, uint32_t off,
@@ -1249,7 +1281,16 @@ uint32_t random_buffered_bounded_uint32(brng_t *brng_state, uint32_t off,
    *  Unused bcnt and buf are here only to allow templating with other uint
    * generators
    */
-  return bounded_uint32(brng_state, off, rng, mask);
+  if (rng == 0) {
+    return off;
+  } else {
+#ifdef USE_MASK_BASED_GENERATOR
+    return bounded_mask_uint32(brng_state, off, rng, mask);
+#endif
+#ifdef USE_LEMIRE_INTERVAL_GENERATOR
+    return bounded_lemire_uint32(brng_state, off, rng);
+#endif
+  }
 }
 
 static NPY_INLINE uint16_t buffered_bounded_uint16(brng_t *brng_state,
@@ -1345,14 +1386,28 @@ void random_bounded_uint64_fill(brng_t *brng_state, uint64_t off, uint64_t rng,
  */
 void random_bounded_uint32_fill(brng_t *brng_state, uint32_t off, uint32_t rng,
                                 npy_intp cnt, uint32_t *out) {
-  uint32_t mask;
   npy_intp i;
 
-  /* Smallest bit mask >= max */
+  if (rng == 0) {
+    for (i = 0; i < cnt; i++) {
+      out[i] = off;
+    }
+    return;
+  }
+
+#ifdef USE_MASK_BASED_GENERATOR
+  uint32_t mask;
+  // Smallest bit mask >= max
   mask = (uint32_t)gen_mask(rng);
   for (i = 0; i < cnt; i++) {
-    out[i] = bounded_uint32(brng_state, off, rng, mask);
+    out[i] = bounded_mask_uint32(brng_state, off, rng, mask);
   }
+#endif
+#ifdef USE_LEMIRE_INTERVAL_GENERATOR
+  for (i = 0; i < cnt; i++) {
+    out[i] = bounded_lemire_uint32(brng_state, off, rng);
+  }
+#endif
 }
 
 /*

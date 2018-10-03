@@ -181,10 +181,10 @@ cdef object _rand_{{nptype}}(object low, object high, object size, brng_t *state
     """
     _rand_{{nptype}}(low, high, size, *state, lock)
 
-    Return random np.{{nptype}} integers between `low` and `high`, inclusive.
+    Return random np.{{nptype}} integers from `low` (inclusive) to `high` (exclusive).
 
     Return random integers from the "discrete uniform" distribution in the
-    closed interval [`low`, `high`).  If `high` is None (the default),
+    interval [`low`, `high`).  If `high` is None (the default),
     then results are from [0, `low`). On entry the arguments are presumed
     to have been validated for size and order for the np.{{nptype}} type.
 
@@ -195,7 +195,7 @@ cdef object _rand_{{nptype}}(object low, object high, object size, brng_t *state
         ``high=None``, in which case this parameter is the *highest* such
         integer).
     high : int or array-like
-        If provided, the largest (signed) integer to be drawn from the
+        If provided, one above the largest (signed) integer to be drawn from the
         distribution (see above for behavior if ``high=None``).
     size : int or tuple of ints
         Output shape.  If the given shape is, e.g., ``(m, n, k)``, then
