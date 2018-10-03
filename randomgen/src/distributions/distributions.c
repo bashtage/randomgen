@@ -1249,18 +1249,20 @@ static NPY_INLINE uint32_t bounded_lemire_uint32(brng_t *brng_state, uint32_t of
    * this function to be templated with the similar uint8 and uint16
    * functions
    */
+  const uint32_t rng_excl = rng + 1;
+  uint64_t m;
+  uint32_t leftover;
 
   if (rng == 0xFFFFFFFF) {
     return next_uint32(brng_state);
     /* ToDo: Move this code to caller to prevent this check on each call when generating arrays of numbers. */
   }
 
-  const uint32_t rng_excl = rng + 1;
   /* Generate a scaled random number. */
-  uint64_t m = ((uint64_t)next_uint32(brng_state)) * rng_excl;
+  m = ((uint64_t)next_uint32(brng_state)) * rng_excl;
 
   /* Rejection sampling to remove any bias */
-  uint32_t leftover = m & ((uint32_t)((1ULL << 32) - 1));
+  leftover = m & ((uint32_t)((1ULL << 32) - 1));
 
   if (leftover < rng_excl) {
       const uint32_t threshold = ((uint32_t)((1ULL << 32) - rng_excl)) % rng_excl;
