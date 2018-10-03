@@ -101,27 +101,29 @@ cdef extern from "src/distributions/distributions.h":
                                         uint64_t rng, uint64_t mask) nogil
     uint32_t random_buffered_bounded_uint32(brng_t *brng_state, uint32_t off,
                                                 uint32_t rng, uint32_t mask,
-                                                int *bcnt, uint32_t *buf) nogil
+                                                int *bcnt, uint32_t *buf, bint use_masked_generator) nogil
 
     uint16_t random_buffered_bounded_uint16(brng_t *brng_state, uint16_t off,
                                                 uint16_t rng, uint16_t mask,
-                                                int *bcnt, uint32_t *buf) nogil
+                                                int *bcnt, uint32_t *buf, bint use_masked_generator) nogil
     uint8_t random_buffered_bounded_uint8(brng_t *brng_state, uint8_t off,
                                                 uint8_t rng, uint8_t mask,
-                                                int *bcnt, uint32_t *buf) nogil
+                                                int *bcnt, uint32_t *buf, bint use_masked_generator) nogil
     np.npy_bool random_buffered_bounded_bool(brng_t *brng_state, np.npy_bool off,
                                                 np.npy_bool rng, np.npy_bool mask,
-                                                int *bcnt, uint32_t *buf) nogil
+                                                int *bcnt, uint32_t *buf, bint use_masked_generator) nogil
     void random_bounded_uint64_fill(brng_t *brng_state, uint64_t off,
                                         uint64_t rng, np.npy_intp cnt,
-                                        uint64_t *out) nogil
+                                        uint64_t *out, bint use_masked_generator) nogil
     void random_bounded_uint32_fill(brng_t *brng_state, uint32_t off,
                                         uint32_t rng, np.npy_intp cnt,
-                                        uint32_t *out) nogil
+                                        uint32_t *out, bint use_masked_generator) nogil
     void random_bounded_uint16_fill(brng_t *brng_state, uint16_t off,
                                         uint16_t rng, np.npy_intp cnt,
-                                        uint16_t *out) nogil
+                                        uint16_t *out, bint use_masked_generator) nogil
     void random_bounded_uint8_fill(brng_t *brng_state, uint8_t off,
-                                        uint8_t rng, np.npy_intp cnt, uint8_t *out) nogil
+                                        uint8_t rng, np.npy_intp cnt,
+                                        uint8_t *out, bint use_masked_generator) nogil
     void random_bounded_bool_fill(brng_t *brng_state, np.npy_bool off,
-                                        np.npy_bool rng, np.npy_intp cnt, np.npy_bool *out) nogil
+                                        np.npy_bool rng, np.npy_intp cnt,
+                                        np.npy_bool *out, bint use_masked_generator) nogil
