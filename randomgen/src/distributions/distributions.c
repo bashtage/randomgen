@@ -1210,6 +1210,8 @@ static NPY_INLINE uint64_t bounded_masked_uint64(brng_t *brng_state,
                                                  uint64_t mask) {
   uint64_t val;
 
+  /* ToDo: Add this if condition to bounded_lemire_uint64 OR move to caller to save overhead. */
+
   if (rng <= 0xffffffffUL) {
     while ((val = (next_uint32(brng_state) & mask)) > rng)
       ;
@@ -1282,8 +1284,12 @@ static NPY_INLINE uint32_t bounded_masked_uint32(brng_t *brng_state,
    */
   uint32_t val;
 
+  /* printf("\n"); */
   while ((val = (next_uint32(brng_state) & mask)) > rng)
-    ;
+      /*printf("reject: %u \n", val)*/;
+
+  /* printf("accept: %u \n", val); */
+
   return off + val;
 }
 

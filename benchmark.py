@@ -96,7 +96,9 @@ def timer_32bit():
 def timer_32bit_bounded():
     # info = np.iinfo(np.uint32)
     # min, max = info.min, info.max
-    min, max = 0, 1536 - 1  # Worst case for masking & rejection algorithm!
+
+    min, max = 0, 1025 - 1  # WORST case for masking & rejection algorithm!
+    # min, max = 0, 1536 - 1  # AVERAGE case for masking & rejection algorithm!
 
     dist = 'random_uintegers'
 
@@ -105,8 +107,8 @@ def timer_32bit_bounded():
     # use_masked=False : Lemire's algorithm is used if available to generate a random number in an interval.
     # Lemire's algorithm has improved performance when {max}+1 is not a power of two.
 
-    # command = 'rg.randint({min}, {max}+1, 1000000, dtype=np.uint32, use_masked=True)'  # Use masking & rejection.
-    command = 'rg.randint({min}, {max}+1, 1000000, dtype=np.uint32, use_masked=False)'  # Use Lemire's algo.
+    command = 'rg.randint({min}, {max}+1, 1000000, dtype=np.uint32, use_masked=True)'  # Use masking & rejection.
+    # command = 'rg.randint({min}, {max}+1, 1000000, dtype=np.uint32, use_masked=False)'  # Use Lemire's algo.
 
     command = command.format(min=min, max=max)
 
@@ -119,7 +121,9 @@ def timer_32bit_bounded():
 def timer_64bit_bounded():
     # info = np.iinfo(np.uint64)
     # min, max = info.min, info.max
-    min, max = 0, 1536 - 1  # Worst case for masking & rejection algorithm!
+
+    min, max = 0, 1025 - 1  # WORST case for masking & rejection algorithm!
+    # min, max = 0, 1536 - 1  # AVERAGE case for masking & rejection algorithm!
 
     dist = 'random_uintegers'
 
@@ -168,6 +172,6 @@ if __name__ == '__main__':
         timer_raw()
         timer_32bit()
         timer_32bit_bounded()
-        timer_64bit_bounded()
         timer_64bit()
+        timer_64bit_bounded()
         timer_normal_zig()
