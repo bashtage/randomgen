@@ -107,8 +107,8 @@ def timer_32bit_bounded():
     # use_masked=False : Lemire's algorithm is used if available to generate a random number in an interval.
     # Lemire's algorithm has improved performance when {max}+1 is not a power of two.
 
-    command = 'rg.randint({min}, {max}+1, 1000000, dtype=np.uint32, use_masked=True)'  # Use masking & rejection.
-    # command = 'rg.randint({min}, {max}+1, 1000000, dtype=np.uint32, use_masked=False)'  # Use Lemire's algo.
+    # command = 'rg.randint({min}, {max}+1, 1000000, dtype=np.uint32, use_masked=True)'  # Use masking & rejection.
+    command = 'rg.randint({min}, {max}+1, 1000000, dtype=np.uint32, use_masked=False)'  # Use Lemire's algo.
 
     command = command.format(min=min, max=max)
 

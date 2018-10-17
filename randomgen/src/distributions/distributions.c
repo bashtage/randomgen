@@ -1234,7 +1234,7 @@ static NPY_INLINE uint64_t bounded_lemire_uint64(brng_t *brng_state,
    * Note: `rng` should not be 0xFFFFFFFFFFFFFFFF. When this happens `rng_excl` becomes zero and `off` is returned.
    */
   const uint64_t rng_excl = rng + 1;
-/*
+
 #if __SIZEOF_INT128__
   __uint128_t m;
   uint64_t leftover;
@@ -1255,7 +1255,7 @@ static NPY_INLINE uint64_t bounded_lemire_uint64(brng_t *brng_state,
   }
 
   return off + (m >> 64);
-#else*/
+#else
   uint64_t m1;
   uint64_t x;
   uint64_t leftover;
@@ -1291,7 +1291,7 @@ static NPY_INLINE uint64_t bounded_lemire_uint64(brng_t *brng_state,
   }
 
   return off + m1;
-//#endif
+#endif
 }
 
 uint64_t random_bounded_uint64(brng_t *brng_state,
