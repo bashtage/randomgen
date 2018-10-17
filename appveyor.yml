@@ -30,4 +30,4 @@ test_script:
 
 on_success:
   - cd %GIT_DIR%\
-  - python benchmark.py
+  - python benchmark.py --full

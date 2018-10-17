@@ -93,7 +93,7 @@ def timer_32bit():
     run_timer(dist, command, command_numpy, SETUP, '32-bit unsigned integers')
 
 
-def timer_32bit_bounded():
+def timer_32bit_bounded(use_masked=True):
     # info = np.iinfo(np.uint32)
     # min, max = info.min, info.max
 
@@ -107,18 +107,21 @@ def timer_32bit_bounded():
     # use_masked=False : Lemire's algorithm is used if available to generate a random number in an interval.
     # Lemire's algorithm has improved performance when {max}+1 is not a power of two.
 
-    # command = 'rg.randint({min}, {max}+1, 1000000, dtype=np.uint32, use_masked=True)'  # Use masking & rejection.
-    command = 'rg.randint({min}, {max}+1, 1000000, dtype=np.uint32, use_masked=False)'  # Use Lemire's algo.
+    if use_masked:
+        command = 'rg.randint({min}, {max}+1, 1000000, dtype=np.uint32, use_masked=True)'  # Use masking & rejection.
+    else:
+        command = 'rg.randint({min}, {max}+1, 1000000, dtype=np.uint32, use_masked=False)'  # Use Lemire's algo.
 
     command = command.format(min=min, max=max)
 
     command_numpy = 'rg.randint({min}, {max}+1, 1000000, dtype=np.uint32)'
     command_numpy = command_numpy.format(min=min, max=max)
 
-    run_timer(dist, command, command_numpy, SETUP, '32-bit bounded unsigned integers')
+    run_timer(dist, command, command_numpy, SETUP,
+              '32-bit bounded unsigned integers; use_masked={use_masked}'.format(use_masked=use_masked))
 
 
-def timer_64bit_bounded():
+def timer_64bit_bounded(use_masked=True):
     # info = np.iinfo(np.uint64)
     # min, max = info.min, info.max
 
@@ -132,15 +135,18 @@ def timer_64bit_bounded():
     # use_masked=False : Lemire's algorithm is used if available to generate a random number in an interval.
     # Lemire's algorithm has improved performance when {max}+1 is not a power of two.
 
-    # command = 'rg.randint({min}, {max}+1, 1000000, dtype=np.uint64, use_masked=True)'  # Use masking & rejection.
-    command = 'rg.randint({min}, {max}+1, 1000000, dtype=np.uint64, use_masked=False)'  # Use Lemire's algo.
+    if use_masked:
+        command = 'rg.randint({min}, {max}+1, 1000000, dtype=np.uint64, use_masked=True)'  # Use masking & rejection.
+    else:
+        command = 'rg.randint({min}, {max}+1, 1000000, dtype=np.uint64, use_masked=False)'  # Use Lemire's algo.
 
     command = command.format(min=min, max=max)
 
     command_numpy = 'rg.randint({min}, {max}+1, 1000000, dtype=np.uint64)'
     command_numpy = command_numpy.format(min=min, max=max)
 
-    run_timer(dist, command, command_numpy, SETUP, '64-bit bounded unsigned integers')
+    run_timer(dist, command, command_numpy, SETUP,
+              '64-bit bounded unsigned integers; use_masked={use_masked}'.format(use_masked=use_masked))
 
 
 def timer_64bit():
@@ -171,7 +177,9 @@ if __name__ == '__main__':
     if args.full:
         timer_raw()
         timer_32bit()
-        timer_32bit_bounded()
+        timer_32bit_bounded(use_masked=True)
+        timer_32bit_bounded(use_masked=False)
         timer_64bit()
-        timer_64bit_bounded()
+        timer_64bit_bounded(use_masked=True)
+        timer_64bit_bounded(use_masked=False)
         timer_normal_zig()
