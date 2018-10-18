@@ -2,6 +2,10 @@
 #include "ziggurat.h"
 #include "ziggurat_constants.h"
 
+#if defined(_MSC_VER) && defined(_WIN64)
+#include <intrin.h>
+#endif
+
 
 /* Random generators for external use */
 float random_float(brng_t *brng_state) { return next_float(brng_state); }
@@ -1236,6 +1240,7 @@ static NPY_INLINE uint64_t bounded_lemire_uint64(brng_t *brng_state,
   const uint64_t rng_excl = rng + 1;
 
 #if __SIZEOF_INT128__
+/* 128-bit uint available (e.g. GCC/clang). `m` is the __uint128_t scaled integer. */
   __uint128_t m;
   uint64_t leftover;
 
@@ -1256,6 +1261,7 @@ static NPY_INLINE uint64_t bounded_lemire_uint64(brng_t *brng_state,
 
   return off + (m >> 64);
 #else
+/* 128-bit uint NOT available (e.g. MSVS). `m1` is the upper 64-bits of the scaled integer. */
   uint64_t m1;
   uint64_t x;
   uint64_t leftover;
@@ -1274,7 +1280,14 @@ static NPY_INLINE uint64_t bounded_lemire_uint64(brng_t *brng_state,
       }
   }
 
-  { /* Calc high 64 bits of x * rng_excl. */
+#if defined(_MSC_VER) && defined(_WIN64)
+/* _WIN64 architecture. Use the __umulh intrinsic to calc `m1`. */
+  {
+      m1 = __umulh(x, rng_excl);
+  }
+#else
+/* 32-bit architecture. Emulate __umulh to calc `m1`. */
+  {
       uint64_t x0, x1, rng_excl0, rng_excl1;
       uint64_t w0, w1, w2, t;
 
@@ -1289,6 +1302,7 @@ static NPY_INLINE uint64_t bounded_lemire_uint64(brng_t *brng_state,
       w1 += x0 * rng_excl1;
       m1 = x1 * rng_excl1 + w2 + (w1 >> 32);
   }
+#endif
 
   return off + m1;
 #endif
