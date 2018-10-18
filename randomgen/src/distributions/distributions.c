@@ -1352,7 +1352,7 @@ static NPY_INLINE uint32_t bounded_lemire_uint32(brng_t *brng_state,
 
 
 /*
- * Fills an array with cnt random npy_uint64 between off and off + rng
+ * Returns a single random npy_uint64 between off and off + rng
  * inclusive. The numbers wrap if rng is sufficiently large.
  */
 uint64_t random_bounded_uint64(brng_t *brng_state,
@@ -1378,7 +1378,7 @@ uint64_t random_bounded_uint64(brng_t *brng_state,
 }
 
 /*
- * Fills an array with cnt random npy_uint32 between off and off + rng
+ * Returns a single random npy_uint64 between off and off + rng
  * inclusive. The numbers wrap if rng is sufficiently large.
  */
 uint32_t random_buffered_bounded_uint32(brng_t *brng_state,
