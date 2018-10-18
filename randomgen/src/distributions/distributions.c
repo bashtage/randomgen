@@ -1236,19 +1236,20 @@ static NPY_INLINE uint64_t bounded_lemire_uint64(brng_t *brng_state,
   __uint128_t m;
   uint64_t leftover;
 
-  // Generate a scaled random number.
+  /* Generate a scaled random number. */
   m = ((__uint128_t)next_uint64(brng_state)) * rng_excl;
 
-  // Rejection sampling to remove any bias.
+  /* Rejection sampling to remove any bias. */
   leftover = m & 0xFFFFFFFFFFFFFFFFULL;
 
-  if (leftover < rng_excl) {
-      const uint64_t threshold = -rng_excl % rng_excl; //same as:((uint64_t)(0x10000000000000000ULLL - rng_excl)) % rng_excl;
+  if (leftover < rng_excl) { /* `rng_excl` is a simple upper bound for `threshold`. */
+    const uint64_t threshold = -rng_excl % rng_excl;
+    /* Same as: threshold=((uint64_t)(0x10000000000000000ULLL - rng_excl)) % rng_excl; */
 
-      while (leftover < threshold) {
-          m = ((__uint128_t)next_uint64(brng_state)) * rng_excl;
-          leftover = m & 0xFFFFFFFFFFFFFFFFULL;
-      }
+    while (leftover < threshold) {
+      m = ((__uint128_t)next_uint64(brng_state)) * rng_excl;
+      leftover = m & 0xFFFFFFFFFFFFFFFFULL;
+    }
   }
 
   return (m >> 64);
@@ -1260,16 +1261,17 @@ static NPY_INLINE uint64_t bounded_lemire_uint64(brng_t *brng_state,
 
   x = next_uint64(brng_state);
 
-  // Rejection sampling to remove any bias/.
-  leftover = x * rng_excl;
+  /* Rejection sampling to remove any bias. */
+  leftover = x * rng_excl; /* The lower 64-bits of the mult. */
 
-  if (leftover < rng_excl) {
-      const uint64_t threshold = -rng_excl % rng_excl; //same as:((uint64_t)(0x10000000000000000ULLL - rng_excl)) % rng_excl;
+  if (leftover < rng_excl) { /* `rng_excl` is a simple upper bound for `threshold`. */
+    const uint64_t threshold = -rng_excl % rng_excl;
+    /* Same as:threshold=((uint64_t)(0x10000000000000000ULLL - rng_excl)) % rng_excl; */
 
-      while (leftover < threshold) {
-          x = next_uint64(brng_state);
-          leftover = x * rng_excl;
-      }
+    while (leftover < threshold) {
+      x = next_uint64(brng_state);
+      leftover = x * rng_excl;
+    }
   }
 
 #if defined(_MSC_VER) && defined(_WIN64)
@@ -1278,19 +1280,19 @@ static NPY_INLINE uint64_t bounded_lemire_uint64(brng_t *brng_state,
 #else
 /* 32-bit architecture. Emulate __umulh to calc `m1`. */
   {
-      uint64_t x0, x1, rng_excl0, rng_excl1;
-      uint64_t w0, w1, w2, t;
+    uint64_t x0, x1, rng_excl0, rng_excl1;
+    uint64_t w0, w1, w2, t;
 
-      x0 = x & 0xFFFFFFFFULL;
-      x1 = x >> 32;
-      rng_excl0 = rng_excl & 0xFFFFFFFFULL;
-      rng_excl1 = rng_excl >> 32;
-      w0 = x0 * rng_excl0;
-      t = x1 * rng_excl0 + (w0 >> 32);
-      w1 = t & 0xFFFFFFFFULL;
-      w2 = t >> 32;
-      w1 += x0 * rng_excl1;
-      m1 = x1 * rng_excl1 + w2 + (w1 >> 32);
+    x0 = x & 0xFFFFFFFFULL;
+    x1 = x >> 32;
+    rng_excl0 = rng_excl & 0xFFFFFFFFULL;
+    rng_excl1 = rng_excl >> 32;
+    w0 = x0 * rng_excl0;
+    t = x1 * rng_excl0 + (w0 >> 32);
+    w1 = t & 0xFFFFFFFFULL;
+    w2 = t >> 32;
+    w1 += x0 * rng_excl1;
+    m1 = x1 * rng_excl1 + w2 + (w1 >> 32);
   }
 #endif
 
@@ -1338,13 +1340,14 @@ static NPY_INLINE uint32_t bounded_lemire_uint32(brng_t *brng_state,
   /* Rejection sampling to remove any bias */
   leftover = m & 0xFFFFFFFFUL;
 
-  if (leftover < rng_excl) {
-      const uint32_t threshold = -rng_excl % rng_excl; //same as:((uint64_t)(0x100000000ULL - rng_excl)) % rng_excl;
+  if (leftover < rng_excl) { /* `rng_excl` is a simple upper bound for `threshold`. */
+    const uint32_t threshold = -rng_excl % rng_excl;
+    /* Same as: threshold=((uint64_t)(0x100000000ULL - rng_excl)) % rng_excl; */
 
-      while (leftover < threshold) {
-          m = ((uint64_t)next_uint32(brng_state)) * rng_excl;
-          leftover = m & 0xFFFFFFFFUL;
-      }
+    while (leftover < threshold) {
+      m = ((uint64_t)next_uint32(brng_state)) * rng_excl;
+      leftover = m & 0xFFFFFFFFUL;
+    }
   }
 
   return (m >> 32);
@@ -1497,7 +1500,7 @@ void random_bounded_uint64_fill(brng_t *brng_state,
     }
   } else if (rng < 0xFFFFFFFFUL) { /* Call 32-bit generator if range in 32-bit. */
     if (use_masked) {
-      // Smallest bit mask >= max
+      /* Smallest bit mask >= max */
       uint64_t mask = gen_mask(rng);
 
       for (i = 0; i < cnt; i++) {
@@ -1514,7 +1517,7 @@ void random_bounded_uint64_fill(brng_t *brng_state,
     }
   } else {
     if (use_masked) {
-      // Smallest bit mask >= max
+      /* Smallest bit mask >= max */
       uint64_t mask = gen_mask(rng);
 
       for (i = 0; i < cnt; i++) {
@@ -1548,7 +1551,7 @@ void random_bounded_uint32_fill(brng_t *brng_state,
     }
   } else {
     if (use_masked) {
-      // Smallest bit mask >= max
+      /* Smallest bit mask >= max */
       uint32_t mask = (uint32_t)gen_mask(rng);
 
       for (i = 0; i < cnt; i++) {
