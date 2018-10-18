@@ -6,11 +6,14 @@
 #include <intrin.h>
 #endif
 
-
 /* Random generators for external use */
-float random_float(brng_t *brng_state) { return next_float(brng_state); }
+float random_float(brng_t *brng_state) {
+  return next_float(brng_state);
+}
 
-double random_double(brng_t *brng_state) { return next_double(brng_state); }
+double random_double(brng_t *brng_state) {
+  return next_double(brng_state);
+}
 
 static NPY_INLINE double next_standard_exponential(brng_t *brng_state) {
   return -log(1.0 - next_double(brng_state));
@@ -1204,11 +1207,9 @@ static NPY_INLINE uint64_t gen_mask(uint64_t max) {
   return mask;
 }
 
-
 /* Static function called by random_bounded_uint64(...) */
 static NPY_INLINE uint64_t bounded_masked_uint64(brng_t *brng_state,
-                                                 uint64_t rng,
-                                                 uint64_t mask) {
+                                                 uint64_t rng, uint64_t mask) {
   uint64_t val;
 
   while ((val = (next_uint64(brng_state) & mask)) > rng)
@@ -1227,12 +1228,14 @@ static NPY_INLINE uint64_t bounded_lemire_uint64(brng_t *brng_state,
    * this function to be templated with the similar uint8 and uint16
    * functions
    *
-   * Note: `rng` should not be 0xFFFFFFFFFFFFFFFF. When this happens `rng_excl` becomes zero.
+   * Note: `rng` should not be 0xFFFFFFFFFFFFFFFF. When this happens `rng_excl`
+   * becomes zero.
    */
   const uint64_t rng_excl = rng + 1;
 
 #if __SIZEOF_INT128__
-/* 128-bit uint available (e.g. GCC/clang). `m` is the __uint128_t scaled integer. */
+  /* 128-bit uint available (e.g. GCC/clang). `m` is the __uint128_t scaled
+   * integer. */
   __uint128_t m;
   uint64_t leftover;
 
@@ -1242,9 +1245,12 @@ static NPY_INLINE uint64_t bounded_lemire_uint64(brng_t *brng_state,
   /* Rejection sampling to remove any bias. */
   leftover = m & 0xFFFFFFFFFFFFFFFFULL;
 
-  if (leftover < rng_excl) { /* `rng_excl` is a simple upper bound for `threshold`. */
+  if (leftover < rng_excl) {
+    /* `rng_excl` is a simple upper bound for `threshold`. */
+
     const uint64_t threshold = -rng_excl % rng_excl;
-    /* Same as: threshold=((uint64_t)(0x10000000000000000ULLL - rng_excl)) % rng_excl; */
+    /* Same as: threshold=((uint64_t)(0x10000000000000000ULLL - rng_excl)) %
+     * rng_excl; */
 
     while (leftover < threshold) {
       m = ((__uint128_t)next_uint64(brng_state)) * rng_excl;
@@ -1254,7 +1260,8 @@ static NPY_INLINE uint64_t bounded_lemire_uint64(brng_t *brng_state,
 
   return (m >> 64);
 #else
-/* 128-bit uint NOT available (e.g. MSVS). `m1` is the upper 64-bits of the scaled integer. */
+  /* 128-bit uint NOT available (e.g. MSVS). `m1` is the upper 64-bits of the
+   * scaled integer. */
   uint64_t m1;
   uint64_t x;
   uint64_t leftover;
@@ -1264,9 +1271,12 @@ static NPY_INLINE uint64_t bounded_lemire_uint64(brng_t *brng_state,
   /* Rejection sampling to remove any bias. */
   leftover = x * rng_excl; /* The lower 64-bits of the mult. */
 
-  if (leftover < rng_excl) { /* `rng_excl` is a simple upper bound for `threshold`. */
+  if (leftover < rng_excl) {
+    /* `rng_excl` is a simple upper bound for `threshold`. */
+
     const uint64_t threshold = -rng_excl % rng_excl;
-    /* Same as:threshold=((uint64_t)(0x10000000000000000ULLL - rng_excl)) % rng_excl; */
+    /* Same as:threshold=((uint64_t)(0x10000000000000000ULLL - rng_excl)) %
+     * rng_excl; */
 
     while (leftover < threshold) {
       x = next_uint64(brng_state);
@@ -1275,10 +1285,10 @@ static NPY_INLINE uint64_t bounded_lemire_uint64(brng_t *brng_state,
   }
 
 #if defined(_MSC_VER) && defined(_WIN64)
-/* _WIN64 architecture. Use the __umulh intrinsic to calc `m1`. */
-    m1 = __umulh(x, rng_excl);
+  /* _WIN64 architecture. Use the __umulh intrinsic to calc `m1`. */
+  m1 = __umulh(x, rng_excl);
 #else
-/* 32-bit architecture. Emulate __umulh to calc `m1`. */
+  /* 32-bit architecture. Emulate __umulh to calc `m1`. */
   {
     uint64_t x0, x1, rng_excl0, rng_excl1;
     uint64_t w0, w1, w2, t;
@@ -1302,8 +1312,7 @@ static NPY_INLINE uint64_t bounded_lemire_uint64(brng_t *brng_state,
 
 /* Static function called by random_buffered_bounded_uint32(...) */
 static NPY_INLINE uint32_t bounded_masked_uint32(brng_t *brng_state,
-                                                 uint32_t rng,
-                                                 uint32_t mask) {
+                                                 uint32_t rng, uint32_t mask) {
   /*
    * The buffer and buffer count are not used here but are included to allow
    * this function to be templated with the similar uint8 and uint16
@@ -1312,7 +1321,7 @@ static NPY_INLINE uint32_t bounded_masked_uint32(brng_t *brng_state,
   uint32_t val;
 
   while ((val = (next_uint32(brng_state) & mask)) > rng)
-      ;
+    ;
 
   return val;
 }
@@ -1327,7 +1336,8 @@ static NPY_INLINE uint32_t bounded_lemire_uint32(brng_t *brng_state,
    * this function to be templated with the similar uint8 and uint16
    * functions
    *
-   * Note: `rng` should not be 0xFFFFFFFF. When this happens `rng_excl` becomes zero.
+   * Note: `rng` should not be 0xFFFFFFFF. When this happens `rng_excl` becomes
+   * zero.
    */
   const uint32_t rng_excl = rng + 1;
 
@@ -1340,7 +1350,8 @@ static NPY_INLINE uint32_t bounded_lemire_uint32(brng_t *brng_state,
   /* Rejection sampling to remove any bias */
   leftover = m & 0xFFFFFFFFUL;
 
-  if (leftover < rng_excl) { /* `rng_excl` is a simple upper bound for `threshold`. */
+  if (leftover < rng_excl) {
+    /* `rng_excl` is a simple upper bound for `threshold`. */
     const uint32_t threshold = -rng_excl % rng_excl;
     /* Same as: threshold=((uint64_t)(0x100000000ULL - rng_excl)) % rng_excl; */
 
@@ -1353,23 +1364,23 @@ static NPY_INLINE uint32_t bounded_lemire_uint32(brng_t *brng_state,
   return (m >> 32);
 }
 
-
 /*
  * Returns a single random npy_uint64 between off and off + rng
  * inclusive. The numbers wrap if rng is sufficiently large.
  */
-uint64_t random_bounded_uint64(brng_t *brng_state,
-                               uint64_t off, uint64_t rng,
+uint64_t random_bounded_uint64(brng_t *brng_state, uint64_t off, uint64_t rng,
                                uint64_t mask, bool use_masked) {
   if (rng == 0) {
     return off;
-  } else if (rng < 0xFFFFFFFFUL) { /* Call 32-bit generator if range in 32-bit. */
+  } else if (rng < 0xFFFFFFFFUL) {
+    /* Call 32-bit generator if range in 32-bit. */
     if (use_masked) {
       return off + bounded_masked_uint32(brng_state, rng, mask);
     } else {
       return off + bounded_lemire_uint32(brng_state, rng);
     }
-  } else if (rng == 0xFFFFFFFFFFFFFFFFULL) { /* Lemire64 doesn't support inclusive rng = 0xFFFFFFFFFFFFFFFF. */
+  } else if (rng == 0xFFFFFFFFFFFFFFFFULL) {
+    /* Lemire64 doesn't support inclusive rng = 0xFFFFFFFFFFFFFFFF. */
     return off + next_uint64(brng_state);
   } else {
     if (use_masked) {
@@ -1384,17 +1395,18 @@ uint64_t random_bounded_uint64(brng_t *brng_state,
  * Returns a single random npy_uint64 between off and off + rng
  * inclusive. The numbers wrap if rng is sufficiently large.
  */
-uint32_t random_buffered_bounded_uint32(brng_t *brng_state,
-                                        uint32_t off, uint32_t rng,
-                                        uint32_t mask, bool use_masked,
-                                        int *bcnt, uint32_t *buf) {
+uint32_t random_buffered_bounded_uint32(brng_t *brng_state, uint32_t off,
+                                        uint32_t rng, uint32_t mask,
+                                        bool use_masked, int *bcnt,
+                                        uint32_t *buf) {
   /*
    *  Unused bcnt and buf are here only to allow templating with other uint
    * generators
    */
   if (rng == 0) {
     return off;
-  } else if (rng == 0xFFFFFFFFUL) { /* Lemire32 doesn't support inclusive rng = 0xFFFFFFFF. */
+  } else if (rng == 0xFFFFFFFFUL) {
+    /* Lemire32 doesn't support inclusive rng = 0xFFFFFFFF. */
     return off + next_uint32(brng_state);
   } else {
     if (use_masked) {
@@ -1405,11 +1417,10 @@ uint32_t random_buffered_bounded_uint32(brng_t *brng_state,
   }
 }
 
-
 static NPY_INLINE uint16_t buffered_bounded_uint16(brng_t *brng_state,
                                                    uint16_t off, uint16_t rng,
-                                                   uint16_t mask,
-                                                   int *bcnt, uint32_t *buf) {
+                                                   uint16_t mask, int *bcnt,
+                                                   uint32_t *buf) {
   uint16_t val;
   if (rng == 0)
     return off;
@@ -1427,17 +1438,17 @@ static NPY_INLINE uint16_t buffered_bounded_uint16(brng_t *brng_state,
   return off + val;
 }
 
-uint16_t random_buffered_bounded_uint16(brng_t *brng_state,
-                                        uint16_t off, uint16_t rng,
-                                        uint16_t mask, bool use_masked,
-                                        int *bcnt, uint32_t *buf) {
+uint16_t random_buffered_bounded_uint16(brng_t *brng_state, uint16_t off,
+                                        uint16_t rng, uint16_t mask,
+                                        bool use_masked, int *bcnt,
+                                        uint32_t *buf) {
   return buffered_bounded_uint16(brng_state, off, rng, mask, bcnt, buf);
 }
 
 static NPY_INLINE uint8_t buffered_bounded_uint8(brng_t *brng_state,
                                                  uint8_t off, uint8_t rng,
-                                                 uint8_t mask,
-                                                 int *bcnt, uint32_t *buf) {
+                                                 uint8_t mask, int *bcnt,
+                                                 uint32_t *buf) {
   uint8_t val;
   if (rng == 0)
     return off;
@@ -1454,17 +1465,17 @@ static NPY_INLINE uint8_t buffered_bounded_uint8(brng_t *brng_state,
   return off + val;
 }
 
-uint8_t random_buffered_bounded_uint8(brng_t *brng_state,
-                                      uint8_t off, uint8_t rng,
-                                      uint8_t mask, bool use_masked,
-                                      int *bcnt, uint32_t *buf) {
+uint8_t random_buffered_bounded_uint8(brng_t *brng_state, uint8_t off,
+                                      uint8_t rng, uint8_t mask,
+                                      bool use_masked, int *bcnt,
+                                      uint32_t *buf) {
   return buffered_bounded_uint8(brng_state, off, rng, mask, bcnt, buf);
 }
 
 static NPY_INLINE npy_bool buffered_bounded_bool(brng_t *brng_state,
                                                  npy_bool off, npy_bool rng,
-                                                 npy_bool mask,
-                                                 int *bcnt, uint32_t *buf) {
+                                                 npy_bool mask, int *bcnt,
+                                                 uint32_t *buf) {
   if (rng == 0)
     return off;
   if (!(bcnt[0])) {
@@ -1477,10 +1488,10 @@ static NPY_INLINE npy_bool buffered_bounded_bool(brng_t *brng_state,
   return (buf[0] & 0x00000001UL) != 0;
 }
 
-npy_bool random_buffered_bounded_bool(brng_t *brng_state,
-                                      npy_bool off, npy_bool rng,
-                                      npy_bool mask, bool use_masked,
-                                      int *bcnt, uint32_t *buf) {
+npy_bool random_buffered_bounded_bool(brng_t *brng_state, npy_bool off,
+                                      npy_bool rng, npy_bool mask,
+                                      bool use_masked, int *bcnt,
+                                      uint32_t *buf) {
   return buffered_bounded_bool(brng_state, off, rng, mask, bcnt, buf);
 }
 
@@ -1488,17 +1499,16 @@ npy_bool random_buffered_bounded_bool(brng_t *brng_state,
  * Fills an array with cnt random npy_uint64 between off and off + rng
  * inclusive. The numbers wrap if rng is sufficiently large.
  */
-void random_bounded_uint64_fill(brng_t *brng_state,
-                                uint64_t off, uint64_t rng, npy_intp cnt,
-                                bool use_masked,
-                                uint64_t *out) {
+void random_bounded_uint64_fill(brng_t *brng_state, uint64_t off, uint64_t rng,
+                                npy_intp cnt, bool use_masked, uint64_t *out) {
   npy_intp i;
 
   if (rng == 0) {
     for (i = 0; i < cnt; i++) {
       out[i] = off;
     }
-  } else if (rng < 0xFFFFFFFFUL) { /* Call 32-bit generator if range in 32-bit. */
+  } else if (rng < 0xFFFFFFFFUL) {
+    /* Call 32-bit generator if range in 32-bit. */
     if (use_masked) {
       /* Smallest bit mask >= max */
       uint64_t mask = gen_mask(rng);
@@ -1511,7 +1521,8 @@ void random_bounded_uint64_fill(brng_t *brng_state,
         out[i] = off + bounded_lemire_uint32(brng_state, rng);
       }
     }
-  } else if (rng == 0xFFFFFFFFFFFFFFFFULL) { /* Lemire64 doesn't support rng = 0xFFFFFFFFFFFFFFFF. */
+  } else if (rng == 0xFFFFFFFFFFFFFFFFULL) {
+    /* Lemire64 doesn't support rng = 0xFFFFFFFFFFFFFFFF. */
     for (i = 0; i < cnt; i++) {
       out[i] = off + next_uint64(brng_state);
     }
@@ -1535,17 +1546,16 @@ void random_bounded_uint64_fill(brng_t *brng_state,
  * Fills an array with cnt random npy_uint32 between off and off + rng
  * inclusive. The numbers wrap if rng is sufficiently large.
  */
-void random_bounded_uint32_fill(brng_t *brng_state,
-                                uint32_t off, uint32_t rng, npy_intp cnt,
-                                bool use_masked,
-                                uint32_t *out) {
+void random_bounded_uint32_fill(brng_t *brng_state, uint32_t off, uint32_t rng,
+                                npy_intp cnt, bool use_masked, uint32_t *out) {
   npy_intp i;
 
   if (rng == 0) {
     for (i = 0; i < cnt; i++) {
       out[i] = off;
     }
-  } else if (rng == 0xFFFFFFFFUL) { /* Lemire32 doesn't support rng = 0xFFFFFFFF. */
+  } else if (rng == 0xFFFFFFFFUL) {
+    /* Lemire32 doesn't support rng = 0xFFFFFFFF. */
     for (i = 0; i < cnt; i++) {
       out[i] = off + next_uint32(brng_state);
     }
@@ -1569,10 +1579,8 @@ void random_bounded_uint32_fill(brng_t *brng_state,
  * Fills an array with cnt random npy_uint16 between off and off + rng
  * inclusive. The numbers wrap if rng is sufficiently large.
  */
-void random_bounded_uint16_fill(brng_t *brng_state,
-                                uint16_t off, uint16_t rng, npy_intp cnt,
-                                bool use_masked,
-                                uint16_t *out) {
+void random_bounded_uint16_fill(brng_t *brng_state, uint16_t off, uint16_t rng,
+                                npy_intp cnt, bool use_masked, uint16_t *out) {
   uint16_t mask;
   npy_intp i;
   uint32_t buf = 0;
@@ -1589,10 +1597,8 @@ void random_bounded_uint16_fill(brng_t *brng_state,
  * Fills an array with cnt random npy_uint8 between off and off + rng
  * inclusive. The numbers wrap if rng is sufficiently large.
  */
-void random_bounded_uint8_fill(brng_t *brng_state,
-                               uint8_t off, uint8_t rng, npy_intp cnt,
-                               bool use_masked,
-                               uint8_t *out) {
+void random_bounded_uint8_fill(brng_t *brng_state, uint8_t off, uint8_t rng,
+                               npy_intp cnt, bool use_masked, uint8_t *out) {
   uint8_t mask;
   npy_intp i;
   uint32_t buf = 0;
@@ -1609,10 +1615,8 @@ void random_bounded_uint8_fill(brng_t *brng_state,
  * Fills an array with cnt random npy_bool between off and off + rng
  * inclusive.
  */
-void random_bounded_bool_fill(brng_t *brng_state,
-                              npy_bool off, npy_bool rng, npy_intp cnt,
-                              bool use_masked,
-                              npy_bool *out) {
+void random_bounded_bool_fill(brng_t *brng_state, npy_bool off, npy_bool rng,
+                              npy_intp cnt, bool use_masked, npy_bool *out) {
   npy_bool mask = 0;
   npy_intp i;
   uint32_t buf = 0;
