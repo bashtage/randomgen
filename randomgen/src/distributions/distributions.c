@@ -1445,23 +1445,35 @@ uint16_t random_buffered_bounded_uint16(brng_t *brng_state, uint16_t off,
   return buffered_bounded_uint16(brng_state, off, rng, mask, bcnt, buf);
 }
 
+static NPY_INLINE uint8_t buffered_uint8(brng_t *brng_state, int *bcnt,
+                                         uint32_t *buf) {
+  uint8_t val;
+
+  if (!(bcnt[0])) {
+    buf[0] = next_uint32(brng_state);
+    bcnt[0] = 3;
+  } else {
+    buf[0] >>= 8;
+    bcnt[0] -= 1;
+  }
+
+  val = (uint8_t)buf[0];
+
+  return val;
+}
+
 static NPY_INLINE uint8_t buffered_bounded_uint8(brng_t *brng_state,
                                                  uint8_t off, uint8_t rng,
                                                  uint8_t mask, int *bcnt,
                                                  uint32_t *buf) {
   uint8_t val;
+
   if (rng == 0)
     return off;
-  do {
-    if (!(bcnt[0])) {
-      buf[0] = next_uint32(brng_state);
-      bcnt[0] = 3;
-    } else {
-      buf[0] >>= 8;
-      bcnt[0] -= 1;
-    }
-    val = (uint8_t)buf[0] & mask;
-  } while (val > rng);
+
+  while ((val = (buffered_uint8(brng_state, bcnt, buf) & mask)) > rng)
+    ;
+
   return off + val;
 }
 
