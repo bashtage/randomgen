@@ -83,6 +83,62 @@ def timer_uniform():
     run_timer(dist, command, None, SETUP, 'Uniforms')
 
 
+def timer_8bit_bounded(use_masked=True):
+    # info = np.iinfo(np.uint8)
+    # min, max = info.min, info.max
+
+    min, max = 0, 65 - 1  # WORST case for masking & rejection algorithm!
+    # min, max = 0, 48 - 1  # AVERAGE case for masking & rejection algorithm!
+
+    dist = 'random_uintegers'
+
+    # Note on performance of generating random numbers in an interval:
+    # use_masked=True : masking and rejection sampling is used to generate a random number in an interval.
+    # use_masked=False : Lemire's algorithm is used if available to generate a random number in an interval.
+    # Lemire's algorithm has improved performance when {max}+1 is not a power of two.
+
+    if use_masked:
+        command = 'rg.randint({min}, {max}+1, 1000000, dtype=np.uint8, use_masked=True)'  # Use masking & rejection.
+    else:
+        command = 'rg.randint({min}, {max}+1, 1000000, dtype=np.uint8, use_masked=False)'  # Use Lemire's algo.
+
+    command = command.format(min=min, max=max)
+
+    command_numpy = 'rg.randint({min}, {max}+1, 1000000, dtype=np.uint8)'
+    command_numpy = command_numpy.format(min=min, max=max)
+
+    run_timer(dist, command, command_numpy, SETUP,
+              '8-bit bounded unsigned integers; use_masked={use_masked}'.format(use_masked=use_masked))
+
+
+def timer_16bit_bounded(use_masked=True):
+    # info = np.iinfo(np.uint16)
+    # min, max = info.min, info.max
+
+    min, max = 0, 1025 - 1  # WORST case for masking & rejection algorithm!
+    # min, max = 0, 1536 - 1  # AVERAGE case for masking & rejection algorithm!
+
+    dist = 'random_uintegers'
+
+    # Note on performance of generating random numbers in an interval:
+    # use_masked=True : masking and rejection sampling is used to generate a random number in an interval.
+    # use_masked=False : Lemire's algorithm is used if available to generate a random number in an interval.
+    # Lemire's algorithm has improved performance when {max}+1 is not a power of two.
+
+    if use_masked:
+        command = 'rg.randint({min}, {max}+1, 1000000, dtype=np.uint16, use_masked=True)'  # Use masking & rejection.
+    else:
+        command = 'rg.randint({min}, {max}+1, 1000000, dtype=np.uint16, use_masked=False)'  # Use Lemire's algo.
+
+    command = command.format(min=min, max=max)
+
+    command_numpy = 'rg.randint({min}, {max}+1, 1000000, dtype=np.uint16)'
+    command_numpy = command_numpy.format(min=min, max=max)
+
+    run_timer(dist, command, command_numpy, SETUP,
+              '16-bit bounded unsigned integers; use_masked={use_masked}'.format(use_masked=use_masked))
+
+
 def timer_32bit():
     info = np.iinfo(np.uint32)
     min, max = info.min, info.max
@@ -121,6 +177,16 @@ def timer_32bit_bounded(use_masked=True):
               '32-bit bounded unsigned integers; use_masked={use_masked}'.format(use_masked=use_masked))
 
 
+def timer_64bit():
+    info = np.iinfo(np.uint64)
+    min, max = info.min, info.max
+    dist = 'random_uintegers'
+    command = 'rg.random_uintegers(1000000)'
+    command_numpy = 'rg.randint({min}, {max}+1, 1000000, dtype=np.uint64)'
+    command_numpy = command_numpy.format(min=min, max=max)
+    run_timer(dist, command, command_numpy, SETUP, '64-bit unsigned integers')
+
+
 def timer_64bit_bounded(use_masked=True):
     # info = np.iinfo(np.uint64)
     # min, max = info.min, info.max
@@ -149,16 +215,6 @@ def timer_64bit_bounded(use_masked=True):
               '64-bit bounded unsigned integers; use_masked={use_masked}'.format(use_masked=use_masked))
 
 
-def timer_64bit():
-    info = np.iinfo(np.uint64)
-    min, max = info.min, info.max
-    dist = 'random_uintegers'
-    command = 'rg.random_uintegers(1000000)'
-    command_numpy = 'rg.randint({min}, {max}+1, 1000000, dtype=np.uint64)'
-    command_numpy = command_numpy.format(min=min, max=max)
-    run_timer(dist, command, command_numpy, SETUP, '64-bit unsigned integers')
-
-
 def timer_normal_zig():
     dist = 'standard_normal'
     command = 'rg.standard_normal(1000000)'
@@ -176,6 +232,10 @@ if __name__ == '__main__':
     timer_uniform()
     if args.full:
         timer_raw()
+        timer_8bit_bounded(use_masked=True)
+        timer_8bit_bounded(use_masked=False)
+        timer_16bit_bounded(use_masked=True)
+        timer_16bit_bounded(use_masked=False)
         timer_32bit()
         timer_32bit_bounded(use_masked=True)
         timer_32bit_bounded(use_masked=False)
