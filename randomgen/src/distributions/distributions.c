@@ -1221,7 +1221,7 @@ static NPY_INLINE uint16_t buffered_uint16(brng_t *brng_state, int *bcnt,
   return (uint16_t)buf[0];
 }
 
-/* Generate 16 bit random numbers using a 32 bit buffer. */
+/* Generate 8 bit random numbers using a 32 bit buffer. */
 static NPY_INLINE uint8_t buffered_uint8(brng_t *brng_state, int *bcnt,
                                          uint32_t *buf) {
   if (!(bcnt[0])) {
@@ -1248,8 +1248,14 @@ static NPY_INLINE uint64_t bounded_masked_uint64(brng_t *brng_state,
 
 /* Static `masked rejection` function called by
  * random_buffered_bounded_uint32(...) */
-static NPY_INLINE uint32_t bounded_masked_uint32(brng_t *brng_state,
-                                                 uint32_t rng, uint32_t mask) {
+static NPY_INLINE uint32_t buffered_bounded_masked_uint32(
+    brng_t *brng_state, uint32_t rng, uint32_t mask, int *bcnt, uint32_t *buf) {
+  /*
+   * The buffer and buffer count are not used here but are included to allow
+   * this function to be templated with the similar uint8 and uint16
+   * functions
+   */
+
   uint32_t val;
 
   while ((val = (next_uint32(brng_state) & mask)) > rng)
@@ -1374,10 +1380,16 @@ static NPY_INLINE uint64_t bounded_lemire_uint64(brng_t *brng_state,
 
 /* Static `Lemire rejection` function called by
  * random_buffered_bounded_uint32(...) */
-static NPY_INLINE uint32_t bounded_lemire_uint32(brng_t *brng_state,
-                                                 uint32_t rng) {
+static NPY_INLINE uint32_t buffered_bounded_lemire_uint32(brng_t *brng_state,
+                                                          uint32_t rng,
+                                                          int *bcnt,
+                                                          uint32_t *buf) {
   /*
    * Uses Lemire's algorithm - https://arxiv.org/abs/1805.10941
+   *
+   * The buffer and buffer count are not used here but are included to allow
+   * this function to be templated with the similar uint8 and uint16
+   * functions
    *
    * Note: `rng` should not be 0xFFFFFFFF. When this happens `rng_excl` becomes
    * zero.
@@ -1490,10 +1502,14 @@ uint64_t random_bounded_uint64(brng_t *brng_state, uint64_t off, uint64_t rng,
     return off;
   } else if (rng < 0xFFFFFFFFUL) {
     /* Call 32-bit generator if range in 32-bit. */
+    uint32_t buf = 0;
+    int bcnt = 0;
+
     if (use_masked) {
-      return off + bounded_masked_uint32(brng_state, rng, mask);
+      return off +
+             buffered_bounded_masked_uint32(brng_state, rng, mask, &bcnt, &buf);
     } else {
-      return off + bounded_lemire_uint32(brng_state, rng);
+      return off + buffered_bounded_lemire_uint32(brng_state, rng, &bcnt, &buf);
     }
   } else if (rng == 0xFFFFFFFFFFFFFFFFULL) {
     /* Lemire64 doesn't support inclusive rng = 0xFFFFFFFFFFFFFFFF. */
@@ -1516,8 +1532,8 @@ uint32_t random_buffered_bounded_uint32(brng_t *brng_state, uint32_t off,
                                         bool use_masked, int *bcnt,
                                         uint32_t *buf) {
   /*
-   *  Unused bcnt and buf are here only to allow templating with other uint
-   * generators
+   * Unused bcnt and buf are here only to allow templating with other uint
+   * generators.
    */
   if (rng == 0) {
     return off;
@@ -1526,9 +1542,10 @@ uint32_t random_buffered_bounded_uint32(brng_t *brng_state, uint32_t off,
     return off + next_uint32(brng_state);
   } else {
     if (use_masked) {
-      return off + bounded_masked_uint32(brng_state, rng, mask);
+      return off +
+             buffered_bounded_masked_uint32(brng_state, rng, mask, bcnt, buf);
     } else {
-      return off + bounded_lemire_uint32(brng_state, rng);
+      return off + buffered_bounded_lemire_uint32(brng_state, rng, bcnt, buf);
     }
   }
 }
@@ -1615,17 +1632,22 @@ void random_bounded_uint64_fill(brng_t *brng_state, uint64_t off, uint64_t rng,
       out[i] = off;
     }
   } else if (rng < 0xFFFFFFFFUL) {
+    uint32_t buf = 0;
+    int bcnt = 0;
+
     /* Call 32-bit generator if range in 32-bit. */
     if (use_masked) {
       /* Smallest bit mask >= max */
       uint64_t mask = gen_mask(rng);
 
       for (i = 0; i < cnt; i++) {
-        out[i] = off + bounded_masked_uint32(brng_state, rng, mask);
+        out[i] = off + buffered_bounded_masked_uint32(brng_state, rng, mask,
+                                                      &bcnt, &buf);
       }
     } else {
       for (i = 0; i < cnt; i++) {
-        out[i] = off + bounded_lemire_uint32(brng_state, rng);
+        out[i] =
+            off + buffered_bounded_lemire_uint32(brng_state, rng, &bcnt, &buf);
       }
     }
   } else if (rng == 0xFFFFFFFFFFFFFFFFULL) {
@@ -1656,6 +1678,8 @@ void random_bounded_uint64_fill(brng_t *brng_state, uint64_t off, uint64_t rng,
 void random_bounded_uint32_fill(brng_t *brng_state, uint32_t off, uint32_t rng,
                                 npy_intp cnt, bool use_masked, uint32_t *out) {
   npy_intp i;
+  uint32_t buf = 0;
+  int bcnt = 0;
 
   if (rng == 0) {
     for (i = 0; i < cnt; i++) {
@@ -1672,11 +1696,13 @@ void random_bounded_uint32_fill(brng_t *brng_state, uint32_t off, uint32_t rng,
       uint32_t mask = (uint32_t)gen_mask(rng);
 
       for (i = 0; i < cnt; i++) {
-        out[i] = off + bounded_masked_uint32(brng_state, rng, mask);
+        out[i] = off + buffered_bounded_masked_uint32(brng_state, rng, mask,
+                                                      &bcnt, &buf);
       }
     } else {
       for (i = 0; i < cnt; i++) {
-        out[i] = off + bounded_lemire_uint32(brng_state, rng);
+        out[i] =
+            off + buffered_bounded_lemire_uint32(brng_state, rng, &bcnt, &buf);
       }
     }
   }
