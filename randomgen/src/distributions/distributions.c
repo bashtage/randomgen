@@ -1502,14 +1502,11 @@ uint64_t random_bounded_uint64(brng_t *brng_state, uint64_t off, uint64_t rng,
     return off;
   } else if (rng < 0xFFFFFFFFUL) {
     /* Call 32-bit generator if range in 32-bit. */
-    uint32_t buf = 0;
-    int bcnt = 0;
-
     if (use_masked) {
       return off +
-             buffered_bounded_masked_uint32(brng_state, rng, mask, &bcnt, &buf);
+             buffered_bounded_masked_uint32(brng_state, rng, mask, NULL, NULL);
     } else {
-      return off + buffered_bounded_lemire_uint32(brng_state, rng, &bcnt, &buf);
+      return off + buffered_bounded_lemire_uint32(brng_state, rng, NULL, NULL);
     }
   } else if (rng == 0xFFFFFFFFFFFFFFFFULL) {
     /* Lemire64 doesn't support inclusive rng = 0xFFFFFFFFFFFFFFFF. */
