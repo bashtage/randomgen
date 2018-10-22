@@ -83,7 +83,7 @@ def timer_uniform():
     run_timer(dist, command, None, SETUP, 'Uniforms')
 
 
-def timer_8bit_bounded(max=127, use_masked=True):
+def timer_8bit_bounded(max=95, use_masked=True):
     min = 0
 
     dist = 'random_uintegers'
