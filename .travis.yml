@@ -80,5 +80,5 @@ after_success:
   - |
     if [[ ${DOCBUILD} == true ]]; then
       cd ${BUILD_DIR}
-      python benchmark.py --full;
+      python benchmark.py;
     fi
