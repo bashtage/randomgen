@@ -83,12 +83,8 @@ def timer_uniform():
     run_timer(dist, command, None, SETUP, 'Uniforms')
 
 
-def timer_8bit_bounded(use_masked=True):
-    # info = np.iinfo(np.uint8)
-    # min, max = info.min, info.max
-
-    min, max = 0, 65 - 1  # WORST case for masking & rejection algorithm!
-    # min, max = 0, 48 - 1  # AVERAGE case for masking & rejection algorithm!
+def timer_8bit_bounded(max=127, use_masked=True):
+    min = 0
 
     dist = 'random_uintegers'
 
@@ -108,15 +104,11 @@ def timer_8bit_bounded(use_masked=True):
     command_numpy = command_numpy.format(min=min, max=max)
 
     run_timer(dist, command, command_numpy, SETUP,
-              '8-bit bounded unsigned integers; use_masked={use_masked}'.format(use_masked=use_masked))
+              '8-bit bounded unsigned integers (max={max}, use_masked={use_masked})'.format(max=max, use_masked=use_masked))
 
 
-def timer_16bit_bounded(use_masked=True):
-    # info = np.iinfo(np.uint16)
-    # min, max = info.min, info.max
-
-    min, max = 0, 1025 - 1  # WORST case for masking & rejection algorithm!
-    # min, max = 0, 1536 - 1  # AVERAGE case for masking & rejection algorithm!
+def timer_16bit_bounded(max=1535, use_masked=True):
+    min = 0
 
     dist = 'random_uintegers'
 
@@ -136,7 +128,7 @@ def timer_16bit_bounded(use_masked=True):
     command_numpy = command_numpy.format(min=min, max=max)
 
     run_timer(dist, command, command_numpy, SETUP,
-              '16-bit bounded unsigned integers; use_masked={use_masked}'.format(use_masked=use_masked))
+              '16-bit bounded unsigned integers (max={max}, use_masked={use_masked})'.format(max=max, use_masked=use_masked))
 
 
 def timer_32bit():
@@ -149,12 +141,8 @@ def timer_32bit():
     run_timer(dist, command, command_numpy, SETUP, '32-bit unsigned integers')
 
 
-def timer_32bit_bounded(use_masked=True):
-    # info = np.iinfo(np.uint32)
-    # min, max = info.min, info.max
-
-    min, max = 0, 1025 - 1  # WORST case for masking & rejection algorithm!
-    # min, max = 0, 1536 - 1  # AVERAGE case for masking & rejection algorithm!
+def timer_32bit_bounded(max=1535, use_masked=True):
+    min = 0
 
     dist = 'random_uintegers'
 
@@ -174,7 +162,7 @@ def timer_32bit_bounded(use_masked=True):
     command_numpy = command_numpy.format(min=min, max=max)
 
     run_timer(dist, command, command_numpy, SETUP,
-              '32-bit bounded unsigned integers; use_masked={use_masked}'.format(use_masked=use_masked))
+              '32-bit bounded unsigned integers (max={max}, use_masked={use_masked})'.format(max=max, use_masked=use_masked))
 
 
 def timer_64bit():
@@ -187,12 +175,8 @@ def timer_64bit():
     run_timer(dist, command, command_numpy, SETUP, '64-bit unsigned integers')
 
 
-def timer_64bit_bounded(use_masked=True):
-    # info = np.iinfo(np.uint64)
-    # min, max = info.min, info.max
-
-    min, max = 0, 1025 - 1  # WORST case for masking & rejection algorithm!
-    # min, max = 0, 1536 - 1  # AVERAGE case for masking & rejection algorithm!
+def timer_64bit_bounded(max=1535, use_masked=True):
+    min = 0
 
     dist = 'random_uintegers'
 
@@ -212,7 +196,7 @@ def timer_64bit_bounded(use_masked=True):
     command_numpy = command_numpy.format(min=min, max=max)
 
     run_timer(dist, command, command_numpy, SETUP,
-              '64-bit bounded unsigned integers; use_masked={use_masked}'.format(use_masked=use_masked))
+              '64-bit bounded unsigned integers (max={max}, use_masked={use_masked})'.format(max=max, use_masked=use_masked))
 
 
 def timer_normal_zig():
@@ -233,13 +217,27 @@ if __name__ == '__main__':
     if args.full:
         timer_raw()
         timer_8bit_bounded(use_masked=True)
-        timer_8bit_bounded(use_masked=False)
+        timer_8bit_bounded(max=64, use_masked=False)  # Worst case for Numpy.
+        timer_8bit_bounded(max=95, use_masked=False)  # Typ. avrg. case for Numpy.
+        timer_8bit_bounded(max=127, use_masked=False)  # Best case for Numpy.
+
         timer_16bit_bounded(use_masked=True)
-        timer_16bit_bounded(use_masked=False)
+        timer_16bit_bounded(max=1024, use_masked=False)  # Worst case for Numpy.
+        timer_16bit_bounded(max=1535, use_masked=False)  # Typ. avrg. case for Numpy.
+        timer_16bit_bounded(max=2047, use_masked=False)  # Best case for Numpy.
+
         timer_32bit()
+
         timer_32bit_bounded(use_masked=True)
-        timer_32bit_bounded(use_masked=False)
+        timer_32bit_bounded(max=1024, use_masked=False)  # Worst case for Numpy.
+        timer_32bit_bounded(max=1535, use_masked=False)  # Typ. avrg. case for Numpy.
+        timer_32bit_bounded(max=2047, use_masked=False)  # Best case for Numpy.
+
         timer_64bit()
+
         timer_64bit_bounded(use_masked=True)
-        timer_64bit_bounded(use_masked=False)
+        timer_64bit_bounded(max=1024, use_masked=False)  # Worst case for Numpy.
+        timer_64bit_bounded(max=1535, use_masked=False)  # Typ. avrg. case for Numpy.
+        timer_64bit_bounded(max=2047, use_masked=False)  # Best case for Numpy.
+
         timer_normal_zig()
