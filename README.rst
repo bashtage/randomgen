@@ -82,8 +82,10 @@ addition to the MT19937 that is included in NumPy. The RNGs include:
 -  `dSFMT <http://www.math.sci.hiroshima-u.ac.jp/~m-mat/MT/SFMT/>`__ a
    SSE2-aware version of the MT19937 generator that is especially fast
    at generating doubles
--  `xoroshiro128+ <http://xoroshiro.di.unimi.it/>`__ and
-   `xorshift1024*φ <http://xorshift.di.unimi.it/>`__
+-  `xoroshiro128+ <http://xoroshiro.di.unimi.it/>`__,
+   `xorshift1024*φ <http://xorshift.di.unimi.it/>`__,
+   `xoshiro256*\* <http://xorshift.di.unimi.it/>`__, and
+   `xoshiro512*\* <http://xorshift.di.unimi.it/>`__
 -  `PCG64 <http://www.pcg-random.org/>`__
 -  ThreeFry and Philox from
    `Random123 <https://www.deshawresearch.com/resources_random123.html>`__

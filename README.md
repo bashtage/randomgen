@@ -79,8 +79,10 @@ The RNGs include:
 * [dSFMT](http://www.math.sci.hiroshima-u.ac.jp/~m-mat/MT/SFMT/) a 
   SSE2-aware version of the MT19937 generator that is especially fast at 
   generating doubles
-* [xoroshiro128+](http://xoroshiro.di.unimi.it/) and
-  [xorshift1024*φ](http://xorshift.di.unimi.it/)
+* [xoroshiro128+](http://xoroshiro.di.unimi.it/),
+  [xorshift1024*φ](http://xorshift.di.unimi.it/),
+  [xoshiro256**](http://xorshift.di.unimi.it/),
+  and [xoshiro512**](http://xorshift.di.unimi.it/)
 * [PCG64](http://www.pcg-random.org/)
 * ThreeFry and Philox from [Random123](https://www.deshawresearch.com/resources_random123.html)
 
