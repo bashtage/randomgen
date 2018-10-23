@@ -15,7 +15,7 @@
   <link rel="stylesheet" type="text/css" href="_static/css/bootstrap-theme.min.css" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-    <title>RandomGen &#8212; RandomGen v1.15.0+9.g8a6fe92 documentation</title>
+    <title>RandomGen &#8212; RandomGen v1.15.0+11.g0023066 documentation</title>
     <link rel="stylesheet" href="_static/guzzle.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
@@ -42,7 +42,7 @@
         <li class="right" >
           <a href="generator.html" title="Random Generator"
              accesskey="N">next</a> |</li>
-        <li class="nav-item nav-item-0"><a href="#">RandomGen v1.15.0+9.g8a6fe92 documentation</a> &#187;</li> 
+        <li class="nav-item nav-item-0"><a href="#">RandomGen v1.15.0+11.g0023066 documentation</a> &#187;</li> 
       </ul>
     </div>
     <div class="container-wrapper">
@@ -52,7 +52,7 @@
       </div>
   <div id="left-column">
     <div class="sphinxsidebar"><a href="
-    #" class="text-logo">RandomGen v1.15.0 (+9)</a>
+    #" class="text-logo">RandomGen v1.15.0 (+11)</a>
 <div class="sidebar-block">
   <div class="sidebar-wrapper">
     <h2>Table Of Contents</h2>
@@ -245,13 +245,19 @@ and statistical quality. Like the XorShift generators, it can be jumped
 to produce multiple streams in parallel applications. See
 <a class="reference internal" href="brng/generated/randomgen.xoroshiro128.Xoroshiro128.jump.html#randomgen.xoroshiro128.Xoroshiro128.jump" title="randomgen.xoroshiro128.Xoroshiro128.jump"><code class="xref py py-meth docutils literal notranslate"><span class="pre">jump()</span></code></a> for details.
 More information about this PRNG is available at the
-<a class="reference external" href="http://xoroshiro.di.unimi.it/">xorshift and xoroshiro authors’ page</a>.</li>
-<li>XorShift1024*φ - Vast fast generator based on the XSadd
+<a class="reference external" href="http://xoroshiro.di.unimi.it/">xorshift, xoroshiro and xoshiro authors’ page</a>.</li>
+<li>XorShift1024*φ - Fast fast generator based on the XSadd
 generator. Supports <code class="docutils literal notranslate"><span class="pre">jump</span></code> and so can be used in
 parallel applications. See the documentation for
 <a class="reference internal" href="brng/generated/randomgen.xorshift1024.Xorshift1024.jump.html#randomgen.xorshift1024.Xorshift1024.jump" title="randomgen.xorshift1024.Xorshift1024.jump"><code class="xref py py-meth docutils literal notranslate"><span class="pre">jump()</span></code></a> for details. More information
 about these PRNGs is available at the
-<a class="reference external" href="http://xoroshiro.di.unimi.it/">xorshift and xoroshiro authors’ page</a>.</li>
+<a class="reference external" href="http://xoroshiro.di.unimi.it/">xorshift, xoroshiro and xoshiro authors’ page</a>.</li>
+<li>Xorshiro256** and Xorshiro512** - The most recently introduced XOR,
+shift, and rotate generator. Supports <code class="docutils literal notranslate"><span class="pre">jump</span></code> and so can be used in
+parallel applications. See the documentation for
+<code class="xref py py-meth docutils literal notranslate"><span class="pre">jump()</span></code> for details. More
+information about these PRNGs is available at the
+<a class="reference external" href="http://xoroshiro.di.unimi.it/">xorshift, xoroshiro and xoshiro authors’ page</a>.</li>
 <li>PCG-64 - Fast generator that support many parallel streams and
 can be advanced by an arbitrary amount. See the documentation for
 <a class="reference internal" href="brng/generated/randomgen.pcg64.PCG64.advance.html#randomgen.pcg64.PCG64.advance" title="randomgen.pcg64.PCG64.advance"><code class="xref py py-meth docutils literal notranslate"><span class="pre">advance()</span></code></a>. PCG-64 has a period of
@@ -284,6 +290,8 @@ arbitrary number of steps or generating independent streams. See the
 <li class="toctree-l3"><a class="reference internal" href="brng/threefry.html">ThreeFry</a></li>
 <li class="toctree-l3"><a class="reference internal" href="brng/xoroshiro128.html">XoroShiro128+</a></li>
 <li class="toctree-l3"><a class="reference internal" href="brng/xorshift1024.html">Xorshift1024*φ</a></li>
+<li class="toctree-l3"><a class="reference internal" href="brng/xoshiro256starstar.html">Xoshiro256**</a></li>
+<li class="toctree-l3"><a class="reference internal" href="brng/xoshiro512starstar.html">Xoshiro512**</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="brng/index.html#experimental-rngs">Experimental RNGs</a><ul>
@@ -326,6 +334,7 @@ arbitrary number of steps or generating independent streams. See the
 <div class="toctree-wrapper compound">
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="change-log.html">Change Log</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="change-log.html#after-v1-15">After v1.15</a></li>
 <li class="toctree-l2"><a class="reference internal" href="change-log.html#v1-15">v1.15</a></li>
 </ul>
 </li>
@@ -369,7 +378,7 @@ arbitrary number of steps or generating independent streams. See the
         <li class="right" >
           <a href="generator.html" title="Random Generator"
              >next</a> |</li>
-        <li class="nav-item nav-item-0"><a href="#">RandomGen v1.15.0+9.g8a6fe92 documentation</a> &#187;</li> 
+        <li class="nav-item nav-item-0"><a href="#">RandomGen v1.15.0+11.g0023066 documentation</a> &#187;</li> 
       </ul>
     </div>
 <script type="text/javascript">

@@ -1,0 +1,6 @@
+randomgen.xoshiro512starstar.Xoshiro512StarStar.generator
+=========================================================
+
+.. currentmodule:: randomgen.xoshiro512starstar
+
+.. autoattribute:: Xoshiro512StarStar.generator
