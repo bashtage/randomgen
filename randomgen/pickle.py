@@ -8,6 +8,8 @@ from randomgen.threefry import ThreeFry
 from randomgen.threefry32 import ThreeFry32
 from randomgen.xoroshiro128 import Xoroshiro128
 from randomgen.xorshift1024 import Xorshift1024
+from randomgen.xoshiro256starstar import Xoshiro256StarStar
+from randomgen.xoshiro512starstar import Xoshiro512StarStar
 from randomgen.legacy import LegacyGenerator
 
 BasicRNGS = {'MT19937': MT19937,
@@ -18,7 +20,10 @@ BasicRNGS = {'MT19937': MT19937,
              'ThreeFry': ThreeFry,
              'ThreeFry32': ThreeFry32,
              'Xorshift1024': Xorshift1024,
-             'Xoroshiro128': Xoroshiro128}
+             'Xoroshiro128': Xoroshiro128,
+             'Xoshiro256StarStar': Xoshiro256StarStar,
+             'Xoshiro512StarStar': Xoshiro512StarStar,
+             }
 
 
 def __generator_ctor(brng_name='mt19937'):
