@@ -258,39 +258,45 @@ NumPy’s mt19937.
 
    Speed-up relative to NumPy (Uniform Doubles)
    ************************************************************
-   DSFMT           137.1%
-   MT19937          21.0%
-   PCG32           101.2%
-   PCG64           110.7%
-   Philox           -2.7%
-   ThreeFry        -11.4%
-   ThreeFry32      -62.3%
-   Xoroshiro128    181.4%
-   Xorshift1024    141.8%
+   DSFMT                 184.9%
+   MT19937                17.3%
+   PCG32                  83.3%
+   PCG64                 108.3%
+   Philox                 -4.9%
+   ThreeFry              -12.0%
+   ThreeFry32            -63.9%
+   Xoroshiro128          159.5%
+   Xorshift1024          150.4%
+   Xoshiro256StarStar    145.7%
+   Xoshiro512StarStar    113.1%
 
    Speed-up relative to NumPy (64-bit unsigned integers)
    ************************************************************
-   DSFMT            24.8%
-   MT19937          15.0%
-   PCG32            92.6%
-   PCG64            99.0%
-   Philox          -20.4%
-   ThreeFry        -21.7%
-   ThreeFry32      -64.4%
-   Xoroshiro128    164.2%
-   Xorshift1024    120.8%
+   DSFMT                  17.4%
+   MT19937                 7.8%
+   PCG32                  60.3%
+   PCG64                  73.5%
+   Philox                -25.5%
+   ThreeFry              -30.5%
+   ThreeFry32            -67.8%
+   Xoroshiro128          124.0%
+   Xorshift1024          109.4%
+   Xoshiro256StarStar    100.3%
+   Xoshiro512StarStar     63.5%
 
    Speed-up relative to NumPy (Standard normals)
    ************************************************************
-   DSFMT           299.4%
-   MT19937         271.2%
-   PCG32           364.5%
-   PCG64           364.2%
-   Philox          256.9%
-   ThreeFry        236.0%
-   ThreeFry32       97.0%
-   Xoroshiro128    477.4%
-   Xorshift1024    360.7%
+   DSFMT                 183.0%
+   MT19937               169.0%
+   PCG32                 240.7%
+   PCG64                 231.6%
+   Philox                131.3%
+   ThreeFry              118.3%
+   ThreeFry32             21.6%
+   Xoroshiro128          332.1%
+   Xorshift1024          232.4%
+   Xoshiro256StarStar    306.6%
+   Xoshiro512StarStar    274.6%
 
 .. |Travis Build Status| image:: https://travis-ci.org/bashtage/randomgen.svg?branch=master
    :target: https://travis-ci.org/bashtage/randomgen
