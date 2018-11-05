@@ -3561,7 +3561,7 @@ cdef class RandomGenerator:
 
         """
         return disc(&random_geometric, self._brng, size, self.lock, 1, 0,
-                        p, 'p', CONS_BOUNDED_0_1,
+                        p, 'p', CONS_BOUNDED_GT_0_1,
                         0.0, '', CONS_NONE,
                         0.0, '', CONS_NONE)
 
@@ -4234,9 +4234,8 @@ cdef class RandomGenerator:
                     self._shuffle_raw(n, sizeof(np.npy_intp), stride, x_ptr, buf_ptr)
                 else:
                     self._shuffle_raw(n, itemsize, stride, x_ptr, buf_ptr)
-        elif isinstance(x, np.ndarray) and x.ndim > 1 and x.size:
-            # Multidimensional ndarrays require a bounce buffer.
-            buf = np.empty_like(x[0])
+        elif isinstance(x, np.ndarray) and x.ndim and x.size:
+            buf = np.empty_like(x[0,...])
             with self.lock:
                 for i in reversed(range(1, n)):
                     j = random_interval(self._brng, i)
@@ -4305,8 +4304,8 @@ cdef class RandomGenerator:
 
         # shuffle has fast-path for 1-d
         if arr.ndim == 1:
-            # must return a copy
-            if arr is x:
+            # Return a copy if same memory
+            if np.may_share_memory(arr, x):
                 arr = np.array(arr)
             self.shuffle(arr)
             return arr
