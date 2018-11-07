@@ -84,6 +84,54 @@ def timer_uniform():
     run_timer(dist, command, None, SETUP, 'Uniforms')
 
 
+def timer_8bit_bounded(max=95, use_masked=True):
+    min = 0
+
+    dist = 'random_uintegers'
+
+    # Note on performance of generating random numbers in an interval:
+    # use_masked=True : masking and rejection sampling is used to generate a random number in an interval.
+    # use_masked=False : Lemire's algorithm is used if available to generate a random number in an interval.
+    # Lemire's algorithm has improved performance when {max}+1 is not a power of two.
+
+    if use_masked:
+        command = 'rg.randint({min}, {max}+1, 1000000, dtype=np.uint8, use_masked=True)'  # Use masking & rejection.
+    else:
+        command = 'rg.randint({min}, {max}+1, 1000000, dtype=np.uint8, use_masked=False)'  # Use Lemire's algo.
+
+    command = command.format(min=min, max=max)
+
+    command_numpy = 'rg.randint({min}, {max}+1, 1000000, dtype=np.uint8)'
+    command_numpy = command_numpy.format(min=min, max=max)
+
+    run_timer(dist, command, command_numpy, SETUP,
+              '8-bit bounded unsigned integers (max={max}, use_masked={use_masked})'.format(max=max, use_masked=use_masked))
+
+
+def timer_16bit_bounded(max=1535, use_masked=True):
+    min = 0
+
+    dist = 'random_uintegers'
+
+    # Note on performance of generating random numbers in an interval:
+    # use_masked=True : masking and rejection sampling is used to generate a random number in an interval.
+    # use_masked=False : Lemire's algorithm is used if available to generate a random number in an interval.
+    # Lemire's algorithm has improved performance when {max}+1 is not a power of two.
+
+    if use_masked:
+        command = 'rg.randint({min}, {max}+1, 1000000, dtype=np.uint16, use_masked=True)'  # Use masking & rejection.
+    else:
+        command = 'rg.randint({min}, {max}+1, 1000000, dtype=np.uint16, use_masked=False)'  # Use Lemire's algo.
+
+    command = command.format(min=min, max=max)
+
+    command_numpy = 'rg.randint({min}, {max}+1, 1000000, dtype=np.uint16)'
+    command_numpy = command_numpy.format(min=min, max=max)
+
+    run_timer(dist, command, command_numpy, SETUP,
+              '16-bit bounded unsigned integers (max={max}, use_masked={use_masked})'.format(max=max, use_masked=use_masked))
+
+
 def timer_32bit():
     info = np.iinfo(np.uint32)
     min, max = info.min, info.max
@@ -94,6 +142,30 @@ def timer_32bit():
     run_timer(dist, command, command_numpy, SETUP, '32-bit unsigned integers')
 
 
+def timer_32bit_bounded(max=1535, use_masked=True):
+    min = 0
+
+    dist = 'random_uintegers'
+
+    # Note on performance of generating random numbers in an interval:
+    # use_masked=True : masking and rejection sampling is used to generate a random number in an interval.
+    # use_masked=False : Lemire's algorithm is used if available to generate a random number in an interval.
+    # Lemire's algorithm has improved performance when {max}+1 is not a power of two.
+
+    if use_masked:
+        command = 'rg.randint({min}, {max}+1, 1000000, dtype=np.uint32, use_masked=True)'  # Use masking & rejection.
+    else:
+        command = 'rg.randint({min}, {max}+1, 1000000, dtype=np.uint32, use_masked=False)'  # Use Lemire's algo.
+
+    command = command.format(min=min, max=max)
+
+    command_numpy = 'rg.randint({min}, {max}+1, 1000000, dtype=np.uint32)'
+    command_numpy = command_numpy.format(min=min, max=max)
+
+    run_timer(dist, command, command_numpy, SETUP,
+              '32-bit bounded unsigned integers (max={max}, use_masked={use_masked})'.format(max=max, use_masked=use_masked))
+
+
 def timer_64bit():
     info = np.iinfo(np.uint64)
     min, max = info.min, info.max
@@ -102,6 +174,30 @@ def timer_64bit():
     command_numpy = 'rg.randint({min}, {max}+1, 1000000, dtype=np.uint64)'
     command_numpy = command_numpy.format(min=min, max=max)
     run_timer(dist, command, command_numpy, SETUP, '64-bit unsigned integers')
+
+
+def timer_64bit_bounded(max=1535, use_masked=True):
+    min = 0
+
+    dist = 'random_uintegers'
+
+    # Note on performance of generating random numbers in an interval:
+    # use_masked=True : masking and rejection sampling is used to generate a random number in an interval.
+    # use_masked=False : Lemire's algorithm is used if available to generate a random number in an interval.
+    # Lemire's algorithm has improved performance when {max}+1 is not a power of two.
+
+    if use_masked:
+        command = 'rg.randint({min}, {max}+1, 1000000, dtype=np.uint64, use_masked=True)'  # Use masking & rejection.
+    else:
+        command = 'rg.randint({min}, {max}+1, 1000000, dtype=np.uint64, use_masked=False)'  # Use Lemire's algo.
+
+    command = command.format(min=min, max=max)
+
+    command_numpy = 'rg.randint({min}, {max}+1, 1000000, dtype=np.uint64)'
+    command_numpy = command_numpy.format(min=min, max=max)
+
+    run_timer(dist, command, command_numpy, SETUP,
+              '64-bit bounded unsigned integers (max={max}, use_masked={use_masked})'.format(max=max, use_masked=use_masked))
 
 
 def timer_normal_zig():
@@ -121,6 +217,28 @@ if __name__ == '__main__':
     timer_uniform()
     if args.full:
         timer_raw()
+        timer_8bit_bounded(use_masked=True)
+        timer_8bit_bounded(max=64, use_masked=False)  # Worst case for Numpy.
+        timer_8bit_bounded(max=95, use_masked=False)  # Typ. avrg. case for Numpy.
+        timer_8bit_bounded(max=127, use_masked=False)  # Best case for Numpy.
+
+        timer_16bit_bounded(use_masked=True)
+        timer_16bit_bounded(max=1024, use_masked=False)  # Worst case for Numpy.
+        timer_16bit_bounded(max=1535, use_masked=False)  # Typ. avrg. case for Numpy.
+        timer_16bit_bounded(max=2047, use_masked=False)  # Best case for Numpy.
+
         timer_32bit()
+
+        timer_32bit_bounded(use_masked=True)
+        timer_32bit_bounded(max=1024, use_masked=False)  # Worst case for Numpy.
+        timer_32bit_bounded(max=1535, use_masked=False)  # Typ. avrg. case for Numpy.
+        timer_32bit_bounded(max=2047, use_masked=False)  # Best case for Numpy.
+
         timer_64bit()
+
+        timer_64bit_bounded(use_masked=True)
+        timer_64bit_bounded(max=1024, use_masked=False)  # Worst case for Numpy.
+        timer_64bit_bounded(max=1535, use_masked=False)  # Typ. avrg. case for Numpy.
+        timer_64bit_bounded(max=2047, use_masked=False)  # Best case for Numpy.
+
         timer_normal_zig()

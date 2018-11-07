@@ -436,6 +436,33 @@ class TestRandomDist(object):
                             [-48, -66]])
         assert_array_equal(actual, desired)
 
+    def test_randint_masked(self):
+        """ Test masked rejection sampling algorithm to generate array of uint32 in an interval. """
+        mt19937.seed(self.seed)
+        actual = mt19937.randint(0, 99, size=(3, 2), dtype=np.uint32, use_masked=True)
+        desired = np.array([[2, 47],
+                            [12, 51],
+                            [33, 43]], dtype=np.uint32)
+        assert_array_equal(actual, desired)
+
+    def test_randint_lemire_32(self):
+        """ Test lemire algorithm to generate array of uint32 in an interval. """
+        mt19937.seed(self.seed)
+        actual = mt19937.randint(0, 99, size=(3, 2), dtype=np.uint32, use_masked=False)
+        desired = np.array([[61, 33],
+                            [58, 14],
+                            [87, 23]], dtype=np.uint32)
+        assert_array_equal(actual, desired)
+
+    def test_randint_lemire_64(self):
+        """ Test lemire algorithm to generate array of uint64 in an interval. """
+        mt19937.seed(self.seed)
+        actual = mt19937.randint(0, 99 + 0xFFFFFFFFF, size=(3, 2), dtype=np.uint64, use_masked=False)
+        desired = np.array([[42523252834, 40656066204],
+                            [61069871386, 61274051182],
+                            [31443797706, 53476677934]], dtype=np.uint64)
+        assert_array_equal(actual, desired)
+
     def test_random_integers(self):
         mt19937.seed(self.seed)
         with suppress_warnings() as sup:
