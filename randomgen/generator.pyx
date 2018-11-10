@@ -574,7 +574,7 @@ cdef class RandomGenerator:
 
     def randint(self, low, high=None, size=None, dtype=int, use_masked=True):
         """
-        randint(low, high=None, size=None, dtype='l')
+        randint(low, high=None, size=None, dtype='l', use_masked=True)
 
         Return random integers from `low` (inclusive) to `high` (exclusive).
 
@@ -652,6 +652,11 @@ cdef class RandomGenerator:
         >>> randomgen.randint([1, 3, 5, 7], [[10], [20]], dtype=np.uint8)
         array([[ 8,  6,  9,  7],
                [ 1, 16,  9, 12]], dtype=uint8)
+
+        References
+        ----------
+        .. [1] Daniel Lemire., "Fast Random Integer Generation in an Interval",
+               CoRR, Aug. 13, 2018, http://arxiv.org/abs/1805.10941.
         """
         if high is None:
             high = low
