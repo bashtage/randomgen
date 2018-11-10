@@ -188,6 +188,7 @@ devel/_sources/multithreading.rst.txt
 devel/_sources/new-or-different.rst.txt
 devel/_sources/parallel.rst.txt
 devel/_sources/performance.rst.txt
+devel/_sources/references.rst.txt
 devel/_static/ajax-loader.gif
 devel/_static/basic.css
 devel/_static/comment-bright.png
@@ -489,5 +490,6 @@ devel/objects.inv
 devel/parallel.html
 devel/performance.html
 devel/py-modindex.html
+devel/references.html
 devel/search.html
 devel/searchindex.js
