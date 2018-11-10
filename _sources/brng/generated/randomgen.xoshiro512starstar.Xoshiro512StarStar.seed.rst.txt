@@ -1,0 +1,6 @@
+randomgen.xoshiro512starstar.Xoshiro512StarStar.seed
+====================================================
+
+.. currentmodule:: randomgen.xoshiro512starstar
+
+.. automethod:: Xoshiro512StarStar.seed
