@@ -33,11 +33,11 @@ cdef class _LegacyGenerator:
     ``_LegacyGenerator`` exposes a number of methods for generating random
     numbers for a set of distributions where the method used to produce random
     samples has changed. Three core generators have changed: normal, exponential
-    and gamma. These have been replaced by faster Ziggurat-based methods in 
+    and gamma. These have been replaced by faster Ziggurat-based methods in
     ``RandomGenerator``. ``_LegacyGenerator`` retains the slower methods
     to produce samples from these distributions as well as from distributions
     that depend on these such as the Chi-square, power or Weibull.
-     
+
     **No Compatibility Guarantee**
 
     ``_LegacyGenerator`` is evolving and so it isn't possible to provide a
@@ -55,9 +55,9 @@ cdef class _LegacyGenerator:
     Examples
     --------
     Exactly reproducing a NumPy stream requires both a ``RandomGenerator``
-    and a ``_LegacyGenerator``.  These must share a common ``MT19937`` basic 
-    RNG. Functions that are available in LegacyGenerator must be called 
-    from ``_LegacyGenerator``, and other functions must be called from 
+    and a ``_LegacyGenerator``.  These must share a common ``MT19937`` basic
+    RNG. Functions that are available in LegacyGenerator must be called
+    from ``_LegacyGenerator``, and other functions must be called from
     ``RandomGenerator``.
 
     >>> from randomgen import RandomGenerator, MT19937
@@ -71,7 +71,7 @@ cdef class _LegacyGenerator:
     0.09290787674371767
     >>> lg.standard_exponential()
     1.6465621229906502
-    
+
     The equivalent commands from NumPy produce identical output.
 
     >>> from numpy.random import RandomState
@@ -98,7 +98,7 @@ cdef class _LegacyGenerator:
         if not PyCapsule_IsValid(capsule, name):
             raise ValueError("Invalid brng. The brng must be instantized.")
         self._brng = <brng_t *> PyCapsule_GetPointer(capsule, name)
-        self._aug_state = <aug_brng_t *>malloc(sizeof(aug_brng_t)) 
+        self._aug_state = <aug_brng_t *>malloc(sizeof(aug_brng_t))
         self._aug_state.basicrng = self._brng
         self._reset_gauss()
         self.lock = Lock()
@@ -137,7 +137,7 @@ cdef class _LegacyGenerator:
         Notes
         -----
         Arguments are directly passed to the basic RNG. This is a convenience
-        function. 
+        function.
 
         The best method to access seed is to directly use a basic RNG instance.
         This example demonstrates this best practice.
@@ -153,8 +153,8 @@ cdef class _LegacyGenerator:
         >>> brng = MT19937(123456789)
         >>> lg = LegacyGenerator(brng)
         >>> brng.seed(987654321)
-        
-        These best practice examples are equivalent to 
+
+        These best practice examples are equivalent to
 
         >>> lg = LegacyGenerator(MT19937(123456789))
         >>> lg.seed(987654321)
@@ -191,7 +191,7 @@ cdef class _LegacyGenerator:
         if isinstance(value, tuple):
             if value[0] != 'MT19937':
                 raise ValueError('tuple only supported for MT19937')
-            st = {'brng': value[0], 
+            st = {'brng': value[0],
                   'state': {'key': value[1], 'pos': value[2]}}
             if len(value) > 3:
                 st['has_gauss'] = value[3]
@@ -236,7 +236,7 @@ cdef class _LegacyGenerator:
         return cont(&legacy_gauss, self._aug_state, size, self.lock, 0,
                     None, None, CONS_NONE,
                     None, None, CONS_NONE,
-                    None, None, CONS_NONE, 
+                    None, None, CONS_NONE,
                     None)
 
     def standard_t(self, df, size=None):
@@ -1623,7 +1623,7 @@ cdef class _LegacyGenerator:
             while i < totsize:
                 acc = 0.0
                 for j in range(k):
-                    val_data[i+j] = legacy_standard_gamma(self._aug_state, 
+                    val_data[i+j] = legacy_standard_gamma(self._aug_state,
                                                           alpha_data[j])
                     acc             = acc + val_data[i + j]
                 invacc  = 1/acc
@@ -1773,7 +1773,7 @@ cdef class _LegacyGenerator:
         # matrices should be equal up to roundoff error if cov is
         # symmetric and the singular value of the corresponding row is
         # not zero. We continue to use the SVD rather than Cholesky in
-        # order to preserve current outputs. 
+        # order to preserve current outputs.
 
         (u, s, v) = svd(cov)
 
@@ -1828,7 +1828,7 @@ cdef class _LegacyGenerator:
         return cont(&legacy_standard_exponential, self._aug_state, size, self.lock, 0,
                     None, None, CONS_NONE,
                     None, None, CONS_NONE,
-                    None, None, CONS_NONE, 
+                    None, None, CONS_NONE,
                     None)
 
     def exponential(self, scale=1.0, size=None):

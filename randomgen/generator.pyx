@@ -2,11 +2,11 @@
 #cython: wraparound=False, nonecheck=False, boundscheck=False, cdivision=True, language_level=3
 from __future__ import absolute_import
 
-import operator 
+import operator
 import warnings
 
 from cpython.pycapsule cimport PyCapsule_IsValid, PyCapsule_GetPointer
-from cpython cimport (Py_INCREF, PyComplex_RealAsDouble, 
+from cpython cimport (Py_INCREF, PyComplex_RealAsDouble,
     PyComplex_ImagAsDouble, PyComplex_FromDoubles, PyFloat_AsDouble)
 from libc cimport string
 from libc.stdlib cimport malloc, free
@@ -141,7 +141,7 @@ cdef class RandomGenerator:
         Notes
         -----
         Arguments are directly passed to the basic RNG. This is a convenience
-        function. 
+        function.
 
         The best method to access seed is to directly use a basic RNG instance.
         This example demonstrates this best practice.
@@ -156,8 +156,8 @@ cdef class RandomGenerator:
         >>> brng = PCG64(1234567891011)
         >>> rg = RandomGenerator(brng)
         >>> brng.seed(1110987654321)
-        
-        These best practice examples are equivalent to 
+
+        These best practice examples are equivalent to
 
         >>> rg = RandomGenerator(PCG64(1234567891011))
         >>> rg.seed(1110987654321)
@@ -176,10 +176,10 @@ cdef class RandomGenerator:
         state : dict
             Dictionary containing the information required to describe the
             state of the Basic RNG
-        
+
         Notes
         -----
-        This is a trivial pass-through function.  RandomGenerator does not 
+        This is a trivial pass-through function.  RandomGenerator does not
         directly contain or manipulate the basic RNG's state.
         """
         return self._basicrng.state
@@ -260,7 +260,7 @@ cdef class RandomGenerator:
             ``m * n * k`` samples are drawn.  Default is None, in which case a
             single value is returned.
         output : bool, optional
-            Output values.  Used for performance testing since the generated 
+            Output values.  Used for performance testing since the generated
             values are not returned.
 
         Returns
@@ -290,7 +290,7 @@ cdef class RandomGenerator:
                 for i in range(n):
                     self._brng.next_raw(self._brng.state)
             return None
-        
+
         if size is None:
             with self.lock:
                 return self._brng.next_raw(self._brng.state)
@@ -684,7 +684,7 @@ cdef class RandomGenerator:
             ret =  _rand_uint8(low, high, size, use_masked, self._brng, self.lock)
         elif key == 'bool':
             ret =  _rand_bool(low, high, size, use_masked, self._brng, self.lock)
-        
+
         if size is None and dtype in (np.bool, np.int, np.long):
                 if np.array(ret).shape == ():
                     return dtype(ret)
@@ -1128,7 +1128,7 @@ cdef class RandomGenerator:
 
         Return random integers of type np.int64 from the "discrete uniform"
         distribution in the closed interval [`low`, `high`].  If `high` is
-        None (the default), then results are from [1, `low`]. 
+        None (the default), then results are from [1, `low`].
 
         This function has been deprecated. Use randint instead.
 
@@ -1392,7 +1392,7 @@ cdef class RandomGenerator:
         -----
         **EXPERIMENTAL** Not part of official NumPy RandomState, may change until
         formal release on PyPi.
-        
+
         Complex normals are generated from a bivariate normal where the
         variance of the real component is 0.5 Re(gamma + relation), the
         variance of the imaginary component is 0.5 Re(gamma - relation), and
@@ -4293,7 +4293,7 @@ cdef class RandomGenerator:
     def permutation(self, object x):
         """
         permutation(x)
-        
+
         Randomly permute a sequence, or return a permuted range.
 
         If `x` is a multi-dimensional array, it is only shuffled along its
@@ -4305,20 +4305,20 @@ cdef class RandomGenerator:
             If `x` is an integer, randomly permute ``np.arange(x)``.
             If `x` is an array, make a copy and shuffle the elements
             randomly.
-        
+
         Returns
         -------
         out : ndarray
             Permuted sequence or array range.
-        
+
         Examples
         --------
         >>> np.random.permutation(10)
         array([1, 7, 4, 3, 0, 9, 2, 5, 8, 6])
-        
+
         >>> np.random.permutation([1, 4, 9, 12, 15])
         array([15,  1,  9,  4, 12])
-        
+
         >>> arr = np.arange(9).reshape((3, 3))
         >>> np.random.permutation(arr)
         array([[6, 7, 8],
