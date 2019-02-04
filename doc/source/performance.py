@@ -1,3 +1,4 @@
+from collections import OrderedDict
 from timeit import repeat
 
 import numpy as np
@@ -26,10 +27,10 @@ rg = {prng}().generator
 """
 
 test = "rg.{func}"
-table = {}
+table = OrderedDict()
 for prng in PRNGS:
     print(prng)
-    col = {}
+    col = OrderedDict()
     for key in funcs:
         t = repeat(test.format(func=funcs[key]),
                    setup.format(prng=prng().__class__.__name__),
@@ -38,7 +39,7 @@ for prng in PRNGS:
     col = pd.Series(col)
     table[prng().__class__.__name__] = col
 
-npfuncs = {}
+npfuncs = OrderedDict()
 npfuncs.update(funcs)
 npfuncs['32-bit Unsigned Ints'] = 'randint(2**32,dtype="uint32",size=1000000)'
 npfuncs['64-bit Unsigned Ints'] = 'tomaxint(size=1000000)'
@@ -63,7 +64,7 @@ table = table.reindex(order)
 table = table.T
 print(table.to_csv(float_format='%0.1f'))
 
-rel = table / (table.iloc[:, [0]].values @ np.ones((1, 8)))
+rel = table.loc[:, ['NumPy']].values @ np.ones((1, table.shape[1])) / table
 rel.pop(rel.columns[0])
 rel = rel.T
 rel['Overall'] = np.exp(np.log(rel).mean(1))
