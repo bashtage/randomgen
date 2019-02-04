@@ -15,7 +15,7 @@
   <link rel="stylesheet" type="text/css" href="../_static/css/bootstrap-theme.min.css" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-    <title>randomgen.generator.RandomGenerator.rayleigh &#8212; RandomGen v1.15.1+5.ga7921f2 documentation</title>
+    <title>randomgen.generator.RandomGenerator.rayleigh &#8212; RandomGen v1.15.1+13.g6570172 documentation</title>
     <link rel="stylesheet" href="../_static/guzzle.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
@@ -47,7 +47,7 @@
         <li class="right" >
           <a href="randomgen.generator.RandomGenerator.power.html" title="randomgen.generator.RandomGenerator.power"
              accesskey="P">previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../index.html">RandomGen v1.15.1+5.ga7921f2 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">RandomGen v1.15.1+13.g6570172 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="../generator.html" accesskey="U">Random Generator</a> &#187;</li> 
       </ul>
     </div>
@@ -58,7 +58,7 @@
       </div>
   <div id="left-column">
     <div class="sphinxsidebar"><a href="
-    ../index.html" class="text-logo">RandomGen v1.15.1 (+5)</a>
+    ../index.html" class="text-logo">RandomGen v1.15.1 (+13)</a>
 <div class="sidebar-block">
   <div class="sidebar-wrapper">
     <h2>Table Of Contents</h2>
@@ -179,7 +179,8 @@ distribution.</p>
 </table>
 <p class="rubric">Examples</p>
 <p>Draw values from the distribution and plot the histogram</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">values</span> <span class="o">=</span> <span class="n">hist</span><span class="p">(</span><span class="n">randomgen</span><span class="o">.</span><span class="n">rayleigh</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">100000</span><span class="p">),</span> <span class="n">bins</span><span class="o">=</span><span class="mi">200</span><span class="p">,</span> <span class="n">density</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">matplotlib.pyplot</span> <span class="k">import</span> <span class="n">hist</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">values</span> <span class="o">=</span> <span class="n">hist</span><span class="p">(</span><span class="n">randomgen</span><span class="o">.</span><span class="n">generator</span><span class="o">.</span><span class="n">rayleigh</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">100000</span><span class="p">),</span> <span class="n">bins</span><span class="o">=</span><span class="mi">200</span><span class="p">,</span> <span class="n">density</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 </pre></div>
 </div>
 <p>Wave heights tend to follow a Rayleigh distribution. If the mean wave
@@ -187,12 +188,12 @@ height is 1 meter, what fraction of waves are likely to be larger than 3
 meters?</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">meanvalue</span> <span class="o">=</span> <span class="mi">1</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">modevalue</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="mi">2</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">)</span> <span class="o">*</span> <span class="n">meanvalue</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">s</span> <span class="o">=</span> <span class="n">randomgen</span><span class="o">.</span><span class="n">rayleigh</span><span class="p">(</span><span class="n">modevalue</span><span class="p">,</span> <span class="mi">1000000</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">s</span> <span class="o">=</span> <span class="n">randomgen</span><span class="o">.</span><span class="n">generator</span><span class="o">.</span><span class="n">rayleigh</span><span class="p">(</span><span class="n">modevalue</span><span class="p">,</span> <span class="mi">1000000</span><span class="p">)</span>
 </pre></div>
 </div>
 <p>The percentage of waves larger than 3 meters is:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="mf">100.</span><span class="o">*</span><span class="nb">sum</span><span class="p">(</span><span class="n">s</span><span class="o">&gt;</span><span class="mi">3</span><span class="p">)</span><span class="o">/</span><span class="mf">1000000.</span>
-<span class="go">0.087300000000000003</span>
+<span class="go">0.087300000000000003 # random</span>
 </pre></div>
 </div>
 </dd></dl>
@@ -232,7 +233,7 @@ meters?</p>
         <li class="right" >
           <a href="randomgen.generator.RandomGenerator.power.html" title="randomgen.generator.RandomGenerator.power"
              >previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../index.html">RandomGen v1.15.1+5.ga7921f2 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">RandomGen v1.15.1+13.g6570172 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="../generator.html" >Random Generator</a> &#187;</li> 
       </ul>
     </div>

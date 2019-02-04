@@ -15,7 +15,7 @@
   <link rel="stylesheet" type="text/css" href="../_static/css/bootstrap-theme.min.css" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-    <title>randomgen.legacy.legacy.LegacyGenerator.hypergeometric &#8212; RandomGen v1.15.1+5.ga7921f2 documentation</title>
+    <title>randomgen.legacy.legacy.LegacyGenerator.hypergeometric &#8212; RandomGen v1.15.1+13.g6570172 documentation</title>
     <link rel="stylesheet" href="../_static/guzzle.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
@@ -47,7 +47,7 @@
         <li class="right" >
           <a href="randomgen.legacy.legacy.LegacyGenerator.gumbel.html" title="randomgen.legacy.legacy.LegacyGenerator.gumbel"
              accesskey="P">previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../index.html">RandomGen v1.15.1+5.ga7921f2 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">RandomGen v1.15.1+13.g6570172 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="../legacy.html" accesskey="U">Legacy Random Generation</a> &#187;</li> 
       </ul>
     </div>
@@ -58,7 +58,7 @@
       </div>
   <div id="left-column">
     <div class="sphinxsidebar"><a href="
-    ../index.html" class="text-logo">RandomGen v1.15.1 (+5)</a>
+    ../index.html" class="text-logo">RandomGen v1.15.1 (+13)</a>
 <div class="sidebar-block">
   <div class="sidebar-wrapper">
     <h2>Table Of Contents</h2>
@@ -210,7 +210,8 @@ MathWorld–A Wolfram Web Resource.
 <p>Draw samples from the distribution:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">ngood</span><span class="p">,</span> <span class="n">nbad</span><span class="p">,</span> <span class="n">nsamp</span> <span class="o">=</span> <span class="mi">100</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">10</span>
 <span class="go"># number of good, number of bad, and number of samples</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">s</span> <span class="o">=</span> <span class="n">randomgen</span><span class="o">.</span><span class="n">hypergeometric</span><span class="p">(</span><span class="n">ngood</span><span class="p">,</span> <span class="n">nbad</span><span class="p">,</span> <span class="n">nsamp</span><span class="p">,</span> <span class="mi">1000</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">s</span> <span class="o">=</span> <span class="n">randomgen</span><span class="o">.</span><span class="n">generator</span><span class="o">.</span><span class="n">hypergeometric</span><span class="p">(</span><span class="n">ngood</span><span class="p">,</span> <span class="n">nbad</span><span class="p">,</span> <span class="n">nsamp</span><span class="p">,</span> <span class="mi">1000</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">matplotlib.pyplot</span> <span class="k">import</span> <span class="n">hist</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">hist</span><span class="p">(</span><span class="n">s</span><span class="p">)</span>
 <span class="go">#   note that it is very unlikely to grab both bad items</span>
 </pre></div>
@@ -218,7 +219,7 @@ MathWorld–A Wolfram Web Resource.
 <p>Suppose you have an urn with 15 white and 15 black marbles.
 If you pull 15 marbles at random, how likely is it that
 12 or more of them are one color?</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">s</span> <span class="o">=</span> <span class="n">randomgen</span><span class="o">.</span><span class="n">hypergeometric</span><span class="p">(</span><span class="mi">15</span><span class="p">,</span> <span class="mi">15</span><span class="p">,</span> <span class="mi">15</span><span class="p">,</span> <span class="mi">100000</span><span class="p">)</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">s</span> <span class="o">=</span> <span class="n">randomgen</span><span class="o">.</span><span class="n">generator</span><span class="o">.</span><span class="n">hypergeometric</span><span class="p">(</span><span class="mi">15</span><span class="p">,</span> <span class="mi">15</span><span class="p">,</span> <span class="mi">15</span><span class="p">,</span> <span class="mi">100000</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="nb">sum</span><span class="p">(</span><span class="n">s</span><span class="o">&gt;=</span><span class="mi">12</span><span class="p">)</span><span class="o">/</span><span class="mf">100000.</span> <span class="o">+</span> <span class="nb">sum</span><span class="p">(</span><span class="n">s</span><span class="o">&lt;=</span><span class="mi">3</span><span class="p">)</span><span class="o">/</span><span class="mf">100000.</span>
 <span class="go">#   answer = 0.003 ... pretty unlikely!</span>
 </pre></div>
@@ -260,7 +261,7 @@ If you pull 15 marbles at random, how likely is it that
         <li class="right" >
           <a href="randomgen.legacy.legacy.LegacyGenerator.gumbel.html" title="randomgen.legacy.legacy.LegacyGenerator.gumbel"
              >previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../index.html">RandomGen v1.15.1+5.ga7921f2 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">RandomGen v1.15.1+13.g6570172 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="../legacy.html" >Legacy Random Generation</a> &#187;</li> 
       </ul>
     </div>

@@ -15,7 +15,7 @@
   <link rel="stylesheet" type="text/css" href="../_static/css/bootstrap-theme.min.css" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-    <title>randomgen.generator.RandomGenerator.f &#8212; RandomGen v1.15.1+5.ga7921f2 documentation</title>
+    <title>randomgen.generator.RandomGenerator.f &#8212; RandomGen v1.15.1+13.g6570172 documentation</title>
     <link rel="stylesheet" href="../_static/guzzle.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
@@ -47,7 +47,7 @@
         <li class="right" >
           <a href="randomgen.generator.RandomGenerator.exponential.html" title="randomgen.generator.RandomGenerator.exponential"
              accesskey="P">previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../index.html">RandomGen v1.15.1+5.ga7921f2 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">RandomGen v1.15.1+13.g6570172 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="../generator.html" accesskey="U">Random Generator</a> &#187;</li> 
       </ul>
     </div>
@@ -58,7 +58,7 @@
       </div>
   <div id="left-column">
     <div class="sphinxsidebar"><a href="
-    ../index.html" class="text-logo">RandomGen v1.15.1 (+5)</a>
+    ../index.html" class="text-logo">RandomGen v1.15.1 (+13)</a>
 <div class="sidebar-block">
   <div class="sidebar-wrapper">
     <h2>Table Of Contents</h2>
@@ -203,12 +203,12 @@ Calculating the F statistic from the data gives a value of 36.01.</p>
 <p>Draw samples from the distribution:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">dfnum</span> <span class="o">=</span> <span class="mf">1.</span> <span class="c1"># between group degrees of freedom</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">dfden</span> <span class="o">=</span> <span class="mf">48.</span> <span class="c1"># within groups degrees of freedom</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">s</span> <span class="o">=</span> <span class="n">randomgen</span><span class="o">.</span><span class="n">f</span><span class="p">(</span><span class="n">dfnum</span><span class="p">,</span> <span class="n">dfden</span><span class="p">,</span> <span class="mi">1000</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">s</span> <span class="o">=</span> <span class="n">randomgen</span><span class="o">.</span><span class="n">generator</span><span class="o">.</span><span class="n">f</span><span class="p">(</span><span class="n">dfnum</span><span class="p">,</span> <span class="n">dfden</span><span class="p">,</span> <span class="mi">1000</span><span class="p">)</span>
 </pre></div>
 </div>
 <p>The lower bound for the top 1% of the samples is :</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">sort</span><span class="p">(</span><span class="n">s</span><span class="p">)[</span><span class="o">-</span><span class="mi">10</span><span class="p">]</span>
-<span class="go">7.61988120985</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">np</span><span class="o">.</span><span class="n">sort</span><span class="p">(</span><span class="n">s</span><span class="p">)[</span><span class="o">-</span><span class="mi">10</span><span class="p">]</span>
+<span class="go">7.61988120985 # random</span>
 </pre></div>
 </div>
 <p>So there is about a 1% chance that the F statistic will exceed 7.62,
@@ -251,7 +251,7 @@ level.</p>
         <li class="right" >
           <a href="randomgen.generator.RandomGenerator.exponential.html" title="randomgen.generator.RandomGenerator.exponential"
              >previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../index.html">RandomGen v1.15.1+5.ga7921f2 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">RandomGen v1.15.1+13.g6570172 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="../generator.html" >Random Generator</a> &#187;</li> 
       </ul>
     </div>

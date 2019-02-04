@@ -15,7 +15,7 @@
   <link rel="stylesheet" type="text/css" href="../_static/css/bootstrap-theme.min.css" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-    <title>randomgen.generator.RandomGenerator.dirichlet &#8212; RandomGen v1.15.1+5.ga7921f2 documentation</title>
+    <title>randomgen.generator.RandomGenerator.dirichlet &#8212; RandomGen v1.15.1+13.g6570172 documentation</title>
     <link rel="stylesheet" href="../_static/guzzle.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
@@ -47,7 +47,7 @@
         <li class="right" >
           <a href="randomgen.generator.RandomGenerator.complex_normal.html" title="randomgen.generator.RandomGenerator.complex_normal"
              accesskey="P">previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../index.html">RandomGen v1.15.1+5.ga7921f2 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">RandomGen v1.15.1+13.g6570172 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="../generator.html" accesskey="U">Random Generator</a> &#187;</li> 
       </ul>
     </div>
@@ -58,7 +58,7 @@
       </div>
   <div id="left-column">
     <div class="sphinxsidebar"><a href="
-    ../index.html" class="text-logo">RandomGen v1.15.1 (+5)</a>
+    ../index.html" class="text-logo">RandomGen v1.15.1 (+13)</a>
 <div class="sidebar-block">
   <div class="sidebar-wrapper">
     <h2>Table Of Contents</h2>
@@ -133,8 +133,9 @@
 <dd><p>Draw samples from the Dirichlet distribution.</p>
 <p>Draw <cite>size</cite> samples of dimension k from a Dirichlet distribution. A
 Dirichlet-distributed random variable can be seen as a multivariate
-generalization of a Beta distribution. Dirichlet pdf is the conjugate
-prior of a multinomial in Bayesian inference.</p>
+generalization of a Beta distribution. The Dirichlet distribution
+is a conjugate prior of a multinomial distribution in Bayesian
+inference.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
@@ -151,19 +152,29 @@ single value is returned.</li>
 <tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>samples</strong> – The drawn samples, of shape (size, alpha.ndim).</p>
 </td>
 </tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">ndarray,</p>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first">ndarray,</p>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><p class="first last"><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#ValueError" title="(in Python v3.7)"><code class="xref py py-exc docutils literal notranslate"><span class="pre">ValueError</span></code></a> – If any value in alpha is less than or equal to zero</p>
 </td>
 </tr>
 </tbody>
 </table>
 <p class="rubric">Notes</p>
+<p>The Dirichlet distribution is a distribution over vectors
+<span class="math notranslate nohighlight">\(x\)</span> that fulfil the conditions <span class="math notranslate nohighlight">\(x_i&gt;0\)</span> and
+<span class="math notranslate nohighlight">\(\sum_{i=1}^k x_i = 1\)</span>.</p>
+<p>The probability density function <span class="math notranslate nohighlight">\(p\)</span> of a
+Dirichlet-distributed random vector <span class="math notranslate nohighlight">\(X\)</span> is
+proportional to</p>
 <div class="math notranslate nohighlight">
-\[X \approx \prod_{i=1}^{k}{x^{\alpha_i-1}_i}\]</div>
-<p>Uses the following property for computation: for each dimension,
-draw a random sample y_i from a standard gamma generator of shape
-<cite>alpha_i</cite>, then
-<span class="math notranslate nohighlight">\(X = \frac{1}{\sum_{i=1}^k{y_i}} (y_1, \ldots, y_n)\)</span> is
-Dirichlet distributed.</p>
+\[p(x) \propto \prod_{i=1}^{k}{x^{\alpha_i-1}_i},\]</div>
+<p>where <span class="math notranslate nohighlight">\(\alpha\)</span> is a vector containing the positive
+concentration parameters.</p>
+<p>The method uses the following property for computation: let <span class="math notranslate nohighlight">\(Y\)</span>
+be a random vector which has components that follow a standard gamma
+distribution, then <span class="math notranslate nohighlight">\(X = \frac{1}{\sum_{i=1}^k{Y_i}} Y\)</span>
+is Dirichlet-distributed</p>
 <p class="rubric">References</p>
 <table class="docutils footnote" frame="void" id="id1" rules="none">
 <colgroup><col class="label" /><col /></colgroup>
@@ -186,10 +197,11 @@ one wanted to cut strings (each of initial length 1.0) into K pieces
 with different lengths, where each piece had, on average, a designated
 average length, but allowing some variation in the relative sizes of
 the pieces.</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">s</span> <span class="o">=</span> <span class="n">randomgen</span><span class="o">.</span><span class="n">dirichlet</span><span class="p">((</span><span class="mi">10</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">3</span><span class="p">),</span> <span class="mi">20</span><span class="p">)</span><span class="o">.</span><span class="n">transpose</span><span class="p">()</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">s</span> <span class="o">=</span> <span class="n">randomgen</span><span class="o">.</span><span class="n">generator</span><span class="o">.</span><span class="n">dirichlet</span><span class="p">((</span><span class="mi">10</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">3</span><span class="p">),</span> <span class="mi">20</span><span class="p">)</span><span class="o">.</span><span class="n">transpose</span><span class="p">()</span>
 </pre></div>
 </div>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">plt</span><span class="o">.</span><span class="n">barh</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="mi">20</span><span class="p">),</span> <span class="n">s</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">plt</span><span class="o">.</span><span class="n">barh</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="mi">20</span><span class="p">),</span> <span class="n">s</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">plt</span><span class="o">.</span><span class="n">barh</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="mi">20</span><span class="p">),</span> <span class="n">s</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">left</span><span class="o">=</span><span class="n">s</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;g&#39;</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">plt</span><span class="o">.</span><span class="n">barh</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="mi">20</span><span class="p">),</span> <span class="n">s</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span> <span class="n">left</span><span class="o">=</span><span class="n">s</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">+</span><span class="n">s</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;r&#39;</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s2">&quot;Lengths of Strings&quot;</span><span class="p">)</span>
@@ -232,7 +244,7 @@ the pieces.</p>
         <li class="right" >
           <a href="randomgen.generator.RandomGenerator.complex_normal.html" title="randomgen.generator.RandomGenerator.complex_normal"
              >previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../index.html">RandomGen v1.15.1+5.ga7921f2 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">RandomGen v1.15.1+13.g6570172 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="../generator.html" >Random Generator</a> &#187;</li> 
       </ul>
     </div>
