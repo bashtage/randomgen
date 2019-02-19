@@ -1485,6 +1485,7 @@ class TestBroadcast(object):
         actual = logistic(loc, scale * 3)
         assert_array_almost_equal(actual, desired, decimal=14)
         assert_raises(ValueError, logistic, loc, bad_scale * 3)
+        assert_equal(mt19937.logistic(1.0, 0.0), 1.0)
 
     def test_lognormal(self):
         mean = [0]

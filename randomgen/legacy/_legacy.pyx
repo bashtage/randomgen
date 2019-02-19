@@ -287,12 +287,12 @@ cdef class _LegacyGenerator:
         .. [1] Dalgaard, Peter, "Introductory Statistics With R",
                Springer, 2002.
         .. [2] Wikipedia, "Student's t-distribution"
-               http://en.wikipedia.org/wiki/Student's_t-distribution
+               https://en.wikipedia.org/wiki/Student's_t-distribution
 
         Examples
         --------
         From Dalgaard page 83 [1]_, suppose the daily energy intake for 11
-        women in Kj is:
+        women in kilojoules (kJ) is:
 
         >>> intake = np.array([5260., 5470, 5640, 6180, 6390, 6515, 6805, 7515, \\
         ...                    7515, 8230, 8770])
@@ -461,9 +461,9 @@ cdef class _LegacyGenerator:
         Parameters
         ----------
         mean : float or array_like of floats
-            Distribution mean, should be > 0.
+            Distribution mean, must be > 0.
         scale : float or array_like of floats
-            Scale parameter, should be >= 0.
+            Scale parameter, must be > 0.
         size : int or tuple of ints, optional
             Output shape.  If the given shape is, e.g., ``(m, n, k)``, then
             ``m * n * k`` samples are drawn.  If size is ``None`` (default),
@@ -495,7 +495,7 @@ cdef class _LegacyGenerator:
                Distribution: Theory : Methodology, and Applications", CRC Press,
                1988.
         .. [3] Wikipedia, "Wald distribution"
-               http://en.wikipedia.org/wiki/Wald_distribution
+               https://en.wikipedia.org/wiki/Wald_distribution
 
         Examples
         --------
@@ -585,7 +585,7 @@ cdef class _LegacyGenerator:
         .. [3] Reiss, R.D., Thomas, M.(2001), Statistical Analysis of Extreme
                Values, Birkhauser Verlag, Basel, pp 23-30.
         .. [4] Wikipedia, "Pareto distribution",
-               http://en.wikipedia.org/wiki/Pareto_distribution
+               https://en.wikipedia.org/wiki/Pareto_distribution
 
         Examples
         --------
@@ -678,7 +678,7 @@ cdef class _LegacyGenerator:
                Wide Applicability", Journal Of Applied Mechanics ASME Paper
                1951.
         .. [3] Wikipedia, "Weibull distribution",
-               http://en.wikipedia.org/wiki/Weibull_distribution
+               https://en.wikipedia.org/wiki/Weibull_distribution
 
         Examples
         --------
@@ -752,7 +752,7 @@ cdef class _LegacyGenerator:
                From MathWorld--A Wolfram Web Resource.
                http://mathworld.wolfram.com/NoncentralF-Distribution.html
         .. [2] Wikipedia, "Noncentral F-distribution",
-               http://en.wikipedia.org/wiki/Noncentral_F-distribution
+               https://en.wikipedia.org/wiki/Noncentral_F-distribution
 
         Examples
         --------
@@ -886,18 +886,10 @@ cdef class _LegacyGenerator:
 
         where :math:`Y_{q}` is the Chi-square with q degrees of freedom.
 
-        In Delhi (2007), it is noted that the noncentral chi-square is
-        useful in bombing and coverage problems, the probability of
-        killing the point target given by the noncentral chi-squared
-        distribution.
-
         References
         ----------
-        .. [1] Delhi, M.S. Holla, "On a noncentral chi-square distribution in
-               the analysis of weapon systems effectiveness", Metrika,
-               Volume 15, Number 1 / December, 1970.
-        .. [2] Wikipedia, "Noncentral chi-square distribution"
-               http://en.wikipedia.org/wiki/Noncentral_chi-square_distribution
+        .. [1] Wikipedia, "Noncentral chi-square distribution"
+               https://en.wikipedia.org/wiki/Noncentral_chi-square_distribution
 
         Examples
         --------
@@ -982,7 +974,7 @@ cdef class _LegacyGenerator:
               Wolfram Web Resource.
               http://mathworld.wolfram.com/CauchyDistribution.html
         .. [3] Wikipedia, "Cauchy distribution"
-              http://en.wikipedia.org/wiki/Cauchy_distribution
+              https://en.wikipedia.org/wiki/Cauchy_distribution
 
         Examples
         --------
@@ -1047,7 +1039,7 @@ cdef class _LegacyGenerator:
                Wolfram Web Resource.
                http://mathworld.wolfram.com/GammaDistribution.html
         .. [2] Wikipedia, "Gamma distribution",
-               http://en.wikipedia.org/wiki/Gamma_distribution
+               https://en.wikipedia.org/wiki/Gamma_distribution
 
         Examples
         --------
@@ -1125,7 +1117,7 @@ cdef class _LegacyGenerator:
                Wolfram Web Resource.
                http://mathworld.wolfram.com/GammaDistribution.html
         .. [2] Wikipedia, "Gamma distribution",
-               http://en.wikipedia.org/wiki/Gamma_distribution
+               https://en.wikipedia.org/wiki/Gamma_distribution
 
         Examples
         --------
@@ -1247,7 +1239,7 @@ cdef class _LegacyGenerator:
         .. [1] Glantz, Stanton A. "Primer of Biostatistics.", McGraw-Hill,
                Fifth Edition, 2002.
         .. [2] Wikipedia, "F-distribution",
-               http://en.wikipedia.org/wiki/F-distribution
+               https://en.wikipedia.org/wiki/F-distribution
 
         Examples
         --------
@@ -1341,7 +1333,7 @@ cdef class _LegacyGenerator:
         References
         ----------
         .. [1] Wikipedia, "Normal distribution",
-               http://en.wikipedia.org/wiki/Normal_distribution
+               https://en.wikipedia.org/wiki/Normal_distribution
         .. [2] P. R. Peebles Jr., "Central Limit Theorem" in "Probability,
                Random Variables and Random Signal Principles", 4th ed., 2001,
                pp. 51, 51, 125.
@@ -1442,7 +1434,7 @@ cdef class _LegacyGenerator:
         Draw samples from a negative binomial distribution.
 
         Samples are drawn from a negative binomial distribution with specified
-        parameters, `n` trials and `p` probability of success where `n` is an
+        parameters, `n` successes and `p` probability of success where `n` is an
         integer > 0 and `p` is in the interval [0, 1].
 
         Parameters
@@ -1462,21 +1454,19 @@ cdef class _LegacyGenerator:
         -------
         out : ndarray or scalar
             Drawn samples from the parameterized negative binomial distribution,
-            where each sample is equal to N, the number of trials it took to
-            achieve n - 1 successes, N - (n - 1) failures, and a success on the,
-            (N + n)th trial.
+            where each sample is equal to N, the number of failures that
+            occurred before a total of n successes was reached.
 
         Notes
         -----
         The probability density for the negative binomial distribution is
 
-        .. math:: P(N;n,p) = \\binom{N+n-1}{n-1}p^{n}(1-p)^{N},
+        .. math:: P(N;n,p) = \\binom{N+n-1}{N}p^{n}(1-p)^{N},
 
-        where :math:`n-1` is the number of successes, :math:`p` is the
-        probability of success, and :math:`N+n-1` is the number of trials.
-        The negative binomial distribution gives the probability of n-1
-        successes and N failures in N+n-1 trials, and success on the (N+n)th
-        trial.
+        where :math:`n` is the number of successes, :math:`p` is the
+        probability of success, and :math:`N+n` is the number of trials.
+        The negative binomial distribution gives the probability of N
+        failures given n successes, with a success on the last trial.
 
         If one throws a die repeatedly until the third time a "1" appears,
         then the probability distribution of the number of non-"1"s that
@@ -1488,7 +1478,7 @@ cdef class _LegacyGenerator:
                MathWorld--A Wolfram Web Resource.
                http://mathworld.wolfram.com/NegativeBinomialDistribution.html
         .. [2] Wikipedia, "Negative binomial distribution",
-               http://en.wikipedia.org/wiki/Negative_binomial_distribution
+               https://en.wikipedia.org/wiki/Negative_binomial_distribution
 
         Examples
         --------
@@ -1500,10 +1490,10 @@ cdef class _LegacyGenerator:
         for each successive well, that is what is the probability of a
         single success after drilling 5 wells, after 6 wells, etc.?
 
-        >>> s = randomgen.generator.negative_binomial(1, 0.1, 100000)
-        >>> for i in range(1, 11):
+        >>> s = randomgen.generator.negative_binomial(1, 0.9, 100000)
+        >>> for i in range(1, 11): # doctest: +SKIP
         ...    probability = sum(s<i) / 100000.
-        ...    print i, "wells drilled, probability of one success =", probability
+        ...    print(i, "wells drilled, probability of one success =", probability)
 
         """
         return disc(&legacy_negative_binomial, self._aug_state, size, self.lock, 2, 0,
@@ -1520,8 +1510,9 @@ cdef class _LegacyGenerator:
 
         Draw `size` samples of dimension k from a Dirichlet distribution. A
         Dirichlet-distributed random variable can be seen as a multivariate
-        generalization of a Beta distribution. Dirichlet pdf is the conjugate
-        prior of a multinomial in Bayesian inference.
+        generalization of a Beta distribution. The Dirichlet distribution
+        is a conjugate prior of a multinomial distribution in Bayesian
+        inference.
 
         Parameters
         ----------
@@ -1538,23 +1529,38 @@ cdef class _LegacyGenerator:
         samples : ndarray,
             The drawn samples, of shape (size, alpha.ndim).
 
+        Raises
+        -------
+        ValueError
+            If any value in alpha is less than or equal to zero
+
         Notes
         -----
-        .. math:: X \\approx \\prod_{i=1}^{k}{x^{\\alpha_i-1}_i}
+        The Dirichlet distribution is a distribution over vectors
+        :math:`x` that fulfil the conditions :math:`x_i>0` and
+        :math:`\\sum_{i=1}^k x_i = 1`.
 
-        Uses the following property for computation: for each dimension,
-        draw a random sample y_i from a standard gamma generator of shape
-        `alpha_i`, then
-        :math:`X = \\frac{1}{\\sum_{i=1}^k{y_i}} (y_1, \\ldots, y_n)` is
-        Dirichlet distributed.
+        The probability density function :math:`p` of a
+        Dirichlet-distributed random vector :math:`X` is
+        proportional to
+
+        .. math:: p(x) \\propto \\prod_{i=1}^{k}{x^{\\alpha_i-1}_i},
+
+        where :math:`\\alpha` is a vector containing the positive
+        concentration parameters.
+
+        The method uses the following property for computation: let :math:`Y`
+        be a random vector which has components that follow a standard gamma
+        distribution, then :math:`X = \\frac{1}{\\sum_{i=1}^k{Y_i}} Y`
+        is Dirichlet-distributed
 
         References
         ----------
         .. [1] David McKay, "Information Theory, Inference and Learning
                Algorithms," chapter 23,
-               http://www.inference.phy.cam.ac.uk/mackay/
+               http://www.inference.org.uk/mackay/itila/
         .. [2] Wikipedia, "Dirichlet distribution",
-               http://en.wikipedia.org/wiki/Dirichlet_distribution
+               https://en.wikipedia.org/wiki/Dirichlet_distribution
 
         Examples
         --------
@@ -1776,7 +1782,8 @@ cdef class _LegacyGenerator:
         # matrices should be equal up to roundoff error if cov is
         # symmetric and the singular value of the corresponding row is
         # not zero. We continue to use the SVD rather than Cholesky in
-        # order to preserve current outputs.
+        # order to preserve current outputs. Note that symmetry has not
+        # been checked.
 
         (u, s, v) = svd(cov)
 
@@ -1788,8 +1795,7 @@ cdef class _LegacyGenerator:
             psd = np.allclose(np.dot(v.T * s, v), cov, rtol=tol, atol=tol)
             if not psd:
                 if check_valid == 'warn':
-                    warnings.warn(
-                        "covariance is not positive-semidefinite.",
+                    warnings.warn("covariance is not positive-semidefinite.",
                         RuntimeWarning)
                 else:
                     raise ValueError(
@@ -1874,9 +1880,9 @@ cdef class _LegacyGenerator:
         .. [1] Peyton Z. Peebles Jr., "Probability, Random Variables and
                Random Signal Principles", 4th ed, 2001, p. 57.
         .. [2] Wikipedia, "Poisson process",
-               http://en.wikipedia.org/wiki/Poisson_process
+               https://en.wikipedia.org/wiki/Poisson_process
         .. [3] Wikipedia, "Exponential distribution",
-               http://en.wikipedia.org/wiki/Exponential_distribution
+               https://en.wikipedia.org/wiki/Exponential_distribution
 
         """
         return cont(&legacy_exponential, self._aug_state, size, self.lock, 1,

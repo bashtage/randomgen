@@ -2513,12 +2513,12 @@ cdef class RandomGenerator:
         >>> plt.figure()
         >>> plt.hist(rvs, bins=50, density=True)
         >>> plt.plot(xx,powpdf,'r-')
-        >>> plt.title('randomgen.power(5)')
+        >>> plt.title('randomgen.generator.power(5)')
 
         >>> plt.figure()
         >>> plt.hist(1./(1.+rvsp), bins=50, density=True)
         >>> plt.plot(xx,powpdf,'r-')
-        >>> plt.title('inverse of 1 + randomgen.pareto(5)')
+        >>> plt.title('inverse of 1 + randomgen.generator.pareto(5)')
 
         >>> plt.figure()
         >>> plt.hist(1./(1.+rvsp), bins=50, density=True)
@@ -2746,7 +2746,7 @@ cdef class RandomGenerator:
         loc : float or array_like of floats, optional
             Parameter of the distribution. Default is 0.
         scale : float or array_like of floats, optional
-            Parameter of the distribution. Should be greater than zero.
+            Parameter of the distribution. Must be >= 0.
             Default is 1.
         size : int or tuple of ints, optional
             Output shape.  If the given shape is, e.g., ``(m, n, k)``, then
@@ -2809,7 +2809,7 @@ cdef class RandomGenerator:
         """
         return cont(&random_logistic, self._brng, size, self.lock, 2,
                     loc, 'loc', CONS_NONE,
-                    scale, 'scale', CONS_POSITIVE,
+                    scale, 'scale', CONS_NON_NEGATIVE,
                     0.0, '', CONS_NONE, None)
 
     def lognormal(self, mean=0.0, sigma=1.0, size=None):
