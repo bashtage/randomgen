@@ -15,7 +15,7 @@
   <link rel="stylesheet" type="text/css" href="../_static/css/bootstrap-theme.min.css" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-    <title>randomgen.legacy.legacy.LegacyGenerator.negative_binomial &#8212; RandomGen v1.16.0 documentation</title>
+    <title>randomgen.legacy.legacy.LegacyGenerator.negative_binomial &#8212; RandomGen v1.16.1 documentation</title>
     <link rel="stylesheet" href="../_static/guzzle.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
@@ -47,7 +47,7 @@
         <li class="right" >
           <a href="randomgen.legacy.legacy.LegacyGenerator.multivariate_normal.html" title="randomgen.legacy.legacy.LegacyGenerator.multivariate_normal"
              accesskey="P">previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../index.html">RandomGen v1.16.0 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">RandomGen v1.16.1 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="../legacy.html" accesskey="U">Legacy Random Generation</a> &#187;</li> 
       </ul>
     </div>
@@ -58,7 +58,7 @@
       </div>
   <div id="left-column">
     <div class="sphinxsidebar"><a href="
-    ../index.html" class="text-logo">RandomGen v1.16.0</a>
+    ../index.html" class="text-logo">RandomGen v1.16.1</a>
 <div class="sidebar-block">
   <div class="sidebar-wrapper">
     <h2>Table Of Contents</h2>
@@ -132,7 +132,7 @@
 <code class="descclassname">LegacyGenerator.</code><code class="descname">negative_binomial</code><span class="sig-paren">(</span><em>n</em>, <em>p</em>, <em>size=None</em><span class="sig-paren">)</span><a class="headerlink" href="#randomgen.legacy.legacy.LegacyGenerator.negative_binomial" title="Permalink to this definition">¶</a></dt>
 <dd><p>Draw samples from a negative binomial distribution.</p>
 <p>Samples are drawn from a negative binomial distribution with specified
-parameters, <cite>n</cite> trials and <cite>p</cite> probability of success where <cite>n</cite> is an
+parameters, <cite>n</cite> successes and <cite>p</cite> probability of success where <cite>n</cite> is an
 integer &gt; 0 and <cite>p</cite> is in the interval [0, 1].</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -150,9 +150,8 @@ Otherwise, <code class="docutils literal notranslate"><span class="pre">np.broad
 </td>
 </tr>
 <tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>out</strong> – Drawn samples from the parameterized negative binomial distribution,
-where each sample is equal to N, the number of trials it took to
-achieve n - 1 successes, N - (n - 1) failures, and a success on the,
-(N + n)th trial.</p>
+where each sample is equal to N, the number of failures that
+occurred before a total of n successes was reached.</p>
 </td>
 </tr>
 <tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">ndarray or scalar</p>
@@ -163,12 +162,11 @@ achieve n - 1 successes, N - (n - 1) failures, and a success on the,
 <p class="rubric">Notes</p>
 <p>The probability density for the negative binomial distribution is</p>
 <div class="math notranslate nohighlight">
-\[P(N;n,p) = \binom{N+n-1}{n-1}p^{n}(1-p)^{N},\]</div>
-<p>where <span class="math notranslate nohighlight">\(n-1\)</span> is the number of successes, <span class="math notranslate nohighlight">\(p\)</span> is the
-probability of success, and <span class="math notranslate nohighlight">\(N+n-1\)</span> is the number of trials.
-The negative binomial distribution gives the probability of n-1
-successes and N failures in N+n-1 trials, and success on the (N+n)th
-trial.</p>
+\[P(N;n,p) = \binom{N+n-1}{N}p^{n}(1-p)^{N},\]</div>
+<p>where <span class="math notranslate nohighlight">\(n\)</span> is the number of successes, <span class="math notranslate nohighlight">\(p\)</span> is the
+probability of success, and <span class="math notranslate nohighlight">\(N+n\)</span> is the number of trials.
+The negative binomial distribution gives the probability of N
+failures given n successes, with a success on the last trial.</p>
 <p>If one throws a die repeatedly until the third time a “1” appears,
 then the probability distribution of the number of non-“1”s that
 appear before the third “1” is a negative binomial distribution.</p>
@@ -185,7 +183,7 @@ MathWorld–A Wolfram Web Resource.
 <colgroup><col class="label" /><col /></colgroup>
 <tbody valign="top">
 <tr><td class="label">[2]</td><td>Wikipedia, “Negative binomial distribution”,
-<a class="reference external" href="http://en.wikipedia.org/wiki/Negative_binomial_distribution">http://en.wikipedia.org/wiki/Negative_binomial_distribution</a></td></tr>
+<a class="reference external" href="https://en.wikipedia.org/wiki/Negative_binomial_distribution">https://en.wikipedia.org/wiki/Negative_binomial_distribution</a></td></tr>
 </tbody>
 </table>
 <p class="rubric">Examples</p>
@@ -195,10 +193,10 @@ exploration wells, each with an estimated probability of
 success of 0.1.  What is the probability of having one success
 for each successive well, that is what is the probability of a
 single success after drilling 5 wells, after 6 wells, etc.?</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">s</span> <span class="o">=</span> <span class="n">randomgen</span><span class="o">.</span><span class="n">generator</span><span class="o">.</span><span class="n">negative_binomial</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">,</span> <span class="mi">100000</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">11</span><span class="p">):</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">s</span> <span class="o">=</span> <span class="n">randomgen</span><span class="o">.</span><span class="n">generator</span><span class="o">.</span><span class="n">negative_binomial</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mf">0.9</span><span class="p">,</span> <span class="mi">100000</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">11</span><span class="p">):</span> <span class="c1"># doctest: +SKIP</span>
 <span class="gp">... </span>   <span class="n">probability</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span><span class="n">s</span><span class="o">&lt;</span><span class="n">i</span><span class="p">)</span> <span class="o">/</span> <span class="mf">100000.</span>
-<span class="gp">... </span>   <span class="nb">print</span> <span class="n">i</span><span class="p">,</span> <span class="s2">&quot;wells drilled, probability of one success =&quot;</span><span class="p">,</span> <span class="n">probability</span>
+<span class="gp">... </span>   <span class="nb">print</span><span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="s2">&quot;wells drilled, probability of one success =&quot;</span><span class="p">,</span> <span class="n">probability</span><span class="p">)</span>
 </pre></div>
 </div>
 </dd></dl>
@@ -238,7 +236,7 @@ single success after drilling 5 wells, after 6 wells, etc.?</p>
         <li class="right" >
           <a href="randomgen.legacy.legacy.LegacyGenerator.multivariate_normal.html" title="randomgen.legacy.legacy.LegacyGenerator.multivariate_normal"
              >previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../index.html">RandomGen v1.16.0 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">RandomGen v1.16.1 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="../legacy.html" >Legacy Random Generation</a> &#187;</li> 
       </ul>
     </div>
