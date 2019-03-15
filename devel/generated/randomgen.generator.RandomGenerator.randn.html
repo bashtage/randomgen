@@ -15,7 +15,7 @@
   <link rel="stylesheet" type="text/css" href="../_static/css/bootstrap-theme.min.css" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-    <title>randomgen.generator.RandomGenerator.randn &#8212; RandomGen v1.16.0+12.gb952810 documentation</title>
+    <title>randomgen.generator.RandomGenerator.randn &#8212; RandomGen v1.16.1 documentation</title>
     <link rel="stylesheet" href="../_static/guzzle.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
@@ -47,7 +47,7 @@
         <li class="right" >
           <a href="randomgen.generator.RandomGenerator.rand.html" title="randomgen.generator.RandomGenerator.rand"
              accesskey="P">previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../index.html">RandomGen v1.16.0+12.gb952810 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">RandomGen v1.16.1 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="../generator.html" accesskey="U">Random Generator</a> &#187;</li> 
       </ul>
     </div>
@@ -58,7 +58,7 @@
       </div>
   <div id="left-column">
     <div class="sphinxsidebar"><a href="
-    ../index.html" class="text-logo">RandomGen v1.16.0 (+12)</a>
+    ../index.html" class="text-logo">RandomGen v1.16.1</a>
 <div class="sidebar-block">
   <div class="sidebar-wrapper">
     <h2>Table Of Contents</h2>
@@ -131,15 +131,20 @@
 <dt id="randomgen.generator.RandomGenerator.randn">
 <code class="descclassname">RandomGenerator.</code><code class="descname">randn</code><span class="sig-paren">(</span><em>d0</em>, <em>d1</em>, <em>...</em>, <em>dn</em>, <em>dtype='d'</em><span class="sig-paren">)</span><a class="headerlink" href="#randomgen.generator.RandomGenerator.randn" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return a sample (or samples) from the “standard normal” distribution.</p>
-<p>If positive, int_like or int-convertible arguments are provided,
-<cite>randn</cite> generates an array of shape <code class="docutils literal notranslate"><span class="pre">(d0,</span> <span class="pre">d1,</span> <span class="pre">...,</span> <span class="pre">dn)</span></code>, filled
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">This is a convenience function for users porting code from Matlab,
+and wraps <cite>numpy.random.standard_normal</cite>. That function takes a
+tuple to specify the size of the output, which is consistent with
+other NumPy functions like <cite>numpy.zeros</cite> and <cite>numpy.ones</cite>.</p>
+</div>
+<p>If positive int_like arguments are provided, <cite>randn</cite> generates an array
+of shape <code class="docutils literal notranslate"><span class="pre">(d0,</span> <span class="pre">d1,</span> <span class="pre">...,</span> <span class="pre">dn)</span></code>, filled
 with random floats sampled from a univariate “normal” (Gaussian)
-distribution of mean 0 and variance 1 (if any of the <span class="math notranslate nohighlight">\(d_i\)</span> are
-floats, they are first converted to integers by truncation). A single
-float randomly sampled from the distribution is returned if no
-argument is provided.</p>
+distribution of mean 0 and variance 1. A single float randomly sampled
+from the distribution is returned if no argument is provided.</p>
 <p>This is a convenience function.  If you want an interface that takes a
-tuple as the first argument, use <cite>standard_normal</cite> instead.</p>
+tuple as the first argument, use <cite>numpy.random.standard_normal</cite> instead.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
@@ -168,6 +173,8 @@ no parameters were supplied.</p>
 <dl class="last docutils">
 <dt><a class="reference internal" href="randomgen.generator.RandomGenerator.standard_normal.html#randomgen.generator.RandomGenerator.standard_normal" title="randomgen.generator.RandomGenerator.standard_normal"><code class="xref py py-meth docutils literal notranslate"><span class="pre">standard_normal()</span></code></a></dt>
 <dd>Similar, but takes a tuple as its argument.</dd>
+<dt><a class="reference internal" href="randomgen.generator.RandomGenerator.normal.html#randomgen.generator.RandomGenerator.normal" title="randomgen.generator.RandomGenerator.normal"><code class="xref py py-meth docutils literal notranslate"><span class="pre">normal()</span></code></a></dt>
+<dd>Also accepts mu and sigma arguments</dd>
 </dl>
 </div>
 <p class="rubric">Notes</p>
@@ -175,13 +182,13 @@ no parameters were supplied.</p>
 <p><code class="docutils literal notranslate"><span class="pre">sigma</span> <span class="pre">*</span> <span class="pre">randomgen.randn(...)</span> <span class="pre">+</span> <span class="pre">mu</span></code></p>
 <p class="rubric">Examples</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">randomgen</span><span class="o">.</span><span class="n">generator</span><span class="o">.</span><span class="n">randn</span><span class="p">()</span>
-<span class="go">2.1923875335537315 #random</span>
+<span class="go">2.1923875335537315  # random</span>
 </pre></div>
 </div>
 <p>Two-by-four array of samples from N(3, 6.25):</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="mf">2.5</span> <span class="o">*</span> <span class="n">randomgen</span><span class="o">.</span><span class="n">generator</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">4</span><span class="p">)</span> <span class="o">+</span> <span class="mi">3</span>
-<span class="go">array([[-4.49401501,  4.00950034, -1.81814867,  7.29718677],  #random</span>
-<span class="go">       [ 0.39924804,  4.68456316,  4.99394529,  4.84057254]]) #random</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="mi">3</span> <span class="o">+</span> <span class="mf">2.5</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">4</span><span class="p">)</span>
+<span class="go">array([[-4.49401501,  4.00950034, -1.81814867,  7.29718677],   # random</span>
+<span class="go">       [ 0.39924804,  4.68456316,  4.99394529,  4.84057254]])  # random</span>
 </pre></div>
 </div>
 </dd></dl>
@@ -221,7 +228,7 @@ no parameters were supplied.</p>
         <li class="right" >
           <a href="randomgen.generator.RandomGenerator.rand.html" title="randomgen.generator.RandomGenerator.rand"
              >previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../index.html">RandomGen v1.16.0+12.gb952810 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">RandomGen v1.16.1 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="../generator.html" >Random Generator</a> &#187;</li> 
       </ul>
     </div>
