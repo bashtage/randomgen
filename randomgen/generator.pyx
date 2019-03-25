@@ -3742,7 +3742,7 @@ cdef class RandomGenerator:
             raise ValueError("ngood + nbad < nsample")
         return discrete_broadcast_iii(&random_hypergeometric, self._brng, size, self.lock,
                                       ongood, 'ngood', CONS_NON_NEGATIVE,
-                                      onbad, nbad, CONS_NON_NEGATIVE, # FIXME: fix nbad
+                                      onbad, 'nbad', CONS_NON_NEGATIVE,
                                       onsample, 'nsample', CONS_GTE_1)
 
     def logseries(self, p, size=None):
