@@ -879,6 +879,9 @@ int64_t random_binomial(brng_t *brng_state, double p, int64_t n,
                         binomial_t *binomial) {
   double q;
 
+  if ((n == 0LL) || (p == 0.0f))
+    return 0;
+
   if (p <= 0.5) {
     if (p * n <= 30.0) {
       return random_binomial_inversion(brng_state, n, p, binomial);
