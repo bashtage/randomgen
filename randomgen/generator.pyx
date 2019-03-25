@@ -3304,7 +3304,7 @@ cdef class RandomGenerator:
         is_scalar = is_scalar and np.PyArray_NDIM(n_arr) == 0
 
         if not is_scalar:
-            check_array_constraint(p_arr, 'p', CONS_BOUNDED_0_1_NOTNAN)
+            check_array_constraint(p_arr, 'p', CONS_BOUNDED_0_1)
             check_array_constraint(n_arr, 'n', CONS_NON_NEGATIVE)
             if size is not None:
                 randoms = <np.ndarray>np.empty(size, np.int64)
@@ -3328,7 +3328,7 @@ cdef class RandomGenerator:
 
         _dp = PyFloat_AsDouble(p)
         _in = <int64_t>n
-        check_constraint(_dp, 'p', CONS_BOUNDED_0_1_NOTNAN)
+        check_constraint(_dp, 'p', CONS_BOUNDED_0_1)
         check_constraint(<double>_in, 'n', CONS_NON_NEGATIVE)
 
         if size is None:
@@ -3742,7 +3742,7 @@ cdef class RandomGenerator:
             raise ValueError("ngood + nbad < nsample")
         return discrete_broadcast_iii(&random_hypergeometric, self._brng, size, self.lock,
                                       ongood, 'ngood', CONS_NON_NEGATIVE,
-                                      onbad, nbad, CONS_NON_NEGATIVE,
+                                      onbad, nbad, CONS_NON_NEGATIVE, # FIXME: fix nbad
                                       onsample, 'nsample', CONS_GTE_1)
 
     def logseries(self, p, size=None):
