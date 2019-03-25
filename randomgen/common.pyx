@@ -148,30 +148,28 @@ cdef uint64_t MAXSIZE = <uint64_t>sys.maxsize
 
 cdef int check_array_constraint(np.ndarray val, object name, constraint_type cons) except -1:
     if cons == CONS_NON_NEGATIVE:
-        if np.any(np.signbit(val)):
+        if np.any(np.signbit(val)) or np.any(np.isnan(val)):
             raise ValueError(name + " < 0")
     elif cons == CONS_POSITIVE:
-        if np.any(np.less_equal(val, 0)):
+        if not np.all(np.greater(val, 0)):
             raise ValueError(name + " <= 0")
-    elif cons == CONS_BOUNDED_0_1 or cons == CONS_BOUNDED_0_1_NOTNAN:
-        if np.any(np.less(val, 0)) or np.any(np.greater(val, 1)):
+    elif cons == CONS_BOUNDED_0_1:
+        if not np.all(np.greater_equal(val, 0)) or \
+                not np.all(np.less_equal(val, 1)):
             raise ValueError(name + " < 0 or " + name + " > 1")
-        if cons == CONS_BOUNDED_0_1_NOTNAN:
-            if np.any(np.isnan(val)):
-                raise ValueError(name + ' contains NaNs')
     elif cons == CONS_BOUNDED_GT_0_1:
-        if np.any(np.less_equal(val, 0)) or np.any(np.greater(val, 1)):
+        if not np.all(np.greater(val, 0)) or not np.all(np.less_equal(val, 1)):
             raise ValueError(name + " <= 0 or " + name + " > 1")
     elif cons == CONS_GT_1:
-        if np.any(np.less_equal(val, 1)):
+        if not np.all(np.greater(val, 1)):
             raise ValueError(name + " <= 1")
     elif cons == CONS_GTE_1:
-        if np.any(np.less(val, 1)):
+        if not np.all(np.greater_equal(val, 1)):
             raise ValueError(name + " < 1")
     elif cons == CONS_POISSON:
-        if np.any(np.greater(val, POISSON_LAM_MAX)):
+        if not np.all(np.less_equal(val, POISSON_LAM_MAX)):
             raise ValueError(name + " value too large")
-        if np.any(np.less(val, 0.0)):
+        if not np.all(np.greater_equal(val, 0.0)):
             raise ValueError(name + " < 0")
 
     return 0
@@ -180,27 +178,24 @@ cdef int check_array_constraint(np.ndarray val, object name, constraint_type con
 
 cdef int check_constraint(double val, object name, constraint_type cons) except -1:
     if cons == CONS_NON_NEGATIVE:
-        if np.signbit(val):
+        if np.signbit(val) or np.isnan(val):
             raise ValueError(name + " < 0")
     elif cons == CONS_POSITIVE:
-        if val <= 0:
+        if not (val > 0):
             raise ValueError(name + " <= 0")
-    elif cons == CONS_BOUNDED_0_1 or cons == CONS_BOUNDED_0_1_NOTNAN:
-        if val < 0 or val > 1:
+    elif cons == CONS_BOUNDED_0_1:
+        if not (val >= 0) or not (val <= 1):
             raise ValueError(name + " < 0 or " + name + " > 1")
-        if cons == CONS_BOUNDED_0_1_NOTNAN:
-            if np.isnan(val):
-                raise ValueError(name + ' contains NaNs')
     elif cons == CONS_GT_1:
-        if val <= 1:
+        if not (val > 1):
             raise ValueError(name + " <= 1")
     elif cons == CONS_GTE_1:
-        if val < 1:
+        if not (val >= 1):
             raise ValueError(name + " < 1")
     elif cons == CONS_POISSON:
-        if val < 0:
+        if not (val >= 0):
             raise ValueError(name + " < 0")
-        elif val > POISSON_LAM_MAX:
+        elif not (val <= POISSON_LAM_MAX):
             raise ValueError(name + " value too large")
 
     return 0
