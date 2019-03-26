@@ -3629,9 +3629,9 @@ cdef class RandomGenerator:
         Draw samples from a Hypergeometric distribution.
 
         Samples are drawn from a hypergeometric distribution with specified
-        parameters, ngood (ways to make a good selection), nbad (ways to make
-        a bad selection), and nsample = number of items sampled, which is less
-        than or equal to the sum ngood + nbad.
+        parameters, `ngood` (ways to make a good selection), `nbad` (ways to make
+        a bad selection), and `nsample` (number of items sampled, which is less
+        than or equal to the sum ``ngood + nbad``).
 
         Parameters
         ----------
@@ -3645,14 +3645,16 @@ cdef class RandomGenerator:
         size : int or tuple of ints, optional
             Output shape.  If the given shape is, e.g., ``(m, n, k)``, then
             ``m * n * k`` samples are drawn.  If size is ``None`` (default),
-            a single value is returned if ``ngood``, ``nbad``, and ``nsample``
+            a single value is returned if `ngood`, `nbad`, and `nsample`
             are all scalars.  Otherwise, ``np.broadcast(ngood, nbad, nsample).size``
             samples are drawn.
 
         Returns
         -------
         out : ndarray or scalar
-            Drawn samples from the parameterized hypergeometric distribution.
+            Drawn samples from the parameterized hypergeometric distribution. Each
+            sample is the number of good items within a randomly selected subset of
+            size `nsample` taken from a set of `ngood` good items and `nbad` bad items.
 
         See Also
         --------
@@ -3667,11 +3669,11 @@ cdef class RandomGenerator:
 
         where :math:`0 \\le x \\le n` and :math:`n-b \\le x \\le g`
 
-        for P(x) the probability of x successes, g = ngood, b = nbad, and
-        n = number of samples.
+        for P(x) the probability of ``x`` good results in the drawn sample,
+        g = `ngood`, b = `nbad`, and n = `nsample`.
 
-        Consider an urn with black and white marbles in it, ngood of them
-        black and nbad are white. If you draw nsample balls without
+        Consider an urn with black and white marbles in it, `ngood` of them
+        are black and `nbad` are white. If you draw `nsample` balls without
         replacement, then the hypergeometric distribution describes the
         distribution of black balls in the drawn sample.
 
@@ -3697,7 +3699,7 @@ cdef class RandomGenerator:
 
         >>> ngood, nbad, nsamp = 100, 2, 10
         # number of good, number of bad, and number of samples
-        >>> s = randomgen.generator.hypergeometric(ngood, nbad, nsamp, 1000)
+        >>> s = np.random.hypergeometric(ngood, nbad, nsamp, 1000)
         >>> from matplotlib.pyplot import hist
         >>> hist(s)
         #   note that it is very unlikely to grab both bad items
@@ -3706,7 +3708,7 @@ cdef class RandomGenerator:
         If you pull 15 marbles at random, how likely is it that
         12 or more of them are one color?
 
-        >>> s = randomgen.generator.hypergeometric(15, 15, 15, 100000)
+        >>> s = np.random.hypergeometric(15, 15, 15, 100000)
         >>> sum(s>=12)/100000. + sum(s<=3)/100000.
         #   answer = 0.003 ... pretty unlikely!
 
@@ -3856,6 +3858,7 @@ cdef class RandomGenerator:
             Behavior when the covariance matrix is not positive semidefinite.
         tol : float, optional
             Tolerance when checking the singular values in covariance matrix.
+            cov is cast to double before the check.
 
         Returns
         -------
@@ -3968,6 +3971,8 @@ cdef class RandomGenerator:
         # order to preserve current outputs. Note that symmetry has not
         # been checked.
 
+        # GH10839, ensure double to make tol meaningful
+        cov = cov.astype(np.double)
         (u, s, v) = svd(cov)
 
         if check_valid != 'ignore':
