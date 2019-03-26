@@ -882,6 +882,12 @@ class TestRandomDist(object):
         assert_raises(ValueError, mt19937.multivariate_normal, mean, cov,
                       check_valid='raise')
 
+        cov = np.array([[1, 0.1], [0.1, 1]], dtype=np.float32)
+        with suppress_warnings() as sup:
+            mt19937.multivariate_normal(mean, cov)
+            w = sup.record(RuntimeWarning)
+            assert len(w) == 0
+
     def test_negative_binomial(self):
         legacy.seed(self.seed)
         actual = legacy.negative_binomial(n=100, p=.12345, size=(3, 2))
@@ -1291,13 +1297,14 @@ class TestBroadcast(object):
 
         self.set_seed()
         actual = nonc_f(dfnum * 3, dfden, nonc)
+        mt_nonc_f = mt19937.noncentral_f
         assert_array_almost_equal(actual, desired, decimal=14)
         assert_raises(ValueError, nonc_f, bad_dfnum * 3, dfden, nonc)
         assert_raises(ValueError, nonc_f, dfnum * 3, bad_dfden, nonc)
         assert_raises(ValueError, nonc_f, dfnum * 3, dfden, bad_nonc)
-        assert_raises(ValueError, mt19937.noncentral_f, bad_dfnum * 3, dfden, nonc)
-        assert_raises(ValueError, mt19937.noncentral_f, dfnum * 3, bad_dfden, nonc)
-        assert_raises(ValueError, mt19937.noncentral_f, dfnum * 3, dfden, bad_nonc)
+        assert_raises(ValueError, mt_nonc_f, bad_dfnum * 3, dfden, nonc)
+        assert_raises(ValueError, mt_nonc_f, dfnum * 3, bad_dfden, nonc)
+        assert_raises(ValueError, mt_nonc_f, dfnum * 3, dfden, bad_nonc)
 
         self.set_seed()
         actual = nonc_f(dfnum, dfden * 3, nonc)
@@ -1305,9 +1312,9 @@ class TestBroadcast(object):
         assert_raises(ValueError, nonc_f, bad_dfnum, dfden * 3, nonc)
         assert_raises(ValueError, nonc_f, dfnum, bad_dfden * 3, nonc)
         assert_raises(ValueError, nonc_f, dfnum, dfden * 3, bad_nonc)
-        assert_raises(ValueError, mt19937.noncentral_f, bad_dfnum, dfden * 3, nonc)
-        assert_raises(ValueError, mt19937.noncentral_f, dfnum, bad_dfden * 3, nonc)
-        assert_raises(ValueError, mt19937.noncentral_f, dfnum, dfden * 3, bad_nonc)
+        assert_raises(ValueError, mt_nonc_f, bad_dfnum, dfden * 3, nonc)
+        assert_raises(ValueError, mt_nonc_f, dfnum, bad_dfden * 3, nonc)
+        assert_raises(ValueError, mt_nonc_f, dfnum, dfden * 3, bad_nonc)
 
         self.set_seed()
         actual = nonc_f(dfnum, dfden, nonc * 3)
@@ -1315,9 +1322,9 @@ class TestBroadcast(object):
         assert_raises(ValueError, nonc_f, bad_dfnum, dfden, nonc * 3)
         assert_raises(ValueError, nonc_f, dfnum, bad_dfden, nonc * 3)
         assert_raises(ValueError, nonc_f, dfnum, dfden, bad_nonc * 3)
-        assert_raises(ValueError, mt19937.noncentral_f, bad_dfnum, dfden, nonc * 3)
-        assert_raises(ValueError, mt19937.noncentral_f, dfnum, bad_dfden, nonc * 3)
-        assert_raises(ValueError, mt19937.noncentral_f, dfnum, dfden, bad_nonc * 3)
+        assert_raises(ValueError, mt_nonc_f, bad_dfnum, dfden, nonc * 3)
+        assert_raises(ValueError, mt_nonc_f, dfnum, bad_dfden, nonc * 3)
+        assert_raises(ValueError, mt_nonc_f, dfnum, dfden, bad_nonc * 3)
 
     def test_chisquare(self):
         df = [1]
@@ -1344,19 +1351,20 @@ class TestBroadcast(object):
 
         self.set_seed()
         actual = nonc_chi(df * 3, nonc)
+        mt_nonc_chi2 = mt19937.noncentral_chisquare
         assert_array_almost_equal(actual, desired, decimal=14)
         assert_raises(ValueError, nonc_chi, bad_df * 3, nonc)
         assert_raises(ValueError, nonc_chi, df * 3, bad_nonc)
-        assert_raises(ValueError, mt19937.noncentral_chisquare, bad_df * 3, nonc)
-        assert_raises(ValueError, mt19937.noncentral_chisquare, df * 3, bad_nonc)
+        assert_raises(ValueError, mt_nonc_chi2, bad_df * 3, nonc)
+        assert_raises(ValueError, mt_nonc_chi2, df * 3, bad_nonc)
 
         self.set_seed()
         actual = nonc_chi(df, nonc * 3)
         assert_array_almost_equal(actual, desired, decimal=14)
         assert_raises(ValueError, nonc_chi, bad_df, nonc * 3)
         assert_raises(ValueError, nonc_chi, df, bad_nonc * 3)
-        assert_raises(ValueError, mt19937.noncentral_chisquare, bad_df, nonc * 3)
-        assert_raises(ValueError, mt19937.noncentral_chisquare, df, bad_nonc * 3)
+        assert_raises(ValueError, mt_nonc_chi2, bad_df, nonc * 3)
+        assert_raises(ValueError, mt_nonc_chi2, df, bad_nonc * 3)
 
     def test_standard_t(self):
         df = [1]

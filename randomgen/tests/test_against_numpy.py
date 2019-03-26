@@ -580,7 +580,7 @@ ids = [f.__name__ for f in funcs]
 
 
 @pytest.mark.filterwarnings('ignore:invalid value encountered:RuntimeWarning')
-@pytest.mark.parametrize('func', funcs, ids=ids )
+@pytest.mark.parametrize('func', funcs, ids=ids)
 def test_nan_guard(func):
     with pytest.raises(ValueError):
         func([np.nan])
