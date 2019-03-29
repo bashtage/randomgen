@@ -128,7 +128,7 @@ class TestSetState(object):
         new = self.brng.standard_normal(size=3)
         assert_(np.all(old == new))
 
-    def test_backwards_compatibility(self):
+    def test_backwards_compat_set_state(self):
         # Make sure we can accept old state tuples that do not have the
         # cached Gaussian value.
         old_state = self.legacy_state
@@ -138,8 +138,20 @@ class TestSetState(object):
         x2 = legacy.standard_normal(size=16)
         legacy.state = old_state + (0, 0.0)
         x3 = legacy.standard_normal(size=16)
+        legacy.set_state(old_state + (0, 0.0))
+        x4 = legacy.standard_normal(size=16)
         assert_(np.all(x1 == x2))
         assert_(np.all(x1 == x3))
+        assert_(np.all(x1 == x4))
+
+    def test_backwards_compat_get_state(self):
+        state = legacy.get_state()
+        new_state = legacy.state
+        assert state[0] == new_state['brng']
+        assert_equal(state[1], new_state['state']['key'])
+        assert state[2] == new_state['state']['pos']
+        assert state[3] == new_state['has_gauss']
+        assert state[4] == new_state['gauss']
 
     def test_negative_binomial(self):
         # Ensure that the negative binomial results take floating point

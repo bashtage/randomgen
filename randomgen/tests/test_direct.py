@@ -14,17 +14,18 @@ from randomgen import RandomGenerator, MT19937, DSFMT, ThreeFry32, ThreeFry, \
 from randomgen.common import interface
 
 try:
-    import cffi
+    import cffi  # noqa: F401
+
     MISSING_CFFI = False
 except ImportError:
     MISSING_CFFI = True
 
 try:
-    import ctypes
+    import ctypes  # noqa: F401
+
     MISSING_CTYPES = False
 except ImportError:
     MISSING_CTYPES = False
-
 
 if (sys.version_info > (3, 0)):
     long = int
@@ -395,7 +396,7 @@ class TestThreeFry(Base):
         brng = self.brng(*self.data1['seed'])
         state = brng.state
         keyed = self.brng(counter=state['state']['counter'],
-                           key=state['state']['key'])
+                          key=state['state']['key'])
         assert_state_equal(brng.state, keyed.state)
 
 
@@ -410,7 +411,8 @@ class TestPCG64(Base):
         cls.seed_error_type = TypeError
         cls.invalid_seed_types = [(np.array([1, 2]),), (3.2,),
                                   (None, np.zeros(1))]
-        cls.invalid_seed_values = [(-1,), (2 ** 129 + 1,), (None, -1), (None, 2 ** 129 + 1)]
+        cls.invalid_seed_values = [(-1,), (2 ** 129 + 1,), (None, -1),
+                                   (None, 2 ** 129 + 1)]
 
     def test_seed_float_array(self):
         rs = RandomGenerator(self.brng(*self.data1['seed']))
@@ -446,8 +448,9 @@ class TestPhilox(Base):
         brng = self.brng(*self.data1['seed'])
         state = brng.state
         keyed = self.brng(counter=state['state']['counter'],
-                           key=state['state']['key'])
+                          key=state['state']['key'])
         assert_state_equal(brng.state, keyed.state)
+
 
 class TestMT19937(Base):
     @classmethod
@@ -490,6 +493,19 @@ class TestMT19937(Base):
         assert_raises(TypeError, rs.seed, np.array([0, np.pi]))
         assert_raises(TypeError, rs.seed, [np.pi])
         assert_raises(TypeError, rs.seed, [0, np.pi])
+
+    def test_state_tuple(self):
+        rs = RandomGenerator(self.brng(*self.data1['seed']))
+        state = rs.state
+        desired = rs.randint(2 ** 16)
+        tup = (state['brng'], state['state']['key'], state['state']['pos'])
+        rs.state = tup
+        actual = rs.randint(2 ** 16)
+        assert_equal(actual, desired)
+        tup = tup + (0, 0.0)
+        rs.state = tup
+        actual = rs.randint(2 ** 16)
+        assert_equal(actual, desired)
 
 
 class TestDSFMT(Base):
@@ -587,8 +603,9 @@ class TestThreeFry32(Base):
         brng = self.brng(*self.data1['seed'])
         state = brng.state
         keyed = self.brng(counter=state['state']['counter'],
-                           key=state['state']['key'])
+                          key=state['state']['key'])
         assert_state_equal(brng.state, keyed.state)
+
 
 class TestPCG32(TestPCG64):
     @classmethod

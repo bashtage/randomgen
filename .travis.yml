@@ -21,7 +21,7 @@ matrix:
       env: [PYTHON=3.7, DOCBUILD=true]
     - os: linux
       python: 3.6
-      env: [PYPI=true]
+      env: [PYPI=true, COVERAGE=false]
     - os: osx
       language: generic
       env: [PYTHON=3.6]

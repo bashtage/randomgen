@@ -24,6 +24,8 @@ exclude_lines =
     except ImportError
     # Cython function declarations
     cdef
+    cdef inline
+    ctypedef
 
 include = */randomgen/*
 omit =

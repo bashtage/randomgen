@@ -93,7 +93,8 @@ class LegacyGenerator(with_metaclass(LegacyGeneratorType, RandomGenerator)):
     """
 
     __atttributes = sorted(set(dir(_LegacyGenerator) +
-                               dir(RandomGenerator)).difference(_HIDDEN_ATTRIBUTES))
+                               dir(RandomGenerator))
+                           .difference(_HIDDEN_ATTRIBUTES))
 
     def __init__(self, brng=None):
         if brng is None:
