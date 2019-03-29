@@ -18,6 +18,7 @@ NumPy RandomState evolution.
 ### License
 [![License](https://img.shields.io/badge/License-NCSA-blue.svg)](https://opensource.org/licenses/NCSA)
 [![License](https://img.shields.io/badge/License-BSD%203--Clause-blue.svg)](https://opensource.org/licenses/BSD-3-Clause)
+[![DOI](https://zenodo.org/badge/122181085.svg)](https://zenodo.org/badge/latestdoi/122181085)
 
 This is a library and generic interface for alternative random 
 generators in Python and NumPy.
