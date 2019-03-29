@@ -336,7 +336,7 @@ setup(
     package_data={'': ['*.h', '*.pxi', '*.pyx', '*.pxd', '*.in'],
                   'randomgen.tests.data': ['*.csv']},
     include_package_data=True,
-    license='NSCA',
+    license='NCSA',
     author='Kevin Sheppard',
     author_email='kevin.k.sheppard@gmail.com',
     distclass=BinaryDistribution,
