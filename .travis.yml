@@ -18,17 +18,17 @@ matrix:
   fast_finish: true
   include:
     - os: linux
-      env: [PYTHON=3.5, NUMPY=1.13, CYTHON=0.26]
-    - os: linux
-      env: [PYTHON=3.6, NUMPY=1.14, CYTHON=0.27]
+      env: [PYTHON=3.7, DOCBUILD=true]
     - os: linux
       python: 3.6
       env: [PYPI=true]
-    - os: linux
-      env: [PYTHON=3.7, DOCBUILD=true]
     - os: osx
       language: generic
       env: [PYTHON=3.6]
+    - os: linux
+      env: [PYTHON=3.6, NUMPY=1.14, CYTHON=0.27]
+    - os: linux
+      env: [PYTHON=3.5, NUMPY=1.13, CYTHON=0.26]
 
 
 before_install:
@@ -66,7 +66,7 @@ script:
 
 after_success:
   - |
-    if [[ ${DOCBUILD} == true ]]; then
+    if [[ ${PYPI} == true ]]; then
       cd ${BUILD_DIR}
       python benchmark.py;
     fi
