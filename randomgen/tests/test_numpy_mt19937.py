@@ -91,6 +91,9 @@ class TestMultinomial(object):
         assert_raises(TypeError, mt19937.multinomial, 1, p,
                       float(1))
 
+    def test_invalid_prob(self):
+        random.multinomial(100, [0.2, 0.9])
+
 
 class TestSetState(object):
     def setup(self):
@@ -125,7 +128,7 @@ class TestSetState(object):
         new = self.brng.standard_normal(size=3)
         assert_(np.all(old == new))
 
-    def test_backwards_compatibility(self):
+    def test_backwards_compat_set_state(self):
         # Make sure we can accept old state tuples that do not have the
         # cached Gaussian value.
         old_state = self.legacy_state
@@ -135,8 +138,20 @@ class TestSetState(object):
         x2 = legacy.standard_normal(size=16)
         legacy.state = old_state + (0, 0.0)
         x3 = legacy.standard_normal(size=16)
+        legacy.set_state(old_state + (0, 0.0))
+        x4 = legacy.standard_normal(size=16)
         assert_(np.all(x1 == x2))
         assert_(np.all(x1 == x3))
+        assert_(np.all(x1 == x4))
+
+    def test_backwards_compat_get_state(self):
+        state = legacy.get_state()
+        new_state = legacy.state
+        assert state[0] == new_state['brng']
+        assert_equal(state[1], new_state['state']['key'])
+        assert state[2] == new_state['state']['pos']
+        assert state[3] == new_state['has_gauss']
+        assert state[4] == new_state['gauss']
 
     def test_negative_binomial(self):
         # Ensure that the negative binomial results take floating point
@@ -420,6 +435,12 @@ class TestRandomDist(object):
                             [0.4575674820298663, 0.7781880808593471]])
         assert_array_almost_equal(actual, desired, decimal=15)
 
+    def test_rand_singleton(self):
+        mt19937.seed(self.seed)
+        actual = mt19937.rand()
+        desired = 0.61879477158567997
+        assert_array_almost_equal(actual, desired, decimal=15)
+
     def test_randn(self):
         legacy.seed(self.seed)
         actual = legacy.randn(3, 2)
@@ -663,6 +684,18 @@ class TestRandomDist(object):
             assert_equal(
                 sorted(b.data[~b.mask]), sorted(b_orig.data[~b_orig.mask]))
 
+    def test_permutation(self):
+        mt19937.seed(self.seed)
+        alist = [1, 2, 3, 4, 5, 6, 7, 8, 9, 0]
+        actual = mt19937.permutation(alist)
+        desired = [0, 1, 9, 6, 2, 4, 5, 8, 7, 3]
+        assert_array_equal(actual, desired)
+
+        mt19937.seed(self.seed)
+        arr_2d = np.atleast_2d([1, 2, 3, 4, 5, 6, 7, 8, 9, 0]).T
+        actual = mt19937.permutation(arr_2d)
+        assert_array_equal(actual, np.atleast_2d(desired).T)
+
     def test_beta(self):
         mt19937.seed(self.seed)
         actual = mt19937.beta(.1, .9, size=(3, 2))
@@ -887,6 +920,17 @@ class TestRandomDist(object):
             mt19937.multivariate_normal(mean, cov)
             w = sup.record(RuntimeWarning)
             assert len(w) == 0
+
+        mu = np.zeros(2)
+        cov = np.eye(2)
+        assert_raises(ValueError, mt19937.multivariate_normal, mean, cov,
+                      check_valid='other')
+        assert_raises(ValueError, mt19937.multivariate_normal,
+                      np.zeros((2, 1, 1)), cov)
+        assert_raises(ValueError, mt19937.multivariate_normal,
+                      mu, np.empty((3, 2)))
+        assert_raises(ValueError, mt19937.multivariate_normal,
+                      mu, np.eye(3))
 
     def test_negative_binomial(self):
         legacy.seed(self.seed)
@@ -1595,6 +1639,10 @@ class TestBroadcast(object):
         assert_raises(ValueError, triangular, bad_left_two,
                       bad_mode_two, right * 3)
 
+        assert_raises(ValueError, triangular, 10., 0., 20.)
+        assert_raises(ValueError, triangular, 10., 25., 20.)
+        assert_raises(ValueError, triangular, 10., 10., 10.)
+
     def test_binomial(self):
         n = [1]
         p = [0.5]
@@ -1720,6 +1768,11 @@ class TestBroadcast(object):
         assert_raises(ValueError, hypergeom, ngood, bad_nbad, nsample * 3)
         assert_raises(ValueError, hypergeom, ngood, nbad, bad_nsample_one * 3)
         assert_raises(ValueError, hypergeom, ngood, nbad, bad_nsample_two * 3)
+
+        assert_raises(ValueError, hypergeom, -1, 10, 20)
+        assert_raises(ValueError, hypergeom, 10, -1, 20)
+        assert_raises(ValueError, hypergeom, 10, 10, 0)
+        assert_raises(ValueError, hypergeom, 10, 10, 25)
 
     def test_logseries(self):
         p = [0.5]

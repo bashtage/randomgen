@@ -2,6 +2,7 @@ import os
 import pickle
 import sys
 import time
+from functools import partial
 
 import numpy as np
 import pytest
@@ -202,6 +203,20 @@ class RNG(object):
     def test_standard_exponential(self):
         assert_(len(self.rg.standard_exponential(10)) == 10)
         params_0(self.rg.standard_exponential)
+
+    def test_standard_exponential_float(self):
+        randoms = self.rg.standard_exponential(10, dtype='float32')
+        assert_(len(randoms) == 10)
+        assert randoms.dtype == np.float32
+        params_0(partial(self.rg.standard_exponential, dtype='float32'))
+
+    def test_standard_exponential_float_log(self):
+        randoms = self.rg.standard_exponential(10, dtype='float32',
+                                               method='inv')
+        assert_(len(randoms) == 10)
+        assert randoms.dtype == np.float32
+        params_0(partial(self.rg.standard_exponential, dtype='float32',
+                         method='inv'))
 
     def test_standard_cauchy(self):
         assert_(len(self.rg.standard_cauchy(10)) == 10)
@@ -681,6 +696,10 @@ class RNG(object):
         rg.state = state
         direct = rg.standard_normal(size=size)
         assert_equal(direct, existing)
+
+        sized = np.empty(size)
+        rg.state = state
+        rg.standard_normal(out=sized, size=sized.shape)
 
         existing = np.empty(size, dtype=np.float32)
         rg.state = state

@@ -1,3 +1,4 @@
+import collections.abc
 import os
 import sys
 from os.path import join
@@ -10,11 +11,36 @@ import pytest
 from randomgen import RandomGenerator, MT19937, DSFMT, ThreeFry32, ThreeFry, \
     PCG32, PCG64, Philox, Xoroshiro128, Xorshift1024, Xoshiro256StarStar, \
     Xoshiro512StarStar
+from randomgen.common import interface
+
+try:
+    import cffi  # noqa: F401
+
+    MISSING_CFFI = False
+except ImportError:
+    MISSING_CFFI = True
+
+try:
+    import ctypes  # noqa: F401
+
+    MISSING_CTYPES = False
+except ImportError:
+    MISSING_CTYPES = False
 
 if (sys.version_info > (3, 0)):
     long = int
 
 pwd = os.path.dirname(os.path.abspath(__file__))
+
+
+def assert_state_equal(actual, target):
+    for key in actual:
+        if isinstance(actual[key], collections.abc.Mapping):
+            assert_state_equal(actual[key], target[key])
+        elif isinstance(actual[key], np.ndarray):
+            assert_array_equal(actual[key], target[key])
+        else:
+            assert actual[key] == target[key]
 
 
 def uniform32_from_uint64(x):
@@ -126,6 +152,8 @@ class Base(object):
         cls.bits = 64
         cls.dtype = np.uint64
         cls.seed_error_type = TypeError
+        cls.invalid_seed_types = []
+        cls.invalid_seed_values = []
 
     @classmethod
     def _read_csv(cls, filename):
@@ -214,6 +242,81 @@ class Base(object):
         assert_raises(ValueError, rs.seed, [2 ** (2 * self.bits + 1)])
         assert_raises(ValueError, rs.seed, [-1])
 
+    def test_repr(self):
+        rs = RandomGenerator(self.brng(*self.data1['seed']))
+        assert 'RandomGenerator' in rs.__repr__()
+        assert str(hex(id(rs)))[2:].upper() in rs.__repr__()
+
+    def test_str(self):
+        rs = RandomGenerator(self.brng(*self.data1['seed']))
+        assert 'RandomGenerator' in str(rs)
+        assert str(self.brng.__name__) in str(rs)
+        assert str(hex(id(rs)))[2:].upper() not in str(rs)
+
+    def test_generator(self):
+        brng = self.brng(*self.data1['seed'])
+        assert isinstance(brng.generator, RandomGenerator)
+
+    def test_pickle(self):
+        import pickle
+
+        brng = self.brng(*self.data1['seed'])
+        state = brng.state
+        brng_pkl = pickle.dumps(brng)
+        reloaded = pickle.loads(brng_pkl)
+        reloaded_state = reloaded.state
+        assert_array_equal(brng.generator.standard_normal(1000),
+                           reloaded.generator.standard_normal(1000))
+        assert brng is not reloaded
+        assert_state_equal(reloaded_state, state)
+
+    def test_invalid_state_type(self):
+        brng = self.brng(*self.data1['seed'])
+        with pytest.raises(TypeError):
+            brng.state = {'1'}
+
+    def test_invalid_state_value(self):
+        brng = self.brng(*self.data1['seed'])
+        state = brng.state
+        state['brng'] = 'otherBRNG'
+        with pytest.raises(ValueError):
+            brng.state = state
+
+    def test_invalid_seed_type(self):
+        brng = self.brng(*self.data1['seed'])
+        for st in self.invalid_seed_types:
+            with pytest.raises(TypeError):
+                brng.seed(*st)
+
+    def test_invalid_seed_values(self):
+        brng = self.brng(*self.data1['seed'])
+        for st in self.invalid_seed_values:
+            with pytest.raises(ValueError):
+                brng.seed(*st)
+
+    def test_benchmark(self):
+        brng = self.brng(*self.data1['seed'])
+        brng._benchmark(1)
+        brng._benchmark(1, 'double')
+        with pytest.raises(ValueError):
+            brng._benchmark(1, 'int32')
+
+    @pytest.mark.skipif(MISSING_CFFI, reason='cffi not available')
+    def test_cffi(self):
+        brng = self.brng(*self.data1['seed'])
+        cffi_interface = brng.cffi
+        assert isinstance(cffi_interface, interface)
+        other_cffi_interface = brng.cffi
+        assert other_cffi_interface is cffi_interface
+
+    @pytest.mark.skipif(MISSING_CTYPES, reason='ctypes not available')
+    def test_ctypes(self):
+        brng = self.brng(*self.data1['seed'])
+        ctypes_interface = brng.ctypes
+        assert isinstance(ctypes_interface, interface)
+        other_ctypes_interface = brng.ctypes
+        assert other_ctypes_interface is ctypes_interface
+
 
 class TestXoroshiro128(Base):
     @classmethod
@@ -226,6 +329,8 @@ class TestXoroshiro128(Base):
         cls.data2 = cls._read_csv(
             join(pwd, './data/xoroshiro128-testset-2.csv'))
         cls.seed_error_type = TypeError
+        cls.invalid_seed_types = [('apple',), (2 + 3j,), (3.1,)]
+        cls.invalid_seed_values = [(-2,), (np.empty((2, 2), dtype=np.int64),)]
 
 
 class TestXoshiro256StarStar(Base):
@@ -239,6 +344,8 @@ class TestXoshiro256StarStar(Base):
         cls.data2 = cls._read_csv(
             join(pwd, './data/xoshiro256starstar-testset-2.csv'))
         cls.seed_error_type = TypeError
+        cls.invalid_seed_types = [('apple',), (2 + 3j,), (3.1,)]
+        cls.invalid_seed_values = [(-2,), (np.empty((2, 2), dtype=np.int64),)]
 
 
 class TestXoshiro512StarStar(Base):
@@ -252,6 +359,8 @@ class TestXoshiro512StarStar(Base):
         cls.data2 = cls._read_csv(
             join(pwd, './data/xoshiro512starstar-testset-2.csv'))
         cls.seed_error_type = TypeError
+        cls.invalid_seed_types = [('apple',), (2 + 3j,), (3.1,)]
+        cls.invalid_seed_values = [(-2,), (np.empty((2, 2), dtype=np.int64),)]
 
 
 class TestXorshift1024(Base):
@@ -265,6 +374,8 @@ class TestXorshift1024(Base):
         cls.data2 = cls._read_csv(
             join(pwd, './data/xorshift1024-testset-2.csv'))
         cls.seed_error_type = TypeError
+        cls.invalid_seed_types = [('apple',), (2 + 3j,), (3.1,)]
+        cls.invalid_seed_values = [(-2,), (np.empty((2, 2), dtype=np.int64),)]
 
 
 class TestThreeFry(Base):
@@ -278,6 +389,15 @@ class TestThreeFry(Base):
         cls.data2 = cls._read_csv(
             join(pwd, './data/threefry-testset-2.csv'))
         cls.seed_error_type = TypeError
+        cls.invalid_seed_types = []
+        cls.invalid_seed_values = [(1, None, 1), (-1,), (2 ** 257 + 1,)]
+
+    def test_set_key(self):
+        brng = self.brng(*self.data1['seed'])
+        state = brng.state
+        keyed = self.brng(counter=state['state']['counter'],
+                          key=state['state']['key'])
+        assert_state_equal(brng.state, keyed.state)
 
 
 class TestPCG64(Base):
@@ -289,6 +409,10 @@ class TestPCG64(Base):
         cls.data1 = cls._read_csv(join(pwd, './data/pcg64-testset-1.csv'))
         cls.data2 = cls._read_csv(join(pwd, './data/pcg64-testset-2.csv'))
         cls.seed_error_type = TypeError
+        cls.invalid_seed_types = [(np.array([1, 2]),), (3.2,),
+                                  (None, np.zeros(1))]
+        cls.invalid_seed_values = [(-1,), (2 ** 129 + 1,), (None, -1),
+                                   (None, 2 ** 129 + 1)]
 
     def test_seed_float_array(self):
         rs = RandomGenerator(self.brng(*self.data1['seed']))
@@ -317,6 +441,15 @@ class TestPhilox(Base):
         cls.data2 = cls._read_csv(
             join(pwd, './data/philox-testset-2.csv'))
         cls.seed_error_type = TypeError
+        cls.invalid_seed_types = []
+        cls.invalid_seed_values = [(1, None, 1), (-1,), (2 ** 257 + 1,)]
+
+    def test_set_key(self):
+        brng = self.brng(*self.data1['seed'])
+        state = brng.state
+        keyed = self.brng(counter=state['state']['counter'],
+                          key=state['state']['key'])
+        assert_state_equal(brng.state, keyed.state)
 
 
 class TestMT19937(Base):
@@ -328,6 +461,8 @@ class TestMT19937(Base):
         cls.data1 = cls._read_csv(join(pwd, './data/mt19937-testset-1.csv'))
         cls.data2 = cls._read_csv(join(pwd, './data/mt19937-testset-2.csv'))
         cls.seed_error_type = ValueError
+        cls.invalid_seed_types = []
+        cls.invalid_seed_values = [(-1,), np.array([2 ** 33])]
 
     def test_seed_out_of_range(self):
         # GH #82
@@ -359,6 +494,19 @@ class TestMT19937(Base):
         assert_raises(TypeError, rs.seed, [np.pi])
         assert_raises(TypeError, rs.seed, [0, np.pi])
 
+    def test_state_tuple(self):
+        rs = RandomGenerator(self.brng(*self.data1['seed']))
+        state = rs.state
+        desired = rs.randint(2 ** 16)
+        tup = (state['brng'], state['state']['key'], state['state']['pos'])
+        rs.state = tup
+        actual = rs.randint(2 ** 16)
+        assert_equal(actual, desired)
+        tup = tup + (0, 0.0)
+        rs.state = tup
+        actual = rs.randint(2 ** 16)
+        assert_equal(actual, desired)
+
 
 class TestDSFMT(Base):
     @classmethod
@@ -369,6 +517,9 @@ class TestDSFMT(Base):
         cls.data1 = cls._read_csv(join(pwd, './data/dSFMT-testset-1.csv'))
         cls.data2 = cls._read_csv(join(pwd, './data/dSFMT-testset-2.csv'))
         cls.seed_error_type = TypeError
+        cls.invalid_seed_types = []
+        cls.invalid_seed_values = [(-1,), np.array([2 ** 33]),
+                                   (np.array([2 ** 33, 2 ** 33]),)]
 
     def test_uniform_double(self):
         rs = RandomGenerator(self.brng(*self.data1['seed']))
@@ -445,6 +596,15 @@ class TestThreeFry32(Base):
         cls.data1 = cls._read_csv(join(pwd, './data/threefry32-testset-1.csv'))
         cls.data2 = cls._read_csv(join(pwd, './data/threefry32-testset-2.csv'))
         cls.seed_error_type = TypeError
+        cls.invalid_seed_types = []
+        cls.invalid_seed_values = [(1, None, 1), (-1,), (2 ** 257 + 1,)]
+
+    def test_set_key(self):
+        brng = self.brng(*self.data1['seed'])
+        state = brng.state
+        keyed = self.brng(counter=state['state']['counter'],
+                          key=state['state']['key'])
+        assert_state_equal(brng.state, keyed.state)
 
 
 class TestPCG32(TestPCG64):
@@ -456,3 +616,7 @@ class TestPCG32(TestPCG64):
         cls.data1 = cls._read_csv(join(pwd, './data/pcg32-testset-1.csv'))
         cls.data2 = cls._read_csv(join(pwd, './data/pcg32-testset-2.csv'))
         cls.seed_error_type = TypeError
+        cls.invalid_seed_types = [(np.array([1, 2]),), (3.2,),
+                                  (None, np.zeros(1))]
+        cls.invalid_seed_values = [(-1,), (2 ** 129 + 1,), (None, -1),
+                                   (None, 2 ** 129 + 1)]

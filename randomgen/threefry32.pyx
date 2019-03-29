@@ -380,6 +380,7 @@ cdef class ThreeFry32:
         self._reset_state_variables()
         return self
 
+    @property
     def ctypes(self):
         """
         Ctypes interface
@@ -414,7 +415,7 @@ cdef class ThreeFry32:
                                              ctypes.CFUNCTYPE(ctypes.c_double,
                                                               ctypes.c_void_p)),
                                  ctypes.c_void_p(<Py_ssize_t> self._brng))
-        return self.ctypes
+        return self._ctypes
 
     @property
     def cffi(self):
@@ -450,7 +451,7 @@ cdef class ThreeFry32:
                                ffi.cast('double (*)(void *)',
                                         <uint64_t> self._brng.next_double),
                                ffi.cast('void *', <Py_ssize_t> self._brng))
-        return self.cffi
+        return self._cffi
 
     @property
     def generator(self):

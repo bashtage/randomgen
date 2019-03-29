@@ -93,7 +93,8 @@ class LegacyGenerator(with_metaclass(LegacyGeneratorType, RandomGenerator)):
     """
 
     __atttributes = sorted(set(dir(_LegacyGenerator) +
-                               dir(RandomGenerator)).difference(_HIDDEN_ATTRIBUTES))
+                               dir(RandomGenerator))
+                           .difference(_HIDDEN_ATTRIBUTES))
 
     def __init__(self, brng=None):
         if brng is None:
@@ -119,6 +120,6 @@ class LegacyGenerator(with_metaclass(LegacyGeneratorType, RandomGenerator)):
         self.state = state
 
     def __reduce__(self):
-        return (randomgen.pickle._experiment_ctor,
+        return (randomgen.pickle.__legacy_ctor,
                 (self.state['brng'],),
                 self.state)
