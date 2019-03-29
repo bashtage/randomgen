@@ -1,11 +1,9 @@
 
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!DOCTYPE html>
 
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
-    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta charset="utf-8" />
   
   <!-- Licensed under the Apache 2.0 License -->
   <link rel="stylesheet" type="text/css" href="../_static/fonts/open-sans/stylesheet.css" />
@@ -15,7 +13,7 @@
   <link rel="stylesheet" type="text/css" href="../_static/css/bootstrap-theme.min.css" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-    <title>randomgen.legacy.legacy.LegacyGenerator.gumbel &#8212; RandomGen v1.16.1+11.g95c8cdd documentation</title>
+    <title>randomgen.legacy.legacy.LegacyGenerator.gumbel &#8212; RandomGen v1.16.1+13.g8f0eb35 documentation</title>
     <link rel="stylesheet" href="../_static/guzzle.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
@@ -47,7 +45,7 @@
         <li class="right" >
           <a href="randomgen.legacy.legacy.LegacyGenerator.geometric.html" title="randomgen.legacy.legacy.LegacyGenerator.geometric"
              accesskey="P">previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../index.html">RandomGen v1.16.1+11.g95c8cdd documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">RandomGen v1.16.1+13.g8f0eb35 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="../legacy.html" accesskey="U">Legacy Random Generation</a> &#187;</li> 
       </ul>
     </div>
@@ -58,7 +56,7 @@
       </div>
   <div id="left-column">
     <div class="sphinxsidebar"><a href="
-    ../index.html" class="text-logo">RandomGen v1.16.1 (+11)</a>
+    ../index.html" class="text-logo">RandomGen v1.16.1 (+13)</a>
 <div class="sidebar-block">
   <div class="sidebar-wrapper">
     <h2>Table Of Contents</h2>
@@ -134,32 +132,28 @@
 <p>Draw samples from a Gumbel distribution with specified location and
 scale.  For more information on the Gumbel distribution, see
 Notes and References below.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>loc</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.7)"><em>float</em></a><em> or </em><em>array_like of floats</em><em>, </em><em>optional</em>) – The location of the mode of the distribution. Default is 0.</li>
-<li><strong>scale</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.7)"><em>float</em></a><em> or </em><em>array_like of floats</em><em>, </em><em>optional</em>) – The scale parameter of the distribution. Default is 1. Must be
-non-negative.</li>
-<li><strong>size</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a><em> or </em><em>tuple of ints</em><em>, </em><em>optional</em>) – Output shape.  If the given shape is, e.g., <code class="docutils literal notranslate"><span class="pre">(m,</span> <span class="pre">n,</span> <span class="pre">k)</span></code>, then
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>loc</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.7)"><em>float</em></a><em> or </em><em>array_like of floats</em><em>, </em><em>optional</em>) – The location of the mode of the distribution. Default is 0.</p></li>
+<li><p><strong>scale</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.7)"><em>float</em></a><em> or </em><em>array_like of floats</em><em>, </em><em>optional</em>) – The scale parameter of the distribution. Default is 1. Must be
+non-negative.</p></li>
+<li><p><strong>size</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a><em> or </em><em>tuple of ints</em><em>, </em><em>optional</em>) – Output shape.  If the given shape is, e.g., <code class="docutils literal notranslate"><span class="pre">(m,</span> <span class="pre">n,</span> <span class="pre">k)</span></code>, then
 <code class="docutils literal notranslate"><span class="pre">m</span> <span class="pre">*</span> <span class="pre">n</span> <span class="pre">*</span> <span class="pre">k</span></code> samples are drawn.  If size is <code class="docutils literal notranslate"><span class="pre">None</span></code> (default),
 a single value is returned if <code class="docutils literal notranslate"><span class="pre">loc</span></code> and <code class="docutils literal notranslate"><span class="pre">scale</span></code> are both scalars.
-Otherwise, <code class="docutils literal notranslate"><span class="pre">np.broadcast(loc,</span> <span class="pre">scale).size</span></code> samples are drawn.</li>
+Otherwise, <code class="docutils literal notranslate"><span class="pre">np.broadcast(loc,</span> <span class="pre">scale).size</span></code> samples are drawn.</p></li>
 </ul>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>out</strong> – Drawn samples from the parameterized Gumbel distribution.</p>
-</td>
-</tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">ndarray or scalar</p>
-</td>
-</tr>
-</tbody>
-</table>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><strong>out</strong> – Drawn samples from the parameterized Gumbel distribution.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>ndarray or scalar</p>
+</dd>
+</dl>
 <div class="admonition seealso">
-<p class="first admonition-title">See also</p>
-<p class="last"><code class="xref py py-meth docutils literal notranslate"><span class="pre">scipy.stats.gumbel_l()</span></code>, <code class="xref py py-meth docutils literal notranslate"><span class="pre">scipy.stats.gumbel_r()</span></code>, <code class="xref py py-meth docutils literal notranslate"><span class="pre">scipy.stats.genextreme()</span></code>, <a class="reference internal" href="randomgen.legacy.legacy.LegacyGenerator.weibull.html#randomgen.legacy.legacy.LegacyGenerator.weibull" title="randomgen.legacy.legacy.LegacyGenerator.weibull"><code class="xref py py-meth docutils literal notranslate"><span class="pre">weibull()</span></code></a></p>
+<p class="admonition-title">See also</p>
+<p><code class="xref py py-meth docutils literal notranslate"><span class="pre">scipy.stats.gumbel_l()</span></code>, <code class="xref py py-meth docutils literal notranslate"><span class="pre">scipy.stats.gumbel_r()</span></code>, <code class="xref py py-meth docutils literal notranslate"><span class="pre">scipy.stats.genextreme()</span></code>, <a class="reference internal" href="randomgen.legacy.legacy.LegacyGenerator.weibull.html#randomgen.legacy.legacy.LegacyGenerator.weibull" title="randomgen.legacy.legacy.LegacyGenerator.weibull"><code class="xref py py-meth docutils literal notranslate"><span class="pre">weibull()</span></code></a></p>
 </div>
 <p class="rubric">Notes</p>
 <p>The Gumbel (or Smallest Extreme Value (SEV) or the Smallest Extreme
@@ -187,21 +181,17 @@ Frechet.</p>
 <p>The function has a mean of <span class="math notranslate nohighlight">\(\mu + 0.57721\beta\)</span> and a variance
 of <span class="math notranslate nohighlight">\(\frac{\pi^2}{6}\beta^2\)</span>.</p>
 <p class="rubric">References</p>
-<table class="docutils footnote" frame="void" id="id1" rules="none">
-<colgroup><col class="label" /><col /></colgroup>
-<tbody valign="top">
-<tr><td class="label">[1]</td><td>Gumbel, E. J., “Statistics of Extremes,”
-New York: Columbia University Press, 1958.</td></tr>
-</tbody>
-</table>
-<table class="docutils footnote" frame="void" id="id2" rules="none">
-<colgroup><col class="label" /><col /></colgroup>
-<tbody valign="top">
-<tr><td class="label">[2]</td><td>Reiss, R.-D. and Thomas, M., “Statistical Analysis of Extreme
+<dl class="footnote brackets">
+<dt class="label" id="id1"><span class="brackets">1</span></dt>
+<dd><p>Gumbel, E. J., “Statistics of Extremes,”
+New York: Columbia University Press, 1958.</p>
+</dd>
+<dt class="label" id="id2"><span class="brackets">2</span></dt>
+<dd><p>Reiss, R.-D. and Thomas, M., “Statistical Analysis of Extreme
 Values from Insurance, Finance, Hydrology and Other Fields,”
-Basel: Birkhauser Verlag, 2001.</td></tr>
-</tbody>
-</table>
+Basel: Birkhauser Verlag, 2001.</p>
+</dd>
+</dl>
 <p class="rubric">Examples</p>
 <p>Draw samples from the distribution:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">mu</span><span class="p">,</span> <span class="n">beta</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="mf">0.1</span> <span class="c1"># location and scale</span>
@@ -275,7 +265,7 @@ and compare to a Gaussian:</p>
         <li class="right" >
           <a href="randomgen.legacy.legacy.LegacyGenerator.geometric.html" title="randomgen.legacy.legacy.LegacyGenerator.geometric"
              >previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../index.html">RandomGen v1.16.1+11.g95c8cdd documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">RandomGen v1.16.1+13.g8f0eb35 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="../legacy.html" >Legacy Random Generation</a> &#187;</li> 
       </ul>
     </div>

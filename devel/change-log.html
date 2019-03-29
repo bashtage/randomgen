@@ -1,11 +1,9 @@
 
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!DOCTYPE html>
 
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
-    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta charset="utf-8" />
   
   <!-- Licensed under the Apache 2.0 License -->
   <link rel="stylesheet" type="text/css" href="_static/fonts/open-sans/stylesheet.css" />
@@ -15,7 +13,7 @@
   <link rel="stylesheet" type="text/css" href="_static/css/bootstrap-theme.min.css" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-    <title>Change Log &#8212; RandomGen v1.16.1+11.g95c8cdd documentation</title>
+    <title>Change Log &#8212; RandomGen v1.16.1+13.g8f0eb35 documentation</title>
     <link rel="stylesheet" href="_static/guzzle.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
@@ -43,7 +41,7 @@
         <li class="right" >
           <a href="references.html" title="References"
              accesskey="P">previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="index.html">RandomGen v1.16.1+11.g95c8cdd documentation</a> &#187;</li> 
+        <li class="nav-item nav-item-0"><a href="index.html">RandomGen v1.16.1+13.g8f0eb35 documentation</a> &#187;</li> 
       </ul>
     </div>
     <div class="container-wrapper">
@@ -53,7 +51,7 @@
       </div>
   <div id="left-column">
     <div class="sphinxsidebar"><a href="
-    index.html" class="text-logo">RandomGen v1.16.1 (+11)</a>
+    index.html" class="text-logo">RandomGen v1.16.1 (+13)</a>
 <div class="sidebar-block">
   <div class="sidebar-wrapper">
     <h2>Table Of Contents</h2>
@@ -123,47 +121,47 @@
 <div class="section" id="v1-16-1">
 <h2>v1.16.1<a class="headerlink" href="#v1-16-1" title="Permalink to this headline">¶</a></h2>
 <ul class="simple">
-<li>Synchronized with upstream changes.</li>
-<li>Fixed a bug in gamma generation if the shape parameters is 0.0.</li>
+<li><p>Synchronized with upstream changes.</p></li>
+<li><p>Fixed a bug in gamma generation if the shape parameters is 0.0.</p></li>
 </ul>
 </div>
 <div class="section" id="v1-16-0">
 <h2>v1.16.0<a class="headerlink" href="#v1-16-0" title="Permalink to this headline">¶</a></h2>
 <ul class="simple">
-<li>Fixed a bug that affected <a class="reference internal" href="brng/dsfmt.html#randomgen.dsfmt.DSFMT" title="randomgen.dsfmt.DSFMT"><code class="xref py py-class docutils literal notranslate"><span class="pre">DSFMT</span></code></a> when calling
+<li><p>Fixed a bug that affected <a class="reference internal" href="brng/dsfmt.html#randomgen.dsfmt.DSFMT" title="randomgen.dsfmt.DSFMT"><code class="xref py py-class docutils literal notranslate"><span class="pre">DSFMT</span></code></a> when calling
 <a class="reference internal" href="brng/generated/randomgen.dsfmt.DSFMT.jump.html#randomgen.dsfmt.DSFMT.jump" title="randomgen.dsfmt.DSFMT.jump"><code class="xref py py-func docutils literal notranslate"><span class="pre">jump()</span></code></a> or <a class="reference internal" href="brng/generated/randomgen.dsfmt.DSFMT.seed.html#randomgen.dsfmt.DSFMT.seed" title="randomgen.dsfmt.DSFMT.seed"><code class="xref py py-func docutils literal notranslate"><span class="pre">seed()</span></code></a>
 that failed to reset the buffer.  This resulted in upto 381 values from the
-previous state being used before the buffer was refilled at the new state.</li>
-<li>Fixed bugs in <a class="reference internal" href="brng/xoshiro512starstar.html#randomgen.xoshiro512starstar.Xoshiro512StarStar" title="randomgen.xoshiro512starstar.Xoshiro512StarStar"><code class="xref py py-class docutils literal notranslate"><span class="pre">Xoshiro512StarStar</span></code></a>
+previous state being used before the buffer was refilled at the new state.</p></li>
+<li><p>Fixed bugs in <a class="reference internal" href="brng/xoshiro512starstar.html#randomgen.xoshiro512starstar.Xoshiro512StarStar" title="randomgen.xoshiro512starstar.Xoshiro512StarStar"><code class="xref py py-class docutils literal notranslate"><span class="pre">Xoshiro512StarStar</span></code></a>
 and <a class="reference internal" href="brng/xorshift1024.html#randomgen.xorshift1024.Xorshift1024" title="randomgen.xorshift1024.Xorshift1024"><code class="xref py py-class docutils literal notranslate"><span class="pre">Xorshift1024</span></code></a> where the fallback
 entropy initialization used too few bytes. This bug is unlikely to be
 encountered since this path is only encountered if the system random
-number generator fails.</li>
-<li>Synchronized with upstream changes.</li>
+number generator fails.</p></li>
+<li><p>Synchronized with upstream changes.</p></li>
 </ul>
 </div>
 <div class="section" id="v1-15-1">
 <h2>v1.15.1<a class="headerlink" href="#v1-15-1" title="Permalink to this headline">¶</a></h2>
 <ul class="simple">
-<li>Added Xoshiro256** and Xoshiro512**, the preferred generators of this class.</li>
-<li>Fixed bug in <cite>jump</cite> method of Random123 generators which did nto specify a default value.</li>
-<li>Added support for generating bounded uniform integers using Lemire’s method.</li>
-<li>Synchronized with upstream changes, which requires moving the minimum supported NumPy to 1.13.</li>
+<li><p>Added Xoshiro256** and Xoshiro512**, the preferred generators of this class.</p></li>
+<li><p>Fixed bug in <cite>jump</cite> method of Random123 generators which did nto specify a default value.</p></li>
+<li><p>Added support for generating bounded uniform integers using Lemire’s method.</p></li>
+<li><p>Synchronized with upstream changes, which requires moving the minimum supported NumPy to 1.13.</p></li>
 </ul>
 </div>
 <div class="section" id="v1-15">
 <h2>v1.15<a class="headerlink" href="#v1-15" title="Permalink to this headline">¶</a></h2>
 <ul class="simple">
-<li>Synced empty choice changes</li>
-<li>Synced upstream docstring changes</li>
-<li>Synced upstream changes in permutation</li>
-<li>Synced upstream doc fixes</li>
-<li>Added absolute_import to avoid import noise on Python 2.7</li>
-<li>Add legacy generator which allows NumPy replication</li>
-<li>Improve type handling of integers</li>
-<li>Switch to array-fillers for 0 parameter distribution to improve performance</li>
-<li>Small changes to build on manylinux</li>
-<li>Build wheels using multibuild</li>
+<li><p>Synced empty choice changes</p></li>
+<li><p>Synced upstream docstring changes</p></li>
+<li><p>Synced upstream changes in permutation</p></li>
+<li><p>Synced upstream doc fixes</p></li>
+<li><p>Added absolute_import to avoid import noise on Python 2.7</p></li>
+<li><p>Add legacy generator which allows NumPy replication</p></li>
+<li><p>Improve type handling of integers</p></li>
+<li><p>Switch to array-fillers for 0 parameter distribution to improve performance</p></li>
+<li><p>Small changes to build on manylinux</p></li>
+<li><p>Build wheels using multibuild</p></li>
 </ul>
 </div>
 </div>
@@ -195,7 +193,7 @@ number generator fails.</li>
         <li class="right" >
           <a href="references.html" title="References"
              >previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="index.html">RandomGen v1.16.1+11.g95c8cdd documentation</a> &#187;</li> 
+        <li class="nav-item nav-item-0"><a href="index.html">RandomGen v1.16.1+13.g8f0eb35 documentation</a> &#187;</li> 
       </ul>
     </div>
 <script type="text/javascript">

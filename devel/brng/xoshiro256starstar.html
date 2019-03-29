@@ -1,11 +1,9 @@
 
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!DOCTYPE html>
 
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
-    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta charset="utf-8" />
   
   <!-- Licensed under the Apache 2.0 License -->
   <link rel="stylesheet" type="text/css" href="../_static/fonts/open-sans/stylesheet.css" />
@@ -15,7 +13,7 @@
   <link rel="stylesheet" type="text/css" href="../_static/css/bootstrap-theme.min.css" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-    <title>Xoshiro256** &#8212; RandomGen v1.16.1+11.g95c8cdd documentation</title>
+    <title>Xoshiro256** &#8212; RandomGen v1.16.1+13.g8f0eb35 documentation</title>
     <link rel="stylesheet" href="../_static/guzzle.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
@@ -47,7 +45,7 @@
         <li class="right" >
           <a href="generated/randomgen.xorshift1024.Xorshift1024.ctypes.html" title="randomgen.xorshift1024.Xorshift1024.ctypes"
              accesskey="P">previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../index.html">RandomGen v1.16.1+11.g95c8cdd documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">RandomGen v1.16.1+13.g8f0eb35 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="index.html" accesskey="U">Basic Random Number Generators</a> &#187;</li> 
       </ul>
     </div>
@@ -58,7 +56,7 @@
       </div>
   <div id="left-column">
     <div class="sphinxsidebar"><a href="
-    ../index.html" class="text-logo">RandomGen v1.16.1 (+11)</a>
+    ../index.html" class="text-logo">RandomGen v1.16.1 (+13)</a>
 <div class="sidebar-block">
   <div class="sidebar-wrapper">
     <h2>Table Of Contents</h2>
@@ -129,24 +127,21 @@
 <dt id="randomgen.xoshiro256starstar.Xoshiro256StarStar">
 <em class="property">class </em><code class="descclassname">randomgen.xoshiro256starstar.</code><code class="descname">Xoshiro256StarStar</code><span class="sig-paren">(</span><em>seed=None</em><span class="sig-paren">)</span><a class="headerlink" href="#randomgen.xoshiro256starstar.Xoshiro256StarStar" title="Permalink to this definition">¶</a></dt>
 <dd><p>Container for the xoshiro256** pseudo-random number generator.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>seed</strong> (<em>{None</em><em>, </em><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a><em>, </em><em>array_like}</em><em>, </em><em>optional</em>) – Random seed initializing the pseudo-random number generator.
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>seed</strong> (<em>{None</em><em>, </em><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a><em>, </em><em>array_like}</em><em>, </em><em>optional</em>) – Random seed initializing the pseudo-random number generator.
 Can be an integer in [0, 2**64-1], array of integers in
 [0, 2**64-1] or <code class="docutils literal notranslate"><span class="pre">None</span></code> (the default). If <cite>seed</cite> is <code class="docutils literal notranslate"><span class="pre">None</span></code>,
 then <code class="docutils literal notranslate"><span class="pre">Xoshiro256StarStar</span></code> will try to read data from
 <code class="docutils literal notranslate"><span class="pre">/dev/urandom</span></code> (or the Windows analog) if available.  If
-unavailable, a 64-bit hash of the time and process ID is used.</td>
-</tr>
-</tbody>
-</table>
+unavailable, a 64-bit hash of the time and process ID is used.</p>
+</dd>
+</dl>
 <p class="rubric">Notes</p>
 <p>xoshiro256** is written by David Blackman and Sebastiano Vigna.
 It is a 64-bit PRNG that uses a carefully linear transformation.
 This produces a fast PRNG with excellent statistical quality
-<a class="footnote-reference" href="#id2" id="id1">[1]</a>. xoshiro256** has a period of <span class="math notranslate nohighlight">\(2^{256} - 1\)</span>
+<a class="footnote-reference brackets" href="#id2" id="id1">1</a>. xoshiro256** has a period of <span class="math notranslate nohighlight">\(2^{256} - 1\)</span>
 and supports jumping the sequence in increments of <span class="math notranslate nohighlight">\(2^{128}\)</span>,
 which allows multiple non-overlapping sequences to be generated.</p>
 <p><code class="docutils literal notranslate"><span class="pre">Xoshiro256StarStar</span></code> exposes no user-facing API except <code class="docutils literal notranslate"><span class="pre">generator</span></code>,
@@ -197,73 +192,72 @@ same value as a scalar will produce the same initial state.</p>
 </pre></div>
 </div>
 <p class="rubric">References</p>
-<table class="docutils footnote" frame="void" id="id2" rules="none">
-<colgroup><col class="label" /><col /></colgroup>
-<tbody valign="top">
-<tr><td class="label"><a class="fn-backref" href="#id1">[1]</a></td><td>“xoroshiro+ / xorshift* / xorshift+ generators and the PRNG shootout”,
-<a class="reference external" href="http://xorshift.di.unimi.it/">http://xorshift.di.unimi.it/</a></td></tr>
-</tbody>
-</table>
+<dl class="footnote brackets">
+<dt class="label" id="id2"><span class="brackets"><a class="fn-backref" href="#id1">1</a></span></dt>
+<dd><p>“xoroshiro+ / xorshift* / xorshift+ generators and the PRNG shootout”,
+<a class="reference external" href="http://xorshift.di.unimi.it/">http://xorshift.di.unimi.it/</a></p>
+</dd>
+</dl>
 </dd></dl>
 
 <div class="section" id="seeding-and-state">
 <h2>Seeding and State<a class="headerlink" href="#seeding-and-state" title="Permalink to this headline">¶</a></h2>
-<table border="1" class="longtable docutils">
+<table class="longtable docutils align-center">
 <colgroup>
-<col width="10%" />
-<col width="90%" />
+<col style="width: 10%" />
+<col style="width: 90%" />
 </colgroup>
-<tbody valign="top">
-<tr class="row-odd"><td><a class="reference internal" href="generated/randomgen.xoshiro256starstar.Xoshiro256StarStar.seed.html#randomgen.xoshiro256starstar.Xoshiro256StarStar.seed" title="randomgen.xoshiro256starstar.Xoshiro256StarStar.seed"><code class="xref py py-obj docutils literal notranslate"><span class="pre">seed</span></code></a>([seed])</td>
-<td>Seed the generator.</td>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="generated/randomgen.xoshiro256starstar.Xoshiro256StarStar.seed.html#randomgen.xoshiro256starstar.Xoshiro256StarStar.seed" title="randomgen.xoshiro256starstar.Xoshiro256StarStar.seed"><code class="xref py py-obj docutils literal notranslate"><span class="pre">seed</span></code></a>([seed])</p></td>
+<td><p>Seed the generator.</p></td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="generated/randomgen.xoshiro256starstar.Xoshiro256StarStar.state.html#randomgen.xoshiro256starstar.Xoshiro256StarStar.state" title="randomgen.xoshiro256starstar.Xoshiro256StarStar.state"><code class="xref py py-obj docutils literal notranslate"><span class="pre">state</span></code></a></td>
-<td>Get or set the PRNG state</td>
+<tr class="row-even"><td><p><a class="reference internal" href="generated/randomgen.xoshiro256starstar.Xoshiro256StarStar.state.html#randomgen.xoshiro256starstar.Xoshiro256StarStar.state" title="randomgen.xoshiro256starstar.Xoshiro256StarStar.state"><code class="xref py py-obj docutils literal notranslate"><span class="pre">state</span></code></a></p></td>
+<td><p>Get or set the PRNG state</p></td>
 </tr>
 </tbody>
 </table>
 </div>
 <div class="section" id="parallel-generation">
 <h2>Parallel generation<a class="headerlink" href="#parallel-generation" title="Permalink to this headline">¶</a></h2>
-<table border="1" class="longtable docutils">
+<table class="longtable docutils align-center">
 <colgroup>
-<col width="10%" />
-<col width="90%" />
+<col style="width: 10%" />
+<col style="width: 90%" />
 </colgroup>
-<tbody valign="top">
-<tr class="row-odd"><td><a class="reference internal" href="generated/randomgen.xoshiro256starstar.Xoshiro256StarStar.jump.html#randomgen.xoshiro256starstar.Xoshiro256StarStar.jump" title="randomgen.xoshiro256starstar.Xoshiro256StarStar.jump"><code class="xref py py-obj docutils literal notranslate"><span class="pre">jump</span></code></a>([iter])</td>
-<td>Jumps the state as-if 2**128 random numbers have been generated.</td>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="generated/randomgen.xoshiro256starstar.Xoshiro256StarStar.jump.html#randomgen.xoshiro256starstar.Xoshiro256StarStar.jump" title="randomgen.xoshiro256starstar.Xoshiro256StarStar.jump"><code class="xref py py-obj docutils literal notranslate"><span class="pre">jump</span></code></a>([iter])</p></td>
+<td><p>Jumps the state as-if 2**128 random numbers have been generated.</p></td>
 </tr>
 </tbody>
 </table>
 </div>
 <div class="section" id="random-generator">
 <h2>Random Generator<a class="headerlink" href="#random-generator" title="Permalink to this headline">¶</a></h2>
-<table border="1" class="longtable docutils">
+<table class="longtable docutils align-center">
 <colgroup>
-<col width="10%" />
-<col width="90%" />
+<col style="width: 10%" />
+<col style="width: 90%" />
 </colgroup>
-<tbody valign="top">
-<tr class="row-odd"><td><a class="reference internal" href="generated/randomgen.xoshiro256starstar.Xoshiro256StarStar.generator.html#randomgen.xoshiro256starstar.Xoshiro256StarStar.generator" title="randomgen.xoshiro256starstar.Xoshiro256StarStar.generator"><code class="xref py py-obj docutils literal notranslate"><span class="pre">generator</span></code></a></td>
-<td>Return a RandomGenerator object</td>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="generated/randomgen.xoshiro256starstar.Xoshiro256StarStar.generator.html#randomgen.xoshiro256starstar.Xoshiro256StarStar.generator" title="randomgen.xoshiro256starstar.Xoshiro256StarStar.generator"><code class="xref py py-obj docutils literal notranslate"><span class="pre">generator</span></code></a></p></td>
+<td><p>Return a RandomGenerator object</p></td>
 </tr>
 </tbody>
 </table>
 </div>
 <div class="section" id="extending">
 <h2>Extending<a class="headerlink" href="#extending" title="Permalink to this headline">¶</a></h2>
-<table border="1" class="longtable docutils">
+<table class="longtable docutils align-center">
 <colgroup>
-<col width="10%" />
-<col width="90%" />
+<col style="width: 10%" />
+<col style="width: 90%" />
 </colgroup>
-<tbody valign="top">
-<tr class="row-odd"><td><a class="reference internal" href="generated/randomgen.xoshiro256starstar.Xoshiro256StarStar.cffi.html#randomgen.xoshiro256starstar.Xoshiro256StarStar.cffi" title="randomgen.xoshiro256starstar.Xoshiro256StarStar.cffi"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cffi</span></code></a></td>
-<td>CFFI interface</td>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="generated/randomgen.xoshiro256starstar.Xoshiro256StarStar.cffi.html#randomgen.xoshiro256starstar.Xoshiro256StarStar.cffi" title="randomgen.xoshiro256starstar.Xoshiro256StarStar.cffi"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cffi</span></code></a></p></td>
+<td><p>CFFI interface</p></td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="generated/randomgen.xoshiro256starstar.Xoshiro256StarStar.ctypes.html#randomgen.xoshiro256starstar.Xoshiro256StarStar.ctypes" title="randomgen.xoshiro256starstar.Xoshiro256StarStar.ctypes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ctypes</span></code></a></td>
-<td>Ctypes interface</td>
+<tr class="row-even"><td><p><a class="reference internal" href="generated/randomgen.xoshiro256starstar.Xoshiro256StarStar.ctypes.html#randomgen.xoshiro256starstar.Xoshiro256StarStar.ctypes" title="randomgen.xoshiro256starstar.Xoshiro256StarStar.ctypes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ctypes</span></code></a></p></td>
+<td><p>Ctypes interface</p></td>
 </tr>
 </tbody>
 </table>
@@ -303,7 +297,7 @@ same value as a scalar will produce the same initial state.</p>
         <li class="right" >
           <a href="generated/randomgen.xorshift1024.Xorshift1024.ctypes.html" title="randomgen.xorshift1024.Xorshift1024.ctypes"
              >previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../index.html">RandomGen v1.16.1+11.g95c8cdd documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">RandomGen v1.16.1+13.g8f0eb35 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="index.html" >Basic Random Number Generators</a> &#187;</li> 
       </ul>
     </div>

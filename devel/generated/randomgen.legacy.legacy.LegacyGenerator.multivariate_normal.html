@@ -1,11 +1,9 @@
 
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!DOCTYPE html>
 
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
-    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta charset="utf-8" />
   
   <!-- Licensed under the Apache 2.0 License -->
   <link rel="stylesheet" type="text/css" href="../_static/fonts/open-sans/stylesheet.css" />
@@ -15,7 +13,7 @@
   <link rel="stylesheet" type="text/css" href="../_static/css/bootstrap-theme.min.css" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-    <title>randomgen.legacy.legacy.LegacyGenerator.multivariate_normal &#8212; RandomGen v1.16.1+11.g95c8cdd documentation</title>
+    <title>randomgen.legacy.legacy.LegacyGenerator.multivariate_normal &#8212; RandomGen v1.16.1+13.g8f0eb35 documentation</title>
     <link rel="stylesheet" href="../_static/guzzle.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
@@ -47,7 +45,7 @@
         <li class="right" >
           <a href="randomgen.legacy.legacy.LegacyGenerator.multinomial.html" title="randomgen.legacy.legacy.LegacyGenerator.multinomial"
              accesskey="P">previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../index.html">RandomGen v1.16.1+11.g95c8cdd documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">RandomGen v1.16.1+13.g8f0eb35 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="../legacy.html" accesskey="U">Legacy Random Generation</a> &#187;</li> 
       </ul>
     </div>
@@ -58,7 +56,7 @@
       </div>
   <div id="left-column">
     <div class="sphinxsidebar"><a href="
-    ../index.html" class="text-logo">RandomGen v1.16.1 (+11)</a>
+    ../index.html" class="text-logo">RandomGen v1.16.1 (+13)</a>
 <div class="sidebar-block">
   <div class="sidebar-wrapper">
     <h2>Table Of Contents</h2>
@@ -137,35 +135,31 @@ dimensions.  Such a distribution is specified by its mean and
 covariance matrix.  These parameters are analogous to the mean
 (average or “center”) and variance (standard deviation, or “width,”
 squared) of the one-dimensional normal distribution.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>mean</strong> (<em>1-D array_like</em><em>, </em><em>of length N</em>) – Mean of the N-dimensional distribution.</li>
-<li><strong>cov</strong> (<em>2-D array_like</em><em>, </em><em>of shape</em><em> (</em><em>N</em><em>, </em><em>N</em><em>)</em>) – Covariance matrix of the distribution. It must be symmetric and
-positive-semidefinite for proper sampling.</li>
-<li><strong>size</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a><em> or </em><em>tuple of ints</em><em>, </em><em>optional</em>) – Given a shape of, for example, <code class="docutils literal notranslate"><span class="pre">(m,n,k)</span></code>, <code class="docutils literal notranslate"><span class="pre">m*n*k</span></code> samples are
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>mean</strong> (<em>1-D array_like</em><em>, </em><em>of length N</em>) – Mean of the N-dimensional distribution.</p></li>
+<li><p><strong>cov</strong> (<em>2-D array_like</em><em>, </em><em>of shape</em><em> (</em><em>N</em><em>, </em><em>N</em><em>)</em>) – Covariance matrix of the distribution. It must be symmetric and
+positive-semidefinite for proper sampling.</p></li>
+<li><p><strong>size</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a><em> or </em><em>tuple of ints</em><em>, </em><em>optional</em>) – Given a shape of, for example, <code class="docutils literal notranslate"><span class="pre">(m,n,k)</span></code>, <code class="docutils literal notranslate"><span class="pre">m*n*k</span></code> samples are
 generated, and packed in an <cite>m</cite>-by-<cite>n</cite>-by-<cite>k</cite> arrangement.  Because
 each sample is <cite>N</cite>-dimensional, the output shape is <code class="docutils literal notranslate"><span class="pre">(m,n,k,N)</span></code>.
-If no shape is specified, a single (<cite>N</cite>-D) sample is returned.</li>
-<li><strong>check_valid</strong> (<em>{ 'warn'</em><em>, </em><em>'raise'</em><em>, </em><em>'ignore' }</em><em>, </em><em>optional</em>) – Behavior when the covariance matrix is not positive semidefinite.</li>
-<li><strong>tol</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.7)"><em>float</em></a><em>, </em><em>optional</em>) – Tolerance when checking the singular values in covariance matrix.</li>
+If no shape is specified, a single (<cite>N</cite>-D) sample is returned.</p></li>
+<li><p><strong>check_valid</strong> (<em>{ 'warn'</em><em>, </em><em>'raise'</em><em>, </em><em>'ignore' }</em><em>, </em><em>optional</em>) – Behavior when the covariance matrix is not positive semidefinite.</p></li>
+<li><p><strong>tol</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.7)"><em>float</em></a><em>, </em><em>optional</em>) – Tolerance when checking the singular values in covariance matrix.</p></li>
 </ul>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><p><strong>out</strong> – The drawn samples, of shape <em>size</em>, if that was provided.  If not,
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><p><strong>out</strong> – The drawn samples, of shape <em>size</em>, if that was provided.  If not,
 the shape is <code class="docutils literal notranslate"><span class="pre">(N,)</span></code>.</p>
 <p>In other words, each entry <code class="docutils literal notranslate"><span class="pre">out[i,j,...,:]</span></code> is an N-dimensional
 value drawn from the distribution.</p>
 </p>
-</td>
-</tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">ndarray</p>
-</td>
-</tr>
-</tbody>
-</table>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>ndarray</p>
+</dd>
+</dl>
 <p class="rubric">Notes</p>
 <p>The mean is a coordinate in N-dimensional space, which represents the
 location where samples are most likely to be generated.  This is
@@ -181,9 +175,9 @@ The element <span class="math notranslate nohighlight">\(C_{ii}\)</span> is the 
 approximations include:</p>
 <blockquote>
 <div><ul class="simple">
-<li>Spherical covariance (<cite>cov</cite> is a multiple of the identity matrix)</li>
-<li>Diagonal covariance (<cite>cov</cite> has non-negative elements, and only on
-the diagonal)</li>
+<li><p>Spherical covariance (<cite>cov</cite> is a multiple of the identity matrix)</p></li>
+<li><p>Diagonal covariance (<cite>cov</cite> has non-negative elements, and only on
+the diagonal)</p></li>
 </ul>
 </div></blockquote>
 <p>This geometrical property can be seen in two dimensions by plotting
@@ -204,20 +198,16 @@ generated data-points:</p>
 nonnegative-definite). Otherwise, the behavior of this method is
 undefined and backwards compatibility is not guaranteed.</p>
 <p class="rubric">References</p>
-<table class="docutils footnote" frame="void" id="id1" rules="none">
-<colgroup><col class="label" /><col /></colgroup>
-<tbody valign="top">
-<tr><td class="label">[1]</td><td>Papoulis, A., “Probability, Random Variables, and Stochastic
-Processes,” 3rd ed., New York: McGraw-Hill, 1991.</td></tr>
-</tbody>
-</table>
-<table class="docutils footnote" frame="void" id="id2" rules="none">
-<colgroup><col class="label" /><col /></colgroup>
-<tbody valign="top">
-<tr><td class="label">[2]</td><td>Duda, R. O., Hart, P. E., and Stork, D. G., “Pattern
-Classification,” 2nd ed., New York: Wiley, 2001.</td></tr>
-</tbody>
-</table>
+<dl class="footnote brackets">
+<dt class="label" id="id1"><span class="brackets">1</span></dt>
+<dd><p>Papoulis, A., “Probability, Random Variables, and Stochastic
+Processes,” 3rd ed., New York: McGraw-Hill, 1991.</p>
+</dd>
+<dt class="label" id="id2"><span class="brackets">2</span></dt>
+<dd><p>Duda, R. O., Hart, P. E., and Stork, D. G., “Pattern
+Classification,” 2nd ed., New York: Wiley, 2001.</p>
+</dd>
+</dl>
 <p class="rubric">Examples</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">mean</span> <span class="o">=</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">cov</span> <span class="o">=</span> <span class="p">[[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">]]</span>
@@ -269,7 +259,7 @@ standard deviation:</p>
         <li class="right" >
           <a href="randomgen.legacy.legacy.LegacyGenerator.multinomial.html" title="randomgen.legacy.legacy.LegacyGenerator.multinomial"
              >previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../index.html">RandomGen v1.16.1+11.g95c8cdd documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">RandomGen v1.16.1+13.g8f0eb35 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="../legacy.html" >Legacy Random Generation</a> &#187;</li> 
       </ul>
     </div>

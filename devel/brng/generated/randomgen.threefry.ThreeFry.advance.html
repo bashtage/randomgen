@@ -1,11 +1,9 @@
 
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!DOCTYPE html>
 
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
-    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta charset="utf-8" />
   
   <!-- Licensed under the Apache 2.0 License -->
   <link rel="stylesheet" type="text/css" href="../../_static/fonts/open-sans/stylesheet.css" />
@@ -15,7 +13,7 @@
   <link rel="stylesheet" type="text/css" href="../../_static/css/bootstrap-theme.min.css" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-    <title>randomgen.threefry.ThreeFry.advance &#8212; RandomGen v1.16.1+11.g95c8cdd documentation</title>
+    <title>randomgen.threefry.ThreeFry.advance &#8212; RandomGen v1.16.1+13.g8f0eb35 documentation</title>
     <link rel="stylesheet" href="../../_static/guzzle.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
     <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
@@ -47,7 +45,7 @@
         <li class="right" >
           <a href="randomgen.threefry.ThreeFry.state.html" title="randomgen.threefry.ThreeFry.state"
              accesskey="P">previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../../index.html">RandomGen v1.16.1+11.g95c8cdd documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">RandomGen v1.16.1+13.g8f0eb35 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="../index.html" >Basic Random Number Generators</a> &#187;</li>
           <li class="nav-item nav-item-2"><a href="../threefry.html" accesskey="U">ThreeFry Counter-based RNG</a> &#187;</li> 
       </ul>
@@ -59,7 +57,7 @@
       </div>
   <div id="left-column">
     <div class="sphinxsidebar"><a href="
-    ../../index.html" class="text-logo">RandomGen v1.16.1 (+11)</a>
+    ../../index.html" class="text-logo">RandomGen v1.16.1 (+13)</a>
 <div class="sidebar-block">
   <div class="sidebar-wrapper">
     <h2>Table Of Contents</h2>
@@ -132,19 +130,18 @@
 <dt id="randomgen.threefry.ThreeFry.advance">
 <code class="descclassname">ThreeFry.</code><code class="descname">advance</code><span class="sig-paren">(</span><em>delta</em><span class="sig-paren">)</span><a class="headerlink" href="#randomgen.threefry.ThreeFry.advance" title="Permalink to this definition">¶</a></dt>
 <dd><p>Advance the underlying RNG as-if delta draws have occurred.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>delta</strong> (<em>integer</em><em>, </em><em>positive</em>) – Number of draws to advance the RNG. Must be less than the
-size state variable in the underlying RNG.</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><strong>self</strong> – RNG advanced delta steps</td>
-</tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference internal" href="../threefry.html#randomgen.threefry.ThreeFry" title="randomgen.threefry.ThreeFry">ThreeFry</a></td>
-</tr>
-</tbody>
-</table>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>delta</strong> (<em>integer</em><em>, </em><em>positive</em>) – Number of draws to advance the RNG. Must be less than the
+size state variable in the underlying RNG.</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><strong>self</strong> – RNG advanced delta steps</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference internal" href="../threefry.html#randomgen.threefry.ThreeFry" title="randomgen.threefry.ThreeFry">ThreeFry</a></p>
+</dd>
+</dl>
 <p class="rubric">Notes</p>
 <p>Advancing a RNG updates the underlying RNG state as-if a given
 number of calls to the underlying RNG have been made. In general
@@ -152,13 +149,13 @@ there is not a one-to-one relationship between the number output
 random values from a particular distribution and the number of
 draws from the core RNG.  This occurs for two reasons:</p>
 <ul class="simple">
-<li>The random values are simulated using a rejection-based method
+<li><p>The random values are simulated using a rejection-based method
 and so, on average, more than one value from the underlying
-RNG is required to generate an single draw.</li>
-<li>The number of bits required to generate a simulated value
+RNG is required to generate an single draw.</p></li>
+<li><p>The number of bits required to generate a simulated value
 differs from the number of bits generated by the underlying
 RNG.  For example, two 16-bit integer values can be simulated
-from a single draw of a 32-bit RNG.</li>
+from a single draw of a 32-bit RNG.</p></li>
 </ul>
 <p>Advancing the RNG state resets any pre-computed random numbers.
 This is required to ensure exact reproducibility.</p>
@@ -199,7 +196,7 @@ This is required to ensure exact reproducibility.</p>
         <li class="right" >
           <a href="randomgen.threefry.ThreeFry.state.html" title="randomgen.threefry.ThreeFry.state"
              >previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../../index.html">RandomGen v1.16.1+11.g95c8cdd documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">RandomGen v1.16.1+13.g8f0eb35 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="../index.html" >Basic Random Number Generators</a> &#187;</li>
           <li class="nav-item nav-item-2"><a href="../threefry.html" >ThreeFry Counter-based RNG</a> &#187;</li> 
       </ul>
