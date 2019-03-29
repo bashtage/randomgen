@@ -3727,12 +3727,6 @@ cdef class RandomGenerator:
             lnbad = <int64_t>nbad
             lnsample = <int64_t>nsample
 
-            if lngood < 0:
-                raise ValueError("ngood < 0")
-            if lnbad < 0:
-                raise ValueError("nbad < 0")
-            if lnsample < 1:
-                raise ValueError("nsample < 1")
             if lngood + lnbad < lnsample:
                 raise ValueError("ngood + nbad < nsample")
             return disc(&random_hypergeometric, self._brng, size, self.lock, 0, 3,

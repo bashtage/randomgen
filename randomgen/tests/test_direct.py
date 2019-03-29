@@ -1,3 +1,4 @@
+import collections.abc
 import os
 import sys
 from os.path import join
@@ -15,6 +16,16 @@ if (sys.version_info > (3, 0)):
     long = int
 
 pwd = os.path.dirname(os.path.abspath(__file__))
+
+
+def assert_state_equal(actual, target):
+    for key in actual:
+        if isinstance(actual[key], collections.abc.Mapping):
+            assert_state_equal(actual[key], target[key])
+        elif isinstance(actual[key], np.ndarray):
+            assert_array_equal(actual[key], target[key])
+        else:
+            assert actual[key] == target[key]
 
 
 def uniform32_from_uint64(x):
@@ -213,6 +224,46 @@ class Base(object):
         rs = RandomGenerator(self.brng(*self.data1['seed']))
         assert_raises(ValueError, rs.seed, [2 ** (2 * self.bits + 1)])
         assert_raises(ValueError, rs.seed, [-1])
+
+    def test_repr(self):
+        rs = RandomGenerator(self.brng(*self.data1['seed']))
+        assert 'RandomGenerator' in rs.__repr__()
+        assert str(hex(id(rs)))[2:].upper() in rs.__repr__()
+
+    def test_str(self):
+        rs = RandomGenerator(self.brng(*self.data1['seed']))
+        assert 'RandomGenerator' in str(rs)
+        assert str(self.brng.__name__) in str(rs)
+        assert str(hex(id(rs)))[2:].upper() not in str(rs)
+
+    def test_generator(self):
+        brng = self.brng(*self.data1['seed'])
+        assert isinstance(brng.generator, RandomGenerator)
+
+    def test_pickle(self):
+        import pickle
+
+        brng = self.brng(*self.data1['seed'])
+        state = brng.state
+        brng_pkl = pickle.dumps(brng)
+        reloaded = pickle.loads(brng_pkl)
+        reloaded_state = reloaded.state
+        assert_array_equal(brng.generator.standard_normal(1000),
+                           reloaded.generator.standard_normal(1000))
+        assert brng is not reloaded
+        assert_state_equal(reloaded_state, state)
+
+    def test_invalid_state_type(self):
+        brng = self.brng(*self.data1['seed'])
+        with pytest.raises(TypeError):
+            brng.state = {'1'}
+
+    def test_invalid_state_value(self):
+        brng = self.brng(*self.data1['seed'])
+        state = brng.state
+        state['brng'] = 'otherBRNG'
+        with pytest.raises(ValueError):
+            brng.state = state
 
 
 class TestXoroshiro128(Base):

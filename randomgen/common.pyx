@@ -29,6 +29,7 @@ cdef double kahan_sum(double *darr, np.npy_intp n):
     return sum
 
 cdef np.ndarray int_to_array(object value, object name, object bits, object uint_size):
+    """Convert a large integer to an array of unsigned integers"""
     len = bits // uint_size
     value = np.asarray(value)
     if uint_size == 32:
@@ -67,8 +68,8 @@ cdef check_output(object out, object dtype, object size):
         raise TypeError('Supplied output array has the wrong type. '
                         'Expected {0}, got {0}'.format(dtype, out_array.dtype))
     if size is not None:
-        # TODO: enable this !!! if tuple(size) != out_array.shape:
-        raise ValueError('size and out cannot be simultaneously used')
+        if tuple(size) != out.shape:
+            raise ValueError('size must match out.shape when used together')
 
 
 cdef object double_fill(void *func, brng_t *state, object size, object lock, object out):
