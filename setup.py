@@ -35,6 +35,12 @@ import versioneer
 with open('requirements.txt') as f:
     required = f.read().splitlines()
 
+CYTHON_COVERAGE = os.environ.get('RANDOMGEN_CYTHON_COVERAGE', '0') in ('true', '1', 'True')
+if CYTHON_COVERAGE:
+    print('Building with coverage for cython modules, RANDOMGEN_CYTHON_COVERAGE=' +
+          os.environ['RANDOMGEN_CYTHON_COVERAGE'])
+
+
 Cython.Compiler.Options.annotate = True
 
 # Make a guess as to whether SSE2 is present for now, TODO: Improve
@@ -66,13 +72,18 @@ if os.name == 'nt':
     if sys.version_info < (3, 0):
         EXTRA_INCLUDE_DIRS += [join(MOD_DIR, 'src', 'common')]
 
-PCG64_DEFS = []
+DEFS = []
+if CYTHON_COVERAGE:
+    DEFS.extend([('CYTHON_TRACE', '1'),
+                 ('CYTHON_TRACE_NOGIL','1')])
+
+PCG64_DEFS = DEFS[:]
 if sys.maxsize < 2 ** 32 or os.name == 'nt':
     # Force emulated mode here
     PCG_EMULATED_MATH = True
     PCG64_DEFS += [('PCG_FORCE_EMULATED_128BIT_MATH', '1')]
 
-DSFMT_DEFS = [('DSFMT_MEXP', '19937')]
+DSFMT_DEFS = DEFS[:] + [('DSFMT_MEXP', '19937')]
 if USE_SSE2:
     if os.name == 'nt':
         EXTRA_COMPILE_ARGS += ['/wd4146', '/GL']
@@ -104,7 +115,8 @@ extensions = [Extension('randomgen.entropy',
                                                                 'entropy')],
                         libraries=EXTRA_LIBRARIES,
                         extra_compile_args=EXTRA_COMPILE_ARGS,
-                        extra_link_args=EXTRA_LINK_ARGS
+                        extra_link_args=EXTRA_LINK_ARGS,
+                        define_macros=DEFS
                         ),
               Extension("randomgen.dsfmt",
                         ["randomgen/dsfmt.pyx",
@@ -128,7 +140,8 @@ extensions = [Extension('randomgen.entropy',
                                                                 'mt19937')],
                         libraries=EXTRA_LIBRARIES,
                         extra_compile_args=EXTRA_COMPILE_ARGS,
-                        extra_link_args=EXTRA_LINK_ARGS
+                        extra_link_args=EXTRA_LINK_ARGS,
+                        define_macros=DEFS
                         ),
               Extension("randomgen.philox",
                         ["randomgen/philox.pyx",
@@ -138,7 +151,8 @@ extensions = [Extension('randomgen.entropy',
                                                                 'philox')],
                         libraries=EXTRA_LIBRARIES,
                         extra_compile_args=EXTRA_COMPILE_ARGS,
-                        extra_link_args=EXTRA_LINK_ARGS
+                        extra_link_args=EXTRA_LINK_ARGS,
+                        define_macros=DEFS
                         ),
               Extension("randomgen.pcg64",
                         ["randomgen/pcg64.pyx",
@@ -159,7 +173,8 @@ extensions = [Extension('randomgen.entropy',
                                                                 'pcg32')],
                         libraries=EXTRA_LIBRARIES,
                         extra_compile_args=EXTRA_COMPILE_ARGS,
-                        extra_link_args=EXTRA_LINK_ARGS
+                        extra_link_args=EXTRA_LINK_ARGS,
+                        define_macros=DEFS
                         ),
               Extension("randomgen.threefry",
                         ["randomgen/threefry.pyx",
@@ -169,7 +184,8 @@ extensions = [Extension('randomgen.entropy',
                                                                 'threefry')],
                         libraries=EXTRA_LIBRARIES,
                         extra_compile_args=EXTRA_COMPILE_ARGS,
-                        extra_link_args=EXTRA_LINK_ARGS
+                        extra_link_args=EXTRA_LINK_ARGS,
+                        define_macros=DEFS
                         ),
               Extension("randomgen.threefry32",
                         ["randomgen/threefry32.pyx",
@@ -179,7 +195,8 @@ extensions = [Extension('randomgen.entropy',
                                                                 'threefry32')],
                         libraries=EXTRA_LIBRARIES,
                         extra_compile_args=EXTRA_COMPILE_ARGS,
-                        extra_link_args=EXTRA_LINK_ARGS
+                        extra_link_args=EXTRA_LINK_ARGS,
+                        define_macros=DEFS
                         ),
               Extension("randomgen.xoroshiro128",
                         ["randomgen/xoroshiro128.pyx",
@@ -191,7 +208,8 @@ extensions = [Extension('randomgen.entropy',
                                                                'xoroshiro128')],
                         libraries=EXTRA_LIBRARIES,
                         extra_compile_args=EXTRA_COMPILE_ARGS,
-                        extra_link_args=EXTRA_LINK_ARGS
+                        extra_link_args=EXTRA_LINK_ARGS,
+                        define_macros=DEFS
                         ),
               Extension("randomgen.xorshift1024",
                         ["randomgen/xorshift1024.pyx",
@@ -202,7 +220,8 @@ extensions = [Extension('randomgen.entropy',
                                                                 'xorshift1024')],
                         libraries=EXTRA_LIBRARIES,
                         extra_compile_args=EXTRA_COMPILE_ARGS,
-                        extra_link_args=EXTRA_LINK_ARGS
+                        extra_link_args=EXTRA_LINK_ARGS,
+                        define_macros=DEFS
                         ),
               Extension("randomgen.xoshiro256starstar",
                         ["randomgen/xoshiro256starstar.pyx",
@@ -214,7 +233,8 @@ extensions = [Extension('randomgen.entropy',
                                                                'xoshiro256starstar')],
                         libraries=EXTRA_LIBRARIES,
                         extra_compile_args=EXTRA_COMPILE_ARGS,
-                        extra_link_args=EXTRA_LINK_ARGS
+                        extra_link_args=EXTRA_LINK_ARGS,
+                        define_macros=DEFS
                         ),
               Extension("randomgen.xoshiro512starstar",
                         ["randomgen/xoshiro512starstar.pyx",
@@ -226,7 +246,8 @@ extensions = [Extension('randomgen.entropy',
                                                                'xoshiro512starstar')],
                         libraries=EXTRA_LIBRARIES,
                         extra_compile_args=EXTRA_COMPILE_ARGS,
-                        extra_link_args=EXTRA_LINK_ARGS
+                        extra_link_args=EXTRA_LINK_ARGS,
+                        define_macros=DEFS
                         ),
               Extension("randomgen.generator",
                         ["randomgen/generator.pyx",
@@ -235,14 +256,16 @@ extensions = [Extension('randomgen.entropy',
                         libraries=EXTRA_LIBRARIES,
                         include_dirs=EXTRA_INCLUDE_DIRS + [np.get_include()],
                         extra_compile_args=EXTRA_COMPILE_ARGS,
-                        extra_link_args=EXTRA_LINK_ARGS
+                        extra_link_args=EXTRA_LINK_ARGS,
+                        define_macros=DEFS
                         ),
               Extension("randomgen.common",
                         ["randomgen/common.pyx"],
                         libraries=EXTRA_LIBRARIES,
                         include_dirs=EXTRA_INCLUDE_DIRS + [np.get_include()],
                         extra_compile_args=EXTRA_COMPILE_ARGS,
-                        extra_link_args=EXTRA_LINK_ARGS
+                        extra_link_args=EXTRA_LINK_ARGS,
+                        define_macros=DEFS
                         ),
               Extension("randomgen.bounded_integers",
                         ["randomgen/bounded_integers.pyx",
@@ -251,7 +274,8 @@ extensions = [Extension('randomgen.entropy',
                         libraries=EXTRA_LIBRARIES,
                         include_dirs=EXTRA_INCLUDE_DIRS + [np.get_include()],
                         extra_compile_args=EXTRA_COMPILE_ARGS,
-                        extra_link_args=EXTRA_LINK_ARGS
+                        extra_link_args=EXTRA_LINK_ARGS,
+                        define_macros=DEFS
                         ),
               Extension("randomgen.legacy._legacy",
                         ["randomgen/legacy/_legacy.pyx",
@@ -262,7 +286,8 @@ extensions = [Extension('randomgen.entropy',
                         include_dirs=EXTRA_INCLUDE_DIRS +
                         [np.get_include()] + [join(MOD_DIR, 'legacy')],
                         extra_compile_args=EXTRA_COMPILE_ARGS,
-                        extra_link_args=EXTRA_LINK_ARGS
+                        extra_link_args=EXTRA_LINK_ARGS,
+                        define_macros=DEFS
                         ),
               ]
 
@@ -303,7 +328,9 @@ setup(
     cmdclass=versioneer.get_cmdclass(),
     ext_modules=cythonize(extensions,
                           compile_time_env={"PCG_EMULATED_MATH": PCG_EMULATED_MATH},
-                          compiler_directives={'language_level': '3'}),
+                          compiler_directives={'language_level': '3',
+                                               'linetrace': CYTHON_COVERAGE},
+                          force=CYTHON_COVERAGE),
     packages=find_packages(),
     package_dir={'randomgen': './randomgen'},
     package_data={'': ['*.h', '*.pxi', '*.pyx', '*.pxd', '*.in'],
