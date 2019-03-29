@@ -119,6 +119,6 @@ class LegacyGenerator(with_metaclass(LegacyGeneratorType, RandomGenerator)):
         self.state = state
 
     def __reduce__(self):
-        return (randomgen.pickle._experiment_ctor,
+        return (randomgen.pickle.__legacy_ctor,
                 (self.state['brng'],),
                 self.state)

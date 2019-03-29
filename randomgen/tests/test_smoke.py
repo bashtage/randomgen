@@ -697,6 +697,10 @@ class RNG(object):
         direct = rg.standard_normal(size=size)
         assert_equal(direct, existing)
 
+        sized = np.empty(size)
+        rg.state = state
+        rg.standard_normal(out=sized, size=sized.shape)
+
         existing = np.empty(size, dtype=np.float32)
         rg.state = state
         rg.standard_normal(out=existing, dtype=np.float32)

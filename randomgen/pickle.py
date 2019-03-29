@@ -102,29 +102,3 @@ def __legacy_ctor(brng_name='mt19937'):
         raise ValueError(str(brng_name) + ' is not a known BasicRNG module.')
 
     return LegacyGenerator(brng())
-
-
-def _experiment_ctor(brng_name='mt19937'):
-    """
-    Pickling helper function that returns a LegacyGenerator object
-
-    Parameters
-    ----------
-    brng_name: str
-        String containing the name of the Basic RNG
-
-    Returns
-    -------
-    brng: BasicRNG
-        Basic RNG instance
-    """
-    try:
-        brng_name = brng_name.decode('ascii')
-    except AttributeError:
-        pass
-    if brng_name in BasicRNGS:
-        brng = BasicRNGS[brng_name]
-    else:
-        raise ValueError(str(brng_name) + ' is not a known BasicRNG module.')
-
-    return LegacyGenerator(brng())

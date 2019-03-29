@@ -172,31 +172,6 @@ cdef class Xorshift1024:
         self.rng_state.has_uint32 = 0
         self.rng_state.uinteger = 0
 
-    def __random_integer(self, bits=64):
-        """
-        64-bit Random Integers from the PRNG
-
-        Parameters
-        ----------
-        bits : {32, 64}
-            Number of random bits to return
-
-        Returns
-        -------
-        rv : int
-            Next random value
-
-        Notes
-        -----
-        Testing only
-        """
-        if bits == 64:
-            return self._brng.next_uint64(self._brng.state)
-        elif bits == 32:
-            return self._brng.next_uint32(self._brng.state)
-        else:
-            raise ValueError('bits must be 32 or 64')
-
     def _benchmark(self, Py_ssize_t cnt, method=u'uint64'):
         cdef Py_ssize_t i
         if method==u'uint64':
@@ -338,7 +313,7 @@ cdef class Xorshift1024:
                                      ctypes.CFUNCTYPE(ctypes.c_double,
                                      ctypes.c_void_p)),
                          ctypes.c_void_p(<uintptr_t>self._brng))
-        return self.ctypes
+        return self._ctypes
 
     @property
     def cffi(self):
@@ -371,7 +346,7 @@ cdef class Xorshift1024:
                          ffi.cast('uint32_t (*)(void *)',<uintptr_t>self._brng.next_uint32),
                          ffi.cast('double (*)(void *)',<uintptr_t>self._brng.next_double),
                          ffi.cast('void *',<uintptr_t>self._brng))
-        return self.cffi
+        return self._cffi
 
     @property
     def generator(self):

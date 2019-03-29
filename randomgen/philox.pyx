@@ -392,6 +392,7 @@ cdef class Philox:
         self._reset_state_variables()
         return self
 
+    @property
     def ctypes(self):
         """
         Ctypes interface
@@ -426,7 +427,7 @@ cdef class Philox:
                                      ctypes.CFUNCTYPE(ctypes.c_double,
                                      ctypes.c_void_p)),
                          ctypes.c_void_p(<uintptr_t>self._brng))
-        return self.ctypes
+        return self._ctypes
 
     @property
     def cffi(self):
@@ -459,7 +460,7 @@ cdef class Philox:
                          ffi.cast('uint32_t (*)(void *)',<uintptr_t>self._brng.next_uint32),
                          ffi.cast('double (*)(void *)',<uintptr_t>self._brng.next_double),
                          ffi.cast('void *',<uintptr_t>self._brng))
-        return self.cffi
+        return self._cffi
 
     @property
     def generator(self):
