@@ -16,13 +16,27 @@ try:
 except ImportError:
     from dummy_threading import Lock
 
-from randomgen.common cimport cont, disc, CONS_NONE, CONS_POSITIVE, CONS_NON_NEGATIVE, CONS_BOUNDED_0_1
-from randomgen.distributions cimport brng_t
+from randomgen.bounded_integers cimport *
+from randomgen.common cimport cont, disc, double_fill, CONS_NONE, \
+    CONS_POSITIVE, CONS_NON_NEGATIVE, CONS_BOUNDED_0_1
+from randomgen.distributions cimport brng_t, random_double_fill
 from randomgen.legacy.legacy_distributions cimport *
 from randomgen.xoroshiro128 import Xoroshiro128
 import randomgen.pickle
 
 np.import_array()
+
+_randint_types = {'bool': (0, 2),
+                 'int8': (-2**7, 2**7),
+                 'int16': (-2**15, 2**15),
+                 'int32': (-2**31, 2**31),
+                 'int64': (-2**63, 2**63),
+                 'uint8': (0, 2**8),
+                 'uint16': (0, 2**16),
+                 'uint32': (0, 2**32),
+                 'uint64': (0, 2**64)
+                 }
+
 
 cdef class _LegacyGenerator:
     """
@@ -200,6 +214,152 @@ cdef class _LegacyGenerator:
         self._aug_state.has_gauss = value.get('has_gauss', 0)
         self._basicrng.state = value
 
+    def get_state(self):
+        """
+        get_state()
+
+        Return a tuple representing the internal state of the generator.
+
+        For more details, see `set_state`.
+
+        Returns
+        -------
+        out : tuple(str, ndarray of 624 uints, int, int, float)
+            The returned tuple has the following items:
+
+            1. the string 'MT19937'.
+            2. a 1-D array of 624 unsigned integer keys.
+            3. an integer ``pos``.
+            4. an integer ``has_gauss``.
+            5. a float ``cached_gaussian``.
+
+        See Also
+        --------
+        set_state
+
+        Notes
+        -----
+        `set_state` and `get_state` are not needed to work with any of the
+        random distributions in NumPy. If the internal state is manually altered,
+        the user should know exactly what he/she is doing.
+        """
+        st = self._basicrng.state
+        if st['brng'] != 'MT19937':
+            raise RuntimeError('get_state can only be used with the MT19937 '
+                               'basic RNG. When using other basic RNGs, '
+                               'use `state`.')
+        st['has_gauss'] = self._aug_state.has_gauss
+        st['gauss'] = self._aug_state.gauss
+
+        return (st['brng'], st['state']['key'], st['state']['pos'],
+                st['has_gauss'], st['gauss'])
+
+    def set_state(self, state):
+        """
+        set_state(state)
+
+        Set the internal state of the generator from a tuple.
+
+        For use if one has reason to manually (re-)set the internal state of the
+        "Mersenne Twister"[1]_ pseudo-random number generating algorithm.
+
+        Parameters
+        ----------
+        state : tuple(str, ndarray of 624 uints, int, int, float)
+            The `state` tuple has the following items:
+
+            1. the string 'MT19937', specifying the Mersenne Twister algorithm.
+            2. a 1-D array of 624 unsigned integers ``keys``.
+            3. an integer ``pos``.
+            4. an integer ``has_gauss``.
+            5. a float ``cached_gaussian``.
+
+        Returns
+        -------
+        out : None
+            Returns 'None' on success.
+
+        See Also
+        --------
+        get_state
+
+        Notes
+        -----
+        `set_state` and `get_state` are not needed to work with any of the
+        random distributions in NumPy. If the internal state is manually altered,
+        the user should know exactly what he/she is doing.
+
+        For backwards compatibility, the form (str, array of 624 uints, int) is
+        also accepted although it is missing some information about the cached
+        Gaussian value: ``state = ('MT19937', keys, pos)``.
+
+        References
+        ----------
+        .. [1] M. Matsumoto and T. Nishimura, "Mersenne Twister: A
+           623-dimensionally equidistributed uniform pseudorandom number
+           generator," *ACM Trans. on Modeling and Computer Simulation*,
+           Vol. 8, No. 1, pp. 3-30, Jan. 1998.
+        """
+        if not isinstance(state, (tuple, list)):
+            raise TypeError('state must be a tuple when using set_state.  '
+                             'Use `state` to set the state using a dictionary.')
+        if state[0] != 'MT19937':
+            raise ValueError('set_state can only be used with legacy MT19937'
+                             'state instances.')
+        st = {'brng': state[0],
+              'state': {'key': state[1], 'pos': state[2]}}
+        if len(state) > 3:
+            st['has_gauss'] = state[3]
+            st['gauss'] = state[4]
+            value = st
+        self._aug_state.gauss = value.get('gauss', 0.0)
+        self._aug_state.has_gauss = value.get('has_gauss', 0)
+        self._basicrng.state = value
+
+    def random_sample(self, size=None):
+        """
+        random_sample(size=None)
+
+        Return random floats in the half-open interval [0.0, 1.0).
+
+        Results are from the "continuous uniform" distribution over the
+        stated interval.  To sample :math:`Unif[a, b), b > a` multiply
+        the output of `random_sample` by `(b-a)` and add `a`::
+
+          (b - a) * random_sample() + a
+
+        Parameters
+        ----------
+        size : int or tuple of ints, optional
+            Output shape.  If the given shape is, e.g., ``(m, n, k)``, then
+            ``m * n * k`` samples are drawn.  Default is None, in which case a
+            single value is returned.
+
+        Returns
+        -------
+        out : float or ndarray of floats
+            Array of random floats of shape `size` (unless ``size=None``, in which
+            case a single float is returned).
+
+        Examples
+        --------
+        np.random.random_sample()
+        0.47108547995356098
+        type(np.random.random_sample())
+        <type 'float'>
+        np.random.random_sample((5,))
+        array([ 0.30220482,  0.86820401,  0.1654503 ,  0.11659149,  0.54323428])
+
+        Three-by-two array of random numbers from [-5, 0):
+
+        5 * np.random.random_sample((3, 2)) - 5
+        array([[-3.99149989, -0.52338984],
+               [-2.99091858, -0.79479508],
+               [-1.23204345, -1.75224494]])
+        """
+        cdef double temp
+        return double_fill(&random_double_fill, self._brng, size, self.lock, None)
+
     def beta(self, a, b, size=None):
         """
         beta(a, b, size=None)
@@ -326,6 +486,157 @@ cdef class _LegacyGenerator:
                     None, None, CONS_NONE,
                     None, None, CONS_NONE,
                     None)
+
+    def randint(self, low, high=None, size=None, dtype=int):
+        """
+        randint(low, high=None, size=None, dtype='l')
+
+        Return random integers from `low` (inclusive) to `high` (exclusive).
+
+        Return random integers from the "discrete uniform" distribution of
+        the specified dtype in the "half-open" interval [`low`, `high`). If
+        `high` is None (the default), then results are from [0, `low`).
+
+        Parameters
+        ----------
+        low : int or array-like of ints
+            Lowest (signed) integers to be drawn from the distribution (unless
+            ``high=None``, in which case this parameter is one above the
+            *highest* such integer).
+        high : int or array-like of ints, optional
+            If provided, one above the largest (signed) integer to be drawn
+            from the distribution (see above for behavior if ``high=None``).
+            If array-like, must contain integer values
+        size : int or tuple of ints, optional
+            Output shape.  If the given shape is, e.g., ``(m, n, k)``, then
+            ``m * n * k`` samples are drawn.  Default is None, in which case a
+            single value is returned.
+        dtype : {str, dtype}, optional
+            Desired dtype of the result. All dtypes are determined by their
+            name, i.e., 'int64', 'int', etc, so byteorder is not available
+            and a specific precision may have different C types depending
+            on the platform. The default value is 'np.int'.
+
+            .. versionadded:: 1.11.0
+
+        Returns
+        -------
+        out : int or ndarray of ints
+            `size`-shaped array of random integers from the appropriate
+            distribution, or a single such random int if `size` not provided.
+
+        See Also
+        --------
+        random.random_integers : similar to `randint`, only for the closed
+            interval [`low`, `high`], and 1 is the lowest value if `high` is
+            omitted. In particular, this other one is the one to use to generate
+            uniformly distributed discrete non-integers.
+
+        Examples
+        --------
+        >>> randomgen.generator.randint(2, size=10)
+        array([1, 0, 0, 0, 1, 1, 0, 0, 1, 0]) # random
+        >>> randomgen.generator.randint(1, size=10)
+        array([0, 0, 0, 0, 0, 0, 0, 0, 0, 0]) # random
+
+        Generate a 2 x 4 array of ints between 0 and 4, inclusive:
+
+        >>> randomgen.generator.randint(5, size=(2, 4))
+        array([[4, 0, 2, 1], # random
+               [3, 2, 2, 0]])
+
+        Generate a 1 x 3 array with 3 different upper bounds
+
+        >>> randomgen.generator.randint(1, [3, 5, 10])
+        array([2, 2, 9]) # random
+
+        Generate a 1 by 3 array with 3 different lower bounds
+
+        >>> randomgen.generator.randint([1, 5, 7], 10)
+        array([9, 8, 7]) # random
+
+        Generate a 2 by 4 array using broadcasting with dtype of uint8
+
+        >>> randomgen.generator.randint([1, 3, 5, 7], [[10], [20]], dtype=np.uint8)
+        array([[ 8,  6,  9,  7], # random
+               [ 1, 16,  9, 12]], dtype=uint8)
+        """
+        cdef bint use_masked=1
+
+        if high is None:
+            high = low
+            low = 0
+
+        key = np.dtype(dtype).name
+        if not key in _randint_types:
+            raise TypeError('Unsupported dtype "%s" for randint' % key)
+
+        if key == 'int32':
+            ret =  _rand_int32(low, high, size, use_masked, self._brng, self.lock)
+        elif key == 'int64':
+            ret =  _rand_int64(low, high, size, use_masked, self._brng, self.lock)
+        elif key == 'int16':
+            ret =  _rand_int16(low, high, size, use_masked, self._brng, self.lock)
+        elif key == 'int8':
+            ret =  _rand_int8(low, high, size, use_masked, self._brng, self.lock)
+        elif key == 'uint64':
+            ret =  _rand_uint64(low, high, size, use_masked, self._brng, self.lock)
+        elif key == 'uint32':
+            ret =  _rand_uint32(low, high, size, use_masked, self._brng, self.lock)
+        elif key == 'uint16':
+            ret =  _rand_uint16(low, high, size, use_masked, self._brng, self.lock)
+        elif key == 'uint8':
+            ret =  _rand_uint8(low, high, size, use_masked, self._brng, self.lock)
+        elif key == 'bool':
+            ret =  _rand_bool(low, high, size, use_masked, self._brng, self.lock)
+
+        if size is None and dtype in (np.bool, np.int, np.long):
+                if np.array(ret).shape == ():
+                    return dtype(ret)
+        return ret
+
+    def rand(self, *args):
+        """
+        rand(d0, d1, ..., dn)
+
+        Random values in a given shape.
+
+        Create an array of the given shape and populate it with
+        random samples from a uniform distribution
+        over ``[0, 1)``.
+
+        Parameters
+        ----------
+        d0, d1, ..., dn : int, optional
+            The dimensions of the returned array, should all be positive.
+            If no argument is given a single Python float is returned.
+
+        Returns
+        -------
+        out : ndarray, shape ``(d0, d1, ..., dn)``
+            Random values.
+
+        See Also
+        --------
+        random
+
+        Notes
+        -----
+        This is a convenience function. If you want an interface that
+        takes a shape-tuple as the first argument, refer to
+        np.random.random_sample .
+
+        Examples
+        --------
+        >>> np.random.rand(3,2)
+        array([[ 0.14022471,  0.96360618],  #random
+               [ 0.37601032,  0.25528411],  #random
+               [ 0.49313049,  0.94909878]]) #random
+        """
+        if len(args) == 0:
+            return self.random_sample()
+        else:
+            return self.random_sample(size=args)
 
     def randn(self, *args):
         """
