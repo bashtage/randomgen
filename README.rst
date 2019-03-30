@@ -1,10 +1,28 @@
 RandomGen
 =========
 
-|Travis Build Status| |Appveyor Build Status| |PyPI version|
-
 Random Number Generator using settable Basic RNG interface for future
 NumPy RandomState evolution.
+
+Continuous Integration
+~~~~~~~~~~~~~~~~~~~~~~
+
+|Travis Build Status| |Appveyor Build Status|
+
+Coverage
+~~~~~~~~
+
+|Coverage Status| |codecov|
+
+Latest Release
+~~~~~~~~~~~~~~
+
+|PyPI version| |Anacnoda Cloud|
+
+License
+~~~~~~~
+
+|License| |License| |DOI|
 
 This is a library and generic interface for alternative random
 generators in Python and NumPy.
@@ -257,6 +275,8 @@ The separate generators are importable from ``randomgen``
    rg = RandomGenerator(MT19937())
    rg.random_sample(100)
 
+.. _license-1:
+
 License
 -------
 
@@ -316,5 +336,17 @@ NumPy’s mt19937.
    :target: https://travis-ci.org/bashtage/randomgen
 .. |Appveyor Build Status| image:: https://ci.appveyor.com/api/projects/status/odc5c4ukhru5xicl/branch/master?svg=true
    :target: https://ci.appveyor.com/project/bashtage/randomgen/branch/master
+.. |Coverage Status| image:: https://coveralls.io/repos/github/bashtage/randomgen/badge.svg?branch=coverage
+   :target: https://coveralls.io/github/bashtage/randomgen?branch=coverage
+.. |codecov| image:: https://codecov.io/gh/bashtage/randomgen/branch/master/graph/badge.svg
+   :target: https://codecov.io/gh/bashtage/randomgen
 .. |PyPI version| image:: https://badge.fury.io/py/randomgen.svg
    :target: https://pypi.org/project/randomgen/
+.. |Anacnoda Cloud| image:: https://anaconda.org/bashtage/randomgen/badges/version.svg
+   :target: https://anaconda.org/bashtage/randomgen
+.. |License| image:: https://img.shields.io/badge/License-NCSA-blue.svg
+   :target: https://opensource.org/licenses/NCSA
+.. |License| image:: https://img.shields.io/badge/License-BSD%203--Clause-blue.svg
+   :target: https://opensource.org/licenses/BSD-3-Clause
+.. |DOI| image:: https://zenodo.org/badge/122181085.svg
+   :target: https://zenodo.org/badge/latestdoi/122181085
