@@ -21,7 +21,7 @@ from randomgen.bounded_integers cimport *
 from randomgen.common cimport *
 from randomgen.distributions cimport *
 from randomgen.legacy.legacy_distributions cimport *
-from randomgen.mt19937 import MT19937
+from randomgen.mt19937 import MT19937 as _MT19937
 import randomgen.pickle
 
 np.import_array()
@@ -98,9 +98,9 @@ cdef class RandomState:
 
     def __init__(self, brng=None):
         if brng is None:
-            brng = MT19937()
+            brng = _MT19937()
         elif not hasattr(brng, 'capsule'):
-            brng = MT19937(brng)
+            brng = _MT19937(brng)
 
         self._basicrng = brng
         capsule = brng.capsule
@@ -302,19 +302,20 @@ cdef class RandomState:
 
         Examples
         --------
-        np.random.random_sample()
+        >>> np.random.random_sample()
         0.47108547995356098
-        type(np.random.random_sample())
+        >>> type(np.random.random_sample())
         <type 'float'>
-        np.random.random_sample((5,))
+        >>> np.random.random_sample((5,))
         array([ 0.30220482,  0.86820401,  0.1654503 ,  0.11659149,  0.54323428])
 
         Three-by-two array of random numbers from [-5, 0):
 
-        5 * np.random.random_sample((3, 2)) - 5
+        >>> 5 * np.random.random_sample((3, 2)) - 5
         array([[-3.99149989, -0.52338984],
                [-2.99091858, -0.79479508],
                [-1.23204345, -1.75224494]])
+
         """
         cdef double temp
         return double_fill(&random_double_fill, self._brng, size, self.lock, None)
@@ -440,6 +441,7 @@ cdef class RandomState:
         Output a 3x8000 array:
 
         >>> n = np.random.standard_exponential((3, 8000))
+
         """
         return cont(&legacy_standard_exponential, self._aug_state, size, self.lock, 0,
                     None, None, CONS_NONE,
@@ -906,6 +908,7 @@ cdef class RandomState:
         >>> count, bins, ignored = plt.hist(s, 15, density=True)
         >>> plt.plot(bins, np.ones_like(bins), linewidth=2, color='r')
         >>> plt.show()
+
         """
         cdef bint is_scalar = True
         cdef np.ndarray alow, ahigh, arange
@@ -1277,7 +1280,7 @@ cdef class RandomState:
         Parameters
         ----------
         shape : float or array_like of floats
-            Parameter, should be > 0.
+            Parameter, must be non-negative.
         size : int or tuple of ints, optional
             Output shape.  If the given shape is, e.g., ``(m, n, k)``, then
             ``m * n * k`` samples are drawn.  If size is ``None`` (default),
@@ -1332,6 +1335,7 @@ cdef class RandomState:
         ...                       (sps.gamma(shape) * scale**shape))
         >>> plt.plot(bins, y, linewidth=2, color='r')
         >>> plt.show()
+
         """
         return cont(&legacy_standard_gamma, self._aug_state, size, self.lock, 1,
                     shape, 'shape', CONS_NON_NEGATIVE,
@@ -1352,9 +1356,9 @@ cdef class RandomState:
         Parameters
         ----------
         shape : float or array_like of floats
-            The shape of the gamma distribution. Should be greater than zero.
+            The shape of the gamma distribution. Must be non-negative.
         scale : float or array_like of floats, optional
-            The scale of the gamma distribution. Should be greater than zero.
+            The scale of the gamma distribution. Must be non-negative.
             Default is equal to 1.
         size : int or tuple of ints, optional
             Output shape.  If the given shape is, e.g., ``(m, n, k)``, then
@@ -1397,7 +1401,7 @@ cdef class RandomState:
         --------
         Draw samples from the distribution:
 
-        >>> shape, scale = 2., 2. # mean and dispersion
+        >>> shape, scale = 2., 2.  # mean=4, std=2*sqrt(2)
         >>> s = np.random.gamma(shape, scale, 1000)
 
         Display the histogram of the samples, along with
@@ -1435,10 +1439,10 @@ cdef class RandomState:
 
         Parameters
         ----------
-        dfnum : int or array_like of ints
-            Degrees of freedom in numerator. Should be greater than zero.
-        dfden : int or array_like of ints
-            Degrees of freedom in denominator. Should be greater than zero.
+        dfnum : float or array_like of floats
+            Degrees of freedom in numerator, should be > 0.
+        dfden : float or array_like of float
+            Degrees of freedom in denominator, should be > 0.
         size : int or tuple of ints, optional
             Output shape.  If the given shape is, e.g., ``(m, n, k)``, then
             ``m * n * k`` samples are drawn.  If size is ``None`` (default),
@@ -1591,8 +1595,8 @@ cdef class RandomState:
 
         Parameters
         ----------
-        df : int or array_like of ints
-             Number of degrees of freedom.
+        df : float or array_like of floats
+             Number of degrees of freedom, should be > 0.
         size : int or tuple of ints, optional
             Output shape.  If the given shape is, e.g., ``(m, n, k)``, then
             ``m * n * k`` samples are drawn.  If size is ``None`` (default),
@@ -1767,7 +1771,7 @@ cdef class RandomState:
         ----------
         .. [1] NIST/SEMATECH e-Handbook of Statistical Methods, "Cauchy
               Distribution",
-              http://www.itl.nist.gov/div898/handbook/eda/section3/eda3663.htm
+              https://www.itl.nist.gov/div898/handbook/eda/section3/eda3663.htm
         .. [2] Weisstein, Eric W. "Cauchy Distribution." From MathWorld--A
               Wolfram Web Resource.
               http://mathworld.wolfram.com/CauchyDistribution.html
@@ -1778,9 +1782,9 @@ cdef class RandomState:
         --------
         Draw samples and plot the distribution:
 
+        >>> import matplotlib.pyplot as plt
         >>> s = np.random.standard_cauchy(1000000)
         >>> s = s[(s>-25) & (s<25)]  # truncate distribution so it plots well
-        >>> import matplotlib.pyplot as plt
         >>> plt.hist(s, bins=100)
         >>> plt.show()
 
@@ -1801,7 +1805,7 @@ cdef class RandomState:
 
         Parameters
         ----------
-        df : int or array_like of ints
+        df : float or array_like of floats
             Degrees of freedom, should be > 0.
         size : int or tuple of ints, optional
             Output shape.  If the given shape is, e.g., ``(m, n, k)``, then
@@ -2278,8 +2282,8 @@ cdef class RandomState:
         loc : float or array_like of floats, optional
             The position, :math:`\\mu`, of the distribution peak. Default is 0.
         scale : float or array_like of floats, optional
-            :math:`\\lambda`, the exponential decay. Default is 1. Must be
-            non-negative.
+            :math:`\\lambda`, the exponential decay. Default is 1. Must be non-
+            negative.
         size : int or tuple of ints, optional
             Output shape.  If the given shape is, e.g., ``(m, n, k)``, then
             ``m * n * k`` samples are drawn.  If size is ``None`` (default),
@@ -2478,7 +2482,7 @@ cdef class RandomState:
         loc : float or array_like of floats, optional
             Parameter of the distribution. Default is 0.
         scale : float or array_like of floats, optional
-            Parameter of the distribution. Must be >= 0.
+            Parameter of the distribution. Must be non-negative.
             Default is 1.
         size : int or tuple of ints, optional
             Output shape.  If the given shape is, e.g., ``(m, n, k)``, then
@@ -2534,8 +2538,8 @@ cdef class RandomState:
 
         >>> def logist(x, loc, scale):
         ...     return np.exp((loc-x)/scale)/(scale*(1+np.exp((loc-x)/scale))**2)
-        >>> scale = logist(bins, loc, scale).max()
-        >>> plt.plot(bins, logist(bins, loc, scale)*count.max()/scale)
+        >>> plt.plot(bins, logist(bins, loc, scale)*count.max()/\\
+        ... logist(bins, loc, scale).max())
         >>> plt.show()
 
         """
@@ -2773,8 +2777,8 @@ cdef class RandomState:
         .. [2] Chhikara, Raj S., and Folks, J. Leroy, "The Inverse Gaussian
                Distribution: Theory : Methodology, and Applications", CRC Press,
                1988.
-        .. [3] Wikipedia, "Wald distribution"
-               https://en.wikipedia.org/wiki/Wald_distribution
+        .. [3] Wikipedia, "Inverse Gaussian distribution"
+               https://en.wikipedia.org/wiki/Inverse_Gaussian_distribution
 
         Examples
         --------
@@ -2973,6 +2977,7 @@ cdef class RandomState:
 
         >>> sum(np.random.binomial(9, 0.1, 20000) == 0)/20000.
         # answer = 0.38885, or 38%.
+
         """
 
         # Uses a custom implementation since self._binomial is required
@@ -3195,7 +3200,7 @@ cdef class RandomState:
         Parameters
         ----------
         a : float or array_like of floats
-            Distribution parameter. Must be greater than 1.
+            Distribution parameter. Should be greater than 1.
         size : int or tuple of ints, optional
             Output shape.  If the given shape is, e.g., ``(m, n, k)``, then
             ``m * n * k`` samples are drawn.  If size is ``None`` (default),
@@ -3825,6 +3830,7 @@ cdef class RandomState:
 
         Notes
         -----
+
         The Dirichlet distribution is a distribution over vectors
         :math:`x` that fulfil the conditions :math:`x_i>0` and
         :math:`\\sum_{i=1}^k x_i = 1`.
@@ -3954,7 +3960,7 @@ cdef class RandomState:
         Examples
         --------
         >>> arr = np.arange(10)
-        >>> randomgen.shuffle(arr)
+        >>> np.random.shuffle(arr)
         >>> arr
         [1 7 5 2 9 4 3 6 0 8] # random
 
@@ -4086,6 +4092,7 @@ dirichlet = _mtrand.dirichlet
 exponential = _mtrand.exponential
 f = _mtrand.f
 gamma = _mtrand.gamma
+get_state = _mtrand.get_state
 geometric = _mtrand.geometric
 gumbel = _mtrand.gumbel
 hypergeometric = _mtrand.hypergeometric
@@ -4102,22 +4109,24 @@ normal = _mtrand.normal
 pareto = _mtrand.pareto
 permutation = _mtrand.permutation
 poisson = _mtrand.poisson
-poisson_lam_max = _mtrand.poisson_lam_max
 power = _mtrand.power
 rand = _mtrand.rand
 randint = _mtrand.randint
 randn = _mtrand.randn
+random = _mtrand.random_sample
 random_integers = _mtrand.random_integers
 random_sample = _mtrand.random_sample
+ranf = _mtrand.random_sample
 rayleigh = _mtrand.rayleigh
+sample = _mtrand.random_sample
 seed = _mtrand.seed
+set_state = _mtrand.set_state
 shuffle = _mtrand.shuffle
 standard_cauchy = _mtrand.standard_cauchy
 standard_exponential = _mtrand.standard_exponential
 standard_gamma = _mtrand.standard_gamma
 standard_normal = _mtrand.standard_normal
 standard_t = _mtrand.standard_t
-tomaxint = _mtrand.tomaxint
 triangular = _mtrand.triangular
 uniform = _mtrand.uniform
 vonmises = _mtrand.vonmises
