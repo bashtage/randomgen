@@ -43,7 +43,6 @@ class TestSeed(object):
         assert_raises(ValueError, randomgen.mtrand.RandomState, [1, 2, 4294967296])
         assert_raises(ValueError, randomgen.mtrand.RandomState, [1, -2, 4294967296])
 
-    @pytest.mark.xfail(reason='MT19937 does not handle errors correctly')
     def test_invalid_array_shape(self):
         # gh-9832
         assert_raises(ValueError, randomgen.mtrand.RandomState, np.array([], dtype=np.int64))
@@ -544,6 +543,12 @@ class TestRandomDist(object):
                              [0.56974431743975207, 0.43025568256024799]]])
         assert_array_almost_equal(actual, desired, decimal=15)
 
+        randomgen.mtrand.seed(self.seed)
+        alpha = np.array([51.72840233779265162, 39.74494232180943953])
+        actual = randomgen.mtrand.dirichlet(alpha)
+        assert_array_almost_equal(actual, desired[0, 0], decimal=15)
+
+
     def test_dirichlet_size(self):
         # gh-3173
         p = np.array([51.72840233779265162, 39.74494232180943953])
@@ -729,6 +734,17 @@ class TestRandomDist(object):
             randomgen.mtrand.multivariate_normal(mean, cov)
             w = sup.record(RuntimeWarning)
             assert len(w) == 0
+
+        mu = np.zeros(2)
+        cov = np.eye(2)
+        assert_raises(ValueError, randomgen.mtrand.multivariate_normal, mean,
+                      cov, check_valid='other')
+        assert_raises(ValueError, randomgen.mtrand.multivariate_normal,
+                      np.zeros((2, 1, 1)), cov)
+        assert_raises(ValueError, randomgen.mtrand.multivariate_normal,
+                      mu, np.empty((3, 2)))
+        assert_raises(ValueError, randomgen.mtrand.multivariate_normal,
+                      mu, np.eye(3))
 
     def test_negative_binomial(self):
         randomgen.mtrand.seed(self.seed)

@@ -206,7 +206,12 @@ cdef class MT19937:
                     raise ValueError("Seed must be between 0 and 2**32 - 1")
                 mt19937_seed(self.rng_state, seed)
         except TypeError:
-            obj = np.asarray(seed).astype(np.int64, casting='safe')
+            obj = np.asarray(seed)
+            if obj.size == 0:
+                raise ValueError("Seed must be non-empty")
+            obj = obj.astype(np.int64, casting='safe')
+            if obj.ndim != 1:
+                raise ValueError("Seed array must be 1-d")
             if ((obj > int(2**32 - 1)) | (obj < 0)).any():
                 raise ValueError("Seed must be between 0 and 2**32 - 1")
             obj = obj.astype(np.uint32, casting='unsafe', order='C')
