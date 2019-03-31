@@ -6,6 +6,7 @@ from numpy.compat import long
 import numpy as np
 
 import randomgen.mtrand
+random = randomgen.mtrand
 
 
 class TestRegression(object):
@@ -14,13 +15,13 @@ class TestRegression(object):
         # Make sure generated random variables are in [-pi, pi].
         # Regression test for ticket #986.
         for mu in np.linspace(-7., 7., 5):
-            r = randomgen.mtrand.vonmises(mu, 1, 50)
+            r = random.vonmises(mu, 1, 50)
             assert_(np.all(r > -np.pi) and np.all(r <= np.pi))
 
     def test_hypergeometric_range(self):
         # Test for ticket #921
-        assert_(np.all(randomgen.mtrand.hypergeometric(3, 18, 11, size=10) < 4))
-        assert_(np.all(randomgen.mtrand.hypergeometric(18, 3, 11, size=10) > 0))
+        assert_(np.all(random.hypergeometric(3, 18, 11, size=10) < 4))
+        assert_(np.all(random.hypergeometric(18, 3, 11, size=10) > 0))
 
         # Test for ticket #5623
         args = [
@@ -28,15 +29,16 @@ class TestRegression(object):
         ]
         is_64bits = sys.maxsize > 2**32
         if is_64bits and sys.platform != 'win32':
-            args.append((2**40 - 2, 2**40 - 2, 2**40 - 2)) # Check for 64-bit systems
+            # Check for 64-bit systems
+            args.append((2**40 - 2, 2**40 - 2, 2**40 - 2))
         for arg in args:
-            assert_(randomgen.mtrand.hypergeometric(*arg) > 0)
+            assert_(random.hypergeometric(*arg) > 0)
 
     def test_logseries_convergence(self):
         # Test for ticket #923
         N = 1000
-        randomgen.mtrand.seed(0)
-        rvsn = randomgen.mtrand.logseries(0.8, size=N)
+        random.seed(0)
+        rvsn = random.logseries(0.8, size=N)
         # these two frequency counts should be close to theoretical
         # numbers with this large sample
         # theoretical large N result is 0.49706795
@@ -49,10 +51,10 @@ class TestRegression(object):
         assert_(freq < 0.23, msg)
 
     def test_permutation_longs(self):
-        randomgen.mtrand.seed(1234)
-        a = randomgen.mtrand.permutation(12)
-        randomgen.mtrand.seed(1234)
-        b = randomgen.mtrand.permutation(long(12))
+        random.seed(1234)
+        a = random.permutation(12)
+        random.seed(1234)
+        b = random.permutation(long(12))
         assert_array_equal(a, b)
 
     def test_shuffle_mixed_dimension(self):
@@ -61,17 +63,17 @@ class TestRegression(object):
                   [(1, 1), (2, 2), (3, 3), None],
                   [1, (2, 2), (3, 3), None],
                   [(1, 1), 2, 3, None]]:
-            randomgen.mtrand.seed(12345)
+            random.seed(12345)
             shuffled = list(t)
-            randomgen.mtrand.shuffle(shuffled)
+            random.shuffle(shuffled)
             assert_array_equal(shuffled, [t[0], t[3], t[1], t[2]])
 
     def test_call_within_randomstate(self):
         # Check that custom RandomState does not call into global state
-        m = randomgen.mtrand.RandomState()
+        m = random.RandomState()
         res = np.array([0, 8, 7, 2, 1, 9, 4, 7, 0, 3])
         for i in range(3):
-            randomgen.mtrand.seed(i)
+            random.seed(i)
             m.seed(4321)
             # If m.state is not honored, the result will change
             assert_array_equal(m.choice(10, size=10, p=np.ones(10)/10.), res)
@@ -80,40 +82,40 @@ class TestRegression(object):
         # Test for multivariate_normal issue with 'size' argument.
         # Check that the multivariate_normal size argument can be a
         # numpy integer.
-        randomgen.mtrand.multivariate_normal([0], [[0]], size=1)
-        randomgen.mtrand.multivariate_normal([0], [[0]], size=np.int_(1))
-        randomgen.mtrand.multivariate_normal([0], [[0]], size=np.int64(1))
+        random.multivariate_normal([0], [[0]], size=1)
+        random.multivariate_normal([0], [[0]], size=np.int_(1))
+        random.multivariate_normal([0], [[0]], size=np.int64(1))
 
     def test_beta_small_parameters(self):
         # Test that beta with small a and b parameters does not produce
         # NaNs due to roundoff errors causing 0 / 0, gh-5851
-        randomgen.mtrand.seed(1234567890)
-        x = randomgen.mtrand.beta(0.0001, 0.0001, size=100)
-        assert_(not np.any(np.isnan(x)), 'Nans in randomgen.mtrand.beta')
+        random.seed(1234567890)
+        x = random.beta(0.0001, 0.0001, size=100)
+        assert_(not np.any(np.isnan(x)), 'Nans in random.beta')
 
     def test_choice_sum_of_probs_tolerance(self):
         # The sum of probs should be 1.0 with some tolerance.
         # For low precision dtypes the tolerance was too tight.
         # See numpy github issue 6123.
-        randomgen.mtrand.seed(1234)
+        random.seed(1234)
         a = [1, 2, 3]
         counts = [4, 4, 2]
         for dt in np.float16, np.float32, np.float64:
             probs = np.array(counts, dtype=dt) / sum(counts)
-            c = randomgen.mtrand.choice(a, p=probs)
+            c = random.choice(a, p=probs)
             assert_(c in a)
-            assert_raises(ValueError, randomgen.mtrand.choice, a, p=probs*0.9)
+            assert_raises(ValueError, random.choice, a, p=probs*0.9)
 
     def test_shuffle_of_array_of_different_length_strings(self):
         # Test that permuting an array of different length strings
         # will not cause a segfault on garbage collection
         # Tests gh-7710
-        randomgen.mtrand.seed(1234)
+        random.seed(1234)
 
         a = np.array(['a', 'a' * 1000])
 
         for _ in range(100):
-            randomgen.mtrand.shuffle(a)
+            random.shuffle(a)
 
         # Force Garbage Collection - should not segfault.
         import gc
@@ -123,11 +125,11 @@ class TestRegression(object):
         # Test that permuting an array of objects will not cause
         # a segfault on garbage collection.
         # See gh-7719
-        randomgen.mtrand.seed(1234)
+        random.seed(1234)
         a = np.array([np.arange(1), np.arange(4)])
 
         for _ in range(1000):
-            randomgen.mtrand.shuffle(a)
+            random.shuffle(a)
 
         # Force Garbage Collection - should not segfault.
         import gc
@@ -137,9 +139,9 @@ class TestRegression(object):
         class N(np.ndarray):
             pass
 
-        randomgen.mtrand.seed(1)
+        random.seed(1)
         orig = np.arange(3).view(N)
-        perm = randomgen.mtrand.permutation(orig)
+        perm = random.permutation(orig)
         assert_array_equal(perm, np.array([0, 2, 1]))
         assert_array_equal(orig, np.arange(3).view(N))
 
@@ -149,8 +151,8 @@ class TestRegression(object):
             def __array__(self):
                 return self.a
 
-        randomgen.mtrand.seed(1)
+        random.seed(1)
         m = M()
-        perm = randomgen.mtrand.permutation(m)
+        perm = random.permutation(m)
         assert_array_equal(perm, np.array([2, 1, 4, 0, 3]))
         assert_array_equal(m.__array__(), np.arange(5))

@@ -11,6 +11,7 @@ from randomgen.xorshift1024 import Xorshift1024
 from randomgen.xoshiro256starstar import Xoshiro256StarStar
 from randomgen.xoshiro512starstar import Xoshiro512StarStar
 from randomgen.legacy import LegacyGenerator
+from randomgen.mtrand import RandomState
 
 BasicRNGS = {'MT19937': MT19937,
              'DSFMT': DSFMT,
@@ -102,3 +103,29 @@ def __legacy_ctor(brng_name='mt19937'):
         raise ValueError(str(brng_name) + ' is not a known BasicRNG module.')
 
     return LegacyGenerator(brng())
+
+
+def __randomstate_ctor(brng_name='mt19937'):
+    """
+    Pickling helper function that returns a LegacyGenerator object
+
+    Parameters
+    ----------
+    brng_name: str
+        String containing the core BasicRNG
+
+    Returns
+    -------
+    lg: LegacyGenerator
+        LegacyGenerator using the named core BasicRNG
+    """
+    try:
+        brng_name = brng_name.decode('ascii')
+    except AttributeError:
+        pass
+    if brng_name in BasicRNGS:
+        brng = BasicRNGS[brng_name]
+    else:
+        raise ValueError(str(brng_name) + ' is not a known BasicRNG module.')
+
+    return RandomState(brng())
