@@ -978,13 +978,6 @@ cdef class RandomGenerator:
         --------
         random
 
-        Notes
-        -----
-        This is a convenience function. If you want an interface that takes
-        a shape-tuple as the first argument, refer to randomgen.random_sample.
-
-        ``dtype`` can only be changed using a keyword argument.
-
         Examples
         --------
         >>> randomgen.generator.rand(3,2)
@@ -1015,9 +1008,6 @@ cdef class RandomGenerator:
         distribution of mean 0 and variance 1. A single float randomly sampled
         from the distribution is returned if no argument is provided.
 
-        This is a convenience function.  If you want an interface that takes a
-        tuple as the first argument, use `numpy.random.standard_normal` instead.
-
         Parameters
         ----------
         d0, d1, ..., dn : int, optional
@@ -1038,13 +1028,13 @@ cdef class RandomGenerator:
         See Also
         --------
         standard_normal : Similar, but takes a tuple as its argument.
-        normal : Also accepts mu and sigma arguments
+        normal : Also accepts mu and sigma arguments.
 
         Notes
         -----
         For random samples from :math:`N(\\mu, \\sigma^2)`, use:
 
-        ``sigma * randomgen.randn(...) + mu``
+        ``sigma * randomgen.generator.randn(...) + mu``
 
         Examples
         --------
@@ -1053,10 +1043,9 @@ cdef class RandomGenerator:
 
         Two-by-four array of samples from N(3, 6.25):
 
-        >>> 3 + 2.5 * np.random.randn(2, 4)
+        >>> 3 + 2.5 * randomgen.generator.randn(2, 4)
         array([[-4.49401501,  4.00950034, -1.81814867,  7.29718677],   # random
                [ 0.39924804,  4.68456316,  4.99394529,  4.84057254]])  # random
-
         """
         if len(args) == 0:
             return self.standard_normal(dtype=dtype)
@@ -1067,7 +1056,7 @@ cdef class RandomGenerator:
         """
         random_integers(low, high=None, size=None)
 
-        Random integers of type np.int64 between `low` and `high`, inclusive.
+        Random integers of type np.int between `low` and `high`, inclusive.
 
         Return random integers of type np.int64 from the "discrete uniform"
         distribution in the closed interval [`low`, `high`].  If `high` is
@@ -1108,7 +1097,7 @@ cdef class RandomGenerator:
         To sample from N evenly spaced floating-point numbers between a and b,
         use::
 
-          a + (b - a) * (randomgen.random_integers(N) - 1) / (N - 1.)
+          a + (b - a) * (randomgen.generator.random_integers(N) - 1) / (N - 1.)
 
         Examples
         --------
@@ -1116,7 +1105,7 @@ cdef class RandomGenerator:
         4 # random
         >>> type(randomgen.generator.random_integers(5))
         <class 'numpy.int64'>
-        >>> randomgen.generator.random_integers(5, size=(3, 2))
+        >>> randomgen.generator.random_integers(5, size=(3,2))
         array([[5, 4], # random
                [3, 3],
                [4, 5]])
@@ -1187,8 +1176,8 @@ cdef class RandomGenerator:
         -----
         For random samples from :math:`N(\\mu, \\sigma^2)`, use one of::
 
-            mu + sigma * np.random.standard_normal(size=...)
-            np.random.normal(mu, sigma, size=...)
+            mu + sigma * randomgen.generator.standard_normal(size=...)
+            randomgen.generator.normal(mu, sigma, size=...)
 
         See Also
         --------
@@ -1198,22 +1187,22 @@ cdef class RandomGenerator:
 
         Examples
         --------
-        >>> np.random.standard_normal()
+        >>> randomgen.generator.standard_normal()
         2.1923875335537315 #random
 
-        >>> s = np.random.standard_normal(8000)
+        >>> s = randomgen.generator.standard_normal(8000)
         >>> s
         array([ 0.6888893 ,  0.78096262, -0.89086505, ...,  0.49876311,  # random
                -0.38672696, -0.4685006 ])                                # random
         >>> s.shape
         (8000,)
-        >>> s = np.random.standard_normal(size=(3, 4, 2))
+        >>> s = randomgen.generator.standard_normal(size=(3, 4, 2))
         >>> s.shape
         (3, 4, 2)
 
         Two-by-four array of samples from :math:`N(3, 6.25)`:
 
-        >>> 3 + 2.5 * np.random.standard_normal(size=(2, 4))
+        >>> 3 + 2.5 * randomgen.generator.standard_normal(size=(2, 4))
         array([[-4.49401501,  4.00950034, -1.81814867,  7.29718677],   # random
                [ 0.39924804,  4.68456316,  4.99394529,  4.84057254]])  # random
 
@@ -1319,7 +1308,7 @@ cdef class RandomGenerator:
 
         Two-by-four array of samples from N(3, 6.25):
 
-        >>> np.random.normal(3, 2.5, size=(2, 4))
+        >>> randomgen.generator.normal(3, 2.5, size=(2, 4))
         array([[-4.49401501,  4.00950034, -1.81814867,  7.29718677],   # random
                [ 0.39924804,  4.68456316,  4.99394529,  4.84057254]])  # random
 
@@ -1640,7 +1629,7 @@ cdef class RandomGenerator:
         --------
         Draw samples from the distribution:
 
-        >>> shape, scale = 2., 2. # mean and dispersion
+        >>> shape, scale = 2., 2.  # mean=4, std=2*sqrt(2)
         >>> s = randomgen.generator.gamma(shape, scale, 1000)
 
         Display the histogram of the samples, along with
@@ -1678,10 +1667,10 @@ cdef class RandomGenerator:
 
         Parameters
         ----------
-        dfnum : int or array_like of ints
-            Degrees of freedom in numerator. Must be non-negative.
-        dfden : int or array_like of ints
-            Degrees of freedom in denominator. Must be non-negative.
+        dfnum : float or array_like of floats
+            Degrees of freedom in numerator, should be > 0.
+        dfden : float or array_like of float
+            Degrees of freedom in denominator, should be > 0.
         size : int or tuple of ints, optional
             Output shape.  If the given shape is, e.g., ``(m, n, k)``, then
             ``m * n * k`` samples are drawn.  If size is ``None`` (default),
@@ -1761,12 +1750,16 @@ cdef class RandomGenerator:
 
         Parameters
         ----------
-        dfnum : int or array_like of ints
-            Parameter, should be > 1.
-        dfden : int or array_like of ints
-            Parameter, should be > 1.
+        dfnum : float or array_like of floats
+            Numerator degrees of freedom, should be > 0.
+
+            .. versionchanged:: 1.14.0
+               Earlier NumPy versions required dfnum > 1.
+        dfden : float or array_like of floats
+            Denominator degrees of freedom, should be > 0.
         nonc : float or array_like of floats
-            Parameter, should be >= 0.
+            Non-centrality parameter, the sum of the squares of the numerator
+            means, should be >= 0.
         size : int or tuple of ints, optional
             Output shape.  If the given shape is, e.g., ``(m, n, k)``, then
             ``m * n * k`` samples are drawn.  If size is ``None`` (default),
@@ -1834,8 +1827,8 @@ cdef class RandomGenerator:
 
         Parameters
         ----------
-        df : int or array_like of ints
-             Number of degrees of freedom.
+        df : float or array_like of floats
+             Number of degrees of freedom, should be > 0.
         size : int or tuple of ints, optional
             Output shape.  If the given shape is, e.g., ``(m, n, k)``, then
             ``m * n * k`` samples are drawn.  If size is ``None`` (default),
@@ -1895,14 +1888,16 @@ cdef class RandomGenerator:
 
         Draw samples from a noncentral chi-square distribution.
 
-        The noncentral :math:`\\chi^2` distribution is a generalisation of
-        the :math:`\\chi^2` distribution.
+        The noncentral :math:`\chi^2` distribution is a generalisation of
+        the :math:`\chi^2` distribution.
 
         Parameters
         ----------
-        df : int or array_like of ints
-            Degrees of freedom, should be > 0 as of NumPy 1.10.0,
-            should be > 1 for earlier versions.
+        df : float or array_like of floats
+            Degrees of freedom, should be > 0.
+
+            .. versionchanged:: 1.10.0
+               Earlier NumPy versions required dfnum > 1.
         nonc : float or array_like of floats
             Non-centrality, should be non-negative.
         size : int or tuple of ints, optional
@@ -1921,16 +1916,16 @@ cdef class RandomGenerator:
         The probability density function for the noncentral Chi-square
         distribution is
 
-        .. math:: P(x;df,nonc) = \\sum^{\\infty}_{i=0}
-                               \\frac{e^{-nonc/2}(nonc/2)^{i}}{i!}
-                               \\P_{Y_{df+2i}}(x),
+        .. math:: P(x;df,nonc) = \sum^{\infty}_{i=0}
+                               \frac{e^{-nonc/2}(nonc/2)^{i}}{i!}
+                               \P_{Y_{df+2i}}(x),
 
         where :math:`Y_{q}` is the Chi-square with q degrees of freedom.
 
         References
         ----------
-        .. [1] Wikipedia, "Noncentral chi-square distribution"
-               https://en.wikipedia.org/wiki/Noncentral_chi-square_distribution
+        .. [1] Wikipedia, "Noncentral chi-squared distribution"
+               https://en.wikipedia.org/wiki/Noncentral_chi-squared_distribution
 
         Examples
         --------
@@ -2010,7 +2005,7 @@ cdef class RandomGenerator:
         ----------
         .. [1] NIST/SEMATECH e-Handbook of Statistical Methods, "Cauchy
               Distribution",
-              http://www.itl.nist.gov/div898/handbook/eda/section3/eda3663.htm
+              https://www.itl.nist.gov/div898/handbook/eda/section3/eda3663.htm
         .. [2] Weisstein, Eric W. "Cauchy Distribution." From MathWorld--A
               Wolfram Web Resource.
               http://mathworld.wolfram.com/CauchyDistribution.html
@@ -2021,9 +2016,9 @@ cdef class RandomGenerator:
         --------
         Draw samples and plot the distribution:
 
+        >>> import matplotlib.pyplot as plt
         >>> s = randomgen.generator.standard_cauchy(1000000)
         >>> s = s[(s>-25) & (s<25)]  # truncate distribution so it plots well
-        >>> import matplotlib.pyplot as plt
         >>> plt.hist(s, bins=100)
         >>> plt.show()
 
@@ -2044,7 +2039,7 @@ cdef class RandomGenerator:
 
         Parameters
         ----------
-        df : int or array_like of ints
+        df : float or array_like of floats
             Degrees of freedom, should be > 0.
         size : int or tuple of ints, optional
             Output shape.  If the given shape is, e.g., ``(m, n, k)``, then
@@ -2235,7 +2230,7 @@ cdef class RandomGenerator:
         Parameters
         ----------
         a : float or array_like of floats
-            Shape of the distribution. All values must be positive.
+            Shape of the distribution. Must all be positive.
         size : int or tuple of ints, optional
             Output shape.  If the given shape is, e.g., ``(m, n, k)``, then
             ``m * n * k`` samples are drawn.  If size is ``None`` (default),
@@ -2416,7 +2411,7 @@ cdef class RandomGenerator:
         Parameters
         ----------
         a : float or array_like of floats
-            Parameter of the distribution. Must be positive.
+            Parameter of the distribution. Must be non-negative.
         size : int or tuple of ints, optional
             Output shape.  If the given shape is, e.g., ``(m, n, k)``, then
             ``m * n * k`` samples are drawn.  If size is ``None`` (default),
@@ -2454,7 +2449,7 @@ cdef class RandomGenerator:
                Dataplot Reference Manual, Volume 2: Let Subcommands and Library
                Functions", National Institute of Standards and Technology
                Handbook Series, June 2003.
-               http://www.itl.nist.gov/div898/software/dataplot/refman2/auxillar/powpdf.pdf
+               https://www.itl.nist.gov/div898/software/dataplot/refman2/auxillar/powpdf.pdf
 
         Examples
         --------
@@ -2521,8 +2516,8 @@ cdef class RandomGenerator:
         loc : float or array_like of floats, optional
             The position, :math:`\\mu`, of the distribution peak. Default is 0.
         scale : float or array_like of floats, optional
-            :math:`\\lambda`, the exponential decay. Default is 1. Must be
-            non-negative.
+            :math:`\lambda`, the exponential decay. Default is 1. Must be non-
+            negative.
         size : int or tuple of ints, optional
             Output shape.  If the given shape is, e.g., ``(m, n, k)``, then
             ``m * n * k`` samples are drawn.  If size is ``None`` (default),
@@ -2604,8 +2599,8 @@ cdef class RandomGenerator:
         loc : float or array_like of floats, optional
             The location of the mode of the distribution. Default is 0.
         scale : float or array_like of floats, optional
-            The scale parameter of the distribution. Default is 1. Must be
-            non-negative.
+            The scale parameter of the distribution. Default is 1. Must be non-
+            negative.
         size : int or tuple of ints, optional
             Output shape.  If the given shape is, e.g., ``(m, n, k)``, then
             ``m * n * k`` samples are drawn.  If size is ``None`` (default),
@@ -2721,7 +2716,7 @@ cdef class RandomGenerator:
         loc : float or array_like of floats, optional
             Parameter of the distribution. Default is 0.
         scale : float or array_like of floats, optional
-            Parameter of the distribution. Must be >= 0.
+            Parameter of the distribution. Must be non-negative.
             Default is 1.
         size : int or tuple of ints, optional
             Output shape.  If the given shape is, e.g., ``(m, n, k)``, then
@@ -2777,8 +2772,8 @@ cdef class RandomGenerator:
 
         >>> def logist(x, loc, scale):
         ...     return np.exp((loc-x)/scale)/(scale*(1+np.exp((loc-x)/scale))**2)
-        >>> scale = logist(bins, loc, scale).max()
-        >>> plt.plot(bins, logist(bins, loc, scale)*count.max()/scale)
+        >>> plt.plot(bins, logist(bins, loc, scale)*count.max()/\
+        ... logist(bins, loc, scale).max())
         >>> plt.show()
 
         """
@@ -3016,8 +3011,8 @@ cdef class RandomGenerator:
         .. [2] Chhikara, Raj S., and Folks, J. Leroy, "The Inverse Gaussian
                Distribution: Theory : Methodology, and Applications", CRC Press,
                1988.
-        .. [3] Wikipedia, "Wald distribution"
-               https://en.wikipedia.org/wiki/Wald_distribution
+        .. [3] Wikipedia, "Inverse Gaussian distribution"
+               https://en.wikipedia.org/wiki/Inverse_Gaussian_distribution
 
         Examples
         --------
@@ -3283,14 +3278,13 @@ cdef class RandomGenerator:
         Draw samples from a negative binomial distribution.
 
         Samples are drawn from a negative binomial distribution with specified
-        parameters, `n` successes and `p` probability of success where `n` is an
-        integer > 0 and `p` is in the interval [0, 1].
+        parameters, `n` successes and `p` probability of success where `n`
+        is > 0 and `p` is in the interval [0, 1].
 
         Parameters
         ----------
-        n : int or array_like of ints
-            Parameter of the distribution, > 0. Floats are also accepted,
-            but they will be truncated to integers.
+        n : float or array_like of floats
+            Parameter of the distribution, > 0.
         p : float or array_like of floats
             Parameter of the distribution, >= 0 and <=1.
         size : int or tuple of ints, optional
@@ -3308,14 +3302,17 @@ cdef class RandomGenerator:
 
         Notes
         -----
-        The probability density for the negative binomial distribution is
+        The probability mass function of the negative binomial distribution is
 
-        .. math:: P(N;n,p) = \\binom{N+n-1}{N}p^{n}(1-p)^{N},
+        .. math:: P(N;n,p) = \frac{\Gamma(N+n)}{N!\Gamma(n)}p^{n}(1-p)^{N},
 
         where :math:`n` is the number of successes, :math:`p` is the
-        probability of success, and :math:`N+n` is the number of trials.
-        The negative binomial distribution gives the probability of N
-        failures given n successes, with a success on the last trial.
+        probability of success, :math:`N+n` is the number of trials, and
+        :math:`\Gamma` is the gamma function. When :math:`n` is an integer,
+        :math:`\frac{\Gamma(N+n)}{N!\Gamma(n)} = \binom{N+n-1}{N}`, which is
+        the more common form of this term in the the pmf. The negative
+        binomial distribution gives the probability of N failures given n
+        successes, with a success on the last trial.
 
         If one throws a die repeatedly until the third time a "1" appears,
         then the probability distribution of the number of non-"1"s that
@@ -3339,7 +3336,7 @@ cdef class RandomGenerator:
         for each successive well, that is what is the probability of a
         single success after drilling 5 wells, after 6 wells, etc.?
 
-        >>> s = randomgen.generator.negative_binomial(1, 0.9, 100000)
+        >>> s = randomgen.generator.negative_binomial(1, 0.1, 100000)
         >>> for i in range(1, 11): # doctest: +SKIP
         ...    probability = sum(s<i) / 100000.
         ...    print(i, "wells drilled, probability of one success =", probability)
@@ -3628,7 +3625,7 @@ cdef class RandomGenerator:
 
         >>> ngood, nbad, nsamp = 100, 2, 10
         # number of good, number of bad, and number of samples
-        >>> s = np.random.hypergeometric(ngood, nbad, nsamp, 1000)
+        >>> s = randomgen.generator.hypergeometric(ngood, nbad, nsamp, 1000)
         >>> from matplotlib.pyplot import hist
         >>> hist(s)
         #   note that it is very unlikely to grab both bad items
@@ -3637,7 +3634,7 @@ cdef class RandomGenerator:
         If you pull 15 marbles at random, how likely is it that
         12 or more of them are one color?
 
-        >>> s = np.random.hypergeometric(15, 15, 15, 100000)
+        >>> s = randomgen.generator.hypergeometric(15, 15, 15, 100000)
         >>> sum(s>=12)/100000. + sum(s<=3)/100000.
         #   answer = 0.003 ... pretty unlikely!
 
@@ -3741,7 +3738,7 @@ cdef class RandomGenerator:
         >>> def logseries(k, p):
         ...     return -p**k/(k*np.log(1-p))
         >>> plt.plot(bins, logseries(bins, a)*count.max()/
-                     logseries(bins, a).max(), 'r')
+        ...          logseries(bins, a).max(), 'r')
         >>> plt.show()
 
         """
@@ -3850,7 +3847,7 @@ cdef class RandomGenerator:
         standard deviation:
 
         >>> list((x[0,0,:] - mean) < 0.6)
-        [True, True]
+        [True, True] # random
 
         """
         from numpy.dual import svd
@@ -3957,14 +3954,14 @@ cdef class RandomGenerator:
         Throw a dice 20 times:
 
         >>> randomgen.generator.multinomial(20, [1/6.]*6, size=1)
-        array([[4, 1, 7, 5, 2, 1]])
+        array([[4, 1, 7, 5, 2, 1]]) # random
 
         It landed 4 times on 1, once on 2, etc.
 
         Now, throw the dice 20 times, and 20 times again:
 
         >>> randomgen.generator.multinomial(20, [1/6.]*6, size=2)
-        array([[3, 4, 3, 3, 4, 3],
+        array([[3, 4, 3, 3, 4, 3], # random
                [2, 4, 3, 4, 0, 7]])
 
         For the first run, we threw 3 times 1, 4 times 2, etc.  For the second,
@@ -4069,6 +4066,7 @@ cdef class RandomGenerator:
 
         Notes
         -----
+
         The Dirichlet distribution is a distribution over vectors
         :math:`x` that fulfil the conditions :math:`x_i>0` and
         :math:`\\sum_{i=1}^k x_i = 1`.
@@ -4198,7 +4196,7 @@ cdef class RandomGenerator:
         Examples
         --------
         >>> arr = np.arange(10)
-        >>> randomgen.shuffle(arr)
+        >>> randomgen.generator.shuffle(arr)
         >>> arr
         [1 7 5 2 9 4 3 6 0 8] # random
 
