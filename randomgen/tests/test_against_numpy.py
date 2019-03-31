@@ -416,7 +416,7 @@ class TestAgainstNumPy(object):
                           'test', '__warningregistry__', '_numpy_tester',
                           'division', 'get_state', 'set_state', 'seed',
                           'ranf', 'random', 'sample', 'absolute_import',
-                          'print_function', 'RandomState']
+                          'print_function', 'RandomState', 'Lock']
         mod += known_exlcuded
         diff = set(npmod).difference(mod)
         assert_equal(len(diff), 0)

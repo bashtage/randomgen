@@ -167,12 +167,12 @@ class Base(object):
             return {'seed': seed, 'data': np.array(data, dtype=cls.dtype)}
 
     def test_raw(self):
-        rs = RandomGenerator(self.brng(*self.data1['seed']))
-        uints = rs.random_raw(1000)
+        brng = self.brng(*self.data1['seed'])
+        uints = brng.random_raw(1000)
         assert_equal(uints, self.data1['data'])
 
-        rs = RandomGenerator(self.brng(*self.data2['seed']))
-        uints = rs.random_raw(1000)
+        brng = self.brng(*self.data2['seed'])
+        uints = brng.random_raw(1000)
         assert_equal(uints, self.data2['data'])
 
     @pytest.mark.skip(reason='Polar transform no longer supported')

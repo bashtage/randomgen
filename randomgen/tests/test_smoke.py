@@ -159,10 +159,6 @@ class RNG(object):
     def test_random_uintegers(self):
         assert_(len(self.rg.random_uintegers(10)) == 10)
 
-    def test_random_raw(self):
-        assert_(len(self.rg.random_raw(10)) == 10)
-        assert_(self.rg.random_raw((10, 10)).shape == (10, 10))
-
     def test_uniform(self):
         r = self.rg.uniform(-1.0, 0.0, size=10)
         assert_(len(r) == 10)
@@ -232,9 +228,9 @@ class RNG(object):
 
     def test_reset_state(self):
         state = self.rg.state
-        int_1 = self.rg.random_raw(1)
+        int_1 = self.rg.randint(2**31)
         self.rg.state = state
-        int_2 = self.rg.random_raw(1)
+        int_2 = self.rg.randint(2**31)
         assert_(int_1 == int_2)
 
     def test_entropy_init(self):
