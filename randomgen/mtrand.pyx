@@ -2,7 +2,7 @@
 #cython: wraparound=False, nonecheck=False, boundscheck=False, cdivision=True, language_level=3
 import operator
 import warnings
-
+from collections.abc import Mapping
 from cpython.pycapsule cimport PyCapsule_IsValid, PyCapsule_GetPointer
 from cpython cimport (Py_INCREF, PyComplex_RealAsDouble,
     PyComplex_ImagAsDouble, PyComplex_FromDoubles, PyFloat_AsDouble)
@@ -105,15 +105,16 @@ cdef class RandomState:
 
     # Pickling support:
     def __getstate__(self):
-        return self.state
+        return self.get_state(legacy=False)
 
     def __setstate__(self, state):
-        self.state = state
+        self.set_state(state)
 
     def __reduce__(self):
+        state = self.get_state(legacy=False)
         return (randomgen.pickle.__randomstate_ctor,
-                (self.state['brng'],),
-                self.state)
+                (state['brng'],),
+                 state)
 
     cdef _reset_gauss(self):
         self._aug_state.has_gauss = 0
@@ -150,7 +151,7 @@ cdef class RandomState:
         self._reset_gauss()
         return self
 
-    def get_state(self):
+    def get_state(self, legacy=True):
         """
         get_state()
 
@@ -160,7 +161,7 @@ cdef class RandomState:
 
         Returns
         -------
-        out : tuple(str, ndarray of 624 uints, int, int, float)
+        out : {tuple(str, ndarray of 624 uints, int, int, float), dict}
             The returned tuple has the following items:
 
             1. the string 'MT19937'.
@@ -168,6 +169,13 @@ cdef class RandomState:
             3. an integer ``pos``.
             4. an integer ``has_gauss``.
             5. a float ``cached_gaussian``.
+
+            If `legacy` is False, or the basic RNG is not NT19937, then
+            state is returned as a dictionary.
+
+        legacy : bool
+            Flag indicating the return a legacy tuple state when the basic RNG
+            is MT19937.
 
         See Also
         --------
@@ -181,15 +189,17 @@ cdef class RandomState:
 
         """
         st = self._basicrng.state
-        if st['brng'] != 'MT19937':
-            raise RuntimeError('get_state can only be used with the MT19937 '
-                               'basic RNG. When using other basic RNGs, '
-                               'use `state`.')
+        if st['brng'] != 'MT19937' and legacy:
+            warnings.warn('get_state and legacy can only be used with the '
+                          'MT19937 basic RNG. To silence this warning, '
+                          'set `legacy` to False.', RuntimeWarning)
+            legacy = False
         st['has_gauss'] = self._aug_state.has_gauss
         st['gauss'] = self._aug_state.gauss
-
-        return (st['brng'], st['state']['key'], st['state']['pos'],
-                st['has_gauss'], st['gauss'])
+        if legacy:
+            return (st['brng'], st['state']['key'], st['state']['pos'],
+                    st['has_gauss'], st['gauss'])
+        return st
 
     def set_state(self, state):
         """
@@ -202,7 +212,7 @@ cdef class RandomState:
 
         Parameters
         ----------
-        state : tuple(str, ndarray of 624 uints, int, int, float)
+        state : {tuple(str, ndarray of 624 uints, int, int, float), dict}
             The `state` tuple has the following items:
 
             1. the string 'MT19937', specifying the Mersenne Twister algorithm.
@@ -210,6 +220,9 @@ cdef class RandomState:
             3. an integer ``pos``.
             4. an integer ``has_gauss``.
             5. a float ``cached_gaussian``.
+
+            If state is a dictionary, it is directly set using the BasicRNGs
+            `state` property.
 
         Returns
         -------
@@ -238,18 +251,23 @@ cdef class RandomState:
            Vol. 8, No. 1, pp. 3-30, Jan. 1998.
 
         """
-        if not isinstance(state, (tuple, list)):
-            raise TypeError('state must be a tuple when using set_state.  '
-                             'Use `state` to set the state using a dictionary.')
-        if state[0] != 'MT19937':
-            raise ValueError('set_state can only be used with legacy MT19937'
-                             'state instances.')
-        st = {'brng': state[0],
-              'state': {'key': state[1], 'pos': state[2]}}
-        if len(state) > 3:
-            st['has_gauss'] = state[3]
-            st['gauss'] = state[4]
-            value = st
+        if isinstance(state, Mapping):
+            if 'brng' not in state or 'state' not in state:
+                raise ValueError('state dictionary is not valid.')
+            st = state
+        else:
+            if not isinstance(state, (tuple, list)):
+                raise TypeError('state must be a dict or a tuple.')
+            if state[0] != 'MT19937':
+                raise ValueError('set_state can only be used with legacy MT19937'
+                                 'state instances.')
+            st = {'brng': state[0],
+                  'state': {'key': state[1], 'pos': state[2]}}
+            if len(state) > 3:
+                st['has_gauss'] = state[3]
+                st['gauss'] = state[4]
+                value = st
+
         self._aug_state.gauss = st.get('gauss', 0.0)
         self._aug_state.has_gauss = st.get('has_gauss', 0)
         self._basicrng.state = st
