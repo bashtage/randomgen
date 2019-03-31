@@ -5,6 +5,11 @@ import operator
 from libc.stdlib cimport malloc, free
 from cpython.pycapsule cimport PyCapsule_New
 
+try:
+    from threading import Lock
+except ImportError:
+    from dummy_threading import Lock
+
 import numpy as np
 cimport numpy as np
 
@@ -122,11 +127,13 @@ cdef class MT19937:
     cdef object _ctypes
     cdef object _cffi
     cdef object _generator
+    cdef public object lock
 
     def __init__(self, seed=None):
         self.rng_state = <mt19937_state *>malloc(sizeof(mt19937_state))
         self._brng = <brng_t *>malloc(sizeof(brng_t))
         self.seed(seed)
+        self.lock = Lock()
 
         self._brng.state = <void *>self.rng_state
         self._brng.next_uint64 = &mt19937_uint64

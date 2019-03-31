@@ -58,24 +58,24 @@ class TestBinomial(object):
         # This test addresses issue #3480.
         zeros = np.zeros(2, dtype='int')
         for p in [0, .5, 1]:
-            assert_(random.binomial(0, p) == 0)
-            assert_array_equal(random.binomial(zeros, p), zeros)
+            assert_(randomgen.mtrand.binomial(0, p) == 0)
+            assert_array_equal(randomgen.mtrand.binomial(zeros, p), zeros)
 
     def test_p_is_nan(self):
         # Issue #4571.
-        assert_raises(ValueError, random.binomial, 1, np.nan)
+        assert_raises(ValueError, randomgen.mtrand.binomial, 1, np.nan)
 
 
 class TestMultinomial(object):
     def test_basic(self):
-        random.multinomial(100, [0.2, 0.8])
+        randomgen.mtrand.multinomial(100, [0.2, 0.8])
 
     def test_zero_probability(self):
-        random.multinomial(100, [0.2, 0.8, 0.0, 0.0, 0.0])
+        randomgen.mtrand.multinomial(100, [0.2, 0.8, 0.0, 0.0, 0.0])
 
     def test_int_negative_interval(self):
-        assert_(-5 <= random.randint(-5, -1) < -1)
-        x = random.randint(-5, -1, 5)
+        assert_(-5 <= randomgen.mtrand.randint(-5, -1) < -1)
+        x = randomgen.mtrand.randint(-5, -1, 5)
         assert_(np.all(-5 <= x))
         assert_(np.all(x < -1))
 
@@ -92,12 +92,13 @@ class TestMultinomial(object):
 
         assert_raises(TypeError, randomgen.mtrand.multinomial, 1, p,
                       float(1))
+        assert_raises(ValueError, randomgen.mtrand.multinomial, 1, [1.1, .1])
 
 
 class TestSetState(object):
     def setup(self):
         self.seed = 1234567890
-        self.prng = random.RandomState(self.seed)
+        self.prng = randomgen.mtrand.RandomState(self.seed)
         self.state = self.prng.get_state()
 
     def test_basic(self):
@@ -322,6 +323,29 @@ class TestRandomDist(object):
                             [-48, -66]])
         assert_array_equal(actual, desired)
 
+        randomgen.mtrand.seed(self.seed)
+        with suppress_warnings() as sup:
+            w = sup.record(DeprecationWarning)
+            actual = randomgen.mtrand.random_integers(198, size=(3, 2))
+            assert_(len(w) == 1)
+        assert_array_equal(actual, desired + 100)
+
+
+    def test_tomaxint(self):
+        randomgen.mtrand.seed(self.seed)
+        rs = randomgen.mtrand.RandomState(self.seed)
+        actual = rs.tomaxint(size=(3, 2))
+        if np.iinfo(np.int).max == 2147483647:
+            desired = np.array([[1328851649,  731237375],
+                                [1270502067,  320041495],
+                                [1908433478,  499156889]], dtype=np.int64)
+        else:
+            desired = np.array([[2191376711989041151, 1690157618316108847],
+                                [7169946713346608947, 7224755809774414763],
+                                [8440630163640693052, 5131664369514206857]],
+                               dtype=np.int64)
+        assert_equal(actual, desired)
+
     def test_random_integers_max_int(self):
         # Tests whether random_integers can generate the
         # maximum allowed Python int that can be converted
@@ -357,6 +381,12 @@ class TestRandomDist(object):
         desired = np.array([[0.61879477158567997, 0.59162362775974664],
                             [0.88868358904449662, 0.89165480011560816],
                             [0.4575674820298663, 0.7781880808593471]])
+        assert_array_almost_equal(actual, desired, decimal=15)
+
+    def test_rand_singleton(self):
+        randomgen.mtrand.seed(self.seed)
+        actual = randomgen.mtrand.rand()
+        desired = np.array(0.61879477158567997)
         assert_array_almost_equal(actual, desired, decimal=15)
 
     def test_choice_uniform_replace(self):
@@ -492,6 +522,18 @@ class TestRandomDist(object):
             desired = conv([0, 1, 9, 6, 2, 4, 5, 8, 7, 3])
             assert_array_equal(actual, desired)
 
+    def test_permutation(self):
+        randomgen.mtrand.seed(self.seed)
+        alist = [1, 2, 3, 4, 5, 6, 7, 8, 9, 0]
+        actual = randomgen.mtrand.permutation(alist)
+        desired = [0, 1, 9, 6, 2, 4, 5, 8, 7, 3]
+        assert_array_equal(actual, desired)
+
+        randomgen.mtrand.seed(self.seed)
+        arr_2d = np.atleast_2d([1, 2, 3, 4, 5, 6, 7, 8, 9, 0]).T
+        actual = randomgen.mtrand.permutation(arr_2d)
+        assert_array_equal(actual, np.atleast_2d(desired).T)
+
     def test_shuffle_masked(self):
         # gh-3263
         a = np.ma.masked_values(np.reshape(range(20), (5, 4)) % 3 - 1, -1)
@@ -521,6 +563,11 @@ class TestRandomDist(object):
         desired = np.array([[37, 43],
                             [42, 48],
                             [46, 45]])
+        assert_array_equal(actual, desired)
+
+        randomgen.mtrand.seed(self.seed)
+        actual = randomgen.mtrand.binomial(100.123, .456)
+        desired = 37
         assert_array_equal(actual, desired)
 
     def test_chisquare(self):
@@ -729,7 +776,7 @@ class TestRandomDist(object):
         assert_raises(ValueError, randomgen.mtrand.multivariate_normal, mean, cov,
                       check_valid='raise')
 
-        cov = np.array([[1, 0.1],[0.1, 1]], dtype=np.float32)
+        cov = np.array([[1, 0.1], [0.1, 1]], dtype=np.float32)
         with suppress_warnings() as sup:
             randomgen.mtrand.multivariate_normal(mean, cov)
             w = sup.record(RuntimeWarning)
@@ -881,6 +928,12 @@ class TestRandomDist(object):
         desired = np.array([[1.34016345771863121, 1.73759122771936081],
                             [1.498988344300628, -0.2286433324536169],
                             [2.031033998682787, 2.17032494605655257]])
+        assert_array_almost_equal(actual, desired, decimal=15)
+
+    def test_randn_singleton(self):
+        randomgen.mtrand.seed(self.seed)
+        actual = randomgen.mtrand.randn()
+        desired = np.array(1.34016345771863121)
         assert_array_almost_equal(actual, desired, decimal=15)
 
     def test_standard_t(self):
@@ -1419,6 +1472,10 @@ class TestBroadcast(object):
         assert_raises(ValueError, triangular, left, bad_mode_one, right * 3)
         assert_raises(ValueError, triangular, bad_left_two, bad_mode_two, right * 3)
 
+        assert_raises(ValueError, triangular, 10., 0., 20.)
+        assert_raises(ValueError, triangular, 10., 25., 20.)
+        assert_raises(ValueError, triangular, 10., 10., 10.)
+
     def test_binomial(self):
         n = [1]
         p = [0.5]
@@ -1541,6 +1598,8 @@ class TestBroadcast(object):
         assert_raises(ValueError, hypergeom, ngood, bad_nbad, nsample * 3)
         assert_raises(ValueError, hypergeom, ngood, nbad, bad_nsample_one * 3)
         assert_raises(ValueError, hypergeom, ngood, nbad, bad_nsample_two * 3)
+
+        assert_raises(ValueError, hypergeom, 10, 10, 25)
 
     def test_logseries(self):
         p = [0.5]
