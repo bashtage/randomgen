@@ -5,6 +5,7 @@ branch = True
 include = */randomgen/*
 omit =
     */_version.py
+    *.pxd
 plugins = Cython.Coverage
 
 [report]

@@ -1889,22 +1889,22 @@ class TestSingleEltArrayInput(object):
             out = func(self.argOne, argTwo[0])
             assert_equal(out.shape, self.tgtShape)
 
-        def test_randint(self):
-            itype = [np.bool, np.int8, np.uint8, np.int16, np.uint16,
-                     np.int32, np.uint32, np.int64, np.uint64]
-            func = mt19937.randint
-            high = np.array([1])
-            low = np.array([0])
+    def test_randint(self):
+        itype = [np.bool, np.int8, np.uint8, np.int16, np.uint16,
+                 np.int32, np.uint32, np.int64, np.uint64]
+        func = mt19937.randint
+        high = np.array([1])
+        low = np.array([0])
 
-            for dt in itype:
-                out = func(low, high, dtype=dt)
-                assert_equal(out.shape, self.tgtShape)
+        for dt in itype:
+            out = func(low, high, dtype=dt)
+            assert_equal(out.shape, self.tgtShape)
 
-                out = func(low[0], high, dtype=dt)
-                assert_equal(out.shape, self.tgtShape)
+            out = func(low[0], high, dtype=dt)
+            assert_equal(out.shape, self.tgtShape)
 
-                out = func(low, high[0], dtype=dt)
-                assert_equal(out.shape, self.tgtShape)
+            out = func(low, high[0], dtype=dt)
+            assert_equal(out.shape, self.tgtShape)
 
     def test_three_arg_funcs(self):
         funcs = [mt19937.noncentral_f, mt19937.triangular,
