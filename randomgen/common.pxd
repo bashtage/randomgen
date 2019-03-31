@@ -27,6 +27,8 @@ cdef enum ConstraintType:
 
 ctypedef ConstraintType constraint_type
 
+cdef object benchmark(brng_t *brng, object lock, Py_ssize_t cnt, object method)
+cdef object random_raw(brng_t *brng, object lock, object size, object output)
 cdef int check_constraint(double val, object name, constraint_type cons) except -1
 cdef int check_array_constraint(np.ndarray val, object name, constraint_type cons) except -1
 
