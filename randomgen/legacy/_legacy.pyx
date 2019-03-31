@@ -17,6 +17,7 @@ except ImportError:
     from dummy_threading import Lock
 
 from randomgen.bounded_integers cimport *
+from randomgen.bounded_integers import _randint_types
 from randomgen.common cimport cont, disc, double_fill, CONS_NONE, \
     CONS_POSITIVE, CONS_NON_NEGATIVE, CONS_BOUNDED_0_1
 from randomgen.distributions cimport brng_t, random_double_fill
@@ -25,17 +26,6 @@ from randomgen.xoroshiro128 import Xoroshiro128
 import randomgen.pickle
 
 np.import_array()
-
-_randint_types = {'bool': (0, 2),
-                 'int8': (-2**7, 2**7),
-                 'int16': (-2**15, 2**15),
-                 'int32': (-2**31, 2**31),
-                 'int64': (-2**63, 2**63),
-                 'uint8': (0, 2**8),
-                 'uint16': (0, 2**16),
-                 'uint32': (0, 2**32),
-                 'uint64': (0, 2**64)
-                 }
 
 
 cdef class _LegacyGenerator:
