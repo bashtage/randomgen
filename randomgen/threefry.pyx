@@ -3,6 +3,11 @@ from __future__ import absolute_import
 from libc.stdlib cimport malloc, free
 from cpython.pycapsule cimport PyCapsule_New
 
+try:
+    from threading import Lock
+except ImportError:
+    from dummy_threading import Lock
+
 import numpy as np
 
 from randomgen.common import interface
@@ -160,6 +165,7 @@ cdef class ThreeFry:
     cdef object _ctypes
     cdef object _cffi
     cdef object _generator
+    cdef public object lock
 
 
     def __init__(self, seed=None, counter=None, key=None):
@@ -168,6 +174,7 @@ cdef class ThreeFry:
         self.rng_state.key = <threefry4x64_key_t *>malloc(sizeof(threefry4x64_key_t))
         self._brng = <brng_t *>malloc(sizeof(brng_t))
         self.seed(seed, counter, key)
+        self.lock = Lock()
 
         self._brng.state = <void *>self.rng_state
         self._brng.next_uint64 = &threefry_uint64

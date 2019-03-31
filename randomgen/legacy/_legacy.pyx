@@ -11,11 +11,6 @@ cimport numpy as np
 import numpy as np
 cimport cython
 
-try:
-    from threading import Lock
-except ImportError:
-    from dummy_threading import Lock
-
 from randomgen.bounded_integers cimport *
 from randomgen.bounded_integers import _randint_types
 from randomgen.common cimport cont, disc, double_fill, CONS_NONE, \
@@ -104,7 +99,7 @@ cdef class _LegacyGenerator:
         self._aug_state = <aug_brng_t *>malloc(sizeof(aug_brng_t))
         self._aug_state.basicrng = self._brng
         self._reset_gauss()
-        self.lock = Lock()
+        self.lock = brng.lock
 
     def __dealloc__(self):
         free(self._aug_state)

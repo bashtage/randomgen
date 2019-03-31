@@ -1,5 +1,10 @@
 from __future__ import absolute_import
 
+try:
+    from threading import Lock
+except ImportError:
+    from dummy_threading import Lock
+
 import numpy as np
 from cpython.pycapsule cimport PyCapsule_New
 from libc.stdlib cimport malloc, free
@@ -163,6 +168,7 @@ cdef class ThreeFry32:
     cdef object _ctypes
     cdef object _cffi
     cdef object _generator
+    cdef public object lock
 
     def __init__(self, seed=None, counter=None, key=None):
         self.rng_state = <threefry32_state *> malloc(sizeof(threefry32_state))
@@ -170,6 +176,7 @@ cdef class ThreeFry32:
         self.rng_state.key = <threefry4x32_key_t *> malloc(sizeof(threefry4x32_key_t))
         self._brng = <brng_t *> malloc(sizeof(brng_t))
         self.seed(seed, counter, key)
+        self.lock = Lock()
 
         self._brng.state = <void *> self.rng_state
         self._brng.next_uint64 = &threefry32_uint64

@@ -1,5 +1,10 @@
 from __future__ import absolute_import
 
+try:
+    from threading import Lock
+except ImportError:
+    from dummy_threading import Lock
+
 from libc.stdlib cimport malloc, free
 from cpython.pycapsule cimport PyCapsule_New
 
@@ -127,11 +132,13 @@ cdef class Xoshiro512StarStar:
     cdef object _ctypes
     cdef object _cffi
     cdef object _generator
+    cdef public object lock
 
     def __init__(self, seed=None):
         self.rng_state = <xoshiro512starstar_state *>malloc(sizeof(xoshiro512starstar_state))
         self._brng = <brng_t *>malloc(sizeof(brng_t))
         self.seed(seed)
+        self.lock = Lock()
 
         self._brng.state = <void *>self.rng_state
         self._brng.next_uint64 = &xoshiro512starstar_uint64

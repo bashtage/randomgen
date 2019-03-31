@@ -3,6 +3,11 @@ from __future__ import absolute_import
 from libc.stdlib cimport malloc, free
 from cpython.pycapsule cimport PyCapsule_New
 
+try:
+    from threading import Lock
+except ImportError:
+    from dummy_threading import Lock
+
 import numpy as np
 cimport numpy as np
 
@@ -134,12 +139,14 @@ cdef class PCG64:
     cdef object _ctypes
     cdef object _cffi
     cdef object _generator
+    cdef public object lock
 
     def __init__(self, seed=None, inc=0):
         self.rng_state = <pcg64_state *>malloc(sizeof(pcg64_state))
         self.rng_state.pcg_state = <pcg64_random_t *>malloc(sizeof(pcg64_random_t))
         self._brng = <brng_t *>malloc(sizeof(brng_t))
         self.seed(seed, inc)
+        self.lock = Lock()
 
         self._brng.state = <void *>self.rng_state
         self._brng.next_uint64 = &pcg64_uint64

@@ -14,11 +14,6 @@ cimport numpy as np
 import numpy as np
 cimport cython
 
-try:
-    from threading import Lock
-except ImportError:
-    from dummy_threading import Lock
-
 from randomgen.bounded_integers cimport *
 from randomgen.bounded_integers import _randint_types
 from randomgen.common cimport *
@@ -98,7 +93,7 @@ cdef class RandomGenerator:
             raise ValueError("Invalid brng. The brng must be instantized.")
         self._brng = <brng_t *> PyCapsule_GetPointer(capsule, name)
         self._binomial = <binomial_t *>malloc(sizeof(binomial_t))
-        self.lock = Lock()
+        self.lock = brng.lock
 
     def __dealloc__(self):
         free(self._binomial)

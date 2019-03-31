@@ -4,6 +4,11 @@ import operator
 from libc.stdlib cimport malloc, free
 from cpython.pycapsule cimport PyCapsule_New
 
+try:
+    from threading import Lock
+except ImportError:
+    from dummy_threading import Lock
+
 import numpy as np
 cimport numpy as np
 
@@ -144,6 +149,7 @@ cdef class DSFMT:
     cdef public object _cffi
     cdef public object _ctypes
     cdef public object _generator
+    cdef public object lock
 
     def __init__(self, seed=None):
         self.rng_state = <dsfmt_state *>malloc(sizeof(dsfmt_state))
@@ -152,6 +158,8 @@ cdef class DSFMT:
         self.rng_state.buffer_loc = DSFMT_N64
         self._brng = <brng_t *>malloc(sizeof(brng_t))
         self.seed(seed)
+        self.lock = Lock()
+
         self._brng.state = <void *>self.rng_state
         self._brng.next_uint64 = &dsfmt_uint64
         self._brng.next_uint32 = &dsfmt_uint32
