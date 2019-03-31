@@ -13,7 +13,7 @@
   <link rel="stylesheet" type="text/css" href="../_static/css/bootstrap-theme.min.css" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-    <title>randomgen.generator.RandomGenerator.negative_binomial &#8212; RandomGen v1.16.1+35.g8d4c354 documentation</title>
+    <title>randomgen.generator.RandomGenerator.negative_binomial &#8212; RandomGen v1.16.1+37.g56a1f4f documentation</title>
     <link rel="stylesheet" href="../_static/guzzle.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
@@ -45,7 +45,7 @@
         <li class="right" >
           <a href="randomgen.generator.RandomGenerator.multivariate_normal.html" title="randomgen.generator.RandomGenerator.multivariate_normal"
              accesskey="P">previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../index.html">RandomGen v1.16.1+35.g8d4c354 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">RandomGen v1.16.1+37.g56a1f4f documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="../generator.html" accesskey="U">Random Generator</a> &#187;</li> 
       </ul>
     </div>
@@ -56,7 +56,7 @@
       </div>
   <div id="left-column">
     <div class="sphinxsidebar"><a href="
-    ../index.html" class="text-logo">RandomGen v1.16.1 (+35)</a>
+    ../index.html" class="text-logo">RandomGen v1.16.1 (+37)</a>
 <div class="sidebar-block">
   <div class="sidebar-wrapper">
     <h2>Table Of Contents</h2>
@@ -127,68 +127,73 @@
 <h1>randomgen.generator.RandomGenerator.negative_binomial<a class="headerlink" href="#randomgen-generator-randomgenerator-negative-binomial" title="Permalink to this headline">¶</a></h1>
 <dl class="method">
 <dt id="randomgen.generator.RandomGenerator.negative_binomial">
-<code class="descclassname">RandomGenerator.</code><code class="descname">negative_binomial</code><span class="sig-paren">(</span><em>n</em>, <em>p</em>, <em>size=None</em><span class="sig-paren">)</span><a class="headerlink" href="#randomgen.generator.RandomGenerator.negative_binomial" title="Permalink to this definition">¶</a></dt>
-<dd><p>Draw samples from a negative binomial distribution.</p>
+<code class="descclassname">RandomGenerator.</code><code class="descname">negative_binomial</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#randomgen.generator.RandomGenerator.negative_binomial" title="Permalink to this definition">¶</a></dt>
+<dd><blockquote>
+<div><p>negative_binomial(n, p, size=None)</p>
+<p>Draw samples from a negative binomial distribution.</p>
 <p>Samples are drawn from a negative binomial distribution with specified
-parameters, <cite>n</cite> successes and <cite>p</cite> probability of success where <cite>n</cite> is an
-integer &gt; 0 and <cite>p</cite> is in the interval [0, 1].</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>n</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a><em> or </em><em>array_like of ints</em>) – Parameter of the distribution, &gt; 0. Floats are also accepted,
-but they will be truncated to integers.</p></li>
-<li><p><strong>p</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.7)"><em>float</em></a><em> or </em><em>array_like of floats</em>) – Parameter of the distribution, &gt;= 0 and &lt;=1.</p></li>
-<li><p><strong>size</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a><em> or </em><em>tuple of ints</em><em>, </em><em>optional</em>) – Output shape.  If the given shape is, e.g., <code class="docutils literal notranslate"><span class="pre">(m,</span> <span class="pre">n,</span> <span class="pre">k)</span></code>, then
+parameters, <cite>n</cite> successes and <cite>p</cite> probability of success where <cite>n</cite>
+is &gt; 0 and <cite>p</cite> is in the interval [0, 1].</p>
+<dl class="simple">
+<dt>n<span class="classifier">float or array_like of floats</span></dt><dd><p>Parameter of the distribution, &gt; 0.</p>
+</dd>
+<dt>p<span class="classifier">float or array_like of floats</span></dt><dd><p>Parameter of the distribution, &gt;= 0 and &lt;=1.</p>
+</dd>
+<dt>size<span class="classifier">int or tuple of ints, optional</span></dt><dd><p>Output shape.  If the given shape is, e.g., <code class="docutils literal notranslate"><span class="pre">(m,</span> <span class="pre">n,</span> <span class="pre">k)</span></code>, then
 <code class="docutils literal notranslate"><span class="pre">m</span> <span class="pre">*</span> <span class="pre">n</span> <span class="pre">*</span> <span class="pre">k</span></code> samples are drawn.  If size is <code class="docutils literal notranslate"><span class="pre">None</span></code> (default),
 a single value is returned if <code class="docutils literal notranslate"><span class="pre">n</span></code> and <code class="docutils literal notranslate"><span class="pre">p</span></code> are both scalars.
-Otherwise, <code class="docutils literal notranslate"><span class="pre">np.broadcast(n,</span> <span class="pre">p).size</span></code> samples are drawn.</p></li>
-</ul>
+Otherwise, <code class="docutils literal notranslate"><span class="pre">np.broadcast(n,</span> <span class="pre">p).size</span></code> samples are drawn.</p>
 </dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p><strong>out</strong> – Drawn samples from the parameterized negative binomial distribution,
+</dl>
+<dl class="simple">
+<dt>out<span class="classifier">ndarray or scalar</span></dt><dd><p>Drawn samples from the parameterized negative binomial distribution,
 where each sample is equal to N, the number of failures that
 occurred before a total of n successes was reached.</p>
 </dd>
-<dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>ndarray or scalar</p>
-</dd>
 </dl>
-<p class="rubric">Notes</p>
-<p>The probability density for the negative binomial distribution is</p>
+<p>The probability mass function of the negative binomial distribution is</p>
 <div class="math notranslate nohighlight">
-\[P(N;n,p) = \binom{N+n-1}{N}p^{n}(1-p)^{N},\]</div>
-<p>where <span class="math notranslate nohighlight">\(n\)</span> is the number of successes, <span class="math notranslate nohighlight">\(p\)</span> is the
-probability of success, and <span class="math notranslate nohighlight">\(N+n\)</span> is the number of trials.
-The negative binomial distribution gives the probability of N
-failures given n successes, with a success on the last trial.</p>
+\[P(N;n,p) =\]</div>
+</div></blockquote>
+<p>rac{Gamma(N+n)}{N!Gamma(n)}p^{n}(1-p)^{N},</p>
+<blockquote>
+<div><p>where <span class="math notranslate nohighlight">\(n\)</span> is the number of successes, <span class="math notranslate nohighlight">\(p\)</span> is the
+probability of success, <span class="math notranslate nohighlight">\(N+n\)</span> is the number of trials, and
+<span class="math notranslate nohighlight">\(\Gamma\)</span> is the gamma function. When <span class="math notranslate nohighlight">\(n\)</span> is an integer,
+:math:<a href="#id1"><span class="problematic" id="id2">`</span></a></p>
+</div></blockquote>
+<dl>
+<dt>rac{Gamma(N+n)}{N!Gamma(n)} = inom{N+n-1}{N}`, which is</dt><dd><p>the more common form of this term in the the pmf. The negative
+binomial distribution gives the probability of N failures given n
+successes, with a success on the last trial.</p>
 <p>If one throws a die repeatedly until the third time a “1” appears,
 then the probability distribution of the number of non-“1”s that
 appear before the third “1” is a negative binomial distribution.</p>
-<p class="rubric">References</p>
 <dl class="footnote brackets">
-<dt class="label" id="id1"><span class="brackets">1</span></dt>
+<dt class="label" id="id3"><span class="brackets">1</span></dt>
 <dd><p>Weisstein, Eric W. “Negative Binomial Distribution.” From
 MathWorld–A Wolfram Web Resource.
 <a class="reference external" href="http://mathworld.wolfram.com/NegativeBinomialDistribution.html">http://mathworld.wolfram.com/NegativeBinomialDistribution.html</a></p>
 </dd>
-<dt class="label" id="id2"><span class="brackets">2</span></dt>
+<dt class="label" id="id4"><span class="brackets">2</span></dt>
 <dd><p>Wikipedia, “Negative binomial distribution”,
 <a class="reference external" href="https://en.wikipedia.org/wiki/Negative_binomial_distribution">https://en.wikipedia.org/wiki/Negative_binomial_distribution</a></p>
 </dd>
 </dl>
-<p class="rubric">Examples</p>
 <p>Draw samples from the distribution:</p>
 <p>A real world example. A company drills wild-cat oil
 exploration wells, each with an estimated probability of
 success of 0.1.  What is the probability of having one success
 for each successive well, that is what is the probability of a
 single success after drilling 5 wells, after 6 wells, etc.?</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">s</span> <span class="o">=</span> <span class="n">randomgen</span><span class="o">.</span><span class="n">generator</span><span class="o">.</span><span class="n">negative_binomial</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mf">0.9</span><span class="p">,</span> <span class="mi">100000</span><span class="p">)</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">s</span> <span class="o">=</span> <span class="n">randomgen</span><span class="o">.</span><span class="n">generator</span><span class="o">.</span><span class="n">negative_binomial</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">,</span> <span class="mi">100000</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">11</span><span class="p">):</span> <span class="c1"># doctest: +SKIP</span>
 <span class="gp">... </span>   <span class="n">probability</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span><span class="n">s</span><span class="o">&lt;</span><span class="n">i</span><span class="p">)</span> <span class="o">/</span> <span class="mf">100000.</span>
 <span class="gp">... </span>   <span class="nb">print</span><span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="s2">&quot;wells drilled, probability of one success =&quot;</span><span class="p">,</span> <span class="n">probability</span><span class="p">)</span>
 </pre></div>
 </div>
+</dd>
+</dl>
 </dd></dl>
 
 </div>
@@ -226,7 +231,7 @@ single success after drilling 5 wells, after 6 wells, etc.?</p>
         <li class="right" >
           <a href="randomgen.generator.RandomGenerator.multivariate_normal.html" title="randomgen.generator.RandomGenerator.multivariate_normal"
              >previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../index.html">RandomGen v1.16.1+35.g8d4c354 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">RandomGen v1.16.1+37.g56a1f4f documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="../generator.html" >Random Generator</a> &#187;</li> 
       </ul>
     </div>

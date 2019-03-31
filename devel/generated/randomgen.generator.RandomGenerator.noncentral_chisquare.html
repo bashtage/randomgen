@@ -13,7 +13,7 @@
   <link rel="stylesheet" type="text/css" href="../_static/css/bootstrap-theme.min.css" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-    <title>randomgen.generator.RandomGenerator.noncentral_chisquare &#8212; RandomGen v1.16.1+35.g8d4c354 documentation</title>
+    <title>randomgen.generator.RandomGenerator.noncentral_chisquare &#8212; RandomGen v1.16.1+37.g56a1f4f documentation</title>
     <link rel="stylesheet" href="../_static/guzzle.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
@@ -45,7 +45,7 @@
         <li class="right" >
           <a href="randomgen.generator.RandomGenerator.negative_binomial.html" title="randomgen.generator.RandomGenerator.negative_binomial"
              accesskey="P">previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../index.html">RandomGen v1.16.1+35.g8d4c354 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">RandomGen v1.16.1+37.g56a1f4f documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="../generator.html" accesskey="U">Random Generator</a> &#187;</li> 
       </ul>
     </div>
@@ -56,7 +56,7 @@
       </div>
   <div id="left-column">
     <div class="sphinxsidebar"><a href="
-    ../index.html" class="text-logo">RandomGen v1.16.1 (+35)</a>
+    ../index.html" class="text-logo">RandomGen v1.16.1 (+37)</a>
 <div class="sidebar-block">
   <div class="sidebar-wrapper">
     <h2>Table Of Contents</h2>
@@ -127,45 +127,46 @@
 <h1>randomgen.generator.RandomGenerator.noncentral_chisquare<a class="headerlink" href="#randomgen-generator-randomgenerator-noncentral-chisquare" title="Permalink to this headline">¶</a></h1>
 <dl class="method">
 <dt id="randomgen.generator.RandomGenerator.noncentral_chisquare">
-<code class="descclassname">RandomGenerator.</code><code class="descname">noncentral_chisquare</code><span class="sig-paren">(</span><em>df</em>, <em>nonc</em>, <em>size=None</em><span class="sig-paren">)</span><a class="headerlink" href="#randomgen.generator.RandomGenerator.noncentral_chisquare" title="Permalink to this definition">¶</a></dt>
-<dd><p>Draw samples from a noncentral chi-square distribution.</p>
+<code class="descclassname">RandomGenerator.</code><code class="descname">noncentral_chisquare</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#randomgen.generator.RandomGenerator.noncentral_chisquare" title="Permalink to this definition">¶</a></dt>
+<dd><blockquote>
+<div><p>noncentral_chisquare(df, nonc, size=None)</p>
+<p>Draw samples from a noncentral chi-square distribution.</p>
 <p>The noncentral <span class="math notranslate nohighlight">\(\chi^2\)</span> distribution is a generalisation of
 the <span class="math notranslate nohighlight">\(\chi^2\)</span> distribution.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>df</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a><em> or </em><em>array_like of ints</em>) – Degrees of freedom, should be &gt; 0 as of NumPy 1.10.0,
-should be &gt; 1 for earlier versions.</p></li>
-<li><p><strong>nonc</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.7)"><em>float</em></a><em> or </em><em>array_like of floats</em>) – Non-centrality, should be non-negative.</p></li>
-<li><p><strong>size</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a><em> or </em><em>tuple of ints</em><em>, </em><em>optional</em>) – Output shape.  If the given shape is, e.g., <code class="docutils literal notranslate"><span class="pre">(m,</span> <span class="pre">n,</span> <span class="pre">k)</span></code>, then
+<dl>
+<dt>df<span class="classifier">float or array_like of floats</span></dt><dd><p>Degrees of freedom, should be &gt; 0.</p>
+<div class="versionchanged">
+<p><span class="versionmodified changed">Changed in version 1.10.0: </span>Earlier NumPy versions required dfnum &gt; 1.</p>
+</div>
+</dd>
+<dt>nonc<span class="classifier">float or array_like of floats</span></dt><dd><p>Non-centrality, should be non-negative.</p>
+</dd>
+<dt>size<span class="classifier">int or tuple of ints, optional</span></dt><dd><p>Output shape.  If the given shape is, e.g., <code class="docutils literal notranslate"><span class="pre">(m,</span> <span class="pre">n,</span> <span class="pre">k)</span></code>, then
 <code class="docutils literal notranslate"><span class="pre">m</span> <span class="pre">*</span> <span class="pre">n</span> <span class="pre">*</span> <span class="pre">k</span></code> samples are drawn.  If size is <code class="docutils literal notranslate"><span class="pre">None</span></code> (default),
 a single value is returned if <code class="docutils literal notranslate"><span class="pre">df</span></code> and <code class="docutils literal notranslate"><span class="pre">nonc</span></code> are both scalars.
-Otherwise, <code class="docutils literal notranslate"><span class="pre">np.broadcast(df,</span> <span class="pre">nonc).size</span></code> samples are drawn.</p></li>
-</ul>
-</dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p><strong>out</strong> – Drawn samples from the parameterized noncentral chi-square distribution.</p>
-</dd>
-<dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>ndarray or scalar</p>
+Otherwise, <code class="docutils literal notranslate"><span class="pre">np.broadcast(df,</span> <span class="pre">nonc).size</span></code> samples are drawn.</p>
 </dd>
 </dl>
-<p class="rubric">Notes</p>
+<dl class="simple">
+<dt>out<span class="classifier">ndarray or scalar</span></dt><dd><p>Drawn samples from the parameterized noncentral chi-square distribution.</p>
+</dd>
+</dl>
 <p>The probability density function for the noncentral Chi-square
 distribution is</p>
 <div class="math notranslate nohighlight">
-\[P(x;df,nonc) = \sum^{\infty}_{i=0}
-\frac{e^{-nonc/2}(nonc/2)^{i}}{i!}
-\P_{Y_{df+2i}}(x),\]</div>
+\[P(x;df,nonc) = \sum^{\infty}_{i=0}\]</div>
+</div></blockquote>
+<dl>
+<dt>rac{e^{-nonc/2}(nonc/2)^{i}}{i!}</dt><dd><blockquote>
+<div><p>P_{Y_{df+2i}}(x),</p>
+</div></blockquote>
 <p>where <span class="math notranslate nohighlight">\(Y_{q}\)</span> is the Chi-square with q degrees of freedom.</p>
-<p class="rubric">References</p>
 <dl class="footnote brackets">
 <dt class="label" id="id1"><span class="brackets">1</span></dt>
-<dd><p>Wikipedia, “Noncentral chi-square distribution”
-<a class="reference external" href="https://en.wikipedia.org/wiki/Noncentral_chi-square_distribution">https://en.wikipedia.org/wiki/Noncentral_chi-square_distribution</a></p>
+<dd><p>Wikipedia, “Noncentral chi-squared distribution”
+<a class="reference external" href="https://en.wikipedia.org/wiki/Noncentral_chi-squared_distribution">https://en.wikipedia.org/wiki/Noncentral_chi-squared_distribution</a></p>
 </dd>
 </dl>
-<p class="rubric">Examples</p>
 <p>Draw values from the distribution and plot the histogram</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">values</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">hist</span><span class="p">(</span><span class="n">randomgen</span><span class="o">.</span><span class="n">generator</span><span class="o">.</span><span class="n">noncentral_chisquare</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">20</span><span class="p">,</span> <span class="mi">100000</span><span class="p">),</span>
@@ -192,6 +193,8 @@ distribution.</p>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
 </pre></div>
 </div>
+</dd>
+</dl>
 </dd></dl>
 
 </div>
@@ -229,7 +232,7 @@ distribution.</p>
         <li class="right" >
           <a href="randomgen.generator.RandomGenerator.negative_binomial.html" title="randomgen.generator.RandomGenerator.negative_binomial"
              >previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../index.html">RandomGen v1.16.1+35.g8d4c354 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">RandomGen v1.16.1+37.g56a1f4f documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="../generator.html" >Random Generator</a> &#187;</li> 
       </ul>
     </div>

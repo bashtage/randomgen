@@ -13,7 +13,7 @@
   <link rel="stylesheet" type="text/css" href="../_static/css/bootstrap-theme.min.css" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-    <title>randomgen.generator.RandomGenerator.standard_cauchy &#8212; RandomGen v1.16.1+35.g8d4c354 documentation</title>
+    <title>randomgen.generator.RandomGenerator.standard_cauchy &#8212; RandomGen v1.16.1+37.g56a1f4f documentation</title>
     <link rel="stylesheet" href="../_static/guzzle.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
@@ -45,7 +45,7 @@
         <li class="right" >
           <a href="randomgen.generator.RandomGenerator.rayleigh.html" title="randomgen.generator.RandomGenerator.rayleigh"
              accesskey="P">previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../index.html">RandomGen v1.16.1+35.g8d4c354 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">RandomGen v1.16.1+37.g56a1f4f documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="../generator.html" accesskey="U">Random Generator</a> &#187;</li> 
       </ul>
     </div>
@@ -56,7 +56,7 @@
       </div>
   <div id="left-column">
     <div class="sphinxsidebar"><a href="
-    ../index.html" class="text-logo">RandomGen v1.16.1 (+35)</a>
+    ../index.html" class="text-logo">RandomGen v1.16.1 (+37)</a>
 <div class="sidebar-block">
   <div class="sidebar-wrapper">
     <h2>Table Of Contents</h2>
@@ -163,7 +163,7 @@ very much like a Gaussian distribution, but with heavier tails.</p>
 <dt class="label" id="id1"><span class="brackets">1</span></dt>
 <dd><p>NIST/SEMATECH e-Handbook of Statistical Methods, “Cauchy
 Distribution”,
-<a class="reference external" href="http://www.itl.nist.gov/div898/handbook/eda/section3/eda3663.htm">http://www.itl.nist.gov/div898/handbook/eda/section3/eda3663.htm</a></p>
+<a class="reference external" href="https://www.itl.nist.gov/div898/handbook/eda/section3/eda3663.htm">https://www.itl.nist.gov/div898/handbook/eda/section3/eda3663.htm</a></p>
 </dd>
 <dt class="label" id="id2"><span class="brackets">2</span></dt>
 <dd><p>Weisstein, Eric W. “Cauchy Distribution.” From MathWorld–A
@@ -177,9 +177,9 @@ Wolfram Web Resource.
 </dl>
 <p class="rubric">Examples</p>
 <p>Draw samples and plot the distribution:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">s</span> <span class="o">=</span> <span class="n">randomgen</span><span class="o">.</span><span class="n">generator</span><span class="o">.</span><span class="n">standard_cauchy</span><span class="p">(</span><span class="mi">1000000</span><span class="p">)</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">s</span> <span class="o">=</span> <span class="n">randomgen</span><span class="o">.</span><span class="n">generator</span><span class="o">.</span><span class="n">standard_cauchy</span><span class="p">(</span><span class="mi">1000000</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">s</span> <span class="o">=</span> <span class="n">s</span><span class="p">[(</span><span class="n">s</span><span class="o">&gt;-</span><span class="mi">25</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">s</span><span class="o">&lt;</span><span class="mi">25</span><span class="p">)]</span>  <span class="c1"># truncate distribution so it plots well</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">plt</span><span class="o">.</span><span class="n">hist</span><span class="p">(</span><span class="n">s</span><span class="p">,</span> <span class="n">bins</span><span class="o">=</span><span class="mi">100</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
 </pre></div>
@@ -221,7 +221,7 @@ Wolfram Web Resource.
         <li class="right" >
           <a href="randomgen.generator.RandomGenerator.rayleigh.html" title="randomgen.generator.RandomGenerator.rayleigh"
              >previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../index.html">RandomGen v1.16.1+35.g8d4c354 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">RandomGen v1.16.1+37.g56a1f4f documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="../generator.html" >Random Generator</a> &#187;</li> 
       </ul>
     </div>
