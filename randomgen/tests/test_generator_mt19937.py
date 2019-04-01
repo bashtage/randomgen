@@ -893,8 +893,6 @@ class TestRandomDist(object):
         cov = [[1, 0], [0, 1]]
         size = (3, 2)
         actual = random.multivariate_normal(mean, cov, size)
-        np.set_printoptions(precision=20)
-        print(actual)
         desired = np.array([[[-3.34929721161096100, 9.891061435770858],
                              [-0.12250896439641100, 9.295898449738300]],
                             [[0.48355927611635563, 10.127832101772366],
@@ -994,7 +992,6 @@ class TestRandomDist(object):
         random.seed(self.seed)
         actual = random.pareto(a=.123456789, size=(3, 2))
         np.set_printoptions(precision=20)
-        print(actual)
         desired = np.array([[5.6883528121891552e+16, 4.0569373841667057e+03],
                             [1.2854967019379475e+12, 6.5833156486851483e+04],
                             [1.1281132447159091e+01, 3.1895968171107006e+08]])
