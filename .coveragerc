@@ -6,6 +6,7 @@ include = */randomgen/*
 omit =
     */_version.py
     *.pxd
+    */_legacy.pyx
 plugins = Cython.Coverage
 
 [report]

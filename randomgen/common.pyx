@@ -141,7 +141,11 @@ cdef check_output(object out, object dtype, object size):
         raise TypeError('Supplied output array has the wrong type. '
                         'Expected {0}, got {0}'.format(dtype, out_array.dtype))
     if size is not None:
-        if tuple(size) != out.shape:
+        try:
+            tup_size = tuple(size)
+        except TypeError:
+            tup_size = tuple([size])
+        if tup_size != out.shape:
             raise ValueError('size must match out.shape when used together')
 
 

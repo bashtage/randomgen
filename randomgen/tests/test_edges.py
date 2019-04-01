@@ -75,6 +75,16 @@ def test_standard_gammma_float_out(random_gen):
     out = np.zeros(10, dtype=np.float32)
     random_gen.standard_gamma(10.0, out=out, dtype=np.float32)
     assert np.all(out != 0)
+    out = np.zeros(10, dtype=np.float32)
+    random_gen.standard_gamma(10.0, out=out, size=10, dtype=np.float32)
+
+
+def test_out_size_mismatch(random_gen):
+    out = np.zeros(10)
+    with pytest.raises(ValueError):
+        random_gen.standard_gamma(10.0, size=20, out=out)
+    with pytest.raises(ValueError):
+        random_gen.standard_gamma(10.0, size=(10, 1), out=out)
 
 
 def test_random_sample_float_scalar(random_gen):

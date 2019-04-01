@@ -4,7 +4,7 @@ from randomgen.legacy._legacy import _LegacyGenerator
 import randomgen.pickle
 
 # Attributes in RandomGenerator that should not appear in LegacyGenerator
-_HIDDEN_ATTRIBUTES = ['complex_normal', 'random_raw', 'random_uintegers']
+_HIDDEN_ATTRIBUTES = ['complex_normal']
 
 _LEGACY_ATTRIBUTES = tuple(a for a in dir(
     _LegacyGenerator) if not a.startswith('_'))

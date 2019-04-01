@@ -156,9 +156,6 @@ class RNG(object):
             brng_name = self.rg._basicrng.__class__.__name__
             pytest.skip('Jump is not supported by {0}'.format(brng_name))
 
-    def test_random_uintegers(self):
-        assert_(len(self.rg.random_uintegers(10)) == 10)
-
     def test_uniform(self):
         r = self.rg.uniform(-1.0, 0.0, size=10)
         assert_(len(r) == 10)
@@ -270,14 +267,14 @@ class RNG(object):
         n2 = rg2.randint(0, 2 ** 24, 10, dtype=np.uint32)
         assert_array_equal(n1, n2)
 
-    def test_reset_state_uintegers(self):
+    def test_reset_state_float(self):
         rg = RandomGenerator(self.brng(*self.seed))
-        rg.random_uintegers(bits=32)
+        rg.random_sample(dtype='float32')
         state = rg.state
-        n1 = rg.random_uintegers(bits=32, size=10)
+        n1 = rg.random_sample(size=10, dtype='float32')
         rg2 = RandomGenerator(self.brng())
         rg2.state = state
-        n2 = rg2.random_uintegers(bits=32, size=10)
+        n2 = rg2.random_sample(size=10, dtype='float32')
         assert_((n1 == n2).all())
 
     def test_shuffle(self):
