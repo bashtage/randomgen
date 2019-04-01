@@ -41,9 +41,8 @@ Compatibility Warning
 it not 100% compatible with NumPy (or randomstate). Box-Muller normals
 are slow to generate and all functions which previously relied on
 Box-Muller normals now use the faster Ziggurat implementation. If you
-require backward compatibility, a legacy generator, ``LegacyGenerator``,
-has been created which can fully reproduce the sequence produced by
-NumPy.
+require backward compatibility, a legacy generator, ``RandomState``, has
+been created which can fully reproduce the sequence produced by NumPy.
 
 Features
 --------
@@ -173,8 +172,8 @@ Status
 Version
 -------
 
-The version matched the latest version of NumPy where
-``LegacyGenerator(MT19937())`` passes all NumPy test.
+The package version matches the latest version of NumPy where
+``RandomState(MT19937())`` passes all NumPy test.
 
 Documentation
 -------------

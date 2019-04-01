@@ -38,4 +38,9 @@ Extending
    ~Xorshift1024.cffi
    ~Xorshift1024.ctypes
 
+Testing
+=======
+.. autosummary::
+   :toctree: generated/
 
+   ~Xorshift1024.random_raw

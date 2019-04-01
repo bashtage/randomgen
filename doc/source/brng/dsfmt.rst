@@ -39,4 +39,10 @@ Extending
    ~DSFMT.cffi
    ~DSFMT.ctypes
 
+Testing
+=======
+.. autosummary::
+   :toctree: generated/
+
+   ~DSFMT.random_raw
 

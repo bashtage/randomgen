@@ -39,4 +39,9 @@ Extending
    ~PCG64.cffi
    ~PCG64.ctypes
 
+Testing
+=======
+.. autosummary::
+   :toctree: generated/
 
+   ~PCG64.random_raw

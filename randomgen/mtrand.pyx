@@ -1722,7 +1722,7 @@ cdef class RandomState:
 
         .. math:: P(x;df,nonc) = \\sum^{\\infty}_{i=0}
                                \\frac{e^{-nonc/2}(nonc/2)^{i}}{i!}
-                               \\P_{Y_{df+2i}}(x),
+                               P_{Y_{df+2i}}(x),
 
         where :math:`Y_{q}` is the Chi-square with q degrees of freedom.
 

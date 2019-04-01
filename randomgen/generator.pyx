@@ -1829,8 +1829,8 @@ cdef class RandomGenerator:
 
         Draw samples from a noncentral chi-square distribution.
 
-        The noncentral :math:`\chi^2` distribution is a generalisation of
-        the :math:`\chi^2` distribution.
+        The noncentral :math:`\\chi^2` distribution is a generalisation of
+        the :math:`\\chi^2` distribution.
 
         Parameters
         ----------
@@ -1857,9 +1857,9 @@ cdef class RandomGenerator:
         The probability density function for the noncentral Chi-square
         distribution is
 
-        .. math:: P(x;df,nonc) = \sum^{\infty}_{i=0}
-                               \frac{e^{-nonc/2}(nonc/2)^{i}}{i!}
-                               \P_{Y_{df+2i}}(x),
+        .. math:: P(x;df,nonc) = \\sum^{\\infty}_{i=0}
+                               \\frac{e^{-nonc/2}(nonc/2)^{i}}{i!}
+                               P_{Y_{df+2i}}(x),
 
         where :math:`Y_{q}` is the Chi-square with q degrees of freedom.
 
@@ -3245,12 +3245,12 @@ cdef class RandomGenerator:
         -----
         The probability mass function of the negative binomial distribution is
 
-        .. math:: P(N;n,p) = \frac{\Gamma(N+n)}{N!\Gamma(n)}p^{n}(1-p)^{N},
+        .. math:: P(N;n,p) = \\frac{\\Gamma(N+n)}{N!\\Gamma(n)}p^{n}(1-p)^{N},
 
         where :math:`n` is the number of successes, :math:`p` is the
         probability of success, :math:`N+n` is the number of trials, and
-        :math:`\Gamma` is the gamma function. When :math:`n` is an integer,
-        :math:`\frac{\Gamma(N+n)}{N!\Gamma(n)} = \binom{N+n-1}{N}`, which is
+        :math:`\\Gamma` is the gamma function. When :math:`n` is an integer,
+        :math:`\\frac{\\Gamma(N+n)}{N!\\Gamma(n)} = \\binom{N+n-1}{N}`, which is
         the more common form of this term in the the pmf. The negative
         binomial distribution gives the probability of N failures given n
         successes, with a success on the last trial.

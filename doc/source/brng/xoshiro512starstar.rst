@@ -38,4 +38,9 @@ Extending
    ~Xoshiro512StarStar.cffi
    ~Xoshiro512StarStar.ctypes
 
+Testing
+=======
+.. autosummary::
+   :toctree: generated/
 
+   ~Xoshiro512StarStar.random_raw

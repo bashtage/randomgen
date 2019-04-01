@@ -277,18 +277,6 @@ extensions = [Extension('randomgen.entropy',
                         extra_link_args=EXTRA_LINK_ARGS,
                         define_macros=DEFS
                         ),
-              Extension("randomgen.legacy._legacy",
-                        ["randomgen/legacy/_legacy.pyx",
-                         join(MOD_DIR, 'src', 'legacy',
-                              'distributions-boxmuller.c'),
-                         join(MOD_DIR, 'src', 'distributions', 'distributions.c')],
-                        libraries=EXTRA_LIBRARIES,
-                        include_dirs=EXTRA_INCLUDE_DIRS +
-                        [np.get_include()] + [join(MOD_DIR, 'legacy')],
-                        extra_compile_args=EXTRA_COMPILE_ARGS,
-                        extra_link_args=EXTRA_LINK_ARGS,
-                        define_macros=DEFS
-                        ),
               Extension("randomgen.mtrand",
                         ["randomgen/mtrand.pyx",
                          join(MOD_DIR, 'src', 'legacy',

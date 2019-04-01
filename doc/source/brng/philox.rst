@@ -39,4 +39,9 @@ Extending
    ~Philox.cffi
    ~Philox.ctypes
 
+Testing
+=======
+.. autosummary::
+   :toctree: generated/
 
+   ~Philox.random_raw
