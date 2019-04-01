@@ -108,8 +108,6 @@ What's New or Different
   select distributions
 * Optional ``out`` argument that allows existing arrays to be filled for
   select distributions
-* Simulate from the complex normal distribution
-  (:meth:`~randomgen.generator.RandomGenerator.complex_normal`)
 * :func:`~randomgen.entropy.random_entropy` provides access to the system
   source of randomness that is used in cryptographic applications (e.g.,
   ``/dev/urandom`` on Unix).

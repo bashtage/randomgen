@@ -100,7 +100,6 @@ devel/_sources/generated/randomgen.generator.RandomGenerator.binomial.rst.txt
 devel/_sources/generated/randomgen.generator.RandomGenerator.bytes.rst.txt
 devel/_sources/generated/randomgen.generator.RandomGenerator.chisquare.rst.txt
 devel/_sources/generated/randomgen.generator.RandomGenerator.choice.rst.txt
-devel/_sources/generated/randomgen.generator.RandomGenerator.complex_normal.rst.txt
 devel/_sources/generated/randomgen.generator.RandomGenerator.dirichlet.rst.txt
 devel/_sources/generated/randomgen.generator.RandomGenerator.exponential.rst.txt
 devel/_sources/generated/randomgen.generator.RandomGenerator.f.rst.txt
@@ -398,7 +397,6 @@ devel/generated/randomgen.generator.RandomGenerator.binomial.html
 devel/generated/randomgen.generator.RandomGenerator.bytes.html
 devel/generated/randomgen.generator.RandomGenerator.chisquare.html
 devel/generated/randomgen.generator.RandomGenerator.choice.html
-devel/generated/randomgen.generator.RandomGenerator.complex_normal.html
 devel/generated/randomgen.generator.RandomGenerator.dirichlet.html
 devel/generated/randomgen.generator.RandomGenerator.exponential.html
 devel/generated/randomgen.generator.RandomGenerator.f.html
