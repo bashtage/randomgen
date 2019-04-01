@@ -3,7 +3,7 @@
 from libc.stdint cimport (uint8_t, uint16_t, uint32_t, uint64_t,
                           int8_t, int16_t, int32_t, int64_t, intptr_t)
 import numpy as np
-cimport numpy as np 
+cimport numpy as np
 
 cdef extern from "src/distributions/distributions.h":
 
@@ -80,13 +80,13 @@ cdef extern from "src/distributions/distributions.h":
     double random_rayleigh(brng_t *brng_state, double mode) nogil
     double random_standard_t(brng_t *brng_state, double df) nogil
     double random_noncentral_chisquare(brng_t *brng_state, double df,
-                                            double nonc) nogil
+                                       double nonc) nogil
     double random_noncentral_f(brng_t *brng_state, double dfnum,
-                                    double dfden, double nonc) nogil
+                               double dfden, double nonc) nogil
     double random_wald(brng_t *brng_state, double mean, double scale) nogil
     double random_vonmises(brng_t *brng_state, double mu, double kappa) nogil
     double random_triangular(brng_t *brng_state, double left, double mode,
-                                    double right) nogil
+                             double right) nogil
 
     int64_t random_poisson(brng_t *brng_state, double lam) nogil
     int64_t random_negative_binomial(brng_t *brng_state, double n, double p) nogil

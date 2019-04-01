@@ -26,7 +26,7 @@ def bounded_uint(lb, ub, state):
     return lb + val
 
 
-bounded_uint(323, 2394691, s.value)
+print(bounded_uint(323, 2394691, s.value))
 
 
 @nb.jit(nopython=True)

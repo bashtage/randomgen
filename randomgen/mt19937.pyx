@@ -1,5 +1,3 @@
-from __future__ import absolute_import
-
 import operator
 
 from libc.stdlib cimport malloc, free
@@ -284,15 +282,15 @@ cdef class MT19937:
             key[i] = self.rng_state.key[i]
 
         return {'brng': self.__class__.__name__,
-                'state': {'key':key, 'pos': self.rng_state.pos}}
+                'state': {'key': key, 'pos': self.rng_state.pos}}
 
     @state.setter
     def state(self, value):
         if isinstance(value, tuple):
-            if value[0] != 'MT19937' or len(value) not in (3,5):
-                    raise ValueError('state is not a legacy MT19937 state')
+            if value[0] != 'MT19937' or len(value) not in (3, 5):
+                raise ValueError('state is not a legacy MT19937 state')
             value ={'brng': 'MT19937',
-                    'state':{'key': value[1], 'pos': value[2]}}
+                    'state': {'key': value[1], 'pos': value[2]}}
 
         if not isinstance(value, dict):
             raise TypeError('state must be a dict')
@@ -308,12 +306,12 @@ cdef class MT19937:
     @property
     def ctypes(self):
         """
-        Ctypes interface
+        ctypes interface
 
         Returns
         -------
         interface : namedtuple
-            Named tuple containing CFFI wrapper
+            Named tuple containing ctypes wrapper
 
             * state_address - Memory address of the state struct
             * state - pointer to the state struct
@@ -322,24 +320,9 @@ cdef class MT19937:
             * next_double - function pointer to produce doubles
             * brng - pointer to the Basic RNG struct
         """
+        if self._ctypes is None:
+            self._ctypes = prepare_ctypes(self._brng)
 
-        if self._ctypes is not None:
-            return self._ctypes
-
-        import ctypes
-
-        self._ctypes = interface(<uintptr_t>self.rng_state,
-                         ctypes.c_void_p(<uintptr_t>self.rng_state),
-                         ctypes.cast(<uintptr_t>&mt19937_uint64,
-                                     ctypes.CFUNCTYPE(ctypes.c_uint64,
-                                     ctypes.c_void_p)),
-                         ctypes.cast(<uintptr_t>&mt19937_uint32,
-                                     ctypes.CFUNCTYPE(ctypes.c_uint32,
-                                     ctypes.c_void_p)),
-                         ctypes.cast(<uintptr_t>&mt19937_double,
-                                     ctypes.CFUNCTYPE(ctypes.c_double,
-                                     ctypes.c_void_p)),
-                         ctypes.c_void_p(<uintptr_t>self._brng))
         return self._ctypes
 
     @property
@@ -361,18 +344,7 @@ cdef class MT19937:
         """
         if self._cffi is not None:
             return self._cffi
-        try:
-            import cffi
-        except ImportError:
-            raise ImportError('cffi is cannot be imported.')
-
-        ffi = cffi.FFI()
-        self._cffi = interface(<uintptr_t>self.rng_state,
-                         ffi.cast('void *',<uintptr_t>self.rng_state),
-                         ffi.cast('uint64_t (*)(void *)',<uintptr_t>self._brng.next_uint64),
-                         ffi.cast('uint32_t (*)(void *)',<uintptr_t>self._brng.next_uint32),
-                         ffi.cast('double (*)(void *)',<uintptr_t>self._brng.next_double),
-                         ffi.cast('void *',<uintptr_t>self._brng))
+        self._cffi = prepare_cffi(self._brng)
         return self._cffi
 
     @property

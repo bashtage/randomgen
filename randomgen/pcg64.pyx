@@ -1,5 +1,3 @@
-from __future__ import absolute_import
-
 from libc.stdlib cimport malloc, free
 from cpython.pycapsule cimport PyCapsule_New
 
@@ -41,15 +39,15 @@ cdef extern from "src/pcg64/pcg64.h":
     ctypedef pcg_state_setseq_128 pcg64_random_t
 
     struct s_pcg64_state:
-      pcg64_random_t *pcg_state
-      int has_uint32
-      uint32_t uinteger
+        pcg64_random_t *pcg_state
+        int has_uint32
+        uint32_t uinteger
 
     ctypedef s_pcg64_state pcg64_state
 
     uint64_t pcg64_next64(pcg64_state *state)  nogil
     uint32_t pcg64_next32(pcg64_state *state)  nogil
-    void pcg64_jump(pcg64_state  *state)
+    void pcg64_jump(pcg64_state *state)
     void pcg64_advance(pcg64_state *state, uint64_t *step)
     void pcg64_set_seed(pcg64_state *state, uint64_t *seed, uint64_t *inc)
 
@@ -215,7 +213,6 @@ cdef class PCG64:
     def _benchmark(self, Py_ssize_t cnt, method=u'uint64'):
         return benchmark(self._brng, self.lock, cnt, method)
 
-
     def seed(self, seed=None, inc=0):
         """
         seed(seed=None, inc=0)
@@ -240,7 +237,7 @@ cdef class PCG64:
 
         """
         cdef np.ndarray _seed, _inc
-        ub =  2 ** 128
+        ub = 2 ** 128
         if seed is None:
             try:
                 _seed = <np.ndarray>random_entropy(4)
@@ -292,7 +289,7 @@ cdef class PCG64:
             inc = self.rng_state.pcg_state.inc
 
         return {'brng': self.__class__.__name__,
-                'state': {'state': state, 'inc':inc},
+                'state': {'state': state, 'inc': inc},
                 'has_uint32': self.rng_state.has_uint32,
                 'uinteger': self.rng_state.uinteger}
 
@@ -310,7 +307,7 @@ cdef class PCG64:
             self.rng_state.pcg_state.inc.high = value['state']['inc'] // 2 ** 64
             self.rng_state.pcg_state.inc.low = value['state']['inc'] % 2 ** 64
         ELSE:
-            self.rng_state.pcg_state.state  = value['state']['state']
+            self.rng_state.pcg_state.state = value['state']['state']
             self.rng_state.pcg_state.inc = value['state']['inc']
 
         self.rng_state.has_uint32 = value['has_uint32']
@@ -385,12 +382,12 @@ cdef class PCG64:
     @property
     def ctypes(self):
         """
-        Ctypes interface
+        ctypes interface
 
         Returns
         -------
         interface : namedtuple
-            Named tuple containing CFFI wrapper
+            Named tuple containing ctypes wrapper
 
             * state_address - Memory address of the state struct
             * state - pointer to the state struct
@@ -399,24 +396,9 @@ cdef class PCG64:
             * next_double - function pointer to produce doubles
             * brng - pointer to the Basic RNG struct
         """
+        if self._ctypes is None:
+            self._ctypes = prepare_ctypes(self._brng)
 
-        if self._ctypes is not None:
-            return self._ctypes
-
-        import ctypes
-
-        self._ctypes = interface(<uintptr_t>self.rng_state,
-                         ctypes.c_void_p(<uintptr_t>self.rng_state),
-                         ctypes.cast(<uintptr_t>&pcg64_uint64,
-                                     ctypes.CFUNCTYPE(ctypes.c_uint64,
-                                     ctypes.c_void_p)),
-                         ctypes.cast(<uintptr_t>&pcg64_uint32,
-                                     ctypes.CFUNCTYPE(ctypes.c_uint32,
-                                     ctypes.c_void_p)),
-                         ctypes.cast(<uintptr_t>&pcg64_double,
-                                     ctypes.CFUNCTYPE(ctypes.c_double,
-                                     ctypes.c_void_p)),
-                         ctypes.c_void_p(<uintptr_t>self._brng))
         return self._ctypes
 
     @property
@@ -438,18 +420,7 @@ cdef class PCG64:
         """
         if self._cffi is not None:
             return self._cffi
-        try:
-            import cffi
-        except ImportError:
-            raise ImportError('cffi is cannot be imported.')
-
-        ffi = cffi.FFI()
-        self._cffi = interface(<uintptr_t>self.rng_state,
-                         ffi.cast('void *',<uintptr_t>self.rng_state),
-                         ffi.cast('uint64_t (*)(void *)',<uintptr_t>self._brng.next_uint64),
-                         ffi.cast('uint32_t (*)(void *)',<uintptr_t>self._brng.next_uint32),
-                         ffi.cast('double (*)(void *)',<uintptr_t>self._brng.next_double),
-                         ffi.cast('void *',<uintptr_t>self._brng))
+        self._cffi = prepare_cffi(self._brng)
         return self._cffi
 
     @property

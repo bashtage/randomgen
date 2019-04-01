@@ -3,7 +3,7 @@
 from libc.stdint cimport uint64_t
 
 import numpy as np
-cimport numpy as np 
+cimport numpy as np
 
 from randomgen.distributions cimport brng_t
 
@@ -12,7 +12,7 @@ cdef extern from "../src/legacy/distributions-boxmuller.h":
     struct aug_brng:
         brng_t *basicrng
         int has_gauss
-        double gauss 
+        double gauss
 
     ctypedef aug_brng aug_brng_t
 

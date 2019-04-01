@@ -20,15 +20,15 @@ np.import_array()
 cdef extern from "src/xoshiro256starstar/xoshiro256starstar.h":
 
     struct s_xoshiro256starstar_state:
-      uint64_t s[4]
-      int has_uint32
-      uint32_t uinteger
+        uint64_t s[4]
+        int has_uint32
+        uint32_t uinteger
 
     ctypedef s_xoshiro256starstar_state xoshiro256starstar_state
 
     uint64_t xoshiro256starstar_next64(xoshiro256starstar_state *state)  nogil
     uint32_t xoshiro256starstar_next32(xoshiro256starstar_state *state)  nogil
-    void xoshiro256starstar_jump(xoshiro256starstar_state  *state)
+    void xoshiro256starstar_jump(xoshiro256starstar_state *state)
 
 cdef uint64_t xoshiro256starstar_uint64(void* st) nogil:
     return xoshiro256starstar_next64(<xoshiro256starstar_state *>st)
@@ -124,7 +124,7 @@ cdef class Xoshiro256StarStar:
     .. [1] "xoroshiro+ / xorshift* / xorshift+ generators and the PRNG shootout",
            http://xorshift.di.unimi.it/
     """
-    cdef xoshiro256starstar_state  *rng_state
+    cdef xoshiro256starstar_state *rng_state
     cdef brng_t *_brng
     cdef public object capsule
     cdef object _ctypes
@@ -225,7 +225,7 @@ cdef class Xoshiro256StarStar:
         ValueError
             If seed values are out of range for the PRNG.
         """
-        ub =  2 ** 64
+        ub = 2 ** 64
         if seed is None:
             try:
                 state = random_entropy(8)
@@ -306,12 +306,12 @@ cdef class Xoshiro256StarStar:
     @property
     def ctypes(self):
         """
-        Ctypes interface
+        ctypes interface
 
         Returns
         -------
         interface : namedtuple
-            Named tuple containing CFFI wrapper
+            Named tuple containing ctypes wrapper
 
             * state_address - Memory address of the state struct
             * state - pointer to the state struct
@@ -320,24 +320,9 @@ cdef class Xoshiro256StarStar:
             * next_double - function pointer to produce doubles
             * brng - pointer to the Basic RNG struct
         """
+        if self._ctypes is None:
+            self._ctypes = prepare_ctypes(self._brng)
 
-        if self._ctypes is not None:
-            return self._ctypes
-
-        import ctypes
-
-        self._ctypes = interface(<uintptr_t>self.rng_state,
-                         ctypes.c_void_p(<uintptr_t>self.rng_state),
-                         ctypes.cast(<uintptr_t>&xoshiro256starstar_uint64,
-                                     ctypes.CFUNCTYPE(ctypes.c_uint64,
-                                     ctypes.c_void_p)),
-                         ctypes.cast(<uintptr_t>&xoshiro256starstar_uint32,
-                                     ctypes.CFUNCTYPE(ctypes.c_uint32,
-                                     ctypes.c_void_p)),
-                         ctypes.cast(<uintptr_t>&xoshiro256starstar_double,
-                                     ctypes.CFUNCTYPE(ctypes.c_double,
-                                     ctypes.c_void_p)),
-                         ctypes.c_void_p(<uintptr_t>self._brng))
         return self._ctypes
 
     @property
@@ -359,18 +344,7 @@ cdef class Xoshiro256StarStar:
         """
         if self._cffi is not None:
             return self._cffi
-        try:
-            import cffi
-        except ImportError:
-            raise ImportError('cffi is cannot be imported.')
-
-        ffi = cffi.FFI()
-        self._cffi = interface(<uintptr_t>self.rng_state,
-                         ffi.cast('void *',<uintptr_t>self.rng_state),
-                         ffi.cast('uint64_t (*)(void *)',<uintptr_t>self._brng.next_uint64),
-                         ffi.cast('uint32_t (*)(void *)',<uintptr_t>self._brng.next_uint32),
-                         ffi.cast('double (*)(void *)',<uintptr_t>self._brng.next_double),
-                         ffi.cast('void *',<uintptr_t>self._brng))
+        self._cffi = prepare_cffi(self._brng)
         return self._cffi
 
     @property

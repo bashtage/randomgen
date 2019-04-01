@@ -1,7 +1,5 @@
 #!python
 #cython: wraparound=False, nonecheck=False, boundscheck=False, cdivision=True, language_level=3
-from __future__ import absolute_import
-
 import operator
 import warnings
 
@@ -275,7 +273,6 @@ cdef class RandomGenerator:
                     b, 'b', CONS_POSITIVE,
                     0.0, '', CONS_NONE, None)
 
-
     def exponential(self, scale=1.0, size=None):
         """
         exponential(scale=1.0, size=None)
@@ -534,31 +531,31 @@ cdef class RandomGenerator:
             low = 0
 
         key = np.dtype(dtype).name
-        if not key in _randint_types:
+        if key not in _randint_types:
             raise TypeError('Unsupported dtype "%s" for randint' % key)
 
         if key == 'int32':
-            ret =  _rand_int32(low, high, size, use_masked, self._brng, self.lock)
+            ret = _rand_int32(low, high, size, use_masked, self._brng, self.lock)
         elif key == 'int64':
-            ret =  _rand_int64(low, high, size, use_masked, self._brng, self.lock)
+            ret = _rand_int64(low, high, size, use_masked, self._brng, self.lock)
         elif key == 'int16':
-            ret =  _rand_int16(low, high, size, use_masked, self._brng, self.lock)
+            ret = _rand_int16(low, high, size, use_masked, self._brng, self.lock)
         elif key == 'int8':
-            ret =  _rand_int8(low, high, size, use_masked, self._brng, self.lock)
+            ret = _rand_int8(low, high, size, use_masked, self._brng, self.lock)
         elif key == 'uint64':
-            ret =  _rand_uint64(low, high, size, use_masked, self._brng, self.lock)
+            ret = _rand_uint64(low, high, size, use_masked, self._brng, self.lock)
         elif key == 'uint32':
-            ret =  _rand_uint32(low, high, size, use_masked, self._brng, self.lock)
+            ret = _rand_uint32(low, high, size, use_masked, self._brng, self.lock)
         elif key == 'uint16':
-            ret =  _rand_uint16(low, high, size, use_masked, self._brng, self.lock)
+            ret = _rand_uint16(low, high, size, use_masked, self._brng, self.lock)
         elif key == 'uint8':
-            ret =  _rand_uint8(low, high, size, use_masked, self._brng, self.lock)
+            ret = _rand_uint8(low, high, size, use_masked, self._brng, self.lock)
         elif key == 'bool':
-            ret =  _rand_bool(low, high, size, use_masked, self._brng, self.lock)
+            ret = _rand_bool(low, high, size, use_masked, self._brng, self.lock)
 
         if size is None and dtype in (np.bool, np.int, np.long):
-                if np.array(ret).shape == ():
-                    return dtype(ret)
+            if np.array(ret).shape == ():
+                return dtype(ret)
         return ret
 
     def bytes(self, np.npy_intp length):
@@ -585,7 +582,6 @@ cdef class RandomGenerator:
         """
         cdef Py_ssize_t n_uint32 = ((length - 1) // 4 + 1)
         return self.randint(0, 4294967296, size=n_uint32, dtype=np.uint32).tobytes()[:length]
-
 
     @cython.wraparound(True)
     def choice(self, a, size=None, replace=True, p=None):
@@ -719,7 +715,7 @@ cdef class RandomGenerator:
                 cdf /= cdf[-1]
                 uniform_samples = self.random_sample(shape)
                 idx = cdf.searchsorted(uniform_samples, side='right')
-                idx = np.array(idx, copy=False) # searchsorted returns a scalar
+                idx = np.array(idx, copy=False)  # searchsorted returns a scalar
             else:
                 idx = self.randint(0, pop_size, size=shape)
         else:
@@ -758,7 +754,7 @@ cdef class RandomGenerator:
             # In most cases a scalar will have been made an array
             idx = idx.item(0)
 
-        #Use samples as indices for a if a is array-like
+        # Use samples as indices for a if a is array-like
         if a.ndim == 0:
             return idx
 
@@ -773,7 +769,6 @@ cdef class RandomGenerator:
             return res
 
         return a[idx]
-
 
     def uniform(self, low=0.0, high=1.0, size=None):
         """
@@ -873,8 +868,10 @@ cdef class RandomGenerator:
                         None)
 
         temp = np.subtract(ahigh, alow)
-        Py_INCREF(temp)  # needed to get around Pyrex's automatic reference-counting
-                         # rules because EnsureArray steals a reference
+        # needed to get around Pyrex's automatic reference-counting
+        # rules because EnsureArray steals a reference
+        Py_INCREF(temp)
+
         arange = <np.ndarray>np.PyArray_EnsureArray(temp)
         if not np.all(np.isfinite(arange)):
             raise OverflowError('Range exceeds valid bounds')
@@ -1080,8 +1077,9 @@ cdef class RandomGenerator:
 
         else:
             warnings.warn(("This function is deprecated. Please call "
-                           "randint({low}, {high} + 1) instead".format(
-                    low=low, high=high)), DeprecationWarning)
+                           "randint({low}, {high} + 1)"
+                           "instead".format(low=low, high=high)),
+                          DeprecationWarning)
 
         return self.randint(low, high + 1, size=size, dtype='l')
 
@@ -1156,7 +1154,6 @@ cdef class RandomGenerator:
 
         else:
             raise TypeError('Unsupported dtype "%s" for standard_normal' % key)
-
 
     def normal(self, loc=0.0, scale=1.0, size=None):
         """
@@ -1319,7 +1316,7 @@ cdef class RandomGenerator:
         """
         cdef np.ndarray ogamma, orelation, oloc, randoms, v_real, v_imag, rho
         cdef double *randoms_data
-        cdef double fgamma_r, fgamma_i, frelation_r, frelation_i, frho, fvar_r , fvar_i, \
+        cdef double fgamma_r, fgamma_i, frelation_r, frelation_i, frho, fvar_r, fvar_i, \
             floc_r, floc_i, f_real, f_imag, i_r_scale, r_scale, i_scale, f_rho
         cdef np.npy_intp i, j, n, n2
         cdef np.broadcast it
@@ -1389,7 +1386,7 @@ cdef class RandomGenerator:
         cov = 0.5 * np.imag(orelation)
         rho = np.zeros_like(cov)
         idx = (v_real.flat > 0) & (v_imag.flat > 0)
-        rho.flat[idx] = cov.flat[idx]  / np.sqrt(v_real.flat[idx] * v_imag.flat[idx])
+        rho.flat[idx] = cov.flat[idx] / np.sqrt(v_real.flat[idx] * v_imag.flat[idx])
         if np.any(cov.flat[~idx] != 0) or np.any(np.abs(rho) > 1):
             raise ValueError('Im(relation) ** 2 > Re(gamma ** 2 - relation ** 2)')
 
@@ -1829,8 +1826,8 @@ cdef class RandomGenerator:
 
         Draw samples from a noncentral chi-square distribution.
 
-        The noncentral :math:`\chi^2` distribution is a generalisation of
-        the :math:`\chi^2` distribution.
+        The noncentral :math:`\\chi^2` distribution is a generalisation of
+        the :math:`\\chi^2` distribution.
 
         Parameters
         ----------
@@ -1857,9 +1854,9 @@ cdef class RandomGenerator:
         The probability density function for the noncentral Chi-square
         distribution is
 
-        .. math:: P(x;df,nonc) = \sum^{\infty}_{i=0}
-                               \frac{e^{-nonc/2}(nonc/2)^{i}}{i!}
-                               \P_{Y_{df+2i}}(x),
+        .. math:: P(x;df,nonc) = \\sum^{\\infty}_{i=0}
+                               \\frac{e^{-nonc/2}(nonc/2)^{i}}{i!}
+                               P_{Y_{df+2i}}(x),
 
         where :math:`Y_{q}` is the Chi-square with q degrees of freedom.
 
@@ -2457,7 +2454,7 @@ cdef class RandomGenerator:
         loc : float or array_like of floats, optional
             The position, :math:`\\mu`, of the distribution peak. Default is 0.
         scale : float or array_like of floats, optional
-            :math:`\lambda`, the exponential decay. Default is 1. Must be non-
+            :math:`\\lambda`, the exponential decay. Default is 1. Must be non-
             negative.
         size : int or tuple of ints, optional
             Output shape.  If the given shape is, e.g., ``(m, n, k)``, then
@@ -3202,7 +3199,7 @@ cdef class RandomGenerator:
 
         randoms = <np.ndarray>np.empty(size, np.int64)
         cnt = np.PyArray_SIZE(randoms)
-        randoms_data =  <np.int64_t *>np.PyArray_DATA(randoms)
+        randoms_data = <np.int64_t *>np.PyArray_DATA(randoms)
 
         with self.lock, nogil:
             for i in range(cnt):
@@ -3210,7 +3207,6 @@ cdef class RandomGenerator:
                                                   self._binomial)
 
         return randoms
-
 
     def negative_binomial(self, n, p, size=None):
         """
@@ -3245,12 +3241,12 @@ cdef class RandomGenerator:
         -----
         The probability mass function of the negative binomial distribution is
 
-        .. math:: P(N;n,p) = \frac{\Gamma(N+n)}{N!\Gamma(n)}p^{n}(1-p)^{N},
+        .. math:: P(N;n,p) = \\frac{\\Gamma(N+n)}{N!\\Gamma(n)}p^{n}(1-p)^{N},
 
         where :math:`n` is the number of successes, :math:`p` is the
         probability of success, :math:`N+n` is the number of trials, and
-        :math:`\Gamma` is the gamma function. When :math:`n` is an integer,
-        :math:`\frac{\Gamma(N+n)}{N!\Gamma(n)} = \binom{N+n-1}{N}`, which is
+        :math:`\\Gamma` is the gamma function. When :math:`n` is an integer,
+        :math:`\\frac{\\Gamma(N+n)}{N!\\Gamma(n)} = \\binom{N+n-1}{N}`, which is
         the more common form of this term in the the pmf. The negative
         binomial distribution gives the probability of N failures given n
         successes, with a success on the last trial.
@@ -3284,9 +3280,9 @@ cdef class RandomGenerator:
 
         """
         return disc(&random_negative_binomial, self._brng, size, self.lock, 2, 0,
-                        n, 'n', CONS_POSITIVE,
-                        p, 'p', CONS_BOUNDED_0_1,
-                        0.0, '', CONS_NONE)
+                    n, 'n', CONS_POSITIVE,
+                    p, 'p', CONS_BOUNDED_0_1,
+                    0.0, '', CONS_NONE)
 
     def poisson(self, lam=1.0, size=None):
         """
@@ -3355,9 +3351,9 @@ cdef class RandomGenerator:
 
         """
         return disc(&random_poisson, self._brng, size, self.lock, 1, 0,
-                        lam, 'lam', CONS_POISSON,
-                        0.0, '', CONS_NONE,
-                        0.0, '', CONS_NONE)
+                    lam, 'lam', CONS_POISSON,
+                    0.0, '', CONS_NONE,
+                    0.0, '', CONS_NONE)
 
     def zipf(self, a, size=None):
         """
@@ -3434,9 +3430,9 @@ cdef class RandomGenerator:
 
         """
         return disc(&random_zipf, self._brng, size, self.lock, 1, 0,
-                        a, 'a', CONS_GT_1,
-                        0.0, '', CONS_NONE,
-                        0.0, '', CONS_NONE)
+                    a, 'a', CONS_GT_1,
+                    0.0, '', CONS_NONE,
+                    0.0, '', CONS_NONE)
 
     def geometric(self, p, size=None):
         """
@@ -3485,9 +3481,9 @@ cdef class RandomGenerator:
 
         """
         return disc(&random_geometric, self._brng, size, self.lock, 1, 0,
-                        p, 'p', CONS_BOUNDED_GT_0_1,
-                        0.0, '', CONS_NONE,
-                        0.0, '', CONS_NONE)
+                    p, 'p', CONS_BOUNDED_GT_0_1,
+                    0.0, '', CONS_NONE,
+                    0.0, '', CONS_NONE)
 
     def hypergeometric(self, ngood, nbad, nsample, size=None):
         """
@@ -3601,7 +3597,7 @@ cdef class RandomGenerator:
                         lnbad, 'nbad', CONS_NON_NEGATIVE,
                         lnsample, 'nsample', CONS_GTE_1)
 
-        if np.any(np.less(np.add(ongood, onbad),onsample)):
+        if np.any(np.less(np.add(ongood, onbad), onsample)):
             raise ValueError("ngood + nbad < nsample")
         return discrete_broadcast_iii(&random_hypergeometric, self._brng, size, self.lock,
                                       ongood, 'ngood', CONS_NON_NEGATIVE,
@@ -3804,11 +3800,11 @@ cdef class RandomGenerator:
             shape = size
 
         if len(mean.shape) != 1:
-               raise ValueError("mean must be 1 dimensional")
+            raise ValueError("mean must be 1 dimensional")
         if (len(cov.shape) != 2) or (cov.shape[0] != cov.shape[1]):
-               raise ValueError("cov must be 2 dimensional and square")
+            raise ValueError("cov must be 2 dimensional and square")
         if mean.shape[0] != cov.shape[0]:
-               raise ValueError("mean and cov must have same length")
+            raise ValueError("mean and cov must have same length")
 
         # Compute shape of output and create a matrix of independent
         # standard normally distributed random numbers. The matrix has rows
@@ -4052,39 +4048,36 @@ cdef class RandomGenerator:
 
         """
 
-        #=================
+        # =================
         # Pure python algo
-        #=================
-        #alpha   = N.atleast_1d(alpha)
-        #k       = alpha.size
+        # =================
+        # alpha   = N.atleast_1d(alpha)
+        # k       = alpha.size
 
-        #if n == 1:
-        #    val = N.zeros(k)
-        #    for i in range(k):
-        #        val[i]   = sgamma(alpha[i], n)
-        #    val /= N.sum(val)
-        #else:
-        #    val = N.zeros((k, n))
-        #    for i in range(k):
-        #        val[i]   = sgamma(alpha[i], n)
-        #    val /= N.sum(val, axis = 0)
-        #    val = val.T
+        # if n == 1:
+        #     val = N.zeros(k)
+        #     for i in range(k):
+        #         val[i]   = sgamma(alpha[i], n)
+        #     val /= N.sum(val)
+        # else:
+        #     val = N.zeros((k, n))
+        #     for i in range(k):
+        #         val[i]   = sgamma(alpha[i], n)
+        #     val /= N.sum(val, axis = 0)
+        #     val = val.T
+        # return val
 
-        #return val
+        cdef np.npy_intp k, totsize, i, j
+        cdef np.ndarray alpha_arr, val_arr
+        cdef double *alpha_data
+        cdef double *val_data
+        cdef double acc, invacc
 
-        cdef np.npy_intp   k
-        cdef np.npy_intp   totsize
-        cdef np.ndarray    alpha_arr, val_arr
-        cdef double     *alpha_data
-        cdef double     *val_data
-        cdef np.npy_intp   i, j
-        cdef double     acc, invacc
-
-        k           = len(alpha)
-        alpha_arr   = <np.ndarray>np.PyArray_FROM_OTF(alpha, np.NPY_DOUBLE, np.NPY_ALIGNED)
+        k = len(alpha)
+        alpha_arr = <np.ndarray>np.PyArray_FROM_OTF(alpha, np.NPY_DOUBLE, np.NPY_ALIGNED)
         if np.any(np.less_equal(alpha_arr, 0)):
             raise ValueError('alpha <= 0')
-        alpha_data  = <double*>np.PyArray_DATA(alpha_arr)
+        alpha_data = <double*>np.PyArray_DATA(alpha_arr)
 
         if size is None:
             shape = (k,)
@@ -4094,7 +4087,7 @@ cdef class RandomGenerator:
             except:
                 shape = tuple(size) + (k,)
 
-        diric   = np.zeros(shape, np.float64)
+        diric = np.zeros(shape, np.float64)
         val_arr = <np.ndarray>diric
         val_data= <double*>np.PyArray_DATA(val_arr)
 
@@ -4106,10 +4099,10 @@ cdef class RandomGenerator:
                 for j in range(k):
                     val_data[i+j] = random_standard_gamma_zig(self._brng,
                                                               alpha_data[j])
-                    acc             = acc + val_data[i + j]
-                invacc  = 1/acc
+                    acc = acc + val_data[i + j]
+                invacc = 1/acc
                 for j in range(k):
-                    val_data[i + j]   = val_data[i + j] * invacc
+                    val_data[i + j] = val_data[i + j] * invacc
                 i = i + k
 
         return diric
@@ -4167,7 +4160,7 @@ cdef class RandomGenerator:
             # of bytes for the swaps to avoid leaving one of the objects
             # within the buffer and erroneously decrementing it's refcount
             # when the function exits.
-            buf = np.empty(itemsize, dtype=np.int8) # GC'd at function exit
+            buf = np.empty(itemsize, dtype=np.int8)  # GC'd at function exit
             buf_ptr = <char*><size_t>buf.ctypes.data
             with self.lock:
                 # We trick gcc into providing a specialized implementation for
@@ -4178,11 +4171,13 @@ cdef class RandomGenerator:
                 else:
                     self._shuffle_raw(n, itemsize, stride, x_ptr, buf_ptr)
         elif isinstance(x, np.ndarray) and x.ndim and x.size:
-            buf = np.empty_like(x[0,...])
+            buf = np.empty_like(x[0, ...])
             with self.lock:
                 for i in reversed(range(1, n)):
                     j = random_interval(self._brng, i)
-                    if i == j : continue # i == j is not needed and memcpy is undefined.
+                    if i == j:
+                        # i == j is not needed and memcpy is undefined.
+                        continue
                     buf[...] = x[j]
                     x[j] = x[i]
                     x[i] = buf

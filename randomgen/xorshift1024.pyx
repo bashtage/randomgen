@@ -1,5 +1,3 @@
-from __future__ import absolute_import
-
 try:
     from threading import Lock
 except ImportError:
@@ -22,16 +20,16 @@ np.import_array()
 cdef extern from "src/xorshift1024/xorshift1024.h":
 
     struct s_xorshift1024_state:
-      uint64_t s[16]
-      int p
-      int has_uint32
-      uint32_t uinteger
+        uint64_t s[16]
+        int p
+        int has_uint32
+        uint32_t uinteger
 
     ctypedef s_xorshift1024_state xorshift1024_state
 
     uint64_t xorshift1024_next64(xorshift1024_state *state)  nogil
     uint32_t xorshift1024_next32(xorshift1024_state *state)  nogil
-    void xorshift1024_jump(xorshift1024_state  *state)
+    void xorshift1024_jump(xorshift1024_state *state)
 
 cdef uint64_t xorshift1024_uint64(void* st) nogil:
     return xorshift1024_next64(<xorshift1024_state *>st)
@@ -132,7 +130,7 @@ cdef class Xorshift1024:
            generators." CoRR, abs/1403.0930, 2014.
     """
 
-    cdef xorshift1024_state  *rng_state
+    cdef xorshift1024_state *rng_state
     cdef brng_t *_brng
     cdef public object capsule
     cdef object _ctypes
@@ -234,7 +232,7 @@ cdef class Xorshift1024:
             If seed values are out of range for the PRNG.
 
         """
-        ub =  2 ** 64
+        ub = 2 ** 64
         if seed is None:
             try:
                 state = random_entropy(32)
@@ -290,7 +288,7 @@ cdef class Xorshift1024:
         for i in range(16):
             s[i] = self.rng_state.s[i]
         return {'brng': self.__class__.__name__,
-                'state': {'s':s,'p':self.rng_state.p},
+                'state': {'s': s, 'p': self.rng_state.p},
                 'has_uint32': self.rng_state.has_uint32,
                 'uinteger': self.rng_state.uinteger}
 
@@ -311,12 +309,12 @@ cdef class Xorshift1024:
     @property
     def ctypes(self):
         """
-        Ctypes interface
+        ctypes interface
 
         Returns
         -------
         interface : namedtuple
-            Named tuple containing CFFI wrapper
+            Named tuple containing ctypes wrapper
 
             * state_address - Memory address of the state struct
             * state - pointer to the state struct
@@ -325,24 +323,9 @@ cdef class Xorshift1024:
             * next_double - function pointer to produce doubles
             * brng - pointer to the Basic RNG struct
         """
+        if self._ctypes is None:
+            self._ctypes = prepare_ctypes(self._brng)
 
-        if self._ctypes is not None:
-            return self._ctypes
-
-        import ctypes
-
-        self._ctypes = interface(<uintptr_t>self.rng_state,
-                         ctypes.c_void_p(<uintptr_t>self.rng_state),
-                         ctypes.cast(<uintptr_t>&xorshift1024_uint64,
-                                     ctypes.CFUNCTYPE(ctypes.c_uint64,
-                                     ctypes.c_void_p)),
-                         ctypes.cast(<uintptr_t>&xorshift1024_uint32,
-                                     ctypes.CFUNCTYPE(ctypes.c_uint32,
-                                     ctypes.c_void_p)),
-                         ctypes.cast(<uintptr_t>&xorshift1024_double,
-                                     ctypes.CFUNCTYPE(ctypes.c_double,
-                                     ctypes.c_void_p)),
-                         ctypes.c_void_p(<uintptr_t>self._brng))
         return self._ctypes
 
     @property
@@ -364,18 +347,7 @@ cdef class Xorshift1024:
         """
         if self._cffi is not None:
             return self._cffi
-        try:
-            import cffi
-        except ImportError:
-            raise ImportError('cffi is cannot be imported.')
-
-        ffi = cffi.FFI()
-        self._cffi = interface(<uintptr_t>self.rng_state,
-                         ffi.cast('void *',<uintptr_t>self.rng_state),
-                         ffi.cast('uint64_t (*)(void *)',<uintptr_t>self._brng.next_uint64),
-                         ffi.cast('uint32_t (*)(void *)',<uintptr_t>self._brng.next_uint32),
-                         ffi.cast('double (*)(void *)',<uintptr_t>self._brng.next_double),
-                         ffi.cast('void *',<uintptr_t>self._brng))
+        self._cffi = prepare_cffi(self._brng)
         return self._cffi
 
     @property

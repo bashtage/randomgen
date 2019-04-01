@@ -114,7 +114,7 @@ cdef class RandomState:
         state = self.get_state(legacy=False)
         return (randomgen.pickle.__randomstate_ctor,
                 (state['brng'],),
-                 state)
+                state)
 
     cdef _reset_gauss(self):
         self._aug_state.has_gauss = 0
@@ -360,7 +360,6 @@ cdef class RandomState:
                     b, 'b', CONS_POSITIVE,
                     0.0, '', CONS_NONE, None)
 
-
     def exponential(self, scale=1.0, size=None):
         """
         exponential(scale=1.0, size=None)
@@ -590,31 +589,31 @@ cdef class RandomState:
             low = 0
 
         key = np.dtype(dtype).name
-        if not key in _randint_types:
+        if key not in _randint_types:
             raise TypeError('Unsupported dtype "%s" for randint' % key)
 
         if key == 'int32':
-            ret =  _rand_int32(low, high, size, use_masked, self._brng, self.lock)
+            ret = _rand_int32(low, high, size, use_masked, self._brng, self.lock)
         elif key == 'int64':
-            ret =  _rand_int64(low, high, size, use_masked, self._brng, self.lock)
+            ret = _rand_int64(low, high, size, use_masked, self._brng, self.lock)
         elif key == 'int16':
-            ret =  _rand_int16(low, high, size, use_masked, self._brng, self.lock)
+            ret = _rand_int16(low, high, size, use_masked, self._brng, self.lock)
         elif key == 'int8':
-            ret =  _rand_int8(low, high, size, use_masked, self._brng, self.lock)
+            ret = _rand_int8(low, high, size, use_masked, self._brng, self.lock)
         elif key == 'uint64':
-            ret =  _rand_uint64(low, high, size, use_masked, self._brng, self.lock)
+            ret = _rand_uint64(low, high, size, use_masked, self._brng, self.lock)
         elif key == 'uint32':
-            ret =  _rand_uint32(low, high, size, use_masked, self._brng, self.lock)
+            ret = _rand_uint32(low, high, size, use_masked, self._brng, self.lock)
         elif key == 'uint16':
-            ret =  _rand_uint16(low, high, size, use_masked, self._brng, self.lock)
+            ret = _rand_uint16(low, high, size, use_masked, self._brng, self.lock)
         elif key == 'uint8':
-            ret =  _rand_uint8(low, high, size, use_masked, self._brng, self.lock)
+            ret = _rand_uint8(low, high, size, use_masked, self._brng, self.lock)
         elif key == 'bool':
-            ret =  _rand_bool(low, high, size, use_masked, self._brng, self.lock)
+            ret = _rand_bool(low, high, size, use_masked, self._brng, self.lock)
 
         if size is None and dtype in (np.bool, np.int, np.long):
-                if np.array(ret).shape == ():
-                    return dtype(ret)
+            if np.array(ret).shape == ():
+                return dtype(ret)
         return ret
 
     def bytes(self, np.npy_intp length):
@@ -641,7 +640,6 @@ cdef class RandomState:
         """
         cdef Py_ssize_t n_uint32 = ((length - 1) // 4 + 1)
         return self.randint(0, 4294967296, size=n_uint32, dtype=np.uint32).tobytes()[:length]
-
 
     @cython.wraparound(True)
     def choice(self, a, size=None, replace=True, p=None):
@@ -775,7 +773,7 @@ cdef class RandomState:
                 cdf /= cdf[-1]
                 uniform_samples = self.random_sample(shape)
                 idx = cdf.searchsorted(uniform_samples, side='right')
-                idx = np.array(idx, copy=False) # searchsorted returns a scalar
+                idx = np.array(idx, copy=False)  # searchsorted returns a scalar
             else:
                 idx = self.randint(0, pop_size, size=shape)
         else:
@@ -814,7 +812,7 @@ cdef class RandomState:
             # In most cases a scalar will have been made an array
             idx = idx.item(0)
 
-        #Use samples as indices for a if a is array-like
+        # Use samples as indices for a if a is array-like
         if a.ndim == 0:
             return idx
 
@@ -829,7 +827,6 @@ cdef class RandomState:
             return res
 
         return a[idx]
-
 
     def uniform(self, low=0.0, high=1.0, size=None):
         """
@@ -930,8 +927,9 @@ cdef class RandomState:
                         None)
 
         temp = np.subtract(ahigh, alow)
-        Py_INCREF(temp)  # needed to get around Pyrex's automatic reference-counting
-                         # rules because EnsureArray steals a reference
+        Py_INCREF(temp)
+        # needed to get around Pyrex's automatic reference-counting
+        # rules because EnsureArray steals a reference
         arange = <np.ndarray>np.PyArray_EnsureArray(temp)
         if not np.all(np.isfinite(arange)):
             raise OverflowError('Range exceeds valid bounds')
@@ -1132,8 +1130,9 @@ cdef class RandomState:
 
         else:
             warnings.warn(("This function is deprecated. Please call "
-                           "randint({low}, {high} + 1) instead".format(
-                    low=low, high=high)), DeprecationWarning)
+                           "randint({low}, {high} + 1) "
+                           "instead".format(low=low, high=high)),
+                          DeprecationWarning)
 
         return self.randint(low, high + 1, size=size, dtype='l')
 
@@ -1722,7 +1721,7 @@ cdef class RandomState:
 
         .. math:: P(x;df,nonc) = \\sum^{\\infty}_{i=0}
                                \\frac{e^{-nonc/2}(nonc/2)^{i}}{i!}
-                               \\P_{Y_{df+2i}}(x),
+                               P_{Y_{df+2i}}(x),
 
         where :math:`Y_{q}` is the Chi-square with q degrees of freedom.
 
@@ -3065,7 +3064,7 @@ cdef class RandomState:
 
         randoms = <np.ndarray>np.empty(size, np.int64)
         cnt = np.PyArray_SIZE(randoms)
-        randoms_data =  <np.int64_t *>np.PyArray_DATA(randoms)
+        randoms_data = <np.int64_t *>np.PyArray_DATA(randoms)
 
         with self.lock, nogil:
             for i in range(cnt):
@@ -3073,7 +3072,6 @@ cdef class RandomState:
                                                   self._binomial)
 
         return randoms
-
 
     def negative_binomial(self, n, p, size=None):
         """
@@ -3108,12 +3106,12 @@ cdef class RandomState:
         -----
         The probability mass function of the negative binomial distribution is
 
-        .. math:: P(N;n,p) = \\frac{\Gamma(N+n)}{N!\Gamma(n)}p^{n}(1-p)^{N},
+        .. math:: P(N;n,p) = \\frac{\\Gamma(N+n)}{N!\\Gamma(n)}p^{n}(1-p)^{N},
 
         where :math:`n` is the number of successes, :math:`p` is the
         probability of success, :math:`N+n` is the number of trials, and
-        :math:`\Gamma` is the gamma function. When :math:`n` is an integer,
-        :math:`\\frac{\Gamma(N+n)}{N!\Gamma(n)} = \\binom{N+n-1}{N}`, which is
+        :math:`\\Gamma` is the gamma function. When :math:`n` is an integer,
+        :math:`\\frac{\\Gamma(N+n)}{N!\\Gamma(n)} = \\binom{N+n-1}{N}`, which is
         the more common form of this term in the the pmf. The negative
         binomial distribution gives the probability of N failures given n
         successes, with a success on the last trial.
@@ -3147,9 +3145,9 @@ cdef class RandomState:
 
         """
         return disc(&legacy_negative_binomial, self._aug_state, size, self.lock, 2, 0,
-                        n, 'n', CONS_POSITIVE,
-                        p, 'p', CONS_BOUNDED_0_1,
-                        0.0, '', CONS_NONE)
+                    n, 'n', CONS_POSITIVE,
+                    p, 'p', CONS_BOUNDED_0_1,
+                    0.0, '', CONS_NONE)
 
     def poisson(self, lam=1.0, size=None):
         """
@@ -3218,9 +3216,9 @@ cdef class RandomState:
 
         """
         return disc(&random_poisson, self._brng, size, self.lock, 1, 0,
-                        lam, 'lam', CONS_POISSON,
-                        0.0, '', CONS_NONE,
-                        0.0, '', CONS_NONE)
+                    lam, 'lam', CONS_POISSON,
+                    0.0, '', CONS_NONE,
+                    0.0, '', CONS_NONE)
 
     def zipf(self, a, size=None):
         """
@@ -3297,9 +3295,9 @@ cdef class RandomState:
 
         """
         return disc(&random_zipf, self._brng, size, self.lock, 1, 0,
-                        a, 'a', CONS_GT_1,
-                        0.0, '', CONS_NONE,
-                        0.0, '', CONS_NONE)
+                    a, 'a', CONS_GT_1,
+                    0.0, '', CONS_NONE,
+                    0.0, '', CONS_NONE)
 
     def geometric(self, p, size=None):
         """
@@ -3348,9 +3346,9 @@ cdef class RandomState:
 
         """
         return disc(&random_geometric, self._brng, size, self.lock, 1, 0,
-                        p, 'p', CONS_BOUNDED_GT_0_1,
-                        0.0, '', CONS_NONE,
-                        0.0, '', CONS_NONE)
+                    p, 'p', CONS_BOUNDED_GT_0_1,
+                    0.0, '', CONS_NONE,
+                    0.0, '', CONS_NONE)
 
     def hypergeometric(self, ngood, nbad, nsample, size=None):
         """
@@ -3464,7 +3462,7 @@ cdef class RandomState:
                         lnbad, 'nbad', CONS_NON_NEGATIVE,
                         lnsample, 'nsample', CONS_GTE_1)
 
-        if np.any(np.less(np.add(ongood, onbad),onsample)):
+        if np.any(np.less(np.add(ongood, onbad), onsample)):
             raise ValueError("ngood + nbad < nsample")
         return discrete_broadcast_iii(&random_hypergeometric, self._brng, size, self.lock,
                                       ongood, 'ngood', CONS_NON_NEGATIVE,
@@ -3667,11 +3665,11 @@ cdef class RandomState:
             shape = size
 
         if len(mean.shape) != 1:
-               raise ValueError("mean must be 1 dimensional")
+            raise ValueError("mean must be 1 dimensional")
         if (len(cov.shape) != 2) or (cov.shape[0] != cov.shape[1]):
-               raise ValueError("cov must be 2 dimensional and square")
+            raise ValueError("cov must be 2 dimensional and square")
         if mean.shape[0] != cov.shape[0]:
-               raise ValueError("mean and cov must have same length")
+            raise ValueError("mean and cov must have same length")
 
         # Compute shape of output and create a matrix of independent
         # standard normally distributed random numbers. The matrix has rows
@@ -3917,39 +3915,36 @@ cdef class RandomState:
 
         """
 
-        #=================
+        # =================
         # Pure python algo
-        #=================
-        #alpha   = N.atleast_1d(alpha)
-        #k       = alpha.size
+        # =================
+        # alpha   = N.atleast_1d(alpha)
+        # k       = alpha.size
 
-        #if n == 1:
-        #    val = N.zeros(k)
-        #    for i in range(k):
-        #        val[i]   = sgamma(alpha[i], n)
-        #    val /= N.sum(val)
-        #else:
-        #    val = N.zeros((k, n))
-        #    for i in range(k):
-        #        val[i]   = sgamma(alpha[i], n)
-        #    val /= N.sum(val, axis = 0)
-        #    val = val.T
+        # if n == 1:
+        #     val = N.zeros(k)
+        #     for i in range(k):
+        #         val[i]   = sgamma(alpha[i], n)
+        #     val /= N.sum(val)
+        # else:
+        #     val = N.zeros((k, n))
+        #     for i in range(k):
+        #         val[i]   = sgamma(alpha[i], n)
+        #     val /= N.sum(val, axis = 0)
+        #     val = val.T
+        # return val
 
-        #return val
+        cdef np.npy_intp k, totsize, i, j
+        cdef np.ndarray alpha_arr, val_arr
+        cdef double *alpha_data
+        cdef double *val_data
+        cdef double  acc, invacc
 
-        cdef np.npy_intp   k
-        cdef np.npy_intp   totsize
-        cdef np.ndarray    alpha_arr, val_arr
-        cdef double     *alpha_data
-        cdef double     *val_data
-        cdef np.npy_intp   i, j
-        cdef double     acc, invacc
-
-        k           = len(alpha)
-        alpha_arr   = <np.ndarray>np.PyArray_FROM_OTF(alpha, np.NPY_DOUBLE, np.NPY_ALIGNED)
+        k = len(alpha)
+        alpha_arr = <np.ndarray>np.PyArray_FROM_OTF(alpha, np.NPY_DOUBLE, np.NPY_ALIGNED)
         if np.any(np.less_equal(alpha_arr, 0)):
             raise ValueError('alpha <= 0')
-        alpha_data  = <double*>np.PyArray_DATA(alpha_arr)
+        alpha_data = <double*>np.PyArray_DATA(alpha_arr)
 
         if size is None:
             shape = (k,)
@@ -3959,9 +3954,9 @@ cdef class RandomState:
             except:
                 shape = tuple(size) + (k,)
 
-        diric   = np.zeros(shape, np.float64)
+        diric = np.zeros(shape, np.float64)
         val_arr = <np.ndarray>diric
-        val_data= <double*>np.PyArray_DATA(val_arr)
+        val_data = <double*>np.PyArray_DATA(val_arr)
 
         i = 0
         totsize = np.PyArray_SIZE(val_arr)
@@ -3971,10 +3966,10 @@ cdef class RandomState:
                 for j in range(k):
                     val_data[i+j] = legacy_standard_gamma(self._aug_state,
                                                           alpha_data[j])
-                    acc             = acc + val_data[i + j]
-                invacc  = 1/acc
+                    acc = acc + val_data[i + j]
+                invacc = 1/acc
                 for j in range(k):
-                    val_data[i + j]   = val_data[i + j] * invacc
+                    val_data[i + j] = val_data[i + j] * invacc
                 i = i + k
 
         return diric
@@ -4032,7 +4027,7 @@ cdef class RandomState:
             # of bytes for the swaps to avoid leaving one of the objects
             # within the buffer and erroneously decrementing it's refcount
             # when the function exits.
-            buf = np.empty(itemsize, dtype=np.int8) # GC'd at function exit
+            buf = np.empty(itemsize, dtype=np.int8)  # GC'd at function exit
             buf_ptr = <char*><size_t>buf.ctypes.data
             with self.lock:
                 # We trick gcc into providing a specialized implementation for
@@ -4043,11 +4038,12 @@ cdef class RandomState:
                 else:
                     self._shuffle_raw(n, itemsize, stride, x_ptr, buf_ptr)
         elif isinstance(x, np.ndarray) and x.ndim and x.size:
-            buf = np.empty_like(x[0,...])
+            buf = np.empty_like(x[0, ...])
             with self.lock:
                 for i in reversed(range(1, n)):
                     j = random_interval(self._brng, i)
-                    if i == j : continue # i == j is not needed and memcpy is undefined.
+                    if i == j:
+                        continue  # i == j is not needed and memcpy is undefined.
                     buf[...] = x[j]
                     x[j] = x[i]
                     x[i] = buf
