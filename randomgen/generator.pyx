@@ -145,6 +145,7 @@ cdef class RandomGenerator:
 
         >>> rg = RandomGenerator(PCG64(1234567891011))
         >>> rg.seed(1110987654321)
+
         """
         # TODO: Should this remain
         self._basicrng.seed(*args, **kwargs)
@@ -165,6 +166,7 @@ cdef class RandomGenerator:
         -----
         This is a trivial pass-through function.  RandomGenerator does not
         directly contain or manipulate the basic RNG's state.
+
         """
         return self._basicrng.state
 
@@ -220,6 +222,7 @@ cdef class RandomGenerator:
         array([[-3.99149989, -0.52338984], # random
                [-2.99091858, -0.79479508],
                [-1.23204345, -1.75224494]])
+
         """
         cdef double temp
         key = np.dtype(dtype).name
@@ -362,6 +365,7 @@ cdef class RandomGenerator:
         Output a 3x8000 array:
 
         >>> n = randomgen.generator.standard_exponential((3, 8000))
+
         """
         key = np.dtype(dtype).name
         if key == 'float64':
@@ -495,36 +499,37 @@ cdef class RandomGenerator:
         Examples
         --------
         >>> randomgen.generator.randint(2, size=10)
-        array([1, 0, 0, 0, 1, 1, 0, 0, 1, 0]) # random
+        array([1, 0, 0, 0, 1, 1, 0, 0, 1, 0])  # random
         >>> randomgen.generator.randint(1, size=10)
         array([0, 0, 0, 0, 0, 0, 0, 0, 0, 0])
 
         Generate a 2 x 4 array of ints between 0 and 4, inclusive:
 
         >>> randomgen.generator.randint(5, size=(2, 4))
-        array([[4, 0, 2, 1], # random
-               [3, 2, 2, 0]])
+        array([[4, 0, 2, 1],
+               [3, 2, 2, 0]])  # random
 
         Generate a 1 x 3 array with 3 different upper bounds
 
         >>> randomgen.generator.randint(1, [3, 5, 10])
-        array([2, 2, 9])
+        array([2, 2, 9])  # random
 
         Generate a 1 by 3 array with 3 different lower bounds
 
         >>> randomgen.generator.randint([1, 5, 7], 10)
-        array([9, 8, 7])
+        array([9, 8, 7])  # random
 
         Generate a 2 by 4 array using broadcasting with dtype of uint8
 
         >>> randomgen.generator.randint([1, 3, 5, 7], [[10], [20]], dtype=np.uint8)
         array([[ 8,  6,  9,  7],
-               [ 1, 16,  9, 12]], dtype=uint8)
+               [ 1, 16,  9, 12]], dtype=uint8)  # random
 
         References
         ----------
         .. [1] Daniel Lemire., "Fast Random Integer Generation in an Interval",
                CoRR, Aug. 13, 2018, http://arxiv.org/abs/1805.10941.
+
         """
         if high is None:
             high = low
@@ -845,6 +850,7 @@ cdef class RandomGenerator:
         >>> count, bins, ignored = plt.hist(s, 15, density=True)
         >>> plt.plot(bins, np.ones_like(bins), linewidth=2, color='r')
         >>> plt.show()
+
         """
         cdef bint is_scalar = True
         cdef np.ndarray alow, ahigh, arange
@@ -922,6 +928,7 @@ cdef class RandomGenerator:
         array([[ 0.14022471,  0.96360618],  #random
                [ 0.37601032,  0.25528411],  #random
                [ 0.49313049,  0.94909878]]) #random
+
         """
         if len(args) == 0:
             return self.random_sample(dtype=dtype)
@@ -984,6 +991,7 @@ cdef class RandomGenerator:
         >>> 3 + 2.5 * randomgen.generator.randn(2, 4)
         array([[-4.49401501,  4.00950034, -1.81814867,  7.29718677],   # random
                [ 0.39924804,  4.68456316,  4.99394529,  4.84057254]])  # random
+
         """
         if len(args) == 0:
             return self.standard_normal(dtype=dtype)
@@ -1313,6 +1321,7 @@ cdef class RandomGenerator:
         Draw samples from the distribution:
 
         >>> s = randomgen.generator.complex_normal(size=1000)
+
         """
         cdef np.ndarray ogamma, orelation, oloc, randoms, v_real, v_imag, rho
         cdef double *randoms_data
@@ -1493,6 +1502,7 @@ cdef class RandomGenerator:
         ...                       (sps.gamma(shape) * scale**shape))
         >>> plt.plot(bins, y, linewidth=2, color='r')
         >>> plt.show()
+
         """
         cdef void *func
         key = np.dtype(dtype).name
@@ -3149,6 +3159,7 @@ cdef class RandomGenerator:
 
         >>> sum(randomgen.generator.binomial(9, 0.1, 20000) == 0)/20000.
         # answer = 0.38885, or 38%.
+
         """
 
         # Uses a custom implementation since self._binomial is required
@@ -3674,7 +3685,7 @@ cdef class RandomGenerator:
 
         >>> def logseries(k, p):
         ...     return -p**k/(k*np.log(1-p))
-        >>> plt.plot(bins, logseries(bins, a)*count.max()/
+        >>> plt.plot(bins, logseries(bins, a) * count.max()/
         ...          logseries(bins, a).max(), 'r')
         >>> plt.show()
 
@@ -3891,15 +3902,15 @@ cdef class RandomGenerator:
         Throw a dice 20 times:
 
         >>> randomgen.generator.multinomial(20, [1/6.]*6, size=1)
-        array([[4, 1, 7, 5, 2, 1]]) # random
+        array([[4, 1, 7, 5, 2, 1]])  # random
 
         It landed 4 times on 1, once on 2, etc.
 
         Now, throw the dice 20 times, and 20 times again:
 
         >>> randomgen.generator.multinomial(20, [1/6.]*6, size=2)
-        array([[3, 4, 3, 3, 4, 3], # random
-               [2, 4, 3, 4, 0, 7]])
+        array([[3, 4, 3, 3, 4, 3],
+               [2, 4, 3, 4, 0, 7]])  # random
 
         For the first run, we threw 3 times 1, 4 times 2, etc.  For the second,
         we threw 2 times 1, 4 times 2, etc.
@@ -3907,7 +3918,7 @@ cdef class RandomGenerator:
         A loaded die is more likely to land on number 6:
 
         >>> randomgen.generator.multinomial(100, [1/7.]*5 + [2/7.])
-        array([11, 16, 14, 17, 16, 26]) # random
+        array([11, 16, 14, 17, 16, 26])  # random
 
         The probability inputs should be normalized. As an implementation
         detail, the value of the last entry is ignored and assumed to take
@@ -3916,7 +3927,7 @@ cdef class RandomGenerator:
         other should be sampled like so:
 
         >>> randomgen.generator.multinomial(100, [1.0 / 3, 2.0 / 3])  # RIGHT
-        array([38, 62]) # random
+        array([38, 62])  # random
 
         not like:
 
@@ -4003,7 +4014,6 @@ cdef class RandomGenerator:
 
         Notes
         -----
-
         The Dirichlet distribution is a distribution over vectors
         :math:`x` that fulfil the conditions :math:`x_i>0` and
         :math:`\\sum_{i=1}^k x_i = 1`.

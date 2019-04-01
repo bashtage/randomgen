@@ -1,4 +1,3 @@
-import collections.abc
 import os
 import sys
 from os.path import join
@@ -35,7 +34,7 @@ pwd = os.path.dirname(os.path.abspath(__file__))
 
 def assert_state_equal(actual, target):
     for key in actual:
-        if isinstance(actual[key], collections.abc.Mapping):
+        if isinstance(actual[key], dict):
             assert_state_equal(actual[key], target[key])
         elif isinstance(actual[key], np.ndarray):
             assert_array_equal(actual[key], target[key])

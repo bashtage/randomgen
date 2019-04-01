@@ -5,8 +5,7 @@ from numpy.testing import (
 from numpy.compat import long
 import numpy as np
 
-import randomgen.mtrand
-random = randomgen.mtrand
+import randomgen.mtrand as random
 
 
 class TestRegression(object):

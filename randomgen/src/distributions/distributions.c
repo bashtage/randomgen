@@ -41,7 +41,7 @@ void random_double_fill(brng_t *brng_state, npy_intp cnt, double *out) {
     out[i] = next_double(brng_state);
   }
 }
-/*
+#if 0
 double random_gauss(brng_t *brng_state) {
   if (brng_state->has_gauss) {
     const double temp = brng_state->gauss;
@@ -57,9 +57,9 @@ double random_gauss(brng_t *brng_state) {
       r2 = x1 * x1 + x2 * x2;
     } while (r2 >= 1.0 || r2 == 0.0);
 
-    /* Polar method, a more efficient version of the Box-Muller approach.
+    /* Polar method, a more efficient version of the Box-Muller approach. */
     f = sqrt(-2.0 * log(r2) / r2);
-    /* Keep for next call
+    /* Keep for next call */
     brng_state->gauss = f * x1;
     brng_state->has_gauss = true;
     return f * x2;
@@ -81,15 +81,15 @@ float random_gauss_f(brng_t *brng_state) {
       r2 = x1 * x1 + x2 * x2;
     } while (r2 >= 1.0 || r2 == 0.0);
 
-    /* Polar method, a more efficient version of the Box-Muller approach.
+    /* Polar method, a more efficient version of the Box-Muller approach. */
     f = sqrtf(-2.0f * logf(r2) / r2);
-    /* Keep for next call
+    /* Keep for next call */
     brng_state->gauss_f = f * x1;
     brng_state->has_gauss_f = true;
     return f * x2;
   }
 }
-*/
+#endif
 
 static NPY_INLINE double standard_exponential_zig(brng_t *brng_state);
 

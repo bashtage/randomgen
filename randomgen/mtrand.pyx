@@ -4,8 +4,7 @@ import operator
 import warnings
 from collections.abc import Mapping
 from cpython.pycapsule cimport PyCapsule_IsValid, PyCapsule_GetPointer
-from cpython cimport (Py_INCREF, PyComplex_RealAsDouble,
-    PyComplex_ImagAsDouble, PyComplex_FromDoubles, PyFloat_AsDouble)
+from cpython cimport (Py_INCREF, PyFloat_AsDouble)
 from libc cimport string
 from libc.stdlib cimport malloc, free
 cimport numpy as np
@@ -136,8 +135,8 @@ cdef class RandomState:
         The best method to access seed is to directly use a basic RNG instance.
         This example demonstrates this best practice.
 
-        >>> from randomgen import MT19937
-        >>> from randomgen.mtrand import RandomState
+        >>> from np.random.randomgen import MT19937
+        >>> from np.random import RandomState
         >>> brng = MT19937(123456789)
         >>> rs = RandomState(brng)
         >>> brng.seed(987654321)
@@ -475,8 +474,8 @@ cdef class RandomState:
 
         Examples
         --------
-        >>> rg = randomgen.RandomGenerator() # need a RandomGenerator object
-        >>> rg.tomaxint((2,2,2))
+        >>> rs = np.random.RandomState() # need a RandomGenerator object
+        >>> rs.tomaxint((2,2,2))
         array([[[1170048599, 1600360186], # random
                 [ 739731006, 1947757578]],
                [[1871712945,  752307660],
@@ -484,7 +483,7 @@ cdef class RandomState:
         >>> import sys
         >>> sys.maxint
         2147483647
-        >>> rg.tomaxint((2,2,2)) < sys.maxint
+        >>> rs.tomaxint((2,2,2)) < sys.maxint
         array([[[ True,  True],
                 [ True,  True]],
                [[ True,  True],
