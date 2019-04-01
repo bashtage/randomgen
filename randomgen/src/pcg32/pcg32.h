@@ -1,3 +1,5 @@
+#ifndef _RANDOMDGEN__PCG32_H_
+#define _RANDOMDGEN__PCG32_H_
 
 #ifdef _WIN32
 #ifndef _INTTYPES
@@ -83,3 +85,5 @@ static inline double pcg32_next_double(pcg32_state *state) {
 
 void pcg32_advance_state(pcg32_state *state, uint64_t step);
 void pcg32_set_seed(pcg32_state *state, uint64_t seed, uint64_t inc);
+
+#endif

@@ -212,8 +212,6 @@ typedef pcg_state_setseq_128 pcg64_random_t;
 }
 #endif
 
-#endif /* PCG64_H_INCLUDED */
-
 typedef struct s_pcg64_state {
   pcg64_random_t *pcg_state;
   int has_uint32;
@@ -239,3 +237,5 @@ static inline uint32_t pcg64_next32(pcg64_state *state) {
 void pcg64_advance(pcg64_state *state, uint64_t *step);
 
 void pcg64_set_seed(pcg64_state *state, uint64_t *seed, uint64_t *inc);
+
+#endif /* PCG64_H_INCLUDED */

@@ -39,7 +39,7 @@ def print_legend(legend):
     print('\n' + legend + '\n' + '*' * max(60, len(legend)))
 
 
-def run_timer(dist, command, numpy_command=None, setup='', random_type=''):
+def run_timer(command, numpy_command=None, setup='', random_type=''):
     print('-' * 80)
     if numpy_command is None:
         numpy_command = command
@@ -70,18 +70,16 @@ def run_timer(dist, command, numpy_command=None, setup='', random_type=''):
 
 
 def timer_raw():
-    dist = 'random_raw'
-    command = 'rg.random_raw(size=1000000, output=False)'
+    command = 'rg._basicrng.random_raw(size=1000000, output=False)'
     info = np.iinfo(np.int32)
     command_numpy = 'rg.random_integers({max},size=1000000)'
     command_numpy = command_numpy.format(max=info.max)
-    run_timer(dist, command, command_numpy, SETUP, 'Raw Values')
+    run_timer(command, command_numpy, SETUP, 'Raw Values')
 
 
 def timer_uniform():
-    dist = 'random_sample'
     command = 'rg.random_sample(1000000)'
-    run_timer(dist, command, None, SETUP, 'Uniforms')
+    run_timer(command, None, SETUP, 'Uniforms')
 
 
 def timer_bounded(bits=8, max=95, use_masked=True):
@@ -108,8 +106,6 @@ def timer_bounded(bits=8, max=95, use_masked=True):
         raise ValueError('bits must be one of 8, 16, 32, 64.')
     minimum = 0
 
-    dist = 'random_uintegers'
-
     if use_masked:  # Use masking & rejection.
         command = 'rg.randint({min}, {max}+1, 1000000, dtype=np.uint{bits}, use_masked=True)'
     else:  # Use Lemire's algo.
@@ -120,7 +116,7 @@ def timer_bounded(bits=8, max=95, use_masked=True):
     command_numpy = 'rg.randint({min}, {max}+1, 1000000, dtype=np.uint{bits})'
     command_numpy = command_numpy.format(min=minimum, max=max, bits=bits)
 
-    run_timer(dist, command, command_numpy, SETUP,
+    run_timer(command, command_numpy, SETUP,
               '{bits}-bit bounded unsigned integers (max={max}, '
               'use_masked={use_masked})'.format(max=max, use_masked=use_masked, bits=bits))
 
@@ -128,29 +124,25 @@ def timer_bounded(bits=8, max=95, use_masked=True):
 def timer_32bit():
     info = np.iinfo(np.uint32)
     minimum, maximum = info.min, info.max
-    dist = 'random_uintegers'
-    command = 'rg.random_uintegers(1000000, 32)'
+    command = 'rg.randint(2**32, size=1000000, dtype=\'uint32\')'
     command_numpy = 'rg.randint({min}, {max}+1, 1000000, dtype=np.uint32)'
     command_numpy = command_numpy.format(min=minimum, max=maximum)
-    run_timer(dist, command, command_numpy, SETUP, '32-bit unsigned integers')
+    run_timer(command, command_numpy, SETUP, '32-bit unsigned integers')
 
 
 def timer_64bit():
     info = np.iinfo(np.uint64)
     minimum, maximum = info.min, info.max
-    dist = 'random_uintegers'
-    command = 'rg.random_uintegers(1000000)'
+    command = 'rg.randint(2**64, size=1000000, dtype=\'uint64\')'
     command_numpy = 'rg.randint({min}, {max}+1, 1000000, dtype=np.uint64)'
     command_numpy = command_numpy.format(min=minimum, max=maximum)
-    run_timer(dist, command, command_numpy, SETUP, '64-bit unsigned integers')
+    run_timer(command, command_numpy, SETUP, '64-bit unsigned integers')
 
 
 def timer_normal_zig():
-    dist = 'standard_normal'
     command = 'rg.standard_normal(1000000)'
     command_numpy = 'rg.standard_normal(1000000)'
-    run_timer(dist, command, command_numpy, SETUP,
-              'Standard normals (Ziggurat)')
+    run_timer(command, command_numpy, SETUP, 'Standard normals (Ziggurat)')
 
 
 if __name__ == '__main__':
