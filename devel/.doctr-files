@@ -116,7 +116,6 @@ devel/_sources/generated/randomgen.generator.RandomGenerator.randint.rst.txt
 devel/_sources/generated/randomgen.generator.RandomGenerator.randn.rst.txt
 devel/_sources/generated/randomgen.generator.RandomGenerator.random_integers.rst.txt
 devel/_sources/generated/randomgen.generator.RandomGenerator.random_sample.rst.txt
-devel/_sources/generated/randomgen.generator.RandomGenerator.random_uintegers.rst.txt
 devel/_sources/generated/randomgen.generator.RandomGenerator.rayleigh.rst.txt
 devel/_sources/generated/randomgen.generator.RandomGenerator.seed.rst.txt
 devel/_sources/generated/randomgen.generator.RandomGenerator.shuffle.rst.txt
@@ -164,7 +163,6 @@ devel/_sources/generated/randomgen.legacy.legacy.LegacyGenerator.randint.rst.txt
 devel/_sources/generated/randomgen.legacy.legacy.LegacyGenerator.randn.rst.txt
 devel/_sources/generated/randomgen.legacy.legacy.LegacyGenerator.random_integers.rst.txt
 devel/_sources/generated/randomgen.legacy.legacy.LegacyGenerator.random_sample.rst.txt
-devel/_sources/generated/randomgen.legacy.legacy.LegacyGenerator.random_uintegers.rst.txt
 devel/_sources/generated/randomgen.legacy.legacy.LegacyGenerator.rayleigh.rst.txt
 devel/_sources/generated/randomgen.legacy.legacy.LegacyGenerator.shuffle.rst.txt
 devel/_sources/generated/randomgen.legacy.legacy.LegacyGenerator.standard_cauchy.rst.txt
@@ -405,7 +403,6 @@ devel/generated/randomgen.generator.RandomGenerator.randint.html
 devel/generated/randomgen.generator.RandomGenerator.randn.html
 devel/generated/randomgen.generator.RandomGenerator.random_integers.html
 devel/generated/randomgen.generator.RandomGenerator.random_sample.html
-devel/generated/randomgen.generator.RandomGenerator.random_uintegers.html
 devel/generated/randomgen.generator.RandomGenerator.rayleigh.html
 devel/generated/randomgen.generator.RandomGenerator.seed.html
 devel/generated/randomgen.generator.RandomGenerator.shuffle.html
@@ -453,7 +450,6 @@ devel/generated/randomgen.legacy.legacy.LegacyGenerator.randint.html
 devel/generated/randomgen.legacy.legacy.LegacyGenerator.randn.html
 devel/generated/randomgen.legacy.legacy.LegacyGenerator.random_integers.html
 devel/generated/randomgen.legacy.legacy.LegacyGenerator.random_sample.html
-devel/generated/randomgen.legacy.legacy.LegacyGenerator.random_uintegers.html
 devel/generated/randomgen.legacy.legacy.LegacyGenerator.rayleigh.html
 devel/generated/randomgen.legacy.legacy.LegacyGenerator.shuffle.html
 devel/generated/randomgen.legacy.legacy.LegacyGenerator.standard_cauchy.html
