@@ -171,9 +171,20 @@ class Base(object):
         uints = brng.random_raw(1000)
         assert_equal(uints, self.data1['data'])
 
+        brng = self.brng(*self.data1['seed'])
+        uints = brng.random_raw()
+        assert_equal(uints, self.data1['data'][0])
+
         brng = self.brng(*self.data2['seed'])
         uints = brng.random_raw(1000)
         assert_equal(uints, self.data2['data'])
+
+    def test_random_raw(self):
+        brng = self.brng(*self.data1['seed'])
+        uints = brng.random_raw(output=False)
+        assert uints is None
+        uints = brng.random_raw(1000, output=False)
+        assert uints is None
 
     @pytest.mark.skip(reason='Polar transform no longer supported')
     def test_gauss_inv(self):
@@ -317,6 +328,12 @@ class Base(object):
         other_ctypes_interface = brng.ctypes
         assert other_ctypes_interface is ctypes_interface
 
+    def test_getstate(self):
+        brng = self.brng(*self.data1['seed'])
+        state = brng.state
+        alt_state = brng.__getstate__()
+        assert_state_equal(state, alt_state)
+
 
 class TestXoroshiro128(Base):
     @classmethod
@@ -390,7 +407,8 @@ class TestThreeFry(Base):
             join(pwd, './data/threefry-testset-2.csv'))
         cls.seed_error_type = TypeError
         cls.invalid_seed_types = []
-        cls.invalid_seed_values = [(1, None, 1), (-1,), (2 ** 257 + 1,)]
+        cls.invalid_seed_values = [(1, None, 1), (-1,), (2 ** 257 + 1,),
+                                   (None, None, 2 ** 257 + 1)]
 
     def test_set_key(self):
         brng = self.brng(*self.data1['seed'])
@@ -442,7 +460,8 @@ class TestPhilox(Base):
             join(pwd, './data/philox-testset-2.csv'))
         cls.seed_error_type = TypeError
         cls.invalid_seed_types = []
-        cls.invalid_seed_values = [(1, None, 1), (-1,), (2 ** 257 + 1,)]
+        cls.invalid_seed_values = [(1, None, 1), (-1,), (2 ** 257 + 1,),
+                                   (None, None, 2 ** 257 + 1)]
 
     def test_set_key(self):
         brng = self.brng(*self.data1['seed'])
@@ -597,7 +616,8 @@ class TestThreeFry32(Base):
         cls.data2 = cls._read_csv(join(pwd, './data/threefry32-testset-2.csv'))
         cls.seed_error_type = TypeError
         cls.invalid_seed_types = []
-        cls.invalid_seed_values = [(1, None, 1), (-1,), (2 ** 257 + 1,)]
+        cls.invalid_seed_values = [(1, None, 1), (-1,), (2 ** 257 + 1,),
+                                   (None, None, 2 ** 129 + 1)]
 
     def test_set_key(self):
         brng = self.brng(*self.data1['seed'])

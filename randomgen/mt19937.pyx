@@ -294,7 +294,6 @@ cdef class MT19937:
             value ={'brng': 'MT19937',
                     'state':{'key': value[1], 'pos': value[2]}}
 
-
         if not isinstance(value, dict):
             raise TypeError('state must be a dict')
         brng = value.get('brng', '')

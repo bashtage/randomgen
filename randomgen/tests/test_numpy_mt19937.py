@@ -11,10 +11,8 @@ from numpy.testing import (
 
 from randomgen._testing import suppress_warnings
 from randomgen import RandomGenerator, MT19937
-from randomgen.legacy import LegacyGenerator
 
 random = mt19937 = RandomGenerator(MT19937())
-legacy = LegacyGenerator(MT19937())
 
 
 class TestSeed(object):
@@ -127,31 +125,6 @@ class TestSetState(object):
         self.brng.state = state
         new = self.brng.standard_normal(size=3)
         assert_(np.all(old == new))
-
-    def test_backwards_compat_set_state(self):
-        # Make sure we can accept old state tuples that do not have the
-        # cached Gaussian value.
-        old_state = self.legacy_state
-        legacy.state = old_state
-        x1 = legacy.standard_normal(size=16)
-        legacy.state = old_state
-        x2 = legacy.standard_normal(size=16)
-        legacy.state = old_state + (0, 0.0)
-        x3 = legacy.standard_normal(size=16)
-        legacy.set_state(old_state + (0, 0.0))
-        x4 = legacy.standard_normal(size=16)
-        assert_(np.all(x1 == x2))
-        assert_(np.all(x1 == x3))
-        assert_(np.all(x1 == x4))
-
-    def test_backwards_compat_get_state(self):
-        state = legacy.get_state()
-        new_state = legacy.state
-        assert state[0] == new_state['brng']
-        assert_equal(state[1], new_state['state']['key'])
-        assert state[2] == new_state['state']['pos']
-        assert state[3] == new_state['has_gauss']
-        assert state[4] == new_state['gauss']
 
     def test_negative_binomial(self):
         # Ensure that the negative binomial results take floating point
@@ -446,7 +419,7 @@ class TestRandomDist(object):
         actual = mt19937.randn(3, 2)
         desired = np.array([[-3.472754000610961, -0.108938564229143],
                             [-0.245965753396411, -0.704101550261701],
-                            [ 0.360102487116356,  0.127832101772367]])
+                            [0.360102487116356,  0.127832101772367]])
         assert_array_almost_equal(actual, desired, decimal=15)
 
         mt19937.seed(self.seed)
@@ -735,9 +708,9 @@ class TestRandomDist(object):
     def test_chisquare(self):
         mt19937.seed(self.seed)
         actual = mt19937.chisquare(50, size=(3, 2))
-        desired = np.array([[22.253456036981234, 46.93023937100741 ],
-                            [52.99741646116137 , 85.35590295057177 ],
-                            [46.158084124071884, 36.193314854808975]])
+        desired = np.array([[22.2534560369812, 46.9302393710074],
+                            [52.9974164611614, 85.3559029505718],
+                            [46.1580841240719, 36.1933148548090]])
         assert_array_almost_equal(actual, desired, decimal=13)
 
     def test_dirichlet(self):
@@ -745,10 +718,10 @@ class TestRandomDist(object):
         alpha = np.array([51.72840233779265162, 39.74494232180943953])
         actual = mt19937.dirichlet(alpha, size=(3, 2))
         desired = np.array([[[0.444382290764855, 0.555617709235145],
-                             [0.46844080929197 , 0.53155919070803 ]],
+                             [0.468440809291970, 0.531559190708030]],
                             [[0.613461427360549, 0.386538572639451],
                              [0.529103072088183, 0.470896927911817]],
-                            [[0.5134906501018  , 0.4865093498982  ],
+                            [[0.513490650101800, 0.486509349898200],
                              [0.558550925712797, 0.441449074287203]]])
         assert_array_almost_equal(actual, desired, decimal=15)
         bad_alpha = np.array([5.4e-01, -1.0e-16])
@@ -772,11 +745,11 @@ class TestRandomDist(object):
         assert_raises(ValueError, mt19937.dirichlet, alpha)
 
     def test_exponential(self):
-        legacy.seed(self.seed)
-        actual = legacy.exponential(1.1234, size=(3, 2))
-        desired = np.array([[1.08342649775011624, 1.00607889924557314],
-                            [2.46628830085216721, 2.49668106809923884],
-                            [0.68717433461363442, 1.69175666993575979]])
+        random.seed(self.seed)
+        actual = random.exponential(1.1234, size=(3, 2))
+        desired = np.array([[5.350682337747634, 1.152307441755771],
+                            [3.867015473358779, 1.538765912839396],
+                            [0.347846818048527, 2.715656549872026]])
         assert_array_almost_equal(actual, desired, decimal=15)
 
     def test_exponential_0(self):
@@ -784,19 +757,19 @@ class TestRandomDist(object):
         assert_raises(ValueError, mt19937.exponential, scale=-0.)
 
     def test_f(self):
-        legacy.seed(self.seed)
-        actual = legacy.f(12, 77, size=(3, 2))
-        desired = np.array([[1.21975394418575878, 1.75135759791559775],
-                            [1.44803115017146489, 1.22108959480396262],
-                            [1.02176975757740629, 1.34431827623300415]])
+        random.seed(self.seed)
+        actual = random.f(12, 77, size=(3, 2))
+        desired = np.array([[0.809498839488467, 2.867222762455471],
+                            [0.588036831639353, 1.012185639664636],
+                            [1.147554281917365, 1.150886518432105]])
         assert_array_almost_equal(actual, desired, decimal=15)
 
     def test_gamma(self):
-        legacy.seed(self.seed)
-        actual = legacy.gamma(5, 3, size=(3, 2))
-        desired = np.array([[24.60509188649287182, 28.54993563207210627],
-                            [26.13476110204064184, 12.56988482927716078],
-                            [31.71863275789960568, 33.30143302795922011]])
+        random.seed(self.seed)
+        actual = random.gamma(5, 3, size=(3, 2))
+        desired = np.array([[12.46569350177219, 16.46580642087044],
+                            [43.65744473309084, 11.98722785682592],
+                            [6.50371499559955, 7.48465689751638]])
         assert_array_almost_equal(actual, desired, decimal=14)
 
     def test_gamma_0(self):
@@ -870,11 +843,11 @@ class TestRandomDist(object):
         assert_array_almost_equal(actual, desired, decimal=15)
 
     def test_lognormal(self):
-        legacy.seed(self.seed)
-        actual = legacy.lognormal(mean=.123456789, sigma=2.0, size=(3, 2))
-        desired = np.array([[16.50698631688883822, 36.54846706092654784],
-                            [22.67886599981281748, 0.71617561058995771],
-                            [65.72798501792723869, 86.84341601437161273]])
+        random.seed(self.seed)
+        actual = random.lognormal(mean=.123456789, sigma=2.0, size=(3, 2))
+        desired = np.array([[1.0894838661036e-03, 9.0990021488311e-01],
+                            [6.9178869932225e-01, 2.7672077560016e-01],
+                            [2.3248645126975e+00, 1.4609997951330e+00]])
         assert_array_almost_equal(actual, desired, decimal=13)
 
     def test_lognormal_0(self):
@@ -901,23 +874,25 @@ class TestRandomDist(object):
         assert_array_equal(actual, desired)
 
     def test_multivariate_normal(self):
-        legacy.seed(self.seed)
+        random.seed(self.seed)
         mean = (.123456789, 10)
         cov = [[1, 0], [0, 1]]
         size = (3, 2)
-        actual = legacy.multivariate_normal(mean, cov, size)
-        desired = np.array([[[1.463620246718631, 11.73759122771936],
-                             [1.622445133300628, 9.771356667546383]],
-                            [[2.154490787682787, 12.170324946056553],
-                             [1.719909438201865, 9.230548443648306]],
-                            [[0.689515026297799, 9.880729819607714],
-                             [-0.023054015651998, 9.201096623542879]]])
+        actual = random.multivariate_normal(mean, cov, size)
+        np.set_printoptions(precision=20)
+        print(actual)
+        desired = np.array([[[-3.34929721161096100, 9.891061435770858],
+                             [-0.12250896439641100, 9.295898449738300]],
+                            [[0.48355927611635563, 10.127832101772366],
+                             [3.11093021424924300, 10.283109168794352]],
+                            [[-0.20332082341774727, 9.868532121697195],
+                             [-1.33806889550667330, 9.813657233804179]]])
 
         assert_array_almost_equal(actual, desired, decimal=15)
 
         # Check for default size, was raising deprecation warning
-        actual = legacy.multivariate_normal(mean, cov)
-        desired = np.array([0.895289569463708, 9.17180864067987])
+        actual = random.multivariate_normal(mean, cov)
+        desired = np.array([-1.097443117192574, 10.535787051184261])
         assert_array_almost_equal(actual, desired, decimal=15)
 
         # Check that non positive-semidefinite covariance warns with
@@ -952,49 +927,49 @@ class TestRandomDist(object):
                       mu, np.eye(3))
 
     def test_negative_binomial(self):
-        legacy.seed(self.seed)
-        actual = legacy.negative_binomial(n=100, p=.12345, size=(3, 2))
-        desired = np.array([[848, 841],
-                            [892, 611],
-                            [779, 647]])
+        random.seed(self.seed)
+        actual = random.negative_binomial(n=100, p=.12345, size=(3, 2))
+        desired = np.array([[521, 736],
+                            [665, 690],
+                            [723, 751]])
         assert_array_equal(actual, desired)
 
     def test_noncentral_chisquare(self):
-        legacy.seed(self.seed)
-        actual = legacy.noncentral_chisquare(df=5, nonc=5, size=(3, 2))
-        desired = np.array([[23.91905354498517511, 13.35324692733826346],
-                            [31.22452661329736401, 16.60047399466177254],
-                            [5.03461598262724586, 17.94973089023519464]])
+        random.seed(self.seed)
+        actual = random.noncentral_chisquare(df=5, nonc=5, size=(3, 2))
+        desired = np.array([[9.47783251920357, 10.02066178260461],
+                            [3.15869984192364, 10.5581565031544],
+                            [5.01652540543548, 13.7689551218441]])
         assert_array_almost_equal(actual, desired, decimal=14)
 
-        actual = legacy.noncentral_chisquare(df=.5, nonc=.2, size=(3, 2))
-        desired = np.array([[1.47145377828516666, 0.15052899268012659],
-                            [0.00943803056963588, 1.02647251615666169],
-                            [0.332334982684171, 0.15451287602753125]])
+        actual = random.noncentral_chisquare(df=.5, nonc=.2, size=(3, 2))
+        desired = np.array([[0.00145153051285, 0.22432468724778],
+                            [0.02956713468556, 0.00207192946898],
+                            [1.41985055641800, 0.15451287602753]])
         assert_array_almost_equal(actual, desired, decimal=14)
 
-        legacy.seed(self.seed)
-        actual = legacy.noncentral_chisquare(df=5, nonc=0, size=(3, 2))
-        desired = np.array([[9.597154162763948, 11.725484450296079],
-                            [10.413711048138335, 3.694475922923986],
-                            [13.484222138963087, 14.377255424602957]])
+        random.seed(self.seed)
+        actual = random.noncentral_chisquare(df=5, nonc=0, size=(3, 2))
+        desired = np.array([[3.64881368071039, 5.48224544747803],
+                            [20.41999842025404, 3.44075915187367],
+                            [1.29765160605552, 1.64125033268606]])
         assert_array_almost_equal(actual, desired, decimal=14)
 
     def test_noncentral_f(self):
-        legacy.seed(self.seed)
-        actual = legacy.noncentral_f(dfnum=5, dfden=2, nonc=1,
+        random.seed(self.seed)
+        actual = random.noncentral_f(dfnum=5, dfden=2, nonc=1,
                                      size=(3, 2))
-        desired = np.array([[1.40598099674926669, 0.34207973179285761],
-                            [3.57715069265772545, 7.92632662577829805],
-                            [0.43741599463544162, 1.1774208752428319]])
+        desired = np.array([[1.22680230963236, 2.56457837623956],
+                            [2.7653304499494, 7.4336268865443],
+                            [1.16362730891403, 2.54104276581491]])
         assert_array_almost_equal(actual, desired, decimal=14)
 
     def test_normal(self):
-        legacy.seed(self.seed)
-        actual = legacy.normal(loc=.123456789, scale=2.0, size=(3, 2))
-        desired = np.array([[2.80378370443726244, 3.59863924443872163],
-                            [3.121433477601256, -0.33382987590723379],
-                            [4.18552478636557357, 4.46410668111310471]])
+        random.seed(self.seed)
+        actual = random.normal(loc=.123456789, scale=2.0, size=(3, 2))
+        desired = np.array([[-6.822051212221923, -0.094420339458285],
+                            [-0.368474717792823, -1.284746311523402],
+                            [0.843661763232711, 0.379120992544734]])
         assert_array_almost_equal(actual, desired, decimal=15)
 
     def test_normal_0(self):
@@ -1002,12 +977,13 @@ class TestRandomDist(object):
         assert_raises(ValueError, mt19937.normal, scale=-0.)
 
     def test_pareto(self):
-        legacy.seed(self.seed)
-        actual = legacy.pareto(a=.123456789, size=(3, 2))
-        desired = np.array(
-            [[2.46852460439034849e+03, 1.41286880810518346e+03],
-             [5.28287797029485181e+07, 6.57720981047328785e+07],
-             [1.40840323350391515e+02, 1.98390255135251704e+05]])
+        random.seed(self.seed)
+        actual = random.pareto(a=.123456789, size=(3, 2))
+        np.set_printoptions(precision=20)
+        print(actual)
+        desired = np.array([[5.6883528121891552e+16, 4.0569373841667057e+03],
+                            [1.2854967019379475e+12, 6.5833156486851483e+04],
+                            [1.1281132447159091e+01, 3.1895968171107006e+08]])
         # For some reason on 32-bit x86 Ubuntu 12.10 the [1, 0] entry in this
         # matrix differs by 24 nulps. Discussion:
         #   http://mail.scipy.org/pipermail/numpy-discussion/2012-September/063801.html
@@ -1033,11 +1009,11 @@ class TestRandomDist(object):
         assert_raises(ValueError, mt19937.poisson, [lambig] * 10)
 
     def test_power(self):
-        legacy.seed(self.seed)
-        actual = legacy.power(a=.123456789, size=(3, 2))
-        desired = np.array([[0.02048932883240791, 0.01424192241128213],
-                            [0.38446073748535298, 0.39499689943484395],
-                            [0.00177699707563439, 0.13115505880863756]])
+        random.seed(self.seed)
+        actual = random.power(a=.123456789, size=(3, 2))
+        desired = np.array([[9.328833342693975e-01, 2.742250409261003e-02],
+                            [7.684513237993961e-01, 9.297548209160028e-02],
+                            [2.214811188828573e-05, 4.693448360603472e-01]])
         assert_array_almost_equal(actual, desired, decimal=15)
 
     def test_rayleigh(self):
@@ -1053,11 +1029,11 @@ class TestRandomDist(object):
         assert_raises(ValueError, mt19937.rayleigh, scale=-0.)
 
     def test_standard_cauchy(self):
-        legacy.seed(self.seed)
-        actual = legacy.standard_cauchy(size=(3, 2))
-        desired = np.array([[0.77127660196445336, -6.55601161955910605],
-                            [0.93582023391158309, -2.07479293013759447],
-                            [-4.74601644297011926, 0.18338989290760804]])
+        random.seed(self.seed)
+        actual = random.standard_cauchy(size=(3, 2))
+        desired = np.array([[31.87809592667601, 0.349332782046838],
+                            [2.816995747731641, 10.552372563459114],
+                            [2.485608017991235, 7.843211273201831]])
         assert_array_almost_equal(actual, desired, decimal=15)
 
     def test_standard_exponential(self):
@@ -1071,17 +1047,17 @@ class TestRandomDist(object):
     def test_standard_gamma(self):
         random.seed(self.seed)
         actual = random.standard_gamma(shape=3, size=(3, 2))
-        desired = np.array([[ 2.28483515569645,  3.29899524967824],
+        desired = np.array([[2.28483515569645,  3.29899524967824],
                             [11.12492298902645,  2.16784417297277],
-                            [ 0.9212181369091 ,  1.1285355232847 ]])
+                            [0.92121813690910,  1.12853552328470]])
         assert_array_almost_equal(actual, desired, decimal=14)
 
     def test_standard_gamma_float(self):
         random.seed(self.seed)
         actual = random.standard_gamma(shape=3, size=(3, 2))
-        desired = np.array([[ 2.2848352,  3.2989952],
-                            [11.124923 ,  2.1678442],
-                            [ 0.9212181,  1.1285355]])
+        desired = np.array([[2.2848352, 3.2989952],
+                            [11.124923, 2.1678442],
+                            [0.9212181, 1.1285355]])
         assert_array_almost_equal(actual, desired, decimal=7)
 
     def test_standard_gamma_unknown_type(self):
@@ -1093,19 +1069,19 @@ class TestRandomDist(object):
         assert_raises(ValueError, mt19937.standard_gamma, shape=-0.)
 
     def test_standard_normal(self):
-        legacy.seed(self.seed)
-        actual = legacy.standard_normal(size=(3, 2))
-        desired = np.array([[1.34016345771863121, 1.73759122771936081],
-                            [1.498988344300628, -0.2286433324536169],
-                            [2.031033998682787, 2.17032494605655257]])
+        random.seed(self.seed)
+        actual = random.standard_normal(size=(3, 2))
+        desired = np.array([[-3.472754000610961, -0.108938564229143],
+                            [-0.245965753396411, -0.704101550261701],
+                            [0.360102487116356, 0.127832101772367]])
         assert_array_almost_equal(actual, desired, decimal=15)
 
     def test_standard_t(self):
-        legacy.seed(self.seed)
-        actual = legacy.standard_t(df=10, size=(3, 2))
-        desired = np.array([[0.97140611862659965, -0.08830486548450577],
-                            [1.36311143689505321, -0.55317463909867071],
-                            [-0.18473749069684214, 0.61181537341755321]])
+        random.seed(self.seed)
+        actual = random.standard_t(df=10, size=(3, 2))
+        desired = np.array([[-3.68722108185508, -0.672031186266171],
+                            [2.900224996448669, -0.199656996187739],
+                            [-1.12179956985969, 1.85668262342106]])
         assert_array_almost_equal(actual, desired, decimal=15)
 
     def test_triangular(self):
@@ -1178,19 +1154,19 @@ class TestRandomDist(object):
         assert_(np.isfinite(r).all())
 
     def test_wald(self):
-        legacy.seed(self.seed)
-        actual = legacy.wald(mean=1.23, scale=1.54, size=(3, 2))
-        desired = np.array([[3.82935265715889983, 5.13125249184285526],
-                            [0.35045403618358717, 1.50832396872003538],
-                            [0.24124319895843183, 0.22031101461955038]])
+        random.seed(self.seed)
+        actual = random.wald(mean=1.23, scale=1.54, size=(3, 2))
+        desired = np.array([[0.10653278160339, 0.98771068102461],
+                            [0.89276055317879, 0.13640126419923],
+                            [0.9194319091599, 0.36037816317472]])
         assert_array_almost_equal(actual, desired, decimal=14)
 
     def test_weibull(self):
-        legacy.seed(self.seed)
-        actual = legacy.weibull(a=1.23, size=(3, 2))
-        desired = np.array([[0.97097342648766727, 0.91422896443565516],
-                            [1.89517770034962929, 1.91414357960479564],
-                            [0.67057783752390987, 1.39494046635066793]])
+        random.seed(self.seed)
+        actual = random.weibull(a=1.23, size=(3, 2))
+        desired = np.array([[3.557276979846361, 1.020870580998542],
+                            [2.731847777612348, 1.29148068905082],
+                            [0.385531483942839, 2.049551716717254]])
         assert_array_almost_equal(actual, desired, decimal=15)
 
     def test_weibull_0(self):
@@ -1298,7 +1274,6 @@ class TestBroadcast(object):
         actual = std_gamma(shape * 3)
         assert_array_almost_equal(actual, desired, decimal=14)
         assert_raises(ValueError, std_gamma, bad_shape * 3)
-
 
     def test_gamma(self):
         shape = [1]
@@ -1425,7 +1400,7 @@ class TestBroadcast(object):
         df = [1]
         bad_df = [-1]
         t = random.standard_t
-        desired = np.array([ 0.60081050724244,
+        desired = np.array([0.60081050724244,
                             -0.90380889829210,
                             -0.64499590504117])
 

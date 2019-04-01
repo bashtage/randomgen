@@ -1,15 +1,13 @@
-from __future__ import absolute_import
-
-try:
-    from threading import Lock
-except ImportError:
-    from dummy_threading import Lock
-
 from libc.stdlib cimport malloc, free
 from cpython.pycapsule cimport PyCapsule_New
 
 import numpy as np
 cimport numpy as np
+
+try:
+    from threading import Lock
+except ImportError:
+    from dummy_threading import Lock
 
 from randomgen.common import interface
 from randomgen.common cimport *

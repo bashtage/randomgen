@@ -4292,7 +4292,6 @@ randint = _random_generator.randint
 randn = _random_generator.randn
 random_integers = _random_generator.random_integers
 random_sample = _random_generator.random_sample
-random_uintegers = _random_generator.random_uintegers
 rayleigh = _random_generator.rayleigh
 shuffle = _random_generator.shuffle
 standard_cauchy = _random_generator.standard_cauchy
