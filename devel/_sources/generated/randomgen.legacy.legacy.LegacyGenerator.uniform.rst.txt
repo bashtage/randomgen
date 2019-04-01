@@ -1,6 +1,0 @@
-randomgen.legacy.legacy.LegacyGenerator.uniform
-===============================================
-
-.. currentmodule:: randomgen.legacy.legacy
-
-.. automethod:: LegacyGenerator.uniform

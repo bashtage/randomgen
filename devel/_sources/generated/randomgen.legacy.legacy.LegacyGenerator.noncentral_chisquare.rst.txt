@@ -1,6 +1,0 @@
-randomgen.legacy.legacy.LegacyGenerator.noncentral\_chisquare
-=============================================================
-
-.. currentmodule:: randomgen.legacy.legacy
-
-.. automethod:: LegacyGenerator.noncentral_chisquare

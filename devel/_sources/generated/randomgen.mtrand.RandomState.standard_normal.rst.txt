@@ -1,0 +1,6 @@
+randomgen.mtrand.RandomState.standard\_normal
+=============================================
+
+.. currentmodule:: randomgen.mtrand
+
+.. automethod:: RandomState.standard_normal

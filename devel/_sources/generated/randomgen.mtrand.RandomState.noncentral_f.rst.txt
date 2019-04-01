@@ -1,0 +1,6 @@
+randomgen.mtrand.RandomState.noncentral\_f
+==========================================
+
+.. currentmodule:: randomgen.mtrand
+
+.. automethod:: RandomState.noncentral_f

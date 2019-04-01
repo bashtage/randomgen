@@ -1,5 +1,14 @@
 Change Log
 ----------
+
+Since v1.16.1
+=============
+- Added :class:`~randomgen.mtrand.RandomState` as a clone of NumPy's
+  RandomState.
+- Removed :class:`~randomgen.legacy.LegacyGenerator` since this is no
+  longer needed
+- Fixed many small bugs, including in cffi and ctype interfaces
+
 v1.16.1
 =======
 - Synchronized with upstream changes.

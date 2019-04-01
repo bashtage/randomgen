@@ -1,6 +1,0 @@
-randomgen.legacy.legacy.LegacyGenerator.random\_sample
-======================================================
-
-.. currentmodule:: randomgen.legacy.legacy
-
-.. automethod:: LegacyGenerator.random_sample

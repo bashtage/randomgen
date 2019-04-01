@@ -1,0 +1,6 @@
+randomgen.mtrand.RandomState.logseries
+======================================
+
+.. currentmodule:: randomgen.mtrand
+
+.. automethod:: RandomState.logseries

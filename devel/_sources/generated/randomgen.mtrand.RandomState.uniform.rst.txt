@@ -1,0 +1,6 @@
+randomgen.mtrand.RandomState.uniform
+====================================
+
+.. currentmodule:: randomgen.mtrand
+
+.. automethod:: RandomState.uniform

@@ -1,0 +1,249 @@
+
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta charset="utf-8" />
+  
+  <!-- Licensed under the Apache 2.0 License -->
+  <link rel="stylesheet" type="text/css" href="../_static/fonts/open-sans/stylesheet.css" />
+  <!-- Licensed under the SIL Open Font License -->
+  <link rel="stylesheet" type="text/css" href="../_static/fonts/source-serif-pro/source-serif-pro.css" />
+  <link rel="stylesheet" type="text/css" href="../_static/css/bootstrap.min.css" />
+  <link rel="stylesheet" type="text/css" href="../_static/css/bootstrap-theme.min.css" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+    <title>randomgen.mtrand.RandomState.zipf &#8212; RandomGen v1.16.1+43.gd98e7cb documentation</title>
+    <link rel="stylesheet" href="../_static/guzzle.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/language_data.js"></script>
+    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Basic Random Number Generators" href="../brng/index.html" />
+    <link rel="prev" title="randomgen.mtrand.RandomState.weibull" href="randomgen.mtrand.RandomState.weibull.html" />
+  
+   
+
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="../brng/index.html" title="Basic Random Number Generators"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="randomgen.mtrand.RandomState.weibull.html" title="randomgen.mtrand.RandomState.weibull"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">RandomGen v1.16.1+43.gd98e7cb documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../legacy.html" accesskey="U">Legacy Random Generation</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="container-wrapper">
+
+      <div id="mobile-toggle">
+        <a href="#"><span class="glyphicon glyphicon-align-justify" aria-hidden="true"></span></a>
+      </div>
+  <div id="left-column">
+    <div class="sphinxsidebar"><a href="
+    ../index.html" class="text-logo">RandomGen v1.16.1 (+43)</a>
+<div class="sidebar-block">
+  <div class="sidebar-wrapper">
+    <h2>Table Of Contents</h2>
+  </div>
+  <div class="sidebar-toc">
+    
+    
+      <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../generator.html">Random Generation</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../legacy.html">Legacy Random Generation</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../legacy.html#seeding-and-state">Seeding and State</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../legacy.html#simple-random-data">Simple random data</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../legacy.html#permutations">Permutations</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="../legacy.html#distributions">Distributions</a></li>
+</ul>
+</li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../brng/index.html">Basic Random Number Generators</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../parallel.html">Parallel Applications</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../multithreading.html">Multithreaded Generation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../new-or-different.html">What’s New or Different</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../performance.html">Comparing Performance</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../extending.html">Extending</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../entropy.html">Reading System Entropy</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../references.html">References</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../change-log.html">Change Log</a></li>
+</ul>
+
+    
+  </div>
+</div>
+<div class="sidebar-block">
+  <div class="sidebar-wrapper">
+    <div id="main-search">
+      <form class="form-inline" action="../search.html" method="GET" role="form">
+        <div class="input-group">
+          <input name="q" type="text" class="form-control" placeholder="Search...">
+        </div>
+        <input type="hidden" name="check_keywords" value="yes" />
+        <input type="hidden" name="area" value="default" />
+      </form>
+    </div>
+  </div>
+</div>
+      
+    </div>
+  </div>
+        <div id="right-column">
+          
+          <div role="navigation" aria-label="breadcrumbs navigation">
+            <ol class="breadcrumb">
+              <li><a href="../index.html">Docs</a></li>
+              
+                <li><a href="../legacy.html">Legacy Random Generation</a></li>
+              
+              <li>randomgen.mtrand.RandomState.zipf</li>
+            </ol>
+          </div>
+          
+          <div class="document clearer body">
+            
+  <div class="section" id="randomgen-mtrand-randomstate-zipf">
+<h1>randomgen.mtrand.RandomState.zipf<a class="headerlink" href="#randomgen-mtrand-randomstate-zipf" title="Permalink to this headline">¶</a></h1>
+<dl class="method">
+<dt id="randomgen.mtrand.RandomState.zipf">
+<code class="descclassname">RandomState.</code><code class="descname">zipf</code><span class="sig-paren">(</span><em>a</em>, <em>size=None</em><span class="sig-paren">)</span><a class="headerlink" href="#randomgen.mtrand.RandomState.zipf" title="Permalink to this definition">¶</a></dt>
+<dd><p>Draw samples from a Zipf distribution.</p>
+<p>Samples are drawn from a Zipf distribution with specified parameter
+<cite>a</cite> &gt; 1.</p>
+<p>The Zipf distribution (also known as the zeta distribution) is a
+continuous probability distribution that satisfies Zipf’s law: the
+frequency of an item is inversely proportional to its rank in a
+frequency table.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>a</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.7)"><em>float</em></a><em> or </em><em>array_like of floats</em>) – Distribution parameter. Should be greater than 1.</p></li>
+<li><p><strong>size</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a><em> or </em><em>tuple of ints</em><em>, </em><em>optional</em>) – Output shape.  If the given shape is, e.g., <code class="docutils literal notranslate"><span class="pre">(m,</span> <span class="pre">n,</span> <span class="pre">k)</span></code>, then
+<code class="docutils literal notranslate"><span class="pre">m</span> <span class="pre">*</span> <span class="pre">n</span> <span class="pre">*</span> <span class="pre">k</span></code> samples are drawn.  If size is <code class="docutils literal notranslate"><span class="pre">None</span></code> (default),
+a single value is returned if <code class="docutils literal notranslate"><span class="pre">a</span></code> is a scalar. Otherwise,
+<code class="docutils literal notranslate"><span class="pre">np.array(a).size</span></code> samples are drawn.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><strong>out</strong> – Drawn samples from the parameterized Zipf distribution.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>ndarray or scalar</p>
+</dd>
+</dl>
+<div class="admonition seealso">
+<p class="admonition-title">See also</p>
+<dl class="simple">
+<dt><code class="xref py py-meth docutils literal notranslate"><span class="pre">scipy.stats.zipf()</span></code></dt><dd><p>probability density function, distribution, or cumulative density function, etc.</p>
+</dd>
+</dl>
+</div>
+<p class="rubric">Notes</p>
+<p>The probability density for the Zipf distribution is</p>
+<div class="math notranslate nohighlight">
+\[p(x) = \frac{x^{-a}}{\zeta(a)},\]</div>
+<p>where <span class="math notranslate nohighlight">\(\zeta\)</span> is the Riemann Zeta function.</p>
+<p>It is named for the American linguist George Kingsley Zipf, who noted
+that the frequency of any word in a sample of a language is inversely
+proportional to its rank in the frequency table.</p>
+<p class="rubric">References</p>
+<dl class="footnote brackets">
+<dt class="label" id="id1"><span class="brackets">1</span></dt>
+<dd><p>Zipf, G. K., “Selected Studies of the Principle of Relative
+Frequency in Language,” Cambridge, MA: Harvard Univ. Press,
+1932.</p>
+</dd>
+</dl>
+<p class="rubric">Examples</p>
+<p>Draw samples from the distribution:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">a</span> <span class="o">=</span> <span class="mf">2.</span> <span class="c1"># parameter</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">s</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">zipf</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="mi">1000</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Display the histogram of the samples, along with
+the probability density function:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">scipy</span> <span class="k">import</span> <span class="n">special</span>
+</pre></div>
+</div>
+<p>Truncate s values at 50 so plot is interesting:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">count</span><span class="p">,</span> <span class="n">bins</span><span class="p">,</span> <span class="n">ignored</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">hist</span><span class="p">(</span><span class="n">s</span><span class="p">[</span><span class="n">s</span><span class="o">&lt;</span><span class="mi">50</span><span class="p">],</span> <span class="mi">50</span><span class="p">,</span> <span class="n">density</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mf">1.</span><span class="p">,</span> <span class="mf">50.</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">y</span> <span class="o">=</span> <span class="n">x</span><span class="o">**</span><span class="p">(</span><span class="o">-</span><span class="n">a</span><span class="p">)</span> <span class="o">/</span> <span class="n">special</span><span class="o">.</span><span class="n">zetac</span><span class="p">(</span><span class="n">a</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="o">/</span><span class="nb">max</span><span class="p">(</span><span class="n">y</span><span class="p">),</span> <span class="n">linewidth</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;r&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+</dd></dl>
+
+</div>
+
+
+          </div>
+            
+  <div class="footer-relations">
+    
+      <div class="pull-left">
+        <a class="btn btn-default" href="randomgen.mtrand.RandomState.weibull.html" title="previous chapter (use the left arrow)">randomgen.mtrand.RandomState.weibull</a>
+      </div>
+    
+      <div class="pull-right">
+        <a class="btn btn-default" href="../brng/index.html" title="next chapter (use the right arrow)">Basic Random Number Generators</a>
+      </div>
+    </div>
+    <div class="clearer"></div>
+  
+        </div>
+        <div class="clearfix"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="../brng/index.html" title="Basic Random Number Generators"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="randomgen.mtrand.RandomState.weibull.html" title="randomgen.mtrand.RandomState.weibull"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">RandomGen v1.16.1+43.gd98e7cb documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../legacy.html" >Legacy Random Generation</a> &#187;</li> 
+      </ul>
+    </div>
+<script type="text/javascript">
+  $("#mobile-toggle a").click(function () {
+    $("#left-column").toggle();
+  });
+</script>
+<script type="text/javascript" src="../_static/js/bootstrap.js"></script>
+  <div class="footer">
+    &copy; Copyright 2018, Kevin Sheppard. Created using <a href="http://sphinx.pocoo.org/">Sphinx</a>.
+  </div>
+  </body>
+</html>

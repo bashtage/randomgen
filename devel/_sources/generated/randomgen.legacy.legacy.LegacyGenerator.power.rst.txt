@@ -1,6 +1,0 @@
-randomgen.legacy.legacy.LegacyGenerator.power
-=============================================
-
-.. currentmodule:: randomgen.legacy.legacy
-
-.. automethod:: LegacyGenerator.power

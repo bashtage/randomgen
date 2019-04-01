@@ -1,0 +1,6 @@
+randomgen.mtrand.RandomState.triangular
+=======================================
+
+.. currentmodule:: randomgen.mtrand
+
+.. automethod:: RandomState.triangular

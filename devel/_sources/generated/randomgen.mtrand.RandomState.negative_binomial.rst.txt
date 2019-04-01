@@ -1,0 +1,6 @@
+randomgen.mtrand.RandomState.negative\_binomial
+===============================================
+
+.. currentmodule:: randomgen.mtrand
+
+.. automethod:: RandomState.negative_binomial

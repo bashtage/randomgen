@@ -1,6 +1,0 @@
-randomgen.legacy.legacy.LegacyGenerator.standard\_normal
-========================================================
-
-.. currentmodule:: randomgen.legacy.legacy
-
-.. automethod:: LegacyGenerator.standard_normal

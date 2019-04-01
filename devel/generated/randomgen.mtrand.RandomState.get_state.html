@@ -1,0 +1,212 @@
+
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta charset="utf-8" />
+  
+  <!-- Licensed under the Apache 2.0 License -->
+  <link rel="stylesheet" type="text/css" href="../_static/fonts/open-sans/stylesheet.css" />
+  <!-- Licensed under the SIL Open Font License -->
+  <link rel="stylesheet" type="text/css" href="../_static/fonts/source-serif-pro/source-serif-pro.css" />
+  <link rel="stylesheet" type="text/css" href="../_static/css/bootstrap.min.css" />
+  <link rel="stylesheet" type="text/css" href="../_static/css/bootstrap-theme.min.css" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+    <title>randomgen.mtrand.RandomState.get_state &#8212; RandomGen v1.16.1+43.gd98e7cb documentation</title>
+    <link rel="stylesheet" href="../_static/guzzle.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/language_data.js"></script>
+    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="randomgen.mtrand.RandomState.set_state" href="randomgen.mtrand.RandomState.set_state.html" />
+    <link rel="prev" title="Legacy Random Generation" href="../legacy.html" />
+  
+   
+
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="randomgen.mtrand.RandomState.set_state.html" title="randomgen.mtrand.RandomState.set_state"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="../legacy.html" title="Legacy Random Generation"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">RandomGen v1.16.1+43.gd98e7cb documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../legacy.html" accesskey="U">Legacy Random Generation</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="container-wrapper">
+
+      <div id="mobile-toggle">
+        <a href="#"><span class="glyphicon glyphicon-align-justify" aria-hidden="true"></span></a>
+      </div>
+  <div id="left-column">
+    <div class="sphinxsidebar"><a href="
+    ../index.html" class="text-logo">RandomGen v1.16.1 (+43)</a>
+<div class="sidebar-block">
+  <div class="sidebar-wrapper">
+    <h2>Table Of Contents</h2>
+  </div>
+  <div class="sidebar-toc">
+    
+    
+      <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../generator.html">Random Generation</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../legacy.html">Legacy Random Generation</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="../legacy.html#seeding-and-state">Seeding and State</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../legacy.html#simple-random-data">Simple random data</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../legacy.html#permutations">Permutations</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../legacy.html#distributions">Distributions</a></li>
+</ul>
+</li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../brng/index.html">Basic Random Number Generators</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../parallel.html">Parallel Applications</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../multithreading.html">Multithreaded Generation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../new-or-different.html">What’s New or Different</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../performance.html">Comparing Performance</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../extending.html">Extending</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../entropy.html">Reading System Entropy</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../references.html">References</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../change-log.html">Change Log</a></li>
+</ul>
+
+    
+  </div>
+</div>
+<div class="sidebar-block">
+  <div class="sidebar-wrapper">
+    <div id="main-search">
+      <form class="form-inline" action="../search.html" method="GET" role="form">
+        <div class="input-group">
+          <input name="q" type="text" class="form-control" placeholder="Search...">
+        </div>
+        <input type="hidden" name="check_keywords" value="yes" />
+        <input type="hidden" name="area" value="default" />
+      </form>
+    </div>
+  </div>
+</div>
+      
+    </div>
+  </div>
+        <div id="right-column">
+          
+          <div role="navigation" aria-label="breadcrumbs navigation">
+            <ol class="breadcrumb">
+              <li><a href="../index.html">Docs</a></li>
+              
+                <li><a href="../legacy.html">Legacy Random Generation</a></li>
+              
+              <li>randomgen.mtrand.RandomState.get_state</li>
+            </ol>
+          </div>
+          
+          <div class="document clearer body">
+            
+  <div class="section" id="randomgen-mtrand-randomstate-get-state">
+<h1>randomgen.mtrand.RandomState.get_state<a class="headerlink" href="#randomgen-mtrand-randomstate-get-state" title="Permalink to this headline">¶</a></h1>
+<dl class="method">
+<dt id="randomgen.mtrand.RandomState.get_state">
+<code class="descclassname">RandomState.</code><code class="descname">get_state</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#randomgen.mtrand.RandomState.get_state" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return a tuple representing the internal state of the generator.</p>
+<p>For more details, see <cite>set_state</cite>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p><ul>
+<li><p><strong>out</strong> (<em>{tuple(str, ndarray of 624 uints, int, int, float), dict}</em>) – The returned tuple has the following items:</p>
+<ol class="arabic simple">
+<li><p>the string ‘MT19937’.</p></li>
+<li><p>a 1-D array of 624 unsigned integer keys.</p></li>
+<li><p>an integer <code class="docutils literal notranslate"><span class="pre">pos</span></code>.</p></li>
+<li><p>an integer <code class="docutils literal notranslate"><span class="pre">has_gauss</span></code>.</p></li>
+<li><p>a float <code class="docutils literal notranslate"><span class="pre">cached_gaussian</span></code>.</p></li>
+</ol>
+<p>If <cite>legacy</cite> is False, or the basic RNG is not NT19937, then
+state is returned as a dictionary.</p>
+</li>
+<li><p><strong>legacy</strong> (<em>bool</em>) – Flag indicating the return a legacy tuple state when the basic RNG
+is MT19937.</p></li>
+</ul>
+</p>
+</dd>
+</dl>
+<div class="admonition seealso">
+<p class="admonition-title">See also</p>
+<p><a class="reference internal" href="randomgen.mtrand.RandomState.set_state.html#randomgen.mtrand.RandomState.set_state" title="randomgen.mtrand.RandomState.set_state"><code class="xref py py-meth docutils literal notranslate"><span class="pre">set_state()</span></code></a></p>
+</div>
+<p class="rubric">Notes</p>
+<p><cite>set_state</cite> and <cite>get_state</cite> are not needed to work with any of the
+random distributions in NumPy. If the internal state is manually altered,
+the user should know exactly what he/she is doing.</p>
+</dd></dl>
+
+</div>
+
+
+          </div>
+            
+  <div class="footer-relations">
+    
+      <div class="pull-left">
+        <a class="btn btn-default" href="../legacy.html" title="previous chapter (use the left arrow)">Legacy Random Generation</a>
+      </div>
+    
+      <div class="pull-right">
+        <a class="btn btn-default" href="randomgen.mtrand.RandomState.set_state.html" title="next chapter (use the right arrow)">randomgen.mtrand.RandomState.set_state</a>
+      </div>
+    </div>
+    <div class="clearer"></div>
+  
+        </div>
+        <div class="clearfix"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="randomgen.mtrand.RandomState.set_state.html" title="randomgen.mtrand.RandomState.set_state"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="../legacy.html" title="Legacy Random Generation"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">RandomGen v1.16.1+43.gd98e7cb documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../legacy.html" >Legacy Random Generation</a> &#187;</li> 
+      </ul>
+    </div>
+<script type="text/javascript">
+  $("#mobile-toggle a").click(function () {
+    $("#left-column").toggle();
+  });
+</script>
+<script type="text/javascript" src="../_static/js/bootstrap.js"></script>
+  <div class="footer">
+    &copy; Copyright 2018, Kevin Sheppard. Created using <a href="http://sphinx.pocoo.org/">Sphinx</a>.
+  </div>
+  </body>
+</html>

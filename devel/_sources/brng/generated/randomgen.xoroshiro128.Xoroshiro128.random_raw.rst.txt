@@ -1,0 +1,6 @@
+randomgen.xoroshiro128.Xoroshiro128.random\_raw
+===============================================
+
+.. currentmodule:: randomgen.xoroshiro128
+
+.. automethod:: Xoroshiro128.random_raw

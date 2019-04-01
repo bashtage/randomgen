@@ -1,0 +1,6 @@
+randomgen.xorshift1024.Xorshift1024.random\_raw
+===============================================
+
+.. currentmodule:: randomgen.xorshift1024
+
+.. automethod:: Xorshift1024.random_raw

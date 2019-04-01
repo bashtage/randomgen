@@ -1,6 +1,0 @@
-randomgen.legacy.legacy.LegacyGenerator.bytes
-=============================================
-
-.. currentmodule:: randomgen.legacy.legacy
-
-.. automethod:: LegacyGenerator.bytes

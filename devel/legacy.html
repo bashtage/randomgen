@@ -13,7 +13,7 @@
   <link rel="stylesheet" type="text/css" href="_static/css/bootstrap-theme.min.css" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-    <title>Legacy Random Generation &#8212; RandomGen v1.16.1+40.g7779c6e documentation</title>
+    <title>Legacy Random Generation &#8212; RandomGen v1.16.1+43.gd98e7cb documentation</title>
     <link rel="stylesheet" href="_static/guzzle.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
@@ -24,7 +24,7 @@
     <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="randomgen.legacy.legacy.LegacyGenerator.state" href="generated/randomgen.legacy.legacy.LegacyGenerator.state.html" />
+    <link rel="next" title="randomgen.mtrand.RandomState.get_state" href="generated/randomgen.mtrand.RandomState.get_state.html" />
     <link rel="prev" title="randomgen.generator.RandomGenerator.zipf" href="generated/randomgen.generator.RandomGenerator.zipf.html" />
   
    
@@ -40,12 +40,12 @@
           <a href="py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="right" >
-          <a href="generated/randomgen.legacy.legacy.LegacyGenerator.state.html" title="randomgen.legacy.legacy.LegacyGenerator.state"
+          <a href="generated/randomgen.mtrand.RandomState.get_state.html" title="randomgen.mtrand.RandomState.get_state"
              accesskey="N">next</a> |</li>
         <li class="right" >
           <a href="generated/randomgen.generator.RandomGenerator.zipf.html" title="randomgen.generator.RandomGenerator.zipf"
              accesskey="P">previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="index.html">RandomGen v1.16.1+40.g7779c6e documentation</a> &#187;</li> 
+        <li class="nav-item nav-item-0"><a href="index.html">RandomGen v1.16.1+43.gd98e7cb documentation</a> &#187;</li> 
       </ul>
     </div>
     <div class="container-wrapper">
@@ -55,7 +55,7 @@
       </div>
   <div id="left-column">
     <div class="sphinxsidebar"><a href="
-    index.html" class="text-logo">RandomGen v1.16.1 (+40)</a>
+    index.html" class="text-logo">RandomGen v1.16.1 (+43)</a>
 <div class="sidebar-block">
   <div class="sidebar-wrapper">
     <h2>Table Of Contents</h2>
@@ -122,23 +122,23 @@
             
   <div class="section" id="legacy-random-generation">
 <h1>Legacy Random Generation<a class="headerlink" href="#legacy-random-generation" title="Permalink to this headline">¶</a></h1>
-<p>The <code class="xref py py-class docutils literal notranslate"><span class="pre">LegacyGenerator</span></code> provides access to
-legacy generators.  These all depend on Box-Muller normals or
-inverse CDF exponentials or gammas. This class should only be used
-if it is essential to have randoms that are identical to what
-would have been produced by NumPy.</p>
-<p><code class="xref py py-class docutils literal notranslate"><span class="pre">LegacyGenerator</span></code> add additional information
+<p>The <a class="reference internal" href="#randomgen.mtrand.RandomState" title="randomgen.mtrand.RandomState"><code class="xref py py-class docutils literal notranslate"><span class="pre">RandomState</span></code></a> provides access to
+legacy generators.  These all depend on normals produced using a
+polar transformation or inverse CDF exponentials or gammas. This
+class should only be used  if it is essential to have randoms that
+are identical to what would have been produced by NumPy.</p>
+<p><a class="reference internal" href="#randomgen.mtrand.RandomState" title="randomgen.mtrand.RandomState"><code class="xref py py-class docutils literal notranslate"><span class="pre">RandomState</span></code></a> add additional information
 to the state which is required when using Box-Muller normals since these
 are produced in pairs. It is important to use
-<code class="xref py py-attr docutils literal notranslate"><span class="pre">state</span></code>
+<a class="reference internal" href="generated/randomgen.mtrand.RandomState.get_state.html#randomgen.mtrand.RandomState.get_state" title="randomgen.mtrand.RandomState.get_state"><code class="xref py py-attr docutils literal notranslate"><span class="pre">get_state()</span></code></a>
 when accessing the state so that these extra values are saved.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">randomgen</span> <span class="kn">import</span> <span class="n">MT19937</span>
-<span class="kn">from</span> <span class="nn">randomgen.legacy</span> <span class="kn">import</span> <span class="n">LegacyGenerator</span>
+<span class="kn">from</span> <span class="nn">randomgen.mtrand</span> <span class="kn">import</span> <span class="n">RandomState</span>
 <span class="kn">from</span> <span class="nn">numpy.random</span> <span class="kn">import</span> <span class="n">RandomState</span>
    <span class="c1"># Use same seed</span>
 <span class="n">rs</span> <span class="o">=</span> <span class="n">RandomState</span><span class="p">(</span><span class="mi">12345</span><span class="p">)</span>
 <span class="n">mt19937</span> <span class="o">=</span> <span class="n">MT19937</span><span class="p">(</span><span class="mi">12345</span><span class="p">)</span>
-<span class="n">lg</span> <span class="o">=</span> <span class="n">LegacyGenerator</span><span class="p">(</span><span class="n">mt19937</span><span class="p">)</span>
+<span class="n">lg</span> <span class="o">=</span> <span class="n">RandomState</span><span class="p">(</span><span class="n">mt19937</span><span class="p">)</span>
 
 <span class="c1"># Identical output</span>
 <span class="n">rs</span><span class="o">.</span><span class="n">standard_normal</span><span class="p">()</span>
@@ -151,10 +151,43 @@ when accessing the state so that these extra values are saved.</p>
 <span class="n">lg</span><span class="o">.</span><span class="n">standard_exponential</span><span class="p">()</span>
 </pre></div>
 </div>
-<dl class="attribute">
-<dt id="randomgen.legacy.legacy.LegacyGenerator">
-<code class="descclassname">randomgen.legacy.legacy.</code><code class="descname">LegacyGenerator</code><a class="headerlink" href="#randomgen.legacy.legacy.LegacyGenerator" title="Permalink to this definition">¶</a></dt>
-<dd><p>alias of <a class="reference internal" href="generator.html#randomgen.generator.RandomGenerator" title="randomgen.generator.RandomGenerator"><code class="xref py py-class docutils literal notranslate"><span class="pre">randomgen.generator.RandomGenerator</span></code></a></p>
+<dl class="class">
+<dt id="randomgen.mtrand.RandomState">
+<em class="property">class </em><code class="descclassname">randomgen.mtrand.</code><code class="descname">RandomState</code><span class="sig-paren">(</span><em>brng=None</em><span class="sig-paren">)</span><a class="headerlink" href="#randomgen.mtrand.RandomState" title="Permalink to this definition">¶</a></dt>
+<dd><p>Container for the Mersenne Twister pseudo-random number generator.</p>
+<p><cite>RandomState</cite> exposes a number of methods for generating random numbers
+drawn from a variety of probability distributions. In addition to the
+distribution-specific arguments, each method takes a keyword argument
+<cite>size</cite> that defaults to <code class="docutils literal notranslate"><span class="pre">None</span></code>. If <cite>size</cite> is <code class="docutils literal notranslate"><span class="pre">None</span></code>, then a single
+value is generated and returned. If <cite>size</cite> is an integer, then a 1-D
+array filled with generated values is returned. If <cite>size</cite> is a tuple,
+then an array with that shape is filled and returned.</p>
+<p><em>Compatibility Guarantee</em>
+A fixed seed and a fixed series of calls to ‘RandomState’ methods using
+the same parameters will always produce the same results up to roundoff
+error except when the values were incorrect. Incorrect values will be
+fixed and the NumPy version in which the fix was made will be noted in
+the relevant docstring. Extension of existing parameter ranges and the
+addition of new parameters is allowed as long the previous behavior
+remains unchanged.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>brng</strong> (<em>{None</em><em>, </em><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a><em>, </em><em>array_like</em><em>, </em><em>BasicRNG}</em><em>, </em><em>optional</em>) – Random seed used to initialize the pseudo-random number generator or
+an instantized BasicRNG.  If an integer or array, used as a seed for
+the MT19937 BasicRNG. Values can be any integer between 0 and
+2**32 - 1 inclusive, an array (or other sequence) of such integers,
+or <code class="docutils literal notranslate"><span class="pre">None</span></code> (the default).  If <cite>seed</cite> is <code class="docutils literal notranslate"><span class="pre">None</span></code>, then the <cite>MT19937</cite>
+BasicRNG is initialized by reading data from <code class="docutils literal notranslate"><span class="pre">/dev/urandom</span></code>
+(or the Windows analogue) if available or seed from the clock
+otherwise.</p>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<p>The Python stdlib module “random” also contains a Mersenne Twister
+pseudo-random number generator with a number of methods that are similar
+to the ones available in <cite>RandomState</cite>. <cite>RandomState</cite>, besides being
+NumPy-aware, has the advantage that it provides a much larger number
+of probability distributions to choose from.</p>
 </dd></dl>
 
 <div class="section" id="seeding-and-state">
@@ -165,8 +198,11 @@ when accessing the state so that these extra values are saved.</p>
 <col style="width: 90%" />
 </colgroup>
 <tbody>
-<tr class="row-odd"><td><p><a class="reference internal" href="generated/randomgen.legacy.legacy.LegacyGenerator.state.html#randomgen.legacy.legacy.LegacyGenerator.state" title="randomgen.legacy.legacy.LegacyGenerator.state"><code class="xref py py-obj docutils literal notranslate"><span class="pre">state</span></code></a></p></td>
-<td><p>Get or set the augmented state</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="generated/randomgen.mtrand.RandomState.get_state.html#randomgen.mtrand.RandomState.get_state" title="randomgen.mtrand.RandomState.get_state"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_state</span></code></a>()</p></td>
+<td><p>Return a tuple representing the internal state of the generator.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="generated/randomgen.mtrand.RandomState.set_state.html#randomgen.mtrand.RandomState.set_state" title="randomgen.mtrand.RandomState.set_state"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_state</span></code></a>(state)</p></td>
+<td><p>Set the internal state of the generator from a tuple.</p></td>
 </tr>
 </tbody>
 </table>
@@ -179,32 +215,26 @@ when accessing the state so that these extra values are saved.</p>
 <col style="width: 90%" />
 </colgroup>
 <tbody>
-<tr class="row-odd"><td><p><a class="reference internal" href="generated/randomgen.legacy.legacy.LegacyGenerator.rand.html#randomgen.legacy.legacy.LegacyGenerator.rand" title="randomgen.legacy.legacy.LegacyGenerator.rand"><code class="xref py py-obj docutils literal notranslate"><span class="pre">rand</span></code></a>(d0, d1, …, dn)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="generated/randomgen.mtrand.RandomState.rand.html#randomgen.mtrand.RandomState.rand" title="randomgen.mtrand.RandomState.rand"><code class="xref py py-obj docutils literal notranslate"><span class="pre">rand</span></code></a>(d0, d1, …, dn)</p></td>
 <td><p>Random values in a given shape.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="generated/randomgen.legacy.legacy.LegacyGenerator.randn.html#randomgen.legacy.legacy.LegacyGenerator.randn" title="randomgen.legacy.legacy.LegacyGenerator.randn"><code class="xref py py-obj docutils literal notranslate"><span class="pre">randn</span></code></a>(d0, d1, …, dn)</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="generated/randomgen.mtrand.RandomState.randn.html#randomgen.mtrand.RandomState.randn" title="randomgen.mtrand.RandomState.randn"><code class="xref py py-obj docutils literal notranslate"><span class="pre">randn</span></code></a>(d0, d1, …, dn)</p></td>
 <td><p>Return a sample (or samples) from the “standard normal” distribution.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="generated/randomgen.legacy.legacy.LegacyGenerator.randint.html#randomgen.legacy.legacy.LegacyGenerator.randint" title="randomgen.legacy.legacy.LegacyGenerator.randint"><code class="xref py py-obj docutils literal notranslate"><span class="pre">randint</span></code></a>(low[, high, size, dtype])</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="generated/randomgen.mtrand.RandomState.randint.html#randomgen.mtrand.RandomState.randint" title="randomgen.mtrand.RandomState.randint"><code class="xref py py-obj docutils literal notranslate"><span class="pre">randint</span></code></a>(low[, high, size, dtype])</p></td>
 <td><p>Return random integers from <cite>low</cite> (inclusive) to <cite>high</cite> (exclusive).</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="generated/randomgen.legacy.legacy.LegacyGenerator.random_integers.html#randomgen.legacy.legacy.LegacyGenerator.random_integers" title="randomgen.legacy.legacy.LegacyGenerator.random_integers"><code class="xref py py-obj docutils literal notranslate"><span class="pre">random_integers</span></code></a>(low[, high, size])</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="generated/randomgen.mtrand.RandomState.random_integers.html#randomgen.mtrand.RandomState.random_integers" title="randomgen.mtrand.RandomState.random_integers"><code class="xref py py-obj docutils literal notranslate"><span class="pre">random_integers</span></code></a>(low[, high, size])</p></td>
 <td><p>Random integers of type np.int between <cite>low</cite> and <cite>high</cite>, inclusive.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="generated/randomgen.legacy.legacy.LegacyGenerator.random_sample.html#randomgen.legacy.legacy.LegacyGenerator.random_sample" title="randomgen.legacy.legacy.LegacyGenerator.random_sample"><code class="xref py py-obj docutils literal notranslate"><span class="pre">random_sample</span></code></a>([size])</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="generated/randomgen.mtrand.RandomState.random_sample.html#randomgen.mtrand.RandomState.random_sample" title="randomgen.mtrand.RandomState.random_sample"><code class="xref py py-obj docutils literal notranslate"><span class="pre">random_sample</span></code></a>([size])</p></td>
 <td><p>Return random floats in the half-open interval [0.0, 1.0).</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="generated/randomgen.legacy.legacy.LegacyGenerator.choice.html#randomgen.legacy.legacy.LegacyGenerator.choice" title="randomgen.legacy.legacy.LegacyGenerator.choice"><code class="xref py py-obj docutils literal notranslate"><span class="pre">choice</span></code></a>(a[, size, replace, p])</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="generated/randomgen.mtrand.RandomState.choice.html#randomgen.mtrand.RandomState.choice" title="randomgen.mtrand.RandomState.choice"><code class="xref py py-obj docutils literal notranslate"><span class="pre">choice</span></code></a>(a[, size, replace, p])</p></td>
 <td><p>Generates a random sample from a given 1-D array</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="generated/randomgen.legacy.legacy.LegacyGenerator.bytes.html#randomgen.legacy.legacy.LegacyGenerator.bytes" title="randomgen.legacy.legacy.LegacyGenerator.bytes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bytes</span></code></a>(length)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="generated/randomgen.mtrand.RandomState.bytes.html#randomgen.mtrand.RandomState.bytes" title="randomgen.mtrand.RandomState.bytes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bytes</span></code></a>(length)</p></td>
 <td><p>Return random bytes.</p></td>
-</tr>
-<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">LegacyGenerator.random_uintegers</span></code></p></td>
-<td><p></p></td>
-</tr>
-<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">LegacyGenerator.random_raw</span></code></p></td>
-<td><p></p></td>
 </tr>
 </tbody>
 </table>
@@ -217,10 +247,10 @@ when accessing the state so that these extra values are saved.</p>
 <col style="width: 90%" />
 </colgroup>
 <tbody>
-<tr class="row-odd"><td><p><a class="reference internal" href="generated/randomgen.legacy.legacy.LegacyGenerator.shuffle.html#randomgen.legacy.legacy.LegacyGenerator.shuffle" title="randomgen.legacy.legacy.LegacyGenerator.shuffle"><code class="xref py py-obj docutils literal notranslate"><span class="pre">shuffle</span></code></a>(x)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="generated/randomgen.mtrand.RandomState.shuffle.html#randomgen.mtrand.RandomState.shuffle" title="randomgen.mtrand.RandomState.shuffle"><code class="xref py py-obj docutils literal notranslate"><span class="pre">shuffle</span></code></a>(x)</p></td>
 <td><p>Modify a sequence in-place by shuffling its contents.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="generated/randomgen.legacy.legacy.LegacyGenerator.permutation.html#randomgen.legacy.legacy.LegacyGenerator.permutation" title="randomgen.legacy.legacy.LegacyGenerator.permutation"><code class="xref py py-obj docutils literal notranslate"><span class="pre">permutation</span></code></a>(x)</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="generated/randomgen.mtrand.RandomState.permutation.html#randomgen.mtrand.RandomState.permutation" title="randomgen.mtrand.RandomState.permutation"><code class="xref py py-obj docutils literal notranslate"><span class="pre">permutation</span></code></a>(x)</p></td>
 <td><p>Randomly permute a sequence, or return a permuted range.</p></td>
 </tr>
 </tbody>
@@ -234,112 +264,109 @@ when accessing the state so that these extra values are saved.</p>
 <col style="width: 90%" />
 </colgroup>
 <tbody>
-<tr class="row-odd"><td><p><a class="reference internal" href="generated/randomgen.legacy.legacy.LegacyGenerator.beta.html#randomgen.legacy.legacy.LegacyGenerator.beta" title="randomgen.legacy.legacy.LegacyGenerator.beta"><code class="xref py py-obj docutils literal notranslate"><span class="pre">beta</span></code></a>(a, b[, size])</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="generated/randomgen.mtrand.RandomState.beta.html#randomgen.mtrand.RandomState.beta" title="randomgen.mtrand.RandomState.beta"><code class="xref py py-obj docutils literal notranslate"><span class="pre">beta</span></code></a>(a, b[, size])</p></td>
 <td><p>Draw samples from a Beta distribution.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="generated/randomgen.legacy.legacy.LegacyGenerator.binomial.html#randomgen.legacy.legacy.LegacyGenerator.binomial" title="randomgen.legacy.legacy.LegacyGenerator.binomial"><code class="xref py py-obj docutils literal notranslate"><span class="pre">binomial</span></code></a>(n, p[, size])</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="generated/randomgen.mtrand.RandomState.binomial.html#randomgen.mtrand.RandomState.binomial" title="randomgen.mtrand.RandomState.binomial"><code class="xref py py-obj docutils literal notranslate"><span class="pre">binomial</span></code></a>(n, p[, size])</p></td>
 <td><p>Draw samples from a binomial distribution.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="generated/randomgen.legacy.legacy.LegacyGenerator.chisquare.html#randomgen.legacy.legacy.LegacyGenerator.chisquare" title="randomgen.legacy.legacy.LegacyGenerator.chisquare"><code class="xref py py-obj docutils literal notranslate"><span class="pre">chisquare</span></code></a>(df[, size])</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="generated/randomgen.mtrand.RandomState.chisquare.html#randomgen.mtrand.RandomState.chisquare" title="randomgen.mtrand.RandomState.chisquare"><code class="xref py py-obj docutils literal notranslate"><span class="pre">chisquare</span></code></a>(df[, size])</p></td>
 <td><p>Draw samples from a chi-square distribution.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="generated/randomgen.legacy.legacy.LegacyGenerator.complex_normal.html#randomgen.legacy.legacy.LegacyGenerator.complex_normal" title="randomgen.legacy.legacy.LegacyGenerator.complex_normal"><code class="xref py py-obj docutils literal notranslate"><span class="pre">complex_normal</span></code></a>([loc, gamma, relation, size])</p></td>
-<td><p>Draw random samples from a complex normal (Gaussian) distribution.</p></td>
-</tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="generated/randomgen.legacy.legacy.LegacyGenerator.dirichlet.html#randomgen.legacy.legacy.LegacyGenerator.dirichlet" title="randomgen.legacy.legacy.LegacyGenerator.dirichlet"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dirichlet</span></code></a>(alpha[, size])</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="generated/randomgen.mtrand.RandomState.dirichlet.html#randomgen.mtrand.RandomState.dirichlet" title="randomgen.mtrand.RandomState.dirichlet"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dirichlet</span></code></a>(alpha[, size])</p></td>
 <td><p>Draw samples from the Dirichlet distribution.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="generated/randomgen.legacy.legacy.LegacyGenerator.exponential.html#randomgen.legacy.legacy.LegacyGenerator.exponential" title="randomgen.legacy.legacy.LegacyGenerator.exponential"><code class="xref py py-obj docutils literal notranslate"><span class="pre">exponential</span></code></a>([scale, size])</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="generated/randomgen.mtrand.RandomState.exponential.html#randomgen.mtrand.RandomState.exponential" title="randomgen.mtrand.RandomState.exponential"><code class="xref py py-obj docutils literal notranslate"><span class="pre">exponential</span></code></a>([scale, size])</p></td>
 <td><p>Draw samples from an exponential distribution.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="generated/randomgen.legacy.legacy.LegacyGenerator.f.html#randomgen.legacy.legacy.LegacyGenerator.f" title="randomgen.legacy.legacy.LegacyGenerator.f"><code class="xref py py-obj docutils literal notranslate"><span class="pre">f</span></code></a>(dfnum, dfden[, size])</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="generated/randomgen.mtrand.RandomState.f.html#randomgen.mtrand.RandomState.f" title="randomgen.mtrand.RandomState.f"><code class="xref py py-obj docutils literal notranslate"><span class="pre">f</span></code></a>(dfnum, dfden[, size])</p></td>
 <td><p>Draw samples from an F distribution.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="generated/randomgen.legacy.legacy.LegacyGenerator.gamma.html#randomgen.legacy.legacy.LegacyGenerator.gamma" title="randomgen.legacy.legacy.LegacyGenerator.gamma"><code class="xref py py-obj docutils literal notranslate"><span class="pre">gamma</span></code></a>(shape[, scale, size])</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="generated/randomgen.mtrand.RandomState.gamma.html#randomgen.mtrand.RandomState.gamma" title="randomgen.mtrand.RandomState.gamma"><code class="xref py py-obj docutils literal notranslate"><span class="pre">gamma</span></code></a>(shape[, scale, size])</p></td>
 <td><p>Draw samples from a Gamma distribution.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="generated/randomgen.legacy.legacy.LegacyGenerator.geometric.html#randomgen.legacy.legacy.LegacyGenerator.geometric" title="randomgen.legacy.legacy.LegacyGenerator.geometric"><code class="xref py py-obj docutils literal notranslate"><span class="pre">geometric</span></code></a>(p[, size])</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="generated/randomgen.mtrand.RandomState.geometric.html#randomgen.mtrand.RandomState.geometric" title="randomgen.mtrand.RandomState.geometric"><code class="xref py py-obj docutils literal notranslate"><span class="pre">geometric</span></code></a>(p[, size])</p></td>
 <td><p>Draw samples from the geometric distribution.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="generated/randomgen.legacy.legacy.LegacyGenerator.gumbel.html#randomgen.legacy.legacy.LegacyGenerator.gumbel" title="randomgen.legacy.legacy.LegacyGenerator.gumbel"><code class="xref py py-obj docutils literal notranslate"><span class="pre">gumbel</span></code></a>([loc, scale, size])</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="generated/randomgen.mtrand.RandomState.gumbel.html#randomgen.mtrand.RandomState.gumbel" title="randomgen.mtrand.RandomState.gumbel"><code class="xref py py-obj docutils literal notranslate"><span class="pre">gumbel</span></code></a>([loc, scale, size])</p></td>
 <td><p>Draw samples from a Gumbel distribution.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="generated/randomgen.legacy.legacy.LegacyGenerator.hypergeometric.html#randomgen.legacy.legacy.LegacyGenerator.hypergeometric" title="randomgen.legacy.legacy.LegacyGenerator.hypergeometric"><code class="xref py py-obj docutils literal notranslate"><span class="pre">hypergeometric</span></code></a>(ngood, nbad, nsample[, size])</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="generated/randomgen.mtrand.RandomState.hypergeometric.html#randomgen.mtrand.RandomState.hypergeometric" title="randomgen.mtrand.RandomState.hypergeometric"><code class="xref py py-obj docutils literal notranslate"><span class="pre">hypergeometric</span></code></a>(ngood, nbad, nsample[, size])</p></td>
 <td><p>Draw samples from a Hypergeometric distribution.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="generated/randomgen.legacy.legacy.LegacyGenerator.laplace.html#randomgen.legacy.legacy.LegacyGenerator.laplace" title="randomgen.legacy.legacy.LegacyGenerator.laplace"><code class="xref py py-obj docutils literal notranslate"><span class="pre">laplace</span></code></a>([loc, scale, size])</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="generated/randomgen.mtrand.RandomState.laplace.html#randomgen.mtrand.RandomState.laplace" title="randomgen.mtrand.RandomState.laplace"><code class="xref py py-obj docutils literal notranslate"><span class="pre">laplace</span></code></a>([loc, scale, size])</p></td>
 <td><p>Draw samples from the Laplace or double exponential distribution with specified location (or mean) and scale (decay).</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="generated/randomgen.legacy.legacy.LegacyGenerator.logistic.html#randomgen.legacy.legacy.LegacyGenerator.logistic" title="randomgen.legacy.legacy.LegacyGenerator.logistic"><code class="xref py py-obj docutils literal notranslate"><span class="pre">logistic</span></code></a>([loc, scale, size])</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="generated/randomgen.mtrand.RandomState.logistic.html#randomgen.mtrand.RandomState.logistic" title="randomgen.mtrand.RandomState.logistic"><code class="xref py py-obj docutils literal notranslate"><span class="pre">logistic</span></code></a>([loc, scale, size])</p></td>
 <td><p>Draw samples from a logistic distribution.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="generated/randomgen.legacy.legacy.LegacyGenerator.lognormal.html#randomgen.legacy.legacy.LegacyGenerator.lognormal" title="randomgen.legacy.legacy.LegacyGenerator.lognormal"><code class="xref py py-obj docutils literal notranslate"><span class="pre">lognormal</span></code></a>([mean, sigma, size])</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="generated/randomgen.mtrand.RandomState.lognormal.html#randomgen.mtrand.RandomState.lognormal" title="randomgen.mtrand.RandomState.lognormal"><code class="xref py py-obj docutils literal notranslate"><span class="pre">lognormal</span></code></a>([mean, sigma, size])</p></td>
 <td><p>Draw samples from a log-normal distribution.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="generated/randomgen.legacy.legacy.LegacyGenerator.logseries.html#randomgen.legacy.legacy.LegacyGenerator.logseries" title="randomgen.legacy.legacy.LegacyGenerator.logseries"><code class="xref py py-obj docutils literal notranslate"><span class="pre">logseries</span></code></a>(p[, size])</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="generated/randomgen.mtrand.RandomState.logseries.html#randomgen.mtrand.RandomState.logseries" title="randomgen.mtrand.RandomState.logseries"><code class="xref py py-obj docutils literal notranslate"><span class="pre">logseries</span></code></a>(p[, size])</p></td>
 <td><p>Draw samples from a logarithmic series distribution.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="generated/randomgen.legacy.legacy.LegacyGenerator.multinomial.html#randomgen.legacy.legacy.LegacyGenerator.multinomial" title="randomgen.legacy.legacy.LegacyGenerator.multinomial"><code class="xref py py-obj docutils literal notranslate"><span class="pre">multinomial</span></code></a>(n, pvals[, size])</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="generated/randomgen.mtrand.RandomState.multinomial.html#randomgen.mtrand.RandomState.multinomial" title="randomgen.mtrand.RandomState.multinomial"><code class="xref py py-obj docutils literal notranslate"><span class="pre">multinomial</span></code></a>(n, pvals[, size])</p></td>
 <td><p>Draw samples from a multinomial distribution.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="generated/randomgen.legacy.legacy.LegacyGenerator.multivariate_normal.html#randomgen.legacy.legacy.LegacyGenerator.multivariate_normal" title="randomgen.legacy.legacy.LegacyGenerator.multivariate_normal"><code class="xref py py-obj docutils literal notranslate"><span class="pre">multivariate_normal</span></code></a>(self, mean, cov[, size, …])</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="generated/randomgen.mtrand.RandomState.multivariate_normal.html#randomgen.mtrand.RandomState.multivariate_normal" title="randomgen.mtrand.RandomState.multivariate_normal"><code class="xref py py-obj docutils literal notranslate"><span class="pre">multivariate_normal</span></code></a>(mean, cov[, size, …])</p></td>
 <td><p>Draw random samples from a multivariate normal distribution.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="generated/randomgen.legacy.legacy.LegacyGenerator.negative_binomial.html#randomgen.legacy.legacy.LegacyGenerator.negative_binomial" title="randomgen.legacy.legacy.LegacyGenerator.negative_binomial"><code class="xref py py-obj docutils literal notranslate"><span class="pre">negative_binomial</span></code></a>(n, p[, size])</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="generated/randomgen.mtrand.RandomState.negative_binomial.html#randomgen.mtrand.RandomState.negative_binomial" title="randomgen.mtrand.RandomState.negative_binomial"><code class="xref py py-obj docutils literal notranslate"><span class="pre">negative_binomial</span></code></a>(n, p[, size])</p></td>
 <td><p>Draw samples from a negative binomial distribution.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="generated/randomgen.legacy.legacy.LegacyGenerator.noncentral_chisquare.html#randomgen.legacy.legacy.LegacyGenerator.noncentral_chisquare" title="randomgen.legacy.legacy.LegacyGenerator.noncentral_chisquare"><code class="xref py py-obj docutils literal notranslate"><span class="pre">noncentral_chisquare</span></code></a>(df, nonc[, size])</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="generated/randomgen.mtrand.RandomState.noncentral_chisquare.html#randomgen.mtrand.RandomState.noncentral_chisquare" title="randomgen.mtrand.RandomState.noncentral_chisquare"><code class="xref py py-obj docutils literal notranslate"><span class="pre">noncentral_chisquare</span></code></a>(df, nonc[, size])</p></td>
 <td><p>Draw samples from a noncentral chi-square distribution.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="generated/randomgen.legacy.legacy.LegacyGenerator.noncentral_f.html#randomgen.legacy.legacy.LegacyGenerator.noncentral_f" title="randomgen.legacy.legacy.LegacyGenerator.noncentral_f"><code class="xref py py-obj docutils literal notranslate"><span class="pre">noncentral_f</span></code></a>(dfnum, dfden, nonc[, size])</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="generated/randomgen.mtrand.RandomState.noncentral_f.html#randomgen.mtrand.RandomState.noncentral_f" title="randomgen.mtrand.RandomState.noncentral_f"><code class="xref py py-obj docutils literal notranslate"><span class="pre">noncentral_f</span></code></a>(dfnum, dfden, nonc[, size])</p></td>
 <td><p>Draw samples from the noncentral F distribution.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="generated/randomgen.legacy.legacy.LegacyGenerator.normal.html#randomgen.legacy.legacy.LegacyGenerator.normal" title="randomgen.legacy.legacy.LegacyGenerator.normal"><code class="xref py py-obj docutils literal notranslate"><span class="pre">normal</span></code></a>([loc, scale, size])</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="generated/randomgen.mtrand.RandomState.normal.html#randomgen.mtrand.RandomState.normal" title="randomgen.mtrand.RandomState.normal"><code class="xref py py-obj docutils literal notranslate"><span class="pre">normal</span></code></a>([loc, scale, size])</p></td>
 <td><p>Draw random samples from a normal (Gaussian) distribution.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="generated/randomgen.legacy.legacy.LegacyGenerator.pareto.html#randomgen.legacy.legacy.LegacyGenerator.pareto" title="randomgen.legacy.legacy.LegacyGenerator.pareto"><code class="xref py py-obj docutils literal notranslate"><span class="pre">pareto</span></code></a>(a[, size])</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="generated/randomgen.mtrand.RandomState.pareto.html#randomgen.mtrand.RandomState.pareto" title="randomgen.mtrand.RandomState.pareto"><code class="xref py py-obj docutils literal notranslate"><span class="pre">pareto</span></code></a>(a[, size])</p></td>
 <td><p>Draw samples from a Pareto II or Lomax distribution with specified shape.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="generated/randomgen.legacy.legacy.LegacyGenerator.poisson.html#randomgen.legacy.legacy.LegacyGenerator.poisson" title="randomgen.legacy.legacy.LegacyGenerator.poisson"><code class="xref py py-obj docutils literal notranslate"><span class="pre">poisson</span></code></a>([lam, size])</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="generated/randomgen.mtrand.RandomState.poisson.html#randomgen.mtrand.RandomState.poisson" title="randomgen.mtrand.RandomState.poisson"><code class="xref py py-obj docutils literal notranslate"><span class="pre">poisson</span></code></a>([lam, size])</p></td>
 <td><p>Draw samples from a Poisson distribution.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="generated/randomgen.legacy.legacy.LegacyGenerator.power.html#randomgen.legacy.legacy.LegacyGenerator.power" title="randomgen.legacy.legacy.LegacyGenerator.power"><code class="xref py py-obj docutils literal notranslate"><span class="pre">power</span></code></a>(a[, size])</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="generated/randomgen.mtrand.RandomState.power.html#randomgen.mtrand.RandomState.power" title="randomgen.mtrand.RandomState.power"><code class="xref py py-obj docutils literal notranslate"><span class="pre">power</span></code></a>(a[, size])</p></td>
 <td><p>Draws samples in [0, 1] from a power distribution with positive exponent a - 1.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="generated/randomgen.legacy.legacy.LegacyGenerator.rayleigh.html#randomgen.legacy.legacy.LegacyGenerator.rayleigh" title="randomgen.legacy.legacy.LegacyGenerator.rayleigh"><code class="xref py py-obj docutils literal notranslate"><span class="pre">rayleigh</span></code></a>([scale, size])</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="generated/randomgen.mtrand.RandomState.rayleigh.html#randomgen.mtrand.RandomState.rayleigh" title="randomgen.mtrand.RandomState.rayleigh"><code class="xref py py-obj docutils literal notranslate"><span class="pre">rayleigh</span></code></a>([scale, size])</p></td>
 <td><p>Draw samples from a Rayleigh distribution.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="generated/randomgen.legacy.legacy.LegacyGenerator.standard_cauchy.html#randomgen.legacy.legacy.LegacyGenerator.standard_cauchy" title="randomgen.legacy.legacy.LegacyGenerator.standard_cauchy"><code class="xref py py-obj docutils literal notranslate"><span class="pre">standard_cauchy</span></code></a>([size])</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="generated/randomgen.mtrand.RandomState.standard_cauchy.html#randomgen.mtrand.RandomState.standard_cauchy" title="randomgen.mtrand.RandomState.standard_cauchy"><code class="xref py py-obj docutils literal notranslate"><span class="pre">standard_cauchy</span></code></a>([size])</p></td>
 <td><p>Draw samples from a standard Cauchy distribution with mode = 0.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="generated/randomgen.legacy.legacy.LegacyGenerator.standard_exponential.html#randomgen.legacy.legacy.LegacyGenerator.standard_exponential" title="randomgen.legacy.legacy.LegacyGenerator.standard_exponential"><code class="xref py py-obj docutils literal notranslate"><span class="pre">standard_exponential</span></code></a>([size])</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="generated/randomgen.mtrand.RandomState.standard_exponential.html#randomgen.mtrand.RandomState.standard_exponential" title="randomgen.mtrand.RandomState.standard_exponential"><code class="xref py py-obj docutils literal notranslate"><span class="pre">standard_exponential</span></code></a>([size])</p></td>
 <td><p>Draw samples from the standard exponential distribution.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="generated/randomgen.legacy.legacy.LegacyGenerator.standard_gamma.html#randomgen.legacy.legacy.LegacyGenerator.standard_gamma" title="randomgen.legacy.legacy.LegacyGenerator.standard_gamma"><code class="xref py py-obj docutils literal notranslate"><span class="pre">standard_gamma</span></code></a>(shape[, size])</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="generated/randomgen.mtrand.RandomState.standard_gamma.html#randomgen.mtrand.RandomState.standard_gamma" title="randomgen.mtrand.RandomState.standard_gamma"><code class="xref py py-obj docutils literal notranslate"><span class="pre">standard_gamma</span></code></a>(shape[, size])</p></td>
 <td><p>Draw samples from a standard Gamma distribution.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="generated/randomgen.legacy.legacy.LegacyGenerator.standard_normal.html#randomgen.legacy.legacy.LegacyGenerator.standard_normal" title="randomgen.legacy.legacy.LegacyGenerator.standard_normal"><code class="xref py py-obj docutils literal notranslate"><span class="pre">standard_normal</span></code></a>([size])</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="generated/randomgen.mtrand.RandomState.standard_normal.html#randomgen.mtrand.RandomState.standard_normal" title="randomgen.mtrand.RandomState.standard_normal"><code class="xref py py-obj docutils literal notranslate"><span class="pre">standard_normal</span></code></a>([size])</p></td>
 <td><p>Draw samples from a standard Normal distribution (mean=0, stdev=1).</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="generated/randomgen.legacy.legacy.LegacyGenerator.standard_t.html#randomgen.legacy.legacy.LegacyGenerator.standard_t" title="randomgen.legacy.legacy.LegacyGenerator.standard_t"><code class="xref py py-obj docutils literal notranslate"><span class="pre">standard_t</span></code></a>(df[, size])</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="generated/randomgen.mtrand.RandomState.standard_t.html#randomgen.mtrand.RandomState.standard_t" title="randomgen.mtrand.RandomState.standard_t"><code class="xref py py-obj docutils literal notranslate"><span class="pre">standard_t</span></code></a>(df[, size])</p></td>
 <td><p>Draw samples from a standard Student’s t distribution with <cite>df</cite> degrees of freedom.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="generated/randomgen.legacy.legacy.LegacyGenerator.triangular.html#randomgen.legacy.legacy.LegacyGenerator.triangular" title="randomgen.legacy.legacy.LegacyGenerator.triangular"><code class="xref py py-obj docutils literal notranslate"><span class="pre">triangular</span></code></a>(left, mode, right[, size])</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="generated/randomgen.mtrand.RandomState.triangular.html#randomgen.mtrand.RandomState.triangular" title="randomgen.mtrand.RandomState.triangular"><code class="xref py py-obj docutils literal notranslate"><span class="pre">triangular</span></code></a>(left, mode, right[, size])</p></td>
 <td><p>Draw samples from the triangular distribution over the interval <code class="docutils literal notranslate"><span class="pre">[left,</span> <span class="pre">right]</span></code>.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="generated/randomgen.legacy.legacy.LegacyGenerator.uniform.html#randomgen.legacy.legacy.LegacyGenerator.uniform" title="randomgen.legacy.legacy.LegacyGenerator.uniform"><code class="xref py py-obj docutils literal notranslate"><span class="pre">uniform</span></code></a>([low, high, size])</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="generated/randomgen.mtrand.RandomState.uniform.html#randomgen.mtrand.RandomState.uniform" title="randomgen.mtrand.RandomState.uniform"><code class="xref py py-obj docutils literal notranslate"><span class="pre">uniform</span></code></a>([low, high, size])</p></td>
 <td><p>Draw samples from a uniform distribution.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="generated/randomgen.legacy.legacy.LegacyGenerator.vonmises.html#randomgen.legacy.legacy.LegacyGenerator.vonmises" title="randomgen.legacy.legacy.LegacyGenerator.vonmises"><code class="xref py py-obj docutils literal notranslate"><span class="pre">vonmises</span></code></a>(mu, kappa[, size])</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="generated/randomgen.mtrand.RandomState.vonmises.html#randomgen.mtrand.RandomState.vonmises" title="randomgen.mtrand.RandomState.vonmises"><code class="xref py py-obj docutils literal notranslate"><span class="pre">vonmises</span></code></a>(mu, kappa[, size])</p></td>
 <td><p>Draw samples from a von Mises distribution.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="generated/randomgen.legacy.legacy.LegacyGenerator.wald.html#randomgen.legacy.legacy.LegacyGenerator.wald" title="randomgen.legacy.legacy.LegacyGenerator.wald"><code class="xref py py-obj docutils literal notranslate"><span class="pre">wald</span></code></a>(mean, scale[, size])</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="generated/randomgen.mtrand.RandomState.wald.html#randomgen.mtrand.RandomState.wald" title="randomgen.mtrand.RandomState.wald"><code class="xref py py-obj docutils literal notranslate"><span class="pre">wald</span></code></a>(mean, scale[, size])</p></td>
 <td><p>Draw samples from a Wald, or inverse Gaussian, distribution.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="generated/randomgen.legacy.legacy.LegacyGenerator.weibull.html#randomgen.legacy.legacy.LegacyGenerator.weibull" title="randomgen.legacy.legacy.LegacyGenerator.weibull"><code class="xref py py-obj docutils literal notranslate"><span class="pre">weibull</span></code></a>(a[, size])</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="generated/randomgen.mtrand.RandomState.weibull.html#randomgen.mtrand.RandomState.weibull" title="randomgen.mtrand.RandomState.weibull"><code class="xref py py-obj docutils literal notranslate"><span class="pre">weibull</span></code></a>(a[, size])</p></td>
 <td><p>Draw samples from a Weibull distribution.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="generated/randomgen.legacy.legacy.LegacyGenerator.zipf.html#randomgen.legacy.legacy.LegacyGenerator.zipf" title="randomgen.legacy.legacy.LegacyGenerator.zipf"><code class="xref py py-obj docutils literal notranslate"><span class="pre">zipf</span></code></a>(a[, size])</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="generated/randomgen.mtrand.RandomState.zipf.html#randomgen.mtrand.RandomState.zipf" title="randomgen.mtrand.RandomState.zipf"><code class="xref py py-obj docutils literal notranslate"><span class="pre">zipf</span></code></a>(a[, size])</p></td>
 <td><p>Draw samples from a Zipf distribution.</p></td>
 </tr>
 </tbody>
@@ -357,7 +384,7 @@ when accessing the state so that these extra values are saved.</p>
       </div>
     
       <div class="pull-right">
-        <a class="btn btn-default" href="generated/randomgen.legacy.legacy.LegacyGenerator.state.html" title="next chapter (use the right arrow)">randomgen.legacy.legacy.LegacyGenerator.state</a>
+        <a class="btn btn-default" href="generated/randomgen.mtrand.RandomState.get_state.html" title="next chapter (use the right arrow)">randomgen.mtrand.RandomState.get_state</a>
       </div>
     </div>
     <div class="clearer"></div>
@@ -375,12 +402,12 @@ when accessing the state so that these extra values are saved.</p>
           <a href="py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="right" >
-          <a href="generated/randomgen.legacy.legacy.LegacyGenerator.state.html" title="randomgen.legacy.legacy.LegacyGenerator.state"
+          <a href="generated/randomgen.mtrand.RandomState.get_state.html" title="randomgen.mtrand.RandomState.get_state"
              >next</a> |</li>
         <li class="right" >
           <a href="generated/randomgen.generator.RandomGenerator.zipf.html" title="randomgen.generator.RandomGenerator.zipf"
              >previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="index.html">RandomGen v1.16.1+40.g7779c6e documentation</a> &#187;</li> 
+        <li class="nav-item nav-item-0"><a href="index.html">RandomGen v1.16.1+43.gd98e7cb documentation</a> &#187;</li> 
       </ul>
     </div>
 <script type="text/javascript">

@@ -1,0 +1,6 @@
+randomgen.mtrand.RandomState.chisquare
+======================================
+
+.. currentmodule:: randomgen.mtrand
+
+.. automethod:: RandomState.chisquare

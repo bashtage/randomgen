@@ -1,0 +1,6 @@
+randomgen.mtrand.RandomState.dirichlet
+======================================
+
+.. currentmodule:: randomgen.mtrand
+
+.. automethod:: RandomState.dirichlet

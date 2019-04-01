@@ -1,6 +1,0 @@
-randomgen.legacy.legacy.LegacyGenerator.weibull
-===============================================
-
-.. currentmodule:: randomgen.legacy.legacy
-
-.. automethod:: LegacyGenerator.weibull

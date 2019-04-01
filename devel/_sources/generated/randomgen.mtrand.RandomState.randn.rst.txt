@@ -1,0 +1,6 @@
+randomgen.mtrand.RandomState.randn
+==================================
+
+.. currentmodule:: randomgen.mtrand
+
+.. automethod:: RandomState.randn

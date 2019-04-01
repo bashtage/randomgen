@@ -1,6 +1,0 @@
-randomgen.legacy.legacy.LegacyGenerator.pareto
-==============================================
-
-.. currentmodule:: randomgen.legacy.legacy
-
-.. automethod:: LegacyGenerator.pareto

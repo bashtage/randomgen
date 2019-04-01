@@ -38,4 +38,9 @@ Extending
    ~Xoroshiro128.cffi
    ~Xoroshiro128.ctypes
 
+Testing
+=======
+.. autosummary::
+   :toctree: generated/
 
+   ~Xoroshiro128.random_raw

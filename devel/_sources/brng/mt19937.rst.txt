@@ -38,4 +38,9 @@ Extending
    ~MT19937.cffi
    ~MT19937.ctypes
 
+Testing
+=======
+.. autosummary::
+   :toctree: generated/
 
+   ~MT19937.random_raw

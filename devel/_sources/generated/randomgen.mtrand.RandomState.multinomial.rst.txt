@@ -1,0 +1,6 @@
+randomgen.mtrand.RandomState.multinomial
+========================================
+
+.. currentmodule:: randomgen.mtrand
+
+.. automethod:: RandomState.multinomial
