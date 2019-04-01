@@ -1,5 +1,3 @@
-from __future__ import absolute_import
-
 try:
     from threading import Lock
 except ImportError:
@@ -29,10 +27,10 @@ cdef extern from 'src/threefry32/threefry32.h':
     ctypedef r123array4x32 threefry4x32_ctr_t
 
     struct s_threefry32_state:
-        threefry4x32_ctr_t *ctr;
-        threefry4x32_key_t *key;
-        int buffer_pos;
-        uint32_t buffer[THREEFRY_BUFFER_SIZE];
+        threefry4x32_ctr_t *ctr
+        threefry4x32_key_t *key
+        int buffer_pos
+        uint32_t buffer[THREEFRY_BUFFER_SIZE]
 
     ctypedef s_threefry32_state threefry32_state
 
@@ -162,7 +160,7 @@ cdef class ThreeFry32:
            the International Conference for High Performance Computing,
            Networking, Storage and Analysis (SC11), New York, NY: ACM, 2011.
     """
-    cdef threefry32_state  *rng_state
+    cdef threefry32_state *rng_state
     cdef brng_t *_brng
     cdef public object capsule
     cdef object _ctypes
@@ -413,12 +411,12 @@ cdef class ThreeFry32:
     @property
     def ctypes(self):
         """
-        Ctypes interface
+        ctypes interface
 
         Returns
         -------
         interface : namedtuple
-            Named tuple containing CFFI wrapper
+            Named tuple containing ctypes wrapper
 
             * state_address - Memory address of the state struct
             * state - pointer to the state struct
@@ -427,24 +425,9 @@ cdef class ThreeFry32:
             * next_double - function pointer to produce doubles
             * brng - pointer to the Basic RNG struct
         """
+        if self._ctypes is None:
+            self._ctypes = prepare_ctypes(self._brng)
 
-        if self._ctypes is not None:
-            return self._ctypes
-
-        import ctypes
-
-        self._ctypes = interface(<Py_ssize_t> self.rng_state,
-                                 ctypes.c_void_p(<Py_ssize_t> self.rng_state),
-                                 ctypes.cast(<Py_ssize_t> &threefry32_uint64,
-                                             ctypes.CFUNCTYPE(ctypes.c_uint64,
-                                                              ctypes.c_void_p)),
-                                 ctypes.cast(<Py_ssize_t> &threefry32_uint32,
-                                             ctypes.CFUNCTYPE(ctypes.c_uint32,
-                                                              ctypes.c_void_p)),
-                                 ctypes.cast(<Py_ssize_t> &threefry32_double,
-                                             ctypes.CFUNCTYPE(ctypes.c_double,
-                                                              ctypes.c_void_p)),
-                                 ctypes.c_void_p(<Py_ssize_t> self._brng))
         return self._ctypes
 
     @property
@@ -466,21 +449,7 @@ cdef class ThreeFry32:
         """
         if self._cffi is not None:
             return self._cffi
-        try:
-            import cffi
-        except ImportError:
-            raise ImportError('cffi is cannot be imported.')
-
-        ffi = cffi.FFI()
-        self._cffi = interface(<Py_ssize_t> self.rng_state,
-                               ffi.cast('void *', <Py_ssize_t> self.rng_state),
-                               ffi.cast('uint64_t (*)(void *)',
-                                        <uint64_t> self._brng.next_uint64),
-                               ffi.cast('uint32_t (*)(void *)',
-                                        <uint64_t> self._brng.next_uint32),
-                               ffi.cast('double (*)(void *)',
-                                        <uint64_t> self._brng.next_double),
-                               ffi.cast('void *', <Py_ssize_t> self._brng))
+        self._cffi = prepare_cffi(self._brng)
         return self._cffi
 
     @property

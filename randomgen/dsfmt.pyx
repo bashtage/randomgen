@@ -1,5 +1,3 @@
-from __future__ import absolute_import
-
 import operator
 from libc.stdlib cimport malloc, free
 from cpython.pycapsule cimport PyCapsule_New
@@ -21,24 +19,24 @@ import randomgen.pickle
 np.import_array()
 
 DEF DSFMT_MEXP = 19937
-DEF DSFMT_N = 191 # ((DSFMT_MEXP - 128) / 104 + 1)
-DEF DSFMT_N_PLUS_1 = 192 # DSFMT_N + 1
+DEF DSFMT_N = 191  # ((DSFMT_MEXP - 128) / 104 + 1)
+DEF DSFMT_N_PLUS_1 = 192  # DSFMT_N + 1
 DEF DSFMT_N64 = DSFMT_N * 2
 
 cdef extern from "src/dsfmt/dSFMT.h":
 
     union W128_T:
-        uint64_t u[2];
-        uint32_t u32[4];
-        double d[2];
+        uint64_t u[2]
+        uint32_t u32[4]
+        double d[2]
 
-    ctypedef W128_T w128_t;
+    ctypedef W128_T w128_t
 
     struct DSFMT_T:
-        w128_t status[DSFMT_N_PLUS_1];
-        int idx;
+        w128_t status[DSFMT_N_PLUS_1]
+        int idx
 
-    ctypedef DSFMT_T dsfmt_t;
+    ctypedef DSFMT_T dsfmt_t
 
     struct s_dsfmt_state:
         dsfmt_t *state
@@ -57,7 +55,7 @@ cdef extern from "src/dsfmt/dSFMT.h":
 
     void dsfmt_init_gen_rand(dsfmt_t *dsfmt, uint32_t seed)
     void dsfmt_init_by_array(dsfmt_t *dsfmt, uint32_t init_key[], int key_length)
-    void dsfmt_jump(dsfmt_state  *state);
+    void dsfmt_jump(dsfmt_state *state)
 
 cdef uint64_t dsfmt_uint64(void* st) nogil:
     return dsfmt_next64(<dsfmt_state *>st)
@@ -143,7 +141,7 @@ cdef class DSFMT:
            Jump Ahead Algorithm for Linear Recurrences in a Polynomial Space",
            Sequences and Their Applications - SETA, 290--298, 2008.
     """
-    cdef dsfmt_state  *rng_state
+    cdef dsfmt_state *rng_state
     cdef brng_t *_brng
     cdef public object capsule
     cdef public object _cffi
@@ -319,14 +317,14 @@ cdef class DSFMT:
             for j in range(2):
                 state[loc] = self.rng_state.state.status[i].u[j]
                 loc += 1
-        buffered_uniforms = np.empty(DSFMT_N64,dtype=np.double)
+        buffered_uniforms = np.empty(DSFMT_N64, dtype=np.double)
         for i in range(DSFMT_N64):
             buffered_uniforms[i] = self.rng_state.buffered_uniforms[i]
         return {'brng': self.__class__.__name__,
-                'state': {'state':np.asarray(state),
-                          'idx':self.rng_state.state.idx},
+                'state': {'state': np.asarray(state),
+                          'idx': self.rng_state.state.idx},
                 'buffer_loc': self.rng_state.buffer_loc,
-                'buffered_uniforms':np.asarray(buffered_uniforms)}
+                'buffered_uniforms': np.asarray(buffered_uniforms)}
 
     @state.setter
     def state(self, value):
@@ -351,12 +349,12 @@ cdef class DSFMT:
     @property
     def ctypes(self):
         """
-        Ctypes interface
+        ctypes interface
 
         Returns
         -------
         interface : namedtuple
-            Named tuple containing CFFI wrapper
+            Named tuple containing ctypes wrapper
 
             * state_address - Memory address of the state struct
             * state - pointer to the state struct
@@ -365,24 +363,9 @@ cdef class DSFMT:
             * next_double - function pointer to produce doubles
             * brng - pointer to the Basic RNG struct
         """
+        if self._ctypes is None:
+            self._ctypes = prepare_ctypes(self._brng)
 
-        if self._ctypes is not None:
-            return self._ctypes
-
-        import ctypes
-
-        self._ctypes = interface(<uintptr_t>self.rng_state,
-                         ctypes.c_void_p(<uintptr_t>self.rng_state),
-                         ctypes.cast(<uintptr_t>&dsfmt_uint64,
-                                     ctypes.CFUNCTYPE(ctypes.c_uint64,
-                                     ctypes.c_void_p)),
-                         ctypes.cast(<uintptr_t>&dsfmt_uint32,
-                                     ctypes.CFUNCTYPE(ctypes.c_uint32,
-                                     ctypes.c_void_p)),
-                         ctypes.cast(<uintptr_t>&dsfmt_double,
-                                     ctypes.CFUNCTYPE(ctypes.c_double,
-                                     ctypes.c_void_p)),
-                         ctypes.c_void_p(<uintptr_t>self._brng))
         return self._ctypes
 
     @property
@@ -404,18 +387,7 @@ cdef class DSFMT:
         """
         if self._cffi is not None:
             return self._cffi
-        try:
-            import cffi
-        except ImportError:
-            raise ImportError('cffi is cannot be imported.')
-
-        ffi = cffi.FFI()
-        self._cffi = interface(<uintptr_t>self.rng_state,
-                         ffi.cast('void *',<uintptr_t>self.rng_state),
-                         ffi.cast('uint64_t (*)(void *)',<uintptr_t>self._brng.next_uint64),
-                         ffi.cast('uint32_t (*)(void *)',<uintptr_t>self._brng.next_uint32),
-                         ffi.cast('double (*)(void *)',<uintptr_t>self._brng.next_double),
-                         ffi.cast('void *',<uintptr_t>self._brng))
+        self._cffi = prepare_cffi(self._brng)
         return self._cffi
 
     @property

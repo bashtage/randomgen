@@ -1,5 +1,3 @@
-from __future__ import absolute_import
-
 from libc.stdlib cimport malloc, free
 from cpython.pycapsule cimport PyCapsule_New
 
@@ -30,14 +28,14 @@ cdef extern from 'src/philox/philox.h':
     ctypedef s_r123array4x64 r123array4x64
     ctypedef s_r123array2x64 r123array2x64
 
-    ctypedef r123array4x64 philox4x64_ctr_t;
-    ctypedef r123array2x64 philox4x64_key_t;
+    ctypedef r123array4x64 philox4x64_ctr_t
+    ctypedef r123array2x64 philox4x64_key_t
 
     struct s_philox_state:
-        philox4x64_ctr_t *ctr;
-        philox4x64_key_t *key;
-        int buffer_pos;
-        uint64_t buffer[PHILOX_BUFFER_SIZE];
+        philox4x64_ctr_t *ctr
+        philox4x64_key_t *key
+        int buffer_pos
+        uint64_t buffer[PHILOX_BUFFER_SIZE]
         int has_uint32
         uint32_t uinteger
 
@@ -163,7 +161,7 @@ cdef class Philox:
            the International Conference for High Performance Computing,
            Networking, Storage and Analysis (SC11), New York, NY: ACM, 2011.
     """
-    cdef philox_state  *rng_state
+    cdef philox_state *rng_state
     cdef brng_t *_brng
     cdef public object capsule
     cdef object _ctypes
@@ -286,7 +284,7 @@ cdef class Philox:
         """
         if seed is not None and key is not None:
             raise ValueError('seed and key cannot be both used')
-        ub =  2 ** 64
+        ub = 2 ** 64
         if key is None:
             if seed is None:
                 try:
@@ -425,12 +423,12 @@ cdef class Philox:
     @property
     def ctypes(self):
         """
-        Ctypes interface
+        ctypes interface
 
         Returns
         -------
         interface : namedtuple
-            Named tuple containing CFFI wrapper
+            Named tuple containing ctypes wrapper
 
             * state_address - Memory address of the state struct
             * state - pointer to the state struct
@@ -439,24 +437,9 @@ cdef class Philox:
             * next_double - function pointer to produce doubles
             * brng - pointer to the Basic RNG struct
         """
+        if self._ctypes is None:
+            self._ctypes = prepare_ctypes(self._brng)
 
-        if self._ctypes is not None:
-            return self._ctypes
-
-        import ctypes
-
-        self._ctypes = interface(<uintptr_t>self.rng_state,
-                         ctypes.c_void_p(<uintptr_t>self.rng_state),
-                         ctypes.cast(<uintptr_t>&philox_uint64,
-                                     ctypes.CFUNCTYPE(ctypes.c_uint64,
-                                     ctypes.c_void_p)),
-                         ctypes.cast(<uintptr_t>&philox_uint32,
-                                     ctypes.CFUNCTYPE(ctypes.c_uint32,
-                                     ctypes.c_void_p)),
-                         ctypes.cast(<uintptr_t>&philox_double,
-                                     ctypes.CFUNCTYPE(ctypes.c_double,
-                                     ctypes.c_void_p)),
-                         ctypes.c_void_p(<uintptr_t>self._brng))
         return self._ctypes
 
     @property
@@ -478,18 +461,7 @@ cdef class Philox:
         """
         if self._cffi is not None:
             return self._cffi
-        try:
-            import cffi
-        except ImportError:
-            raise ImportError('cffi is cannot be imported.')
-
-        ffi = cffi.FFI()
-        self._cffi = interface(<uintptr_t>self.rng_state,
-                         ffi.cast('void *',<uintptr_t>self.rng_state),
-                         ffi.cast('uint64_t (*)(void *)',<uintptr_t>self._brng.next_uint64),
-                         ffi.cast('uint32_t (*)(void *)',<uintptr_t>self._brng.next_uint32),
-                         ffi.cast('double (*)(void *)',<uintptr_t>self._brng.next_double),
-                         ffi.cast('void *',<uintptr_t>self._brng))
+        self._cffi = prepare_cffi(self._brng)
         return self._cffi
 
     @property

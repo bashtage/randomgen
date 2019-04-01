@@ -17,9 +17,7 @@ _randint_types = {'bool': (0, 2),
                  'uint8': (0, 2**8),
                  'uint16': (0, 2**16),
                  'uint32': (0, 2**32),
-                 'uint64': (0, 2**64)
-                 }
-
+                 'uint64': (0, 2**64)}
 {{
 py:
 type_info = (('uint32', 'uint32', 'uint64', 'NPY_UINT64', 0, 0, 0, '0X100000000ULL'),
@@ -32,7 +30,6 @@ type_info = (('uint32', 'uint32', 'uint64', 'NPY_UINT64', 0, 0, 0, '0X100000000U
 )}}
 {{for  nptype, utype, nptype_up, npctype, remaining, bitshift, lb, ub in type_info}}
 {{ py: otype = nptype + '_' if nptype == 'bool' else nptype }}
-
 cdef object _rand_{{nptype}}_broadcast(np.ndarray low, np.ndarray high, object size,
                                        bint use_masked,
                                        brng_t *state, object lock):
@@ -52,7 +49,6 @@ cdef object _rand_{{nptype}}_broadcast(np.ndarray low, np.ndarray high, object s
     cdef np.npy_intp i, cnt
     cdef np.broadcast it
     cdef int buf_rem = 0
-
 
     # Array path
     low_arr = <np.ndarray>low
@@ -94,7 +90,6 @@ cdef object _rand_{{nptype}}_broadcast(np.ndarray low, np.ndarray high, object s
             np.PyArray_MultiIter_NEXT(it)
     return out_arr
 {{endfor}}
-
 {{
 py:
 big_type_info = (('uint64', 'uint64', 'NPY_UINT64', '0x0ULL', '0xFFFFFFFFFFFFFFFFULL'),
@@ -177,7 +172,6 @@ cdef object _rand_{{nptype}}_broadcast(object low, object high, object size,
 
     return out_arr
 {{endfor}}
-
 {{
 py:
 type_info = (('uint64', 'uint64', '0x0ULL', '0xFFFFFFFFFFFFFFFFULL'),
@@ -252,8 +246,8 @@ cdef object _rand_{{nptype}}(object low, object high, object size,
     high_arr = <np.ndarray>np.array(high, copy=False)
     low_ndim = np.PyArray_NDIM(low_arr)
     high_ndim = np.PyArray_NDIM(high_arr)
-    if ((low_ndim == 0 or (low_ndim == 1 and low_arr.size == 1 and size is not None))
-            and (high_ndim == 0 or (high_ndim == 1 and high_arr.size == 1 and size is not None))):
+    if ((low_ndim == 0 or (low_ndim == 1 and low_arr.size == 1 and size is not None)) and
+            (high_ndim == 0 or (high_ndim == 1 and high_arr.size == 1 and size is not None))):
         low = int(low_arr)
         high = int(high_arr)
         # Subtract 1 since internal generator produces on closed interval [low, high]

@@ -7,7 +7,7 @@ from libc.stdint cimport (uint8_t, uint16_t, uint32_t, uint64_t,
                           uintptr_t)
 from libc.math cimport sqrt
 
-from randomgen.distributions cimport brng_t 
+from randomgen.distributions cimport brng_t
 import numpy as np
 cimport numpy as np
 
@@ -29,14 +29,16 @@ ctypedef ConstraintType constraint_type
 
 cdef object benchmark(brng_t *brng, object lock, Py_ssize_t cnt, object method)
 cdef object random_raw(brng_t *brng, object lock, object size, object output)
+cdef object prepare_cffi(brng_t *brng)
+cdef object prepare_ctypes(brng_t *brng)
 cdef int check_constraint(double val, object name, constraint_type cons) except -1
 cdef int check_array_constraint(np.ndarray val, object name, constraint_type cons) except -1
 
 cdef extern from "src/aligned_malloc/aligned_malloc.h":
-    cdef void *PyArray_realloc_aligned(void *p, size_t n);
-    cdef void *PyArray_malloc_aligned(size_t n);
-    cdef void *PyArray_calloc_aligned(size_t n, size_t s);
-    cdef void PyArray_free_aligned(void *p);
+    cdef void *PyArray_realloc_aligned(void *p, size_t n)
+    cdef void *PyArray_malloc_aligned(size_t n)
+    cdef void *PyArray_calloc_aligned(size_t n, size_t s)
+    cdef void PyArray_free_aligned(void *p)
 
 ctypedef double (*random_double_fill)(brng_t *state, np.npy_intp count, double* out) nogil
 ctypedef double (*random_double_0)(void *state) nogil
@@ -107,5 +109,5 @@ cdef inline void compute_complex(double *rv_r, double *rv_i, double loc_r,
     scale_r = sqrt(var_r)
     scale_i = sqrt(var_i)
 
-    rv_i[0] = loc_i + scale_i * (rho * rv_r[0]  + scale_c * rv_i[0])
+    rv_i[0] = loc_i + scale_i * (rho * rv_r[0] + scale_c * rv_i[0])
     rv_r[0] = loc_r + scale_r * rv_r[0]

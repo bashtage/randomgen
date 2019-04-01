@@ -1,12 +1,16 @@
+#cython: language_level=3
+from libc.stdint cimport uint32_t
+from cpython.pycapsule cimport PyCapsule_IsValid, PyCapsule_GetPointer
+
 import numpy as np
 cimport numpy as np
 cimport cython
-from libc.stdint cimport uint32_t
-from cpython.pycapsule cimport PyCapsule_IsValid, PyCapsule_GetPointer
+
 from randomgen.common cimport brng_t
 from randomgen.xoroshiro128 import Xoroshiro128
 
 np.import_array()
+
 
 def uniform_mean(Py_ssize_t N):
     cdef Py_ssize_t i
@@ -26,6 +30,7 @@ def uniform_mean(Py_ssize_t N):
     randoms = np.asarray(random_values)
     return randoms.mean()
 
+
 cdef uint32_t bounded_uint(uint32_t lb, uint32_t ub, brng_t *rng):
     cdef uint32_t mask, delta, val
     mask = delta = ub - lb
@@ -40,6 +45,7 @@ cdef uint32_t bounded_uint(uint32_t lb, uint32_t ub, brng_t *rng):
         val = rng.next_uint32(rng.state) & mask
 
     return lb + val
+
 
 @cython.boundscheck(False)
 @cython.wraparound(False)
