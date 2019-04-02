@@ -2574,8 +2574,8 @@ cdef class RandomState:
 
         >>> def logist(x, loc, scale):
         ...     return np.exp((loc-x)/scale)/(scale*(1+np.exp((loc-x)/scale))**2)
-        >>> plt.plot(bins, logist(bins, loc, scale)*count.max()/\
-        ...          logist(bins, loc, scale).max())
+        >>> lgst_val = logist(bins, loc, scale)
+        >>> plt.plot(bins, lgst_val * count.max() / lgst_val.max())
         >>> plt.show()
 
         """
