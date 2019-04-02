@@ -139,8 +139,8 @@ cdef class RandomState:
         The best method to access seed is to directly use a basic RNG instance.
         This example demonstrates this best practice.
 
-        >>> from np.random.randomgen import MT19937
-        >>> from np.random import RandomState
+        >>> from numpy.random.randomgen import MT19937
+        >>> from numpy.random import RandomState
         >>> brng = MT19937(123456789)
         >>> rs = RandomState(brng)
         >>> brng.seed(987654321)
@@ -152,7 +152,6 @@ cdef class RandomState:
         """
         self._basicrng.seed(*args, **kwargs)
         self._reset_gauss()
-        return self
 
     def get_state(self, legacy=True):
         """
