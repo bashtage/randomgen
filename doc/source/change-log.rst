@@ -1,8 +1,9 @@
 Change Log
 ----------
 
-Since v1.16.1
-=============
+v1.16.2
+=======
+- Updated Xoroshiro120 to use AUthor's latest parameterization
 - Closely synchronized with the version of randomgen being integrated
   into NumPy, including removing:
 

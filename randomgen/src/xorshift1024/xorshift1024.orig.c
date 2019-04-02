@@ -14,7 +14,7 @@ See <http://creativecommons.org/publicdomain/zero/1.0/>. */
    linear dependencies from one of the lowest bits. The previous
    multiplier was 1181783497276652981 (M_8 in the paper). If you need to
    tell apart the two generators, you can refer to this generator as
-   xorshift1024*φ and to the previous one as xorshift1024*M_8.
+   xorshift1024φ and to the previous one as xorshift1024*M_8.
 
    This is a fast, high-quality generator. If 1024 bits of state are too
    much, try a xoroshiro128+ generator.
@@ -36,7 +36,7 @@ int p;
 uint64_t next(void) {
   const uint64_t s0 = s[p];
   uint64_t s1 = s[p = (p + 1) & 15];
-  s1 ^= s1 << 31;                           // a
+  s1 ^= s1 << 31; // a
   s[p] = s1 ^ s0 ^ (s1 >> 11) ^ (s0 >> 30); // b,c
   return s[p] * 0x9e3779b97f4a7c13;
 }
