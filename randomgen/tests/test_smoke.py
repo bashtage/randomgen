@@ -6,14 +6,13 @@ from functools import partial
 
 import numpy as np
 import pytest
-from numpy.testing import assert_almost_equal, assert_equal, assert_, \
-    assert_array_equal
+from numpy.testing import (assert_, assert_almost_equal, assert_array_equal,
+                           assert_equal)
 
+from randomgen import (DSFMT, MT19937, PCG32, PCG64, Philox, RandomGenerator,
+                       ThreeFry, ThreeFry32, Xoroshiro128, Xorshift1024,
+                       Xoshiro256StarStar, Xoshiro512StarStar, entropy)
 from randomgen._testing import suppress_warnings
-from randomgen import RandomGenerator, MT19937, DSFMT, ThreeFry32, ThreeFry, \
-    PCG32, PCG64, Philox, Xoroshiro128, Xorshift1024, Xoshiro256StarStar, \
-    Xoshiro512StarStar
-from randomgen import entropy
 
 
 @pytest.fixture(scope='module',
@@ -790,6 +789,70 @@ class RNG(object):
             self.rg.randint([lower - 1], [upper] * 10, dtype=dtype)
         with pytest.raises(ValueError):
             self.rg.randint([0], [0], dtype=dtype)
+
+    def test_complex_normal(self):
+        st = self.rg.state
+        vals = self.rg.complex_normal(
+            2.0 + 7.0j, 10.0, 5.0 - 5.0j, size=10)
+        assert_(len(vals) == 10)
+
+        self.rg.state = st
+        vals2 = [self.rg.complex_normal(
+            2.0 + 7.0j, 10.0, 5.0 - 5.0j) for _ in range(10)]
+        np.testing.assert_allclose(vals, vals2)
+
+        self.rg.state = st
+        vals3 = self.rg.complex_normal(
+            2.0 + 7.0j * np.ones(10), 10.0 * np.ones(1), 5.0 - 5.0j)
+        np.testing.assert_allclose(vals, vals3)
+
+        self.rg.state = st
+        norms = self.rg.standard_normal(size=20)
+        norms = np.reshape(norms, (10, 2))
+        cov = 0.5 * (-5.0)
+        v_real = 7.5
+        v_imag = 2.5
+        rho = cov / np.sqrt(v_real * v_imag)
+        imag = 7 + np.sqrt(v_imag) * (rho *
+                                      norms[:, 0] + np.sqrt(1 - rho ** 2) *
+                                      norms[:, 1])
+        real = 2 + np.sqrt(v_real) * norms[:, 0]
+        vals4 = [re + im * (0 + 1.0j) for re, im in zip(real, imag)]
+
+        np.testing.assert_allclose(vals4, vals)
+
+    def test_complex_normal_bm(self):
+        st = self.rg.state
+        vals = self.rg.complex_normal(
+            2.0 + 7.0j, 10.0, 5.0 - 5.0j, size=10)
+        assert_(len(vals) == 10)
+
+        self.rg.state = st
+        vals2 = [self.rg.complex_normal(
+            2.0 + 7.0j, 10.0, 5.0 - 5.0j) for _ in range(10)]
+        np.testing.assert_allclose(vals, vals2)
+
+        self.rg.state = st
+        vals3 = self.rg.complex_normal(
+            2.0 + 7.0j * np.ones(10), 10.0 * np.ones(1), 5.0 - 5.0j)
+        np.testing.assert_allclose(vals, vals3)
+
+    def test_complex_normal_zero_variance(self):
+        st = self.rg.state
+        c = self.rg.complex_normal(0, 1.0, 1.0)
+        assert_almost_equal(c.imag, 0.0)
+        self.rg.state = st
+        n = self.rg.standard_normal()
+        np.testing.assert_allclose(c, n, atol=1e-8)
+
+        st = self.rg.state
+        c = self.rg.complex_normal(0, 1.0, -1.0)
+        assert_almost_equal(c.real, 0.0)
+        self.rg.state = st
+        self.rg.standard_normal()
+        n = self.rg.standard_normal()
+        assert_almost_equal(c.real, 0.0)
+        np.testing.assert_allclose(c.imag, n, atol=1e-8)
 
 
 class TestMT19937(RNG):

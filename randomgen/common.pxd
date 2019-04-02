@@ -98,3 +98,14 @@ cdef object discrete_broadcast_iii(void *func, void *state, object size, object 
                                   np.ndarray a_arr, object a_name, constraint_type a_constraint,
                                   np.ndarray b_arr, object b_name, constraint_type b_constraint,
                                   np.ndarray c_arr, object c_name, constraint_type c_constraint)
+
+cdef inline void compute_complex(double *rv_r, double *rv_i, double loc_r,
+                                 double loc_i, double var_r, double var_i, double rho) nogil:
+    cdef double scale_c, scale_i, scale_r
+
+    scale_c = sqrt(1 - rho * rho)
+    scale_r = sqrt(var_r)
+    scale_i = sqrt(var_i)
+
+    rv_i[0] = loc_i + scale_i * (rho * rv_r[0] + scale_c * rv_i[0])
+    rv_r[0] = loc_r + scale_r * rv_r[0]

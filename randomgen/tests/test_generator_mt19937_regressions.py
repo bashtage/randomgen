@@ -1,9 +1,11 @@
 import sys
-from numpy.testing import (assert_, assert_array_equal)
-from numpy.compat import long
+
 import numpy as np
 import pytest
-from randomgen import RandomGenerator, MT19937
+from numpy.compat import long
+from numpy.testing import assert_, assert_array_equal
+
+from randomgen import MT19937, RandomGenerator
 
 mt19937 = RandomGenerator(MT19937())
 

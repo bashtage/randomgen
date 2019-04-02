@@ -3,19 +3,24 @@
 import operator
 import warnings
 
+import numpy as np
+
+from randomgen.bounded_integers import _randint_types
+from randomgen.xoroshiro128 import Xoroshiro128
+
 from cpython.pycapsule cimport PyCapsule_IsValid, PyCapsule_GetPointer
-from cpython cimport (Py_INCREF, PyFloat_AsDouble)
+from cpython cimport (Py_INCREF, PyComplex_FromDoubles,
+                      PyComplex_ImagAsDouble, PyComplex_RealAsDouble,
+                      PyFloat_AsDouble)
 from libc cimport string
 from libc.stdlib cimport malloc, free
-cimport numpy as np
-import numpy as np
+
 cimport cython
+cimport numpy as np
 
 from randomgen.bounded_integers cimport *
-from randomgen.bounded_integers import _randint_types
 from randomgen.common cimport *
 from randomgen.distributions cimport *
-from randomgen.xoroshiro128 import Xoroshiro128
 import randomgen.pickle
 
 np.import_array()
@@ -892,7 +897,7 @@ cdef class RandomGenerator:
 
         .. note::
             This is a convenience function for users porting code from Matlab,
-            and wraps `numpy.random.random_sample`. That function takes a
+            and wraps `randomgen.generator.random_sample`. That function takes a
             tuple to specify the size of the output, which is consistent with
             other NumPy functions like `numpy.zeros` and `numpy.ones`.
 
@@ -940,7 +945,7 @@ cdef class RandomGenerator:
 
         .. note::
             This is a convenience function for users porting code from Matlab,
-            and wraps `numpy.random.standard_normal`. That function takes a
+            and wraps `randomgen.generator.standard_normal`. That function takes a
             tuple to specify the size of the output, which is consistent with
             other NumPy functions like `numpy.zeros` and `numpy.ones`.
 
@@ -1215,7 +1220,7 @@ cdef class RandomGenerator:
         The function has its peak at the mean, and its "spread" increases with
         the standard deviation (the function reaches 0.607 times its maximum at
         :math:`x + \\sigma` and :math:`x - \\sigma` [2]_).  This implies that
-        `numpy.random.normal` is more likely to return samples lying close to
+        `randomgen.generator.normal` is more likely to return samples lying close to
         the mean, rather than those far away.
 
         References
@@ -4100,6 +4105,170 @@ cdef class RandomGenerator:
         self.shuffle(idx)
         return arr[idx]
 
+    def complex_normal(self, loc=0.0, gamma=1.0, relation=0.0, size=None):
+        """
+        complex_normal(loc=0.0, gamma=1.0, relation=0.0, size=None)
+
+        Draw random samples from a complex normal (Gaussian) distribution.
+
+        Parameters
+        ----------
+        loc : complex or array_like of complex
+            Mean of the distribution.
+        gamma : float, complex or array_like of float or complex
+            Variance of the distribution
+        relation : float, complex or array_like of float or complex
+            Relation between the two component normals
+        size : int or tuple of ints, optional
+            Output shape.  If the given shape is, e.g., ``(m, n, k)``, then
+            ``m * n * k`` samples are drawn.  If size is ``None`` (default),
+            a single value is returned if ``loc``, ``gamma`` and ``relation``
+            are all scalars. Otherwise,
+            ``np.broadcast(loc, gamma, relation).size`` samples are drawn.
+
+        Returns
+        -------
+        out : ndarray or scalar
+            Drawn samples from the parameterized complex normal distribution.
+
+        See Also
+        --------
+        randomgen.generator.normal : random values from a real-valued normal
+            distribution
+
+        Notes
+        -----
+        **EXPERIMENTAL** Not part of official NumPy RandomState, may change until
+        formal release on PyPi.
+
+        Complex normals are generated from a bivariate normal where the
+        variance of the real component is 0.5 Re(gamma + relation), the
+        variance of the imaginary component is 0.5 Re(gamma - relation), and
+        the covariance between the two is 0.5 Im(relation).  The implied
+        covariance matrix must be positive semi-definite and so both variances
+        must be zero and the covariance must be weakly smaller than the
+        product of the two standard deviations.
+
+        References
+        ----------
+        .. [1] Wikipedia, "Complex normal distribution",
+               https://en.wikipedia.org/wiki/Complex_normal_distribution
+        .. [2] Leigh J. Halliwell, "Complex Random Variables" in "Casualty
+               Actuarial Society E-Forum", Fall 2015.
+
+        Examples
+        --------
+        Draw samples from the distribution:
+
+        >>> s = randomgen.generator.complex_normal(size=1000)
+
+        """
+        cdef np.ndarray ogamma, orelation, oloc, randoms, v_real, v_imag, rho
+        cdef double *randoms_data
+        cdef double fgamma_r, fgamma_i, frelation_r, frelation_i, frho, \
+            fvar_r, fvar_i, floc_r, floc_i, f_real, f_imag, f_rho
+        cdef np.npy_intp i, j, n, n2
+        cdef np.broadcast it
+
+        oloc = <np.ndarray>np.PyArray_FROM_OTF(loc, np.NPY_COMPLEX128, np.NPY_ALIGNED)
+        ogamma = <np.ndarray>np.PyArray_FROM_OTF(gamma, np.NPY_COMPLEX128, np.NPY_ALIGNED)
+        orelation = <np.ndarray>np.PyArray_FROM_OTF(relation, np.NPY_COMPLEX128, np.NPY_ALIGNED)
+
+        if np.PyArray_NDIM(ogamma) == np.PyArray_NDIM(orelation) == np.PyArray_NDIM(oloc) == 0:
+            floc_r = PyComplex_RealAsDouble(loc)
+            floc_i = PyComplex_ImagAsDouble(loc)
+            fgamma_r = PyComplex_RealAsDouble(gamma)
+            fgamma_i = PyComplex_ImagAsDouble(gamma)
+            frelation_r = PyComplex_RealAsDouble(relation)
+            frelation_i = 0.5 * PyComplex_ImagAsDouble(relation)
+
+            fvar_r = 0.5 * (fgamma_r + frelation_r)
+            fvar_i = 0.5 * (fgamma_r - frelation_r)
+            if fgamma_i != 0:
+                raise ValueError('Im(gamma) != 0')
+            if fvar_i < 0:
+                raise ValueError('Re(gamma - relation) < 0')
+            if fvar_r < 0:
+                raise ValueError('Re(gamma + relation) < 0')
+            f_rho = 0.0
+            if fvar_i > 0 and fvar_r > 0:
+                f_rho = frelation_i / sqrt(fvar_i * fvar_r)
+            if f_rho > 1.0 or f_rho < -1.0:
+                raise ValueError('Im(relation) ** 2 > Re(gamma ** 2 - relation** 2)')
+
+            if size is None:
+                f_real = random_gauss_zig(self._brng)
+                f_imag = random_gauss_zig(self._brng)
+
+                compute_complex(&f_real, &f_imag, floc_r, floc_i, fvar_r,
+                                fvar_i, f_rho)
+                return PyComplex_FromDoubles(f_real, f_imag)
+
+            randoms = <np.ndarray>np.empty(size, np.complex128)
+            randoms_data = <double *>np.PyArray_DATA(randoms)
+            n = np.PyArray_SIZE(randoms)
+
+            j = 0
+            with self.lock, nogil:
+                for i in range(n):
+                    f_real = random_gauss_zig(self._brng)
+                    f_imag = random_gauss_zig(self._brng)
+                    compute_complex(&f_real, &f_imag, floc_r, floc_i, fvar_r,
+                                    fvar_i, f_rho)
+                    randoms_data[j] = f_real
+                    randoms_data[j+1] = f_imag
+                    j += 2
+
+            return randoms
+
+        gpc = ogamma + orelation
+        gmc = ogamma - orelation
+        v_real = <np.ndarray>(0.5 * np.real(gpc))
+        if np.any(np.less(v_real, 0)):
+            raise ValueError('Re(gamma + relation) < 0')
+        v_imag = <np.ndarray>(0.5 * np.real(gmc))
+        if np.any(np.less(v_imag, 0)):
+            raise ValueError('Re(gamma - relation) < 0')
+        if np.any(np.not_equal(np.imag(ogamma), 0)):
+            raise ValueError('Im(gamma) != 0')
+
+        cov = 0.5 * np.imag(orelation)
+        rho = np.zeros_like(cov)
+        idx = (v_real.flat > 0) & (v_imag.flat > 0)
+        rho.flat[idx] = cov.flat[idx] / np.sqrt(v_real.flat[idx] * v_imag.flat[idx])
+        if np.any(cov.flat[~idx] != 0) or np.any(np.abs(rho) > 1):
+            raise ValueError('Im(relation) ** 2 > Re(gamma ** 2 - relation ** 2)')
+
+        if size is not None:
+            randoms = <np.ndarray>np.empty(size, np.complex128)
+        else:
+            it = np.PyArray_MultiIterNew4(oloc, v_real, v_imag, rho)
+            randoms = <np.ndarray>np.empty(it.shape, np.complex128)
+
+        randoms_data = <double *>np.PyArray_DATA(randoms)
+        n = np.PyArray_SIZE(randoms)
+
+        it = np.PyArray_MultiIterNew5(randoms, oloc, v_real, v_imag, rho)
+        with self.lock, nogil:
+            n2 = 2 * n  # Avoid compiler noise for cast
+            for i in range(n2):
+                randoms_data[i] = random_gauss_zig(self._brng)
+        with nogil:
+            j = 0
+            for i in range(n):
+                floc_r= (<double*>np.PyArray_MultiIter_DATA(it, 1))[0]
+                floc_i= (<double*>np.PyArray_MultiIter_DATA(it, 1))[1]
+                fvar_r = (<double*>np.PyArray_MultiIter_DATA(it, 2))[0]
+                fvar_i = (<double*>np.PyArray_MultiIter_DATA(it, 3))[0]
+                f_rho = (<double*>np.PyArray_MultiIter_DATA(it, 4))[0]
+                compute_complex(&randoms_data[j], &randoms_data[j+1], floc_r,
+                                floc_i, fvar_r, fvar_i, f_rho)
+                j += 2
+                np.PyArray_MultiIter_NEXT(it)
+
+        return randoms
+
+
 _random_generator = RandomGenerator()
 
 beta = _random_generator.beta
@@ -4107,6 +4276,7 @@ binomial = _random_generator.binomial
 bytes = _random_generator.bytes
 chisquare = _random_generator.chisquare
 choice = _random_generator.choice
+complex_normal = _random_generator.complex_normal
 dirichlet = _random_generator.dirichlet
 exponential = _random_generator.exponential
 f = _random_generator.f

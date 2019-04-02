@@ -10,9 +10,10 @@ from randomgen import MT19937, DSFMT, ThreeFry, PCG64, Xoroshiro128, \
 PRNGS = [DSFMT, MT19937, Philox, PCG64, ThreeFry, Xoroshiro128, Xorshift1024,
          Xoshiro256StarStar, Xoshiro512StarStar]
 
-funcs = {'32-bit Unsigned Ints': 'random_uintegers(size=1000000,bits=32)',
-         '64-bit Unsigned Ints': 'random_uintegers(size=1000000,bits=32)',
+funcs = {'32-bit Unsigned Ints': 'randint(2**32, dtype="uint32", size=1000000)',
+         '64-bit Unsigned Ints': 'randint(2**64, dtype="uint64", size=1000000)',
          'Uniforms': 'random_sample(size=1000000)',
+         'Complex Normals': 'complex_normal(size=1000000)',
          'Normals': 'standard_normal(size=1000000)',
          'Exponentials': 'standard_exponential(size=1000000)',
          'Gammas': 'standard_gamma(3.0,size=1000000)',
@@ -40,8 +41,8 @@ for prng in PRNGS:
 
 npfuncs = OrderedDict()
 npfuncs.update(funcs)
-npfuncs['32-bit Unsigned Ints'] = 'randint(2**32,dtype="uint32",size=1000000)'
-npfuncs['64-bit Unsigned Ints'] = 'tomaxint(size=1000000)'
+npfuncs['32-bit Unsigned Ints'] = 'randint(2**32, dtype="uint32", size=1000000)'
+npfuncs['64-bit Unsigned Ints'] = 'randint(2**64, dtype="uint64", size=1000000)'
 del npfuncs['Complex Normals']
 setup = """
 from numpy.random import RandomState

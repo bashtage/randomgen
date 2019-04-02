@@ -2,13 +2,12 @@ import sys
 import warnings
 
 import numpy as np
-from numpy.testing import (
-    assert_, assert_raises, assert_equal,
-    assert_warns, assert_no_warnings, assert_array_equal,
-    assert_array_almost_equal)
+from numpy.testing import (assert_, assert_array_almost_equal,
+                           assert_array_equal, assert_equal,
+                           assert_no_warnings, assert_raises, assert_warns)
 
+from randomgen import MT19937, RandomGenerator
 from randomgen._testing import suppress_warnings
-from randomgen import RandomGenerator, MT19937
 
 random = RandomGenerator(MT19937())
 
@@ -1222,6 +1221,37 @@ class TestRandomDist(object):
                             [3, 13]])
         assert_array_equal(actual, desired)
 
+    def test_complex_normal(self):
+        random.seed(self.seed)
+        actual = random.complex_normal(loc=1., gamma=1., relation=0.5,
+                                       size=(3, 2))
+        desired = np.array([[-2.007493185623132 - 0.05446928211457126j,
+                             0.7869874090977291 - 0.35205077513085050j],
+                            [1.3118579018087224 + 0.06391605088618339j,
+                             3.5872278793967554 + 0.14155458439717636j],
+                            [0.7170022862582056 - 0.06573393915140235j,
+                             -0.26571837106621987 - 0.0931713830979103j]])
+        assert_array_almost_equal(actual, desired, decimal=15)
+
+        random.seed(self.seed)
+        actual = random.complex_normal(loc=0, gamma=1., relation=0.5, size=3)
+        assert_array_almost_equal(actual, desired.flat[:3] - 1., decimal=15)
+
+        random.seed(self.seed)
+        actual = random.complex_normal(loc=2., gamma=1., relation=0.5)
+        assert_array_almost_equal(actual, 1. + desired[0, 0], decimal=15)
+
+    def test_complex_normal_invalid(self):
+        assert_raises(ValueError, random.complex_normal, gamma=1 + 0.5j)
+        assert_raises(ValueError, random.complex_normal, relation=2)
+        assert_raises(ValueError, random.complex_normal, relation=-3)
+        assert_raises(ValueError, random.complex_normal, relation=10j)
+
+        assert_raises(ValueError, random.complex_normal, gamma=[1 + 0.5j])
+        assert_raises(ValueError, random.complex_normal, relation=[2])
+        assert_raises(ValueError, random.complex_normal, relation=[-3])
+        assert_raises(ValueError, random.complex_normal, relation=[10j])
+
 
 class TestBroadcast(object):
     # tests that functions that broadcast behave
@@ -1806,6 +1836,25 @@ class TestBroadcast(object):
         assert_array_equal(actual, desired)
         assert_raises(ValueError, logseries, bad_p_one * 3)
         assert_raises(ValueError, logseries, bad_p_two * 3)
+
+    def test_complex_normal(self):
+        random.seed(self.seed)
+        loc = np.ones((1, 2))
+        gamma = np.ones((3, 1))
+        relation = 0.5 * np.ones((3, 2))
+        actual = random.complex_normal(loc=loc, gamma=gamma, relation=relation)
+        desired = np.array([[1.393937478212015 - 0.31374589731830593j,
+                             0.9474905694736895 - 0.16424530802218726j],
+                            [1.119247463119766 + 0.023956373851168843j,
+                             0.8776366291514774 + 0.2865220655803411j],
+                            [0.5515508326417458 - 0.15986016780453596j,
+                             -0.6803993941303332 + 1.1782711493556892j]])
+        assert_array_almost_equal(actual, desired, decimal=15)
+
+        random.seed(self.seed)
+        actual = random.complex_normal(loc=loc, gamma=1., relation=0.5,
+                                       size=(3,2))
+        assert_array_almost_equal(actual, desired, decimal=15)
 
 
 class TestThread(object):

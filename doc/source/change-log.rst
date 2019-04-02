@@ -3,6 +3,13 @@ Change Log
 
 Since v1.16.1
 =============
+- Closely synchronized with the version of randomgen being integrated
+  into NumPy, including removing:
+
+    - ``random_raw``, which have been moved to the individual basic RNGs
+    - ``random_uintegers``, which can be replaced with
+      :func:`~randomgen..generator.RandomGenerator.randint`.
+
 - Added :class:`~randomgen.mtrand.RandomState` as a clone of NumPy's
   RandomState.
 - Removed :class:`~randomgen.legacy.LegacyGenerator` since this is no

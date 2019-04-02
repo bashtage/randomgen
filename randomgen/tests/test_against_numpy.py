@@ -1,12 +1,11 @@
 import numpy as np
 import numpy.random
-from numpy.testing import assert_allclose, assert_array_equal, assert_equal
-
 import pytest
+from numpy.testing import assert_allclose, assert_array_equal, assert_equal
 
 import randomgen
 import randomgen.generator
-from randomgen import RandomGenerator, MT19937
+from randomgen import MT19937, RandomGenerator
 from randomgen._testing import suppress_warnings
 from randomgen.mtrand import RandomState
 
