@@ -1,9 +1,11 @@
 #!python
 #cython: wraparound=False, nonecheck=False, boundscheck=False, cdivision=True, language_level=3
-from collections import namedtuple
-from cpython cimport PyFloat_AsDouble
 import sys
+from collections import namedtuple
+
 import numpy as np
+
+from cpython cimport PyFloat_AsDouble
 cimport numpy as np
 
 from randomgen.common cimport *

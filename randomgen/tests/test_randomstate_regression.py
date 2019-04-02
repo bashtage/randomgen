@@ -1,9 +1,8 @@
 import sys
-from numpy.testing import (
-    assert_, assert_array_equal, assert_raises,
-    )
-from numpy.compat import long
+
 import numpy as np
+from numpy.compat import long
+from numpy.testing import assert_, assert_array_equal, assert_raises
 
 import randomgen.mtrand as random
 

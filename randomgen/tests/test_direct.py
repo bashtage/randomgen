@@ -3,13 +3,13 @@ import sys
 from os.path import join
 
 import numpy as np
-from numpy.testing import assert_equal, assert_allclose, assert_array_equal, \
-    assert_raises
 import pytest
+from numpy.testing import (assert_allclose, assert_array_equal, assert_equal,
+                           assert_raises)
 
-from randomgen import RandomGenerator, MT19937, DSFMT, ThreeFry32, ThreeFry, \
-    PCG32, PCG64, Philox, Xoroshiro128, Xorshift1024, Xoshiro256StarStar, \
-    Xoshiro512StarStar, RandomState
+from randomgen import (DSFMT, MT19937, PCG32, PCG64, Philox, RandomGenerator,
+                       RandomState, ThreeFry, ThreeFry32, Xoroshiro128,
+                       Xorshift1024, Xoshiro256StarStar, Xoshiro512StarStar)
 from randomgen.common import interface
 
 try:

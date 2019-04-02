@@ -3,21 +3,25 @@
 import operator
 import warnings
 from collections.abc import Mapping
+
+import numpy as np
+
+from randomgen.bounded_integers import _randint_types
+from randomgen.mt19937 import MT19937 as _MT19937
+import randomgen.pickle
+
 from cpython.pycapsule cimport PyCapsule_IsValid, PyCapsule_GetPointer
 from cpython cimport (Py_INCREF, PyFloat_AsDouble)
 from libc cimport string
 from libc.stdlib cimport malloc, free
-cimport numpy as np
-import numpy as np
+
 cimport cython
+cimport numpy as np
 
 from randomgen.bounded_integers cimport *
-from randomgen.bounded_integers import _randint_types
 from randomgen.common cimport *
 from randomgen.distributions cimport *
 from randomgen.legacy.legacy_distributions cimport *
-from randomgen.mt19937 import MT19937 as _MT19937
-import randomgen.pickle
 
 np.import_array()
 

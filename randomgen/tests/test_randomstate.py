@@ -1,13 +1,12 @@
-import warnings
 import pickle
+import sys
+import warnings
 
 import numpy as np
-from numpy.testing import (
-        assert_, assert_raises, assert_equal, assert_warns,
-        assert_no_warnings, assert_array_equal, assert_array_almost_equal,
-        suppress_warnings
-        )
-import sys
+from numpy.testing import (assert_, assert_array_almost_equal,
+                           assert_array_equal, assert_equal,
+                           assert_no_warnings, assert_raises, assert_warns,
+                           suppress_warnings)
 
 import randomgen.mtrand
 from randomgen.mt19937 import MT19937

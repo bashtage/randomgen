@@ -1,7 +1,7 @@
 import datetime as dt
 
-import numpy as np
 import numba as nb
+import numpy as np
 
 from randomgen import Xoroshiro128
 
