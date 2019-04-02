@@ -217,7 +217,7 @@ cdef class RandomGenerator:
 
         Three-by-two array of random numbers from [-5, 0):
 
-        >>> 5 * randomgen.random_sample((3, 2)) - 5
+        >>> 5 * randomgen.generator.random_sample((3, 2)) - 5
         array([[-3.99149989, -0.52338984], # random
                [-2.99091858, -0.79479508],
                [-1.23204345, -1.75224494]])
@@ -385,10 +385,9 @@ cdef class RandomGenerator:
         """
         tomaxint(size=None)
 
-        Random integers between 0 and ``sys.maxint``, inclusive.
-
         Return a sample of uniformly distributed random integers in the interval
-        [0, ``sys.maxint``].
+        [0, ``np.iinfo(np.int).max``]. The np.int type translates to the C long
+        integer type and its precision is platform dependent.
 
         Parameters
         ----------
@@ -416,10 +415,9 @@ cdef class RandomGenerator:
                 [ 739731006, 1947757578]],
                [[1871712945,  752307660],
                 [1601631370, 1479324245]]])
-        >>> import sys
-        >>> sys.maxint
+        >>> np.iinfo(np.int).max
         2147483647
-        >>> rg.tomaxint((2,2,2)) < sys.maxint
+        >>> rg.tomaxint((2,2,2)) < np.iinfo(np.int).max
         array([[[ True,  True],
                 [ True,  True]],
                [[ True,  True],
@@ -636,7 +634,7 @@ cdef class RandomGenerator:
 
         >>> randomgen.generator.choice(5, 3)
         array([0, 3, 4]) # random
-        >>> #This is equivalent to randomgen.randint(0,5,3)
+        >>> #This is equivalent to randomgen.generator.randint(0,5,3)
 
         Generate a non-uniform random sample from np.arange(5) of size 3:
 
@@ -648,7 +646,7 @@ cdef class RandomGenerator:
 
         >>> randomgen.generator.choice(5, 3, replace=False)
         array([3,1,0]) # random
-        >>> #This is equivalent to randomgen.permutation(np.arange(5))[:3]
+        >>> #This is equivalent to randomgen.generator.permutation(np.arange(5))[:3]
 
         Generate a non-uniform random sample from np.arange(5) of size
         3 without replacement:
@@ -1003,9 +1001,11 @@ cdef class RandomGenerator:
 
         Random integers of type np.int between `low` and `high`, inclusive.
 
-        Return random integers of type np.int64 from the "discrete uniform"
+        Return random integers of type np.int from the "discrete uniform"
         distribution in the closed interval [`low`, `high`].  If `high` is
-        None (the default), then results are from [1, `low`].
+        None (the default), then results are from [1, `low`]. The np.int
+        type translates to the C long integer type and its precision
+        is platform dependent.
 
         This function has been deprecated. Use randint instead.
 
@@ -1673,7 +1673,7 @@ cdef class RandomGenerator:
 
         Draw samples from a noncentral chi-square distribution.
 
-        The noncentral :math:`\\chi^2` distribution is a generalisation of
+        The noncentral :math:`\\chi^2` distribution is a generalization of
         the :math:`\\chi^2` distribution.
 
         Parameters
@@ -2558,7 +2558,7 @@ cdef class RandomGenerator:
         >>> def logist(x, loc, scale):
         ...     return np.exp((loc-x)/scale)/(scale*(1+np.exp((loc-x)/scale))**2)
         >>> plt.plot(bins, logist(bins, loc, scale)*count.max()/\
-        ... logist(bins, loc, scale).max())
+        ...          logist(bins, loc, scale).max())
         >>> plt.show()
 
         """
@@ -2656,7 +2656,7 @@ cdef class RandomGenerator:
         >>> # values, drawn from a normal distribution.
         >>> b = []
         >>> for i in range(1000):
-        ...    a = 10. + randomgen.generator.randn(100)
+        ...    a = 10. + randomgen.generator.standard_normal(100)
         ...    b.append(np.product(a))
 
         >>> b = np.array(b) / np.min(b) # scale values to be positive
@@ -3536,7 +3536,7 @@ cdef class RandomGenerator:
     def multivariate_normal(self, mean, cov, size=None, check_valid='warn',
                             tol=1e-8):
         """
-        multivariate_normal(self, mean, cov, size=None, check_valid='warn', tol=1e-8)
+        multivariate_normal(mean, cov, size=None, check_valid='warn', tol=1e-8)
 
         Draw random samples from a multivariate normal distribution.
 
@@ -3703,7 +3703,7 @@ cdef class RandomGenerator:
 
         Draw samples from a multinomial distribution.
 
-        The multinomial distribution is a multivariate generalisation of the
+        The multinomial distribution is a multivariate generalization of the
         binomial distribution.  Take an experiment with one of ``p``
         possible outcomes.  An example of such an experiment is throwing a dice,
         where the outcome can be 1 through 6.  Each sample drawn from the
