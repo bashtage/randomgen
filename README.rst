@@ -335,8 +335,8 @@ NumPy’s mt19937.
    :target: https://travis-ci.org/bashtage/randomgen
 .. |Appveyor Build Status| image:: https://ci.appveyor.com/api/projects/status/odc5c4ukhru5xicl/branch/master?svg=true
    :target: https://ci.appveyor.com/project/bashtage/randomgen/branch/master
-.. |Coverage Status| image:: https://coveralls.io/repos/github/bashtage/randomgen/badge.svg?branch=coverage
-   :target: https://coveralls.io/github/bashtage/randomgen?branch=coverage
+.. |Coverage Status| image:: https://coveralls.io/repos/github/bashtage/randomgen/badge.svg
+   :target: https://coveralls.io/github/bashtage/randomgen
 .. |codecov| image:: https://codecov.io/gh/bashtage/randomgen/branch/master/graph/badge.svg
    :target: https://codecov.io/gh/bashtage/randomgen
 .. |PyPI version| image:: https://badge.fury.io/py/randomgen.svg

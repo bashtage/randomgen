@@ -8,7 +8,7 @@ NumPy RandomState evolution.
 [![Appveyor Build Status](https://ci.appveyor.com/api/projects/status/odc5c4ukhru5xicl/branch/master?svg=true)](https://ci.appveyor.com/project/bashtage/randomgen/branch/master)
 
 ### Coverage
-[![Coverage Status](https://coveralls.io/repos/github/bashtage/randomgen/badge.svg?branch=coverage)](https://coveralls.io/github/bashtage/randomgen?branch=coverage)
+[![Coverage Status](https://coveralls.io/repos/github/bashtage/randomgen/badge.svg)](https://coveralls.io/github/bashtage/randomgen)
 [![codecov](https://codecov.io/gh/bashtage/randomgen/branch/master/graph/badge.svg)](https://codecov.io/gh/bashtage/randomgen)
 
 ### Latest Release

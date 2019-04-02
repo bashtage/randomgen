@@ -9,7 +9,7 @@ import pytest
 
 from randomgen import RandomGenerator, MT19937, DSFMT, ThreeFry32, ThreeFry, \
     PCG32, PCG64, Philox, Xoroshiro128, Xorshift1024, Xoshiro256StarStar, \
-    Xoshiro512StarStar
+    Xoshiro512StarStar, RandomState
 from randomgen.common import interface
 
 try:
@@ -51,14 +51,6 @@ def uniform32_from_uint64(x):
     out = (joined >> np.uint32(9)) * (1.0 / 2 ** 23)
     return out.astype(np.float32)
 
-
-def uniform32_from_uint63(x):
-    x = np.uint64(x)
-    x = np.uint32(x >> np.uint64(32))
-    out = (x >> np.uint32(9)) * (1.0 / 2 ** 23)
-    return out.astype(np.float32)
-
-
 def uniform32_from_uint53(x):
     x = np.uint64(x) >> np.uint64(16)
     x = np.uint32(x & np.uint64(0xffffffff))
@@ -73,8 +65,6 @@ def uniform32_from_uint32(x):
 def uniform32_from_uint(x, bits):
     if bits == 64:
         return uniform32_from_uint64(x)
-    elif bits == 63:
-        return uniform32_from_uint63(x)
     elif bits == 53:
         return uniform32_from_uint53(x)
     elif bits == 32:
@@ -101,16 +91,6 @@ def uniform_from_uint32(x):
         b = x[i + 1] >> 6
         out[i // 2] = (a * 67108864.0 + b) / 9007199254740992.0
     return out
-
-
-def uint64_from_uint63(x):
-    out = np.empty(len(x) // 2, dtype=np.uint64)
-    for i in range(0, len(x), 2):
-        a = x[i] & np.uint64(0xffffffff00000000)
-        b = x[i + 1] >> np.uint64(32)
-        out[i // 2] = a | b
-    return out
-
 
 def uniform_from_dsfmt(x):
     return x.view(np.double) - 1.0
@@ -185,15 +165,14 @@ class Base(object):
         uints = brng.random_raw(1000, output=False)
         assert uints is None
 
-    @pytest.mark.skip(reason='Polar transform no longer supported')
     def test_gauss_inv(self):
         n = 25
-        rs = RandomGenerator(self.brng(*self.data1['seed']))
+        rs = RandomState(self.brng(*self.data1['seed']))
         gauss = rs.standard_normal(n)
         assert_allclose(gauss,
                         gauss_from_uint(self.data1['data'], n, self.bits))
 
-        rs = RandomGenerator(self.brng(*self.data2['seed']))
+        rs = RandomState(self.brng(*self.data2['seed']))
         gauss = rs.standard_normal(25)
         assert_allclose(gauss,
                         gauss_from_uint(self.data2['data'], n, self.bits))
@@ -548,15 +527,14 @@ class TestDSFMT(Base):
         assert_equal(uniform_from_dsfmt(self.data2['data']),
                      rs.random_sample(1000))
 
-    @pytest.mark.skip(reason='Polar transform no longer supported')
     def test_gauss_inv(self):
         n = 25
-        rs = RandomGenerator(self.brng(*self.data1['seed']))
+        rs = RandomState(self.brng(*self.data1['seed']))
         gauss = rs.standard_normal(n)
         assert_allclose(gauss,
                         gauss_from_uint(self.data1['data'], n, 'dsfmt'))
 
-        rs = RandomGenerator(self.brng(*self.data2['seed']))
+        rs = RandomState(self.brng(*self.data2['seed']))
         gauss = rs.standard_normal(25)
         assert_allclose(gauss,
                         gauss_from_uint(self.data2['data'], n, 'dsfmt'))
