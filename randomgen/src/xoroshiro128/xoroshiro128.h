@@ -14,35 +14,41 @@
 #define INLINE inline
 #endif
 
-typedef struct s_xoroshiro128_state {
+typedef struct s_xoroshiro128_state
+{
   uint64_t s[2];
   int has_uint32;
   uint32_t uinteger;
 } xoroshiro128_state;
 
-static INLINE uint64_t rotl(const uint64_t x, int k) {
+static INLINE uint64_t rotl(const uint64_t x, int k)
+{
   return (x << k) | (x >> (64 - k));
 }
 
-static INLINE uint64_t xoroshiro128_next(uint64_t *s) {
+static INLINE uint64_t xoroshiro128_next(uint64_t *s)
+{
   const uint64_t s0 = s[0];
   uint64_t s1 = s[1];
   const uint64_t result = s0 + s1;
 
   s1 ^= s0;
-  s[0] = rotl(s0, 55) ^ s1 ^ (s1 << 14); // a, b
-  s[1] = rotl(s1, 36);                   // c
+  s[0] = rotl(s0, 24) ^ s1 ^ (s1 << 16); // a, b
+  s[1] = rotl(s1, 37);                   // c
 
   return result;
 }
 
-static INLINE uint64_t xoroshiro128_next64(xoroshiro128_state *state) {
+static INLINE uint64_t xoroshiro128_next64(xoroshiro128_state *state)
+{
   return xoroshiro128_next(&state->s[0]);
 }
 
-static INLINE uint32_t xoroshiro128_next32(xoroshiro128_state *state) {
+static INLINE uint32_t xoroshiro128_next32(xoroshiro128_state *state)
+{
   uint64_t next;
-  if (state->has_uint32) {
+  if (state->has_uint32)
+  {
     state->has_uint32 = 0;
     return state->uinteger;
   }
