@@ -1,0 +1,6 @@
+randomgen.mtrand.RandomState.choice
+===================================
+
+.. currentmodule:: randomgen.mtrand
+
+.. automethod:: RandomState.choice

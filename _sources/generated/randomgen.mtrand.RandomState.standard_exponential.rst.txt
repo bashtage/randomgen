@@ -1,0 +1,6 @@
+randomgen.mtrand.RandomState.standard\_exponential
+==================================================
+
+.. currentmodule:: randomgen.mtrand
+
+.. automethod:: RandomState.standard_exponential

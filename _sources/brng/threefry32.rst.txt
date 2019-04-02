@@ -39,4 +39,9 @@ Extending
    ~ThreeFry32.cffi
    ~ThreeFry32.ctypes
 
+Testing
+=======
+.. autosummary::
+   :toctree: generated/
 
+   ~ThreeFry32.random_raw

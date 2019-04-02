@@ -1,6 +1,0 @@
-randomgen.legacy.legacy.LegacyGenerator.standard\_gamma
-=======================================================
-
-.. currentmodule:: randomgen.legacy.legacy
-
-.. automethod:: LegacyGenerator.standard_gamma

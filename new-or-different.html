@@ -1,11 +1,9 @@
 
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!DOCTYPE html>
 
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
-    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta charset="utf-8" />
   
   <!-- Licensed under the Apache 2.0 License -->
   <link rel="stylesheet" type="text/css" href="_static/fonts/open-sans/stylesheet.css" />
@@ -15,7 +13,7 @@
   <link rel="stylesheet" type="text/css" href="_static/css/bootstrap-theme.min.css" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-    <title>What’s New or Different &#8212; RandomGen v1.16.1 documentation</title>
+    <title>What’s New or Different &#8212; RandomGen v1.16.2 documentation</title>
     <link rel="stylesheet" href="_static/guzzle.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
@@ -47,7 +45,7 @@
         <li class="right" >
           <a href="multithreading.html" title="Multithreaded Generation"
              accesskey="P">previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="index.html">RandomGen v1.16.1 documentation</a> &#187;</li> 
+        <li class="nav-item nav-item-0"><a href="index.html">RandomGen v1.16.2 documentation</a> &#187;</li> 
       </ul>
     </div>
     <div class="container-wrapper">
@@ -57,7 +55,7 @@
       </div>
   <div id="left-column">
     <div class="sphinxsidebar"><a href="
-    index.html" class="text-logo">RandomGen v1.16.1</a>
+    index.html" class="text-logo">RandomGen v1.16.2</a>
 <div class="sidebar-block">
   <div class="sidebar-wrapper">
     <h2>Table Of Contents</h2>
@@ -119,33 +117,33 @@
   <div class="section" id="what-s-new-or-different">
 <span id="new-or-different"></span><h1>What’s New or Different<a class="headerlink" href="#what-s-new-or-different" title="Permalink to this headline">¶</a></h1>
 <div class="admonition warning">
-<p class="first admonition-title">Warning</p>
-<p class="last">The Box-Muller method used to produce NumPy’s normals is no longer available
+<p class="admonition-title">Warning</p>
+<p>The Box-Muller method used to produce NumPy’s normals is no longer available
 in <a class="reference internal" href="generator.html#randomgen.generator.RandomGenerator" title="randomgen.generator.RandomGenerator"><code class="xref py py-class docutils literal notranslate"><span class="pre">RandomGenerator</span></code></a>.  It is not possible to
 reproduce the random values using <a class="reference internal" href="generator.html#randomgen.generator.RandomGenerator" title="randomgen.generator.RandomGenerator"><code class="xref py py-class docutils literal notranslate"><span class="pre">RandomGenerator</span></code></a>
 for the normal distribution or any other distribution that relies on the
 normal such as the gamma or student’s t. If you require backward compatibility, a
-legacy generator, <code class="xref py py-class docutils literal notranslate"><span class="pre">LegacyGenerator</span></code>, has been created
+legacy generator, <a class="reference internal" href="legacy.html#randomgen.mtrand.RandomState" title="randomgen.mtrand.RandomState"><code class="xref py py-class docutils literal notranslate"><span class="pre">RandomState</span></code></a>, has been created
 which can fully reproduce the sequence produced by NumPy.</p>
 </div>
 <ul class="simple">
-<li><a class="reference internal" href="entropy.html#randomgen.entropy.random_entropy" title="randomgen.entropy.random_entropy"><code class="xref py py-func docutils literal notranslate"><span class="pre">random_entropy()</span></code></a> provides access to the system
+<li><p><a class="reference internal" href="entropy.html#randomgen.entropy.random_entropy" title="randomgen.entropy.random_entropy"><code class="xref py py-func docutils literal notranslate"><span class="pre">random_entropy()</span></code></a> provides access to the system
 source of randomness that is used in cryptographic applications (e.g.,
-<code class="docutils literal notranslate"><span class="pre">/dev/urandom</span></code> on Unix).</li>
-<li>Simulate from the complex normal distribution
-(<a class="reference internal" href="generated/randomgen.generator.RandomGenerator.complex_normal.html#randomgen.generator.RandomGenerator.complex_normal" title="randomgen.generator.RandomGenerator.complex_normal"><code class="xref py py-meth docutils literal notranslate"><span class="pre">complex_normal()</span></code></a>)</li>
-<li>The normal, exponential and gamma generators use 256-step Ziggurat
+<code class="docutils literal notranslate"><span class="pre">/dev/urandom</span></code> on Unix).</p></li>
+<li><p>Simulate from the complex normal distribution
+(<a class="reference internal" href="generated/randomgen.generator.RandomGenerator.complex_normal.html#randomgen.generator.RandomGenerator.complex_normal" title="randomgen.generator.RandomGenerator.complex_normal"><code class="xref py py-meth docutils literal notranslate"><span class="pre">complex_normal()</span></code></a>)</p></li>
+<li><p>The normal, exponential and gamma generators use 256-step Ziggurat
 methods which are 2-10 times faster than NumPy’s default implementation in
 <a class="reference internal" href="generated/randomgen.generator.RandomGenerator.standard_normal.html#randomgen.generator.RandomGenerator.standard_normal" title="randomgen.generator.RandomGenerator.standard_normal"><code class="xref py py-meth docutils literal notranslate"><span class="pre">standard_normal()</span></code></a>,
 <a class="reference internal" href="generated/randomgen.generator.RandomGenerator.standard_exponential.html#randomgen.generator.RandomGenerator.standard_exponential" title="randomgen.generator.RandomGenerator.standard_exponential"><code class="xref py py-meth docutils literal notranslate"><span class="pre">standard_exponential()</span></code></a> or
-<a class="reference internal" href="generated/randomgen.generator.RandomGenerator.standard_gamma.html#randomgen.generator.RandomGenerator.standard_gamma" title="randomgen.generator.RandomGenerator.standard_gamma"><code class="xref py py-meth docutils literal notranslate"><span class="pre">standard_gamma()</span></code></a>.</li>
-<li>The Box-Muller used to produce NumPy’s normals is no longer available.</li>
-<li>All basic random generators functions to produce doubles, uint64s and
+<a class="reference internal" href="generated/randomgen.generator.RandomGenerator.standard_gamma.html#randomgen.generator.RandomGenerator.standard_gamma" title="randomgen.generator.RandomGenerator.standard_gamma"><code class="xref py py-meth docutils literal notranslate"><span class="pre">standard_gamma()</span></code></a>.</p></li>
+<li><p>The Box-Muller used to produce NumPy’s normals is no longer available.</p></li>
+<li><p>All basic random generators functions to produce doubles, uint64s and
 uint32s via CTypes (<a class="reference internal" href="brng/generated/randomgen.xoroshiro128.Xoroshiro128.ctypes.html#randomgen.xoroshiro128.Xoroshiro128.ctypes" title="randomgen.xoroshiro128.Xoroshiro128.ctypes"><code class="xref py py-meth docutils literal notranslate"><span class="pre">ctypes()</span></code></a>)
 and CFFI (<a class="reference internal" href="brng/generated/randomgen.xoroshiro128.Xoroshiro128.cffi.html#randomgen.xoroshiro128.Xoroshiro128.cffi" title="randomgen.xoroshiro128.Xoroshiro128.cffi"><code class="xref py py-meth docutils literal notranslate"><span class="pre">cffi()</span></code></a>).  This allows
-these basic RNGs to be used in numba.</li>
-<li>The basic random number generators can be used in downstream projects via
-Cython.</li>
+these basic RNGs to be used in numba.</p></li>
+<li><p>The basic random number generators can be used in downstream projects via
+Cython.</p></li>
 </ul>
 <div class="highlight-ipython notranslate"><div class="highlight"><pre><span></span><span class="gp">In [1]: </span><span class="kn">from</span> <span class="nn">randomgen</span> <span class="kn">import</span> <span class="n">Xoroshiro128</span>
 
@@ -156,58 +154,59 @@ Cython.</li>
 <span class="gp">In [4]: </span><span class="o">%</span><span class="k">timeit</span> rg.standard_normal(100000)
 <span class="gp">   ...: </span><span class="o">%</span><span class="k">timeit</span> numpy.random.standard_normal(100000)
 <span class="gp">   ...: </span>
-<span class="go">956 us +- 6.55 us per loop (mean +- std. dev. of 7 runs, 1000 loops each)</span>
-<span class="go">4.98 ms +- 125 us per loop (mean +- std. dev. of 7 runs, 100 loops each)</span>
+<span class="go">12.3 ms +- 58.7 us per loop (mean +- std. dev. of 7 runs, 100 loops each)</span>
+<span class="go">4.85 ms +- 34.6 us per loop (mean +- std. dev. of 7 runs, 100 loops each)</span>
 </pre></div>
 </div>
 <div class="highlight-ipython notranslate"><div class="highlight"><pre><span></span><span class="gp">In [5]: </span><span class="o">%</span><span class="k">timeit</span> rg.standard_exponential(100000)
 <span class="gp">   ...: </span><span class="o">%</span><span class="k">timeit</span> numpy.random.standard_exponential(100000)
 <span class="gp">   ...: </span>
-<span class="go">539 us +- 28.2 us per loop (mean +- std. dev. of 7 runs, 1000 loops each)</span>
-<span class="go">6.19 ms +- 50.3 us per loop (mean +- std. dev. of 7 runs, 100 loops each)</span>
+<span class="go">12.7 ms +- 66.5 us per loop (mean +- std. dev. of 7 runs, 100 loops each)</span>
+<span class="go">6.15 ms +- 22 us per loop (mean +- std. dev. of 7 runs, 100 loops each)</span>
 </pre></div>
 </div>
 <div class="highlight-ipython notranslate"><div class="highlight"><pre><span></span><span class="gp">In [6]: </span><span class="o">%</span><span class="k">timeit</span> rg.standard_gamma(3.0, 100000)
 <span class="gp">   ...: </span><span class="o">%</span><span class="k">timeit</span> numpy.random.standard_gamma(3.0, 100000)
 <span class="gp">   ...: </span>
-<span class="go">3.14 ms +- 16.6 us per loop (mean +- std. dev. of 7 runs, 100 loops each)</span>
-<span class="go">8.18 ms +- 55.9 us per loop (mean +- std. dev. of 7 runs, 100 loops each)</span>
+<span class="go">37.4 ms +- 307 us per loop (mean +- std. dev. of 7 runs, 10 loops each)</span>
+<span class="go">8.08 ms +- 26.7 us per loop (mean +- std. dev. of 7 runs, 100 loops each)</span>
 </pre></div>
 </div>
 <ul class="simple">
-<li>Optional <code class="docutils literal notranslate"><span class="pre">dtype</span></code> argument that accepts <code class="docutils literal notranslate"><span class="pre">np.float32</span></code> or <code class="docutils literal notranslate"><span class="pre">np.float64</span></code>
+<li><p>Optional <code class="docutils literal notranslate"><span class="pre">dtype</span></code> argument that accepts <code class="docutils literal notranslate"><span class="pre">np.float32</span></code> or <code class="docutils literal notranslate"><span class="pre">np.float64</span></code>
 to produce either single or double prevision uniform random variables for
-select distributions<ul>
-<li>Uniforms (<a class="reference internal" href="generated/randomgen.generator.RandomGenerator.random_sample.html#randomgen.generator.RandomGenerator.random_sample" title="randomgen.generator.RandomGenerator.random_sample"><code class="xref py py-meth docutils literal notranslate"><span class="pre">random_sample()</span></code></a> and
-<a class="reference internal" href="generated/randomgen.generator.RandomGenerator.rand.html#randomgen.generator.RandomGenerator.rand" title="randomgen.generator.RandomGenerator.rand"><code class="xref py py-meth docutils literal notranslate"><span class="pre">rand()</span></code></a>)</li>
-<li>Normals (<a class="reference internal" href="generated/randomgen.generator.RandomGenerator.standard_normal.html#randomgen.generator.RandomGenerator.standard_normal" title="randomgen.generator.RandomGenerator.standard_normal"><code class="xref py py-meth docutils literal notranslate"><span class="pre">standard_normal()</span></code></a> and
-<a class="reference internal" href="generated/randomgen.generator.RandomGenerator.randn.html#randomgen.generator.RandomGenerator.randn" title="randomgen.generator.RandomGenerator.randn"><code class="xref py py-meth docutils literal notranslate"><span class="pre">randn()</span></code></a>)</li>
-<li>Standard Gammas (<a class="reference internal" href="generated/randomgen.generator.RandomGenerator.standard_gamma.html#randomgen.generator.RandomGenerator.standard_gamma" title="randomgen.generator.RandomGenerator.standard_gamma"><code class="xref py py-meth docutils literal notranslate"><span class="pre">standard_gamma()</span></code></a>)</li>
-<li>Standard Exponentials (<a class="reference internal" href="generated/randomgen.generator.RandomGenerator.standard_exponential.html#randomgen.generator.RandomGenerator.standard_exponential" title="randomgen.generator.RandomGenerator.standard_exponential"><code class="xref py py-meth docutils literal notranslate"><span class="pre">standard_exponential()</span></code></a>)</li>
+select distributions</p>
+<ul>
+<li><p>Uniforms (<a class="reference internal" href="generated/randomgen.generator.RandomGenerator.random_sample.html#randomgen.generator.RandomGenerator.random_sample" title="randomgen.generator.RandomGenerator.random_sample"><code class="xref py py-meth docutils literal notranslate"><span class="pre">random_sample()</span></code></a> and
+<a class="reference internal" href="generated/randomgen.generator.RandomGenerator.rand.html#randomgen.generator.RandomGenerator.rand" title="randomgen.generator.RandomGenerator.rand"><code class="xref py py-meth docutils literal notranslate"><span class="pre">rand()</span></code></a>)</p></li>
+<li><p>Normals (<a class="reference internal" href="generated/randomgen.generator.RandomGenerator.standard_normal.html#randomgen.generator.RandomGenerator.standard_normal" title="randomgen.generator.RandomGenerator.standard_normal"><code class="xref py py-meth docutils literal notranslate"><span class="pre">standard_normal()</span></code></a> and
+<a class="reference internal" href="generated/randomgen.generator.RandomGenerator.randn.html#randomgen.generator.RandomGenerator.randn" title="randomgen.generator.RandomGenerator.randn"><code class="xref py py-meth docutils literal notranslate"><span class="pre">randn()</span></code></a>)</p></li>
+<li><p>Standard Gammas (<a class="reference internal" href="generated/randomgen.generator.RandomGenerator.standard_gamma.html#randomgen.generator.RandomGenerator.standard_gamma" title="randomgen.generator.RandomGenerator.standard_gamma"><code class="xref py py-meth docutils literal notranslate"><span class="pre">standard_gamma()</span></code></a>)</p></li>
+<li><p>Standard Exponentials (<a class="reference internal" href="generated/randomgen.generator.RandomGenerator.standard_exponential.html#randomgen.generator.RandomGenerator.standard_exponential" title="randomgen.generator.RandomGenerator.standard_exponential"><code class="xref py py-meth docutils literal notranslate"><span class="pre">standard_exponential()</span></code></a>)</p></li>
 </ul>
 </li>
 </ul>
 <div class="highlight-ipython notranslate"><div class="highlight"><pre><span></span><span class="gp">In [7]: </span><span class="n">rg</span><span class="o">.</span><span class="n">seed</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
-<span class="gh">Out[7]: </span><span class="go">RandomGenerator(Xoroshiro128) at 0x2B96D3732E58</span>
+<span class="gh">Out[7]: </span><span class="go">RandomGenerator(Xoroshiro128) at 0x2BA636BD2BD8</span>
 
 <span class="gp">In [8]: </span><span class="n">rg</span><span class="o">.</span><span class="n">random_sample</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="s1">&#39;d&#39;</span><span class="p">)</span>
-<span class="go">                                                        Out[8]: array([0.31483881, 0.00208035, 0.06399498])</span>
+<span class="go">                                                        Out[8]: array([0.31483881, 0.84384135, 0.85491961])</span>
 
 <span class="gp">In [9]: </span><span class="n">rg</span><span class="o">.</span><span class="n">seed</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
-<span class="go">                                                                                                            Out[9]: RandomGenerator(Xoroshiro128) at 0x2B96D3732E58</span>
+<span class="go">                                                                                                            Out[9]: RandomGenerator(Xoroshiro128) at 0x2BA636BD2BD8</span>
 
 <span class="gp">In [10]: </span><span class="n">rg</span><span class="o">.</span><span class="n">random_sample</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="s1">&#39;f&#39;</span><span class="p">)</span>
-<span class="go">                                                                                                                                                                    Out[10]: array([0.11265862, 0.31483877, 0.6936537 ], dtype=float32)</span>
+<span class="go">                                                                                                                                                                    Out[10]: array([0.11265862, 0.31483877, 0.4068042 ], dtype=float32)</span>
 </pre></div>
 </div>
 <ul>
-<li><p class="first">Optional <code class="docutils literal notranslate"><span class="pre">out</span></code> argument that allows existing arrays to be filled for
+<li><p>Optional <code class="docutils literal notranslate"><span class="pre">out</span></code> argument that allows existing arrays to be filled for
 select distributions</p>
 <ul class="simple">
-<li>Uniforms (<a class="reference internal" href="generated/randomgen.generator.RandomGenerator.random_sample.html#randomgen.generator.RandomGenerator.random_sample" title="randomgen.generator.RandomGenerator.random_sample"><code class="xref py py-meth docutils literal notranslate"><span class="pre">random_sample()</span></code></a>)</li>
-<li>Normals (<a class="reference internal" href="generated/randomgen.generator.RandomGenerator.standard_normal.html#randomgen.generator.RandomGenerator.standard_normal" title="randomgen.generator.RandomGenerator.standard_normal"><code class="xref py py-meth docutils literal notranslate"><span class="pre">standard_normal()</span></code></a>)</li>
-<li>Standard Gammas (<a class="reference internal" href="generated/randomgen.generator.RandomGenerator.standard_gamma.html#randomgen.generator.RandomGenerator.standard_gamma" title="randomgen.generator.RandomGenerator.standard_gamma"><code class="xref py py-meth docutils literal notranslate"><span class="pre">standard_gamma()</span></code></a>)</li>
-<li>Standard Exponentials (<a class="reference internal" href="generated/randomgen.generator.RandomGenerator.standard_exponential.html#randomgen.generator.RandomGenerator.standard_exponential" title="randomgen.generator.RandomGenerator.standard_exponential"><code class="xref py py-meth docutils literal notranslate"><span class="pre">standard_exponential()</span></code></a>)</li>
+<li><p>Uniforms (<a class="reference internal" href="generated/randomgen.generator.RandomGenerator.random_sample.html#randomgen.generator.RandomGenerator.random_sample" title="randomgen.generator.RandomGenerator.random_sample"><code class="xref py py-meth docutils literal notranslate"><span class="pre">random_sample()</span></code></a>)</p></li>
+<li><p>Normals (<a class="reference internal" href="generated/randomgen.generator.RandomGenerator.standard_normal.html#randomgen.generator.RandomGenerator.standard_normal" title="randomgen.generator.RandomGenerator.standard_normal"><code class="xref py py-meth docutils literal notranslate"><span class="pre">standard_normal()</span></code></a>)</p></li>
+<li><p>Standard Gammas (<a class="reference internal" href="generated/randomgen.generator.RandomGenerator.standard_gamma.html#randomgen.generator.RandomGenerator.standard_gamma" title="randomgen.generator.RandomGenerator.standard_gamma"><code class="xref py py-meth docutils literal notranslate"><span class="pre">standard_gamma()</span></code></a>)</p></li>
+<li><p>Standard Exponentials (<a class="reference internal" href="generated/randomgen.generator.RandomGenerator.standard_exponential.html#randomgen.generator.RandomGenerator.standard_exponential" title="randomgen.generator.RandomGenerator.standard_exponential"><code class="xref py py-meth docutils literal notranslate"><span class="pre">standard_exponential()</span></code></a>)</p></li>
 </ul>
 <p>This allows multithreading to fill large arrays in chunks using suitable
 PRNGs in parallel.</p>
@@ -216,22 +215,22 @@ PRNGs in parallel.</p>
 <div class="highlight-ipython notranslate"><div class="highlight"><pre><span></span><span class="gp">In [11]: </span><span class="n">existing</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="mi">4</span><span class="p">)</span>
 
 <span class="gp">In [12]: </span><span class="n">rg</span><span class="o">.</span><span class="n">random_sample</span><span class="p">(</span><span class="n">out</span><span class="o">=</span><span class="n">existing</span><span class="p">[:</span><span class="mi">2</span><span class="p">])</span>
-<span class="gh">Out[12]: </span><span class="go">array([0.06399498, 0.24822833])</span>
+<span class="gh">Out[12]: </span><span class="go">array([0.85491961, 0.38351904])</span>
 
 <span class="gp">In [13]: </span><span class="k">print</span><span class="p">(</span><span class="n">existing</span><span class="p">)</span>
-<span class="go">                                         [0.06399498 0.24822833 0.         0.        ]</span>
+<span class="go">                                         [0.85491961 0.38351904 0.         0.        ]</span>
 </pre></div>
 </div>
 <ul class="simple">
-<li>Support for Lemire’s method of generating uniform integers on an
+<li><p>Support for Lemire’s method of generating uniform integers on an
 arbitrary interval by setting <code class="docutils literal notranslate"><span class="pre">use_masked=True</span></code> in
-(<a class="reference internal" href="generated/randomgen.generator.RandomGenerator.randint.html#randomgen.generator.RandomGenerator.randint" title="randomgen.generator.RandomGenerator.randint"><code class="xref py py-meth docutils literal notranslate"><span class="pre">randint()</span></code></a>).</li>
+(<a class="reference internal" href="generated/randomgen.generator.RandomGenerator.randint.html#randomgen.generator.RandomGenerator.randint" title="randomgen.generator.RandomGenerator.randint"><code class="xref py py-meth docutils literal notranslate"><span class="pre">randint()</span></code></a>).</p></li>
 </ul>
 <div class="highlight-ipython notranslate"><div class="highlight"><pre><span></span><span class="gp">In [14]: </span><span class="o">%</span><span class="k">timeit</span> rg.randint(0, 1535, use_masked=False)
 <span class="gp">   ....: </span><span class="o">%</span><span class="k">timeit</span> numpy.random.randint(0, 1535)
 <span class="gp">   ....: </span>
-<span class="go">6.52 us +- 249 ns per loop (mean +- std. dev. of 7 runs, 100000 loops each)</span>
-<span class="go">1.2 us +- 6.12 ns per loop (mean +- std. dev. of 7 runs, 1000000 loops each)</span>
+<span class="go">6.45 us +- 21.4 ns per loop (mean +- std. dev. of 7 runs, 100000 loops each)</span>
+<span class="go">1.25 us +- 5.36 ns per loop (mean +- std. dev. of 7 runs, 1000000 loops each)</span>
 </pre></div>
 </div>
 </div>
@@ -269,7 +268,7 @@ arbitrary interval by setting <code class="docutils literal notranslate"><span c
         <li class="right" >
           <a href="multithreading.html" title="Multithreaded Generation"
              >previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="index.html">RandomGen v1.16.1 documentation</a> &#187;</li> 
+        <li class="nav-item nav-item-0"><a href="index.html">RandomGen v1.16.2 documentation</a> &#187;</li> 
       </ul>
     </div>
 <script type="text/javascript">

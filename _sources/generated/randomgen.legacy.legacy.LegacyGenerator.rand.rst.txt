@@ -1,6 +1,0 @@
-randomgen.legacy.legacy.LegacyGenerator.rand
-============================================
-
-.. currentmodule:: randomgen.legacy.legacy
-
-.. automethod:: LegacyGenerator.rand

@@ -1,0 +1,6 @@
+randomgen.dsfmt.DSFMT.random\_raw
+=================================
+
+.. currentmodule:: randomgen.dsfmt
+
+.. automethod:: DSFMT.random_raw

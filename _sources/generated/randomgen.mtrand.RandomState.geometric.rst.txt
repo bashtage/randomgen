@@ -1,0 +1,6 @@
+randomgen.mtrand.RandomState.geometric
+======================================
+
+.. currentmodule:: randomgen.mtrand
+
+.. automethod:: RandomState.geometric

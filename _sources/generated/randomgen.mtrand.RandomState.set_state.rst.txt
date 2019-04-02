@@ -1,0 +1,6 @@
+randomgen.mtrand.RandomState.set\_state
+=======================================
+
+.. currentmodule:: randomgen.mtrand
+
+.. automethod:: RandomState.set_state

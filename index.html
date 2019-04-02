@@ -1,11 +1,9 @@
 
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!DOCTYPE html>
 
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
-    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta charset="utf-8" />
   
   <!-- Licensed under the Apache 2.0 License -->
   <link rel="stylesheet" type="text/css" href="_static/fonts/open-sans/stylesheet.css" />
@@ -15,7 +13,7 @@
   <link rel="stylesheet" type="text/css" href="_static/css/bootstrap-theme.min.css" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-    <title>RandomGen &#8212; RandomGen v1.16.1 documentation</title>
+    <title>RandomGen &#8212; RandomGen v1.16.2 documentation</title>
     <link rel="stylesheet" href="_static/guzzle.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
@@ -43,7 +41,7 @@
         <li class="right" >
           <a href="generator.html" title="Random Generator"
              accesskey="N">next</a> |</li>
-        <li class="nav-item nav-item-0"><a href="#">RandomGen v1.16.1 documentation</a> &#187;</li> 
+        <li class="nav-item nav-item-0"><a href="#">RandomGen v1.16.2 documentation</a> &#187;</li> 
       </ul>
     </div>
     <div class="container-wrapper">
@@ -53,7 +51,7 @@
       </div>
   <div id="left-column">
     <div class="sphinxsidebar"><a href="
-    #" class="text-logo">RandomGen v1.16.1</a>
+    #" class="text-logo">RandomGen v1.16.2</a>
 <div class="sidebar-block">
   <div class="sidebar-wrapper">
     <h2>Table Of Contents</h2>
@@ -186,38 +184,38 @@ access an embedded random generator.</p>
 <div class="section" id="what-s-new-or-different">
 <h3>What’s New or Different<a class="headerlink" href="#what-s-new-or-different" title="Permalink to this headline">¶</a></h3>
 <div class="admonition warning">
-<p class="first admonition-title">Warning</p>
-<p class="last">The Box-Muller method used to produce NumPy’s normals is no longer available
+<p class="admonition-title">Warning</p>
+<p>The Box-Muller method used to produce NumPy’s normals is no longer available
 in <a class="reference internal" href="generator.html#randomgen.generator.RandomGenerator" title="randomgen.generator.RandomGenerator"><code class="xref py py-class docutils literal notranslate"><span class="pre">RandomGenerator</span></code></a>.  It is not possible to
 reproduce the random values using <a class="reference internal" href="generator.html#randomgen.generator.RandomGenerator" title="randomgen.generator.RandomGenerator"><code class="xref py py-class docutils literal notranslate"><span class="pre">RandomGenerator</span></code></a>
 for the normal distribution or any other distribution that relies on the
 normal such as the gamma or student’s t. If you require backward compatibility, a
-legacy generator, <code class="xref py py-class docutils literal notranslate"><span class="pre">LegacyGenerator</span></code>, has been created
+legacy generator, <a class="reference internal" href="legacy.html#randomgen.mtrand.RandomState" title="randomgen.mtrand.RandomState"><code class="xref py py-class docutils literal notranslate"><span class="pre">RandomState</span></code></a>, has been created
 which can fully reproduce the sequence produced by NumPy.</p>
 </div>
 <ul class="simple">
-<li>The normal, exponential and gamma generators use 256-step Ziggurat
+<li><p>The normal, exponential and gamma generators use 256-step Ziggurat
 methods which are 2-10 times faster than NumPy’s Box-Muller or inverse CDF
-implementations.</li>
-<li>Optional <code class="docutils literal notranslate"><span class="pre">dtype</span></code> argument that accepts <code class="docutils literal notranslate"><span class="pre">np.float32</span></code> or <code class="docutils literal notranslate"><span class="pre">np.float64</span></code>
+implementations.</p></li>
+<li><p>Optional <code class="docutils literal notranslate"><span class="pre">dtype</span></code> argument that accepts <code class="docutils literal notranslate"><span class="pre">np.float32</span></code> or <code class="docutils literal notranslate"><span class="pre">np.float64</span></code>
 to produce either single or double prevision uniform random variables for
-select distributions</li>
-<li>Optional <code class="docutils literal notranslate"><span class="pre">out</span></code> argument that allows existing arrays to be filled for
-select distributions</li>
-<li>Simulate from the complex normal distribution
-(<a class="reference internal" href="generated/randomgen.generator.RandomGenerator.complex_normal.html#randomgen.generator.RandomGenerator.complex_normal" title="randomgen.generator.RandomGenerator.complex_normal"><code class="xref py py-meth docutils literal notranslate"><span class="pre">complex_normal()</span></code></a>)</li>
-<li><a class="reference internal" href="entropy.html#randomgen.entropy.random_entropy" title="randomgen.entropy.random_entropy"><code class="xref py py-func docutils literal notranslate"><span class="pre">random_entropy()</span></code></a> provides access to the system
+select distributions</p></li>
+<li><p>Optional <code class="docutils literal notranslate"><span class="pre">out</span></code> argument that allows existing arrays to be filled for
+select distributions</p></li>
+<li><p>Simulate from the complex normal distribution
+(<a class="reference internal" href="generated/randomgen.generator.RandomGenerator.complex_normal.html#randomgen.generator.RandomGenerator.complex_normal" title="randomgen.generator.RandomGenerator.complex_normal"><code class="xref py py-meth docutils literal notranslate"><span class="pre">complex_normal()</span></code></a>)</p></li>
+<li><p><a class="reference internal" href="entropy.html#randomgen.entropy.random_entropy" title="randomgen.entropy.random_entropy"><code class="xref py py-func docutils literal notranslate"><span class="pre">random_entropy()</span></code></a> provides access to the system
 source of randomness that is used in cryptographic applications (e.g.,
-<code class="docutils literal notranslate"><span class="pre">/dev/urandom</span></code> on Unix).</li>
-<li>All basic random generators functions to produce doubles, uint64s and
+<code class="docutils literal notranslate"><span class="pre">/dev/urandom</span></code> on Unix).</p></li>
+<li><p>All basic random generators functions to produce doubles, uint64s and
 uint32s via CTypes (<a class="reference internal" href="brng/generated/randomgen.xoroshiro128.Xoroshiro128.ctypes.html#randomgen.xoroshiro128.Xoroshiro128.ctypes" title="randomgen.xoroshiro128.Xoroshiro128.ctypes"><code class="xref py py-meth docutils literal notranslate"><span class="pre">ctypes()</span></code></a>)
 and CFFI (<a class="reference internal" href="brng/generated/randomgen.xoroshiro128.Xoroshiro128.cffi.html#randomgen.xoroshiro128.Xoroshiro128.cffi" title="randomgen.xoroshiro128.Xoroshiro128.cffi"><code class="xref py py-meth docutils literal notranslate"><span class="pre">cffi()</span></code></a>).  This allows
-these basic RNGs to be used in numba.</li>
-<li>The basic random number generators can be used in downstream projects via
-Cython.</li>
-<li>Support for Lemire’s method <a class="reference internal" href="references.html#lemire" id="id1">[Lemire]</a> of generating uniform integers on an
+these basic RNGs to be used in numba.</p></li>
+<li><p>The basic random number generators can be used in downstream projects via
+Cython.</p></li>
+<li><p>Support for Lemire’s method <a class="reference internal" href="references.html#lemire" id="id1"><span>[Lemire]</span></a> of generating uniform integers on an
 arbitrary interval by setting <code class="docutils literal notranslate"><span class="pre">use_masked=True</span></code> in
-(<a class="reference internal" href="generated/randomgen.generator.RandomGenerator.randint.html#randomgen.generator.RandomGenerator.randint" title="randomgen.generator.RandomGenerator.randint"><code class="xref py py-meth docutils literal notranslate"><span class="pre">randint()</span></code></a>).</li>
+(<a class="reference internal" href="generated/randomgen.generator.RandomGenerator.randint.html#randomgen.generator.RandomGenerator.randint" title="randomgen.generator.RandomGenerator.randint"><code class="xref py py-meth docutils literal notranslate"><span class="pre">randint()</span></code></a>).</p></li>
 </ul>
 <p>See <a class="reference internal" href="new-or-different.html#new-or-different"><span class="std std-ref">What’s New or Different</span></a> for a complete list of improvements and
 differences.</p>
@@ -227,8 +225,8 @@ differences.</p>
 <p>The included generators can be used in parallel, distributed applications in
 one of two ways:</p>
 <ul class="simple">
-<li><a class="reference internal" href="parallel.html#independent-streams"><span class="std std-ref">Independent Streams</span></a></li>
-<li><a class="reference internal" href="parallel.html#jump-and-advance"><span class="std std-ref">Jump/Advance the PRNG state</span></a></li>
+<li><p><a class="reference internal" href="parallel.html#independent-streams"><span class="std std-ref">Independent Streams</span></a></p></li>
+<li><p><a class="reference internal" href="parallel.html#jump-and-advance"><span class="std std-ref">Jump/Advance the PRNG state</span></a></p></li>
 </ul>
 </div>
 </div>
@@ -237,40 +235,40 @@ one of two ways:</p>
 <p>The main innovation is the inclusion of a number of alternative pseudo-random number
 generators, ‘in addition’ to the standard PRNG in NumPy.  The included PRNGs are:</p>
 <ul class="simple">
-<li>MT19937 - The standard NumPy generator.  Produces identical results to NumPy
+<li><p>MT19937 - The standard NumPy generator.  Produces identical results to NumPy
 using the same seed/state. Adds a jump function that advances the generator
 as-if 2**128 draws have been made (<a class="reference internal" href="brng/generated/randomgen.mt19937.MT19937.jump.html#randomgen.mt19937.MT19937.jump" title="randomgen.mt19937.MT19937.jump"><code class="xref py py-meth docutils literal notranslate"><span class="pre">jump()</span></code></a>).
-See <a class="reference external" href="https://docs.scipy.org/doc/numpy/reference/routines.random.html">NumPy’s documentation</a>.</li>
-<li>dSFMT - SSE2 enabled versions of the MT19937 generator.  Theoretically
+See <a class="reference external" href="https://docs.scipy.org/doc/numpy/reference/routines.random.html">NumPy’s documentation</a>.</p></li>
+<li><p>dSFMT - SSE2 enabled versions of the MT19937 generator.  Theoretically
 the same, but with a different state and so it is not possible to produce a
 sequence identical to MT19937. Supports <code class="docutils literal notranslate"><span class="pre">jump</span></code> and so can
-be used in parallel applications. See the <a class="reference external" href="http://www.math.sci.hiroshima-u.ac.jp/~m-mat/MT/SFMT/">dSFMT authors’ page</a>.</li>
-<li>XoroShiro128+ - Improved version of XorShift128+ with better performance
+be used in parallel applications. See the <a class="reference external" href="http://www.math.sci.hiroshima-u.ac.jp/~m-mat/MT/SFMT/">dSFMT authors’ page</a>.</p></li>
+<li><p>XoroShiro128+ - Improved version of XorShift128+ with better performance
 and statistical quality. Like the XorShift generators, it can be jumped
 to produce multiple streams in parallel applications. See
 <a class="reference internal" href="brng/generated/randomgen.xoroshiro128.Xoroshiro128.jump.html#randomgen.xoroshiro128.Xoroshiro128.jump" title="randomgen.xoroshiro128.Xoroshiro128.jump"><code class="xref py py-meth docutils literal notranslate"><span class="pre">jump()</span></code></a> for details.
 More information about this PRNG is available at the
-<a class="reference external" href="http://xoroshiro.di.unimi.it/">xorshift, xoroshiro and xoshiro authors’ page</a>.</li>
-<li>XorShift1024*φ - Fast fast generator based on the XSadd
+<a class="reference external" href="http://xoroshiro.di.unimi.it/">xorshift, xoroshiro and xoshiro authors’ page</a>.</p></li>
+<li><p>XorShift1024*φ - Fast fast generator based on the XSadd
 generator. Supports <code class="docutils literal notranslate"><span class="pre">jump</span></code> and so can be used in
 parallel applications. See the documentation for
 <a class="reference internal" href="brng/generated/randomgen.xorshift1024.Xorshift1024.jump.html#randomgen.xorshift1024.Xorshift1024.jump" title="randomgen.xorshift1024.Xorshift1024.jump"><code class="xref py py-meth docutils literal notranslate"><span class="pre">jump()</span></code></a> for details. More information
 about these PRNGs is available at the
-<a class="reference external" href="http://xoroshiro.di.unimi.it/">xorshift, xoroshiro and xoshiro authors’ page</a>.</li>
-<li>Xorshiro256** and Xorshiro512** - The most recently introduced XOR,
+<a class="reference external" href="http://xoroshiro.di.unimi.it/">xorshift, xoroshiro and xoshiro authors’ page</a>.</p></li>
+<li><p>Xorshiro256** and Xorshiro512** - The most recently introduced XOR,
 shift, and rotate generator. Supports <code class="docutils literal notranslate"><span class="pre">jump</span></code> and so can be used in
 parallel applications. See the documentation for
 <code class="xref py py-meth docutils literal notranslate"><span class="pre">jump()</span></code> for details. More
 information about these PRNGs is available at the
-<a class="reference external" href="http://xoroshiro.di.unimi.it/">xorshift, xoroshiro and xoshiro authors’ page</a>.</li>
-<li>PCG-64 - Fast generator that support many parallel streams and
+<a class="reference external" href="http://xoroshiro.di.unimi.it/">xorshift, xoroshiro and xoshiro authors’ page</a>.</p></li>
+<li><p>PCG-64 - Fast generator that support many parallel streams and
 can be advanced by an arbitrary amount. See the documentation for
 <a class="reference internal" href="brng/generated/randomgen.pcg64.PCG64.advance.html#randomgen.pcg64.PCG64.advance" title="randomgen.pcg64.PCG64.advance"><code class="xref py py-meth docutils literal notranslate"><span class="pre">advance()</span></code></a>. PCG-64 has a period of
 <span class="math notranslate nohighlight">\(2^{128}\)</span>. See the <a class="reference external" href="http://www.pcg-random.org/">PCG author’s page</a> for more details about
-this class of PRNG.</li>
-<li>ThreeFry and Philox - counter-based generators capable of being advanced an
+this class of PRNG.</p></li>
+<li><p>ThreeFry and Philox - counter-based generators capable of being advanced an
 arbitrary number of steps or generating independent streams. See the
-<a class="reference external" href="https://www.deshawresearch.com/resources_random123.html">Random123</a> page for more details about this class of PRNG.</li>
+<a class="reference external" href="https://www.deshawresearch.com/resources_random123.html">Random123</a> page for more details about this class of PRNG.</p></li>
 </ul>
 </div>
 <div class="section" id="random-generator">
@@ -340,6 +338,7 @@ arbitrary number of steps or generating independent streams. See the
 <div class="toctree-wrapper compound">
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="change-log.html">Change Log</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="change-log.html#v1-16-2">v1.16.2</a></li>
 <li class="toctree-l2"><a class="reference internal" href="change-log.html#v1-16-1">v1.16.1</a></li>
 <li class="toctree-l2"><a class="reference internal" href="change-log.html#v1-16-0">v1.16.0</a></li>
 <li class="toctree-l2"><a class="reference internal" href="change-log.html#v1-15-1">v1.15.1</a></li>
@@ -352,9 +351,9 @@ arbitrary number of steps or generating independent streams. See the
 <div class="section" id="indices-and-tables">
 <h3>Indices and tables<a class="headerlink" href="#indices-and-tables" title="Permalink to this headline">¶</a></h3>
 <ul class="simple">
-<li><a class="reference internal" href="genindex.html"><span class="std std-ref">Index</span></a></li>
-<li><a class="reference internal" href="py-modindex.html"><span class="std std-ref">Module Index</span></a></li>
-<li><a class="reference internal" href="search.html"><span class="std std-ref">Search Page</span></a></li>
+<li><p><a class="reference internal" href="genindex.html"><span class="std std-ref">Index</span></a></p></li>
+<li><p><a class="reference internal" href="py-modindex.html"><span class="std std-ref">Module Index</span></a></p></li>
+<li><p><a class="reference internal" href="search.html"><span class="std std-ref">Search Page</span></a></p></li>
 </ul>
 </div>
 </div>
@@ -386,7 +385,7 @@ arbitrary number of steps or generating independent streams. See the
         <li class="right" >
           <a href="generator.html" title="Random Generator"
              >next</a> |</li>
-        <li class="nav-item nav-item-0"><a href="#">RandomGen v1.16.1 documentation</a> &#187;</li> 
+        <li class="nav-item nav-item-0"><a href="#">RandomGen v1.16.2 documentation</a> &#187;</li> 
       </ul>
     </div>
 <script type="text/javascript">

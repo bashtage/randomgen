@@ -37,8 +37,6 @@ Simple random data
    ~RandomGenerator.random_sample
    ~RandomGenerator.choice
    ~RandomGenerator.bytes
-   ~RandomGenerator.random_uintegers
-   ~RandomGenerator.random_raw
 
 Permutations
 ============

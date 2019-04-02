@@ -1,0 +1,6 @@
+randomgen.mtrand.RandomState.power
+==================================
+
+.. currentmodule:: randomgen.mtrand
+
+.. automethod:: RandomState.power

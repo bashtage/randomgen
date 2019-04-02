@@ -1,11 +1,9 @@
 
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!DOCTYPE html>
 
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
-    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta charset="utf-8" />
   
   <!-- Licensed under the Apache 2.0 License -->
   <link rel="stylesheet" type="text/css" href="../../_static/fonts/open-sans/stylesheet.css" />
@@ -15,7 +13,7 @@
   <link rel="stylesheet" type="text/css" href="../../_static/css/bootstrap-theme.min.css" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-    <title>randomgen.threefry32.ThreeFry32.seed &#8212; RandomGen v1.16.1 documentation</title>
+    <title>randomgen.threefry32.ThreeFry32.seed &#8212; RandomGen v1.16.2 documentation</title>
     <link rel="stylesheet" href="../../_static/guzzle.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
     <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
@@ -47,7 +45,7 @@
         <li class="right" >
           <a href="../threefry32.html" title="ThreeFry32 Counter-based RNG"
              accesskey="P">previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../../index.html">RandomGen v1.16.1 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">RandomGen v1.16.2 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="../index.html" >Basic Random Number Generators</a> &#187;</li>
           <li class="nav-item nav-item-2"><a href="../threefry32.html" accesskey="U">ThreeFry32 Counter-based RNG</a> &#187;</li> 
       </ul>
@@ -59,7 +57,7 @@
       </div>
   <div id="left-column">
     <div class="sphinxsidebar"><a href="
-    ../../index.html" class="text-logo">RandomGen v1.16.1</a>
+    ../../index.html" class="text-logo">RandomGen v1.16.2</a>
 <div class="sidebar-block">
   <div class="sidebar-wrapper">
     <h2>Table Of Contents</h2>
@@ -135,24 +133,20 @@
 <p>This method is called when <code class="docutils literal notranslate"><span class="pre">ThreeFry32</span></code> is initialized. It can be
 called again to re-seed the generator. For details, see
 <code class="docutils literal notranslate"><span class="pre">ThreeFry32</span></code>.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>seed</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a><em>, </em><em>optional</em>) – Seed for <code class="docutils literal notranslate"><span class="pre">ThreeFry32</span></code>.</li>
-<li><strong>counter</strong> (<em>{int array}</em><em>, </em><em>optional</em>) – Positive integer less than 2**128 containing the counter position
-or a 4 element array of uint32 containing the counter</li>
-<li><strong>key</strong> (<em>{int</em><em>, </em><em>array}</em><em>, </em><em>options</em>) – Positive integer less than 2**128 containing the key
-or a 4 element array of uint32 containing the key</li>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>seed</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a><em>, </em><em>optional</em>) – Seed for <code class="docutils literal notranslate"><span class="pre">ThreeFry32</span></code>.</p></li>
+<li><p><strong>counter</strong> (<em>{int array}</em><em>, </em><em>optional</em>) – Positive integer less than 2**128 containing the counter position
+or a 4 element array of uint32 containing the counter</p></li>
+<li><p><strong>key</strong> (<em>{int</em><em>, </em><em>array}</em><em>, </em><em>options</em>) – Positive integer less than 2**128 containing the key
+or a 4 element array of uint32 containing the key</p></li>
 </ul>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><p class="first last"><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#ValueError" title="(in Python v3.7)"><code class="xref py py-exc docutils literal notranslate"><span class="pre">ValueError</span></code></a> – If values are out of range for the PRNG.</p>
-</td>
-</tr>
-</tbody>
-</table>
+</dd>
+<dt class="field-even">Raises</dt>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#ValueError" title="(in Python v3.7)"><strong>ValueError</strong></a> – If values are out of range for the PRNG.</p>
+</dd>
+</dl>
 <p class="rubric">Notes</p>
 <p>The two representation of the counter and key are related through
 array[i] = (value // 2**(32*i)) % 2**32.</p>
@@ -193,7 +187,7 @@ array[i] = (value // 2**(32*i)) % 2**32.</p>
         <li class="right" >
           <a href="../threefry32.html" title="ThreeFry32 Counter-based RNG"
              >previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../../index.html">RandomGen v1.16.1 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">RandomGen v1.16.2 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="../index.html" >Basic Random Number Generators</a> &#187;</li>
           <li class="nav-item nav-item-2"><a href="../threefry32.html" >ThreeFry32 Counter-based RNG</a> &#187;</li> 
       </ul>

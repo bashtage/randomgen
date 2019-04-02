@@ -3,4 +3,4 @@ randomgen.philox.Philox.ctypes
 
 .. currentmodule:: randomgen.philox
 
-.. automethod:: Philox.ctypes
+.. autoattribute:: Philox.ctypes

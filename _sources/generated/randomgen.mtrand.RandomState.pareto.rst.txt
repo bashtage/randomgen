@@ -1,0 +1,6 @@
+randomgen.mtrand.RandomState.pareto
+===================================
+
+.. currentmodule:: randomgen.mtrand
+
+.. automethod:: RandomState.pareto

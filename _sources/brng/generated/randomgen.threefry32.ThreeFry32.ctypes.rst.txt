@@ -3,4 +3,4 @@ randomgen.threefry32.ThreeFry32.ctypes
 
 .. currentmodule:: randomgen.threefry32
 
-.. automethod:: ThreeFry32.ctypes
+.. autoattribute:: ThreeFry32.ctypes

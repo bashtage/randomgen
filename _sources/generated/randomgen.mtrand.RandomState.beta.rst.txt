@@ -1,0 +1,6 @@
+randomgen.mtrand.RandomState.beta
+=================================
+
+.. currentmodule:: randomgen.mtrand
+
+.. automethod:: RandomState.beta

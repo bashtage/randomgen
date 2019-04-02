@@ -1,6 +1,0 @@
-randomgen.legacy.legacy.LegacyGenerator.dirichlet
-=================================================
-
-.. currentmodule:: randomgen.legacy.legacy
-
-.. automethod:: LegacyGenerator.dirichlet
