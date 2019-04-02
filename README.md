@@ -16,8 +16,8 @@ NumPy RandomState evolution.
 [![Anacnoda Cloud](https://anaconda.org/bashtage/randomgen/badges/version.svg)](https://anaconda.org/bashtage/randomgen)
 
 ### License
-[![License](https://img.shields.io/badge/License-NCSA-blue.svg)](https://opensource.org/licenses/NCSA)
-[![License](https://img.shields.io/badge/License-BSD%203--Clause-blue.svg)](https://opensource.org/licenses/BSD-3-Clause)
+[![NCSA License](https://img.shields.io/badge/License-NCSA-blue.svg)](https://opensource.org/licenses/NCSA)
+[![BSD License](https://img.shields.io/badge/License-BSD%203--Clause-blue.svg)](https://opensource.org/licenses/BSD-3-Clause)
 [![DOI](https://zenodo.org/badge/122181085.svg)](https://zenodo.org/badge/latestdoi/122181085)
 
 This is a library and generic interface for alternative random 

@@ -22,7 +22,7 @@ Latest Release
 License
 ~~~~~~~
 
-|License| |License| |DOI|
+|NCSA License| |BSD License| |DOI|
 
 This is a library and generic interface for alternative random
 generators in Python and NumPy.
@@ -343,9 +343,9 @@ NumPy’s mt19937.
    :target: https://pypi.org/project/randomgen/
 .. |Anacnoda Cloud| image:: https://anaconda.org/bashtage/randomgen/badges/version.svg
    :target: https://anaconda.org/bashtage/randomgen
-.. |License| image:: https://img.shields.io/badge/License-NCSA-blue.svg
+.. |NCSA License| image:: https://img.shields.io/badge/License-NCSA-blue.svg
    :target: https://opensource.org/licenses/NCSA
-.. |License| image:: https://img.shields.io/badge/License-BSD%203--Clause-blue.svg
+.. |BSD License| image:: https://img.shields.io/badge/License-BSD%203--Clause-blue.svg
    :target: https://opensource.org/licenses/BSD-3-Clause
 .. |DOI| image:: https://zenodo.org/badge/122181085.svg
    :target: https://zenodo.org/badge/latestdoi/122181085
