@@ -7,7 +7,6 @@ import numpy as np
 from cpython.pycapsule cimport PyCapsule_New
 from libc.stdlib cimport malloc, free
 
-from randomgen.common import interface
 from randomgen.common cimport *
 from randomgen.distributions cimport brng_t
 from randomgen.entropy import random_entropy, seed_by_array

@@ -8,7 +8,6 @@ except ImportError:
 
 import numpy as np
 
-from randomgen.common import interface
 from randomgen.common cimport *
 from randomgen.distributions cimport brng_t
 from randomgen.entropy import random_entropy, seed_by_array
