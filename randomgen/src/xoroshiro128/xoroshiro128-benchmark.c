@@ -14,14 +14,16 @@
 
 #define N 1000000000
 
-int main() {
+int main()
+{
   uint64_t count = 0, sum = 0;
   uint64_t seed = 0xDEADBEAF;
   s[0] = splitmix64_next(&seed);
   s[1] = splitmix64_next(&seed);
   int i;
   clock_t begin = clock();
-  for (i = 0; i < N; i++) {
+  for (i = 0; i < N; i++)
+  {
     sum += next();
     count++;
   }
