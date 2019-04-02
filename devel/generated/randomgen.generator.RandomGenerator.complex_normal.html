@@ -13,7 +13,7 @@
   <link rel="stylesheet" type="text/css" href="../_static/css/bootstrap-theme.min.css" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-    <title>randomgen.generator.RandomGenerator.geometric &#8212; RandomGen v1.16.1+60.g123eea9 documentation</title>
+    <title>randomgen.generator.RandomGenerator.complex_normal &#8212; RandomGen v1.16.1+60.g123eea9 documentation</title>
     <link rel="stylesheet" href="../_static/guzzle.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
@@ -24,8 +24,8 @@
     <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="randomgen.generator.RandomGenerator.gumbel" href="randomgen.generator.RandomGenerator.gumbel.html" />
-    <link rel="prev" title="randomgen.generator.RandomGenerator.gamma" href="randomgen.generator.RandomGenerator.gamma.html" />
+    <link rel="next" title="randomgen.generator.RandomGenerator.dirichlet" href="randomgen.generator.RandomGenerator.dirichlet.html" />
+    <link rel="prev" title="randomgen.generator.RandomGenerator.chisquare" href="randomgen.generator.RandomGenerator.chisquare.html" />
   
    
 
@@ -40,10 +40,10 @@
           <a href="../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="right" >
-          <a href="randomgen.generator.RandomGenerator.gumbel.html" title="randomgen.generator.RandomGenerator.gumbel"
+          <a href="randomgen.generator.RandomGenerator.dirichlet.html" title="randomgen.generator.RandomGenerator.dirichlet"
              accesskey="N">next</a> |</li>
         <li class="right" >
-          <a href="randomgen.generator.RandomGenerator.gamma.html" title="randomgen.generator.RandomGenerator.gamma"
+          <a href="randomgen.generator.RandomGenerator.chisquare.html" title="randomgen.generator.RandomGenerator.chisquare"
              accesskey="P">previous</a> |</li>
         <li class="nav-item nav-item-0"><a href="../index.html">RandomGen v1.16.1+60.g123eea9 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="../generator.html" accesskey="U">Random Generator</a> &#187;</li> 
@@ -117,53 +117,69 @@
               
                 <li><a href="../generator.html">Random Generator</a></li>
               
-              <li>randomgen.generator.RandomGenerator.geometric</li>
+              <li>randomgen.generator.RandomGenerator.complex_normal</li>
             </ol>
           </div>
           
           <div class="document clearer body">
             
-  <div class="section" id="randomgen-generator-randomgenerator-geometric">
-<h1>randomgen.generator.RandomGenerator.geometric<a class="headerlink" href="#randomgen-generator-randomgenerator-geometric" title="Permalink to this headline">¶</a></h1>
+  <div class="section" id="randomgen-generator-randomgenerator-complex-normal">
+<h1>randomgen.generator.RandomGenerator.complex_normal<a class="headerlink" href="#randomgen-generator-randomgenerator-complex-normal" title="Permalink to this headline">¶</a></h1>
 <dl class="method">
-<dt id="randomgen.generator.RandomGenerator.geometric">
-<code class="descclassname">RandomGenerator.</code><code class="descname">geometric</code><span class="sig-paren">(</span><em>p</em>, <em>size=None</em><span class="sig-paren">)</span><a class="headerlink" href="#randomgen.generator.RandomGenerator.geometric" title="Permalink to this definition">¶</a></dt>
-<dd><p>Draw samples from the geometric distribution.</p>
-<p>Bernoulli trials are experiments with one of two outcomes:
-success or failure (an example of such an experiment is flipping
-a coin).  The geometric distribution models the number of trials
-that must be run in order to achieve success.  It is therefore
-supported on the positive integers, <code class="docutils literal notranslate"><span class="pre">k</span> <span class="pre">=</span> <span class="pre">1,</span> <span class="pre">2,</span> <span class="pre">...</span></code>.</p>
-<p>The probability mass function of the geometric distribution is</p>
-<div class="math notranslate nohighlight">
-\[f(k) = (1 - p)^{k - 1} p\]</div>
-<p>where <cite>p</cite> is the probability of success of an individual trial.</p>
+<dt id="randomgen.generator.RandomGenerator.complex_normal">
+<code class="descclassname">RandomGenerator.</code><code class="descname">complex_normal</code><span class="sig-paren">(</span><em>loc=0.0</em>, <em>gamma=1.0</em>, <em>relation=0.0</em>, <em>size=None</em><span class="sig-paren">)</span><a class="headerlink" href="#randomgen.generator.RandomGenerator.complex_normal" title="Permalink to this definition">¶</a></dt>
+<dd><p>Draw random samples from a complex normal (Gaussian) distribution.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>p</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.7)"><em>float</em></a><em> or </em><em>array_like of floats</em>) – The probability of success of an individual trial.</p></li>
+<li><p><strong>loc</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#complex" title="(in Python v3.7)"><em>complex</em></a><em> or </em><em>array_like of complex</em>) – Mean of the distribution.</p></li>
+<li><p><strong>gamma</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.7)"><em>float</em></a><em>, </em><a class="reference external" href="https://docs.python.org/3/library/functions.html#complex" title="(in Python v3.7)"><em>complex</em></a><em> or </em><em>array_like of float</em><em> or </em><a class="reference external" href="https://docs.python.org/3/library/functions.html#complex" title="(in Python v3.7)"><em>complex</em></a>) – Variance of the distribution</p></li>
+<li><p><strong>relation</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.7)"><em>float</em></a><em>, </em><a class="reference external" href="https://docs.python.org/3/library/functions.html#complex" title="(in Python v3.7)"><em>complex</em></a><em> or </em><em>array_like of float</em><em> or </em><a class="reference external" href="https://docs.python.org/3/library/functions.html#complex" title="(in Python v3.7)"><em>complex</em></a>) – Relation between the two component normals</p></li>
 <li><p><strong>size</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a><em> or </em><em>tuple of ints</em><em>, </em><em>optional</em>) – Output shape.  If the given shape is, e.g., <code class="docutils literal notranslate"><span class="pre">(m,</span> <span class="pre">n,</span> <span class="pre">k)</span></code>, then
 <code class="docutils literal notranslate"><span class="pre">m</span> <span class="pre">*</span> <span class="pre">n</span> <span class="pre">*</span> <span class="pre">k</span></code> samples are drawn.  If size is <code class="docutils literal notranslate"><span class="pre">None</span></code> (default),
-a single value is returned if <code class="docutils literal notranslate"><span class="pre">p</span></code> is a scalar.  Otherwise,
-<code class="docutils literal notranslate"><span class="pre">np.array(p).size</span></code> samples are drawn.</p></li>
+a single value is returned if <code class="docutils literal notranslate"><span class="pre">loc</span></code>, <code class="docutils literal notranslate"><span class="pre">gamma</span></code> and <code class="docutils literal notranslate"><span class="pre">relation</span></code>
+are all scalars. Otherwise,
+<code class="docutils literal notranslate"><span class="pre">np.broadcast(loc,</span> <span class="pre">gamma,</span> <span class="pre">relation).size</span></code> samples are drawn.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
-<dd class="field-even"><p><strong>out</strong> – Drawn samples from the parameterized geometric distribution.</p>
+<dd class="field-even"><p><strong>out</strong> – Drawn samples from the parameterized complex normal distribution.</p>
 </dd>
 <dt class="field-odd">Return type</dt>
 <dd class="field-odd"><p>ndarray or scalar</p>
 </dd>
 </dl>
-<p class="rubric">Examples</p>
-<p>Draw ten thousand values from the geometric distribution,
-with the probability of an individual success equal to 0.35:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">z</span> <span class="o">=</span> <span class="n">randomgen</span><span class="o">.</span><span class="n">generator</span><span class="o">.</span><span class="n">geometric</span><span class="p">(</span><span class="n">p</span><span class="o">=</span><span class="mf">0.35</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="mi">10000</span><span class="p">)</span>
-</pre></div>
+<div class="admonition seealso">
+<p class="admonition-title">See also</p>
+<dl class="simple">
+<dt><code class="xref py py-meth docutils literal notranslate"><span class="pre">randomgen.generator.normal()</span></code></dt><dd><p>random values from a real-valued normal distribution</p>
+</dd>
+</dl>
 </div>
-<p>How many trials succeeded after a single run?</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="p">(</span><span class="n">z</span> <span class="o">==</span> <span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span> <span class="o">/</span> <span class="mf">10000.</span>
-<span class="go">0.34889999999999999 #random</span>
+<p class="rubric">Notes</p>
+<p><strong>EXPERIMENTAL</strong> Not part of official NumPy RandomState, may change until
+formal release on PyPi.</p>
+<p>Complex normals are generated from a bivariate normal where the
+variance of the real component is 0.5 Re(gamma + relation), the
+variance of the imaginary component is 0.5 Re(gamma - relation), and
+the covariance between the two is 0.5 Im(relation).  The implied
+covariance matrix must be positive semi-definite and so both variances
+must be zero and the covariance must be weakly smaller than the
+product of the two standard deviations.</p>
+<p class="rubric">References</p>
+<dl class="footnote brackets">
+<dt class="label" id="id1"><span class="brackets">1</span></dt>
+<dd><p>Wikipedia, “Complex normal distribution”,
+<a class="reference external" href="https://en.wikipedia.org/wiki/Complex_normal_distribution">https://en.wikipedia.org/wiki/Complex_normal_distribution</a></p>
+</dd>
+<dt class="label" id="id2"><span class="brackets">2</span></dt>
+<dd><p>Leigh J. Halliwell, “Complex Random Variables” in “Casualty
+Actuarial Society E-Forum”, Fall 2015.</p>
+</dd>
+</dl>
+<p class="rubric">Examples</p>
+<p>Draw samples from the distribution:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">s</span> <span class="o">=</span> <span class="n">randomgen</span><span class="o">.</span><span class="n">generator</span><span class="o">.</span><span class="n">complex_normal</span><span class="p">(</span><span class="n">size</span><span class="o">=</span><span class="mi">1000</span><span class="p">)</span>
 </pre></div>
 </div>
 </dd></dl>
@@ -176,11 +192,11 @@ with the probability of an individual success equal to 0.35:</p>
   <div class="footer-relations">
     
       <div class="pull-left">
-        <a class="btn btn-default" href="randomgen.generator.RandomGenerator.gamma.html" title="previous chapter (use the left arrow)">randomgen.generator.RandomGenerator.gamma</a>
+        <a class="btn btn-default" href="randomgen.generator.RandomGenerator.chisquare.html" title="previous chapter (use the left arrow)">randomgen.generator.RandomGenerator.chisquare</a>
       </div>
     
       <div class="pull-right">
-        <a class="btn btn-default" href="randomgen.generator.RandomGenerator.gumbel.html" title="next chapter (use the right arrow)">randomgen.generator.RandomGenerator.gumbel</a>
+        <a class="btn btn-default" href="randomgen.generator.RandomGenerator.dirichlet.html" title="next chapter (use the right arrow)">randomgen.generator.RandomGenerator.dirichlet</a>
       </div>
     </div>
     <div class="clearer"></div>
@@ -198,10 +214,10 @@ with the probability of an individual success equal to 0.35:</p>
           <a href="../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="right" >
-          <a href="randomgen.generator.RandomGenerator.gumbel.html" title="randomgen.generator.RandomGenerator.gumbel"
+          <a href="randomgen.generator.RandomGenerator.dirichlet.html" title="randomgen.generator.RandomGenerator.dirichlet"
              >next</a> |</li>
         <li class="right" >
-          <a href="randomgen.generator.RandomGenerator.gamma.html" title="randomgen.generator.RandomGenerator.gamma"
+          <a href="randomgen.generator.RandomGenerator.chisquare.html" title="randomgen.generator.RandomGenerator.chisquare"
              >previous</a> |</li>
         <li class="nav-item nav-item-0"><a href="../index.html">RandomGen v1.16.1+60.g123eea9 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="../generator.html" >Random Generator</a> &#187;</li> 

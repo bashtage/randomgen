@@ -17,6 +17,8 @@ What's New or Different
 * :func:`~randomgen.entropy.random_entropy` provides access to the system
   source of randomness that is used in cryptographic applications (e.g.,
   ``/dev/urandom`` on Unix).
+* Simulate from the complex normal distribution
+  (:meth:`~randomgen.generator.RandomGenerator.complex_normal`)
 * The normal, exponential and gamma generators use 256-step Ziggurat
   methods which are 2-10 times faster than NumPy's default implementation in
   :meth:`~randomgen.generator.RandomGenerator.standard_normal`,

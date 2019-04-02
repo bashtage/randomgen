@@ -54,6 +54,7 @@ Distributions
    ~RandomGenerator.beta
    ~RandomGenerator.binomial
    ~RandomGenerator.chisquare
+   ~RandomGenerator.complex_normal
    ~RandomGenerator.dirichlet
    ~RandomGenerator.exponential
    ~RandomGenerator.f
