@@ -13,7 +13,7 @@
   <link rel="stylesheet" type="text/css" href="_static/css/bootstrap-theme.min.css" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-    <title>What’s New or Different &#8212; RandomGen v1.16.2+1.g16ad2e7 documentation</title>
+    <title>What’s New or Different &#8212; RandomGen v1.16.3 documentation</title>
     <link rel="stylesheet" href="_static/guzzle.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
@@ -45,7 +45,7 @@
         <li class="right" >
           <a href="multithreading.html" title="Multithreaded Generation"
              accesskey="P">previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="index.html">RandomGen v1.16.2+1.g16ad2e7 documentation</a> &#187;</li> 
+        <li class="nav-item nav-item-0"><a href="index.html">RandomGen v1.16.3 documentation</a> &#187;</li> 
       </ul>
     </div>
     <div class="container-wrapper">
@@ -55,7 +55,7 @@
       </div>
   <div id="left-column">
     <div class="sphinxsidebar"><a href="
-    index.html" class="text-logo">RandomGen v1.16.2 (+1)</a>
+    index.html" class="text-logo">RandomGen v1.16.3</a>
 <div class="sidebar-block">
   <div class="sidebar-wrapper">
     <h2>Table Of Contents</h2>
@@ -154,22 +154,22 @@ Cython.</p></li>
 <span class="gp">In [4]: </span><span class="o">%</span><span class="k">timeit</span> rg.standard_normal(100000)
 <span class="gp">   ...: </span><span class="o">%</span><span class="k">timeit</span> numpy.random.standard_normal(100000)
 <span class="gp">   ...: </span>
-<span class="go">12.5 ms +- 47.2 us per loop (mean +- std. dev. of 7 runs, 100 loops each)</span>
-<span class="go">4.85 ms +- 23.5 us per loop (mean +- std. dev. of 7 runs, 100 loops each)</span>
+<span class="go">12.2 ms +- 32.9 us per loop (mean +- std. dev. of 7 runs, 100 loops each)</span>
+<span class="go">4.82 ms +- 16.5 us per loop (mean +- std. dev. of 7 runs, 100 loops each)</span>
 </pre></div>
 </div>
 <div class="highlight-ipython notranslate"><div class="highlight"><pre><span></span><span class="gp">In [5]: </span><span class="o">%</span><span class="k">timeit</span> rg.standard_exponential(100000)
 <span class="gp">   ...: </span><span class="o">%</span><span class="k">timeit</span> numpy.random.standard_exponential(100000)
 <span class="gp">   ...: </span>
-<span class="go">12.7 ms +- 76.3 us per loop (mean +- std. dev. of 7 runs, 100 loops each)</span>
-<span class="go">6.15 ms +- 43.1 us per loop (mean +- std. dev. of 7 runs, 100 loops each)</span>
+<span class="go">12.4 ms +- 77.8 us per loop (mean +- std. dev. of 7 runs, 100 loops each)</span>
+<span class="go">6.13 ms +- 18.6 us per loop (mean +- std. dev. of 7 runs, 100 loops each)</span>
 </pre></div>
 </div>
 <div class="highlight-ipython notranslate"><div class="highlight"><pre><span></span><span class="gp">In [6]: </span><span class="o">%</span><span class="k">timeit</span> rg.standard_gamma(3.0, 100000)
 <span class="gp">   ...: </span><span class="o">%</span><span class="k">timeit</span> numpy.random.standard_gamma(3.0, 100000)
 <span class="gp">   ...: </span>
-<span class="go">37.4 ms +- 229 us per loop (mean +- std. dev. of 7 runs, 10 loops each)</span>
-<span class="go">8.12 ms +- 32.4 us per loop (mean +- std. dev. of 7 runs, 100 loops each)</span>
+<span class="go">37 ms +- 202 us per loop (mean +- std. dev. of 7 runs, 10 loops each)</span>
+<span class="go">8.07 ms +- 28.9 us per loop (mean +- std. dev. of 7 runs, 100 loops each)</span>
 </pre></div>
 </div>
 <ul class="simple">
@@ -187,13 +187,13 @@ select distributions</p>
 </li>
 </ul>
 <div class="highlight-ipython notranslate"><div class="highlight"><pre><span></span><span class="gp">In [7]: </span><span class="n">rg</span><span class="o">.</span><span class="n">seed</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
-<span class="gh">Out[7]: </span><span class="go">RandomGenerator(Xoroshiro128) at 0x2B1D3682CBD8</span>
+<span class="gh">Out[7]: </span><span class="go">RandomGenerator(Xoroshiro128) at 0x2AAF4F748B88</span>
 
 <span class="gp">In [8]: </span><span class="n">rg</span><span class="o">.</span><span class="n">random_sample</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="s1">&#39;d&#39;</span><span class="p">)</span>
 <span class="go">                                                        Out[8]: array([0.31483881, 0.84384135, 0.85491961])</span>
 
 <span class="gp">In [9]: </span><span class="n">rg</span><span class="o">.</span><span class="n">seed</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
-<span class="go">                                                                                                            Out[9]: RandomGenerator(Xoroshiro128) at 0x2B1D3682CBD8</span>
+<span class="go">                                                                                                            Out[9]: RandomGenerator(Xoroshiro128) at 0x2AAF4F748B88</span>
 
 <span class="gp">In [10]: </span><span class="n">rg</span><span class="o">.</span><span class="n">random_sample</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="s1">&#39;f&#39;</span><span class="p">)</span>
 <span class="go">                                                                                                                                                                    Out[10]: array([0.11265862, 0.31483877, 0.4068042 ], dtype=float32)</span>
@@ -229,8 +229,8 @@ arbitrary interval by setting <code class="docutils literal notranslate"><span c
 <div class="highlight-ipython notranslate"><div class="highlight"><pre><span></span><span class="gp">In [14]: </span><span class="o">%</span><span class="k">timeit</span> rg.randint(0, 1535, use_masked=False)
 <span class="gp">   ....: </span><span class="o">%</span><span class="k">timeit</span> numpy.random.randint(0, 1535)
 <span class="gp">   ....: </span>
-<span class="go">6.96 us +- 43.1 ns per loop (mean +- std. dev. of 7 runs, 100000 loops each)</span>
-<span class="go">1.24 us +- 11.8 ns per loop (mean +- std. dev. of 7 runs, 1000000 loops each)</span>
+<span class="go">6.63 us +- 11.4 ns per loop (mean +- std. dev. of 7 runs, 100000 loops each)</span>
+<span class="go">1.2 us +- 0.677 ns per loop (mean +- std. dev. of 7 runs, 1000000 loops each)</span>
 </pre></div>
 </div>
 </div>
@@ -268,7 +268,7 @@ arbitrary interval by setting <code class="docutils literal notranslate"><span c
         <li class="right" >
           <a href="multithreading.html" title="Multithreaded Generation"
              >previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="index.html">RandomGen v1.16.2+1.g16ad2e7 documentation</a> &#187;</li> 
+        <li class="nav-item nav-item-0"><a href="index.html">RandomGen v1.16.3 documentation</a> &#187;</li> 
       </ul>
     </div>
 <script type="text/javascript">
