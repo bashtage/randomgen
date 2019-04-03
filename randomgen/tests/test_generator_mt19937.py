@@ -1853,7 +1853,7 @@ class TestBroadcast(object):
 
         random.seed(self.seed)
         actual = random.complex_normal(loc=loc, gamma=1., relation=0.5,
-                                       size=(3,2))
+                                       size=(3, 2))
         assert_array_almost_equal(actual, desired, decimal=15)
 
 
