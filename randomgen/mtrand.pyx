@@ -2,7 +2,6 @@
 #cython: wraparound=False, nonecheck=False, boundscheck=False, cdivision=True, language_level=3
 import operator
 import warnings
-from collections.abc import Mapping
 
 import numpy as np
 
@@ -254,7 +253,7 @@ cdef class RandomState:
            Vol. 8, No. 1, pp. 3-30, Jan. 1998.
 
         """
-        if isinstance(state, Mapping):
+        if isinstance(state, dict):
             if 'brng' not in state or 'state' not in state:
                 raise ValueError('state dictionary is not valid.')
             st = state
