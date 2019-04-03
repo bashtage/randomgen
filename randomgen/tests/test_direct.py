@@ -234,7 +234,7 @@ class Base(object):
     def test_repr(self):
         rs = RandomGenerator(self.brng(*self.data1['seed']))
         assert 'RandomGenerator' in rs.__repr__()
-        assert str(hex(id(rs)))[2:].upper() in rs.__repr__()
+        assert hex(int(id(rs))).upper()[2:] in rs.__repr__()
 
     def test_str(self):
         rs = RandomGenerator(self.brng(*self.data1['seed']))

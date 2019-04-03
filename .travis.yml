@@ -18,6 +18,8 @@ matrix:
   fast_finish: true
   include:
     - os: linux
+      env: [PYTHON=2.7]
+    - os: linux
       env: [PYTHON=3.7, DOCBUILD=true]
     - os: linux
       python: 3.6

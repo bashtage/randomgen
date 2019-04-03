@@ -1,3 +1,4 @@
+import io
 import os
 import glob
 import platform
@@ -40,7 +41,7 @@ if CYTHON_COVERAGE:
     print('Building with coverage for cython modules, RANDOMGEN_CYTHON_COVERAGE=' +
           os.environ['RANDOMGEN_CYTHON_COVERAGE'])
 
-
+LONG_DESCRIPTION = io.open('README.rst', encoding="utf-8").read()
 Cython.Compiler.Options.annotate = True
 
 # Make a guess as to whether SSE2 is present for now, TODO: Improve
@@ -340,7 +341,7 @@ setup(
     author='Kevin Sheppard',
     author_email='kevin.k.sheppard@gmail.com',
     distclass=BinaryDistribution,
-    long_description=open('README.rst', encoding="utf-8").read(),
+    long_description=LONG_DESCRIPTION,
     description='Random generator supporting multiple PRNGs',
     url='https://github.com/bashtage/randomgen',
     keywords=['pseudo random numbers', 'PRNG', 'RNG', 'RandomState', 'random',
