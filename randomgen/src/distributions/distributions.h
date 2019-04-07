@@ -20,7 +20,7 @@ typedef int bool;
 
 #include "Python.h"
 #include "numpy/npy_common.h"
-#include <math.h>
+#include "numpy/npy_math.h"
 
 #ifdef _WIN32
 #if _MSC_VER == 1500
