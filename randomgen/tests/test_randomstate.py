@@ -112,7 +112,9 @@ class TestMultinomial(object):
 
         assert_raises(TypeError, random.multinomial, 1, p,
                       float(1))
-        assert_raises(ValueError, random.multinomial, 1, [1.1, .1])
+
+    def test_invalid_prob(self):
+        assert_raises(ValueError, random.multinomial, 100, [1.1, 0.2])
 
 
 class TestSetState(object):
@@ -355,6 +357,12 @@ class TestRandomDist(object):
                             [0.4575674820298663, 0.7781880808593471]])
         assert_array_almost_equal(actual, desired, decimal=15)
 
+    def test_rand_singleton(self):
+        random.seed(self.seed)
+        actual = random.rand()
+        desired = 0.61879477158567997
+        assert_array_almost_equal(actual, desired, decimal=15)
+
     def test_randn(self):
         random.seed(self.seed)
         actual = random.randn(3, 2)
@@ -362,6 +370,10 @@ class TestRandomDist(object):
                            [1.498988344300628, -0.2286433324536169],
                            [2.031033998682787, 2.17032494605655257]])
         assert_array_almost_equal(actual, desired, decimal=15)
+
+        random.seed(self.seed)
+        actual = random.randn()
+        assert_array_almost_equal(actual, desired[0, 0], decimal=15)
 
     def test_randint(self):
         random.seed(self.seed)
@@ -446,11 +458,9 @@ class TestRandomDist(object):
                             [0.4575674820298663, 0.7781880808593471]])
         assert_array_almost_equal(actual, desired, decimal=15)
 
-    def test_rand_singleton(self):
         random.seed(self.seed)
-        actual = random.rand()
-        desired = np.array(0.61879477158567997)
-        assert_array_almost_equal(actual, desired, decimal=15)
+        actual = random.random_sample()
+        assert_array_almost_equal(actual, desired[0, 0], decimal=15)
 
     def test_choice_uniform_replace(self):
         random.seed(self.seed)
@@ -585,18 +595,6 @@ class TestRandomDist(object):
             desired = conv([0, 1, 9, 6, 2, 4, 5, 8, 7, 3])
             assert_array_equal(actual, desired)
 
-    def test_permutation(self):
-        random.seed(self.seed)
-        alist = [1, 2, 3, 4, 5, 6, 7, 8, 9, 0]
-        actual = random.permutation(alist)
-        desired = [0, 1, 9, 6, 2, 4, 5, 8, 7, 3]
-        assert_array_equal(actual, desired)
-
-        random.seed(self.seed)
-        arr_2d = np.atleast_2d([1, 2, 3, 4, 5, 6, 7, 8, 9, 0]).T
-        actual = random.permutation(arr_2d)
-        assert_array_equal(actual, np.atleast_2d(desired).T)
-
     def test_shuffle_masked(self):
         # gh-3263
         a = np.ma.masked_values(np.reshape(range(20), (5, 4)) % 3 - 1, -1)
@@ -610,6 +608,18 @@ class TestRandomDist(object):
             random.shuffle(b)
             assert_equal(
                 sorted(b.data[~b.mask]), sorted(b_orig.data[~b_orig.mask]))
+
+    def test_permutation(self):
+        random.seed(self.seed)
+        alist = [1, 2, 3, 4, 5, 6, 7, 8, 9, 0]
+        actual = random.permutation(alist)
+        desired = [0, 1, 9, 6, 2, 4, 5, 8, 7, 3]
+        assert_array_equal(actual, desired)
+
+        random.seed(self.seed)
+        arr_2d = np.atleast_2d([1, 2, 3, 4, 5, 6, 7, 8, 9, 0]).T
+        actual = random.permutation(arr_2d)
+        assert_array_equal(actual, np.atleast_2d(desired).T)
 
     def test_beta(self):
         random.seed(self.seed)
@@ -652,6 +662,8 @@ class TestRandomDist(object):
                             [[0.59266909280647828, 0.40733090719352177],
                              [0.56974431743975207, 0.43025568256024799]]])
         assert_array_almost_equal(actual, desired, decimal=15)
+        bad_alpha = np.array([5.4e-01, -1.0e-16])
+        assert_raises(ValueError, random.dirichlet, bad_alpha)
 
         random.seed(self.seed)
         alpha = np.array([51.72840233779265162, 39.74494232180943953])
@@ -714,6 +726,16 @@ class TestRandomDist(object):
                             [17, 17],
                             [5, 12]])
         assert_array_equal(actual, desired)
+
+    def test_geometric_exceptions(self):
+        assert_raises(ValueError, random.geometric, 1.1)
+        assert_raises(ValueError, random.geometric, [1.1] * 10)
+        assert_raises(ValueError, random.geometric, -0.1)
+        assert_raises(ValueError, random.geometric, [-0.1] * 10)
+        with suppress_warnings() as sup:
+            sup.record(RuntimeWarning)
+            assert_raises(ValueError, random.geometric, np.nan)
+            assert_raises(ValueError, random.geometric, [np.nan] * 10)
 
     def test_gumbel(self):
         random.seed(self.seed)
@@ -793,9 +815,15 @@ class TestRandomDist(object):
                             [3, 6]])
         assert_array_equal(actual, desired)
 
+    def test_logseries_exceptions(self):
+        with suppress_warnings() as sup:
+            sup.record(RuntimeWarning)
+            assert_raises(ValueError, random.logseries, np.nan)
+            assert_raises(ValueError, random.logseries, [np.nan] * 10)
+
     def test_multinomial(self):
         random.seed(self.seed)
-        actual = random.multinomial(20, [1/6.]*6, size=(3, 2))
+        actual = random.multinomial(20, [1 / 6.] * 6, size=(3, 2))
         desired = np.array([[[4, 3, 5, 4, 2, 2],
                              [5, 2, 8, 2, 2, 1]],
                             [[3, 4, 3, 6, 0, 4],
@@ -846,8 +874,8 @@ class TestRandomDist(object):
 
         mu = np.zeros(2)
         cov = np.eye(2)
-        assert_raises(ValueError, random.multivariate_normal, mean,
-                      cov, check_valid='other')
+        assert_raises(ValueError, random.multivariate_normal, mean, cov,
+                      check_valid='other')
         assert_raises(ValueError, random.multivariate_normal,
                       np.zeros((2, 1, 1)), cov)
         assert_raises(ValueError, random.multivariate_normal,
@@ -862,6 +890,13 @@ class TestRandomDist(object):
                             [892, 611],
                             [779, 647]])
         assert_array_equal(actual, desired)
+
+    def test_negative_binomial_exceptions(self):
+        with suppress_warnings() as sup:
+            sup.record(RuntimeWarning)
+            assert_raises(ValueError, random.negative_binomial, 100, np.nan)
+            assert_raises(ValueError, random.negative_binomial, 100,
+                          [np.nan] * 10)
 
     def test_noncentral_chisquare(self):
         random.seed(self.seed)
@@ -892,6 +927,11 @@ class TestRandomDist(object):
                             [3.57715069265772545, 7.92632662577829805],
                             [0.43741599463544162, 1.1774208752428319]])
         assert_array_almost_equal(actual, desired, decimal=14)
+
+    def test_noncentral_f_nan(self):
+        random.seed(self.seed)
+        actual = random.noncentral_f(dfnum=5, dfden=2, nonc=np.nan)
+        assert np.isnan(actual)
 
     def test_normal(self):
         random.seed(self.seed)
@@ -932,9 +972,13 @@ class TestRandomDist(object):
         lambig = np.iinfo('l').max
         lamneg = -1
         assert_raises(ValueError, random.poisson, lamneg)
-        assert_raises(ValueError, random.poisson, [lamneg]*10)
+        assert_raises(ValueError, random.poisson, [lamneg] * 10)
         assert_raises(ValueError, random.poisson, lambig)
-        assert_raises(ValueError, random.poisson, [lambig]*10)
+        assert_raises(ValueError, random.poisson, [lambig] * 10)
+        with suppress_warnings() as sup:
+            sup.record(RuntimeWarning)
+            assert_raises(ValueError, random.poisson, np.nan)
+            assert_raises(ValueError, random.poisson, [np.nan] * 10)
 
     def test_power(self):
         random.seed(self.seed)
@@ -1029,8 +1073,8 @@ class TestRandomDist(object):
 
         func = random.uniform
         assert_raises(OverflowError, func, -np.inf, 0)
-        assert_raises(OverflowError, func,  0,      np.inf)
-        assert_raises(OverflowError, func,  fmin,   fmax)
+        assert_raises(OverflowError, func, 0, np.inf)
+        assert_raises(OverflowError, func, fmin, fmax)
         assert_raises(OverflowError, func, [-np.inf], [0])
         assert_raises(OverflowError, func, [0], [np.inf])
 
@@ -1073,7 +1117,12 @@ class TestRandomDist(object):
         # check infinite loop, gh-4720
         random.seed(self.seed)
         r = random.vonmises(mu=0., kappa=1.1e-8, size=10**6)
-        np.testing.assert_(np.isfinite(r).all())
+        assert_(np.isfinite(r).all())
+
+    def test_vonmises_nan(self):
+        random.seed(self.seed)
+        r = random.vonmises(mu=0., kappa=np.nan)
+        assert_(np.isnan(r))
 
     def test_wald(self):
         random.seed(self.seed)
@@ -1111,11 +1160,8 @@ class TestBroadcast(object):
     def setup(self):
         self.seed = 123456789
 
-    def setSeed(self):
+    def set_seed(self):
         random.seed(self.seed)
-
-    # TODO: Include test for randint once it can broadcast
-    # Can steal the test written in PR #6938
 
     def test_uniform(self):
         low = [0]
@@ -1125,11 +1171,11 @@ class TestBroadcast(object):
                             0.53413660089041659,
                             0.50955303552646702])
 
-        self.setSeed()
+        self.set_seed()
         actual = uniform(low * 3, high)
         assert_array_almost_equal(actual, desired, decimal=14)
 
-        self.setSeed()
+        self.set_seed()
         actual = uniform(low, high * 3)
         assert_array_almost_equal(actual, desired, decimal=14)
 
@@ -1142,12 +1188,12 @@ class TestBroadcast(object):
                             2.1283977976520019,
                             1.8417114045748335])
 
-        self.setSeed()
+        self.set_seed()
         actual = normal(loc * 3, scale)
         assert_array_almost_equal(actual, desired, decimal=14)
         assert_raises(ValueError, normal, loc * 3, bad_scale)
 
-        self.setSeed()
+        self.set_seed()
         actual = normal(loc, scale * 3)
         assert_array_almost_equal(actual, desired, decimal=14)
         assert_raises(ValueError, normal, loc, bad_scale * 3)
@@ -1162,13 +1208,13 @@ class TestBroadcast(object):
                             0.075230336409423643,
                             0.24976865978980844])
 
-        self.setSeed()
+        self.set_seed()
         actual = beta(a * 3, b)
         assert_array_almost_equal(actual, desired, decimal=14)
         assert_raises(ValueError, beta, bad_a * 3, b)
         assert_raises(ValueError, beta, a * 3, bad_b)
 
-        self.setSeed()
+        self.set_seed()
         actual = beta(a, b * 3)
         assert_array_almost_equal(actual, desired, decimal=14)
         assert_raises(ValueError, beta, bad_a, b * 3)
@@ -1182,7 +1228,7 @@ class TestBroadcast(object):
                             0.76386282278691653,
                             0.71243813125891797])
 
-        self.setSeed()
+        self.set_seed()
         actual = exponential(scale * 3)
         assert_array_almost_equal(actual, desired, decimal=14)
         assert_raises(ValueError, exponential, bad_scale * 3)
@@ -1195,7 +1241,7 @@ class TestBroadcast(object):
                             0.76386282278691653,
                             0.71243813125891797])
 
-        self.setSeed()
+        self.set_seed()
         actual = std_gamma(shape * 3)
         assert_array_almost_equal(actual, desired, decimal=14)
         assert_raises(ValueError, std_gamma, bad_shape * 3)
@@ -1210,13 +1256,13 @@ class TestBroadcast(object):
                             1.5277256455738331,
                             1.4248762625178359])
 
-        self.setSeed()
+        self.set_seed()
         actual = gamma(shape * 3, scale)
         assert_array_almost_equal(actual, desired, decimal=14)
         assert_raises(ValueError, gamma, bad_shape * 3, scale)
         assert_raises(ValueError, gamma, shape * 3, bad_scale)
 
-        self.setSeed()
+        self.set_seed()
         actual = gamma(shape, scale * 3)
         assert_array_almost_equal(actual, desired, decimal=14)
         assert_raises(ValueError, gamma, bad_shape, scale * 3)
@@ -1232,13 +1278,13 @@ class TestBroadcast(object):
                             0.86768719635363512,
                             2.7251095168386801])
 
-        self.setSeed()
+        self.set_seed()
         actual = f(dfnum * 3, dfden)
         assert_array_almost_equal(actual, desired, decimal=14)
         assert_raises(ValueError, f, bad_dfnum * 3, dfden)
         assert_raises(ValueError, f, dfnum * 3, bad_dfden)
 
-        self.setSeed()
+        self.set_seed()
         actual = f(dfnum, dfden * 3)
         assert_array_almost_equal(actual, desired, decimal=14)
         assert_raises(ValueError, f, bad_dfnum, dfden * 3)
@@ -1256,21 +1302,23 @@ class TestBroadcast(object):
                             13.025456344595602,
                             8.8018098359100545])
 
-        self.setSeed()
+        self.set_seed()
         actual = nonc_f(dfnum * 3, dfden, nonc)
         assert_array_almost_equal(actual, desired, decimal=14)
+        assert np.all(np.isnan(nonc_f(dfnum, dfden, [np.nan] * 3)))
+
         assert_raises(ValueError, nonc_f, bad_dfnum * 3, dfden, nonc)
         assert_raises(ValueError, nonc_f, dfnum * 3, bad_dfden, nonc)
         assert_raises(ValueError, nonc_f, dfnum * 3, dfden, bad_nonc)
 
-        self.setSeed()
+        self.set_seed()
         actual = nonc_f(dfnum, dfden * 3, nonc)
         assert_array_almost_equal(actual, desired, decimal=14)
         assert_raises(ValueError, nonc_f, bad_dfnum, dfden * 3, nonc)
         assert_raises(ValueError, nonc_f, dfnum, bad_dfden * 3, nonc)
         assert_raises(ValueError, nonc_f, dfnum, dfden * 3, bad_nonc)
 
-        self.setSeed()
+        self.set_seed()
         actual = nonc_f(dfnum, dfden, nonc * 3)
         assert_array_almost_equal(actual, desired, decimal=14)
         assert_raises(ValueError, nonc_f, bad_dfnum, dfden, nonc * 3)
@@ -1278,7 +1326,7 @@ class TestBroadcast(object):
         assert_raises(ValueError, nonc_f, dfnum, dfden, bad_nonc * 3)
 
     def test_noncentral_f_small_df(self):
-        self.setSeed()
+        self.set_seed()
         desired = np.array([6.869638627492048, 0.785880199263955])
         actual = random.noncentral_f(0.9, 0.9, 2, size=2)
         assert_array_almost_equal(actual, desired, decimal=14)
@@ -1291,7 +1339,7 @@ class TestBroadcast(object):
                             0.51947702108840776,
                             0.1320969254923558])
 
-        self.setSeed()
+        self.set_seed()
         actual = chisquare(df * 3)
         assert_array_almost_equal(actual, desired, decimal=14)
         assert_raises(ValueError, chisquare, bad_df * 3)
@@ -1306,13 +1354,13 @@ class TestBroadcast(object):
                             4.5804135049718742,
                             6.0872302432834564])
 
-        self.setSeed()
+        self.set_seed()
         actual = nonc_chi(df * 3, nonc)
         assert_array_almost_equal(actual, desired, decimal=14)
         assert_raises(ValueError, nonc_chi, bad_df * 3, nonc)
         assert_raises(ValueError, nonc_chi, df * 3, bad_nonc)
 
-        self.setSeed()
+        self.set_seed()
         actual = nonc_chi(df, nonc * 3)
         assert_array_almost_equal(actual, desired, decimal=14)
         assert_raises(ValueError, nonc_chi, bad_df, nonc * 3)
@@ -1326,10 +1374,11 @@ class TestBroadcast(object):
                             5.8560725167361607,
                             1.0274791436474273])
 
-        self.setSeed()
+        self.set_seed()
         actual = t(df * 3)
         assert_array_almost_equal(actual, desired, decimal=14)
         assert_raises(ValueError, t, bad_df * 3)
+        assert_raises(ValueError, random.standard_t, bad_df * 3)
 
     def test_vonmises(self):
         mu = [2]
@@ -1340,12 +1389,12 @@ class TestBroadcast(object):
                             -2.7064099483995943,
                             -1.8672476700665914])
 
-        self.setSeed()
+        self.set_seed()
         actual = vonmises(mu * 3, kappa)
         assert_array_almost_equal(actual, desired, decimal=14)
         assert_raises(ValueError, vonmises, mu * 3, bad_kappa)
 
-        self.setSeed()
+        self.set_seed()
         actual = vonmises(mu, kappa * 3)
         assert_array_almost_equal(actual, desired, decimal=14)
         assert_raises(ValueError, vonmises, mu, bad_kappa * 3)
@@ -1358,10 +1407,11 @@ class TestBroadcast(object):
                             1.1465519762044529,
                             1.0389564467453547])
 
-        self.setSeed()
+        self.set_seed()
         actual = pareto(a * 3)
         assert_array_almost_equal(actual, desired, decimal=14)
         assert_raises(ValueError, pareto, bad_a * 3)
+        assert_raises(ValueError, random.pareto, bad_a * 3)
 
     def test_weibull(self):
         a = [1]
@@ -1371,10 +1421,11 @@ class TestBroadcast(object):
                             0.76386282278691653,
                             0.71243813125891797])
 
-        self.setSeed()
+        self.set_seed()
         actual = weibull(a * 3)
         assert_array_almost_equal(actual, desired, decimal=14)
         assert_raises(ValueError, weibull, bad_a * 3)
+        assert_raises(ValueError, random.weibull, bad_a * 3)
 
     def test_power(self):
         a = [1]
@@ -1384,10 +1435,11 @@ class TestBroadcast(object):
                             0.53413660089041659,
                             0.50955303552646702])
 
-        self.setSeed()
+        self.set_seed()
         actual = power(a * 3)
         assert_array_almost_equal(actual, desired, decimal=14)
         assert_raises(ValueError, power, bad_a * 3)
+        assert_raises(ValueError, random.power, bad_a * 3)
 
     def test_laplace(self):
         loc = [0]
@@ -1398,12 +1450,12 @@ class TestBroadcast(object):
                             0.070715642226971326,
                             0.019290950698972624])
 
-        self.setSeed()
+        self.set_seed()
         actual = laplace(loc * 3, scale)
         assert_array_almost_equal(actual, desired, decimal=14)
         assert_raises(ValueError, laplace, loc * 3, bad_scale)
 
-        self.setSeed()
+        self.set_seed()
         actual = laplace(loc, scale * 3)
         assert_array_almost_equal(actual, desired, decimal=14)
         assert_raises(ValueError, laplace, loc, bad_scale * 3)
@@ -1417,12 +1469,12 @@ class TestBroadcast(object):
                             0.26936705726291116,
                             0.33906220393037939])
 
-        self.setSeed()
+        self.set_seed()
         actual = gumbel(loc * 3, scale)
         assert_array_almost_equal(actual, desired, decimal=14)
         assert_raises(ValueError, gumbel, loc * 3, bad_scale)
 
-        self.setSeed()
+        self.set_seed()
         actual = gumbel(loc, scale * 3)
         assert_array_almost_equal(actual, desired, decimal=14)
         assert_raises(ValueError, gumbel, loc, bad_scale * 3)
@@ -1436,15 +1488,16 @@ class TestBroadcast(object):
                             0.13675915696285773,
                             0.038216792802833396])
 
-        self.setSeed()
+        self.set_seed()
         actual = logistic(loc * 3, scale)
         assert_array_almost_equal(actual, desired, decimal=14)
         assert_raises(ValueError, logistic, loc * 3, bad_scale)
 
-        self.setSeed()
+        self.set_seed()
         actual = logistic(loc, scale * 3)
         assert_array_almost_equal(actual, desired, decimal=14)
         assert_raises(ValueError, logistic, loc, bad_scale * 3)
+        assert_equal(random.logistic(1.0, 0.0), 1.0)
 
     def test_lognormal(self):
         mean = [0]
@@ -1455,15 +1508,17 @@ class TestBroadcast(object):
                             8.4013952870126261,
                             6.3073234116578671])
 
-        self.setSeed()
+        self.set_seed()
         actual = lognormal(mean * 3, sigma)
         assert_array_almost_equal(actual, desired, decimal=14)
         assert_raises(ValueError, lognormal, mean * 3, bad_sigma)
+        assert_raises(ValueError, random.lognormal, mean * 3, bad_sigma)
 
-        self.setSeed()
+        self.set_seed()
         actual = lognormal(mean, sigma * 3)
         assert_array_almost_equal(actual, desired, decimal=14)
         assert_raises(ValueError, lognormal, mean, bad_sigma * 3)
+        assert_raises(ValueError, random.lognormal, mean, bad_sigma * 3)
 
     def test_rayleigh(self):
         scale = [1]
@@ -1473,7 +1528,7 @@ class TestBroadcast(object):
                             1.2360119924878694,
                             1.1936818095781789])
 
-        self.setSeed()
+        self.set_seed()
         actual = rayleigh(scale * 3)
         assert_array_almost_equal(actual, desired, decimal=14)
         assert_raises(ValueError, rayleigh, bad_scale * 3)
@@ -1488,13 +1543,15 @@ class TestBroadcast(object):
                             0.12450084820795027,
                             0.9096122728408238])
 
-        self.setSeed()
+        self.set_seed()
         actual = wald(mean * 3, scale)
         assert_array_almost_equal(actual, desired, decimal=14)
         assert_raises(ValueError, wald, bad_mean * 3, scale)
         assert_raises(ValueError, wald, mean * 3, bad_scale)
+        assert_raises(ValueError, random.wald, bad_mean * 3, scale)
+        assert_raises(ValueError, random.wald, mean * 3, bad_scale)
 
-        self.setSeed()
+        self.set_seed()
         actual = wald(mean, scale * 3)
         assert_array_almost_equal(actual, desired, decimal=14)
         assert_raises(ValueError, wald, bad_mean, scale * 3)
@@ -1514,7 +1571,7 @@ class TestBroadcast(object):
                             2.0347400359389356,
                             2.0095991069536208])
 
-        self.setSeed()
+        self.set_seed()
         actual = triangular(left * 3, mode, right)
         assert_array_almost_equal(actual, desired, decimal=14)
         assert_raises(ValueError, triangular, bad_left_one * 3, mode, right)
@@ -1522,7 +1579,7 @@ class TestBroadcast(object):
         assert_raises(ValueError, triangular, bad_left_two * 3, bad_mode_two,
                       right)
 
-        self.setSeed()
+        self.set_seed()
         actual = triangular(left, mode * 3, right)
         assert_array_almost_equal(actual, desired, decimal=14)
         assert_raises(ValueError, triangular, bad_left_one, mode * 3, right)
@@ -1530,7 +1587,7 @@ class TestBroadcast(object):
         assert_raises(ValueError, triangular, bad_left_two, bad_mode_two * 3,
                       right)
 
-        self.setSeed()
+        self.set_seed()
         actual = triangular(left, mode, right * 3)
         assert_array_almost_equal(actual, desired, decimal=14)
         assert_raises(ValueError, triangular, bad_left_one, mode, right * 3)
@@ -1551,14 +1608,14 @@ class TestBroadcast(object):
         binom = random.binomial
         desired = np.array([1, 1, 1])
 
-        self.setSeed()
+        self.set_seed()
         actual = binom(n * 3, p)
         assert_array_equal(actual, desired)
         assert_raises(ValueError, binom, bad_n * 3, p)
         assert_raises(ValueError, binom, n * 3, bad_p_one)
         assert_raises(ValueError, binom, n * 3, bad_p_two)
 
-        self.setSeed()
+        self.set_seed()
         actual = binom(n, p * 3)
         assert_array_equal(actual, desired)
         assert_raises(ValueError, binom, bad_n, p * 3)
@@ -1574,14 +1631,14 @@ class TestBroadcast(object):
         neg_binom = random.negative_binomial
         desired = np.array([1, 0, 1])
 
-        self.setSeed()
+        self.set_seed()
         actual = neg_binom(n * 3, p)
         assert_array_equal(actual, desired)
         assert_raises(ValueError, neg_binom, bad_n * 3, p)
         assert_raises(ValueError, neg_binom, n * 3, bad_p_one)
         assert_raises(ValueError, neg_binom, n * 3, bad_p_two)
 
-        self.setSeed()
+        self.set_seed()
         actual = neg_binom(n, p * 3)
         assert_array_equal(actual, desired)
         assert_raises(ValueError, neg_binom, bad_n, p * 3)
@@ -1597,7 +1654,7 @@ class TestBroadcast(object):
         poisson = random.poisson
         desired = np.array([1, 1, 0])
 
-        self.setSeed()
+        self.set_seed()
         actual = poisson(lam * 3)
         assert_array_equal(actual, desired)
         assert_raises(ValueError, poisson, bad_lam_one * 3)
@@ -1609,7 +1666,7 @@ class TestBroadcast(object):
         zipf = random.zipf
         desired = np.array([2, 2, 1])
 
-        self.setSeed()
+        self.set_seed()
         actual = zipf(a * 3)
         assert_array_equal(actual, desired)
         assert_raises(ValueError, zipf, bad_a * 3)
@@ -1624,7 +1681,7 @@ class TestBroadcast(object):
         geom = random.geometric
         desired = np.array([2, 2, 2])
 
-        self.setSeed()
+        self.set_seed()
         actual = geom(p * 3)
         assert_array_equal(actual, desired)
         assert_raises(ValueError, geom, bad_p_one * 3)
@@ -1641,7 +1698,7 @@ class TestBroadcast(object):
         hypergeom = random.hypergeometric
         desired = np.array([1, 1, 1])
 
-        self.setSeed()
+        self.set_seed()
         actual = hypergeom(ngood * 3, nbad, nsample)
         assert_array_equal(actual, desired)
         assert_raises(ValueError, hypergeom, bad_ngood * 3, nbad, nsample)
@@ -1649,7 +1706,7 @@ class TestBroadcast(object):
         assert_raises(ValueError, hypergeom, ngood * 3, nbad, bad_nsample_one)
         assert_raises(ValueError, hypergeom, ngood * 3, nbad, bad_nsample_two)
 
-        self.setSeed()
+        self.set_seed()
         actual = hypergeom(ngood, nbad * 3, nsample)
         assert_array_equal(actual, desired)
         assert_raises(ValueError, hypergeom, bad_ngood, nbad * 3, nsample)
@@ -1657,7 +1714,7 @@ class TestBroadcast(object):
         assert_raises(ValueError, hypergeom, ngood, nbad * 3, bad_nsample_one)
         assert_raises(ValueError, hypergeom, ngood, nbad * 3, bad_nsample_two)
 
-        self.setSeed()
+        self.set_seed()
         actual = hypergeom(ngood, nbad, nsample * 3)
         assert_array_equal(actual, desired)
         assert_raises(ValueError, hypergeom, bad_ngood, nbad, nsample * 3)
@@ -1665,6 +1722,9 @@ class TestBroadcast(object):
         assert_raises(ValueError, hypergeom, ngood, nbad, bad_nsample_one * 3)
         assert_raises(ValueError, hypergeom, ngood, nbad, bad_nsample_two * 3)
 
+        assert_raises(ValueError, hypergeom, -1, 10, 20)
+        assert_raises(ValueError, hypergeom, 10, -1, 20)
+        assert_raises(ValueError, hypergeom, 10, 10, 0)
         assert_raises(ValueError, hypergeom, 10, 10, 25)
 
     def test_logseries(self):
@@ -1674,7 +1734,7 @@ class TestBroadcast(object):
         logseries = random.logseries
         desired = np.array([1, 1, 1])
 
-        self.setSeed()
+        self.set_seed()
         actual = logseries(p * 3)
         assert_array_equal(actual, desired)
         assert_raises(ValueError, logseries, bad_p_one * 3)
@@ -1711,16 +1771,19 @@ class TestThread(object):
     def test_normal(self):
         def gen_random(state, out):
             out[...] = state.normal(size=10000)
+
         self.check_function(gen_random, sz=(10000,))
 
     def test_exp(self):
         def gen_random(state, out):
             out[...] = state.exponential(scale=np.ones((100, 1000)))
+
         self.check_function(gen_random, sz=(100, 1000))
 
     def test_multinomial(self):
         def gen_random(state, out):
-            out[...] = state.multinomial(10, [1/6.]*6, size=10000)
+            out[...] = state.multinomial(10, [1 / 6.] * 6, size=10000)
+
         self.check_function(gen_random, sz=(10000, 6))
 
 
@@ -1777,24 +1840,6 @@ class TestSingleEltArrayInput(object):
 
             out = func(self.argOne, argTwo[0])
             assert_equal(out.shape, self.tgtShape)
-
-# TODO: Uncomment once randint can broadcast arguments
-#    def test_randint(self):
-#        itype = [bool, np.int8, np.uint8, np.int16, np.uint16,
-#                 np.int32, np.uint32, np.int64, np.uint64]
-#        func = random.randint
-#        high = np.array([1])
-#        low = np.array([0])
-#
-#        for dt in itype:
-#            out = func(low, high, dtype=dt)
-#            self.assert_equal(out.shape, self.tgtShape)
-#
-#            out = func(low[0], high, dtype=dt)
-#            self.assert_equal(out.shape, self.tgtShape)
-#
-#            out = func(low, high[0], dtype=dt)
-#            self.assert_equal(out.shape, self.tgtShape)
 
     def test_three_arg_funcs(self):
         funcs = [random.noncentral_f, random.triangular,

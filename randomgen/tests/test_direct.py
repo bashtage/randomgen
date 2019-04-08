@@ -51,7 +51,6 @@ def uniform32_from_uint64(x):
     out = (joined >> np.uint32(9)) * (1.0 / 2 ** 23)
     return out.astype(np.float32)
 
-
 def uniform32_from_uint53(x):
     x = np.uint64(x) >> np.uint64(16)
     x = np.uint32(x & np.uint64(0xffffffff))
@@ -92,7 +91,6 @@ def uniform_from_uint32(x):
         b = x[i + 1] >> 6
         out[i // 2] = (a * 67108864.0 + b) / 9007199254740992.0
     return out
-
 
 def uniform_from_dsfmt(x):
     return x.view(np.double) - 1.0
@@ -236,7 +234,7 @@ class Base(object):
     def test_repr(self):
         rs = RandomGenerator(self.brng(*self.data1['seed']))
         assert 'RandomGenerator' in repr(rs)
-        assert '{:#x}'.format(id(rs)).upper().replace('X','x') in repr(rs)
+        assert '{:#x}'.format(id(rs)).upper().replace('X', 'x') in repr(rs)
 
     def test_str(self):
         rs = RandomGenerator(self.brng(*self.data1['seed']))

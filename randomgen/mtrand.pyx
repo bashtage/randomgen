@@ -958,7 +958,7 @@ cdef class RandomState:
         Parameters
         ----------
         d0, d1, ..., dn : int, optional
-            The dimensions of the returned array, should all be positive.
+            The dimensions of the returned array, must be non-negative.
             If no argument is given a single Python float is returned.
 
         Returns
@@ -1004,7 +1004,7 @@ cdef class RandomState:
         Parameters
         ----------
         d0, d1, ..., dn : int, optional
-            The dimensions of the returned array, should be all positive.
+            The dimensions of the returned array, must be non-negative.
             If no argument is given a single Python float is returned.
 
         Returns
@@ -1461,7 +1461,7 @@ cdef class RandomState:
 
         Samples are drawn from an F distribution with specified parameters,
         `dfnum` (degrees of freedom in numerator) and `dfden` (degrees of
-        freedom in denominator), where both parameters should be greater than
+        freedom in denominator), where both parameters must be greater than
         zero.
 
         The random variate of the F distribution (also known as the
@@ -1472,9 +1472,9 @@ cdef class RandomState:
         Parameters
         ----------
         dfnum : float or array_like of floats
-            Degrees of freedom in numerator, should be > 0.
+            Degrees of freedom in numerator, must be > 0.
         dfden : float or array_like of float
-            Degrees of freedom in denominator, should be > 0.
+            Degrees of freedom in denominator, must be > 0.
         size : int or tuple of ints, optional
             Output shape.  If the given shape is, e.g., ``(m, n, k)``, then
             ``m * n * k`` samples are drawn.  If size is ``None`` (default),
@@ -1555,15 +1555,15 @@ cdef class RandomState:
         Parameters
         ----------
         dfnum : float or array_like of floats
-            Numerator degrees of freedom, should be > 0.
+            Numerator degrees of freedom, must be > 0.
 
             .. versionchanged:: 1.14.0
                Earlier NumPy versions required dfnum > 1.
         dfden : float or array_like of floats
-            Denominator degrees of freedom, should be > 0.
+            Denominator degrees of freedom, must be > 0.
         nonc : float or array_like of floats
             Non-centrality parameter, the sum of the squares of the numerator
-            means, should be >= 0.
+            means, must be >= 0.
         size : int or tuple of ints, optional
             Output shape.  If the given shape is, e.g., ``(m, n, k)``, then
             ``m * n * k`` samples are drawn.  If size is ``None`` (default),
@@ -1632,7 +1632,7 @@ cdef class RandomState:
         Parameters
         ----------
         df : float or array_like of floats
-             Number of degrees of freedom, should be > 0.
+             Number of degrees of freedom, must be > 0.
         size : int or tuple of ints, optional
             Output shape.  If the given shape is, e.g., ``(m, n, k)``, then
             ``m * n * k`` samples are drawn.  If size is ``None`` (default),
@@ -1698,12 +1698,12 @@ cdef class RandomState:
         Parameters
         ----------
         df : float or array_like of floats
-            Degrees of freedom, should be > 0.
+            Degrees of freedom, must be > 0.
 
             .. versionchanged:: 1.10.0
                Earlier NumPy versions required dfnum > 1.
         nonc : float or array_like of floats
-            Non-centrality, should be non-negative.
+            Non-centrality, must be non-negative.
         size : int or tuple of ints, optional
             Output shape.  If the given shape is, e.g., ``(m, n, k)``, then
             ``m * n * k`` samples are drawn.  If size is ``None`` (default),
@@ -1844,7 +1844,7 @@ cdef class RandomState:
         Parameters
         ----------
         df : float or array_like of floats
-            Degrees of freedom, should be > 0.
+            Degrees of freedom, must be > 0.
         size : int or tuple of ints, optional
             Output shape.  If the given shape is, e.g., ``(m, n, k)``, then
             ``m * n * k`` samples are drawn.  If size is ``None`` (default),
@@ -2034,7 +2034,7 @@ cdef class RandomState:
         Parameters
         ----------
         a : float or array_like of floats
-            Shape of the distribution. Must all be positive.
+            Shape of the distribution. Must be positive.
         size : int or tuple of ints, optional
             Output shape.  If the given shape is, e.g., ``(m, n, k)``, then
             ``m * n * k`` samples are drawn.  If size is ``None`` (default),
@@ -2850,9 +2850,9 @@ cdef class RandomState:
             Lower limit.
         mode : float or array_like of floats
             The value where the peak of the distribution occurs.
-            The value should fulfill the condition ``left <= mode <= right``.
+            The value must fulfill the condition ``left <= mode <= right``.
         right : float or array_like of floats
-            Upper limit, should be larger than `left`.
+            Upper limit, must be larger than `left`.
         size : int or tuple of ints, optional
             Output shape.  If the given shape is, e.g., ``(m, n, k)``, then
             ``m * n * k`` samples are drawn.  If size is ``None`` (default),
@@ -3163,7 +3163,7 @@ cdef class RandomState:
         Parameters
         ----------
         lam : float or array_like of floats
-            Expectation of interval, should be >= 0. A sequence of expectation
+            Expectation of interval, must be >= 0. A sequence of expectation
             intervals must be broadcastable over the requested size.
         size : int or tuple of ints, optional
             Output shape.  If the given shape is, e.g., ``(m, n, k)``, then
@@ -3738,7 +3738,7 @@ cdef class RandomState:
             Number of experiments.
         pvals : sequence of floats, length p
             Probabilities of each of the ``p`` different outcomes.  These
-            should sum to 1 (however, the last element is always assumed to
+            must sum to 1 (however, the last element is always assumed to
             account for the remaining probability, as long as
             ``sum(pvals[:-1]) <= 1)``.
         size : int or tuple of ints, optional
@@ -3793,11 +3793,11 @@ cdef class RandomState:
         array([100,   0])
 
         """
-        cdef np.npy_intp d, i, j, dn, sz
-        cdef np.ndarray parr "arrayObject_parr", mnarr "arrayObject_mnarr"
+        cdef np.npy_intp d, i, sz, offset
+        cdef np.ndarray parr, mnarr
         cdef double *pix
         cdef int64_t *mnix
-        cdef double Sum
+        cdef int64_t ni
 
         d = len(pvals)
         parr = <np.ndarray>np.PyArray_FROM_OTF(pvals, np.NPY_DOUBLE, np.NPY_ALIGNED)
@@ -3818,23 +3818,12 @@ cdef class RandomState:
         mnarr = <np.ndarray>multin
         mnix = <int64_t*>np.PyArray_DATA(mnarr)
         sz = np.PyArray_SIZE(mnarr)
-
+        ni = n
+        offset = 0
         with self.lock, nogil:
-            i = 0
-            while i < sz:
-                Sum = 1.0
-                dn = n
-                for j in range(d-1):
-                    mnix[i+j] = random_binomial(self._brng, pix[j]/Sum, dn,
-                                                self._binomial)
-                    dn = dn - mnix[i+j]
-                    if dn <= 0:
-                        break
-                    Sum = Sum - pix[j]
-                if dn > 0:
-                    mnix[i+d-1] = dn
-
-                i = i + d
+            for i in range(sz // d):
+                random_multinomial(self._brng, ni, &mnix[offset], pix, d, self._binomial)
+                offset += d
 
         return multin
 

@@ -20,7 +20,7 @@ typedef int bool;
 
 #include "Python.h"
 #include "numpy/npy_common.h"
-#include <math.h>
+#include "numpy/npy_math.h"
 
 #ifdef _WIN32
 #if _MSC_VER == 1500
@@ -216,5 +216,8 @@ DECLDIR void random_bounded_uint8_fill(brng_t *brng_state, uint8_t off,
 DECLDIR void random_bounded_bool_fill(brng_t *brng_state, npy_bool off,
                                       npy_bool rng, npy_intp cnt,
                                       bool use_masked, npy_bool *out);
+
+DECLDIR void random_multinomial(brng_t *brng_state, int64_t n, int64_t *mnix,
+                                double *pix, npy_intp d, binomial_t *binomial);
 
 #endif
