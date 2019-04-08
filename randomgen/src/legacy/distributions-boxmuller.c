@@ -103,6 +103,7 @@ double legacy_chisquare(aug_brng_t *aug_state, double df) {
 
 double legacy_noncentral_chisquare(aug_brng_t *aug_state, double df,
                                    double nonc) {
+  double out;
   if (nonc == 0) {
     return legacy_chisquare(aug_state, df);
   }
@@ -112,7 +113,13 @@ double legacy_noncentral_chisquare(aug_brng_t *aug_state, double df,
     return Chi2 + n * n;
   } else {
     const long i = random_poisson(aug_state->basicrng, nonc / 2.0);
-    return legacy_chisquare(aug_state, df + 2 * i);
+    out = legacy_chisquare(aug_state, df + 2 * i);
+    /* Insert nan guard here to avoid changing the stream */
+    if (npy_isnan(nonc)){
+      return NPY_NAN;
+    } else {
+    return out;
+    }
   }
 }
 

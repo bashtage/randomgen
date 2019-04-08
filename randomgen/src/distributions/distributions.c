@@ -899,6 +899,9 @@ int64_t random_binomial(brng_t *brng_state, double p, int64_t n,
 }
 
 double random_noncentral_chisquare(brng_t *brng_state, double df, double nonc) {
+  if (npy_isnan(nonc)){
+    return NPY_NAN;
+  }
   if (nonc == 0) {
     return random_chisquare(brng_state, df);
   }
@@ -939,7 +942,9 @@ double random_vonmises(brng_t *brng_state, double mu, double kappa) {
   double U, V, W, Y, Z;
   double result, mod;
   int neg;
-
+  if (npy_isnan(kappa)){
+    return NPY_NAN;
+  }
   if (kappa < 1e-8) {
     return M_PI * (2 * next_double(brng_state) - 1);
   } else {

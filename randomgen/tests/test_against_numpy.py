@@ -570,9 +570,7 @@ class TestAgainstNumPy(object):
         self._is_state_common_legacy()
 
 
-funcs = [randomgen.generator.exponential,
-         randomgen.generator.zipf,
-         randomgen.generator.chisquare,
+funcs = [randomgen.generator.zipf,
          randomgen.generator.logseries,
          randomgen.generator.poisson]
 ids = [f.__name__ for f in funcs]
