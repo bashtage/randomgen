@@ -1179,8 +1179,10 @@ int64_t random_hypergeometric(brng_t *brng_state, int64_t good, int64_t bad,
                               int64_t sample) {
   if (sample > 10) {
     return random_hypergeometric_hrua(brng_state, good, bad, sample);
-  } else {
+  } else if (sample > 0) {
     return random_hypergeometric_hyp(brng_state, good, bad, sample);
+  } else {
+  return 0;
   }
 }
 

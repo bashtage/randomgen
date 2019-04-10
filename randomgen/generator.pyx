@@ -3448,14 +3448,14 @@ cdef class RandomGenerator:
             return disc(&random_hypergeometric, self._brng, size, self.lock, 0, 3,
                         lngood, 'ngood', CONS_NON_NEGATIVE,
                         lnbad, 'nbad', CONS_NON_NEGATIVE,
-                        lnsample, 'nsample', CONS_GTE_1)
+                        lnsample, 'nsample', CONS_NON_NEGATIVE)
 
         if np.any(np.less(np.add(ongood, onbad), onsample)):
             raise ValueError("ngood + nbad < nsample")
         return discrete_broadcast_iii(&random_hypergeometric, self._brng, size, self.lock,
                                       ongood, 'ngood', CONS_NON_NEGATIVE,
                                       onbad, 'nbad', CONS_NON_NEGATIVE,
-                                      onsample, 'nsample', CONS_GTE_1)
+                                      onsample, 'nsample', CONS_NON_NEGATIVE)
 
     def logseries(self, p, size=None):
         """
