@@ -3793,11 +3793,11 @@ cdef class RandomState:
         array([100,   0])
 
         """
-        cdef np.npy_intp d, i, j, dn, sz
-        cdef np.ndarray parr "arrayObject_parr", mnarr "arrayObject_mnarr"
+        cdef np.npy_intp d, i, sz, offset
+        cdef np.ndarray parr, mnarr
         cdef double *pix
         cdef int64_t *mnix
-        cdef double Sum
+        cdef int64_t ni
 
         d = len(pvals)
         parr = <np.ndarray>np.PyArray_FROM_OTF(pvals, np.NPY_DOUBLE, np.NPY_ALIGNED)
@@ -3818,23 +3818,12 @@ cdef class RandomState:
         mnarr = <np.ndarray>multin
         mnix = <int64_t*>np.PyArray_DATA(mnarr)
         sz = np.PyArray_SIZE(mnarr)
-
+        ni = n
+        offset = 0
         with self.lock, nogil:
-            i = 0
-            while i < sz:
-                Sum = 1.0
-                dn = n
-                for j in range(d-1):
-                    mnix[i+j] = random_binomial(self._brng, pix[j]/Sum, dn,
-                                                self._binomial)
-                    dn = dn - mnix[i+j]
-                    if dn <= 0:
-                        break
-                    Sum = Sum - pix[j]
-                if dn > 0:
-                    mnix[i+d-1] = dn
-
-                i = i + d
+            for i in range(sz // d):
+                random_multinomial(self._brng, ni, &mnix[offset], pix, d, self._binomial)
+                offset += d
 
         return multin
 

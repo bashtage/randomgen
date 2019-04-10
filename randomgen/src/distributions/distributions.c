@@ -1809,3 +1809,21 @@ void random_bounded_bool_fill(brng_t *brng_state, npy_bool off, npy_bool rng,
     out[i] = buffered_bounded_bool(brng_state, off, rng, mask, &bcnt, &buf);
   }
 }
+
+void random_multinomial(brng_t *brng_state, int64_t n, int64_t *mnix,
+                        double *pix, npy_intp d, binomial_t *binomial) {
+  double remaining_p = 1.0;
+  npy_intp j;
+  int64_t dn = n;
+  for (j = 0; j < (d - 1); j++) {
+    mnix[j] = random_binomial(brng_state, pix[j] / remaining_p, dn, binomial);
+    dn = dn - mnix[j];
+    if (dn <= 0) {
+      break;
+    }
+    remaining_p -= pix[j];
+    if (dn > 0) {
+      mnix[d - 1] = dn;
+    }
+  }
+}
