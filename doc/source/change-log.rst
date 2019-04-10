@@ -1,6 +1,11 @@
 Change Log
 ----------
 
+Since v1.16.2
+=============
+- Added broadcasting to multinomial (see
+  `NumPy issue 9710 <https://github.com/numpy/numpy/pull/9710>`_)
+
 v1.16.2
 =======
 - Updated Xoroshiro120 to use AUthor's latest parameterization
