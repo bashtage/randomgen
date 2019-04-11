@@ -3722,7 +3722,7 @@ cdef class RandomGenerator:
             Number of experiments.
         pvals : sequence of floats, length p
             Probabilities of each of the ``p`` different outcomes.  These
-            should sum to 1 (however, the last element is always assumed to
+            must sum to 1 (however, the last element is always assumed to
             account for the remaining probability, as long as
             ``sum(pvals[:-1]) <= 1)``.
         size : int or tuple of ints, optional
