@@ -98,7 +98,8 @@ cdef class RandomGenerator:
         self.lock = brng.lock
 
     def __dealloc__(self):
-        free(self._binomial)
+        if self._binomial:
+            free(self._binomial)
 
     def __repr__(self):
         return self.__str__() + ' at 0x{:X}'.format(id(self))

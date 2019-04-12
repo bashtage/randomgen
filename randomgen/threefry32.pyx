@@ -201,10 +201,14 @@ cdef class ThreeFry32:
                 self.state)
 
     def __dealloc__(self):
-        free(self.rng_state.ctr)
-        free(self.rng_state.key)
-        free(self.rng_state)
-        free(self._brng)
+        if self.rng_state.ctr:
+            free(self.rng_state.ctr)
+        if self.rng_state.key:
+            free(self.rng_state.key)
+        if self.rng_state:
+            free(self.rng_state)
+        if self._brng:
+            free(self._brng)
 
     cdef _reset_state_variables(self):
         self.rng_state.buffer_pos = THREEFRY_BUFFER_SIZE

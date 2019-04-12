@@ -146,8 +146,10 @@ cdef class MT19937:
         self.capsule = PyCapsule_New(<void *>self._brng, name, NULL)
 
     def __dealloc__(self):
-        free(self.rng_state)
-        free(self._brng)
+        if self.rng_state:
+            free(self.rng_state)
+        if self._brng:
+            free(self._brng)
 
     # Pickling support:
     def __getstate__(self):

@@ -94,8 +94,10 @@ cdef class RandomState:
         self.lock = brng.lock
 
     def __dealloc__(self):
-        free(self._binomial)
-        free(self._aug_state)
+        if self._binomial:
+            free(self._binomial)
+        if self._aug_state:
+            free(self._aug_state)
 
     def __repr__(self):
         return self.__str__() + ' at 0x{:X}'.format(id(self))
@@ -138,7 +140,7 @@ cdef class RandomState:
         The best method to access seed is to directly use a basic RNG instance.
         This example demonstrates this best practice.
 
-        >>> from numpy.random.randomgen import MT19937
+        >>> from numpy.random import MT19937
         >>> from numpy.random import RandomState
         >>> brng = MT19937(123456789)
         >>> rs = RandomState(brng)
@@ -482,8 +484,6 @@ cdef class RandomState:
                 [ 739731006, 1947757578]],
                [[1871712945,  752307660],
                 [1601631370, 1479324245]]])
-        >>> np.iinfo(np.int).max
-        2147483647
         >>> rs.tomaxint((2,2,2)) < np.iinfo(np.int).max
         array([[[ True,  True],
                 [ True,  True]],
@@ -1361,11 +1361,11 @@ cdef class RandomState:
         the probability density function:
 
         >>> import matplotlib.pyplot as plt
-        >>> import scipy.special as sps
+        >>> import scipy.special as sps  # doctest: +SKIP
         >>> count, bins, ignored = plt.hist(s, 50, density=True)
-        >>> y = bins**(shape-1) * ((np.exp(-bins/scale))/ \\
+        >>> y = bins**(shape-1) * ((np.exp(-bins/scale))/  # doctest: +SKIP
         ...                       (sps.gamma(shape) * scale**shape))
-        >>> plt.plot(bins, y, linewidth=2, color='r')
+        >>> plt.plot(bins, y, linewidth=2, color='r')  # doctest: +SKIP
         >>> plt.show()
 
         """
@@ -1440,11 +1440,11 @@ cdef class RandomState:
         the probability density function:
 
         >>> import matplotlib.pyplot as plt
-        >>> import scipy.special as sps
+        >>> import scipy.special as sps  # doctest: +SKIP
         >>> count, bins, ignored = plt.hist(s, 50, density=True)
-        >>> y = bins**(shape-1)*(np.exp(-bins/scale) /
+        >>> y = bins**(shape-1)*(np.exp(-bins/scale) /  # doctest: +SKIP
         ...                      (sps.gamma(shape)*scale**shape))
-        >>> plt.plot(bins, y, linewidth=2, color='r')
+        >>> plt.plot(bins, y, linewidth=2, color='r')  # doctest: +SKIP
         >>> plt.show()
 
         """
@@ -1994,11 +1994,11 @@ cdef class RandomState:
         the probability density function:
 
         >>> import matplotlib.pyplot as plt
-        >>> from scipy.special import i0
+        >>> from scipy.special import i0  # doctest: +SKIP
         >>> plt.hist(s, 50, density=True)
         >>> x = np.linspace(-np.pi, np.pi, num=51)
-        >>> y = np.exp(kappa*np.cos(x-mu))/(2*np.pi*i0(kappa))
-        >>> plt.plot(x, y, linewidth=2, color='r')
+        >>> y = np.exp(kappa*np.cos(x-mu))/(2*np.pi*i0(kappa))  # doctest: +SKIP
+        >>> plt.plot(x, y, linewidth=2, color='r')  # doctest: +SKIP
         >>> plt.show()
 
         """
@@ -2276,25 +2276,25 @@ cdef class RandomState:
 
         Compare the power function distribution to the inverse of the Pareto.
 
-        >>> from scipy import stats
+        >>> from scipy import stats # doctest: +SKIP
         >>> rvs = np.random.power(5, 1000000)
         >>> rvsp = np.random.pareto(5, 1000000)
         >>> xx = np.linspace(0,1,100)
-        >>> powpdf = stats.powerlaw.pdf(xx,5)
+        >>> powpdf = stats.powerlaw.pdf(xx,5)  # doctest: +SKIP
 
         >>> plt.figure()
         >>> plt.hist(rvs, bins=50, density=True)
-        >>> plt.plot(xx,powpdf,'r-')
+        >>> plt.plot(xx,powpdf,'r-')  # doctest: +SKIP
         >>> plt.title('np.random.power(5)')
 
         >>> plt.figure()
         >>> plt.hist(1./(1.+rvsp), bins=50, density=True)
-        >>> plt.plot(xx,powpdf,'r-')
+        >>> plt.plot(xx,powpdf,'r-')  # doctest: +SKIP
         >>> plt.title('inverse of 1 + np.random.pareto(5)')
 
         >>> plt.figure()
         >>> plt.hist(1./(1.+rvsp), bins=50, density=True)
-        >>> plt.plot(xx,powpdf,'r-')
+        >>> plt.plot(xx,powpdf,'r-')  # doctest: +SKIP
         >>> plt.title('inverse of stats.pareto(5)')
 
         """
@@ -3285,14 +3285,14 @@ cdef class RandomState:
         the probability density function:
 
         >>> import matplotlib.pyplot as plt
-        >>> from scipy import special
+        >>> from scipy import special  # doctest: +SKIP
 
         Truncate s values at 50 so plot is interesting:
 
         >>> count, bins, ignored = plt.hist(s[s<50], 50, density=True)
         >>> x = np.arange(1., 50.)
-        >>> y = x**(-a) / special.zetac(a)
-        >>> plt.plot(x, y/max(y), linewidth=2, color='r')
+        >>> y = x**(-a) / special.zetac(a)  # doctest: +SKIP
+        >>> plt.plot(x, y/max(y), linewidth=2, color='r')  # doctest: +SKIP
         >>> plt.show()
 
         """
@@ -4110,56 +4110,56 @@ cdef class RandomState:
         self.shuffle(idx)
         return arr[idx]
 
-_mtrand = RandomState()
+_rand = RandomState()
 
-beta = _mtrand.beta
-binomial = _mtrand.binomial
-bytes = _mtrand.bytes
-chisquare = _mtrand.chisquare
-choice = _mtrand.choice
-dirichlet = _mtrand.dirichlet
-exponential = _mtrand.exponential
-f = _mtrand.f
-gamma = _mtrand.gamma
-get_state = _mtrand.get_state
-geometric = _mtrand.geometric
-gumbel = _mtrand.gumbel
-hypergeometric = _mtrand.hypergeometric
-laplace = _mtrand.laplace
-logistic = _mtrand.logistic
-lognormal = _mtrand.lognormal
-logseries = _mtrand.logseries
-multinomial = _mtrand.multinomial
-multivariate_normal = _mtrand.multivariate_normal
-negative_binomial = _mtrand.negative_binomial
-noncentral_chisquare = _mtrand.noncentral_chisquare
-noncentral_f = _mtrand.noncentral_f
-normal = _mtrand.normal
-pareto = _mtrand.pareto
-permutation = _mtrand.permutation
-poisson = _mtrand.poisson
-power = _mtrand.power
-rand = _mtrand.rand
-randint = _mtrand.randint
-randn = _mtrand.randn
-random = _mtrand.random_sample
-random_integers = _mtrand.random_integers
-random_sample = _mtrand.random_sample
-rayleigh = _mtrand.rayleigh
-seed = _mtrand.seed
-set_state = _mtrand.set_state
-shuffle = _mtrand.shuffle
-standard_cauchy = _mtrand.standard_cauchy
-standard_exponential = _mtrand.standard_exponential
-standard_gamma = _mtrand.standard_gamma
-standard_normal = _mtrand.standard_normal
-standard_t = _mtrand.standard_t
-triangular = _mtrand.triangular
-uniform = _mtrand.uniform
-vonmises = _mtrand.vonmises
-wald = _mtrand.wald
-weibull = _mtrand.weibull
-zipf = _mtrand.zipf
+beta = _rand.beta
+binomial = _rand.binomial
+bytes = _rand.bytes
+chisquare = _rand.chisquare
+choice = _rand.choice
+dirichlet = _rand.dirichlet
+exponential = _rand.exponential
+f = _rand.f
+gamma = _rand.gamma
+get_state = _rand.get_state
+geometric = _rand.geometric
+gumbel = _rand.gumbel
+hypergeometric = _rand.hypergeometric
+laplace = _rand.laplace
+logistic = _rand.logistic
+lognormal = _rand.lognormal
+logseries = _rand.logseries
+multinomial = _rand.multinomial
+multivariate_normal = _rand.multivariate_normal
+negative_binomial = _rand.negative_binomial
+noncentral_chisquare = _rand.noncentral_chisquare
+noncentral_f = _rand.noncentral_f
+normal = _rand.normal
+pareto = _rand.pareto
+permutation = _rand.permutation
+poisson = _rand.poisson
+power = _rand.power
+rand = _rand.rand
+randint = _rand.randint
+randn = _rand.randn
+random = _rand.random_sample
+random_integers = _rand.random_integers
+random_sample = _rand.random_sample
+rayleigh = _rand.rayleigh
+seed = _rand.seed
+set_state = _rand.set_state
+shuffle = _rand.shuffle
+standard_cauchy = _rand.standard_cauchy
+standard_exponential = _rand.standard_exponential
+standard_gamma = _rand.standard_gamma
+standard_normal = _rand.standard_normal
+standard_t = _rand.standard_t
+triangular = _rand.triangular
+uniform = _rand.uniform
+vonmises = _rand.vonmises
+wald = _rand.wald
+weibull = _rand.weibull
+zipf = _rand.zipf
 
 # Old aliases that should not be removed
 def sample(*args, **kwargs):
@@ -4167,11 +4167,65 @@ def sample(*args, **kwargs):
     This is an alias of `random_sample`. See `random_sample`  for the complete
     documentation.
     """
-    return _mtrand.random_sample(*args, **kwargs)
+    return _rand.random_sample(*args, **kwargs)
 
 def ranf(*args, **kwargs):
     """
     This is an alias of `random_sample`. See `random_sample`  for the complete
     documentation.
     """
-    return _mtrand.random_sample(*args, **kwargs)
+    return _rand.random_sample(*args, **kwargs)
+
+__all__ = [
+    'beta',
+    'binomial',
+    'bytes',
+    'chisquare',
+    'choice',
+    'dirichlet',
+    'exponential',
+    'f',
+    'gamma',
+    'geometric',
+    'get_state',
+    'gumbel',
+    'hypergeometric',
+    'laplace',
+    'logistic',
+    'lognormal',
+    'logseries',
+    'multinomial',
+    'multivariate_normal',
+    'negative_binomial',
+    'noncentral_chisquare',
+    'noncentral_f',
+    'normal',
+    'pareto',
+    'permutation',
+    'poisson',
+    'power',
+    'rand',
+    'randint',
+    'randn',
+    'random_integers',
+    'random_sample',
+    'ranf',
+    'rayleigh',
+    'sample',
+    'seed',
+    'set_state',
+    'shuffle',
+    'standard_cauchy',
+    'standard_exponential',
+    'standard_gamma',
+    'standard_normal',
+    'standard_t',
+    'triangular',
+    'uniform',
+    'vonmises',
+    'wald',
+    'weibull',
+    'zipf',
+    'RandomState',
+]
+
