@@ -577,7 +577,7 @@ cdef class RandomGenerator:
         return self.randint(0, 4294967296, size=n_uint32, dtype=np.uint32).tobytes()[:length]
 
     @cython.wraparound(True)
-    def choice(self, a, size=None, replace=True, p=None):
+    def choice(self, a, size=None, replace=True, p=None, axis=0):
         """
         choice(a, size=None, replace=True, p=None)
 
@@ -600,6 +600,9 @@ cdef class RandomGenerator:
             The probabilities associated with each entry in a.
             If not given the sample assumes a uniform distribution over all
             entries in a.
+        axis : int, optional
+            The axis along which the selection is performed. The default, 0,
+            selects by row.
 
         Returns
         -------
@@ -609,11 +612,11 @@ cdef class RandomGenerator:
         Raises
         ------
         ValueError
-            If a is an int and less than zero, if a or p are not 1-dimensional,
-            if a is an array-like of size 0, if p is not a vector of
+            If a is an int and less than zero, if p is not 1-dimensional, if
+            a is array-like with a size 0, if p is not a vector of
             probabilities, if a and p have different lengths, or if
             replace=False and the sample size is greater than the population
-            size
+            size.
 
         See Also
         --------
@@ -665,11 +668,9 @@ cdef class RandomGenerator:
                 raise ValueError("a must be 1-dimensional or an integer")
             if pop_size <= 0 and np.prod(size) != 0:
                 raise ValueError("a must be greater than 0 unless no samples are taken")
-        elif a.ndim != 1:
-            raise ValueError("a must be 1-dimensional")
         else:
-            pop_size = a.shape[0]
-            if pop_size is 0 and np.prod(size) != 0:
+            pop_size = a.shape[axis]
+            if pop_size == 0 and np.prod(size) != 0:
                 raise ValueError("'a' cannot be empty unless no samples are taken")
 
         if p is not None:
@@ -761,7 +762,9 @@ cdef class RandomGenerator:
             res[()] = a[idx]
             return res
 
-        return a[idx]
+        # asarray downcasts on 32-bit platforms, always safe
+        # no-op on 64-bit platforms
+        return a.take(np.asarray(idx, dtype=np.intp), axis=axis)
 
     def uniform(self, low=0.0, high=1.0, size=None):
         """
