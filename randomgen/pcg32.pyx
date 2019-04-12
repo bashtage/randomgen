@@ -160,8 +160,10 @@ cdef class PCG32:
                 self.state)
 
     def __dealloc__(self):
-        free(self.rng_state)
-        free(self._brng)
+        if self.rng_state:
+            free(self.rng_state)
+        if self._brng:
+            free(self._brng)
 
     def random_raw(self, size=None, output=True):
         """

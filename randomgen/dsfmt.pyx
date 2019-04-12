@@ -182,10 +182,14 @@ cdef class DSFMT:
                 self.state)
 
     def __dealloc__(self):
-        PyArray_free_aligned(self.rng_state.state)
-        PyArray_free_aligned(self.rng_state.buffered_uniforms)
-        free(self.rng_state)
-        free(self._brng)
+        if self.rng_state.state:
+            PyArray_free_aligned(self.rng_state.state)
+        if self.rng_state.buffered_uniforms:
+            PyArray_free_aligned(self.rng_state.buffered_uniforms)
+        if self.rng_state:
+            free(self.rng_state)
+        if self._brng:
+            free(self._brng)
 
     cdef _reset_state_variables(self):
         self.rng_state.buffer_loc = DSFMT_N64

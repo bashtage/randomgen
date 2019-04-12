@@ -171,8 +171,10 @@ cdef class PCG64:
                 self.state)
 
     def __dealloc__(self):
-        free(self.rng_state)
-        free(self._brng)
+        if self.rng_state:
+            free(self.rng_state)
+        if self._brng:
+            free(self._brng)
 
     cdef _reset_state_variables(self):
         self.rng_state.has_uint32 = 0
