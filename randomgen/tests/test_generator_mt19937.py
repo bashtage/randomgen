@@ -541,25 +541,25 @@ class TestRandomDist(object):
     def test_choice_uniform_replace(self):
         random.seed(self.seed)
         actual = random.choice(4, 4)
-        desired = np.array([2, 3, 2, 3])
+        desired = np.array([2, 3, 2, 3], dtype=np.int64)
         assert_array_equal(actual, desired)
 
     def test_choice_nonuniform_replace(self):
         random.seed(self.seed)
         actual = random.choice(4, 4, p=[0.4, 0.4, 0.1, 0.1])
-        desired = np.array([1, 1, 2, 2])
+        desired = np.array([1, 1, 2, 2], dtype=np.int64)
         assert_array_equal(actual, desired)
 
     def test_choice_uniform_noreplace(self):
         random.seed(self.seed)
         actual = random.choice(4, 3, replace=False)
-        desired = np.array([0, 1, 3])
+        desired = np.array([0, 1, 3], dtype=np.int64)
         assert_array_equal(actual, desired)
 
     def test_choice_nonuniform_noreplace(self):
         random.seed(self.seed)
         actual = random.choice(4, 3, replace=False, p=[0.1, 0.3, 0.5, 0.1])
-        desired = np.array([2, 3, 1])
+        desired = np.array([2, 3, 1], dtype=np.int64)
         assert_array_equal(actual, desired)
 
     def test_choice_noninteger(self):
@@ -637,6 +637,18 @@ class TestRandomDist(object):
         a = np.array([42, 1, 2])
         p = [None, None, None]
         assert_raises(ValueError, random.choice, a, p=p)
+
+    def test_choice_return_type(self):
+        # gh 9867
+        p = np.ones(4) / 4.
+        actual = random.choice(4, 2)
+        assert actual.dtype == np.int64
+        actual = random.choice(4, 2, replace=False)
+        assert actual.dtype == np.int64
+        actual = random.choice(4, 2, p=p)
+        assert actual.dtype == np.int64
+        actual = random.choice(4, 2, p=p, replace=False)
+        assert actual.dtype == np.int64
 
     def test_bytes(self):
         random.seed(self.seed)

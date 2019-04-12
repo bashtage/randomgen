@@ -722,9 +722,9 @@ cdef class RandomGenerator:
                 cdf /= cdf[-1]
                 uniform_samples = self.random_sample(shape)
                 idx = cdf.searchsorted(uniform_samples, side='right')
-                idx = np.array(idx, copy=False)  # searchsorted returns a scalar
+                idx = np.array(idx, copy=False, dtype=np.int64)  # searchsorted returns a scalar
             else:
-                idx = self.randint(0, pop_size, size=shape)
+                idx = self.randint(0, pop_size, size=shape, dtype=np.int64)
         else:
             if size > pop_size:
                 raise ValueError("Cannot take a larger sample than "
@@ -753,7 +753,7 @@ cdef class RandomGenerator:
                     n_uniq += new.size
                 idx = found
             else:
-                idx = self.permutation(pop_size)[:size]
+                idx = (self.permutation(pop_size)[:size]).astype(np.int64)
                 if shape is not None:
                     idx.shape = shape
 
