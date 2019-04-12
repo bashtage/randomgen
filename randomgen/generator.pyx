@@ -430,26 +430,11 @@ cdef class RandomGenerator:
                 [ True,  True]]])
 
         """
-        cdef np.npy_intp n
-        cdef np.ndarray randoms
-        cdef int64_t *randoms_data
+        return self.randint(0, np.iinfo(np.int).max + 1, dtype=np.int, size=size)
 
-        if size is None:
-            with self.lock:
-                return random_positive_int(self._brng)
-
-        randoms = <np.ndarray>np.empty(size, dtype=np.int64)
-        randoms_data = <int64_t*>np.PyArray_DATA(randoms)
-        n = np.PyArray_SIZE(randoms)
-
-        for i in range(n):
-            with self.lock, nogil:
-                randoms_data[i] = random_positive_int(self._brng)
-        return randoms
-
-    def randint(self, low, high=None, size=None, dtype=int, use_masked=True):
+    def randint(self, low, high=None, size=None, dtype=np.int64, use_masked=True):
         """
-        randint(low, high=None, size=None, dtype='l', use_masked=True)
+        randint(low, high=None, size=None, dtype='int64', use_masked=True)
 
         Return random integers from `low` (inclusive) to `high` (exclusive).
 
