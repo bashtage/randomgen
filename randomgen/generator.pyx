@@ -3801,11 +3801,12 @@ cdef class RandomGenerator:
         on = <np.ndarray>np.PyArray_FROM_OTF(n, np.NPY_INT64, np.NPY_ALIGNED)
         parr = <np.ndarray>np.PyArray_FROM_OTF(pvals, np.NPY_DOUBLE, np.NPY_ALIGNED)
         pix = <double*>np.PyArray_DATA(parr)
-
+        check_array_constraint(parr, 'pvals', CONS_BOUNDED_0_1)
         if kahan_sum(pix, d-1) > (1.0 + 1e-12):
             raise ValueError("sum(pvals[:-1]) > 1.0")
 
         if np.PyArray_NDIM(on) != 0: # vector
+            check_array_constraint(on, 'n', CONS_NON_NEGATIVE)
             if size is None:
                 it = np.PyArray_MultiIterNew1(on)
             else:
@@ -3839,6 +3840,7 @@ cdef class RandomGenerator:
         mnix = <int64_t*>np.PyArray_DATA(mnarr)
         sz = np.PyArray_SIZE(mnarr)
         ni = n
+        check_constraint(ni, 'n', CONS_NON_NEGATIVE)
         offset = 0
         with self.lock, nogil:
             for i in range(sz // d):
