@@ -4145,9 +4145,7 @@ randn = _mtrand.randn
 random = _mtrand.random_sample
 random_integers = _mtrand.random_integers
 random_sample = _mtrand.random_sample
-ranf = _mtrand.random_sample
 rayleigh = _mtrand.rayleigh
-sample = _mtrand.random_sample
 seed = _mtrand.seed
 set_state = _mtrand.set_state
 shuffle = _mtrand.shuffle
@@ -4162,3 +4160,18 @@ vonmises = _mtrand.vonmises
 wald = _mtrand.wald
 weibull = _mtrand.weibull
 zipf = _mtrand.zipf
+
+# Old aliases that should not be removed
+def sample(*args, **kwargs):
+    """
+    This is an alias of `random_sample`. See `random_sample`  for the complete
+    documentation.
+    """
+    return _mtrand.random_sample(*args, **kwargs)
+
+def ranf(*args, **kwargs):
+    """
+    This is an alias of `random_sample`. See `random_sample`  for the complete
+    documentation.
+    """
+    return _mtrand.random_sample(*args, **kwargs)
