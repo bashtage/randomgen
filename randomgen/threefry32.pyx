@@ -10,7 +10,6 @@ from libc.stdlib cimport malloc, free
 from randomgen.common cimport *
 from randomgen.distributions cimport brng_t
 from randomgen.entropy import random_entropy, seed_by_array
-import randomgen.pickle
 
 np.import_array()
 
@@ -112,9 +111,9 @@ cdef class ThreeFry32:
 
     >>> from randomgen import RandomGenerator, ThreeFry32
     >>> rg = [RandomGenerator(ThreeFry32(1234)) for _ in range(10)]
-    # Advance rs[i] by i jumps
+    # Advance each ThreeFry32 instance by i jumps
     >>> for i in range(10):
-    ...     rg[i].jump(i)
+    ...     rg[i].brng.jump(i)
 
     Using distinct keys produces independent streams
 
@@ -146,11 +145,13 @@ cdef class ThreeFry32:
     >>> from randomgen import RandomGenerator, ThreeFry32
     >>> rg = RandomGenerator(ThreeFry32(1234))
     >>> rg.standard_normal()
+    0.123  # random
 
     Identical method using only ThreeFry32
 
     >>> rg = ThreeFry32(1234).generator
     >>> rg.standard_normal()
+    0.123  # random
 
     References
     ----------
@@ -196,16 +197,13 @@ cdef class ThreeFry32:
         self.state = state
 
     def __reduce__(self):
-        return (randomgen.pickle.__brng_ctor,
-                (self.state['brng'],),
-                self.state)
+        from randomgen._pickle import __brng_ctor
+        return __brng_ctor, (self.state['brng'],), self.state
 
     def __dealloc__(self):
-        if self.rng_state.ctr:
-            free(self.rng_state.ctr)
-        if self.rng_state.key:
-            free(self.rng_state.key)
         if self.rng_state:
+            free(self.rng_state.ctr)
+            free(self.rng_state.key)
             free(self.rng_state)
         if self._brng:
             free(self._brng)

@@ -7,7 +7,6 @@ import numpy as np
 
 from randomgen.bounded_integers import _randint_types
 from randomgen.mt19937 import MT19937 as _MT19937
-import randomgen.pickle
 
 from cpython.pycapsule cimport PyCapsule_IsValid, PyCapsule_GetPointer
 from cpython cimport (Py_INCREF, PyFloat_AsDouble)
@@ -20,7 +19,7 @@ cimport numpy as np
 from randomgen.bounded_integers cimport *
 from randomgen.common cimport *
 from randomgen.distributions cimport *
-from randomgen.legacy.legacy_distributions cimport *
+from randomgen.legacy_distributions cimport *
 
 np.import_array()
 
@@ -116,9 +115,8 @@ cdef class RandomState:
 
     def __reduce__(self):
         state = self.get_state(legacy=False)
-        return (randomgen.pickle.__randomstate_ctor,
-                (state['brng'],),
-                state)
+        from randomgen._pickle import __randomstate_ctor
+        return __randomstate_ctor, (state['brng'],), state
 
     cdef _reset_gauss(self):
         self._aug_state.has_gauss = 0
@@ -3790,7 +3788,8 @@ cdef class RandomState:
         not like:
 
         >>> np.random.multinomial(100, [1.0, 2.0])  # WRONG
-        array([100,   0])
+        Traceback (most recent call last):
+        ValueError: pvals < 0, pvals > 1 or pvals contains NaNs
 
         """
         cdef np.npy_intp d, i, sz, offset
