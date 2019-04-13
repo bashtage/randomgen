@@ -657,6 +657,10 @@ cdef class RandomGenerator:
               dtype='<U11')
 
         """
+        cdef char* idx_ptr
+        cdef int64_t buf
+        cdef char* buf_ptr
+
         cdef set idx_set
         cdef int64_t val, t, loc, size_i, pop_size_i
         cdef int64_t *idx_data
@@ -743,28 +747,39 @@ cdef class RandomGenerator:
                     n_uniq += new.size
                 idx = found
             else:
-                idx = np.empty(size, dtype=np.int64)
-                idx_data = <int64_t*>np.PyArray_DATA(<np.ndarray>idx)
-                idx_set = set()
-                loc = 0
                 size_i = size
                 pop_size_i = pop_size
-                # Sample indices with one pass to avoid reacquiring the lock
-                with self.lock:
-                    for j in range(pop_size_i - size_i, pop_size_i):
-                        idx_data[loc] = random_interval(self._brng, j)
-                        loc += 1
-                loc = 0
-                # Floyds's algorithm with precomputed indices
-                # Worst case, O(n**2) when size is close to pop_size
-                while len(idx_set) < size_i:
-                    for j in range(pop_size_i - size_i, pop_size_i):
-                        if idx_data[loc] not in idx_set:
-                            val = idx_data[loc]
-                        else:
-                            idx_data[loc] = val = j
-                        idx_set.add(val)
-                        loc += 1
+                # This is a heuristic tuning. should be improvable
+                if pop_size_i > 200 and (size > 200 or size > (10 * pop_size // size)):
+                    # Tail shuffle size elements
+                    idx = np.arange(pop_size, dtype=np.int64)
+                    idx_ptr = np.PyArray_BYTES(<np.ndarray>idx)
+                    buf_ptr = <char*>&buf
+                    self._shuffle_raw(pop_size_i, max(pop_size_i - size_i,1),
+                                      8, 8, idx_ptr, buf_ptr)
+                    # Copy to allow potentially large array backing idx to be gc
+                    idx = idx[(pop_size - size):].copy()
+                else:
+                    # Floyds's algorithm with precomputed indices
+                    # Worst case, O(n**2) when size is close to pop_size
+                    idx = np.empty(size, dtype=np.int64)
+                    idx_data = <int64_t*>np.PyArray_DATA(<np.ndarray>idx)
+                    idx_set = set()
+                    loc = 0
+                    # Sample indices with one pass to avoid reacquiring the lock
+                    with self.lock:
+                        for j in range(pop_size_i - size_i, pop_size_i):
+                            idx_data[loc] = random_interval(self._brng, j)
+                            loc += 1
+                    loc = 0
+                    while len(idx_set) < size_i:
+                        for j in range(pop_size_i - size_i, pop_size_i):
+                            if idx_data[loc] not in idx_set:
+                                val = idx_data[loc]
+                            else:
+                                idx_data[loc] = val = j
+                            idx_set.add(val)
+                            loc += 1
                 if shape is not None:
                     idx.shape = shape
 
@@ -4059,9 +4074,9 @@ cdef class RandomGenerator:
                 # the most common case, yielding a ~33% performance improvement.
                 # Note that apparently, only one branch can ever be specialized.
                 if itemsize == sizeof(np.npy_intp):
-                    self._shuffle_raw(n, sizeof(np.npy_intp), stride, x_ptr, buf_ptr)
+                    self._shuffle_raw(n, 1, sizeof(np.npy_intp), stride, x_ptr, buf_ptr)
                 else:
-                    self._shuffle_raw(n, itemsize, stride, x_ptr, buf_ptr)
+                    self._shuffle_raw(n, 1, itemsize, stride, x_ptr, buf_ptr)
         elif isinstance(x, np.ndarray) and x.ndim and x.size:
             buf = np.empty_like(x[0, ...])
             with self.lock:
@@ -4080,10 +4095,29 @@ cdef class RandomGenerator:
                     j = random_interval(self._brng, i)
                     x[i], x[j] = x[j], x[i]
 
-    cdef inline _shuffle_raw(self, np.npy_intp n, np.npy_intp itemsize,
-                             np.npy_intp stride, char* data, char* buf):
+    cdef inline _shuffle_raw(self, np.npy_intp n, np.npy_intp first,
+                             np.npy_intp itemsize, np.npy_intp stride,
+                             char* data, char* buf):
+        """
+        Parameters
+        ----------
+        n
+            Number of elements in data 
+        first
+            First observation to shuffle.  Shuffles n-1, 
+            n-2, ..., first, so that when first=1 the entire
+            array is shuffled 
+        itemsize
+            Size in bytes of item 
+        stride
+            Array stride
+        data
+            Location of data
+        buf
+            Location of buffer (itemsize)
+        """
         cdef np.npy_intp i, j
-        for i in reversed(range(1, n)):
+        for i in reversed(range(first, n)):
             j = random_interval(self._brng, i)
             string.memcpy(buf, data + j * stride, itemsize)
             string.memcpy(data + j * stride, data + i * stride, itemsize)
