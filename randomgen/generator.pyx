@@ -657,7 +657,10 @@ cdef class RandomGenerator:
               dtype='<U11')
 
         """
-
+        cdef set idx_set
+        cdef int64_t val, t, loc, size_i, pop_size_i
+        cdef int64_t *idx_data
+        cdef np.npy_intp j
         # Format and Verify input
         a = np.array(a, copy=False)
         if a.ndim == 0:
@@ -740,7 +743,28 @@ cdef class RandomGenerator:
                     n_uniq += new.size
                 idx = found
             else:
-                idx = (self.permutation(pop_size)[:size]).astype(np.int64)
+                idx = np.empty(size, dtype=np.int64)
+                idx_data = <int64_t*>np.PyArray_DATA(<np.ndarray>idx)
+                idx_set = set()
+                loc = 0
+                size_i = size
+                pop_size_i = pop_size
+                # Sample indices with one pass to avoid reacquiring the lock
+                with self.lock:
+                    for j in range(pop_size_i - size_i, pop_size_i):
+                        idx_data[loc] = random_interval(self._brng, j)
+                        loc += 1
+                loc = 0
+                # Floyds's algorithm with precomputed indices
+                # Worst case, O(n**2) when size is close to pop_size
+                while len(idx_set) < size_i:
+                    for j in range(pop_size_i - size_i, pop_size_i):
+                        if idx_data[loc] not in idx_set:
+                            val = idx_data[loc]
+                        else:
+                            idx_data[loc] = val = j
+                        idx_set.add(val)
+                        loc += 1
                 if shape is not None:
                     idx.shape = shape
 
