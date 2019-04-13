@@ -13,7 +13,7 @@
   <link rel="stylesheet" type="text/css" href="../_static/css/bootstrap-theme.min.css" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-    <title>randomgen.generator.RandomGenerator.choice &#8212; RandomGen v1.16.3+22.g6b6d6a6 documentation</title>
+    <title>randomgen.generator.RandomGenerator.choice &#8212; RandomGen v1.16.3+24.gd343bd1 documentation</title>
     <link rel="stylesheet" href="../_static/guzzle.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
@@ -45,7 +45,7 @@
         <li class="right" >
           <a href="randomgen.generator.RandomGenerator.random_sample.html" title="randomgen.generator.RandomGenerator.random_sample"
              accesskey="P">previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../index.html">RandomGen v1.16.3+22.g6b6d6a6 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">RandomGen v1.16.3+24.gd343bd1 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="../generator.html" accesskey="U">Random Generator</a> &#187;</li> 
       </ul>
     </div>
@@ -56,7 +56,7 @@
       </div>
   <div id="left-column">
     <div class="sphinxsidebar"><a href="
-    ../index.html" class="text-logo">RandomGen v1.16.3 (+22)</a>
+    ../index.html" class="text-logo">RandomGen v1.16.3 (+24)</a>
 <div class="sidebar-block">
   <div class="sidebar-wrapper">
     <h2>Table Of Contents</h2>
@@ -146,6 +146,8 @@ single value is returned.</p></li>
 <li><p><strong>p</strong> (<em>1-D array-like</em><em>, </em><em>optional</em>) – The probabilities associated with each entry in a.
 If not given the sample assumes a uniform distribution over all
 entries in a.</p></li>
+<li><p><strong>axis</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a><em>, </em><em>optional</em>) – The axis along which the selection is performed. The default, 0,
+selects by row.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
@@ -155,11 +157,11 @@ entries in a.</p></li>
 <dd class="field-odd"><p>single item or ndarray</p>
 </dd>
 <dt class="field-even">Raises</dt>
-<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#ValueError" title="(in Python v3.7)"><strong>ValueError</strong></a> – If a is an int and less than zero, if a or p are not 1-dimensional,
-    if a is an array-like of size 0, if p is not a vector of
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#ValueError" title="(in Python v3.7)"><strong>ValueError</strong></a> – If a is an int and less than zero, if p is not 1-dimensional, if
+    a is array-like with a size 0, if p is not a vector of
     probabilities, if a and p have different lengths, or if
     replace=False and the sample size is greater than the population
-    size</p>
+    size.</p>
 </dd>
 </dl>
 <div class="admonition seealso">
@@ -236,7 +238,7 @@ instead of just integers. For instance:</p>
         <li class="right" >
           <a href="randomgen.generator.RandomGenerator.random_sample.html" title="randomgen.generator.RandomGenerator.random_sample"
              >previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../index.html">RandomGen v1.16.3+22.g6b6d6a6 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">RandomGen v1.16.3+24.gd343bd1 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="../generator.html" >Random Generator</a> &#187;</li> 
       </ul>
     </div>
