@@ -13,7 +13,6 @@ cimport numpy as np
 from randomgen.common cimport *
 from randomgen.distributions cimport brng_t
 from randomgen.entropy import random_entropy
-import randomgen.pickle
 
 np.import_array()
 
@@ -107,9 +106,9 @@ cdef class DSFMT:
     >>> from randomgen import RandomGenerator, DSFMT
     >>> seed = random_entropy()
     >>> rs = [RandomGenerator(DSFMT(seed)) for _ in range(10)]
-    # Advance rs[i] by i jumps
+    # Advance each DSFMT instance by i jumps
     >>> for i in range(10):
-    ...     rs[i].jump()
+    ...     rs[i].brng.jump()
 
     **State and Seeding**
 
@@ -177,16 +176,13 @@ cdef class DSFMT:
         self.state = state
 
     def __reduce__(self):
-        return (randomgen.pickle.__brng_ctor,
-                (self.state['brng'],),
-                self.state)
+        from randomgen._pickle import __brng_ctor
+        return __brng_ctor, (self.state['brng'],), self.state
 
     def __dealloc__(self):
-        if self.rng_state.state:
-            PyArray_free_aligned(self.rng_state.state)
-        if self.rng_state.buffered_uniforms:
-            PyArray_free_aligned(self.rng_state.buffered_uniforms)
         if self.rng_state:
+            PyArray_free_aligned(self.rng_state.state)
+            PyArray_free_aligned(self.rng_state.buffered_uniforms)
             free(self.rng_state)
         if self._brng:
             free(self._brng)

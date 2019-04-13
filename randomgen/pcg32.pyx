@@ -12,7 +12,6 @@ cimport numpy as np
 from randomgen.common cimport *
 from randomgen.distributions cimport brng_t
 from randomgen.entropy import random_entropy
-import randomgen.pickle
 
 np.import_array()
 
@@ -99,12 +98,12 @@ cdef class PCG32:
     >>> from randomgen import RandomGenerator, PCG32
     >>> rg = [RandomGenerator(PCG32(1234, i + 1)) for i in range(10)]
 
-    The alternative method is to call ``advance`` on a instance to
-    produce non-overlapping sequences.
+    The alternative method is to call ``advance`` with a different value on
+    each instance to produce non-overlapping sequences.
 
     >>> rg = [RandomGenerator(PCG32(1234, i + 1)) for i in range(10)]
     >>> for i in range(10):
-    ...     rg[i].advance(i * 2**32)
+    ...     rg[i].brng.advance(i * 2**32)
 
     **State and Seeding**
 
@@ -155,9 +154,8 @@ cdef class PCG32:
         self.state = state
 
     def __reduce__(self):
-        return (randomgen.pickle.__brng_ctor,
-                (self.state['brng'],),
-                self.state)
+        from randomgen._pickle import __brng_ctor
+        return __brng_ctor, (self.state['brng'],), self.state
 
     def __dealloc__(self):
         if self.rng_state:

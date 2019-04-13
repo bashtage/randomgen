@@ -14,7 +14,6 @@ cimport numpy as np
 from randomgen.common cimport *
 from randomgen.distributions cimport brng_t
 from randomgen.entropy import random_entropy
-import randomgen.pickle
 
 np.import_array()
 
@@ -102,10 +101,10 @@ cdef class MT19937:
     >>> from randomgen.entropy import random_entropy
     >>> from randomgen import RandomGenerator, MT19937
     >>> seed = random_entropy()
-    >>> rs = [RandomGenerator(MT19937(seed) for _ in range(10)]
-    # Advance rs[i] by i jumps
+    >>> rs = [RandomGenerator(MT19937(seed)) for _ in range(10)]
+    # Advance each MT19937 instance by i jumps
     >>> for i in range(10):
-            rs[i].jump(i)
+    ...     rs[i].brng.jump(i)
 
     References
     ----------
@@ -159,9 +158,8 @@ cdef class MT19937:
         self.state = state
 
     def __reduce__(self):
-        return (randomgen.pickle.__brng_ctor,
-                (self.state['brng'],),
-                self.state)
+        from randomgen._pickle import __brng_ctor
+        return __brng_ctor, (self.state['brng'],), self.state
 
     def random_raw(self, size=None, output=True):
         """

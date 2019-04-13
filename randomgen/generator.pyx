@@ -21,7 +21,6 @@ cimport numpy as np
 from randomgen.bounded_integers cimport *
 from randomgen.common cimport *
 from randomgen.distributions cimport *
-import randomgen.pickle
 
 np.import_array()
 
@@ -55,7 +54,7 @@ cdef class RandomGenerator:
 
     Notes
     -----
-    The Python stdlib module "random" contains pseudo-random number generator
+    The Python stdlib module `random` contains pseudo-random number generator
     with a number of methods that are similar to the ones available in
     ``RandomGenerator``. It uses Mersenne Twister, and this basic RNG can be
     accessed using ``MT19937``. ``RandomGenerator``, besides being
@@ -67,6 +66,7 @@ cdef class RandomGenerator:
     >>> from randomgen import RandomGenerator
     >>> rg = RandomGenerator()
     >>> rg.standard_normal()
+    -0.203  # random
 
     Using a specific generator
 
@@ -77,6 +77,8 @@ cdef class RandomGenerator:
 
     >>> rg = MT19937().generator
     >>> rg.standard_normal()
+    -0.203  # random
+
     """
     cdef public object _basicrng
     cdef brng_t *_brng
@@ -106,20 +108,31 @@ cdef class RandomGenerator:
 
     def __str__(self):
         _str = self.__class__.__name__
-        _str += '(' + self._basicrng.__class__.__name__ + ')'
+        _str += '(' + self.brng.__class__.__name__ + ')'
         return _str
 
     # Pickling support:
     def __getstate__(self):
-        return self.state
+        return self.brng.state
 
     def __setstate__(self, state):
-        self.state = state
+        self.brng.state = state
 
     def __reduce__(self):
-        return (randomgen.pickle.__generator_ctor,
-                (self.state['brng'],),
-                self.state)
+        from randomgen._pickle import __generator_ctor
+        return __generator_ctor, (self.brng.state['brng'],), self.brng.state
+
+    @property
+    def brng(self):
+        """
+        Gets the basic RNG instance used by the generator
+
+        Returns
+        -------
+        basic_rng : Basic RNG
+            The basic RNG instance used by the generator
+        """
+        return self._basicrng
 
     def seed(self, *args, **kwargs):
         """
@@ -152,7 +165,6 @@ cdef class RandomGenerator:
         >>> rg.seed(1110987654321)
 
         """
-        # TODO: Should this remain
         self._basicrng.seed(*args, **kwargs)
         return self
 
@@ -421,8 +433,6 @@ cdef class RandomGenerator:
                 [ 739731006, 1947757578]],
                [[1871712945,  752307660],
                 [1601631370, 1479324245]]])
-        >>> np.iinfo(np.int).max
-        2147483647
         >>> rg.tomaxint((2,2,2)) < np.iinfo(np.int).max
         array([[[ True,  True],
                 [ True,  True]],
@@ -579,7 +589,7 @@ cdef class RandomGenerator:
     @cython.wraparound(True)
     def choice(self, a, size=None, replace=True, p=None, axis=0):
         """
-        choice(a, size=None, replace=True, p=None)
+        choice(a, size=None, replace=True, p=None, axis=0):
 
         Generates a random sample from a given 1-D array
 
@@ -1366,11 +1376,11 @@ cdef class RandomGenerator:
         the probability density function:
 
         >>> import matplotlib.pyplot as plt
-        >>> import scipy.special as sps
+        >>> import scipy.special as sps  # doctest: +SKIP
         >>> count, bins, ignored = plt.hist(s, 50, density=True)
-        >>> y = bins**(shape-1) * ((np.exp(-bins/scale))/ \\
+        >>> y = bins**(shape-1) * ((np.exp(-bins/scale))/  # doctest: +SKIP
         ...                       (sps.gamma(shape) * scale**shape))
-        >>> plt.plot(bins, y, linewidth=2, color='r')
+        >>> plt.plot(bins, y, linewidth=2, color='r')  # doctest: +SKIP
         >>> plt.show()
 
         """
@@ -1454,11 +1464,11 @@ cdef class RandomGenerator:
         the probability density function:
 
         >>> import matplotlib.pyplot as plt
-        >>> import scipy.special as sps
+        >>> import scipy.special as sps  # doctest: +SKIP
         >>> count, bins, ignored = plt.hist(s, 50, density=True)
-        >>> y = bins**(shape-1)*(np.exp(-bins/scale) /
+        >>> y = bins**(shape-1)*(np.exp(-bins/scale) /  # doctest: +SKIP
         ...                      (sps.gamma(shape)*scale**shape))
-        >>> plt.plot(bins, y, linewidth=2, color='r')
+        >>> plt.plot(bins, y, linewidth=2, color='r')  # doctest: +SKIP
         >>> plt.show()
 
         """
@@ -2008,11 +2018,11 @@ cdef class RandomGenerator:
         the probability density function:
 
         >>> import matplotlib.pyplot as plt
-        >>> from scipy.special import i0
+        >>> from scipy.special import i0  # doctest: +SKIP
         >>> plt.hist(s, 50, density=True)
         >>> x = np.linspace(-np.pi, np.pi, num=51)
-        >>> y = np.exp(kappa*np.cos(x-mu))/(2*np.pi*i0(kappa))
-        >>> plt.plot(x, y, linewidth=2, color='r')
+        >>> y = np.exp(kappa*np.cos(x-mu))/(2*np.pi*i0(kappa))  # doctest: +SKIP
+        >>> plt.plot(x, y, linewidth=2, color='r')  # doctest: +SKIP
         >>> plt.show()
 
         """
@@ -2290,25 +2300,25 @@ cdef class RandomGenerator:
 
         Compare the power function distribution to the inverse of the Pareto.
 
-        >>> from scipy import stats
+        >>> from scipy import stats  # doctest: +SKIP
         >>> rvs = randomgen.generator.power(5, 1000000)
         >>> rvsp = randomgen.generator.pareto(5, 1000000)
         >>> xx = np.linspace(0,1,100)
-        >>> powpdf = stats.powerlaw.pdf(xx,5)
+        >>> powpdf = stats.powerlaw.pdf(xx,5)  # doctest: +SKIP
 
         >>> plt.figure()
         >>> plt.hist(rvs, bins=50, density=True)
-        >>> plt.plot(xx,powpdf,'r-')
+        >>> plt.plot(xx,powpdf,'r-')  # doctest: +SKIP
         >>> plt.title('randomgen.generator.power(5)')
 
         >>> plt.figure()
         >>> plt.hist(1./(1.+rvsp), bins=50, density=True)
-        >>> plt.plot(xx,powpdf,'r-')
+        >>> plt.plot(xx,powpdf,'r-')  # doctest: +SKIP
         >>> plt.title('inverse of 1 + randomgen.generator.pareto(5)')
 
         >>> plt.figure()
         >>> plt.hist(1./(1.+rvsp), bins=50, density=True)
-        >>> plt.plot(xx,powpdf,'r-')
+        >>> plt.plot(xx,powpdf,'r-')  # doctest: +SKIP
         >>> plt.title('inverse of stats.pareto(5)')
 
         """
@@ -3299,14 +3309,15 @@ cdef class RandomGenerator:
         the probability density function:
 
         >>> import matplotlib.pyplot as plt
-        >>> from scipy import special
+        >>> from scipy import special  # doctest: +SKIP
 
         Truncate s values at 50 so plot is interesting:
 
-        >>> count, bins, ignored = plt.hist(s[s<50], 50, density=True)
+        >>> count, bins, ignored = plt.hist(s[s<50],
+        ...         50, density=True)
         >>> x = np.arange(1., 50.)
-        >>> y = x**(-a) / special.zetac(a)
-        >>> plt.plot(x, y/max(y), linewidth=2, color='r')
+        >>> y = x**(-a) / special.zetac(a)  # doctest: +SKIP
+        >>> plt.plot(x, y/max(y), linewidth=2, color='r')  # doctest: +SKIP
         >>> plt.show()
 
         """
@@ -3814,7 +3825,8 @@ cdef class RandomGenerator:
         not like:
 
         >>> randomgen.generator.multinomial(100, [1.0, 2.0])  # WRONG
-        array([100,   0])
+        Traceback (most recent call last):
+        ValueError: pvals < 0, pvals > 1 or pvals contains NaNs
 
         """
 
@@ -4102,13 +4114,13 @@ cdef class RandomGenerator:
         Parameters
         ----------
         n
-            Number of elements in data 
+            Number of elements in data
         first
-            First observation to shuffle.  Shuffles n-1, 
+            First observation to shuffle.  Shuffles n-1,
             n-2, ..., first, so that when first=1 the entire
-            array is shuffled 
+            array is shuffled
         itemsize
-            Size in bytes of item 
+            Size in bytes of item
         stride
             Array stride
         data
