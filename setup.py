@@ -57,7 +57,6 @@ if '--no-sse2' in sys.argv:
 MOD_DIR = './randomgen'
 
 DEBUG = False
-PCG_EMULATED_MATH = False
 
 EXTRA_INCLUDE_DIRS = []
 EXTRA_LINK_ARGS = []
@@ -81,7 +80,6 @@ if CYTHON_COVERAGE:
 PCG64_DEFS = DEFS[:]
 if sys.maxsize < 2 ** 32 or os.name == 'nt':
     # Force emulated mode here
-    PCG_EMULATED_MATH = True
     PCG64_DEFS += [('PCG_FORCE_EMULATED_128BIT_MATH', '1')]
 
 DSFMT_DEFS = DEFS[:] + [('DSFMT_MEXP', '19937')]
@@ -93,8 +91,6 @@ if USE_SSE2:
     else:
         EXTRA_COMPILE_ARGS += ['-msse2']
     DSFMT_DEFS += [('HAVE_SSE2', '1')]
-if struct.calcsize('P') < 8:
-    PCG_EMULATED_MATH = True
 
 files = glob.glob('./randomgen/*.in')
 for templated_file in files:
@@ -328,7 +324,6 @@ setup(
     classifiers=classifiers,
     cmdclass=versioneer.get_cmdclass(),
     ext_modules=cythonize(extensions,
-                          compile_time_env={"PCG_EMULATED_MATH": PCG_EMULATED_MATH},
                           compiler_directives={'language_level': '3',
                                                'linetrace': CYTHON_COVERAGE},
                           force=CYTHON_COVERAGE),
