@@ -3395,7 +3395,7 @@ cdef class RandomGenerator:
         nbad : int or array_like of ints
             Number of ways to make a bad selection.  Must be nonnegative.
         nsample : int or array_like of ints
-            Number of items sampled.  Must be at least 1 and at most
+            Number of items sampled.  Must be nonnegative and less than
             ``ngood + nbad``.
         size : int or tuple of ints, optional
             Output shape.  If the given shape is, e.g., ``(m, n, k)``, then
