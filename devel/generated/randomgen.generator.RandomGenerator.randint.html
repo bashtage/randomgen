@@ -13,7 +13,7 @@
   <link rel="stylesheet" type="text/css" href="../_static/css/bootstrap-theme.min.css" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-    <title>randomgen.generator.RandomGenerator.randint &#8212; RandomGen v1.16.4+1.g5490361 documentation</title>
+    <title>randomgen.generator.RandomGenerator.randint &#8212; RandomGen v1.16.4+3.g4d23a90 documentation</title>
     <link rel="stylesheet" href="../_static/guzzle.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
@@ -45,7 +45,7 @@
         <li class="right" >
           <a href="randomgen.generator.RandomGenerator.randn.html" title="randomgen.generator.RandomGenerator.randn"
              accesskey="P">previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../index.html">RandomGen v1.16.4+1.g5490361 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">RandomGen v1.16.4+3.g4d23a90 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="../generator.html" accesskey="U">Random Generator</a> &#187;</li> 
       </ul>
     </div>
@@ -56,7 +56,7 @@
       </div>
   <div id="left-column">
     <div class="sphinxsidebar"><a href="
-    ../index.html" class="text-logo">RandomGen v1.16.4 (+1)</a>
+    ../index.html" class="text-logo">RandomGen v1.16.4 (+3)</a>
 <div class="sidebar-block">
   <div class="sidebar-wrapper">
     <h2>Table Of Contents</h2>
@@ -127,11 +127,14 @@
 <h1>randomgen.generator.RandomGenerator.randint<a class="headerlink" href="#randomgen-generator-randomgenerator-randint" title="Permalink to this headline">¶</a></h1>
 <dl class="method">
 <dt id="randomgen.generator.RandomGenerator.randint">
-<code class="descclassname">RandomGenerator.</code><code class="descname">randint</code><span class="sig-paren">(</span><em>low</em>, <em>high=None</em>, <em>size=None</em>, <em>dtype='int64'</em>, <em>use_masked=True</em><span class="sig-paren">)</span><a class="headerlink" href="#randomgen.generator.RandomGenerator.randint" title="Permalink to this definition">¶</a></dt>
-<dd><p>Return random integers from <cite>low</cite> (inclusive) to <cite>high</cite> (exclusive).</p>
+<code class="descclassname">RandomGenerator.</code><code class="descname">randint</code><span class="sig-paren">(</span><em>low</em>, <em>high=None</em>, <em>size=None</em>, <em>dtype='int64'</em>, <em>use_masked=True</em>, <em>closed=False</em><span class="sig-paren">)</span><a class="headerlink" href="#randomgen.generator.RandomGenerator.randint" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return random integers from <cite>low</cite> (inclusive) to <cite>high</cite> (exclusive), or
+if closed=True, <cite>low</cite> (inclusive) to <cite>high</cite> (inclusive).</p>
 <p>Return random integers from the “discrete uniform” distribution of
 the specified dtype in the “half-open” interval [<cite>low</cite>, <cite>high</cite>). If
-<cite>high</cite> is None (the default), then results are from [0, <cite>low</cite>).</p>
+<cite>high</cite> is None (the default), then results are from [0, <cite>low</cite>). If
+<cite>closed</cite> is True, then samples from the closed interval [<cite>low</cite>, <cite>high</cite>]
+or [0, <cite>low</cite>] if <cite>high</cite> is None.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
@@ -153,12 +156,14 @@ on the platform. The default value is ‘np.int’.</p>
 </div>
 </p></li>
 <li><p><strong>use_masked</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><em>bool</em></a>) – <p>If True the generator uses rejection sampling with a bit mask to
-reject random numbers that are out of bounds. If False the generator
-will use Lemire’s rejection sampling algorithm.</p>
+reject random numbers that are out of bounds. If False the
+generator will use Lemire’s rejection sampling algorithm.</p>
 <div class="versionadded">
 <p><span class="versionmodified added">New in version 1.15.1.</span></p>
 </div>
 </p></li>
+<li><p><strong>closed</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><em>bool</em></a>) – If true, sample from the interval [low, high] instead of the
+default [low, high)</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
@@ -253,7 +258,7 @@ CoRR, Aug. 13, 2018, <a class="reference external" href="http://arxiv.org/abs/18
         <li class="right" >
           <a href="randomgen.generator.RandomGenerator.randn.html" title="randomgen.generator.RandomGenerator.randn"
              >previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../index.html">RandomGen v1.16.4+1.g5490361 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">RandomGen v1.16.4+3.g4d23a90 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="../generator.html" >Random Generator</a> &#187;</li> 
       </ul>
     </div>

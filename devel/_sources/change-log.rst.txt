@@ -1,6 +1,14 @@
 Change Log
 ----------
 
+Since v1.16.4
+=============
+- Added keyword ``closed`` to :func:`~randomgen.generator.RandomGenerator.randint`
+  which changes sampling from the half-open interval ``[low, high)`` to the closed
+  interval ``[low, high]``.
+- Fixed a bug in :func:`~randomgen.mtrand.RandomState.random_integers` that
+  could lead to valid values being treated as invalid.
+
 v1.16.4
 =======
 - Add a fast path for broadcasting :func:`~randomgen.generator.RandomGenerator.randint`
