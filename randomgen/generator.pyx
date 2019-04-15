@@ -487,6 +487,12 @@ cdef class RandomGenerator:
             `size`-shaped array of random integers from the appropriate
             distribution, or a single such random int if `size` not provided.
 
+        Notes
+        -----
+        When using broadcasting with uint64 dtypes, the maximum value (2**64)
+        cannot be represented as a standard integer type. The high array (or
+        low if high is None) must have object dtype, e.g., array([2**64]).
+
         See Also
         --------
         random_integers : similar to `randint`, only for the closed

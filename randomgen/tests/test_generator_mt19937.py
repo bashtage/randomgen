@@ -318,6 +318,7 @@ class TestRandint(object):
     def test_repeatability_broadcasting(self):
 
         for dt in self.itype:
+            print(dt)
             lbnd = 0 if dt in (np.bool, bool, np.bool_) else np.iinfo(dt).min
             ubnd = 2 if dt in (
                 np.bool, bool, np.bool_) else np.iinfo(dt).max + 1
@@ -335,6 +336,33 @@ class TestRandint(object):
             val_bc = self.rfunc([lbnd] * 1000, [ubnd] * 1000, dtype=dt)
 
             assert_array_equal(val, val_bc)
+
+    def test_int64_uint64_broadcast_exceptions(self):
+        configs = {np.uint64: ((0, 2**65), (-1, 2**62), (10, 9), (0, 0)),
+                   np.int64: ((0, 2**64), (-(2**64), 2**62), (10, 9), (0, 0),
+                              (-2**63-1, -2**63-1))}
+        for dtype in configs:
+            for config in configs[dtype]:
+                low, high = config
+                low_a = np.array([[low]*10])
+                high_a = np.array([high] * 10)
+                assert_raises(ValueError, random.randint, low, high,
+                              dtype=dtype)
+                assert_raises(ValueError, random.randint, low_a, high,
+                              dtype=dtype)
+                assert_raises(ValueError, random.randint, low, high_a,
+                              dtype=dtype)
+                assert_raises(ValueError, random.randint, low_a, high_a,
+                              dtype=dtype)
+
+                low_o = np.array([[low]*10], dtype=np.object)
+                high_o = np.array([high] * 10, dtype=np.object)
+                assert_raises(ValueError, random.randint, low_o, high,
+                              dtype=dtype)
+                assert_raises(ValueError, random.randint, low, high_o,
+                              dtype=dtype)
+                assert_raises(ValueError, random.randint, low_o, high_o,
+                              dtype=dtype)
 
     def test_int64_uint64_corner_case(self):
         # When stored in Numpy arrays, `lbnd` is casted
@@ -2083,6 +2111,7 @@ class TestSingleEltArrayInput(object):
 
             out = func(self.argOne, self.argTwo[0], self.argThree)
             assert_equal(out.shape, self.tgtShape)
+
 
 def test_seed_equivalence():
     random.seed(0)
