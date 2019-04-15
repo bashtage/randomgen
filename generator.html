@@ -13,7 +13,7 @@
   <link rel="stylesheet" type="text/css" href="_static/css/bootstrap-theme.min.css" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-    <title>Random Generator &#8212; RandomGen v1.16.3 documentation</title>
+    <title>Random Generator &#8212; RandomGen v1.16.4 documentation</title>
     <link rel="stylesheet" href="_static/guzzle.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
@@ -45,7 +45,7 @@
         <li class="right" >
           <a href="index.html" title="RandomGen"
              accesskey="P">previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="index.html">RandomGen v1.16.3 documentation</a> &#187;</li> 
+        <li class="nav-item nav-item-0"><a href="index.html">RandomGen v1.16.4 documentation</a> &#187;</li> 
       </ul>
     </div>
     <div class="container-wrapper">
@@ -55,7 +55,7 @@
       </div>
   <div id="left-column">
     <div class="sphinxsidebar"><a href="
-    index.html" class="text-logo">RandomGen v1.16.3</a>
+    index.html" class="text-logo">RandomGen v1.16.4</a>
 <div class="sidebar-block">
   <div class="sidebar-wrapper">
     <h2>Table Of Contents</h2>
@@ -156,7 +156,7 @@ Xoroshiro128.</p>
 </dd>
 </dl>
 <p class="rubric">Notes</p>
-<p>The Python stdlib module “random” contains pseudo-random number generator
+<p>The Python stdlib module <cite>random</cite> contains pseudo-random number generator
 with a number of methods that are similar to the ones available in
 <code class="docutils literal notranslate"><span class="pre">RandomGenerator</span></code>. It uses Mersenne Twister, and this basic RNG can be
 accessed using <code class="docutils literal notranslate"><span class="pre">MT19937</span></code>. <code class="docutils literal notranslate"><span class="pre">RandomGenerator</span></code>, besides being
@@ -166,6 +166,7 @@ of probability distributions to choose from.</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">randomgen</span> <span class="k">import</span> <span class="n">RandomGenerator</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">rg</span> <span class="o">=</span> <span class="n">RandomGenerator</span><span class="p">()</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">rg</span><span class="o">.</span><span class="n">standard_normal</span><span class="p">()</span>
+<span class="go">-0.203  # random</span>
 </pre></div>
 </div>
 <p>Using a specific generator</p>
@@ -176,6 +177,7 @@ of probability distributions to choose from.</p>
 <p>The generator is also directly available from basic RNGs</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">rg</span> <span class="o">=</span> <span class="n">MT19937</span><span class="p">()</span><span class="o">.</span><span class="n">generator</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">rg</span><span class="o">.</span><span class="n">standard_normal</span><span class="p">()</span>
+<span class="go">-0.203  # random</span>
 </pre></div>
 </div>
 </dd></dl>
@@ -220,8 +222,8 @@ of probability distributions to choose from.</p>
 <tr class="row-odd"><td><p><a class="reference internal" href="generated/randomgen.generator.RandomGenerator.random_sample.html#randomgen.generator.RandomGenerator.random_sample" title="randomgen.generator.RandomGenerator.random_sample"><code class="xref py py-obj docutils literal notranslate"><span class="pre">random_sample</span></code></a>([size, dtype, out])</p></td>
 <td><p>Return random floats in the half-open interval [0.0, 1.0).</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="generated/randomgen.generator.RandomGenerator.choice.html#randomgen.generator.RandomGenerator.choice" title="randomgen.generator.RandomGenerator.choice"><code class="xref py py-obj docutils literal notranslate"><span class="pre">choice</span></code></a>(a[, size, replace, p])</p></td>
-<td><p>Generates a random sample from a given 1-D array</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="generated/randomgen.generator.RandomGenerator.choice.html#randomgen.generator.RandomGenerator.choice" title="randomgen.generator.RandomGenerator.choice"><code class="xref py py-obj docutils literal notranslate"><span class="pre">choice</span></code></a></p></td>
+<td><p>choice(a, size=None, replace=True, p=None, axis=0):</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="generated/randomgen.generator.RandomGenerator.bytes.html#randomgen.generator.RandomGenerator.bytes" title="randomgen.generator.RandomGenerator.bytes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bytes</span></code></a>(length)</p></td>
 <td><p>Return random bytes.</p></td>
@@ -400,7 +402,7 @@ of probability distributions to choose from.</p>
         <li class="right" >
           <a href="index.html" title="RandomGen"
              >previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="index.html">RandomGen v1.16.3 documentation</a> &#187;</li> 
+        <li class="nav-item nav-item-0"><a href="index.html">RandomGen v1.16.4 documentation</a> &#187;</li> 
       </ul>
     </div>
 <script type="text/javascript">
