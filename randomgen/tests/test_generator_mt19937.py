@@ -318,7 +318,6 @@ class TestRandint(object):
     def test_repeatability_broadcasting(self):
 
         for dt in self.itype:
-            print(dt)
             lbnd = 0 if dt in (np.bool, bool, np.bool_) else np.iinfo(dt).min
             ubnd = 2 if dt in (
                 np.bool, bool, np.bool_) else np.iinfo(dt).max + 1
