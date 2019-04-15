@@ -13,7 +13,7 @@
   <link rel="stylesheet" type="text/css" href="_static/css/bootstrap-theme.min.css" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-    <title>Change Log &#8212; RandomGen v1.16.3+36.g20b86ad documentation</title>
+    <title>Change Log &#8212; RandomGen v1.16.3+37.g9633d35 documentation</title>
     <link rel="stylesheet" href="_static/guzzle.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
@@ -41,7 +41,7 @@
         <li class="right" >
           <a href="references.html" title="References"
              accesskey="P">previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="index.html">RandomGen v1.16.3+36.g20b86ad documentation</a> &#187;</li> 
+        <li class="nav-item nav-item-0"><a href="index.html">RandomGen v1.16.3+37.g9633d35 documentation</a> &#187;</li> 
       </ul>
     </div>
     <div class="container-wrapper">
@@ -51,7 +51,7 @@
       </div>
   <div id="left-column">
     <div class="sphinxsidebar"><a href="
-    index.html" class="text-logo">RandomGen v1.16.3 (+36)</a>
+    index.html" class="text-logo">RandomGen v1.16.3 (+37)</a>
 <div class="sidebar-block">
   <div class="sidebar-wrapper">
     <h2>Table Of Contents</h2>
@@ -77,7 +77,8 @@
 </ul>
 <ul class="current">
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Change Log</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="#since-v1-16-2">Since v1.16.2</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#v1-16-4">v1.16.4</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#v1-16-3">v1.16.3</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#v1-16-2">v1.16.2</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#v1-16-1">v1.16.1</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#v1-16-0">v1.16.0</a></li>
@@ -120,11 +121,28 @@
             
   <div class="section" id="change-log">
 <h1>Change Log<a class="headerlink" href="#change-log" title="Permalink to this headline">¶</a></h1>
-<div class="section" id="since-v1-16-2">
-<h2>Since v1.16.2<a class="headerlink" href="#since-v1-16-2" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="v1-16-4">
+<h2>v1.16.4<a class="headerlink" href="#v1-16-4" title="Permalink to this headline">¶</a></h2>
 <ul class="simple">
-<li><p>Added broadcasting to multinomial (see
+<li><p>Add a fast path for broadcasting <a class="reference internal" href="generated/randomgen.generator.RandomGenerator.randint.html#randomgen.generator.RandomGenerator.randint" title="randomgen.generator.RandomGenerator.randint"><code class="xref py py-func docutils literal notranslate"><span class="pre">randint()</span></code></a>
+when using <code class="docutils literal notranslate"><span class="pre">uint64</span></code> or <code class="docutils literal notranslate"><span class="pre">int64</span></code>.</p></li>
+<li><p>Refactor PCG64 so that it does not rely on Cython conditional compilation.</p></li>
+<li><p>Add <code class="xref py py-func docutils literal notranslate"><span class="pre">brng()</span></code> to access the basic RNG.</p></li>
+<li><p>Allow multidimensional arrays in <a class="reference internal" href="generated/randomgen.generator.RandomGenerator.choice.html#randomgen.generator.RandomGenerator.choice" title="randomgen.generator.RandomGenerator.choice"><code class="xref py py-func docutils literal notranslate"><span class="pre">choice()</span></code></a>.</p></li>
+<li><p>Speed-up <a class="reference internal" href="generated/randomgen.generator.RandomGenerator.choice.html#randomgen.generator.RandomGenerator.choice" title="randomgen.generator.RandomGenerator.choice"><code class="xref py py-func docutils literal notranslate"><span class="pre">choice()</span></code></a> when not replacing.
+The gains can be very large (1000x or more) when the input array is large but
+the sample size is small.</p></li>
+<li><p>Add parameter checks in <a class="reference internal" href="generated/randomgen.generator.RandomGenerator.multinomial.html#randomgen.generator.RandomGenerator.multinomial" title="randomgen.generator.RandomGenerator.multinomial"><code class="xref py py-func docutils literal notranslate"><span class="pre">multinomial()</span></code></a>.</p></li>
+<li><p>Fix an edge-case bug in <a class="reference internal" href="generated/randomgen.generator.RandomGenerator.zipf.html#randomgen.generator.RandomGenerator.zipf" title="randomgen.generator.RandomGenerator.zipf"><code class="xref py py-func docutils literal notranslate"><span class="pre">zipf()</span></code></a>.</p></li>
+<li><p>Allow 0 for sample in <a class="reference internal" href="generated/randomgen.generator.RandomGenerator.hypergeometric.html#randomgen.generator.RandomGenerator.hypergeometric" title="randomgen.generator.RandomGenerator.hypergeometric"><code class="xref py py-func docutils literal notranslate"><span class="pre">hypergeometric()</span></code></a>.</p></li>
+<li><p>Add broadcasting to <a class="reference internal" href="generated/randomgen.generator.RandomGenerator.multinomial.html#randomgen.generator.RandomGenerator.multinomial" title="randomgen.generator.RandomGenerator.multinomial"><code class="xref py py-func docutils literal notranslate"><span class="pre">multinomial()</span></code></a> (see
 <a class="reference external" href="https://github.com/numpy/numpy/pull/9710">NumPy issue 9710</a>)</p></li>
+</ul>
+</div>
+<div class="section" id="v1-16-3">
+<h2>v1.16.3<a class="headerlink" href="#v1-16-3" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li><p>Release fixing Python 2.7 issues</p></li>
 </ul>
 </div>
 <div class="section" id="v1-16-2">
@@ -137,7 +155,7 @@ into NumPy, including removing:</p>
 <div><ul class="simple">
 <li><p><code class="docutils literal notranslate"><span class="pre">random_raw</span></code>, which have been moved to the individual basic RNGs</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">random_uintegers</span></code>, which can be replaced with
-<code class="xref py py-func docutils literal notranslate"><span class="pre">randint()</span></code>.</p></li>
+<a class="reference internal" href="generated/randomgen.generator.RandomGenerator.randint.html#randomgen.generator.RandomGenerator.randint" title="randomgen.generator.RandomGenerator.randint"><code class="xref py py-func docutils literal notranslate"><span class="pre">randint()</span></code></a>.</p></li>
 </ul>
 </div></blockquote>
 </li>
@@ -223,7 +241,7 @@ number generator fails.</p></li>
         <li class="right" >
           <a href="references.html" title="References"
              >previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="index.html">RandomGen v1.16.3+36.g20b86ad documentation</a> &#187;</li> 
+        <li class="nav-item nav-item-0"><a href="index.html">RandomGen v1.16.3+37.g9633d35 documentation</a> &#187;</li> 
       </ul>
     </div>
 <script type="text/javascript">
