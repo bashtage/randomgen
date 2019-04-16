@@ -504,10 +504,9 @@ cdef class RandomGenerator:
 
         See Also
         --------
-        random_integers : similar to `randint`, only for the closed
-            interval [`low`, `high`], and 1 is the lowest value if `high` is
-            omitted. In particular, this other one is the one to use to generate
-            uniformly distributed discrete non-integers.
+        random_integers : similar to `randint`, only for the closed interval
+                          [`low`, `high`], where 1 is the lowest value if
+                          `high` is omitted.
 
         Examples
         --------

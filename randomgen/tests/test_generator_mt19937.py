@@ -159,15 +159,23 @@ class TestRandint(object):
             lbnd = 0 if dt is bool else np.iinfo(dt).min
             ubnd = 2 if dt is bool else np.iinfo(dt).max + 1
             ubnd = ubnd - 1 if closed else ubnd
-            assert_raises(ValueError, self.rfunc, lbnd - 1, ubnd, closed=closed, dtype=dt)
-            assert_raises(ValueError, self.rfunc, lbnd, ubnd + 1, closed=closed, dtype=dt)
-            assert_raises(ValueError, self.rfunc, ubnd, lbnd, closed=closed, dtype=dt)
-            assert_raises(ValueError, self.rfunc, 1, 0, closed=closed, dtype=dt)
+            assert_raises(ValueError, self.rfunc, lbnd - 1, ubnd,
+                          closed=closed, dtype=dt)
+            assert_raises(ValueError, self.rfunc, lbnd, ubnd + 1,
+                          closed=closed, dtype=dt)
+            assert_raises(ValueError, self.rfunc, ubnd, lbnd,
+                          closed=closed, dtype=dt)
+            assert_raises(ValueError, self.rfunc, 1, 0, closed=closed,
+                          dtype=dt)
 
-            assert_raises(ValueError, self.rfunc, [lbnd - 1], ubnd, closed=closed, dtype=dt)
-            assert_raises(ValueError, self.rfunc, [lbnd], [ubnd + 1], closed=closed, dtype=dt)
-            assert_raises(ValueError, self.rfunc, [ubnd], [lbnd], closed=closed, dtype=dt)
-            assert_raises(ValueError, self.rfunc, 1, [0], closed=closed, dtype=dt)
+            assert_raises(ValueError, self.rfunc, [lbnd - 1], ubnd,
+                          closed=closed, dtype=dt)
+            assert_raises(ValueError, self.rfunc, [lbnd], [ubnd + 1],
+                          closed=closed, dtype=dt)
+            assert_raises(ValueError, self.rfunc, [ubnd], [lbnd],
+                          closed=closed, dtype=dt)
+            assert_raises(ValueError, self.rfunc, 1, [0],
+                          closed=closed, dtype=dt)
 
     def test_bounds_checking_array(self, closed):
         for dt in self.itype:
@@ -178,8 +186,10 @@ class TestRandint(object):
                           lbnd - 1] * 2, [ubnd] * 2, closed=closed, dtype=dt)
             assert_raises(ValueError, self.rfunc, [
                           lbnd] * 2, [ubnd + 1] * 2, closed=closed, dtype=dt)
-            assert_raises(ValueError, self.rfunc, ubnd, [lbnd] * 2, closed=closed, dtype=dt)
-            assert_raises(ValueError, self.rfunc, [1] * 2, 0, closed=closed, dtype=dt)
+            assert_raises(ValueError, self.rfunc, ubnd, [lbnd] * 2,
+                          closed=closed, dtype=dt)
+            assert_raises(ValueError, self.rfunc, [1] * 2, 0,
+                          closed=closed, dtype=dt)
 
     def test_rng_zero_and_extremes(self, closed):
         for dt in self.itype:
@@ -189,15 +199,20 @@ class TestRandint(object):
             is_open = not closed
 
             tgt = ubnd - 1
-            assert_equal(self.rfunc(tgt, tgt + is_open, size=1000, closed=closed, dtype=dt), tgt)
-            assert_equal(self.rfunc([tgt], tgt + is_open, size=1000, closed=closed, dtype=dt), tgt)
+            assert_equal(self.rfunc(tgt, tgt + is_open, size=1000,
+                                    closed=closed, dtype=dt), tgt)
+            assert_equal(self.rfunc([tgt], tgt + is_open, size=1000,
+                                    closed=closed, dtype=dt), tgt)
 
             tgt = lbnd
-            assert_equal(self.rfunc(tgt, tgt + is_open, size=1000, closed=closed, dtype=dt), tgt)
-            assert_equal(self.rfunc(tgt, [tgt + is_open], size=1000, closed=closed, dtype=dt), tgt)
+            assert_equal(self.rfunc(tgt, tgt + is_open, size=1000,
+                                    closed=closed, dtype=dt), tgt)
+            assert_equal(self.rfunc(tgt, [tgt + is_open], size=1000,
+                                    closed=closed, dtype=dt), tgt)
 
             tgt = (lbnd + ubnd) // 2
-            assert_equal(self.rfunc(tgt, tgt + is_open, size=1000, closed=closed, dtype=dt), tgt)
+            assert_equal(self.rfunc(tgt, tgt + is_open, size=1000,
+                                    closed=closed, dtype=dt), tgt)
             assert_equal(self.rfunc([tgt], [tgt + is_open],
                                     size=1000, closed=closed, dtype=dt), tgt)
 
@@ -268,11 +283,13 @@ class TestRandint(object):
 
         for dt in self.itype[1:]:
             for ubnd in [4, 8, 16]:
-                vals = self.rfunc(2, ubnd - closed, size=2 ** 16, closed=closed, dtype=dt)
+                vals = self.rfunc(2, ubnd - closed, size=2 ** 16,
+                                  closed=closed, dtype=dt)
                 assert_(vals.max() < ubnd)
                 assert_(vals.min() >= 2)
 
-        vals = self.rfunc(0, 2 - closed, size=2 ** 16, closed=closed, dtype=bool)
+        vals = self.rfunc(0, 2 - closed, size=2 ** 16, closed=closed,
+                          dtype=bool)
         assert_(vals.max() < 2)
         assert_(vals.min() >= 0)
 
@@ -287,7 +304,8 @@ class TestRandint(object):
             scalar = self.rfunc(lbnd, ubnd, size=size, closed=closed, dtype=dt)
 
             random.brng.seed(1234)
-            scalar_array = self.rfunc([lbnd], [ubnd], size=size, closed=closed, dtype=dt)
+            scalar_array = self.rfunc([lbnd], [ubnd], size=size,
+                                      closed=closed, dtype=dt)
 
             random.brng.seed(1234)
             array = self.rfunc([lbnd] * size, [ubnd] *
@@ -315,16 +333,19 @@ class TestRandint(object):
 
             # view as little endian for hash
             if sys.byteorder == 'little':
-                val = self.rfunc(0, 6 - closed, size=1000, closed=closed, dtype=dt)
+                val = self.rfunc(0, 6 - closed, size=1000, closed=closed,
+                                 dtype=dt)
             else:
-                val = self.rfunc(0, 6 - closed, size=1000, closed=closed, dtype=dt).byteswap()
+                val = self.rfunc(0, 6 - closed, size=1000, closed=closed,
+                                 dtype=dt).byteswap()
 
             res = hashlib.md5(val.view(np.int8)).hexdigest()
             assert_(tgt[np.dtype(dt).name] == res)
 
         # bools do not depend on endianness
         random.brng.seed(1234)
-        val = self.rfunc(0, 2 - closed, size=1000, closed=closed, dtype=bool).view(np.int8)
+        val = self.rfunc(0, 2 - closed, size=1000, closed=closed,
+                         dtype=bool).view(np.int8)
         res = hashlib.md5(val).hexdigest()
         assert_(tgt[np.dtype(bool).name] == res)
 
@@ -345,7 +366,8 @@ class TestRandint(object):
             assert_array_equal(val, val_bc)
 
             random.brng.seed(1234)
-            val_bc = self.rfunc([lbnd] * 1000, [ubnd] * 1000, closed=closed, dtype=dt)
+            val_bc = self.rfunc([lbnd] * 1000, [ubnd] * 1000, closed=closed,
+                                dtype=dt)
 
             assert_array_equal(val, val_bc)
 
@@ -431,7 +453,8 @@ class TestRandint(object):
 
             sample = self.rfunc([lbnd], [ubnd], closed=closed, dtype=dt)
             assert_equal(sample.dtype, dt)
-            sample = self.rfunc([lbnd] * 2, [ubnd] * 2, closed=closed, dtype=dt)
+            sample = self.rfunc([lbnd] * 2, [ubnd] * 2, closed=closed,
+                                dtype=dt)
             assert_equal(sample.dtype, dt)
 
     def test_zero_size(self, closed):
@@ -441,6 +464,9 @@ class TestRandint(object):
             assert sample.shape == (3, 0, 4)
             assert sample.dtype == dt
             assert self.rfunc(0, -10, 0, closed=closed, dtype=dt).shape == (0,)
+            assert_equal(random.randint(0, 0, size=(3, 0, 4)).shape, (3, 0, 4))
+            assert_equal(random.randint(0, -10, size=0).shape, (0,))
+            assert_equal(random.randint(10, 10, size=0).shape, (0,))
 
 
 class TestRandomDist(object):
@@ -681,9 +707,6 @@ class TestRandomDist(object):
         assert_equal(random.choice(np.arange(6), s, replace=True).shape, s)
 
         # Check zero-size
-        assert_equal(random.randint(0, 0, size=(3, 0, 4)).shape, (3, 0, 4))
-        assert_equal(random.randint(0, -10, size=0).shape, (0,))
-        assert_equal(random.randint(10, 10, size=0).shape, (0,))
         assert_equal(random.choice(0, size=0).shape, (0,))
         assert_equal(random.choice([], size=(0,)).shape, (0,))
         assert_equal(random.choice(['a', 'b'], size=(3, 0, 4)).shape,
@@ -2097,7 +2120,7 @@ class TestSingleEltArrayInput(object):
             out = func(self.argOne, argTwo[0])
             assert_equal(out.shape, self.tgtShape)
 
-    def test_randint(self):
+    def test_randint(self, closed):
         itype = [np.bool, np.int8, np.uint8, np.int16, np.uint16,
                  np.int32, np.uint32, np.int64, np.uint64]
         func = random.randint
@@ -2105,13 +2128,13 @@ class TestSingleEltArrayInput(object):
         low = np.array([0])
 
         for dt in itype:
-            out = func(low, high, dtype=dt)
+            out = func(low, high, closed=closed, dtype=dt)
             assert_equal(out.shape, self.tgtShape)
 
-            out = func(low[0], high, dtype=dt)
+            out = func(low[0], high, closed=closed, dtype=dt)
             assert_equal(out.shape, self.tgtShape)
 
-            out = func(low, high[0], dtype=dt)
+            out = func(low, high[0], closed=closed, dtype=dt)
             assert_equal(out.shape, self.tgtShape)
 
     def test_three_arg_funcs(self):
