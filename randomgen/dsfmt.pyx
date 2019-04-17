@@ -76,31 +76,46 @@ cdef class DSFMT:
     Parameters
     ----------
     seed : {None, int, array_like}, optional
-        Random seed initializing the pseudo-random number generator.
-        Can be an integer in [0, 2**32-1], array of integers in
-        [0, 2**32-1] or ``None`` (the default). If `seed` is ``None``,
-        then ``DSFMT`` will try to read entropy from ``/dev/urandom``
-        (or the Windows analog) if available to produce a 32-bit
-        seed. If unavailable, a 32-bit hash of the time and process
-        ID is used.
+        Random seed used to initialize the pseudo-random number generator.  Can
+        be any integer between 0 and 2**32 - 1 inclusive, an array (or other
+        sequence) of unsigned 32-bit integers, or ``None`` (the default).  If
+        `seed` is ``None``, a 32-bit unsigned integer is read from
+        ``/dev/urandom`` (or the Windows analog) if available. If unavailable,
+        a 32-bit hash of the time and process ID is used.
 
     Notes
     -----
-    ``DSFMT`` directly provides generators for doubles, and unsigned 32 and 64-
-    bit integers [1]_ . These are not directly available and must be consumed
-    via a ``RandomGenerator`` object.
+    ``DSFMT`` provides a capsule containing function pointers that produce
+    doubles, and unsigned 32 and 64- bit integers [1]_ . These are not
+    directly consumable in Python and must be consumed by a ``RandomGenerator``
+    or similar object that supports low-level access.
 
     The Python stdlib module "random" also contains a Mersenne Twister
     pseudo-random number generator.
+
+    **State and Seeding**
+
+    The ``DSFMT`` state vector consists of a 384 element array of 64-bit
+    unsigned integers plus a single integer value between 0 and 382
+    indicating the current position within the main array. The implementation
+    used here augments this with a 382 element array of doubles which are used
+    to efficiently access the random numbers produced by the dSFMT generator.
+
+    ``DSFMT`` is seeded using either a single 32-bit unsigned integer or a
+    vector of 32-bit unsigned integers. In either case, the input seed is used
+    as an input (or inputs) for a hashing function, and the output of the
+    hashing function is used as the initial state. Using a single 32-bit value
+    for the seed can only initialize a small range of the possible initial
+    state values.
 
     **Parallel Features**
 
     ``DSFMT`` can be used in parallel applications by calling the method
     ``jump`` which advances the state as-if :math:`2^{128}` random numbers
     have been generated [2]_. This allows the original sequence to be split
-    so that distinct segments can be used in each worker process.  All
-    generators should be initialized with the same seed to ensure that the
-    segments come from the same sequence.
+    so that distinct segments can be used in each worker process. All
+    generators should be initialized with the same seed to ensure that
+    the segments come from the same sequence.
 
     >>> from randomgen.entropy import random_entropy
     >>> from randomgen import RandomGenerator, DSFMT
@@ -110,25 +125,10 @@ cdef class DSFMT:
     >>> for i in range(10):
     ...     rs[i].brng.jump()
 
-    **State and Seeding**
-
-    The ``DSFMT`` state vector consists of a 384 element array of
-    64-bit unsigned integers plus a single integer value between 0 and 382
-    indicating  the current position within the main array. The implementation
-    used here augments this with a 382 element array of doubles which are used
-    to efficiently access the random numbers produced by the dSFMT generator.
-
-    ``DSFMT`` is seeded using either a single 32-bit unsigned integer
-    or a vector of 32-bit unsigned integers.  In either case, the input seed is
-    used as an input (or inputs) for a hashing function, and the output of the
-    hashing function is used as the initial state. Using a single 32-bit value
-    for the seed can only initialize a small range of the possible initial
-    state values.
-
     **Compatibility Guarantee**
 
-    ``DSFMT`` does makes a guarantee that a fixed seed and will always
-    produce the same results.
+    ``DSFMT`` makes a guarantee that a fixed seed and will always produce
+    the same random integer stream.
 
     References
     ----------

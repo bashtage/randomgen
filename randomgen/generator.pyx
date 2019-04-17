@@ -31,8 +31,8 @@ cdef class RandomGenerator:
 
     Container for the Basic Random Number Generators.
 
-    ``RandomGenerator`` exposes a number of methods for generating random
-    numbers drawn from a variety of probability distributions. In addition to the
+    ``RandomGenerator`` exposes methods for generating random numbers drawn
+    from a variety of probability distributions. In addition to the
     distribution-specific arguments, each method takes a keyword argument
     `size` that defaults to ``None``. If `size` is ``None``, then a single
     value is generated and returned. If `size` is an integer, then a 1-D
@@ -42,9 +42,9 @@ cdef class RandomGenerator:
     **No Compatibility Guarantee**
 
     ``RandomGenerator`` is evolving and so it isn't possible to provide a
-    compatibility guarantee like NumPy does. In particular, better algorithms
-    have already been added. This will change once ``RandomGenerator``
-    stabilizes.
+    compatibility guarantee like ``RandomState``. In particular, better
+    algorithms have already been added and bugs that change the stream
+    have been fixed. This will change once ``RandomGenerator`` stabilizes.
 
     Parameters
     ----------
@@ -56,10 +56,10 @@ cdef class RandomGenerator:
     -----
     The Python stdlib module `random` contains pseudo-random number generator
     with a number of methods that are similar to the ones available in
-    ``RandomGenerator``. It uses Mersenne Twister, and this basic RNG can be
-    accessed using ``MT19937``. ``RandomGenerator``, besides being
+    ``RandomGenerator``. It uses Mersenne Twister, which is available  by
+    using the ``MT19937`` basic RNG. ``RandomGenerator``, besides being
     NumPy-aware, has the advantage that it provides a much larger number
-    of probability distributions to choose from.
+    of probability distributions from which to choose.
 
     Examples
     --------

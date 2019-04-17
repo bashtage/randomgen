@@ -24,18 +24,18 @@ cdef Py_ssize_t compute_numel(size):
 
 def seed_by_array(object seed, Py_ssize_t n):
     """
-    Transforms a seed array into an initial state
+    Transforms a seed array into an initial state using SplitMix64
 
     Parameters
     ----------
-    seed: array, 1d, uint64
-        Array to use.  If seed is a scalar, promote to array.
+    seed: int, array or uint64
+        Array to use.  If seed is a scalar, it is promoted to an array.
     n : int
-        Number of 64-bit unsigned integers required
+        Number of 64-bit unsigned integers required in the seed
 
     Notes
     -----
-    Uses splitmix64 to perform the transformation
+    Uses SplitMix64 to transform the input to a seed
     """
     cdef uint64_t seed_copy = 0
     cdef uint64_t[::1] seed_array
@@ -106,8 +106,9 @@ def random_entropy(size=None, source='system'):
 
     Returns
     -------
-    entropy : scalar or ndarray
-        Entropy bits in 32-bit unsigned integers
+    entropy : scalar or array
+        Entropy bits in 32-bit unsigned integers. A scalar is returned if size
+        is `None`.
 
     Notes
     -----

@@ -49,18 +49,6 @@ cdef class PCG64:
 
     Container for the PCG-64 pseudo-random number generator.
 
-    PCG-64 is a 128-bit implementation of O'Neill's permutation congruential
-    generator ([1]_, [2]_). PCG-64 has a period of :math:`2^{128}` and supports
-    advancing an arbitrary number of steps as well as :math:`2^{127}` streams.
-
-    ``PCG64`` exposes no user-facing API except ``generator``,``state``,
-    ``cffi`` and ``ctypes``. Designed for use in a ``RandomGenerator`` object.
-
-    **Compatibility Guarantee**
-
-    ``PCG64`` makes a guarantee that a fixed seed will always produce the same
-    results.
-
     Parameters
     ----------
     seed : {None, long}, optional
@@ -77,11 +65,27 @@ cdef class PCG64:
 
     Notes
     -----
+    PCG-64 is a 128-bit implementation of O'Neill's permutation congruential
+    generator ([1]_, [2]_). PCG-64 has a period of :math:`2^{128}` and supports
+    advancing an arbitrary number of steps as well as :math:`2^{127}` streams.
+
+    ``PCG64`` provides a capsule containing function pointers that produce
+    doubles, and unsigned 32 and 64- bit integers. These are not
+    directly consumable in Python and must be consumed by a ``RandomGenerator``
+    or similar object that supports low-level access.
+
     Supports the method advance to advance the RNG an arbitrary number of
     steps. The state of the PCG-64 RNG is represented by 2 128-bit unsigned
     integers.
 
     See ``PCG32`` for a similar implementation with a smaller period.
+
+    **State and Seeding**
+
+    The ``PCG64`` state vector consists of 2 unsigned 128-bit values,
+    which are represented externally as Python ints.
+    ``PCG64`` is seeded using a single 128-bit unsigned integer.
+    In addition, a second 128-bit unsigned integer is used to set the stream.
 
     **Parallel Features**
 
@@ -99,13 +103,10 @@ cdef class PCG64:
     >>> for i in range(10):
     ...     rg[i].brng.advance(i * 2**64)
 
-    **State and Seeding**
+    **Compatibility Guarantee**
 
-    The ``PCG64`` state vector consists of 2 unsigned 128-bit values,
-    which are represented externally as python longs (2.x) or ints (Python 3+).
-    ``PCG64`` is seeded using a single 128-bit unsigned integer
-    (Python long/int). In addition, a second 128-bit unsigned integer is used
-    to set the stream.
+    ``PCG64`` makes a guarantee that a fixed seed and will always produce
+    the same random integer stream.
 
     References
     ----------
