@@ -81,35 +81,43 @@ cdef class Philox:
 
     Notes
     -----
-    Philox is a 64-bit PRNG that uses a counter-based design based on weaker
-    (and faster) versions of cryptographic functions [1]_. Instances using
-    different values of the key produce independent sequences.  Philox has a
-    period of :math:`2^{256} - 1` and supports arbitrary advancing and jumping
-    the sequence in increments of :math:`2^{128}`. These features allow
+    Philox is a 64-bit PRNG that uses a counter-based design based on
+    weaker (and faster) versions of cryptographic functions [1]_. Instances
+    using different values of the key produce independent sequences.  ``Philox``
+    has a period of :math:`2^{256} - 1` and supports arbitrary advancing and
+    jumping the sequence in increments of :math:`2^{128}`. These features allow
     multiple non-overlapping sequences to be generated.
 
-    ``Philox`` exposes no user-facing API except ``generator``,
-    ``state``, ``cffi`` and ``ctypes``. Designed for use in a
-    ``RandomGenerator`` object.
+    ``Philox`` provides a capsule containing function pointers that produce
+    doubles, and unsigned 32 and 64- bit integers. These are not
+    directly consumable in Python and must be consumed by a ``RandomGenerator``
+    or similar object that supports low-level access.
 
-    **Compatibility Guarantee**
+    See ``ThreeFry`` for a closely related PRNG.
 
-    ``Philox`` guarantees that a fixed seed will always produce the
-    same results.
+    **State and Seeding**
 
-    See ``Philox`` for a closely related PRNG implementation.
+    The ``Philox`` state vector consists of a 2 256-bit values encoded as
+    4-element uint64 arrays. One is a counter which is incremented by 1 for
+    every 4 64-bit randoms produced.  The second is a key which determined
+    the sequence produced.  Using different keys produces independent
+    sequences.
+
+    ``Philox`` is seeded using either a single 64-bit unsigned integer
+    or a vector of 64-bit unsigned integers.  In either case, the seed is
+    used as an input for a second random number generator,
+    SplitMix64, and the output of this PRNG function is used as the initial state.
+    Using a single 64-bit value for the seed can only initialize a small range of
+    the possible initial state values.
 
     **Parallel Features**
 
-    ``Philox`` can be used in parallel applications by
-    calling the method ``jump`` which advances the state as-if
-    :math:`2^{128}` random numbers have been generated. Alternatively,
-    ``advance`` can be used to advance the counter for an abritrary number of
-    positive steps in [0, 2**256). When using ``jump``, all generators should
-    be initialized with the same seed to ensure that the segments come from
-    the same sequence. Alternatively, ``Philox`` can be used
-    in parallel applications by using a sequence of distinct keys where each
-    instance uses different key.
+    ``Philox`` can be used in parallel applications by calling the ``jump``
+    method  to advances the state as-if :math:`2^{128}` random numbers have
+    been generated. Alternatively, ``advance`` can be used to advance the
+    counter for any positive step in [0, 2**256). When using ``jump``, all
+    generators should be initialized with the same seed to ensure that the
+    segments come from the same sequence.
 
     >>> from randomgen import RandomGenerator, Philox
     >>> rg = [RandomGenerator(Philox(1234)) for _ in range(10)]
@@ -117,29 +125,16 @@ cdef class Philox:
     >>> for i in range(10):
     ...     rg[i].brng.jump(i)
 
-    Using distinct keys produces independent streams
+    Alternatively, ``Philox`` can be used in parallel applications by using
+    a sequence of distinct keys where each instance uses different key.
 
-    >>> key = 2**96 + 2**32 + 2**65 + 2**33 + 2**17 + 2**9
+    >>> key = 2**196 + 2**132 + 2**65 + 2**33 + 2**17 + 2**9
     >>> rg = [RandomGenerator(Philox(key=key+i)) for i in range(10)]
 
-    **State and Seeding**
+    **Compatibility Guarantee**
 
-    The ``Philox`` state vector consists of a 256-bit counter encoded as a
-    4-element uint64 array and a 128-bit key encoded as a 2-element uint64
-    array. The counter is incremented by 1 for every 4 64-bit randoms
-    produced.  The key determines the sequence produced.  Using different
-    keys produces independent sequences.
-
-    ``Philox`` is seeded using either a single 64-bit unsigned integer
-    or a vector of 64-bit unsigned integers.  In either case, the input seed is
-    used as an input (or inputs) for another simple random number generator,
-    Splitmix64, and the output of this PRNG function is used as the initial state.
-    Using a single 64-bit value for the seed can only initialize a small range of
-    the possible initial state values.  When using an array, the SplitMix64 state
-    for producing the ith component of the initial state is XORd with the ith
-    value of the seed array until the seed array is exhausted. When using an array
-    the initial state for the SplitMix64 state is 0 so that using a single element
-    array and using the same value as a scalar will produce the same initial state.
+    ``Philox`` makes a guarantee that a fixed seed and will always produce
+    the same random integer stream.
 
     Examples
     --------

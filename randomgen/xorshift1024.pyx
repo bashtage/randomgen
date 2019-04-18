@@ -44,44 +44,50 @@ cdef class Xorshift1024:
 
     Container for the xorshift1024*φ pseudo-random number generator.
 
+    Parameters
+    ----------
+    seed : {None, int, array_like}, optional
+        Random seed initializing the pseudo-random number generator.
+        Can be an integer in [0, 2**64-1], array of integers in [0, 2**64-1]
+        or ``None`` (the default). If `seed` is ``None``, then  data is read
+        from ``/dev/urandom`` (or the Windows analog) if available.  If
+        unavailable, a hash of the time and process ID is used.
+
+    Notes
+    -----
     xorshift1024*φ is a 64-bit implementation of Saito and Matsumoto's XSadd
     generator [1]_ (see also [2]_, [3]_, [4]_). xorshift1024*φ has a period of
     :math:`2^{1024} - 1` and supports jumping the sequence in increments of
     :math:`2^{512}`, which allows multiple non-overlapping sequences to be
     generated.
 
-    ``Xorshift1024`` exposes no user-facing API except ``generator``,
-    ``state``, ``cffi`` and ``ctypes``. Designed for use in a
-    ``RandomGenerator`` object.
+    ``Xorshift1024`` provides a capsule containing function pointers that
+    produce doubles, and unsigned 32 and 64- bit integers. These are not
+    directly consumable in Python and must be consumed by a ``RandomGenerator``
+    or similar object that supports low-level access.
 
-    **Compatibility Guarantee**
+    See ``Xoroshiro128`` for a faster basic RNG that has a smaller period.
 
-    ``Xorshift1024`` guarantees that a fixed seed will always produce the
-    same results.
+    **State and Seeding**
 
-    Parameters
-    ----------
-    seed : {None, int, array_like}, optional
-        Random seed initializing the pseudo-random number generator.
-        Can be an integer in [0, 2**64-1], array of integers in
-        [0, 2**64-1] or ``None`` (the default). If `seed` is ``None``,
-        then ``Xorshift1024`` will try to read data from
-        ``/dev/urandom`` (or the Windows analog) if available.  If
-        unavailable, a 64-bit hash of the time and process ID is used.
+    The ``Xoroshiro128`` state vector consists of a 16-element array of 64-bit
+    unsigned integers.
 
-    Notes
-    -----
-    See ``Xoroshiro128`` for a faster implementation that has a smaller
-    period.
+    ``Xoroshiro1024`` is seeded using either a single 64-bit unsigned integer
+    or a vector of 64-bit unsigned integers.  In either case, the seed is
+    used as an input for another simple random number generator,
+    SplitMix64, and the output of this PRNG function is used as the initial
+    state. Using a single 64-bit value for the seed can only initialize a
+    small range of the possible initial state values.
 
     **Parallel Features**
 
-    ``Xorshift1024`` can be used in parallel applications by
-    calling the method ``jump`` which advances the state as-if
-    :math:`2^{512}` random numbers have been generated. This
-    allows the original sequence to be split so that distinct segments can be used
-    in each worker process. All generators should be initialized with the same
-    seed to ensure that the segments come from the same sequence.
+    ``Xoroshiro1024`` can be used in parallel applications by calling the
+    method ``jump`` which advances the state as-if :math:`2^{512}` random
+    numbers have been generated. This allows the original sequence to be split
+    so that distinct segments can be used in each worker process. All
+    generators should be initialized with the same seed to ensure that
+    the segments come from the same sequence.
 
     >>> from randomgen import RandomGenerator, Xorshift1024
     >>> rg = [RandomGenerator(Xorshift1024(1234)) for _ in range(10)]
@@ -89,21 +95,10 @@ cdef class Xorshift1024:
     >>> for i in range(10):
     ...     rg[i].brng.jump(i)
 
-    **State and Seeding**
+    **Compatibility Guarantee**
 
-    The ``Xorshift1024`` state vector consists of a 16 element array
-    of 64-bit unsigned integers.
-
-    ``Xorshift1024`` is seeded using either a single 64-bit unsigned integer
-    or a vector of 64-bit unsigned integers.  In either case, the input seed is
-    used as an input (or inputs) for another simple random number generator,
-    Splitmix64, and the output of this PRNG function is used as the initial state.
-    Using a single 64-bit value for the seed can only initialize a small range of
-    the possible initial state values.  When using an array, the SplitMix64 state
-    for producing the ith component of the initial state is XORd with the ith
-    value of the seed array until the seed array is exhausted. When using an array
-    the initial state for the SplitMix64 state is 0 so that using a single element
-    array and using the same value as a scalar will produce the same initial state.
+    ``Xorshift1024`` makes a guarantee that a fixed seed will always
+    produce the same random integer stream.
 
     Examples
     --------

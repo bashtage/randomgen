@@ -55,24 +55,26 @@ cdef class MT19937:
     seed : {None, int, array_like}, optional
         Random seed used to initialize the pseudo-random number generator.  Can
         be any integer between 0 and 2**32 - 1 inclusive, an array (or other
-        sequence) of such integers, or ``None`` (the default).  If `seed` is
-        ``None``, then will attempt to read data from ``/dev/urandom``
-        (or the Windows analog) if available or seed from the clock otherwise.
+        sequence) of unsigned 32-bit integers, or ``None`` (the default).  If
+        `seed` is ``None``, a 32-bit unsigned integer is read from
+        ``/dev/urandom`` (or the Windows analog) if available. If unavailable,
+        a 32-bit hash of the time and process ID is used.
 
     Notes
     -----
-    ``MT19937`` directly provides generators for doubles, and unsigned 32 and 64-
-    bit integers [1]_ . These are not directly available and must be consumed
-    via a ``RandomGenerator`` object.
+    ``MT19937`` provides a capsule containing function pointers that produce
+    doubles, and unsigned 32 and 64- bit integers [1]_. These are not
+    directly consumable in Python and must be consumed by a ``RandomGenerator``
+    or similar object that supports low-level access.
 
     The Python stdlib module "random" also contains a Mersenne Twister
     pseudo-random number generator.
 
     **State and Seeding**
 
-    The ``MT19937`` state vector consists of a 768 element array of
+    The ``MT19937`` state vector consists of a 768-element array of
     32-bit unsigned integers plus a single integer value between 0 and 768
-    indicating  the current position within the main array.
+    that indexes the current position within the main array.
 
     ``MT19937`` is seeded using either a single 32-bit unsigned integer
     or a vector of 32-bit unsigned integers.  In either case, the input seed is
@@ -81,22 +83,14 @@ cdef class MT19937:
     for the seed can only initialize a small range of the possible initial
     state values.
 
-    **Compatibility Guarantee**
-
-    ``MT19937`` make a compatibility guarantee. A fixed seed and a fixed
-    series of calls to ``MT19937`` methods will always produce the same
-    results up to roundoff error except when the values were incorrect.
-    Incorrect values will be fixed and the version in which the fix was
-    made will be noted in the relevant docstring.
-
     **Parallel Features**
 
     ``MT19937`` can be used in parallel applications by
     calling the method ``jump`` which advances the state as-if :math:`2^{128}`
-    random numbers have been generated ([1]_, [2]_). This allows the original sequence to
-    be split so that distinct segments can be used in each worker process.  All
-    generators should be initialized with the same seed to ensure that the
-    segments come from the same sequence.
+    random numbers have been generated ([1]_, [2]_). This allows the original
+    sequence to be split so that distinct segments can be used in each worker
+    process. All generators should be initialized with the same seed to ensure
+    that the segments come from the same sequence.
 
     >>> from randomgen.entropy import random_entropy
     >>> from randomgen import RandomGenerator, MT19937
@@ -105,6 +99,11 @@ cdef class MT19937:
     # Advance each MT19937 instance by i jumps
     >>> for i in range(10):
     ...     rs[i].brng.jump(i)
+
+    **Compatibility Guarantee**
+
+    ``MT19937`` makes a guarantee that a fixed seed and will always produce
+    the same random integer stream.
 
     References
     ----------

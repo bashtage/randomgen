@@ -37,14 +37,15 @@ cdef class RandomState:
     array filled with generated values is returned. If `size` is a tuple,
     then an array with that shape is filled and returned.
 
-    *Compatibility Guarantee*
-    A fixed seed and a fixed series of calls to 'RandomState' methods using
-    the same parameters will always produce the same results up to roundoff
-    error except when the values were incorrect. Incorrect values will be
-    fixed and the NumPy version in which the fix was made will be noted in
-    the relevant docstring. Extension of existing parameter ranges and the
-    addition of new parameters is allowed as long the previous behavior
-    remains unchanged.
+    **Compatibility Guarantee**
+
+    A fixed basic RNG using a fixed seed and a fixed series of calls to
+    'RandomState' methods using the same parameters will always produce the
+    same results up to roundoff error except when the values were incorrect.
+    `RandomState` is effectively frozen and will only recieve updates that
+    are required by changes in the the internals of Numpy. More substantial
+    changes, including algorithmic improvements, are reserved for
+    `RandomGenerator`.
 
     Parameters
     ----------
@@ -65,6 +66,11 @@ cdef class RandomState:
     to the ones available in `RandomState`. `RandomState`, besides being
     NumPy-aware, has the advantage that it provides a much larger number
     of probability distributions to choose from.
+
+    See Also
+    --------
+    randomgen.generator.RandomGenerator
+    randomgen.mt19937.MT19937
 
     """
     cdef public object _basicrng

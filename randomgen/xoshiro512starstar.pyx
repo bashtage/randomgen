@@ -47,47 +47,27 @@ cdef class Xoshiro512StarStar:
     ----------
     seed : {None, int, array_like}, optional
         Random seed initializing the pseudo-random number generator.
-        Can be an integer in [0, 2**64-1], array of integers in
-        [0, 2**64-1] or ``None`` (the default). If `seed` is ``None``,
-        then ``Xoshiro512StarStar`` will try to read data from
-        ``/dev/urandom`` (or the Windows analog) if available.  If
-        unavailable, a 64-bit hash of the time and process ID is used.
+        Can be an integer in [0, 2**64-1], array of integers in [0, 2**64-1]
+        or ``None`` (the default). If `seed` is ``None``, then  data is read
+        from ``/dev/urandom`` (or the Windows analog) if available.  If
+        unavailable, a hash of the time and process ID is used.
 
     Notes
     -----
     xoshiro512** is written by David Blackman and Sebastiano Vigna.
-    It is a 64-bit PRNG that uses a carefully linear transformation.
+    It is a 64-bit PRNG that uses a carefully constructed linear transformation.
     This produces a fast PRNG with excellent statistical quality
     [1]_. xoshiro512** has a period of :math:`2^{512} - 1`
     and supports jumping the sequence in increments of :math:`2^{256}`,
-    which allows multiple non-overlapping sequences to be generated.
+    which allows multiple non-overlapping subsequences to be generated.
 
-    ``Xoshiro512StarStar`` exposes no user-facing API except ``generator``,
-    ``state``, ``cffi`` and ``ctypes``. Designed for use in a
-    ``RandomGenerator`` object.
+    ``Xoshiro512StarStar`` provides a capsule containing function pointers that
+    produce doubles, and unsigned 32 and 64- bit integers. These are not
+    directly consumable in Python and must be consumed by a ``RandomGenerator``
+    or similar object that supports low-level access.
 
-    **Compatibility Guarantee**
-
-    ``Xoshiro512StarStar`` guarantees that a fixed seed will always produce the
-    same results.
-
-    See ``Xorshift1024`` for a related PRNG with different periods
+    See ``Xorshift1024`` for a related PRNG with a different period
     (:math:`2^{1024} - 1`) and jump size (:math:`2^{512} - 1`).
-
-    **Parallel Features**
-
-    ``Xoshiro512StarStar`` can be used in parallel applications by
-    calling the method ``jump`` which advances the state as-if
-    :math:`2^{128}` random numbers have been generated. This
-    allow the original sequence to be split so that distinct segments can be used
-    in each worker process. All generators should be initialized with the same
-    seed to ensure that the segments come from the same sequence.
-
-    >>> from randomgen import RandomGenerator, Xoshiro512StarStar
-    >>> rg = [RandomGenerator(Xoshiro512StarStar(1234)) for _ in range(10)]
-    # Advance each Xoshiro512StarStar instance by i jumps
-    >>> for i in range(10):
-    ...     rg[i].brng.jump(i)
 
     **State and Seeding**
 
@@ -95,16 +75,31 @@ cdef class Xoshiro512StarStar:
     of 64-bit unsigned integers.
 
     ``Xoshiro512StarStar`` is seeded using either a single 64-bit unsigned
-    integer or a vector of 64-bit unsigned integers.  In either case, the
-    input seed is used as an input (or inputs) for another simple random
-    number generator, Splitmix64, and the output of this PRNG function is
-    used as the initial state. Using a single 64-bit value for the seed can
-    only initialize a small range of the possible initial state values.  When
-    using an array, the SplitMix64 state for producing the ith component of
-    the initial state is XORd with the ith value of the seed array until the
-    seed array is exhausted. When using an array the initial state for the
-    SplitMix64 state is 0 so that using a single element array and using the
-    same value as a scalar will produce the same initial state.
+    integer or a vector of 64-bit unsigned integers.  In either case, the seed
+    is used as an input for another simple random number generator, SplitMix64,
+    and the output of this PRNG function is used as the initial state. Using
+    a single 64-bit value for the seed can only initialize a small range of
+    the possible initial state values.
+
+    **Parallel Features**
+
+    ``Xoshiro512StarStar`` can be used in parallel applications by calling the
+    method ``jump`` which advances the state as-if :math:`2^{128}` random
+    numbers have been generated. This allows the original sequence to be split
+    so that distinct segments can be used in each worker process. All
+    generators should be initialized with the same seed to ensure that the
+    segments come from the same sequence.
+
+    >>> from randomgen import RandomGenerator, Xoshiro512StarStar
+    >>> rg = [RandomGenerator(Xoshiro512StarStar(1234)) for _ in range(10)]
+    # Advance each Xoshiro512StarStar instance by i jumps
+    >>> for i in range(10):
+    ...     rg[i].brng.jump(i)
+
+    **Compatibility Guarantee**
+
+    ``Xoshiro512StarStar`` makes a guarantee that a fixed seed will always
+    produce the same random integer stream.
 
     Examples
     --------

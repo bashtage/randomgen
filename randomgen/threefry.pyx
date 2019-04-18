@@ -67,56 +67,29 @@ cdef class ThreeFry:
         used.
     counter : {None, int, array_like}, optional
         Counter to use in the ThreeFry state. Can be either
-        a Python int (long in 2.x) in [0, 2**256) or a 4-element uint64 array.
+        a Python int in [0, 2**256) or a 4-element uint64 array.
         If not provided, the RNG is initialized at 0.
     key : {None, int, array_like}, optional
         Key to use in the ThreeFry state.  Unlike seed, which is run through
         another RNG before use, the value in key is directly set. Can be either
-        a Python int (long in 2.x) in [0, 2**256) or a 4-element uint64 array.
+        a Python int in [0, 2**256) or a 4-element uint64 array.
         key and seed cannot both be used.
 
     Notes
     -----
-    ThreeFry is a 64-bit PRNG that uses a counter-based design based on weaker
-    (and faster) versions of cryptographic functions [1]_. Instances using
-    different values of the key produce independent sequences.  ThreeFry has a
-    period of :math:`2^{256} - 1` and supports arbitrary advancing and jumping
-    the sequence in increments of :math:`2^{128}`. These features allow
+    ThreeFry is a 64-bit PRNG that uses a counter-based design based on
+    weaker (and faster) versions of cryptographic functions [1]_. Instances
+    using different values of the key produce independent sequences.  ``ThreeFry``
+    has a period of :math:`2^{256} - 1` and supports arbitrary advancing and
+    jumping the sequence in increments of :math:`2^{128}`. These features allow
     multiple non-overlapping sequences to be generated.
 
-    ``ThreeFry`` exposes no user-facing API except ``generator``,
-    ``state``, ``cffi`` and ``ctypes``. Designed for use in a
-    ``RandomGenerator`` object.
+    ``ThreeFry`` provides a capsule containing function pointers that produce
+    doubles, and unsigned 32 and 64- bit integers. These are not
+    directly consumable in Python and must be consumed by a ``RandomGenerator``
+    or similar object that supports low-level access.
 
-    **Compatibility Guarantee**
-
-    ``ThreeFry`` guarantees that a fixed seed will always produce the
-    same results.
-
-    See ``Philox`` for a closely related PRNG implementation.
-
-    **Parallel Features**
-
-    ``ThreeFry`` can be used in parallel applications by
-    calling the method ``jump`` which advances the state as-if
-    :math:`2^{128}` random numbers have been generated. Alternatively,
-    ``advance`` can be used to advance the counter for an any
-    positive step in [0, 2**256). When using ``jump``, all generators should
-    be initialized with the same seed to ensure that the segments come from
-    the same sequence. Alternatively, ``ThreeFry`` can be used
-    in parallel applications by using a sequence of distinct keys where each
-    instance uses different key.
-
-    >>> from randomgen import RandomGenerator, ThreeFry
-    >>> rg = [RandomGenerator(ThreeFry(1234)) for _ in range(10)]
-    # Advance each ThreeFry instance by i jumps
-    >>> for i in range(10):
-    ...     rg[i].brng.jump(i)
-
-    Using distinct keys produces independent streams
-
-    >>> key = 2**196 + 2**132 + 2**65 + 2**33 + 2**17 + 2**9
-    >>> rg = [RandomGenerator(ThreeFry(key=key+i)) for i in range(10)]
+    See ``Philox`` for a closely related PRNG.
 
     **State and Seeding**
 
@@ -127,15 +100,37 @@ cdef class ThreeFry:
     sequences.
 
     ``ThreeFry`` is seeded using either a single 64-bit unsigned integer
-    or a vector of 64-bit unsigned integers.  In either case, the input seed is
-    used as an input (or inputs) for another simple random number generator,
-    Splitmix64, and the output of this PRNG function is used as the initial state.
+    or a vector of 64-bit unsigned integers.  In either case, the seed is
+    used as an input for a second random number generator,
+    SplitMix64, and the output of this PRNG function is used as the initial state.
     Using a single 64-bit value for the seed can only initialize a small range of
-    the possible initial state values.  When using an array, the SplitMix64 state
-    for producing the ith component of the initial state is XORd with the ith
-    value of the seed array until the seed array is exhausted. When using an array
-    the initial state for the SplitMix64 state is 0 so that using a single element
-    array and using the same value as a scalar will produce the same initial state.
+    the possible initial state values.
+
+    **Parallel Features**
+
+    ``ThreeFry`` can be used in parallel applications by calling the ``jump``
+    method  to advances the state as-if :math:`2^{128}` random numbers have
+    been generated. Alternatively, ``advance`` can be used to advance the
+    counter for any positive step in [0, 2**256). When using ``jump``, all
+    generators should be initialized with the same seed to ensure that the
+    segments come from the same sequence.
+
+    >>> from randomgen import RandomGenerator, ThreeFry
+    >>> rg = [RandomGenerator(ThreeFry(1234)) for _ in range(10)]
+    # Advance each ThreeFry instance by i jumps
+    >>> for i in range(10):
+    ...     rg[i].brng.jump(i)
+
+    Alternatively, ``ThreeFry`` can be used in parallel applications by using
+    a sequence of distinct keys where each instance uses different key.
+
+    >>> key = 2**196 + 2**132 + 2**65 + 2**33 + 2**17 + 2**9
+    >>> rg = [RandomGenerator(ThreeFry(key=key+i)) for i in range(10)]
+
+    **Compatibility Guarantee**
+
+    ``ThreeFry`` makes a guarantee that a fixed seed and will always produce
+    the same random integer stream.
 
     Examples
     --------
