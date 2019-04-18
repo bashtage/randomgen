@@ -13,7 +13,7 @@
   <link rel="stylesheet" type="text/css" href="_static/css/bootstrap-theme.min.css" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-    <title>Legacy Random Generation &#8212; RandomGen v1.16.4+5.g2d2525b documentation</title>
+    <title>Legacy Random Generation &#8212; RandomGen v1.16.4+7.g9e1f13b documentation</title>
     <link rel="stylesheet" href="_static/guzzle.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
@@ -45,7 +45,7 @@
         <li class="right" >
           <a href="generated/randomgen.generator.RandomGenerator.zipf.html" title="randomgen.generator.RandomGenerator.zipf"
              accesskey="P">previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="index.html">RandomGen v1.16.4+5.g2d2525b documentation</a> &#187;</li> 
+        <li class="nav-item nav-item-0"><a href="index.html">RandomGen v1.16.4+7.g9e1f13b documentation</a> &#187;</li> 
       </ul>
     </div>
     <div class="container-wrapper">
@@ -55,7 +55,7 @@
       </div>
   <div id="left-column">
     <div class="sphinxsidebar"><a href="
-    index.html" class="text-logo">RandomGen v1.16.4 (+5)</a>
+    index.html" class="text-logo">RandomGen v1.16.4 (+7)</a>
 <div class="sidebar-block">
   <div class="sidebar-wrapper">
     <h2>Table Of Contents</h2>
@@ -162,14 +162,14 @@ distribution-specific arguments, each method takes a keyword argument
 value is generated and returned. If <cite>size</cite> is an integer, then a 1-D
 array filled with generated values is returned. If <cite>size</cite> is a tuple,
 then an array with that shape is filled and returned.</p>
-<p><em>Compatibility Guarantee</em>
-A fixed seed and a fixed series of calls to ‘RandomState’ methods using
-the same parameters will always produce the same results up to roundoff
-error except when the values were incorrect. Incorrect values will be
-fixed and the NumPy version in which the fix was made will be noted in
-the relevant docstring. Extension of existing parameter ranges and the
-addition of new parameters is allowed as long the previous behavior
-remains unchanged.</p>
+<p><strong>Compatibility Guarantee</strong></p>
+<p>A fixed basic RNG using a fixed seed and a fixed series of calls to
+‘RandomState’ methods using the same parameters will always produce the
+same results up to roundoff error except when the values were incorrect.
+<cite>RandomState</cite> is effectively frozen and will only recieve updates that
+are required by changes in the the internals of Numpy. More substantial
+changes, including algorithmic improvements, are reserved for
+<cite>RandomGenerator</cite>.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><p><strong>brng</strong> (<em>{None</em><em>, </em><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a><em>, </em><em>array_like</em><em>, </em><em>BasicRNG}</em><em>, </em><em>optional</em>) – Random seed used to initialize the pseudo-random number generator or
@@ -188,6 +188,10 @@ pseudo-random number generator with a number of methods that are similar
 to the ones available in <cite>RandomState</cite>. <cite>RandomState</cite>, besides being
 NumPy-aware, has the advantage that it provides a much larger number
 of probability distributions to choose from.</p>
+<div class="admonition seealso">
+<p class="admonition-title">See also</p>
+<p><a class="reference internal" href="generator.html#randomgen.generator.RandomGenerator" title="randomgen.generator.RandomGenerator"><code class="xref py py-class docutils literal notranslate"><span class="pre">randomgen.generator.RandomGenerator</span></code></a>, <a class="reference internal" href="brng/mt19937.html#randomgen.mt19937.MT19937" title="randomgen.mt19937.MT19937"><code class="xref py py-class docutils literal notranslate"><span class="pre">randomgen.mt19937.MT19937</span></code></a></p>
+</div>
 </dd></dl>
 
 <div class="section" id="seeding-and-state">
@@ -407,7 +411,7 @@ of probability distributions to choose from.</p>
         <li class="right" >
           <a href="generated/randomgen.generator.RandomGenerator.zipf.html" title="randomgen.generator.RandomGenerator.zipf"
              >previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="index.html">RandomGen v1.16.4+5.g2d2525b documentation</a> &#187;</li> 
+        <li class="nav-item nav-item-0"><a href="index.html">RandomGen v1.16.4+7.g9e1f13b documentation</a> &#187;</li> 
       </ul>
     </div>
 <script type="text/javascript">
