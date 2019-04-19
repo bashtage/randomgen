@@ -86,8 +86,8 @@ What's New or Different
   rg.random_sample(out=existing[:2])
   print(existing)
 
-* :meth:`~randomgen.generator.RandomGenerator.randint` supports
-  broadcasting inputs.
+* :meth:`~randomgen.generator.RandomGenerator.randint` supports broadcasting inputs.
+
 * :meth:`~randomgen.generator.RandomGenerator.randint` supports
   drawing from open (default, ``[low, high)``) or closed
   (``[low, high]``) intervals using the keyword argument

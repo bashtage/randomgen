@@ -70,7 +70,6 @@ cdef class PCG32:
         ``None``, then 0 is used.  Can be used with the same seed to
         produce multiple streams using other values of inc.
 
-
     Notes
     -----
     PCG-32 is a 64-bit implementation of O'Neill's permutation congruential
