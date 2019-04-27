@@ -96,7 +96,8 @@ static NPY_INLINE double standard_exponential_zig(brng_t *brng_state);
 static double standard_exponential_zig_unlikely(brng_t *brng_state, uint8_t idx,
                                                 double x) {
   if (idx == 0) {
-    return ziggurat_exp_r - log(next_double(brng_state));
+    /* Switch to 1.0 - U to avoid log(0.0), see GH 13361 */
+    return ziggurat_exp_r - log(1.0 - next_double(brng_state));
   } else if ((fe_double[idx - 1] - fe_double[idx]) * next_double(brng_state) +
                  fe_double[idx] <
              exp(-x)) {
@@ -138,7 +139,8 @@ static NPY_INLINE float standard_exponential_zig_f(brng_t *brng_state);
 static float standard_exponential_zig_unlikely_f(brng_t *brng_state,
                                                  uint8_t idx, float x) {
   if (idx == 0) {
-    return ziggurat_exp_r_f - logf(next_float(brng_state));
+    /* Switch to 1.0 - U to avoid log(0.0), see GH 13361 */
+    return ziggurat_exp_r_f - logf(1.0f - next_float(brng_state));
   } else if ((fe_float[idx - 1] - fe_float[idx]) * next_float(brng_state) +
                  fe_float[idx] <
              expf(-x)) {
@@ -187,8 +189,9 @@ static NPY_INLINE double next_gauss_zig(brng_t *brng_state) {
       return x; /* 99.3% of the time return here */
     if (idx == 0) {
       for (;;) {
-        xx = -ziggurat_nor_inv_r * log(next_double(brng_state));
-        yy = -log(next_double(brng_state));
+        /* Switch to 1.0 - U to avoid log(0.0), see GH 13361 */
+        xx = -ziggurat_nor_inv_r * log(1.0 - next_double(brng_state));
+        yy = -log(1.0 - next_double(brng_state));
         if (yy + yy > xx * xx)
           return ((rabs >> 8) & 0x1) ? -(ziggurat_nor_r + xx)
                                      : ziggurat_nor_r + xx;
@@ -231,8 +234,9 @@ float random_gauss_zig_f(brng_t *brng_state) {
       return x; /* # 99.3% of the time return here */
     if (idx == 0) {
       for (;;) {
-        xx = -ziggurat_nor_inv_r_f * logf(next_float(brng_state));
-        yy = -logf(next_float(brng_state));
+        /* Switch to 1.0 - U to avoid log(0.0), see GH 13361 */
+        xx = -ziggurat_nor_inv_r_f * logf(1.0f - next_float(brng_state));
+        yy = -logf(1.0f - next_float(brng_state));
         if (yy + yy > xx * xx)
           return ((rabs >> 8) & 0x1) ? -(ziggurat_nor_r_f + xx)
                                      : ziggurat_nor_r_f + xx;
@@ -378,6 +382,7 @@ static NPY_INLINE double standard_gamma_zig(brng_t *brng_state, double shape) {
       U = next_double(brng_state);
       if (U < 1.0 - 0.0331 * (X * X) * (X * X))
         return (b * V);
+      /* log(0.0) ok here */
       if (log(U) < 0.5 * X * X + b * (1. - V + log(V)))
         return (b * V);
     }
@@ -422,6 +427,7 @@ static NPY_INLINE float standard_gamma_zig_f(brng_t *brng_state, float shape) {
       U = next_float(brng_state);
       if (U < 1.0f - 0.0331f * (X * X) * (X * X))
         return (b * V);
+      /* logf(0.0) ok here */
       if (logf(U) < 0.5f * X * X + b * (1.0f - V + logf(V)))
         return (b * V);
     }
@@ -529,7 +535,7 @@ double random_beta(brng_t *brng_state, double a, double b) {
   double Ga, Gb;
 
   if ((a <= 1.0) && (b <= 1.0)) {
-    double U, V, X, Y;
+    double U, V, X, Y, XpY;
     /* Use Johnk's algorithm */
 
     while (1) {
@@ -537,10 +543,11 @@ double random_beta(brng_t *brng_state, double a, double b) {
       V = next_double(brng_state);
       X = pow(U, 1.0 / a);
       Y = pow(V, 1.0 / b);
-
-      if ((X + Y) <= 1.0) {
+      XpY = X + Y;
+      /* Reject if both U and V are 0.0, which is approx 1 in 10^106 */
+      if ((XpY <= 1.0) && (XpY > 0.0)) {
         if (X + Y > 0) {
-          return X / (X + Y);
+          return X / XpY;
         } else {
           double logX = log(U) / a;
           double logY = log(V) / b;
@@ -591,10 +598,13 @@ double random_laplace(brng_t *brng_state, double loc, double scale) {
   double U;
 
   U = next_double(brng_state);
-  if (U < 0.5) {
+  if (U >= 0.5) {
+    U = loc - scale * log(2.0 - U - U);
+  } else if (U > 0.0) {
     U = loc + scale * log(U + U);
   } else {
-    U = loc - scale * log(2.0 - U - U);
+    /* Reject U == 0.0 */
+    U = random_laplace(brng_state, loc, scale);
   }
   return U;
 }
@@ -603,14 +613,20 @@ double random_gumbel(brng_t *brng_state, double loc, double scale) {
   double U;
 
   U = 1.0 - next_double(brng_state);
-  return loc - scale * log(-log(U));
+  if (U < 1.0) {
+    return loc - scale * log(-log(U));
+  }
+  return random_gumbel(brng_state, loc, scale);
 }
 
 double random_logistic(brng_t *brng_state, double loc, double scale) {
   double U;
 
   U = next_double(brng_state);
-  return loc + scale * log(U / (1.0 - U));
+  if (U > 0.0) {
+    return loc + scale * log(U / (1.0 - U));
+  }
+  return random_logistic(brng_state, loc, scale);
 }
 
 double random_lognormal(brng_t *brng_state, double mean, double sigma) {
@@ -676,6 +692,8 @@ static int64_t random_poisson_ptrs(brng_t *brng_state, double lam) {
     if ((k < 0) || ((us < 0.013) && (V > us))) {
       continue;
     }
+    /* log(V) == log(0.0) ok here */
+    /* if U==0.0 so that us==0.0, log is ok since always returns */
     if ((log(V) + log(invalpha) - log(a / (us * us) + b)) <=
         (-lam + k * loglam - loggam(k + 1))) {
       return k;
@@ -767,14 +785,16 @@ Step30:
   if (u > p3)
     goto Step40;
   y = (int64_t)floor(xl + log(v) / laml);
-  if (y < 0)
+  /* Reject if v==0.0 since previous cast is undefined */
+  if ((y < 0) || (v == 0.0))
     goto Step10;
   v = v * (u - p2) * laml;
   goto Step50;
 
 Step40:
   y = (int64_t)floor(xr - log(v) / lamr);
-  if (y > n)
+  /* Reject if v==0.0 since previous cast is undefined */
+  if ((y > n) || (v == 0.0))
     goto Step10;
   v = v * (u - p3) * lamr;
 
@@ -803,6 +823,7 @@ Step52:
   rho =
       (k / (nrq)) * ((k * (k / 3.0 + 0.625) + 0.16666666666666666) / nrq + 0.5);
   t = -k * k / (2 * nrq);
+  /* log(0.0) ok here */
   A = log(v);
   if (A < (t - rho))
     goto Step60;
@@ -967,6 +988,10 @@ double random_vonmises(brng_t *brng_state, double mu, double kappa) {
       W = (1 + s * Z) / (s + Z);
       Y = kappa * (s - W);
       V = next_double(brng_state);
+      /*
+       * V==0.0 is ok here since Y >= 0 always leads
+       * to accept, while Y < 0 always rejects
+       */
       if ((Y * (2 - Y) - V >= 0) || (log(Y / V) + 1 - Y >= 0)) {
         break;
       }
@@ -1005,7 +1030,7 @@ int64_t random_logseries(brng_t *brng_state, double p) {
     q = 1.0 - exp(r * U);
     if (V <= q * q) {
       result = (int64_t)floor(1 + log(V) / log(q));
-      if (result < 1) {
+      if ((result < 1) || (V==0.0)) {
         continue;
       } else {
         return result;
@@ -1163,7 +1188,7 @@ int64_t random_hypergeometric_hrua(brng_t *brng_state, int64_t good,
     /* fast rejection: */
     if (X * (X - T) >= 1)
       continue;
-
+    /* log(0.0) is ok here, since always accept */
     if (2.0 * log(X) <= T)
       break; /* acceptance */
   }
