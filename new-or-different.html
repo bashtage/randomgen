@@ -13,7 +13,7 @@
   <link rel="stylesheet" type="text/css" href="_static/css/bootstrap-theme.min.css" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-    <title>What’s New or Different &#8212; RandomGen v1.16.4 documentation</title>
+    <title>What’s New or Different &#8212; RandomGen v1.16.5 documentation</title>
     <link rel="stylesheet" href="_static/guzzle.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
@@ -45,7 +45,7 @@
         <li class="right" >
           <a href="multithreading.html" title="Multithreaded Generation"
              accesskey="P">previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="index.html">RandomGen v1.16.4 documentation</a> &#187;</li> 
+        <li class="nav-item nav-item-0"><a href="index.html">RandomGen v1.16.5 documentation</a> &#187;</li> 
       </ul>
     </div>
     <div class="container-wrapper">
@@ -55,7 +55,7 @@
       </div>
   <div id="left-column">
     <div class="sphinxsidebar"><a href="
-    index.html" class="text-logo">RandomGen v1.16.4</a>
+    index.html" class="text-logo">RandomGen v1.16.5</a>
 <div class="sidebar-block">
   <div class="sidebar-wrapper">
     <h2>Table Of Contents</h2>
@@ -137,13 +137,6 @@ methods which are 2-10 times faster than NumPy’s default implementation in
 <a class="reference internal" href="generated/randomgen.generator.RandomGenerator.standard_normal.html#randomgen.generator.RandomGenerator.standard_normal" title="randomgen.generator.RandomGenerator.standard_normal"><code class="xref py py-meth docutils literal notranslate"><span class="pre">standard_normal()</span></code></a>,
 <a class="reference internal" href="generated/randomgen.generator.RandomGenerator.standard_exponential.html#randomgen.generator.RandomGenerator.standard_exponential" title="randomgen.generator.RandomGenerator.standard_exponential"><code class="xref py py-meth docutils literal notranslate"><span class="pre">standard_exponential()</span></code></a> or
 <a class="reference internal" href="generated/randomgen.generator.RandomGenerator.standard_gamma.html#randomgen.generator.RandomGenerator.standard_gamma" title="randomgen.generator.RandomGenerator.standard_gamma"><code class="xref py py-meth docutils literal notranslate"><span class="pre">standard_gamma()</span></code></a>.</p></li>
-<li><p>The Box-Muller used to produce NumPy’s normals is no longer available.</p></li>
-<li><p>All basic random generators functions to produce doubles, uint64s and
-uint32s via CTypes (<a class="reference internal" href="brng/generated/randomgen.xoroshiro128.Xoroshiro128.ctypes.html#randomgen.xoroshiro128.Xoroshiro128.ctypes" title="randomgen.xoroshiro128.Xoroshiro128.ctypes"><code class="xref py py-meth docutils literal notranslate"><span class="pre">ctypes()</span></code></a>)
-and CFFI (<a class="reference internal" href="brng/generated/randomgen.xoroshiro128.Xoroshiro128.cffi.html#randomgen.xoroshiro128.Xoroshiro128.cffi" title="randomgen.xoroshiro128.Xoroshiro128.cffi"><code class="xref py py-meth docutils literal notranslate"><span class="pre">cffi()</span></code></a>).  This allows
-these basic RNGs to be used in numba.</p></li>
-<li><p>The basic random number generators can be used in downstream projects via
-Cython.</p></li>
 </ul>
 <div class="highlight-ipython notranslate"><div class="highlight"><pre><span></span><span class="gp">In [1]: </span><span class="kn">from</span> <span class="nn">randomgen</span> <span class="kn">import</span> <span class="n">Xoroshiro128</span>
 
@@ -154,28 +147,35 @@ Cython.</p></li>
 <span class="gp">In [4]: </span><span class="o">%</span><span class="k">timeit</span> rg.standard_normal(100000)
 <span class="gp">   ...: </span><span class="o">%</span><span class="k">timeit</span> numpy.random.standard_normal(100000)
 <span class="gp">   ...: </span>
-<span class="go">12.1 ms +- 22.1 us per loop (mean +- std. dev. of 7 runs, 100 loops each)</span>
-<span class="go">4.81 ms +- 12.4 us per loop (mean +- std. dev. of 7 runs, 100 loops each)</span>
+<span class="go">12.1 ms +- 33.7 us per loop (mean +- std. dev. of 7 runs, 100 loops each)</span>
+<span class="go">4.78 ms +- 9.33 us per loop (mean +- std. dev. of 7 runs, 100 loops each)</span>
 </pre></div>
 </div>
 <div class="highlight-ipython notranslate"><div class="highlight"><pre><span></span><span class="gp">In [5]: </span><span class="o">%</span><span class="k">timeit</span> rg.standard_exponential(100000)
 <span class="gp">   ...: </span><span class="o">%</span><span class="k">timeit</span> numpy.random.standard_exponential(100000)
 <span class="gp">   ...: </span>
-<span class="go">12.7 ms +- 174 us per loop (mean +- std. dev. of 7 runs, 100 loops each)</span>
-<span class="go">6.09 ms +- 18.1 us per loop (mean +- std. dev. of 7 runs, 100 loops each)</span>
+<span class="go">12.9 ms +- 312 us per loop (mean +- std. dev. of 7 runs, 100 loops each)</span>
+<span class="go">6.32 ms +- 64.3 us per loop (mean +- std. dev. of 7 runs, 100 loops each)</span>
 </pre></div>
 </div>
 <div class="highlight-ipython notranslate"><div class="highlight"><pre><span></span><span class="gp">In [6]: </span><span class="o">%</span><span class="k">timeit</span> rg.standard_gamma(3.0, 100000)
 <span class="gp">   ...: </span><span class="o">%</span><span class="k">timeit</span> numpy.random.standard_gamma(3.0, 100000)
 <span class="gp">   ...: </span>
-<span class="go">37.4 ms +- 362 us per loop (mean +- std. dev. of 7 runs, 10 loops each)</span>
-<span class="go">8.17 ms +- 76.7 us per loop (mean +- std. dev. of 7 runs, 100 loops each)</span>
+<span class="go">37.2 ms +- 304 us per loop (mean +- std. dev. of 7 runs, 10 loops each)</span>
+<span class="go">8.03 ms +- 18.5 us per loop (mean +- std. dev. of 7 runs, 100 loops each)</span>
 </pre></div>
 </div>
 <ul class="simple">
+<li><p>The Box-Muller used to produce NumPy’s normals is no longer available.</p></li>
+<li><p>All basic random generators functions to produce doubles, uint64s and
+uint32s via CTypes (<a class="reference internal" href="brng/generated/randomgen.xoroshiro128.Xoroshiro128.ctypes.html#randomgen.xoroshiro128.Xoroshiro128.ctypes" title="randomgen.xoroshiro128.Xoroshiro128.ctypes"><code class="xref py py-meth docutils literal notranslate"><span class="pre">ctypes()</span></code></a>)
+and CFFI (<a class="reference internal" href="brng/generated/randomgen.xoroshiro128.Xoroshiro128.cffi.html#randomgen.xoroshiro128.Xoroshiro128.cffi" title="randomgen.xoroshiro128.Xoroshiro128.cffi"><code class="xref py py-meth docutils literal notranslate"><span class="pre">cffi()</span></code></a>).  This allows
+the basic RNGs to be used in numba or in other low-level applications</p></li>
+<li><p>The basic random number generators can be used in downstream projects via
+Cython.</p></li>
 <li><p>Optional <code class="docutils literal notranslate"><span class="pre">dtype</span></code> argument that accepts <code class="docutils literal notranslate"><span class="pre">np.float32</span></code> or <code class="docutils literal notranslate"><span class="pre">np.float64</span></code>
 to produce either single or double prevision uniform random variables for
-select distributions</p>
+select core distributions</p>
 <ul>
 <li><p>Uniforms (<a class="reference internal" href="generated/randomgen.generator.RandomGenerator.random_sample.html#randomgen.generator.RandomGenerator.random_sample" title="randomgen.generator.RandomGenerator.random_sample"><code class="xref py py-meth docutils literal notranslate"><span class="pre">random_sample()</span></code></a> and
 <a class="reference internal" href="generated/randomgen.generator.RandomGenerator.rand.html#randomgen.generator.RandomGenerator.rand" title="randomgen.generator.RandomGenerator.rand"><code class="xref py py-meth docutils literal notranslate"><span class="pre">rand()</span></code></a>)</p></li>
@@ -187,13 +187,13 @@ select distributions</p>
 </li>
 </ul>
 <div class="highlight-ipython notranslate"><div class="highlight"><pre><span></span><span class="gp">In [7]: </span><span class="n">rg</span><span class="o">.</span><span class="n">seed</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
-<span class="gh">Out[7]: </span><span class="go">RandomGenerator(Xoroshiro128) at 0x2AD8D6F9CDB8</span>
+<span class="gh">Out[7]: </span><span class="go">RandomGenerator(Xoroshiro128) at 0x2AAE85FBEA48</span>
 
 <span class="gp">In [8]: </span><span class="n">rg</span><span class="o">.</span><span class="n">random_sample</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="s1">&#39;d&#39;</span><span class="p">)</span>
 <span class="go">                                                        Out[8]: array([0.31483881, 0.84384135, 0.85491961])</span>
 
 <span class="gp">In [9]: </span><span class="n">rg</span><span class="o">.</span><span class="n">seed</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
-<span class="go">                                                                                                            Out[9]: RandomGenerator(Xoroshiro128) at 0x2AD8D6F9CDB8</span>
+<span class="go">                                                                                                            Out[9]: RandomGenerator(Xoroshiro128) at 0x2AAE85FBEA48</span>
 
 <span class="gp">In [10]: </span><span class="n">rg</span><span class="o">.</span><span class="n">random_sample</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="s1">&#39;f&#39;</span><span class="p">)</span>
 <span class="go">                                                                                                                                                                    Out[10]: array([0.11265862, 0.31483877, 0.4068042 ], dtype=float32)</span>
@@ -201,7 +201,7 @@ select distributions</p>
 </div>
 <ul>
 <li><p>Optional <code class="docutils literal notranslate"><span class="pre">out</span></code> argument that allows existing arrays to be filled for
-select distributions</p>
+select core distributions</p>
 <ul class="simple">
 <li><p>Uniforms (<a class="reference internal" href="generated/randomgen.generator.RandomGenerator.random_sample.html#randomgen.generator.RandomGenerator.random_sample" title="randomgen.generator.RandomGenerator.random_sample"><code class="xref py py-meth docutils literal notranslate"><span class="pre">random_sample()</span></code></a>)</p></li>
 <li><p>Normals (<a class="reference internal" href="generated/randomgen.generator.RandomGenerator.standard_normal.html#randomgen.generator.RandomGenerator.standard_normal" title="randomgen.generator.RandomGenerator.standard_normal"><code class="xref py py-meth docutils literal notranslate"><span class="pre">standard_normal()</span></code></a>)</p></li>
@@ -222,17 +222,106 @@ PRNGs in parallel.</p>
 </pre></div>
 </div>
 <ul class="simple">
+<li><p><a class="reference internal" href="generated/randomgen.generator.RandomGenerator.randint.html#randomgen.generator.RandomGenerator.randint" title="randomgen.generator.RandomGenerator.randint"><code class="xref py py-meth docutils literal notranslate"><span class="pre">randint()</span></code></a> supports broadcasting inputs.</p></li>
+<li><p><a class="reference internal" href="generated/randomgen.generator.RandomGenerator.randint.html#randomgen.generator.RandomGenerator.randint" title="randomgen.generator.RandomGenerator.randint"><code class="xref py py-meth docutils literal notranslate"><span class="pre">randint()</span></code></a> supports
+drawing from open (default, <code class="docutils literal notranslate"><span class="pre">[low,</span> <span class="pre">high)</span></code>) or closed
+(<code class="docutils literal notranslate"><span class="pre">[low,</span> <span class="pre">high]</span></code>) intervals using the keyword argument
+<code class="docutils literal notranslate"><span class="pre">closed</span></code>. Closed intervals are simpler to use when the
+distribution may include the maximum value of a given integer type.</p></li>
+</ul>
+<div class="highlight-ipython notranslate"><div class="highlight"><pre><span></span><span class="gp">In [14]: </span><span class="n">rg</span><span class="o">.</span><span class="n">seed</span><span class="p">(</span><span class="mi">1234</span><span class="p">)</span>
+<span class="gh">Out[14]: </span><span class="go">RandomGenerator(Xoroshiro128) at 0x2AAE85FBEA48</span>
+
+<span class="gp">In [15]: </span><span class="n">rg</span><span class="o">.</span><span class="n">randint</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">iinfo</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">int64</span><span class="p">)</span><span class="o">.</span><span class="n">max</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span>
+<span class="go">                                                         Out[15]: 5968561782418604543</span>
+
+<span class="gp">In [16]: </span><span class="n">rg</span><span class="o">.</span><span class="n">seed</span><span class="p">(</span><span class="mi">1234</span><span class="p">)</span>
+<span class="go">                                                                                      Out[16]: RandomGenerator(Xoroshiro128) at 0x2AAE85FBEA48</span>
+
+<span class="gp">In [17]: </span><span class="n">rg</span><span class="o">.</span><span class="n">randint</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">iinfo</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">int64</span><span class="p">)</span><span class="o">.</span><span class="n">max</span><span class="p">,</span> <span class="n">closed</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+<span class="go">                                                                                                                                               Out[17]: 5968561782418604543</span>
+</pre></div>
+</div>
+<ul class="simple">
+<li><p>The <code class="docutils literal notranslate"><span class="pre">closed</span></code> interval is particularly helpful when using arrays since
+it avoids object-dtype arrays when sampling from the full range.</p></li>
+</ul>
+<div class="highlight-ipython notranslate"><div class="highlight"><pre><span></span><span class="gp">In [18]: </span><span class="n">rg</span><span class="o">.</span><span class="n">seed</span><span class="p">(</span><span class="mi">1234</span><span class="p">)</span>
+<span class="gh">Out[18]: </span><span class="go">RandomGenerator(Xoroshiro128) at 0x2AAE85FBEA48</span>
+
+<span class="gp">In [19]: </span><span class="n">lower</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">uint64</span><span class="p">)</span>
+
+<span class="gp">In [20]: </span><span class="n">upper</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">10</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">iinfo</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">uint64</span><span class="p">)</span><span class="o">.</span><span class="n">max</span><span class="o">+</span><span class="mi">1</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">object</span><span class="p">)</span>
+
+<span class="gp">In [21]: </span><span class="n">upper</span>
+<span class="gh">Out[21]: </span><span class="go">array([10, 18446744073709551616], dtype=object)</span>
+
+<span class="gp">In [22]: </span><span class="n">rg</span><span class="o">.</span><span class="n">randint</span><span class="p">(</span><span class="n">lower</span><span class="p">,</span> <span class="n">upper</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">uint64</span><span class="p">)</span>
+<span class="go">                                                         Out[22]: </span>
+<span class="go">array([[                   1, 13679804536755542709],</span>
+<span class="go">       [                   3, 14565847542971664883]], dtype=uint64)</span>
+
+<span class="gp">In [23]: </span><span class="n">rg</span><span class="o">.</span><span class="n">seed</span><span class="p">(</span><span class="mi">1234</span><span class="p">)</span>
+<span class="go">                                                                                                                                                                                            Out[23]: RandomGenerator(Xoroshiro128) at 0x2AAE85FBEA48</span>
+
+<span class="gp">In [24]: </span><span class="n">upper</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">10</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">iinfo</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">uint64</span><span class="p">)</span><span class="o">.</span><span class="n">max</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">uint64</span><span class="p">)</span>
+
+<span class="gp">In [25]: </span><span class="n">upper</span>
+<span class="gh">Out[25]: </span><span class="go">array([                  10, 18446744073709551615], dtype=uint64)</span>
+
+<span class="gp">In [26]: </span><span class="n">rg</span><span class="o">.</span><span class="n">randint</span><span class="p">(</span><span class="n">lower</span><span class="p">,</span> <span class="n">upper</span><span class="p">,</span> <span class="n">closed</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">uint64</span><span class="p">)</span>
+<span class="go">                                                                           Out[26]: </span>
+<span class="go">array([[                   1, 13679804536755542709],</span>
+<span class="go">       [                   3, 14565847542971664883]], dtype=uint64)</span>
+</pre></div>
+</div>
+<ul class="simple">
 <li><p>Support for Lemire’s method of generating uniform integers on an
 arbitrary interval by setting <code class="docutils literal notranslate"><span class="pre">use_masked=True</span></code> in
 (<a class="reference internal" href="generated/randomgen.generator.RandomGenerator.randint.html#randomgen.generator.RandomGenerator.randint" title="randomgen.generator.RandomGenerator.randint"><code class="xref py py-meth docutils literal notranslate"><span class="pre">randint()</span></code></a>).</p></li>
 </ul>
-<div class="highlight-ipython notranslate"><div class="highlight"><pre><span></span><span class="gp">In [14]: </span><span class="o">%</span><span class="k">timeit</span> rg.randint(0, 1535, use_masked=False)
-<span class="gp">   ....: </span><span class="o">%</span><span class="k">timeit</span> numpy.random.randint(0, 1535)
+<div class="highlight-ipython notranslate"><div class="highlight"><pre><span></span><span class="gp">In [27]: </span><span class="o">%</span><span class="k">timeit</span> rg.randint(0, 1535, size=100000, use_masked=False)
+<span class="gp">   ....: </span><span class="o">%</span><span class="k">timeit</span> numpy.random.randint(0, 1535, size=100000)
 <span class="gp">   ....: </span>
-<span class="go">6.1 us +- 19.2 ns per loop (mean +- std. dev. of 7 runs, 100000 loops each)</span>
-<span class="go">1.26 us +- 18.7 ns per loop (mean +- std. dev. of 7 runs, 1000000 loops each)</span>
+<span class="go">11.8 ms +- 45.5 us per loop (mean +- std. dev. of 7 runs, 100 loops each)</span>
+<span class="go">1.04 ms +- 3.62 us per loop (mean +- std. dev. of 7 runs, 1000 loops each)</span>
 </pre></div>
 </div>
+<ul class="simple">
+<li><p><a class="reference internal" href="generated/randomgen.generator.RandomGenerator.multinomial.html#randomgen.generator.RandomGenerator.multinomial" title="randomgen.generator.RandomGenerator.multinomial"><code class="xref py py-meth docutils literal notranslate"><span class="pre">multinomial()</span></code></a>
+supports multidimensional values of <code class="docutils literal notranslate"><span class="pre">n</span></code></p></li>
+</ul>
+<div class="highlight-ipython notranslate"><div class="highlight"><pre><span></span><span class="gp">In [28]: </span><span class="n">rg</span><span class="o">.</span><span class="n">multinomial</span><span class="p">([</span><span class="mi">10</span><span class="p">,</span> <span class="mi">100</span><span class="p">],</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="mi">6</span><span class="p">)</span> <span class="o">/</span> <span class="mf">6.</span><span class="p">)</span>
+<span class="gh">Out[28]: </span><span class="go"></span>
+<span class="go">array([[ 1,  1,  1,  2,  2,  3],</span>
+<span class="go">       [12, 15, 17, 17, 23, 16]])</span>
+</pre></div>
+</div>
+<ul class="simple">
+<li><p><a class="reference internal" href="generated/randomgen.generator.RandomGenerator.choice.html#randomgen.generator.RandomGenerator.choice" title="randomgen.generator.RandomGenerator.choice"><code class="xref py py-meth docutils literal notranslate"><span class="pre">choice()</span></code></a>
+is much faster when sampling small amounts from large arrays</p></li>
+</ul>
+<div class="highlight-ipython notranslate"><div class="highlight"><pre><span></span><span class="gp">In [29]: </span><span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">1000000</span><span class="p">)</span>
+
+<span class="gp">In [30]: </span><span class="o">%</span><span class="k">timeit</span> rg.choice(x, 10)
+<span class="go">23 us +- 172 ns per loop (mean +- std. dev. of 7 runs, 10000 loops each)</span>
+</pre></div>
+</div>
+<ul class="simple">
+<li><p><a class="reference internal" href="generated/randomgen.generator.RandomGenerator.choice.html#randomgen.generator.RandomGenerator.choice" title="randomgen.generator.RandomGenerator.choice"><code class="xref py py-meth docutils literal notranslate"><span class="pre">choice()</span></code></a>
+supports the <code class="docutils literal notranslate"><span class="pre">axis</span></code> keyword to work with multidimensional arrays.</p></li>
+</ul>
+<div class="highlight-ipython notranslate"><div class="highlight"><pre><span></span><span class="gp">In [31]: </span><span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">20</span><span class="p">),</span> <span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">10</span><span class="p">))</span>
+
+<span class="gp">In [32]: </span><span class="n">rg</span><span class="o">.</span><span class="n">choice</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+<span class="gh">Out[32]: </span><span class="go"></span>
+<span class="go">array([[ 7,  8],</span>
+<span class="go">       [17, 18]])</span>
+</pre></div>
+</div>
+<ul class="simple">
+<li><p>For changes since the previous release, see the <a class="reference internal" href="change-log.html#change-log"><span class="std std-ref">Change Log</span></a></p></li>
+</ul>
 </div>
 
 
@@ -268,7 +357,7 @@ arbitrary interval by setting <code class="docutils literal notranslate"><span c
         <li class="right" >
           <a href="multithreading.html" title="Multithreaded Generation"
              >previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="index.html">RandomGen v1.16.4 documentation</a> &#187;</li> 
+        <li class="nav-item nav-item-0"><a href="index.html">RandomGen v1.16.5 documentation</a> &#187;</li> 
       </ul>
     </div>
 <script type="text/javascript">

@@ -13,7 +13,7 @@
   <link rel="stylesheet" type="text/css" href="_static/css/bootstrap-theme.min.css" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-    <title>Random Generator &#8212; RandomGen v1.16.4 documentation</title>
+    <title>Random Generator &#8212; RandomGen v1.16.5 documentation</title>
     <link rel="stylesheet" href="_static/guzzle.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
@@ -45,7 +45,7 @@
         <li class="right" >
           <a href="index.html" title="RandomGen"
              accesskey="P">previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="index.html">RandomGen v1.16.4 documentation</a> &#187;</li> 
+        <li class="nav-item nav-item-0"><a href="index.html">RandomGen v1.16.5 documentation</a> &#187;</li> 
       </ul>
     </div>
     <div class="container-wrapper">
@@ -55,7 +55,7 @@
       </div>
   <div id="left-column">
     <div class="sphinxsidebar"><a href="
-    index.html" class="text-logo">RandomGen v1.16.4</a>
+    index.html" class="text-logo">RandomGen v1.16.5</a>
 <div class="sidebar-block">
   <div class="sidebar-wrapper">
     <h2>Table Of Contents</h2>
@@ -137,8 +137,8 @@ changed by passing an instantized basic RNG to
 <dt id="randomgen.generator.RandomGenerator">
 <em class="property">class </em><code class="descclassname">randomgen.generator.</code><code class="descname">RandomGenerator</code><span class="sig-paren">(</span><em>brng=None</em><span class="sig-paren">)</span><a class="headerlink" href="#randomgen.generator.RandomGenerator" title="Permalink to this definition">¶</a></dt>
 <dd><p>Container for the Basic Random Number Generators.</p>
-<p><code class="docutils literal notranslate"><span class="pre">RandomGenerator</span></code> exposes a number of methods for generating random
-numbers drawn from a variety of probability distributions. In addition to the
+<p><code class="docutils literal notranslate"><span class="pre">RandomGenerator</span></code> exposes methods for generating random numbers drawn
+from a variety of probability distributions. In addition to the
 distribution-specific arguments, each method takes a keyword argument
 <cite>size</cite> that defaults to <code class="docutils literal notranslate"><span class="pre">None</span></code>. If <cite>size</cite> is <code class="docutils literal notranslate"><span class="pre">None</span></code>, then a single
 value is generated and returned. If <cite>size</cite> is an integer, then a 1-D
@@ -146,9 +146,9 @@ array filled with generated values is returned. If <cite>size</cite> is a tuple,
 then an array with that shape is filled and returned.</p>
 <p><strong>No Compatibility Guarantee</strong></p>
 <p><code class="docutils literal notranslate"><span class="pre">RandomGenerator</span></code> is evolving and so it isn’t possible to provide a
-compatibility guarantee like NumPy does. In particular, better algorithms
-have already been added. This will change once <code class="docutils literal notranslate"><span class="pre">RandomGenerator</span></code>
-stabilizes.</p>
+compatibility guarantee like <code class="docutils literal notranslate"><span class="pre">RandomState</span></code>. In particular, better
+algorithms have already been added and bugs that change the stream
+have been fixed. This will change once <code class="docutils literal notranslate"><span class="pre">RandomGenerator</span></code> stabilizes.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><p><strong>brng</strong> (<em>Basic RNG</em><em>, </em><em>optional</em>) – Basic RNG to use as the core generator. If none is provided, uses
@@ -158,10 +158,10 @@ Xoroshiro128.</p>
 <p class="rubric">Notes</p>
 <p>The Python stdlib module <cite>random</cite> contains pseudo-random number generator
 with a number of methods that are similar to the ones available in
-<code class="docutils literal notranslate"><span class="pre">RandomGenerator</span></code>. It uses Mersenne Twister, and this basic RNG can be
-accessed using <code class="docutils literal notranslate"><span class="pre">MT19937</span></code>. <code class="docutils literal notranslate"><span class="pre">RandomGenerator</span></code>, besides being
+<code class="docutils literal notranslate"><span class="pre">RandomGenerator</span></code>. It uses Mersenne Twister, which is available  by
+using the <code class="docutils literal notranslate"><span class="pre">MT19937</span></code> basic RNG. <code class="docutils literal notranslate"><span class="pre">RandomGenerator</span></code>, besides being
 NumPy-aware, has the advantage that it provides a much larger number
-of probability distributions to choose from.</p>
+of probability distributions from which to choose.</p>
 <p class="rubric">Examples</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">randomgen</span> <span class="k">import</span> <span class="n">RandomGenerator</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">rg</span> <span class="o">=</span> <span class="n">RandomGenerator</span><span class="p">()</span>
@@ -213,8 +213,8 @@ of probability distributions to choose from.</p>
 <tr class="row-even"><td><p><a class="reference internal" href="generated/randomgen.generator.RandomGenerator.randn.html#randomgen.generator.RandomGenerator.randn" title="randomgen.generator.RandomGenerator.randn"><code class="xref py py-obj docutils literal notranslate"><span class="pre">randn</span></code></a>(d0, d1, …, dn[, dtype])</p></td>
 <td><p>Return a sample (or samples) from the “standard normal” distribution.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="generated/randomgen.generator.RandomGenerator.randint.html#randomgen.generator.RandomGenerator.randint" title="randomgen.generator.RandomGenerator.randint"><code class="xref py py-obj docutils literal notranslate"><span class="pre">randint</span></code></a>(low[, high, size, dtype, use_masked])</p></td>
-<td><p>Return random integers from <cite>low</cite> (inclusive) to <cite>high</cite> (exclusive).</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="generated/randomgen.generator.RandomGenerator.randint.html#randomgen.generator.RandomGenerator.randint" title="randomgen.generator.RandomGenerator.randint"><code class="xref py py-obj docutils literal notranslate"><span class="pre">randint</span></code></a>(low[, high, size, dtype, …])</p></td>
+<td><p>Return random integers from <cite>low</cite> (inclusive) to <cite>high</cite> (exclusive), or if closed=True, <cite>low</cite> (inclusive) to <cite>high</cite> (inclusive).</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="generated/randomgen.generator.RandomGenerator.random_integers.html#randomgen.generator.RandomGenerator.random_integers" title="randomgen.generator.RandomGenerator.random_integers"><code class="xref py py-obj docutils literal notranslate"><span class="pre">random_integers</span></code></a>(low[, high, size])</p></td>
 <td><p>Random integers of type np.int between <cite>low</cite> and <cite>high</cite>, inclusive.</p></td>
@@ -402,7 +402,7 @@ of probability distributions to choose from.</p>
         <li class="right" >
           <a href="index.html" title="RandomGen"
              >previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="index.html">RandomGen v1.16.4 documentation</a> &#187;</li> 
+        <li class="nav-item nav-item-0"><a href="index.html">RandomGen v1.16.5 documentation</a> &#187;</li> 
       </ul>
     </div>
 <script type="text/javascript">

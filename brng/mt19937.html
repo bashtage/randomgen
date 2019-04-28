@@ -13,7 +13,7 @@
   <link rel="stylesheet" type="text/css" href="../_static/css/bootstrap-theme.min.css" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-    <title>Mersenne Twister (MT19937) &#8212; RandomGen v1.16.4 documentation</title>
+    <title>Mersenne Twister (MT19937) &#8212; RandomGen v1.16.5 documentation</title>
     <link rel="stylesheet" href="../_static/guzzle.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
@@ -45,7 +45,7 @@
         <li class="right" >
           <a href="generated/randomgen.dsfmt.DSFMT.random_raw.html" title="randomgen.dsfmt.DSFMT.random_raw"
              accesskey="P">previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../index.html">RandomGen v1.16.4 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">RandomGen v1.16.5 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="index.html" accesskey="U">Basic Random Number Generators</a> &#187;</li> 
       </ul>
     </div>
@@ -56,7 +56,7 @@
       </div>
   <div id="left-column">
     <div class="sphinxsidebar"><a href="
-    ../index.html" class="text-logo">RandomGen v1.16.4</a>
+    ../index.html" class="text-logo">RandomGen v1.16.5</a>
 <div class="sidebar-block">
   <div class="sidebar-wrapper">
     <h2>Table Of Contents</h2>
@@ -131,40 +131,36 @@
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><p><strong>seed</strong> (<em>{None</em><em>, </em><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a><em>, </em><em>array_like}</em><em>, </em><em>optional</em>) – Random seed used to initialize the pseudo-random number generator.  Can
 be any integer between 0 and 2**32 - 1 inclusive, an array (or other
-sequence) of such integers, or <code class="docutils literal notranslate"><span class="pre">None</span></code> (the default).  If <cite>seed</cite> is
-<code class="docutils literal notranslate"><span class="pre">None</span></code>, then will attempt to read data from <code class="docutils literal notranslate"><span class="pre">/dev/urandom</span></code>
-(or the Windows analog) if available or seed from the clock otherwise.</p>
+sequence) of unsigned 32-bit integers, or <code class="docutils literal notranslate"><span class="pre">None</span></code> (the default).  If
+<cite>seed</cite> is <code class="docutils literal notranslate"><span class="pre">None</span></code>, a 32-bit unsigned integer is read from
+<code class="docutils literal notranslate"><span class="pre">/dev/urandom</span></code> (or the Windows analog) if available. If unavailable,
+a 32-bit hash of the time and process ID is used.</p>
 </dd>
 </dl>
 <p class="rubric">Notes</p>
-<p><code class="docutils literal notranslate"><span class="pre">MT19937</span></code> directly provides generators for doubles, and unsigned 32 and 64-
-bit integers <a class="footnote-reference brackets" href="#id4" id="id1">1</a> . These are not directly available and must be consumed
-via a <code class="docutils literal notranslate"><span class="pre">RandomGenerator</span></code> object.</p>
+<p><code class="docutils literal notranslate"><span class="pre">MT19937</span></code> provides a capsule containing function pointers that produce
+doubles, and unsigned 32 and 64- bit integers <a class="footnote-reference brackets" href="#id4" id="id1">1</a>. These are not
+directly consumable in Python and must be consumed by a <code class="docutils literal notranslate"><span class="pre">RandomGenerator</span></code>
+or similar object that supports low-level access.</p>
 <p>The Python stdlib module “random” also contains a Mersenne Twister
 pseudo-random number generator.</p>
 <p><strong>State and Seeding</strong></p>
-<p>The <code class="docutils literal notranslate"><span class="pre">MT19937</span></code> state vector consists of a 768 element array of
+<p>The <code class="docutils literal notranslate"><span class="pre">MT19937</span></code> state vector consists of a 768-element array of
 32-bit unsigned integers plus a single integer value between 0 and 768
-indicating  the current position within the main array.</p>
+that indexes the current position within the main array.</p>
 <p><code class="docutils literal notranslate"><span class="pre">MT19937</span></code> is seeded using either a single 32-bit unsigned integer
 or a vector of 32-bit unsigned integers.  In either case, the input seed is
 used as an input (or inputs) for a hashing function, and the output of the
 hashing function is used as the initial state. Using a single 32-bit value
 for the seed can only initialize a small range of the possible initial
 state values.</p>
-<p><strong>Compatibility Guarantee</strong></p>
-<p><code class="docutils literal notranslate"><span class="pre">MT19937</span></code> make a compatibility guarantee. A fixed seed and a fixed
-series of calls to <code class="docutils literal notranslate"><span class="pre">MT19937</span></code> methods will always produce the same
-results up to roundoff error except when the values were incorrect.
-Incorrect values will be fixed and the version in which the fix was
-made will be noted in the relevant docstring.</p>
 <p><strong>Parallel Features</strong></p>
 <p><code class="docutils literal notranslate"><span class="pre">MT19937</span></code> can be used in parallel applications by
 calling the method <code class="docutils literal notranslate"><span class="pre">jump</span></code> which advances the state as-if <span class="math notranslate nohighlight">\(2^{128}\)</span>
-random numbers have been generated (<a class="footnote-reference brackets" href="#id4" id="id2">1</a>, <a class="footnote-reference brackets" href="#id5" id="id3">2</a>). This allows the original sequence to
-be split so that distinct segments can be used in each worker process.  All
-generators should be initialized with the same seed to ensure that the
-segments come from the same sequence.</p>
+random numbers have been generated (<a class="footnote-reference brackets" href="#id4" id="id2">1</a>, <a class="footnote-reference brackets" href="#id5" id="id3">2</a>). This allows the original
+sequence to be split so that distinct segments can be used in each worker
+process. All generators should be initialized with the same seed to ensure
+that the segments come from the same sequence.</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">randomgen.entropy</span> <span class="k">import</span> <span class="n">random_entropy</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">randomgen</span> <span class="k">import</span> <span class="n">RandomGenerator</span><span class="p">,</span> <span class="n">MT19937</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">seed</span> <span class="o">=</span> <span class="n">random_entropy</span><span class="p">()</span>
@@ -174,6 +170,9 @@ segments come from the same sequence.</p>
 <span class="gp">... </span>    <span class="n">rs</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">brng</span><span class="o">.</span><span class="n">jump</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
 </pre></div>
 </div>
+<p><strong>Compatibility Guarantee</strong></p>
+<p><code class="docutils literal notranslate"><span class="pre">MT19937</span></code> makes a guarantee that a fixed seed and will always produce
+the same random integer stream.</p>
 <p class="rubric">References</p>
 <dl class="footnote brackets">
 <dt class="label" id="id4"><span class="brackets">1</span><span class="fn-backref">(<a href="#id1">1</a>,<a href="#id2">2</a>)</span></dt>
@@ -301,7 +300,7 @@ No. 3, Summer 2008, pp. 385-390.</p>
         <li class="right" >
           <a href="generated/randomgen.dsfmt.DSFMT.random_raw.html" title="randomgen.dsfmt.DSFMT.random_raw"
              >previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../index.html">RandomGen v1.16.4 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">RandomGen v1.16.5 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="index.html" >Basic Random Number Generators</a> &#187;</li> 
       </ul>
     </div>

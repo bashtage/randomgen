@@ -13,7 +13,7 @@
   <link rel="stylesheet" type="text/css" href="../_static/css/bootstrap-theme.min.css" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-    <title>Xorshift1024*φ &#8212; RandomGen v1.16.4 documentation</title>
+    <title>Xorshift1024*φ &#8212; RandomGen v1.16.5 documentation</title>
     <link rel="stylesheet" href="../_static/guzzle.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
@@ -45,7 +45,7 @@
         <li class="right" >
           <a href="generated/randomgen.xoroshiro128.Xoroshiro128.random_raw.html" title="randomgen.xoroshiro128.Xoroshiro128.random_raw"
              accesskey="P">previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../index.html">RandomGen v1.16.4 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">RandomGen v1.16.5 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="index.html" accesskey="U">Basic Random Number Generators</a> &#187;</li> 
       </ul>
     </div>
@@ -56,7 +56,7 @@
       </div>
   <div id="left-column">
     <div class="sphinxsidebar"><a href="
-    ../index.html" class="text-logo">RandomGen v1.16.4</a>
+    ../index.html" class="text-logo">RandomGen v1.16.5</a>
 <div class="sidebar-block">
   <div class="sidebar-wrapper">
     <h2>Table Of Contents</h2>
@@ -127,37 +127,42 @@
 <dt id="randomgen.xorshift1024.Xorshift1024">
 <em class="property">class </em><code class="descclassname">randomgen.xorshift1024.</code><code class="descname">Xorshift1024</code><span class="sig-paren">(</span><em>seed=None</em><span class="sig-paren">)</span><a class="headerlink" href="#randomgen.xorshift1024.Xorshift1024" title="Permalink to this definition">¶</a></dt>
 <dd><p>Container for the xorshift1024*φ pseudo-random number generator.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>seed</strong> (<em>{None</em><em>, </em><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a><em>, </em><em>array_like}</em><em>, </em><em>optional</em>) – Random seed initializing the pseudo-random number generator.
+Can be an integer in [0, 2**64-1], array of integers in [0, 2**64-1]
+or <code class="docutils literal notranslate"><span class="pre">None</span></code> (the default). If <cite>seed</cite> is <code class="docutils literal notranslate"><span class="pre">None</span></code>, then  data is read
+from <code class="docutils literal notranslate"><span class="pre">/dev/urandom</span></code> (or the Windows analog) if available.  If
+unavailable, a hash of the time and process ID is used.</p>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
 <p>xorshift1024*φ is a 64-bit implementation of Saito and Matsumoto’s XSadd
 generator <a class="footnote-reference brackets" href="#id5" id="id1">1</a> (see also <a class="footnote-reference brackets" href="#id6" id="id2">2</a>, <a class="footnote-reference brackets" href="#id7" id="id3">3</a>, <a class="footnote-reference brackets" href="#id8" id="id4">4</a>). xorshift1024*φ has a period of
 <span class="math notranslate nohighlight">\(2^{1024} - 1\)</span> and supports jumping the sequence in increments of
 <span class="math notranslate nohighlight">\(2^{512}\)</span>, which allows multiple non-overlapping sequences to be
 generated.</p>
-<p><code class="docutils literal notranslate"><span class="pre">Xorshift1024</span></code> exposes no user-facing API except <code class="docutils literal notranslate"><span class="pre">generator</span></code>,
-<code class="docutils literal notranslate"><span class="pre">state</span></code>, <code class="docutils literal notranslate"><span class="pre">cffi</span></code> and <code class="docutils literal notranslate"><span class="pre">ctypes</span></code>. Designed for use in a
-<code class="docutils literal notranslate"><span class="pre">RandomGenerator</span></code> object.</p>
-<p><strong>Compatibility Guarantee</strong></p>
-<p><code class="docutils literal notranslate"><span class="pre">Xorshift1024</span></code> guarantees that a fixed seed will always produce the
-same results.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>seed</strong> (<em>{None</em><em>, </em><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a><em>, </em><em>array_like}</em><em>, </em><em>optional</em>) – Random seed initializing the pseudo-random number generator.
-Can be an integer in [0, 2**64-1], array of integers in
-[0, 2**64-1] or <code class="docutils literal notranslate"><span class="pre">None</span></code> (the default). If <cite>seed</cite> is <code class="docutils literal notranslate"><span class="pre">None</span></code>,
-then <code class="docutils literal notranslate"><span class="pre">Xorshift1024</span></code> will try to read data from
-<code class="docutils literal notranslate"><span class="pre">/dev/urandom</span></code> (or the Windows analog) if available.  If
-unavailable, a 64-bit hash of the time and process ID is used.</p>
-</dd>
-</dl>
-<p class="rubric">Notes</p>
-<p>See <code class="docutils literal notranslate"><span class="pre">Xoroshiro128</span></code> for a faster implementation that has a smaller
-period.</p>
+<p><code class="docutils literal notranslate"><span class="pre">Xorshift1024</span></code> provides a capsule containing function pointers that
+produce doubles, and unsigned 32 and 64- bit integers. These are not
+directly consumable in Python and must be consumed by a <code class="docutils literal notranslate"><span class="pre">RandomGenerator</span></code>
+or similar object that supports low-level access.</p>
+<p>See <code class="docutils literal notranslate"><span class="pre">Xoroshiro128</span></code> for a faster basic RNG that has a smaller period.</p>
+<p><strong>State and Seeding</strong></p>
+<p>The <code class="docutils literal notranslate"><span class="pre">Xoroshiro128</span></code> state vector consists of a 16-element array of 64-bit
+unsigned integers.</p>
+<p><code class="docutils literal notranslate"><span class="pre">Xoroshiro1024</span></code> is seeded using either a single 64-bit unsigned integer
+or a vector of 64-bit unsigned integers.  In either case, the seed is
+used as an input for another simple random number generator,
+SplitMix64, and the output of this PRNG function is used as the initial
+state. Using a single 64-bit value for the seed can only initialize a
+small range of the possible initial state values.</p>
 <p><strong>Parallel Features</strong></p>
-<p><code class="docutils literal notranslate"><span class="pre">Xorshift1024</span></code> can be used in parallel applications by
-calling the method <code class="docutils literal notranslate"><span class="pre">jump</span></code> which advances the state as-if
-<span class="math notranslate nohighlight">\(2^{512}\)</span> random numbers have been generated. This
-allows the original sequence to be split so that distinct segments can be used
-in each worker process. All generators should be initialized with the same
-seed to ensure that the segments come from the same sequence.</p>
+<p><code class="docutils literal notranslate"><span class="pre">Xoroshiro1024</span></code> can be used in parallel applications by calling the
+method <code class="docutils literal notranslate"><span class="pre">jump</span></code> which advances the state as-if <span class="math notranslate nohighlight">\(2^{512}\)</span> random
+numbers have been generated. This allows the original sequence to be split
+so that distinct segments can be used in each worker process. All
+generators should be initialized with the same seed to ensure that
+the segments come from the same sequence.</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">randomgen</span> <span class="k">import</span> <span class="n">RandomGenerator</span><span class="p">,</span> <span class="n">Xorshift1024</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">rg</span> <span class="o">=</span> <span class="p">[</span><span class="n">RandomGenerator</span><span class="p">(</span><span class="n">Xorshift1024</span><span class="p">(</span><span class="mi">1234</span><span class="p">))</span> <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">10</span><span class="p">)]</span>
 <span class="go"># Advance each Xorshift1024 instance by i jumps</span>
@@ -165,19 +170,9 @@ seed to ensure that the segments come from the same sequence.</p>
 <span class="gp">... </span>    <span class="n">rg</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">brng</span><span class="o">.</span><span class="n">jump</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
 </pre></div>
 </div>
-<p><strong>State and Seeding</strong></p>
-<p>The <code class="docutils literal notranslate"><span class="pre">Xorshift1024</span></code> state vector consists of a 16 element array
-of 64-bit unsigned integers.</p>
-<p><code class="docutils literal notranslate"><span class="pre">Xorshift1024</span></code> is seeded using either a single 64-bit unsigned integer
-or a vector of 64-bit unsigned integers.  In either case, the input seed is
-used as an input (or inputs) for another simple random number generator,
-Splitmix64, and the output of this PRNG function is used as the initial state.
-Using a single 64-bit value for the seed can only initialize a small range of
-the possible initial state values.  When using an array, the SplitMix64 state
-for producing the ith component of the initial state is XORd with the ith
-value of the seed array until the seed array is exhausted. When using an array
-the initial state for the SplitMix64 state is 0 so that using a single element
-array and using the same value as a scalar will produce the same initial state.</p>
+<p><strong>Compatibility Guarantee</strong></p>
+<p><code class="docutils literal notranslate"><span class="pre">Xorshift1024</span></code> makes a guarantee that a fixed seed will always
+produce the same random integer stream.</p>
 <p class="rubric">Examples</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">randomgen</span> <span class="k">import</span> <span class="n">RandomGenerator</span><span class="p">,</span> <span class="n">Xorshift1024</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">rg</span> <span class="o">=</span> <span class="n">RandomGenerator</span><span class="p">(</span><span class="n">Xorshift1024</span><span class="p">(</span><span class="mi">1234</span><span class="p">))</span>
@@ -323,7 +318,7 @@ generators.” CoRR, abs/1403.0930, 2014.</p>
         <li class="right" >
           <a href="generated/randomgen.xoroshiro128.Xoroshiro128.random_raw.html" title="randomgen.xoroshiro128.Xoroshiro128.random_raw"
              >previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../index.html">RandomGen v1.16.4 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">RandomGen v1.16.5 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="index.html" >Basic Random Number Generators</a> &#187;</li> 
       </ul>
     </div>
