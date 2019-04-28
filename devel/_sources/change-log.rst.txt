@@ -3,8 +3,17 @@
 Change Log
 ----------
 
-Since v1.16.4
-=============
+v1.16.5
+=======
+- Fixed bugs in :func:`~randomgen.mtrand.RandomState.laplace`,
+  :func:`~randomgen.mtrand.RandomState.gumbel`,
+  :func:`~randomgen.mtrand.RandomState.logseries`,
+  :func:`~randomgen.mtrand.RandomState.normal`,
+  :func:`~randomgen.mtrand.RandomState.standard_normal`,
+  :func:`~randomgen.mtrand.RandomState.standard_exponential`,
+  :func:`~randomgen.mtrand.RandomState.exponential`, and
+  :func:`~randomgen.mtrand.RandomState.logistic` that could result in ``nan``
+  values in rare circumstances (about 1 in :math:`10^{53}` draws).
 - Added keyword ``closed`` to :func:`~randomgen.generator.RandomGenerator.randint`
   which changes sampling from the half-open interval ``[low, high)`` to the closed
   interval ``[low, high]``.
