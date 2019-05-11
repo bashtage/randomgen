@@ -32,7 +32,7 @@ Simple random data
 
    ~RandomGenerator.rand
    ~RandomGenerator.randn
-   ~RandomGenerator.randint
+   ~RandomGenerator.integers
    ~RandomGenerator.random_integers
    ~RandomGenerator.random_sample
    ~RandomGenerator.choice

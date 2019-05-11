@@ -368,23 +368,23 @@ class TestAgainstNumPy(object):
     def test_randint(self):
         self._set_common_state()
         self._is_state_common()
-        compare_2_input(self.rg.randint,
+        compare_2_input(self.rg.integers,
                         self.nprs.randint,
                         is_scalar=True)
         self._is_state_common()
 
     def test_scalar(self):
         s = RandomGenerator(MT19937(0))
-        assert_equal(s.randint(1000), 684)
+        assert_equal(s.integers(1000), 684)
         s1 = np.random.RandomState(0)
         assert_equal(s1.randint(1000), 684)
-        assert_equal(s1.randint(1000), s.randint(1000))
+        assert_equal(s1.randint(1000), s.integers(1000))
 
         s = RandomGenerator(MT19937(4294967295))
-        assert_equal(s.randint(1000), 419)
+        assert_equal(s.integers(1000), 419)
         s1 = np.random.RandomState(4294967295)
         assert_equal(s1.randint(1000), 419)
-        assert_equal(s1.randint(1000), s.randint(1000))
+        assert_equal(s1.randint(1000), s.integers(1000))
 
         self.rg.brng.seed(4294967295)
         self.nprs.seed(4294967295)
@@ -392,16 +392,16 @@ class TestAgainstNumPy(object):
 
     def test_array(self):
         s = RandomGenerator(MT19937(range(10)))
-        assert_equal(s.randint(1000), 468)
+        assert_equal(s.integers(1000), 468)
         s = np.random.RandomState(range(10))
         assert_equal(s.randint(1000), 468)
 
         s = RandomGenerator(MT19937(np.arange(10)))
-        assert_equal(s.randint(1000), 468)
+        assert_equal(s.integers(1000), 468)
         s = RandomGenerator(MT19937([0]))
-        assert_equal(s.randint(1000), 973)
+        assert_equal(s.integers(1000), 973)
         s = RandomGenerator(MT19937([4294967295]))
-        assert_equal(s.randint(1000), 265)
+        assert_equal(s.integers(1000), 265)
 
     def test_dir(self):
         nprs_d = set(dir(self.nprs))
@@ -417,9 +417,11 @@ class TestAgainstNumPy(object):
                           'test', '__warningregistry__', '_numpy_tester',
                           'division', 'get_state', 'set_state', 'seed',
                           'ranf', 'random', 'sample', 'absolute_import',
-                          'print_function', 'RandomState', 'Lock']
+                          'print_function', 'RandomState', 'Lock',
+                          'randint']
         mod += known_exlcuded
         diff = set(npmod).difference(mod)
+        print(diff)
         assert_equal(len(diff), 0)
 
     # Tests using legacy generator

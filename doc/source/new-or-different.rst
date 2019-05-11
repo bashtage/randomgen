@@ -86,9 +86,9 @@ What's New or Different
   rg.random_sample(out=existing[:2])
   print(existing)
 
-* :meth:`~randomgen.generator.RandomGenerator.randint` supports broadcasting inputs.
+* :meth:`~randomgen.generator.RandomGenerator.integers` supports broadcasting inputs.
 
-* :meth:`~randomgen.generator.RandomGenerator.randint` supports
+* :meth:`~randomgen.generator.RandomGenerator.integers` supports
   drawing from open (default, ``[low, high)``) or closed
   (``[low, high]``) intervals using the keyword argument
   ``closed``. Closed intervals are simpler to use when the
@@ -97,9 +97,9 @@ What's New or Different
 .. ipython:: python
 
   rg.seed(1234)
-  rg.randint(0, np.iinfo(np.int64).max+1)
+  rg.integers(0, np.iinfo(np.int64).max+1)
   rg.seed(1234)
-  rg.randint(0, np.iinfo(np.int64).max, closed=True)
+  rg.integers(0, np.iinfo(np.int64).max, closed=True)
 
 * The ``closed`` interval is particularly helpful when using arrays since
   it avoids object-dtype arrays when sampling from the full range.
@@ -110,19 +110,19 @@ What's New or Different
   lower = np.zeros((2, 1), dtype=np.uint64)
   upper = np.array([10, np.iinfo(np.uint64).max+1], dtype=np.object)
   upper
-  rg.randint(lower, upper, dtype=np.uint64)
+  rg.integers(lower, upper, dtype=np.uint64)
   rg.seed(1234)
   upper = np.array([10, np.iinfo(np.uint64).max], dtype=np.uint64)
   upper
-  rg.randint(lower, upper, closed=True, dtype=np.uint64)
+  rg.integers(lower, upper, closed=True, dtype=np.uint64)
 
 * Support for Lemire’s method of generating uniform integers on an
   arbitrary interval by setting ``use_masked=True`` in
-  (:meth:`~randomgen.generator.RandomGenerator.randint`).
+  (:meth:`~randomgen.generator.RandomGenerator.integers`).
 
 .. ipython:: python
 
-  %timeit rg.randint(0, 1535, size=100000, use_masked=False)
+  %timeit rg.integers(0, 1535, size=100000, use_masked=False)
   %timeit numpy.random.randint(0, 1535, size=100000)
 
 * :meth:`~randomgen.generator.RandomGenerator.multinomial`
