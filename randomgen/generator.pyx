@@ -456,17 +456,17 @@ cdef class RandomGenerator:
         return self.integers(*args, **kwargs)
 
     def integers(self, low, high=None, size=None, dtype=np.int64,
-                 use_masked=None, closed=False):
+                 use_masked=None, endpoint=False, closed=None):
         """
-        integers(low, high=None, size=None, dtype='int64', use_masked=True, closed=False)
+        integers(low, high=None, size=None, dtype='int64', use_masked=True, endpoint=False)
 
         Return random integers from `low` (inclusive) to `high` (exclusive), or
-        if closed=True, `low` (inclusive) to `high` (inclusive).
+        if endpoint=True, `low` (inclusive) to `high` (inclusive).
 
         Return random integers from the "discrete uniform" distribution of
         the specified dtype in the "half-open" interval [`low`, `high`). If
         `high` is None (the default), then results are from [0, `low`). If
-        `closed` is True, then samples from the closed interval [`low`, `high`]
+        `endpoint` is True, then samples from the closed interval [`low`, `high`]
         or [0, `low`] if `high` is None.
 
         Parameters
@@ -498,7 +498,7 @@ cdef class RandomGenerator:
 
             .. versionadded:: 1.15.1
 
-        closed : bool
+        endpoint : bool
             If true, sample from the interval [low, high] instead of the
             default [low, high)
 
@@ -560,6 +560,11 @@ cdef class RandomGenerator:
             warnings.warn('use_masked will be removed in the final release and'
                           'only the Lemire method will be available.',
                           DeprecationWarning)
+        if closed is not None:
+            import warnings
+            warnings.warn('closed has been deprecated in favor of endpoint.',
+                          DeprecationWarning)
+            endpoint = closed
 
         cdef bint _use_masked = use_masked is None or use_masked
         if high is None:
@@ -571,23 +576,23 @@ cdef class RandomGenerator:
             raise TypeError('Unsupported dtype "%s" for integers' % key)
 
         if key == 'int32':
-            ret = _rand_int32(low, high, size, _use_masked, closed, self._brng, self.lock)
+            ret = _rand_int32(low, high, size, _use_masked, endpoint, self._brng, self.lock)
         elif key == 'int64':
-            ret = _rand_int64(low, high, size, _use_masked, closed, self._brng, self.lock)
+            ret = _rand_int64(low, high, size, _use_masked, endpoint, self._brng, self.lock)
         elif key == 'int16':
-            ret = _rand_int16(low, high, size, _use_masked, closed, self._brng, self.lock)
+            ret = _rand_int16(low, high, size, _use_masked, endpoint, self._brng, self.lock)
         elif key == 'int8':
-            ret = _rand_int8(low, high, size, _use_masked, closed, self._brng, self.lock)
+            ret = _rand_int8(low, high, size, _use_masked, endpoint, self._brng, self.lock)
         elif key == 'uint64':
-            ret = _rand_uint64(low, high, size, _use_masked, closed, self._brng, self.lock)
+            ret = _rand_uint64(low, high, size, _use_masked, endpoint, self._brng, self.lock)
         elif key == 'uint32':
-            ret = _rand_uint32(low, high, size, _use_masked, closed, self._brng, self.lock)
+            ret = _rand_uint32(low, high, size, _use_masked, endpoint, self._brng, self.lock)
         elif key == 'uint16':
-            ret = _rand_uint16(low, high, size, _use_masked, closed, self._brng, self.lock)
+            ret = _rand_uint16(low, high, size, _use_masked, endpoint, self._brng, self.lock)
         elif key == 'uint8':
-            ret = _rand_uint8(low, high, size, _use_masked, closed, self._brng, self.lock)
+            ret = _rand_uint8(low, high, size, _use_masked, endpoint, self._brng, self.lock)
         elif key == 'bool':
-            ret = _rand_bool(low, high, size, _use_masked, closed, self._brng, self.lock)
+            ret = _rand_bool(low, high, size, _use_masked, endpoint, self._brng, self.lock)
 
         if size is None and dtype in (np.bool, np.int, np.long):
             if np.array(ret).shape == ():
