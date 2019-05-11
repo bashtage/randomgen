@@ -116,7 +116,7 @@ cdef class PCG64:
            Statistically Good Algorithms for Random Number Generation"
     """
     cdef pcg64_state *rng_state
-    cdef brng_t *_brng
+    cdef brng_t _brng
     cdef public object capsule
     cdef object _ctypes
     cdef object _cffi
@@ -126,7 +126,6 @@ cdef class PCG64:
     def __init__(self, seed=None, inc=0):
         self.rng_state = <pcg64_state *>malloc(sizeof(pcg64_state))
         self.rng_state.pcg_state = <pcg64_random_t *>malloc(sizeof(pcg64_random_t))
-        self._brng = <brng_t *>malloc(sizeof(brng_t))
         self.seed(seed, inc)
         self.lock = Lock()
 
@@ -141,7 +140,7 @@ cdef class PCG64:
         self._generator = None
 
         cdef const char *name = "BasicRNG"
-        self.capsule = PyCapsule_New(<void *>self._brng, name, NULL)
+        self.capsule = PyCapsule_New(<void *>&self._brng, name, NULL)
 
     # Pickling support:
     def __getstate__(self):
@@ -157,8 +156,6 @@ cdef class PCG64:
     def __dealloc__(self):
         if self.rng_state:
             free(self.rng_state)
-        if self._brng:
-            free(self._brng)
 
     cdef _reset_state_variables(self):
         self.rng_state.has_uint32 = 0
@@ -193,10 +190,10 @@ cdef class PCG64:
 
         See the class docstring for the number of bits returned.
         """
-        return random_raw(self._brng, self.lock, size, output)
+        return random_raw(&self._brng, self.lock, size, output)
 
     def _benchmark(self, Py_ssize_t cnt, method=u'uint64'):
-        return benchmark(self._brng, self.lock, cnt, method)
+        return benchmark(&self._brng, self.lock, cnt, method)
 
     def seed(self, seed=None, inc=0):
         """
@@ -382,7 +379,7 @@ cdef class PCG64:
             * brng - pointer to the Basic RNG struct
         """
         if self._ctypes is None:
-            self._ctypes = prepare_ctypes(self._brng)
+            self._ctypes = prepare_ctypes(&self._brng)
 
         return self._ctypes
 
@@ -405,7 +402,7 @@ cdef class PCG64:
         """
         if self._cffi is not None:
             return self._cffi
-        self._cffi = prepare_cffi(self._brng)
+        self._cffi = prepare_cffi(&self._brng)
         return self._cffi
 
     @property

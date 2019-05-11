@@ -126,7 +126,7 @@ cdef class Xorshift1024:
     """
 
     cdef xorshift1024_state *rng_state
-    cdef brng_t *_brng
+    cdef brng_t _brng
     cdef public object capsule
     cdef object _ctypes
     cdef object _cffi
@@ -135,7 +135,6 @@ cdef class Xorshift1024:
 
     def __init__(self, seed=None):
         self.rng_state = <xorshift1024_state *>malloc(sizeof(xorshift1024_state))
-        self._brng = <brng_t *>malloc(sizeof(brng_t))
         self.seed(seed)
         self.lock = Lock()
 
@@ -150,7 +149,7 @@ cdef class Xorshift1024:
         self._generator = None
 
         cdef const char *name = "BasicRNG"
-        self.capsule = PyCapsule_New(<void *>self._brng, name, NULL)
+        self.capsule = PyCapsule_New(<void *>&self._brng, name, NULL)
 
     # Pickling support:
     def __getstate__(self):
@@ -166,8 +165,6 @@ cdef class Xorshift1024:
     def __dealloc__(self):
         if self.rng_state:
             free(self.rng_state)
-        if self._brng:
-            free(self._brng)
 
     cdef _reset_state_variables(self):
         self.rng_state.has_uint32 = 0
@@ -202,10 +199,10 @@ cdef class Xorshift1024:
 
         See the class docstring for the number of bits returned.
         """
-        return random_raw(self._brng, self.lock, size, output)
+        return random_raw(&self._brng, self.lock, size, output)
 
     def _benchmark(self, Py_ssize_t cnt, method=u'uint64'):
-        return benchmark(self._brng, self.lock, cnt, method)
+        return benchmark(&self._brng, self.lock, cnt, method)
 
     def seed(self, seed=None):
         """
@@ -320,7 +317,7 @@ cdef class Xorshift1024:
             * brng - pointer to the Basic RNG struct
         """
         if self._ctypes is None:
-            self._ctypes = prepare_ctypes(self._brng)
+            self._ctypes = prepare_ctypes(&self._brng)
 
         return self._ctypes
 
@@ -343,7 +340,7 @@ cdef class Xorshift1024:
         """
         if self._cffi is not None:
             return self._cffi
-        self._cffi = prepare_cffi(self._brng)
+        self._cffi = prepare_cffi(&self._brng)
         return self._cffi
 
     @property
@@ -354,7 +351,7 @@ cdef class Xorshift1024:
         Returns
         -------
         gen : randomgen.generator.RandomGenerator
-            Random generator used this instance as the core PRNG
+            Random generator used by this instance as the core PRNG
         """
         if self._generator is None:
             from .generator import RandomGenerator
