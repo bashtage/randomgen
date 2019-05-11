@@ -91,7 +91,7 @@ What's New or Different
 * :meth:`~randomgen.generator.RandomGenerator.integers` supports
   drawing from open (default, ``[low, high)``) or closed
   (``[low, high]``) intervals using the keyword argument
-  ``closed``. Closed intervals are simpler to use when the
+  ``endpoint``. Closed intervals are simpler to use when the
   distribution may include the maximum value of a given integer type.
 
 .. ipython:: python
@@ -99,9 +99,9 @@ What's New or Different
   rg.seed(1234)
   rg.integers(0, np.iinfo(np.int64).max+1)
   rg.seed(1234)
-  rg.integers(0, np.iinfo(np.int64).max, closed=True)
+  rg.integers(0, np.iinfo(np.int64).max, endpoint=True)
 
-* The ``closed`` interval is particularly helpful when using arrays since
+* The closed interval is particularly helpful when using arrays since
   it avoids object-dtype arrays when sampling from the full range.
 
 .. ipython:: python
@@ -114,13 +114,14 @@ What's New or Different
   rg.seed(1234)
   upper = np.array([10, np.iinfo(np.uint64).max], dtype=np.uint64)
   upper
-  rg.integers(lower, upper, closed=True, dtype=np.uint64)
+  rg.integers(lower, upper, endpoint=True, dtype=np.uint64)
 
 * Support for Lemire’s method of generating uniform integers on an
   arbitrary interval by setting ``use_masked=True`` in
   (:meth:`~randomgen.generator.RandomGenerator.integers`).
 
 .. ipython:: python
+  :okwarning:
 
   %timeit rg.integers(0, 1535, size=100000, use_masked=False)
   %timeit numpy.random.randint(0, 1535, size=100000)
