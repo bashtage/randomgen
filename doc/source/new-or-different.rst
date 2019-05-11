@@ -55,7 +55,7 @@ What's New or Different
   to produce either single or double prevision uniform random variables for
   select core distributions
 
-  * Uniforms (:meth:`~randomgen.generator.RandomGenerator.random_sample` and
+  * Uniforms (:meth:`~randomgen.generator.RandomGenerator.random` and
     :meth:`~randomgen.generator.RandomGenerator.rand`)
   * Normals (:meth:`~randomgen.generator.RandomGenerator.standard_normal` and
     :meth:`~randomgen.generator.RandomGenerator.randn`)
@@ -65,14 +65,14 @@ What's New or Different
 .. ipython:: python
 
   rg.seed(0)
-  rg.random_sample(3, dtype='d')
+  rg.random(3, dtype='d')
   rg.seed(0)
-  rg.random_sample(3, dtype='f')
+  rg.random(3, dtype='f')
 
 * Optional ``out`` argument that allows existing arrays to be filled for
   select core distributions
 
-  * Uniforms (:meth:`~randomgen.generator.RandomGenerator.random_sample`)
+  * Uniforms (:meth:`~randomgen.generator.RandomGenerator.random`)
   * Normals (:meth:`~randomgen.generator.RandomGenerator.standard_normal`)
   * Standard Gammas (:meth:`~randomgen.generator.RandomGenerator.standard_gamma`)
   * Standard Exponentials (:meth:`~randomgen.generator.RandomGenerator.standard_exponential`)
@@ -83,7 +83,7 @@ What's New or Different
 .. ipython:: python
 
   existing = np.zeros(4)
-  rg.random_sample(out=existing[:2])
+  rg.random(out=existing[:2])
   print(existing)
 
 * :meth:`~randomgen.generator.RandomGenerator.randint` supports broadcasting inputs.

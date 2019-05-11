@@ -70,14 +70,14 @@ sole argument. Note that the basic RNG must be instantized.
 
   from randomgen import RandomGenerator, MT19937
   rg = RandomGenerator(MT19937())
-  rg.random_sample()
+  rg.random()
 
 Seed information is directly passed to the basic RNG.
 
 .. code-block:: python
 
   rg = RandomGenerator(MT19937(12345))
-  rg.random_sample()
+  rg.random()
 
 A shorthand method is also available which uses the
 :meth:`~randomgen.mt19937.MT19937.generator` property from a basic RNG to
@@ -86,7 +86,7 @@ access an embedded random generator.
 .. code-block:: python
 
   rg = MT19937(12345).generator
-  rg.random_sample()
+  rg.random()
 
 What's New or Different
 ~~~~~~~~~~~~~~~~~~~~~~~
