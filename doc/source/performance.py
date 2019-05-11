@@ -53,7 +53,7 @@ npfuncs.update(funcs)
 del npfuncs['Complex Normals']
 npfuncs.update({'64-bit Unsigned Ints':
                 f'randint(2**64, dtype="uint64", size={SIZE})',
-                'Uniforms': f'random_sample(size={SIZE})'})
+                'Uniforms': f'random(size={SIZE})'})
 
 setup = """
 from numpy.random import RandomState

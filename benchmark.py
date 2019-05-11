@@ -16,7 +16,7 @@ if '{brng}' == 'numpy':
 else:
     from randomgen import RandomGenerator, {brng}
     rg = RandomGenerator({brng}())
-rg.random_sample()
+rg.random()
 '''
 
 scale_32 = scale_64 = 1
@@ -78,7 +78,7 @@ def timer_raw():
 
 
 def timer_uniform():
-    command = 'rg.random_sample(1000000)'
+    command = 'rg.random(1000000)'
     run_timer(command, None, SETUP, 'Uniforms')
 
 

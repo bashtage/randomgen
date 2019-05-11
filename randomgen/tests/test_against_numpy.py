@@ -155,11 +155,11 @@ class TestAgainstNumPy(object):
         assert (state[1] == state2['state']['key']).all()
         assert (state[2] == state2['state']['pos'])
 
-    def test_random_sample(self):
+    def test_random(self):
         self._set_common_state()
         self._is_state_common()
         v1 = self.nprs.random_sample(10)
-        v2 = self.rg.random_sample(10)
+        v2 = self.rg.random(10)
 
         assert_array_equal(v1, v2)
 

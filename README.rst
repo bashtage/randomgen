@@ -54,7 +54,7 @@ Features
       from randomgen import RandomGenerator, MT19937
       rnd = RandomGenerator(MT19937())
       x = rnd.standard_normal(100)
-      y = rnd.random_sample(100)
+      y = rnd.random(100)
       z = rnd.randn(10,10)
 
 -  Default random generator is a fast generator called Xoroshiro128plus
@@ -75,7 +75,7 @@ Features
 -  Support for 32-bit floating randoms for core generators. Currently
    supported:
 
-   -  Uniforms (``random_sample``)
+   -  Uniforms (``random``)
    -  Exponentials (``standard_exponential``, both Inverse CDF and
       Ziggurat)
    -  Normals (``standard_normal``)
@@ -90,7 +90,7 @@ Features
 -  Support for filling existing arrays using ``out`` keyword argument.
    Currently supported in (both 32- and 64-bit outputs)
 
-   -  Uniforms (``random_sample``)
+   -  Uniforms (``random``)
    -  Exponentials (``standard_exponential``)
    -  Normals (``standard_normal``)
    -  Standard Gammas (via ``standard_gamma``)
@@ -265,14 +265,14 @@ The separate generators are importable from ``randomgen``
 
    from randomgen import RandomGenerator, ThreeFry, PCG64, MT19937
    rg = RandomGenerator(ThreeFry())
-   rg.random_sample(100)
+   rg.random(100)
 
    rg = RandomGenerator(PCG64())
-   rg.random_sample(100)
+   rg.random(100)
 
    # Identical to NumPy
    rg = RandomGenerator(MT19937())
-   rg.random_sample(100)
+   rg.random(100)
 
 .. _license-1:
 
