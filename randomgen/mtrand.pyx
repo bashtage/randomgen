@@ -5,7 +5,7 @@ import warnings
 
 import numpy as np
 
-from randomgen.bounded_integers import _randint_types
+from randomgen.bounded_integers import _integers_types
 from randomgen.mt19937 import MT19937 as _MT19937
 
 from cpython.pycapsule cimport PyCapsule_IsValid, PyCapsule_GetPointer
@@ -593,7 +593,7 @@ cdef class RandomState:
             low = 0
 
         key = np.dtype(dtype).name
-        if key not in _randint_types:
+        if key not in _integers_types:
             raise TypeError('Unsupported dtype "%s" for randint' % key)
 
         if key == 'int32':

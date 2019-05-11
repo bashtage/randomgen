@@ -499,14 +499,14 @@ class TestMT19937(Base):
         rs = RandomGenerator(self.brng(*self.data1['seed']))
         brng = rs.brng
         state = brng.state
-        desired = rs.randint(2 ** 16)
+        desired = rs.integers(2 ** 16)
         tup = (state['brng'], state['state']['key'], state['state']['pos'])
         brng.state = tup
-        actual = rs.randint(2 ** 16)
+        actual = rs.integers(2 ** 16)
         assert_equal(actual, desired)
         tup = tup + (0, 0.0)
         brng.state = tup
-        actual = rs.randint(2 ** 16)
+        actual = rs.integers(2 ** 16)
         assert_equal(actual, desired)
 
 

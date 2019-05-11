@@ -121,7 +121,7 @@ What's New or Different
   Cython.
 * Support for Lemire’s method [Lemire]_ of generating uniform integers on an
   arbitrary interval by setting ``use_masked=True`` in
-  (:meth:`~randomgen.generator.RandomGenerator.randint`).
+  (:meth:`~randomgen.generator.RandomGenerator.integers`).
 
 
 See :ref:`new-or-different` for a complete list of improvements and
