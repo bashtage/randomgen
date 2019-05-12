@@ -39,7 +39,7 @@ cdef class RandomState:
 
     **Compatibility Guarantee**
 
-    A fixed basic RNG using a fixed seed and a fixed series of calls to
+    A fixed bit generator using a fixed seed and a fixed series of calls to
     'RandomState' methods using the same parameters will always produce the
     same results up to roundoff error except when the values were incorrect.
     `RandomState` is effectively frozen and will only recieve updates that
@@ -133,17 +133,17 @@ cdef class RandomState:
         """
         seed(self, *args, **kwargs)
 
-        Reseed the basic RNG.
+        Reseed the bit generator.
 
-        Parameters depend on the basic RNG used.
+        Parameters depend on the bit generator used.
 
         Notes
         -----
-        Arguments are directly passed to the basic RNG. This is a convenience
+        Arguments are directly passed to the bit generator. This is a convenience
         function.
 
-        The best method to access seed is to directly use a basic RNG instance.
-        This example demonstrates this best practice.
+        The best method to access seed is to directly use a bit generator
+        instance. This example demonstrates this best practice.
 
         >>> from numpy.random import MT19937
         >>> from numpy.random import RandomState
@@ -178,12 +178,12 @@ cdef class RandomState:
             4. an integer ``has_gauss``.
             5. a float ``cached_gaussian``.
 
-            If `legacy` is False, or the basic RNG is not NT19937, then
+            If `legacy` is False, or the bit generator is not NT19937, then
             state is returned as a dictionary.
 
         legacy : bool
-            Flag indicating the return a legacy tuple state when the basic RNG
-            is MT19937.
+            Flag indicating the return a legacy tuple state when the bit
+            generator is MT19937.
 
         See Also
         --------
@@ -199,7 +199,7 @@ cdef class RandomState:
         st = self._bit_generator.state
         if st['bit_generator'] != 'MT19937' and legacy:
             warnings.warn('get_state and legacy can only be used with the '
-                          'MT19937 basic RNG. To silence this warning, '
+                          'MT19937 bit generator. To silence this warning, '
                           'set `legacy` to False.', RuntimeWarning)
             legacy = False
         st['has_gauss'] = self._aug_state.has_gauss
@@ -215,9 +215,10 @@ cdef class RandomState:
 
         Set the internal state of the generator from a tuple.
 
-        For use if one has reason to manually (re-)set the internal state of the
-        Basic RNG used by the RandomState instance. By default, RandomState uses
-        the "Mersenne Twister"[1]_ pseudo-random number generating algorithm.
+        For use if one has reason to manually (re-)set the internal state of
+        the bit generator used by the RandomState instance. By default,
+        RandomState uses the "Mersenne Twister"[1]_ pseudo-random number
+        generating algorithm.
 
         Parameters
         ----------

@@ -234,8 +234,8 @@ cdef object _rand_{{nptype}}(object low, object high, object size,
         If True then rejection sampling with a range mask is used else Lemire's algorithm is used.
     closed : bool
         If True then sample from [low, high].  If False, sample [low, high)
-    state : basic random state
-        State to use in the core random number generators
+    state : bit generator
+        Bit generator state to use in the core random number generators
     lock : threading.Lock
         Lock to prevent multiple using a single generator simultaneously
 

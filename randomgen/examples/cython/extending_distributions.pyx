@@ -38,7 +38,7 @@ def uniforms(Py_ssize_t n):
 
     x = Xoroshiro128()
     capsule = x.capsule
-    # Optional check that the capsule if from a Basic RNG
+    # Optional check that the capsule if from a BitGenerator
     if not PyCapsule_IsValid(capsule, capsule_name):
         raise ValueError("Invalid pointer to anon_func_state")
     # Cast the pointer

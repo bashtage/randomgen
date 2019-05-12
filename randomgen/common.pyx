@@ -91,24 +91,24 @@ cdef object random_raw(bitgen_t *bitgen, object lock, object size, object output
 
 cdef object prepare_cffi(bitgen_t *bitgen):
     """
-    Bundles the interfaces to interact with a Basic RNG using cffi
+    Bundles the interfaces to interact with a bit generator using cffi
 
     Parameters
     ----------
     bitgen : pointer
-        A pointer to a Basic RNG instance
+        A pointer to a bit generator instance
 
     Returns
     -------
     interface : namedtuple
-        The functions required to interface with the Basic RNG using cffi
+        The functions required to interface with the bit generator using cffi
 
         * state_address - Memory address of the state struct
         * state - pointer to the state struct
         * next_uint64 - function pointer to produce 64 bit integers
         * next_uint32 - function pointer to produce 32 bit integers
         * next_double - function pointer to produce doubles
-        * bitgen - pointer to the Basic RNG struct
+        * bitgen - pointer to the bit generator struct
     """
     try:
         import cffi
@@ -126,24 +126,24 @@ cdef object prepare_cffi(bitgen_t *bitgen):
 
 cdef object prepare_ctypes(bitgen_t *bitgen):
     """
-    Bundles the interfaces to interact with a Basic RNG using ctypes
+    Bundles the interfaces to interact with a bit generator using ctypes
 
     Parameters
     ----------
     bitgen : pointer
-        A pointer to a Basic RNG instance
+        A pointer to a bit generator instance
 
     Returns
     -------
     interface : namedtuple
-        The functions required to interface with the Basic RNG using ctypes:
+        The functions required to interface with the bit generator using ctypes:
 
         * state_address - Memory address of the state struct
         * state - pointer to the state struct
         * next_uint64 - function pointer to produce 64 bit integers
         * next_uint32 - function pointer to produce 32 bit integers
         * next_double - function pointer to produce doubles
-        * bitgen - pointer to the Basic RNG struct
+        * bitgen - pointer to the bit generator struct
     """
     import ctypes
 

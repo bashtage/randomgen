@@ -46,7 +46,7 @@ v1.16.2
 - Closely synchronized with the version of randomgen being integrated
   into NumPy, including removing:
 
-    - ``random_raw``, which have been moved to the individual basic RNGs
+    - ``random_raw``, which have been moved to the individual bit generators
     - ``random_uintegers``, which can be replaced with
       :func:`~randomgen.generator.Generator.randint`.
 

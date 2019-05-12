@@ -1,15 +1,15 @@
 Extending
 ---------
-The basic RNGs have been designed to be extendable using standard tools for
+The bit generators have been designed to be extendable using standard tools for
 high-performance Python -- numba and Cython.
 The :class:`randomgen.generator.Generator` object can also be used with
-user-provided basic RNGs as long as these export a small set of required
+user-provided bit generators as long as these export a small set of required
 functions.
 
 Numba
 =====
 Numba can be used with either CTypes or CFFI.  The current iteration of the
-basic RNGs all export a small set of functions through both interfaces.
+bit generators all export a small set of functions through both interfaces.
 
 This example shows how numba can be used to produce Box-Muller normals using
 a pure Python implementation which is then compiled.  The random numbers are
@@ -62,7 +62,7 @@ examples folder.
 Cython
 ======
 
-Cython can be used to unpack the ``PyCapsule`` provided by a basic RNG.
+Cython can be used to unpack the ``PyCapsule`` provided by a bit generator.
 This example uses :class:`~randomgen.xoroshiro128.Xoroshiro128` and
 ``random_gauss_zig``, the Ziggurat-based generator for normals, to fill an
 array.  The usual caveats for writing high-performance code using Cython --
@@ -85,12 +85,12 @@ removing bounds checks and wrap around, providing array alignment information
    def normals_zig(Py_ssize_t n):
        cdef Py_ssize_t i
        cdef bitgen_t *rng
-       cdef const char *capsule_name = "BasicRNG"
+       cdef const char *capsule_name = "BitGenerator"
        cdef double[::1] random_values
 
        x = Xoroshiro128()
        capsule = x.capsule
-       # Optional check that the capsule if from a Basic RNG
+       # Optional check that the capsule if from a BitGenerator
        if not PyCapsule_IsValid(capsule, capsule_name):
            raise ValueError("Invalid pointer to anon_func_state")
        # Cast the pointer
@@ -103,8 +103,8 @@ removing bounds checks and wrap around, providing array alignment information
        return randoms
 
 
-The basic RNG can also be directly accessed using the members of the basic
-RNG structure.
+The bit generator can also be directly accessed using the members of the bit
+generator's structure.
 
 .. code-block:: cython
 
@@ -113,12 +113,12 @@ RNG structure.
    def uniforms(Py_ssize_t n):
        cdef Py_ssize_t i
        cdef bitgen_t *rng
-       cdef const char *capsule_name = "BasicRNG"
+       cdef const char *capsule_name = "BitGenerator"
        cdef double[::1] random_values
 
        x = Xoroshiro128()
        capsule = x.capsule
-       # Optional check that the capsule if from a Basic RNG
+       # Optional check that the capsule if from a BitGenerator
        if not PyCapsule_IsValid(capsule, capsule_name):
            raise ValueError("Invalid pointer to anon_func_state")
        # Cast the pointer
@@ -133,11 +133,11 @@ RNG structure.
 These functions along with a minimal setup file are included in the
 examples folder.
 
-New Basic RNGs
-==============
+New Bit Generators
+==================
 :class:`~randomgen.generator.Generator` can be used with other
-user-provided basic RNGs.  The simplest way to write a new basic RNG is to
-examine the pyx file of one of the existing basic RNGs. The key structure
+user-provided bit generators.  The simplest way to write a new bit generator is to
+examine the pyx file of one of the existing bit generators. The key structure
 that must be provided is the ``capsule`` which contains a ``PyCapsule`` to a
 struct pointer of type ``bitgen_t``,
 
@@ -152,7 +152,7 @@ struct pointer of type ``bitgen_t``,
   } bitgen_t;
 
 which provides 5 pointers. The first is an opaque pointer to the data structure
-used by the basic RNG.  The next three are function pointers which return the
+used by the bit generator.  The next three are function pointers which return the
 next 64- and 32-bit unsigned integers, the next random double and the next
 raw value.  This final function is used for testing and so can be set to
 the next 64-bit unsigned integer function if not needed. Functions inside

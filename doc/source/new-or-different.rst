@@ -45,12 +45,11 @@ What's New or Different
 
 
 * The Box-Muller used to produce NumPy's normals is no longer available.
-* All basic random generators functions to produce doubles, uint64s and
+* All bit generators functions to produce doubles, uint64s and
   uint32s via CTypes (:meth:`~randomgen.xoroshiro128.Xoroshiro128.ctypes`)
   and CFFI (:meth:`~randomgen.xoroshiro128.Xoroshiro128.cffi`).  This allows
-  the basic RNGs to be used in numba or in other low-level applications
-* The basic random number generators can be used in downstream projects via
-  Cython.
+  the bit generators to be used in numba or in other low-level applications
+* The bit generators can be used in downstream projects via Cython.
 * Optional ``dtype`` argument that accepts ``np.float32`` or ``np.float64``
   to produce either single or double prevision uniform random variables for
   select core distributions

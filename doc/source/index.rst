@@ -32,7 +32,7 @@ also isn't possible to directly seed a
   rg.standard_normal()
 
 
-Seeds can be passed to any of the basic RNGs. Here :class:`~randomgen.mt19937.MT19937`
+Seeds can be passed to any of the bit generators. Here :class:`~randomgen.mt19937.MT19937`
 is used and the :class:`~randomgen.generator.Generator` is accessed via
 the property :attr:`~randomgen.mt19937.MT19937.generator`.
 
@@ -47,24 +47,24 @@ Introduction
 ------------
 RandomGen takes a different approach to producing random numbers from the
 :class:`numpy.random.RandomState` object used in NumPy.  Random number
-generation is separated into two components, a basic RNG and a random
+generation is separated into two components, a bit generator and a random
 generator.
 
-The basic RNG has a limited set of responsibilities -- it manages the
+The bit generator has a limited set of responsibilities -- it manages the
 underlying RNG state and provides functions to produce random doubles and
-random unsigned 32- and 64-bit values. The basic random generator also handles
-all seeding since this varies when using alternative basic RNGs.
+random unsigned 32- and 64-bit values. The bit generator also handles
+all seeding since this varies when using alternative bit generators.
 
 The random generator (:class:`~randomgen.generator.Generator`) takes the
-basic RNG-provided functions and transforms them into more useful
+bit generator-provided functions and transforms them into more useful
 distributions, e.g., simulated normal random values. This structure allows
-alternative basic RNGs to be used without code duplication.
+alternative bit generators to be used without code duplication.
 
 The :class:`~randomgen.generator.Generator` is the user-facing object
 that is nearly identical to :class:`~numpy.random.RandomState`. The canonical
-method to initialize a generator passes a basic RNG --
+method to initialize a generator passes a bit generator --
 :class:`~randomgen.mt19937.MT19937`, the underlying RNG in NumPy  -- as the
-sole argument. Note that the basic RNG must be instantized.
+sole argument. Note that the bit generator must be instantized.
 
 .. code-block:: python
 
@@ -72,7 +72,7 @@ sole argument. Note that the basic RNG must be instantized.
   rg = Generator(MT19937())
   rg.random()
 
-Seed information is directly passed to the basic RNG.
+Seed information is directly passed to the bit generator.
 
 .. code-block:: python
 
@@ -80,7 +80,7 @@ Seed information is directly passed to the basic RNG.
   rg.random()
 
 A shorthand method is also available which uses the
-:meth:`~randomgen.mt19937.MT19937.generator` property from a basic RNG to
+:meth:`~randomgen.mt19937.MT19937.generator` property from a bit generator to
 access an embedded random generator.
 
 .. code-block:: python
@@ -113,12 +113,11 @@ What's New or Different
 * :func:`~randomgen.entropy.random_entropy` provides access to the system
   source of randomness that is used in cryptographic applications (e.g.,
   ``/dev/urandom`` on Unix).
-* All basic random generators functions to produce doubles, uint64s and
+* All bit generators functions to produce doubles, uint64s and
   uint32s via CTypes (:meth:`~randomgen.xoroshiro128.Xoroshiro128.ctypes`)
   and CFFI (:meth:`~randomgen.xoroshiro128.Xoroshiro128.cffi`).  This allows
-  these basic RNGs to be used in numba.
-* The basic random number generators can be used in downstream projects via
-  Cython.
+  these bit generators to be used in numba.
+* The bit generators can be used in downstream projects via Cython.
 * Support for Lemire’s method [Lemire]_ of generating uniform integers on an
   arbitrary interval by setting ``use_masked=True`` in
   (:meth:`~randomgen.generator.Generator.integers`).
@@ -190,13 +189,19 @@ Random Generator
    Random Generation <generator>
    legacy
 
-Basic Random Number Generators
-------------------------------
+Bit Generators
+--------------
+
+.. warning::
+
+   These for formerly called Basic Random Number Generators. They have been
+   renamed Bit Generators for compatibility with the version that will ship
+   with NumPy.
 
 .. toctree::
    :maxdepth: 3
 
-   Basic Random Number Generators <bit_generators/index>
+   Bit Generators <bit_generators/index>
 
 New Features
 ------------

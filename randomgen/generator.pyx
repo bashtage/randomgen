@@ -45,7 +45,7 @@ cdef class Generator:
     """
     Generator(bit_generator=None)
 
-    Container for the Basic Random Number Generators.
+    Random value generator using a bit generator source.
 
     ``Generator`` exposes methods for generating random numbers drawn
     from a variety of probability distributions. In addition to the
@@ -64,8 +64,8 @@ cdef class Generator:
 
     Parameters
     ----------
-    bit_generator : Basic RNG, optional
-        Basic RNG to use as the core generator. If none is provided, uses
+    bit_generator : BitGenerator, optional
+        Bit generator to use as the core generator. If none is provided, uses
         Xoroshiro128.
 
     Notes
@@ -73,7 +73,7 @@ cdef class Generator:
     The Python stdlib module `random` contains pseudo-random number generator
     with a number of methods that are similar to the ones available in
     ``Generator``. It uses Mersenne Twister, which is available  by
-    using the ``MT19937`` basic RNG. ``Generator``, besides being
+    using the ``MT19937`` bit generator. ``Generator``, besides being
     NumPy-aware, has the advantage that it provides a much larger number
     of probability distributions from which to choose.
 
@@ -89,7 +89,7 @@ cdef class Generator:
     >>> from randomgen import MT19937
     >>> rg = Generator(MT19937())
 
-    The generator is also directly available from basic RNGs
+    The generator is also directly available from bit generators
 
     >>> rg = MT19937().generator
     >>> rg.standard_normal()
@@ -143,12 +143,12 @@ cdef class Generator:
     @property
     def brng(self):
         """
-        Gets the basic RNG instance used by the generator
+        Gets the bit generator instance used by the generator
 
         Returns
         -------
-        bit_generator : Basic RNG
-            The basic RNG instance used by the generator
+        bit_generator : BitGenerator
+            The bit generator instance used by the generator
         """
         import warnings
         warnings.warn('brng is deprecated. Use bit_generator.')
@@ -157,28 +157,28 @@ cdef class Generator:
     @property
     def bit_generator(self):
         """
-        Gets the basic RNG instance used by the generator
+        Gets the bit generator instance used by the generator
 
         Returns
         -------
-        bit_generator : Basic RNG
-            The basic RNG instance used by the generator
+        bit_generator : BitGenerator
+            The bit generator instance used by the generator
         """
         return self._bit_generator
 
     def seed(self, *args, **kwargs):
         """
-        Reseed the basic RNG.
+        Reseed the bit generator.
 
-        Parameters depend on the basic RNG used.
+        Parameters depend on the bit generator used.
 
         Notes
         -----
-        Arguments are directly passed to the basic RNG. This is a convenience
-        function.
+        Arguments are directly passed to the bit generator. This is a
+        convenience function.
 
-        The best method to access seed is to directly use a basic RNG instance.
-        This example demonstrates this best practice.
+        The best method to access seed is to directly use a bit generator
+        instance. This example demonstrates this best practice.
 
         >>> from randomgen import Generator, PCG64
         >>> bit_generator = PCG64(1234567891011)
@@ -203,18 +203,18 @@ cdef class Generator:
     @property
     def state(self):
         """
-        Get or set the Basic RNG's state
+        Get or set the bit generator's state
 
         Returns
         -------
         state : dict
             Dictionary containing the information required to describe the
-            state of the Basic RNG
+            state of the bit generator
 
         Notes
         -----
         This is a trivial pass-through function.  Generator does not
-        directly contain or manipulate the basic RNG's state.
+        directly contain or manipulate the bit generator's state.
 
         """
         return self._bit_generator.state
