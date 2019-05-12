@@ -49,7 +49,7 @@ class TestSeed(object):
         assert_raises(ValueError, MT19937, [1, 2, 4294967296])
         assert_raises(ValueError, MT19937, [1, -2, 4294967296])
 
-    def test_noninstantized_brng(self):
+    def test_noninstantized_bitgen(self):
         assert_raises(ValueError, Generator, MT19937)
 
 
@@ -110,7 +110,7 @@ class TestSetState(object):
         self.rg = Generator(MT19937(self.seed))
         self.bit_generator = self.rg.bit_generator
         self.state = self.bit_generator.state
-        self.legacy_state = (self.state['brng'],
+        self.legacy_state = (self.state['bit_generator'],
                              self.state['state']['key'],
                              self.state['state']['pos'])
 

@@ -4,12 +4,12 @@ The :class:`~randomgen.generator.Generator` provides access to
 a wide range of distributions, and served as a replacement for 
 :class:`~numpy.random.RandomState`.  The main difference between 
 the two is that :class:`~randomgen.generator.Generator` relies
-on an additional basic RNG to manage state and generate the random 
+on an additional bit generator to manage state and generate the random
 bits which are then transformed into random values from useful 
-distributions. The default basic RNG used by 
+distributions. The default bit generator used by
 :class:`~randomgen.generator.Generator` is
-:class:`~randomgen.xoroshiro128.Xoroshiro128`.  The basic RNG can be 
-changed by passing an instantized basic RNG to 
+:class:`~randomgen.xoroshiro128.Xoroshiro128`.  The bit generator can be
+changed by passing an instantized bit generator to
 :class:`~randomgen.generator.Generator`.
 
 .. currentmodule:: randomgen.generator

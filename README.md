@@ -58,7 +58,7 @@ which can fully reproduce the sequence produced by NumPy.
 
   ```python
   from randomgen import Generator
-  # Default basic PRNG is Xoroshiro128
+  # Default bit generator is Xoroshiro128
   rnd = Generator()
   w = rnd.standard_normal(10000)
   x = rnd.standard_exponential(10000)
@@ -192,7 +192,7 @@ All development has been on 64-bit Linux, and it is regularly tested on
 Travis-CI (Linux/OSX) and Appveyor (Windows). The library is occasionally
 tested on Linux 32-bit and Free BSD 11.1.
 
-Basic tests are in place for all RNGs. The MT19937 is tested against
+Tests are in place for all RNGs. The MT19937 is tested against
 NumPy's implementation for identical results. It also passes NumPy's 
 test suite where still relevant.
 

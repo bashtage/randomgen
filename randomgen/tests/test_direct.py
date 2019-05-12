@@ -129,7 +129,7 @@ class Base(object):
 
     @classmethod
     def setup_class(cls):
-        cls.brng = Xoroshiro128
+        cls.bit_generator = Xoroshiro128
         cls.bits = 64
         cls.dtype = np.uint64
         cls.seed_error_type = TypeError
@@ -148,58 +148,58 @@ class Base(object):
             return {'seed': seed, 'data': np.array(data, dtype=cls.dtype)}
 
     def test_raw(self):
-        brng = self.brng(*self.data1['seed'])
-        uints = brng.random_raw(1000)
+        bit_generator = self.bit_generator(*self.data1['seed'])
+        uints = bit_generator.random_raw(1000)
         assert_equal(uints, self.data1['data'])
 
-        brng = self.brng(*self.data1['seed'])
-        uints = brng.random_raw()
+        bit_generator = self.bit_generator(*self.data1['seed'])
+        uints = bit_generator.random_raw()
         assert_equal(uints, self.data1['data'][0])
 
-        brng = self.brng(*self.data2['seed'])
-        uints = brng.random_raw(1000)
+        bit_generator = self.bit_generator(*self.data2['seed'])
+        uints = bit_generator.random_raw(1000)
         assert_equal(uints, self.data2['data'])
 
     def test_random_raw(self):
-        brng = self.brng(*self.data1['seed'])
-        uints = brng.random_raw(output=False)
+        bit_generator = self.bit_generator(*self.data1['seed'])
+        uints = bit_generator.random_raw(output=False)
         assert uints is None
-        uints = brng.random_raw(1000, output=False)
+        uints = bit_generator.random_raw(1000, output=False)
         assert uints is None
 
     def test_gauss_inv(self):
         n = 25
-        rs = RandomState(self.brng(*self.data1['seed']))
+        rs = RandomState(self.bit_generator(*self.data1['seed']))
         gauss = rs.standard_normal(n)
         assert_allclose(gauss,
                         gauss_from_uint(self.data1['data'], n, self.bits))
 
-        rs = RandomState(self.brng(*self.data2['seed']))
+        rs = RandomState(self.bit_generator(*self.data2['seed']))
         gauss = rs.standard_normal(25)
         assert_allclose(gauss,
                         gauss_from_uint(self.data2['data'], n, self.bits))
 
     def test_uniform_double(self):
-        rs = Generator(self.brng(*self.data1['seed']))
+        rs = Generator(self.bit_generator(*self.data1['seed']))
         vals = uniform_from_uint(self.data1['data'], self.bits)
         uniforms = rs.random(len(vals))
         assert_allclose(uniforms, vals)
         assert_equal(uniforms.dtype, np.float64)
 
-        rs = Generator(self.brng(*self.data2['seed']))
+        rs = Generator(self.bit_generator(*self.data2['seed']))
         vals = uniform_from_uint(self.data2['data'], self.bits)
         uniforms = rs.random(len(vals))
         assert_allclose(uniforms, vals)
         assert_equal(uniforms.dtype, np.float64)
 
     def test_uniform_float(self):
-        rs = Generator(self.brng(*self.data1['seed']))
+        rs = Generator(self.bit_generator(*self.data1['seed']))
         vals = uniform32_from_uint(self.data1['data'], self.bits)
         uniforms = rs.random(len(vals), dtype=np.float32)
         assert_allclose(uniforms, vals)
         assert_equal(uniforms.dtype, np.float32)
 
-        rs = Generator(self.brng(*self.data2['seed']))
+        rs = Generator(self.bit_generator(*self.data2['seed']))
         vals = uniform32_from_uint(self.data2['data'], self.bits)
         uniforms = rs.random(len(vals), dtype=np.float32)
         assert_allclose(uniforms, vals)
@@ -207,13 +207,13 @@ class Base(object):
 
     def test_seed_float(self):
         # GH #82
-        rs = Generator(self.brng(*self.data1['seed']))
+        rs = Generator(self.bit_generator(*self.data1['seed']))
         assert_raises(self.seed_error_type, rs.bit_generator.seed, np.pi)
         assert_raises(self.seed_error_type, rs.bit_generator.seed, -np.pi)
 
     def test_seed_float_array(self):
         # GH #82
-        rs = Generator(self.brng(*self.data1['seed']))
+        rs = Generator(self.bit_generator(*self.data1['seed']))
         assert_raises(self.seed_error_type, rs.bit_generator.seed, np.array([np.pi]))
         assert_raises(self.seed_error_type, rs.bit_generator.seed, np.array([-np.pi]))
         assert_raises(ValueError, rs.bit_generator.seed, np.array([np.pi, -np.pi]))
@@ -223,105 +223,103 @@ class Base(object):
 
     def test_seed_out_of_range(self):
         # GH #82
-        rs = Generator(self.brng(*self.data1['seed']))
+        rs = Generator(self.bit_generator(*self.data1['seed']))
         assert_raises(ValueError, rs.bit_generator.seed, 2 ** (2 * self.bits + 1))
         assert_raises(ValueError, rs.bit_generator.seed, -1)
 
     def test_seed_out_of_range_array(self):
         # GH #82
-        rs = Generator(self.brng(*self.data1['seed']))
+        rs = Generator(self.bit_generator(*self.data1['seed']))
         assert_raises(ValueError, rs.bit_generator.seed, [2 ** (2 * self.bits + 1)])
         assert_raises(ValueError, rs.bit_generator.seed, [-1])
 
     def test_repr(self):
-        rs = Generator(self.brng(*self.data1['seed']))
+        rs = Generator(self.bit_generator(*self.data1['seed']))
         assert 'Generator' in repr(rs)
         assert '{:#x}'.format(id(rs)).upper().replace('X', 'x') in repr(rs)
 
     def test_str(self):
-        rs = Generator(self.brng(*self.data1['seed']))
+        rs = Generator(self.bit_generator(*self.data1['seed']))
         assert 'Generator' in str(rs)
-        assert str(self.brng.__name__) in str(rs)
+        assert str(self.bit_generator.__name__) in str(rs)
         assert '{:#x}'.format(id(rs)).upper().replace('X', 'x') not in str(rs)
 
     def test_generator(self):
-        brng = self.brng(*self.data1['seed'])
+        bit_generator = self.bit_generator(*self.data1['seed'])
         with pytest.raises(NotImplementedError):
-            brng.generator
+            bit_generator.generator
 
     def test_pickle(self):
         import pickle
 
-        brng = self.brng(*self.data1['seed'])
-        state = brng.state
-        brng_pkl = pickle.dumps(brng)
-        reloaded = pickle.loads(brng_pkl)
-        reloaded_state = reloaded.state
-        orig_gen = Generator(brng)
+        bit_generator = self.bit_generator(*self.data1['seed'])
+        bit_generator_pkl = pickle.dumps(bit_generator)
+        reloaded = pickle.loads(bit_generator_pkl)
+        orig_gen = Generator(bit_generator)
         reloaded_gen = Generator(reloaded)
         assert_array_equal(orig_gen.standard_normal(1000),
                            reloaded_gen.standard_normal(1000))
-        assert brng is not reloaded
-        assert_state_equal(reloaded_state, state)
+        assert bit_generator is not reloaded
+        assert_state_equal(reloaded.state, bit_generator.state)
 
     def test_invalid_state_type(self):
-        brng = self.brng(*self.data1['seed'])
+        bit_generator = self.bit_generator(*self.data1['seed'])
         with pytest.raises(TypeError):
-            brng.state = {'1'}
+            bit_generator.state = {'1'}
 
     def test_invalid_state_value(self):
-        brng = self.brng(*self.data1['seed'])
-        state = brng.state
-        state['brng'] = 'otherBRNG'
+        bit_generator = self.bit_generator(*self.data1['seed'])
+        state = bit_generator.state
+        state['bit_generator'] = 'otherBitGenerator'
         with pytest.raises(ValueError):
-            brng.state = state
+            bit_generator.state = state
 
     def test_invalid_seed_type(self):
-        brng = self.brng(*self.data1['seed'])
+        bit_generator = self.bit_generator(*self.data1['seed'])
         for st in self.invalid_seed_types:
             with pytest.raises(TypeError):
-                brng.seed(*st)
+                bit_generator.seed(*st)
 
     def test_invalid_seed_values(self):
-        brng = self.brng(*self.data1['seed'])
+        bit_generator = self.bit_generator(*self.data1['seed'])
         for st in self.invalid_seed_values:
             with pytest.raises(ValueError):
-                brng.seed(*st)
+                bit_generator.seed(*st)
 
     def test_benchmark(self):
-        brng = self.brng(*self.data1['seed'])
-        brng._benchmark(1)
-        brng._benchmark(1, 'double')
+        bit_generator = self.bit_generator(*self.data1['seed'])
+        bit_generator._benchmark(1)
+        bit_generator._benchmark(1, 'double')
         with pytest.raises(ValueError):
-            brng._benchmark(1, 'int32')
+            bit_generator._benchmark(1, 'int32')
 
     @pytest.mark.skipif(MISSING_CFFI, reason='cffi not available')
     def test_cffi(self):
-        brng = self.brng(*self.data1['seed'])
-        cffi_interface = brng.cffi
+        bit_generator = self.bit_generator(*self.data1['seed'])
+        cffi_interface = bit_generator.cffi
         assert isinstance(cffi_interface, interface)
-        other_cffi_interface = brng.cffi
+        other_cffi_interface = bit_generator.cffi
         assert other_cffi_interface is cffi_interface
 
     @pytest.mark.skipif(MISSING_CTYPES, reason='ctypes not available')
     def test_ctypes(self):
-        brng = self.brng(*self.data1['seed'])
-        ctypes_interface = brng.ctypes
+        bit_generator = self.bit_generator(*self.data1['seed'])
+        ctypes_interface = bit_generator.ctypes
         assert isinstance(ctypes_interface, interface)
-        other_ctypes_interface = brng.ctypes
+        other_ctypes_interface = bit_generator.ctypes
         assert other_ctypes_interface is ctypes_interface
 
     def test_getstate(self):
-        brng = self.brng(*self.data1['seed'])
-        state = brng.state
-        alt_state = brng.__getstate__()
+        bit_generator = self.bit_generator(*self.data1['seed'])
+        state = bit_generator.state
+        alt_state = bit_generator.__getstate__()
         assert_state_equal(state, alt_state)
 
 
 class TestXoroshiro128(Base):
     @classmethod
     def setup_class(cls):
-        cls.brng = Xoroshiro128
+        cls.bit_generator = Xoroshiro128
         cls.bits = 64
         cls.dtype = np.uint64
         cls.data1 = cls._read_csv(
@@ -336,7 +334,7 @@ class TestXoroshiro128(Base):
 class TestXoshiro256StarStar(Base):
     @classmethod
     def setup_class(cls):
-        cls.brng = Xoshiro256StarStar
+        cls.bit_generator = Xoshiro256StarStar
         cls.bits = 64
         cls.dtype = np.uint64
         cls.data1 = cls._read_csv(
@@ -351,7 +349,7 @@ class TestXoshiro256StarStar(Base):
 class TestXoshiro512StarStar(Base):
     @classmethod
     def setup_class(cls):
-        cls.brng = Xoshiro512StarStar
+        cls.bit_generator = Xoshiro512StarStar
         cls.bits = 64
         cls.dtype = np.uint64
         cls.data1 = cls._read_csv(
@@ -366,7 +364,7 @@ class TestXoshiro512StarStar(Base):
 class TestXorshift1024(Base):
     @classmethod
     def setup_class(cls):
-        cls.brng = Xorshift1024
+        cls.bit_generator = Xorshift1024
         cls.bits = 64
         cls.dtype = np.uint64
         cls.data1 = cls._read_csv(
@@ -381,7 +379,7 @@ class TestXorshift1024(Base):
 class TestThreeFry(Base):
     @classmethod
     def setup_class(cls):
-        cls.brng = ThreeFry
+        cls.bit_generator = ThreeFry
         cls.bits = 64
         cls.dtype = np.uint64
         cls.data1 = cls._read_csv(
@@ -394,17 +392,17 @@ class TestThreeFry(Base):
                                    (None, None, 2 ** 257 + 1)]
 
     def test_set_key(self):
-        brng = self.brng(*self.data1['seed'])
-        state = brng.state
-        keyed = self.brng(counter=state['state']['counter'],
+        bit_generator = self.bit_generator(*self.data1['seed'])
+        state = bit_generator.state
+        keyed = self.bit_generator(counter=state['state']['counter'],
                           key=state['state']['key'])
-        assert_state_equal(brng.state, keyed.state)
+        assert_state_equal(bit_generator.state, keyed.state)
 
 
 class TestPCG64(Base):
     @classmethod
     def setup_class(cls):
-        cls.brng = PCG64
+        cls.bit_generator = PCG64
         cls.bits = 64
         cls.dtype = np.uint64
         cls.data1 = cls._read_csv(join(pwd, './data/pcg64-testset-1.csv'))
@@ -416,7 +414,7 @@ class TestPCG64(Base):
                                    (None, 2 ** 129 + 1)]
 
     def test_seed_float_array(self):
-        rs = Generator(self.brng(*self.data1['seed']))
+        rs = Generator(self.bit_generator(*self.data1['seed']))
         assert_raises(self.seed_error_type, rs.bit_generator.seed, np.array([np.pi]))
         assert_raises(self.seed_error_type, rs.bit_generator.seed, np.array([-np.pi]))
         assert_raises(self.seed_error_type, rs.bit_generator.seed,
@@ -426,7 +424,7 @@ class TestPCG64(Base):
         assert_raises(self.seed_error_type, rs.bit_generator.seed, [0, np.pi])
 
     def test_seed_out_of_range_array(self):
-        rs = Generator(self.brng(*self.data1['seed']))
+        rs = Generator(self.bit_generator(*self.data1['seed']))
         assert_raises(self.seed_error_type, rs.bit_generator.seed,
                       [2 ** (2 * self.bits + 1)])
         assert_raises(self.seed_error_type, rs.bit_generator.seed, [-1])
@@ -435,7 +433,7 @@ class TestPCG64(Base):
 class TestPhilox(Base):
     @classmethod
     def setup_class(cls):
-        cls.brng = Philox
+        cls.bit_generator = Philox
         cls.bits = 64
         cls.dtype = np.uint64
         cls.data1 = cls._read_csv(
@@ -448,17 +446,17 @@ class TestPhilox(Base):
                                    (None, None, 2 ** 257 + 1)]
 
     def test_set_key(self):
-        brng = self.brng(*self.data1['seed'])
-        state = brng.state
-        keyed = self.brng(counter=state['state']['counter'],
+        bit_generator = self.bit_generator(*self.data1['seed'])
+        state = bit_generator.state
+        keyed = self.bit_generator(counter=state['state']['counter'],
                           key=state['state']['key'])
-        assert_state_equal(brng.state, keyed.state)
+        assert_state_equal(bit_generator.state, keyed.state)
 
 
 class TestMT19937(Base):
     @classmethod
     def setup_class(cls):
-        cls.brng = MT19937
+        cls.bit_generator = MT19937
         cls.bits = 32
         cls.dtype = np.uint32
         cls.data1 = cls._read_csv(join(pwd, './data/mt19937-testset-1.csv'))
@@ -469,27 +467,27 @@ class TestMT19937(Base):
 
     def test_seed_out_of_range(self):
         # GH #82
-        rs = Generator(self.brng(*self.data1['seed']))
+        rs = Generator(self.bit_generator(*self.data1['seed']))
         assert_raises(ValueError, rs.bit_generator.seed, 2 ** (self.bits + 1))
         assert_raises(ValueError, rs.bit_generator.seed, -1)
         assert_raises(ValueError, rs.bit_generator.seed, 2 ** (2 * self.bits + 1))
 
     def test_seed_out_of_range_array(self):
         # GH #82
-        rs = Generator(self.brng(*self.data1['seed']))
+        rs = Generator(self.bit_generator(*self.data1['seed']))
         assert_raises(ValueError, rs.bit_generator.seed, [2 ** (self.bits + 1)])
         assert_raises(ValueError, rs.bit_generator.seed, [-1])
         assert_raises(TypeError, rs.bit_generator.seed, [2 ** (2 * self.bits + 1)])
 
     def test_seed_float(self):
         # GH #82
-        rs = Generator(self.brng(*self.data1['seed']))
+        rs = Generator(self.bit_generator(*self.data1['seed']))
         assert_raises(TypeError, rs.bit_generator.seed, np.pi)
         assert_raises(TypeError, rs.bit_generator.seed, -np.pi)
 
     def test_seed_float_array(self):
         # GH #82
-        rs = Generator(self.brng(*self.data1['seed']))
+        rs = Generator(self.bit_generator(*self.data1['seed']))
         bit_generator = rs.bit_generator
         assert_raises(TypeError, bit_generator.seed, np.array([np.pi]))
         assert_raises(TypeError, bit_generator.seed, np.array([-np.pi]))
@@ -499,11 +497,11 @@ class TestMT19937(Base):
         assert_raises(TypeError, bit_generator.seed, [0, np.pi])
 
     def test_state_tuple(self):
-        rs = Generator(self.brng(*self.data1['seed']))
+        rs = Generator(self.bit_generator(*self.data1['seed']))
         bit_generator = rs.bit_generator
         state = bit_generator.state
         desired = rs.integers(2 ** 16)
-        tup = (state['brng'], state['state']['key'], state['state']['pos'])
+        tup = (state['bit_generator'], state['state']['key'], state['state']['pos'])
         bit_generator.state = tup
         actual = rs.integers(2 ** 16)
         assert_equal(actual, desired)
@@ -516,7 +514,7 @@ class TestMT19937(Base):
 class TestDSFMT(Base):
     @classmethod
     def setup_class(cls):
-        cls.brng = DSFMT
+        cls.bit_generator = DSFMT
         cls.bits = 53
         cls.dtype = np.uint64
         cls.data1 = cls._read_csv(join(pwd, './data/dSFMT-testset-1.csv'))
@@ -527,42 +525,42 @@ class TestDSFMT(Base):
                                    (np.array([2 ** 33, 2 ** 33]),)]
 
     def test_uniform_double(self):
-        rs = Generator(self.brng(*self.data1['seed']))
+        rs = Generator(self.bit_generator(*self.data1['seed']))
         assert_array_equal(uniform_from_dsfmt(self.data1['data']),
                            rs.random(1000))
 
-        rs = Generator(self.brng(*self.data2['seed']))
+        rs = Generator(self.bit_generator(*self.data2['seed']))
         assert_equal(uniform_from_dsfmt(self.data2['data']),
                      rs.random(1000))
 
     def test_gauss_inv(self):
         n = 25
-        rs = RandomState(self.brng(*self.data1['seed']))
+        rs = RandomState(self.bit_generator(*self.data1['seed']))
         gauss = rs.standard_normal(n)
         assert_allclose(gauss,
                         gauss_from_uint(self.data1['data'], n, 'dsfmt'))
 
-        rs = RandomState(self.brng(*self.data2['seed']))
+        rs = RandomState(self.bit_generator(*self.data2['seed']))
         gauss = rs.standard_normal(25)
         assert_allclose(gauss,
                         gauss_from_uint(self.data2['data'], n, 'dsfmt'))
 
     def test_seed_out_of_range_array(self):
         # GH #82
-        rs = Generator(self.brng(*self.data1['seed']))
+        rs = Generator(self.bit_generator(*self.data1['seed']))
         assert_raises(ValueError, rs.bit_generator.seed, [2 ** (self.bits + 1)])
         assert_raises(ValueError, rs.bit_generator.seed, [-1])
         assert_raises(TypeError, rs.bit_generator.seed, [2 ** (2 * self.bits + 1)])
 
     def test_seed_float(self):
         # GH #82
-        rs = Generator(self.brng(*self.data1['seed']))
+        rs = Generator(self.bit_generator(*self.data1['seed']))
         assert_raises(TypeError, rs.bit_generator.seed, np.pi)
         assert_raises(TypeError, rs.bit_generator.seed, -np.pi)
 
     def test_seed_float_array(self):
         # GH #82
-        rs = Generator(self.brng(*self.data1['seed']))
+        rs = Generator(self.bit_generator(*self.data1['seed']))
         assert_raises(TypeError, rs.bit_generator.seed, np.array([np.pi]))
         assert_raises(TypeError, rs.bit_generator.seed, np.array([-np.pi]))
         assert_raises(TypeError, rs.bit_generator.seed, np.array([np.pi, -np.pi]))
@@ -571,20 +569,20 @@ class TestDSFMT(Base):
         assert_raises(TypeError, rs.bit_generator.seed, [0, np.pi])
 
     def test_uniform_float(self):
-        rs = Generator(self.brng(*self.data1['seed']))
+        rs = Generator(self.bit_generator(*self.data1['seed']))
         vals = uniform32_from_uint(self.data1['data'], self.bits)
         uniforms = rs.random(len(vals), dtype=np.float32)
         assert_allclose(uniforms, vals)
         assert_equal(uniforms.dtype, np.float32)
 
-        rs = Generator(self.brng(*self.data2['seed']))
+        rs = Generator(self.bit_generator(*self.data2['seed']))
         vals = uniform32_from_uint(self.data2['data'], self.bits)
         uniforms = rs.random(len(vals), dtype=np.float32)
         assert_allclose(uniforms, vals)
         assert_equal(uniforms.dtype, np.float32)
 
     def test_buffer_reset(self):
-        rs = Generator(self.brng(*self.data1['seed']))
+        rs = Generator(self.bit_generator(*self.data1['seed']))
         rs.random(1)
         assert rs.bit_generator.state['buffer_loc'] != 382
         rs.bit_generator.seed(*self.data1['seed'])
@@ -594,7 +592,7 @@ class TestDSFMT(Base):
 class TestThreeFry32(Base):
     @classmethod
     def setup_class(cls):
-        cls.brng = ThreeFry32
+        cls.bit_generator = ThreeFry32
         cls.bits = 32
         cls.dtype = np.uint32
         cls.data1 = cls._read_csv(join(pwd, './data/threefry32-testset-1.csv'))
@@ -605,17 +603,17 @@ class TestThreeFry32(Base):
                                    (None, None, 2 ** 129 + 1)]
 
     def test_set_key(self):
-        brng = self.brng(*self.data1['seed'])
-        state = brng.state
-        keyed = self.brng(counter=state['state']['counter'],
+        bit_generator = self.bit_generator(*self.data1['seed'])
+        state = bit_generator.state
+        keyed = self.bit_generator(counter=state['state']['counter'],
                           key=state['state']['key'])
-        assert_state_equal(brng.state, keyed.state)
+        assert_state_equal(bit_generator.state, keyed.state)
 
 
 class TestPCG32(TestPCG64):
     @classmethod
     def setup_class(cls):
-        cls.brng = PCG32
+        cls.bit_generator = PCG32
         cls.bits = 32
         cls.dtype = np.uint32
         cls.data1 = cls._read_csv(join(pwd, './data/pcg32-testset-1.csv'))
