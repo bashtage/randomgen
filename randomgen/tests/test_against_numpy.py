@@ -287,8 +287,10 @@ class TestAgainstNumPy(object):
         self._is_state_common()
         f = self.rg.rand
         g = self.nprs.rand
-        assert_allclose(f(10), g(10))
-        assert_allclose(f(3, 4, 5), g(3, 4, 5))
+        with pytest.deprecated_call():
+            assert_allclose(f(10), g(10))
+        with pytest.deprecated_call():
+            assert_allclose(f(3, 4, 5), g(3, 4, 5))
 
     def test_poisson_lam_max(self):
         assert_allclose(self.rg.poisson_lam_max, self.nprs.poisson_lam_max)

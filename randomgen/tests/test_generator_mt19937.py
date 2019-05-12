@@ -478,7 +478,8 @@ class TestRandomDist(object):
 
     def test_rand(self):
         random.brng.seed(self.seed)
-        actual = random.rand(3, 2)
+        with pytest.deprecated_call():
+            actual = random.rand(3, 2)
         desired = np.array([[0.61879477158567997, 0.59162362775974664],
                             [0.88868358904449662, 0.89165480011560816],
                             [0.4575674820298663, 0.7781880808593471]])
@@ -486,20 +487,23 @@ class TestRandomDist(object):
 
     def test_rand_singleton(self):
         random.brng.seed(self.seed)
-        actual = random.rand()
+        with pytest.deprecated_call():
+            actual = random.rand()
         desired = 0.61879477158567997
         assert_array_almost_equal(actual, desired, decimal=15)
 
     def test_randn(self):
         random.brng.seed(self.seed)
-        actual = random.randn(3, 2)
+        with pytest.deprecated_call():
+            actual = random.randn(3, 2)
         desired = np.array([[-3.472754000610961, -0.108938564229143],
                             [-0.245965753396411, -0.704101550261701],
                             [0.360102487116356,  0.127832101772367]])
         assert_array_almost_equal(actual, desired, decimal=15)
 
         random.brng.seed(self.seed)
-        actual = random.randn()
+        with pytest.deprecated_call():
+            actual = random.randn()
         assert_array_almost_equal(actual, desired[0, 0], decimal=15)
 
     def test_integers(self):
