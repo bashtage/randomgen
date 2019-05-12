@@ -357,29 +357,35 @@ class RNG(object):
 
     def test_rand(self):
         state = self.rg.brng.state
-        vals = self.rg.rand(10, 10, 10)
+        with pytest.deprecated_call():
+            vals = self.rg.rand(10, 10, 10)
         self.rg.brng.state = state
         assert_((vals == self.rg.random((10, 10, 10))).all())
         assert_(vals.shape == (10, 10, 10))
-        vals = self.rg.rand(10, 10, 10, dtype=np.float32)
+        with pytest.deprecated_call():
+            vals = self.rg.rand(10, 10, 10, dtype=np.float32)
         assert_(vals.shape == (10, 10, 10))
 
     def test_randn(self):
         state = self.rg.brng.state
-        vals = self.rg.randn(10, 10, 10)
+        with pytest.deprecated_call():
+            vals = self.rg.randn(10, 10, 10)
         self.rg.brng.state = state
         assert_equal(vals, self.rg.standard_normal((10, 10, 10)))
         assert_equal(vals.shape, (10, 10, 10))
 
         state = self.rg.brng.state
-        vals = self.rg.randn(10, 10, 10)
+        with pytest.deprecated_call():
+            vals = self.rg.randn(10, 10, 10)
         self.rg.brng.state = state
         assert_equal(vals, self.rg.standard_normal((10, 10, 10)))
 
         state = self.rg.brng.state
-        self.rg.randn(10, 10, 10)
+        with pytest.deprecated_call():
+            self.rg.randn(10, 10, 10)
         self.rg.brng.state = state
-        vals = self.rg.randn(10, 10, 10, dtype=np.float32)
+        with pytest.deprecated_call():
+            vals = self.rg.randn(10, 10, 10, dtype=np.float32)
         assert_(vals.shape == (10, 10, 10))
 
     def test_noncentral_chisquare(self):

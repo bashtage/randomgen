@@ -25,6 +25,22 @@ from randomgen.distributions cimport *
 np.import_array()
 
 
+# TODO: Remove after deprecation
+def _rand_dep_message(old, new, args, dtype):
+    msg = '{old} is deprecated. Use {new}({call}) instead'
+    dtype = np.dtype(dtype).char
+    if args:
+        if len(args) == 1:
+            size = str(args[0])
+        else:
+            size = '(' + ', '.join(map(str,args)) + ')'
+        call = '{size}, dtype=\'{dtype}\''.format(size=size,
+                                                dtype=str(dtype))
+    else:
+        call = 'dtype=\'{dtype}\''.format(dtype = str(dtype))
+    return msg.format(old=old, new=new, call=call)
+
+
 cdef class Generator:
     """
     Generator(brng=None)
@@ -781,7 +797,7 @@ cdef class Generator:
                 found = np.zeros(shape, dtype=np.int64)
                 flat_found = found.ravel()
                 while n_uniq < size:
-                    x = self.rand(size - n_uniq)
+                    x = self.random(size - n_uniq)
                     if n_uniq > 0:
                         p[flat_found[0:n_uniq]] = 0
                     cdf = np.cumsum(p)
@@ -886,9 +902,6 @@ cdef class Generator:
         --------
         integers : Discrete uniform distribution, yielding integers.
         random : Floats uniformly distributed over ``[0, 1)``.
-        rand : Convenience function that accepts dimensions as input, e.g.,
-               ``rand(2,2)`` would generate a 2-by-2 array of floats,
-               uniformly distributed over ``[0, 1)``.
 
         Notes
         -----
@@ -1004,6 +1017,10 @@ cdef class Generator:
                [ 0.49313049,  0.94909878]]) #random
 
         """
+        import warnings
+        msg = _rand_dep_message('rand', 'random', args, dtype)
+        warnings.warn(msg, DeprecationWarning)
+
         if len(args) == 0:
             return self.random(dtype=dtype)
         else:
@@ -1067,6 +1084,10 @@ cdef class Generator:
                [ 0.39924804,  4.68456316,  4.99394529,  4.84057254]])  # random
 
         """
+        import warnings
+        msg = _rand_dep_message('randn', 'standard_normal', args, dtype)
+        warnings.warn(msg, DeprecationWarning)
+
         if len(args) == 0:
             return self.standard_normal(dtype=dtype)
         else:
