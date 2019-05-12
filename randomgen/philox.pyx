@@ -90,7 +90,7 @@ cdef class Philox:
 
     ``Philox`` provides a capsule containing function pointers that produce
     doubles, and unsigned 32 and 64- bit integers. These are not
-    directly consumable in Python and must be consumed by a ``RandomGenerator``
+    directly consumable in Python and must be consumed by a ``Generator``
     or similar object that supports low-level access.
 
     See ``ThreeFry`` for a closely related PRNG.
@@ -119,8 +119,8 @@ cdef class Philox:
     generators should be initialized with the same seed to ensure that the
     segments come from the same sequence.
 
-    >>> from randomgen import RandomGenerator, Philox
-    >>> rg = [RandomGenerator(Philox(1234)) for _ in range(10)]
+    >>> from randomgen import Generator, Philox
+    >>> rg = [Generator(Philox(1234)) for _ in range(10)]
     # Advance each Philox instance by i jumps
     >>> for i in range(10):
     ...     rg[i].brng.jump(i)
@@ -129,7 +129,7 @@ cdef class Philox:
     a sequence of distinct keys where each instance uses different key.
 
     >>> key = 2**196 + 2**132 + 2**65 + 2**33 + 2**17 + 2**9
-    >>> rg = [RandomGenerator(Philox(key=key+i)) for i in range(10)]
+    >>> rg = [Generator(Philox(key=key+i)) for i in range(10)]
 
     **Compatibility Guarantee**
 
@@ -138,8 +138,8 @@ cdef class Philox:
 
     Examples
     --------
-    >>> from randomgen import RandomGenerator, Philox
-    >>> rg = RandomGenerator(Philox(1234))
+    >>> from randomgen import Generator, Philox
+    >>> rg = Generator(Philox(1234))
     >>> rg.standard_normal()
     0.123  # random
 
@@ -460,14 +460,14 @@ cdef class Philox:
     @property
     def generator(self):
         """
-        Return a RandomGenerator object
+        Return a Generator object
 
         Returns
         -------
-        gen : randomgen.generator.RandomGenerator
+        gen : randomgen.generator.Generator
             Random generator used by this instance as the core PRNG
         """
         if self._generator is None:
-            from .generator import RandomGenerator
-            self._generator = RandomGenerator(self)
+            from .generator import Generator
+            self._generator = Generator(self)
         return self._generator

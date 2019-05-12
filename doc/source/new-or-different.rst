@@ -6,8 +6,8 @@ What's New or Different
 .. warning::
 
   The Box-Muller method used to produce NumPy's normals is no longer available
-  in :class:`~randomgen.generator.RandomGenerator`.  It is not possible to 
-  reproduce the random values using :class:`~randomgen.generator.RandomGenerator` 
+  in :class:`~randomgen.generator.Generator`.  It is not possible to
+  reproduce the random values using :class:`~randomgen.generator.Generator`
   for the normal distribution or any other distribution that relies on the
   normal such as the gamma or student's t. If you require backward compatibility, a 
   legacy generator, :class:`~randomgen.mtrand.RandomState`, has been created
@@ -18,12 +18,12 @@ What's New or Different
   source of randomness that is used in cryptographic applications (e.g.,
   ``/dev/urandom`` on Unix).
 * Simulate from the complex normal distribution
-  (:meth:`~randomgen.generator.RandomGenerator.complex_normal`)
+  (:meth:`~randomgen.generator.Generator.complex_normal`)
 * The normal, exponential and gamma generators use 256-step Ziggurat
   methods which are 2-10 times faster than NumPy's default implementation in
-  :meth:`~randomgen.generator.RandomGenerator.standard_normal`,
-  :meth:`~randomgen.generator.RandomGenerator.standard_exponential` or
-  :meth:`~randomgen.generator.RandomGenerator.standard_gamma`.
+  :meth:`~randomgen.generator.Generator.standard_normal`,
+  :meth:`~randomgen.generator.Generator.standard_exponential` or
+  :meth:`~randomgen.generator.Generator.standard_gamma`.
 
 .. ipython:: python
 
@@ -55,12 +55,12 @@ What's New or Different
   to produce either single or double prevision uniform random variables for
   select core distributions
 
-  * Uniforms (:meth:`~randomgen.generator.RandomGenerator.random` and
-    :meth:`~randomgen.generator.RandomGenerator.rand`)
-  * Normals (:meth:`~randomgen.generator.RandomGenerator.standard_normal` and
-    :meth:`~randomgen.generator.RandomGenerator.randn`)
-  * Standard Gammas (:meth:`~randomgen.generator.RandomGenerator.standard_gamma`)
-  * Standard Exponentials (:meth:`~randomgen.generator.RandomGenerator.standard_exponential`)
+  * Uniforms (:meth:`~randomgen.generator.Generator.random` and
+    :meth:`~randomgen.generator.Generator.rand`)
+  * Normals (:meth:`~randomgen.generator.Generator.standard_normal` and
+    :meth:`~randomgen.generator.Generator.randn`)
+  * Standard Gammas (:meth:`~randomgen.generator.Generator.standard_gamma`)
+  * Standard Exponentials (:meth:`~randomgen.generator.Generator.standard_exponential`)
 
 .. ipython:: python
 
@@ -72,10 +72,10 @@ What's New or Different
 * Optional ``out`` argument that allows existing arrays to be filled for
   select core distributions
 
-  * Uniforms (:meth:`~randomgen.generator.RandomGenerator.random`)
-  * Normals (:meth:`~randomgen.generator.RandomGenerator.standard_normal`)
-  * Standard Gammas (:meth:`~randomgen.generator.RandomGenerator.standard_gamma`)
-  * Standard Exponentials (:meth:`~randomgen.generator.RandomGenerator.standard_exponential`)
+  * Uniforms (:meth:`~randomgen.generator.Generator.random`)
+  * Normals (:meth:`~randomgen.generator.Generator.standard_normal`)
+  * Standard Gammas (:meth:`~randomgen.generator.Generator.standard_gamma`)
+  * Standard Exponentials (:meth:`~randomgen.generator.Generator.standard_exponential`)
 
   This allows multithreading to fill large arrays in chunks using suitable
   PRNGs in parallel.
@@ -86,9 +86,9 @@ What's New or Different
   rg.random(out=existing[:2])
   print(existing)
 
-* :meth:`~randomgen.generator.RandomGenerator.integers` supports broadcasting inputs.
+* :meth:`~randomgen.generator.Generator.integers` supports broadcasting inputs.
 
-* :meth:`~randomgen.generator.RandomGenerator.integers` supports
+* :meth:`~randomgen.generator.Generator.integers` supports
   drawing from open (default, ``[low, high)``) or closed
   (``[low, high]``) intervals using the keyword argument
   ``endpoint``. Closed intervals are simpler to use when the
@@ -118,7 +118,7 @@ What's New or Different
 
 * Support for Lemire’s method of generating uniform integers on an
   arbitrary interval by setting ``use_masked=True`` in
-  (:meth:`~randomgen.generator.RandomGenerator.integers`).
+  (:meth:`~randomgen.generator.Generator.integers`).
 
 .. ipython:: python
   :okwarning:
@@ -126,14 +126,14 @@ What's New or Different
   %timeit rg.integers(0, 1535, size=100000, use_masked=False)
   %timeit numpy.random.randint(0, 1535, size=100000)
 
-* :meth:`~randomgen.generator.RandomGenerator.multinomial`
+* :meth:`~randomgen.generator.Generator.multinomial`
   supports multidimensional values of ``n``
 
 .. ipython:: python
 
   rg.multinomial([10, 100], np.ones(6) / 6.)
 
-* :meth:`~randomgen.generator.RandomGenerator.choice`
+* :meth:`~randomgen.generator.Generator.choice`
   is much faster when sampling small amounts from large arrays
 
 .. ipython:: python
@@ -141,7 +141,7 @@ What's New or Different
   x = np.arange(1000000)
   %timeit rg.choice(x, 10)
 
-* :meth:`~randomgen.generator.RandomGenerator.choice`
+* :meth:`~randomgen.generator.Generator.choice`
   supports the ``axis`` keyword to work with multidimensional arrays.
 
 .. ipython:: python

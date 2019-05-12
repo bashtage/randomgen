@@ -87,7 +87,7 @@ cdef class DSFMT:
     -----
     ``DSFMT`` provides a capsule containing function pointers that produce
     doubles, and unsigned 32 and 64- bit integers [1]_ . These are not
-    directly consumable in Python and must be consumed by a ``RandomGenerator``
+    directly consumable in Python and must be consumed by a ``Generator``
     or similar object that supports low-level access.
 
     The Python stdlib module "random" also contains a Mersenne Twister
@@ -118,9 +118,9 @@ cdef class DSFMT:
     the segments come from the same sequence.
 
     >>> from randomgen.entropy import random_entropy
-    >>> from randomgen import RandomGenerator, DSFMT
+    >>> from randomgen import Generator, DSFMT
     >>> seed = random_entropy()
-    >>> rs = [RandomGenerator(DSFMT(seed)) for _ in range(10)]
+    >>> rs = [Generator(DSFMT(seed)) for _ in range(10)]
     # Advance each DSFMT instance by i jumps
     >>> for i in range(10):
     ...     rs[i].brng.jump()
@@ -389,14 +389,14 @@ cdef class DSFMT:
     @property
     def generator(self):
         """
-        Return a RandomGenerator object
+        Return a Generator object
 
         Returns
         -------
-        gen : randomgen.generator.RandomGenerator
+        gen : randomgen.generator.Generator
             Random generator used this instance as the basic RNG
         """
         if self._generator is None:
-            from .generator import RandomGenerator
-            self._generator = RandomGenerator(self)
+            from .generator import Generator
+            self._generator = Generator(self)
         return self._generator

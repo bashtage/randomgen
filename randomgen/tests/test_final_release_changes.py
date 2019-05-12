@@ -1,8 +1,8 @@
 import pytest
 
-from randomgen import RandomGenerator
+from randomgen import Generator
 
-random_gen = RandomGenerator()
+random_gen = Generator()
 
 
 def test_random_sample_deprecated():

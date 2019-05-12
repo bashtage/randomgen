@@ -1,7 +1,7 @@
 Basic Random Number Generators
 ------------------------------
 
-The random values produced by :class:`~randomgen.generator.RandomGenerator` 
+The random values produced by :class:`~randomgen.generator.Generator`
 are produced by a basic RNG.  These basic RNGs do not directly provide
 random numbers and only contains methods used for seeding, getting or
 setting the state, jumping or advancing the state, and for accessing 

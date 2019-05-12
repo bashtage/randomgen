@@ -15,8 +15,8 @@ if '{brng}' == 'numpy':
     rg = numpy.random.RandomState()
     rg.random_sample()
 else:
-    from randomgen import RandomGenerator, {brng}
-    rg = RandomGenerator({brng}())
+    from randomgen import Generator, {brng}
+    rg = Generator({brng}())
     rg.random()
 '''
 

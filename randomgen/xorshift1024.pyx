@@ -63,7 +63,7 @@ cdef class Xorshift1024:
 
     ``Xorshift1024`` provides a capsule containing function pointers that
     produce doubles, and unsigned 32 and 64- bit integers. These are not
-    directly consumable in Python and must be consumed by a ``RandomGenerator``
+    directly consumable in Python and must be consumed by a ``Generator``
     or similar object that supports low-level access.
 
     See ``Xoroshiro128`` for a faster basic RNG that has a smaller period.
@@ -89,8 +89,8 @@ cdef class Xorshift1024:
     generators should be initialized with the same seed to ensure that
     the segments come from the same sequence.
 
-    >>> from randomgen import RandomGenerator, Xorshift1024
-    >>> rg = [RandomGenerator(Xorshift1024(1234)) for _ in range(10)]
+    >>> from randomgen import Generator, Xorshift1024
+    >>> rg = [Generator(Xorshift1024(1234)) for _ in range(10)]
     # Advance each Xorshift1024 instance by i jumps
     >>> for i in range(10):
     ...     rg[i].brng.jump(i)
@@ -102,8 +102,8 @@ cdef class Xorshift1024:
 
     Examples
     --------
-    >>> from randomgen import RandomGenerator, Xorshift1024
-    >>> rg = RandomGenerator(Xorshift1024(1234))
+    >>> from randomgen import Generator, Xorshift1024
+    >>> rg = Generator(Xorshift1024(1234))
     >>> rg.standard_normal()
     0.123  # random
 
@@ -346,14 +346,14 @@ cdef class Xorshift1024:
     @property
     def generator(self):
         """
-        Return a RandomGenerator object
+        Return a Generator object
 
         Returns
         -------
-        gen : randomgen.generator.RandomGenerator
+        gen : randomgen.generator.Generator
             Random generator used by this instance as the core PRNG
         """
         if self._generator is None:
-            from .generator import RandomGenerator
-            self._generator = RandomGenerator(self)
+            from .generator import Generator
+            self._generator = Generator(self)
         return self._generator

@@ -25,13 +25,13 @@ from randomgen.distributions cimport *
 np.import_array()
 
 
-cdef class RandomGenerator:
+cdef class Generator:
     """
-    RandomGenerator(brng=None)
+    Generator(brng=None)
 
     Container for the Basic Random Number Generators.
 
-    ``RandomGenerator`` exposes methods for generating random numbers drawn
+    ``Generator`` exposes methods for generating random numbers drawn
     from a variety of probability distributions. In addition to the
     distribution-specific arguments, each method takes a keyword argument
     `size` that defaults to ``None``. If `size` is ``None``, then a single
@@ -41,10 +41,10 @@ cdef class RandomGenerator:
 
     **No Compatibility Guarantee**
 
-    ``RandomGenerator`` is evolving and so it isn't possible to provide a
+    ``Generator`` is evolving and so it isn't possible to provide a
     compatibility guarantee like ``RandomState``. In particular, better
     algorithms have already been added and bugs that change the stream
-    have been fixed. This will change once ``RandomGenerator`` stabilizes.
+    have been fixed. This will change once ``Generator`` stabilizes.
 
     Parameters
     ----------
@@ -56,22 +56,22 @@ cdef class RandomGenerator:
     -----
     The Python stdlib module `random` contains pseudo-random number generator
     with a number of methods that are similar to the ones available in
-    ``RandomGenerator``. It uses Mersenne Twister, which is available  by
-    using the ``MT19937`` basic RNG. ``RandomGenerator``, besides being
+    ``Generator``. It uses Mersenne Twister, which is available  by
+    using the ``MT19937`` basic RNG. ``Generator``, besides being
     NumPy-aware, has the advantage that it provides a much larger number
     of probability distributions from which to choose.
 
     Examples
     --------
-    >>> from randomgen import RandomGenerator
-    >>> rg = RandomGenerator()
+    >>> from randomgen import Generator
+    >>> rg = Generator()
     >>> rg.standard_normal()
     -0.203  # random
 
     Using a specific generator
 
     >>> from randomgen import MT19937
-    >>> rg = RandomGenerator(MT19937())
+    >>> rg = Generator(MT19937())
 
     The generator is also directly available from basic RNGs
 
@@ -148,7 +148,7 @@ cdef class RandomGenerator:
         The best method to access seed is to directly use a basic RNG instance.
         This example demonstrates this best practice.
 
-        >>> from randomgen import RandomGenerator, PCG64
+        >>> from randomgen import Generator, PCG64
         >>> brng = PCG64(1234567891011)
         >>> rg = brng.generator
         >>> brng.seed(1110987654321)
@@ -156,12 +156,12 @@ cdef class RandomGenerator:
         The method used to create the generator is not important.
 
         >>> brng = PCG64(1234567891011)
-        >>> rg = RandomGenerator(brng)
+        >>> rg = Generator(brng)
         >>> brng.seed(1110987654321)
 
         These best practice examples are equivalent to
 
-        >>> rg = RandomGenerator(PCG64(1234567891011))
+        >>> rg = Generator(PCG64(1234567891011))
         >>> rg.seed(1110987654321)
 
         """
@@ -181,7 +181,7 @@ cdef class RandomGenerator:
 
         Notes
         -----
-        This is a trivial pass-through function.  RandomGenerator does not
+        This is a trivial pass-through function.  Generator does not
         directly contain or manipulate the basic RNG's state.
 
         """
@@ -433,7 +433,7 @@ cdef class RandomGenerator:
 
         Examples
         --------
-        >>> rg = randomgen.RandomGenerator() # need a RandomGenerator object
+        >>> rg = randomgen.Generator() # need a Generator object
         >>> rg.tomaxint((2,2,2))
         array([[[1170048599, 1600360186], # random
                 [ 739731006, 1947757578]],
@@ -4389,7 +4389,10 @@ cdef class RandomGenerator:
         return randoms
 
 
-_random_generator = RandomGenerator()
+_random_generator = Generator()
+
+# TODO: Remove after final merge
+RandomGenerator = Generator
 
 beta = _random_generator.beta
 binomial = _random_generator.binomial

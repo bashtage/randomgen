@@ -45,7 +45,7 @@ cdef class RandomState:
     `RandomState` is effectively frozen and will only recieve updates that
     are required by changes in the the internals of Numpy. More substantial
     changes, including algorithmic improvements, are reserved for
-    `RandomGenerator`.
+    `Generator`.
 
     Parameters
     ----------
@@ -69,7 +69,7 @@ cdef class RandomState:
 
     See Also
     --------
-    randomgen.generator.RandomGenerator
+    randomgen.generator.Generator
     randomgen.mt19937.MT19937
 
     """
