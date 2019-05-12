@@ -4,6 +4,25 @@ This package contains replacements for the NumPy
 :class:`~numpy.random.RandomState` object that allows the core random number
 generator be be changed.
 
+.. warning::
+
+    There are many changes between v1.16.x and v1.17.x. These reflect API
+    decision taken in conjunction with NumPy in preparation of the core
+    of ``randomgen`` being used as the preferred random number generator in
+    NumPy. These all issue ``DeprecationWarning`` except for ``BasicRNG.generator``
+    which raises ``NotImplementedError``. The C-API has also changed to reflect
+    the preferred naming the underlying Pseudo-RNGs, which are now known as
+    bit generators (or ``BitGenerator``).
+
+    The main changes are
+
+    * Rename ``RandomGenerator`` to :class:`~randomgen.generator.Generator`.
+    * Rename `:meth:`~randomgen.generator.Generator.randint` to `:meth:`~randomgen.generator.Generator.integers`.
+    * Rename `:meth:`~randomgen.generator.Generator.random_integers` to `:meth:`~randomgen.generator.Generator.integers`.
+    * Rename `:meth:`~randomgen.generator.Generator.random_sample` to `:meth:`~randomgen.generator.Generator.random`.
+    * Change ``jump`` which operated in-place to ``jumped`` which returns a new ``BitGenerator``.
+    * Rename Basic RNG to bit generator, which impacts the API in multiple places where names like ``brng`` and ``basic_rng`` have been replaced by ``bitgen`` or ``bit_generator``.
+
 Quick Start
 -----------
 

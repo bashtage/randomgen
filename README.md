@@ -3,25 +3,43 @@
 Random Number Generator using settable Basic RNG interface for future
 NumPy RandomState evolution.
 
-### Continuous Integration
+**Continuous Integration**
+
 [![Travis Build Status](https://travis-ci.org/bashtage/randomgen.svg?branch=master)](https://travis-ci.org/bashtage/randomgen)
 [![Appveyor Build Status](https://ci.appveyor.com/api/projects/status/odc5c4ukhru5xicl/branch/master?svg=true)](https://ci.appveyor.com/project/bashtage/randomgen/branch/master)
 
-### Coverage
+**Coverage**
+
 [![Coverage Status](https://coveralls.io/repos/github/bashtage/randomgen/badge.svg)](https://coveralls.io/github/bashtage/randomgen)
 [![codecov](https://codecov.io/gh/bashtage/randomgen/branch/master/graph/badge.svg)](https://codecov.io/gh/bashtage/randomgen)
 
-### Latest Release
+**Latest Release**
+
 [![PyPI version](https://badge.fury.io/py/randomgen.svg)](https://pypi.org/project/randomgen/)
 [![Anacnoda Cloud](https://anaconda.org/bashtage/randomgen/badges/version.svg)](https://anaconda.org/bashtage/randomgen)
 
-### License
+**License**
+
 [![NCSA License](https://img.shields.io/badge/License-NCSA-blue.svg)](https://opensource.org/licenses/NCSA)
 [![BSD License](https://img.shields.io/badge/License-BSD%203--Clause-blue.svg)](https://opensource.org/licenses/BSD-3-Clause)
 [![DOI](https://zenodo.org/badge/122181085.svg)](https://zenodo.org/badge/latestdoi/122181085)
 
 This is a library and generic interface for alternative random 
 generators in Python and NumPy.
+
+
+# WARNINGS
+
+## Changes in v1.17
+
+There are many changes between v1.16.x and v1.17.x. These reflect API 
+decision taken in conjunction with NumPy in preperation of the core 
+of `randomgen` being used as the preferred random number generator in 
+NumPy. These all issue `DeprecationWarning`s except for `BasicRNG.generator` 
+which raises `NotImplementedError`. The C-API has also changed to reflect
+the preferred naming the underlying Pseudo-RNGs, which are now known as
+bit generators (or `BigGenerator`s).
+
 
 ## Python 2.7 Support
 
@@ -38,7 +56,7 @@ normals now use the faster Ziggurat implementation. If you require backward
 compatibility, a legacy generator, ``RandomState``, has been created
 which can fully reproduce the sequence produced by NumPy.
 
-## Features
+# Features
 
 * Replacement for NumPy's RandomState
 

@@ -4,28 +4,39 @@ RandomGen
 Random Number Generator using settable Basic RNG interface for future
 NumPy RandomState evolution.
 
-Continuous Integration
-~~~~~~~~~~~~~~~~~~~~~~
+**Continuous Integration**
 
 |Travis Build Status| |Appveyor Build Status|
 
-Coverage
-~~~~~~~~
+**Coverage**
 
 |Coverage Status| |codecov|
 
-Latest Release
-~~~~~~~~~~~~~~
+**Latest Release**
 
 |PyPI version| |Anacnoda Cloud|
 
-License
-~~~~~~~
+**License**
 
 |NCSA License| |BSD License| |DOI|
 
 This is a library and generic interface for alternative random
 generators in Python and NumPy.
+
+WARNINGS
+========
+
+Changes in v1.17
+----------------
+
+There are many changes between v1.16.x and v1.17.x. These reflect API
+decision taken in conjunction with NumPy in preperation of the core of
+``randomgen`` being used as the preferred random number generator in
+NumPy. These all issue ``DeprecationWarning``\ s except for
+``BasicRNG.generator`` which raises ``NotImplementedError``. The C-API
+has also changed to reflect the preferred naming the underlying
+Pseudo-RNGs, which are now known as bit generators (or
+``BigGenerator``\ s).
 
 Python 2.7 Support
 ------------------
@@ -45,7 +56,7 @@ backward compatibility, a legacy generator, ``RandomState``, has been
 created which can fully reproduce the sequence produced by NumPy.
 
 Features
---------
+========
 
 -  Replacement for NumPy’s RandomState
 
@@ -273,8 +284,6 @@ The separate generators are importable from ``randomgen``
    # Identical to NumPy
    rg = Generator(MT19937())
    rg.random(100)
-
-.. _license-1:
 
 License
 -------
