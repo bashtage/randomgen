@@ -191,17 +191,24 @@ cdef class RandomGenerator:
     def state(self, value):
         self._basicrng.state = value
 
-    def random_sample(self, size=None, dtype=np.float64, out=None):
+    def random_sample(self, *args, **kwargs):
+        import warnings
+        warnings.warn('random_sample is deprecated in favor of random',
+                      DeprecationWarning)
+
+        return self.random(*args, **kwargs)
+
+    def random(self, size=None, dtype=np.float64, out=None):
         """
-        random_sample(size=None, dtype='d', out=None)
+        random(size=None, dtype='d', out=None)
 
         Return random floats in the half-open interval [0.0, 1.0).
 
         Results are from the "continuous uniform" distribution over the
         stated interval.  To sample :math:`Unif[a, b), b > a` multiply
-        the output of `random_sample` by `(b-a)` and add `a`::
+        the output of `random` by `(b-a)` and add `a`::
 
-          (b - a) * random_sample() + a
+          (b - a) * random() + a
 
         Parameters
         ----------
@@ -226,16 +233,16 @@ cdef class RandomGenerator:
 
         Examples
         --------
-        >>> randomgen.generator.random_sample()
+        >>> randomgen.generator.random()
         0.47108547995356098 # random
-        >>> type(randomgen.generator.random_sample())
+        >>> type(randomgen.generator.random())
         <class 'float'>
-        >>> randomgen.generator.random_sample((5,))
+        >>> randomgen.generator.random((5,))
         array([ 0.30220482,  0.86820401,  0.1654503 ,  0.11659149,  0.54323428]) # random
 
         Three-by-two array of random numbers from [-5, 0):
 
-        >>> 5 * randomgen.generator.random_sample((3, 2)) - 5
+        >>> 5 * randomgen.generator.random((3, 2)) - 5
         array([[-3.99149989, -0.52338984], # random
                [-2.99091858, -0.79479508],
                [-1.23204345, -1.75224494]])
@@ -248,7 +255,7 @@ cdef class RandomGenerator:
         elif key == 'float32':
             return float_fill(&random_float, self._brng, size, self.lock, out)
         else:
-            raise TypeError('Unsupported dtype "%s" for random_sample' % key)
+            raise TypeError('Unsupported dtype "%s" for random' % key)
 
     def beta(self, a, b, size=None):
         """
@@ -738,7 +745,7 @@ cdef class RandomGenerator:
             if p is not None:
                 cdf = p.cumsum()
                 cdf /= cdf[-1]
-                uniform_samples = self.random_sample(shape)
+                uniform_samples = self.random(shape)
                 idx = cdf.searchsorted(uniform_samples, side='right')
                 idx = np.array(idx, copy=False, dtype=np.int64)  # searchsorted returns a scalar
             else:
@@ -864,8 +871,7 @@ cdef class RandomGenerator:
         randint : Discrete uniform distribution, yielding integers.
         random_integers : Discrete uniform distribution over the closed
                           interval ``[low, high]``.
-        random_sample : Floats uniformly distributed over ``[0, 1)``.
-        random : Alias for `random_sample`.
+        random : Floats uniformly distributed over ``[0, 1)``.
         rand : Convenience function that accepts dimensions as input, e.g.,
                ``rand(2,2)`` would generate a 2-by-2 array of floats,
                uniformly distributed over ``[0, 1)``.
@@ -949,7 +955,7 @@ cdef class RandomGenerator:
 
         .. note::
             This is a convenience function for users porting code from Matlab,
-            and wraps `randomgen.generator.random_sample`. That function takes a
+            and wraps `randomgen.generator.random`. That function takes a
             tuple to specify the size of the output, which is consistent with
             other NumPy functions like `numpy.zeros` and `numpy.ones`.
 
@@ -985,9 +991,9 @@ cdef class RandomGenerator:
 
         """
         if len(args) == 0:
-            return self.random_sample(dtype=dtype)
+            return self.random(dtype=dtype)
         else:
-            return self.random_sample(size=args, dtype=dtype)
+            return self.random(size=args, dtype=dtype)
 
     def randn(self, *args, dtype=np.float64):
         """
@@ -4403,6 +4409,7 @@ randint = _random_generator.randint
 randn = _random_generator.randn
 random_integers = _random_generator.random_integers
 random_sample = _random_generator.random_sample
+random = _random_generator.random
 rayleigh = _random_generator.rayleigh
 shuffle = _random_generator.shuffle
 standard_cauchy = _random_generator.standard_cauchy

@@ -34,7 +34,7 @@ Simple random data
    ~RandomGenerator.randn
    ~RandomGenerator.randint
    ~RandomGenerator.random_integers
-   ~RandomGenerator.random_sample
+   ~RandomGenerator.random
    ~RandomGenerator.choice
    ~RandomGenerator.bytes
 

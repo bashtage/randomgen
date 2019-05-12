@@ -182,26 +182,26 @@ class Base(object):
     def test_uniform_double(self):
         rs = RandomGenerator(self.brng(*self.data1['seed']))
         vals = uniform_from_uint(self.data1['data'], self.bits)
-        uniforms = rs.random_sample(len(vals))
+        uniforms = rs.random(len(vals))
         assert_allclose(uniforms, vals)
         assert_equal(uniforms.dtype, np.float64)
 
         rs = RandomGenerator(self.brng(*self.data2['seed']))
         vals = uniform_from_uint(self.data2['data'], self.bits)
-        uniforms = rs.random_sample(len(vals))
+        uniforms = rs.random(len(vals))
         assert_allclose(uniforms, vals)
         assert_equal(uniforms.dtype, np.float64)
 
     def test_uniform_float(self):
         rs = RandomGenerator(self.brng(*self.data1['seed']))
         vals = uniform32_from_uint(self.data1['data'], self.bits)
-        uniforms = rs.random_sample(len(vals), dtype=np.float32)
+        uniforms = rs.random(len(vals), dtype=np.float32)
         assert_allclose(uniforms, vals)
         assert_equal(uniforms.dtype, np.float32)
 
         rs = RandomGenerator(self.brng(*self.data2['seed']))
         vals = uniform32_from_uint(self.data2['data'], self.bits)
-        uniforms = rs.random_sample(len(vals), dtype=np.float32)
+        uniforms = rs.random(len(vals), dtype=np.float32)
         assert_allclose(uniforms, vals)
         assert_equal(uniforms.dtype, np.float32)
 
@@ -526,11 +526,11 @@ class TestDSFMT(Base):
     def test_uniform_double(self):
         rs = RandomGenerator(self.brng(*self.data1['seed']))
         assert_array_equal(uniform_from_dsfmt(self.data1['data']),
-                           rs.random_sample(1000))
+                           rs.random(1000))
 
         rs = RandomGenerator(self.brng(*self.data2['seed']))
         assert_equal(uniform_from_dsfmt(self.data2['data']),
-                     rs.random_sample(1000))
+                     rs.random(1000))
 
     def test_gauss_inv(self):
         n = 25
@@ -570,19 +570,19 @@ class TestDSFMT(Base):
     def test_uniform_float(self):
         rs = RandomGenerator(self.brng(*self.data1['seed']))
         vals = uniform32_from_uint(self.data1['data'], self.bits)
-        uniforms = rs.random_sample(len(vals), dtype=np.float32)
+        uniforms = rs.random(len(vals), dtype=np.float32)
         assert_allclose(uniforms, vals)
         assert_equal(uniforms.dtype, np.float32)
 
         rs = RandomGenerator(self.brng(*self.data2['seed']))
         vals = uniform32_from_uint(self.data2['data'], self.bits)
-        uniforms = rs.random_sample(len(vals), dtype=np.float32)
+        uniforms = rs.random(len(vals), dtype=np.float32)
         assert_allclose(uniforms, vals)
         assert_equal(uniforms.dtype, np.float32)
 
     def test_buffer_reset(self):
         rs = RandomGenerator(self.brng(*self.data1['seed']))
-        rs.random_sample(1)
+        rs.random(1)
         assert rs.brng.state['buffer_loc'] != 382
         rs.brng.seed(*self.data1['seed'])
         assert rs.brng.state['buffer_loc'] == 382

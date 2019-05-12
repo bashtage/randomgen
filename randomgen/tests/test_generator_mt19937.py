@@ -581,34 +581,34 @@ class TestRandomDist(object):
                           random.random_integers,
                           np.iinfo('l').max, np.iinfo('l').max)
 
-    def test_random_sample(self):
+    def test_random(self):
         random.brng.seed(self.seed)
-        actual = random.random_sample((3, 2))
+        actual = random.random((3, 2))
         desired = np.array([[0.61879477158567997, 0.59162362775974664],
                             [0.88868358904449662, 0.89165480011560816],
                             [0.4575674820298663, 0.7781880808593471]])
         assert_array_almost_equal(actual, desired, decimal=15)
 
         random.brng.seed(self.seed)
-        actual = random.random_sample()
+        actual = random.random()
         assert_array_almost_equal(actual, desired[0, 0], decimal=15)
 
-    def test_random_sample_float(self):
+    def test_random_float(self):
         random.brng.seed(self.seed)
-        actual = random.random_sample((3, 2))
+        actual = random.random((3, 2))
         desired = np.array([[0.6187948, 0.5916236],
                             [0.8886836, 0.8916548],
                             [0.4575675, 0.7781881]])
         assert_array_almost_equal(actual, desired, decimal=7)
 
-    def test_random_sample_float_scalar(self):
+    def test_random_float_scalar(self):
         random.brng.seed(self.seed)
-        actual = random.random_sample(dtype=np.float32)
+        actual = random.random(dtype=np.float32)
         desired = 0.6187948
         assert_array_almost_equal(actual, desired, decimal=7)
 
-    def test_random_sample_unsupported_type(self):
-        assert_raises(TypeError, random.random_sample, dtype='int32')
+    def test_random_unsupported_type(self):
+        assert_raises(TypeError, random.random, dtype='int32')
 
     def test_choice_uniform_replace(self):
         random.brng.seed(self.seed)

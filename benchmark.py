@@ -13,10 +13,11 @@ import numpy as np
 if '{brng}' == 'numpy':
     import numpy.random
     rg = numpy.random.RandomState()
+    rg.random_sample()
 else:
     from randomgen import RandomGenerator, {brng}
     rg = RandomGenerator({brng}())
-rg.random_sample()
+    rg.random()
 '''
 
 scale_32 = scale_64 = 1
@@ -78,8 +79,9 @@ def timer_raw():
 
 
 def timer_uniform():
-    command = 'rg.random_sample(1000000)'
-    run_timer(command, None, SETUP, 'Uniforms')
+    command = 'rg.random(1000000)'
+    command_numpy = 'rg.random_sample(1000000)'
+    run_timer(command, command_numpy, SETUP, 'Uniforms')
 
 
 def timer_bounded(bits=8, max=95, use_masked=True):
