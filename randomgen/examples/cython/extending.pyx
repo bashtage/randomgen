@@ -15,7 +15,7 @@ np.import_array()
 def uniform_mean(Py_ssize_t N):
     cdef Py_ssize_t i
     cdef bitgen_t *rng
-    cdef const char *capsule_name = "BasicRNG"
+    cdef const char *capsule_name = "BitGenerator"
     cdef double[::1] random_values
     cdef np.ndarray randoms
 
@@ -53,7 +53,7 @@ def bounded_uints(uint32_t lb, uint32_t ub, Py_ssize_t n):
     cdef Py_ssize_t i
     cdef bitgen_t *rng
     cdef uint32_t[::1] out
-    cdef const char *capsule_name = "BasicRNG"
+    cdef const char *capsule_name = "BitGenerator"
 
     x = Xoroshiro128()
     out = np.empty(n, dtype=np.uint32)

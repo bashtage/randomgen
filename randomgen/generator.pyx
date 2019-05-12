@@ -108,7 +108,7 @@ cdef class Generator:
         self._bit_generator = bit_generator
 
         capsule = bit_generator.capsule
-        cdef const char *name = "BasicRNG"
+        cdef const char *name = "BitGenerator"
         if not PyCapsule_IsValid(capsule, name):
             raise ValueError("Invalid bit generator'. The bit generator must "
                              "be instantized.")

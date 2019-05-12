@@ -18,7 +18,7 @@ interface = namedtuple('interface', ['state_address', 'state', 'next_uint64',
 
 
 cdef object benchmark(bitgen_t *bitgen, object lock, Py_ssize_t cnt, object method):
-    """Benchmark command used by BasicRNG"""
+    """Benchmark command used by BitGenerator"""
     cdef Py_ssize_t i
     if method==u'uint64':
         with lock, nogil:

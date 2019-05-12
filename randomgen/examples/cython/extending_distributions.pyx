@@ -13,7 +13,7 @@ from randomgen.xoroshiro128 import Xoroshiro128
 def normals_zig(Py_ssize_t n):
     cdef Py_ssize_t i
     cdef bitgen_t *rng
-    cdef const char *capsule_name = "BasicRNG"
+    cdef const char *capsule_name = "BitGenerator"
     cdef double[::1] random_values
 
     x = Xoroshiro128()
@@ -33,7 +33,7 @@ def normals_zig(Py_ssize_t n):
 def uniforms(Py_ssize_t n):
     cdef Py_ssize_t i
     cdef bitgen_t *rng
-    cdef const char *capsule_name = "BasicRNG"
+    cdef const char *capsule_name = "BitGenerator"
     cdef double[::1] random_values
 
     x = Xoroshiro128()

@@ -13,7 +13,7 @@ from .dsfmt import DSFMT
 from .generator import Generator
 from .mt19937 import MT19937
 
-BasicRNGS = {'MT19937': MT19937,
+BitGeneratorS = {'MT19937': MT19937,
              'DSFMT': DSFMT,
              'PCG32': PCG32,
              'PCG64': PCG64,
@@ -34,21 +34,21 @@ def __generator_ctor(bit_generator_name='mt19937'):
     Parameters
     ----------
     bit_generator_name: str
-        String containing the core BasicRNG
+        String containing the core BitGenerator
 
     Returns
     -------
     rg: Generator
-        Generator using the named core BasicRNG
+        Generator using the named core BitGenerator
     """
     try:
         bit_generator_name = bit_generator_name.decode('ascii')
     except AttributeError:
         pass
-    if bit_generator_name in BasicRNGS:
-        bit_generator = BasicRNGS[bit_generator_name]
+    if bit_generator_name in BitGeneratorS:
+        bit_generator = BitGeneratorS[bit_generator_name]
     else:
-        raise ValueError(str(bit_generator_name) + ' is not a known BasicRNG module.')
+        raise ValueError(str(bit_generator_name) + ' is not a known BitGenerator module.')
 
     return Generator(bit_generator())
 
@@ -71,10 +71,10 @@ def __bit_generator_ctor(bit_generator_name='mt19937'):
         bit_generator_name = bit_generator_name.decode('ascii')
     except AttributeError:
         pass
-    if bit_generator_name in BasicRNGS:
-        bit_generator = BasicRNGS[bit_generator_name]
+    if bit_generator_name in BitGeneratorS:
+        bit_generator = BitGeneratorS[bit_generator_name]
     else:
-        raise ValueError(str(bit_generator_name) + ' is not a known BasicRNG module.')
+        raise ValueError(str(bit_generator_name) + ' is not a known BitGenerator module.')
 
     return bit_generator()
 
@@ -86,20 +86,20 @@ def __randomstate_ctor(bit_generator_name='mt19937'):
     Parameters
     ----------
     bit_generator_name: str
-        String containing the core BasicRNG
+        String containing the core BitGenerator
 
     Returns
     -------
     rs: RandomState
-        Legacy RandomState using the named core BasicRNG
+        Legacy RandomState using the named core BitGenerator
     """
     try:
         bit_generator_name = bit_generator_name.decode('ascii')
     except AttributeError:
         pass
-    if bit_generator_name in BasicRNGS:
-        bit_generator = BasicRNGS[bit_generator_name]
+    if bit_generator_name in BitGeneratorS:
+        bit_generator = BitGeneratorS[bit_generator_name]
     else:
-        raise ValueError(str(bit_generator_name) + ' is not a known BasicRNG module.')
+        raise ValueError(str(bit_generator_name) + ' is not a known BitGenerator module.')
 
     return RandomState(bit_generator())

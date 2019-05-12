@@ -49,13 +49,13 @@ cdef class RandomState:
 
     Parameters
     ----------
-    bit_generator : {None, int, array_like, BasicRNG}, optional
+    bit_generator : {None, int, array_like, BitGenerator}, optional
         Random seed used to initialize the pseudo-random number generator or
-        an instantized BasicRNG.  If an integer or array, used as a seed for
-        the MT19937 BasicRNG. Values can be any integer between 0 and
+        an instantized BitGenerator.  If an integer or array, used as a seed for
+        the MT19937 BitGenerator. Values can be any integer between 0 and
         2**32 - 1 inclusive, an array (or other sequence) of such integers,
         or ``None`` (the default).  If `seed` is ``None``, then the `MT19937`
-        BasicRNG is initialized by reading data from ``/dev/urandom``
+        BitGenerator is initialized by reading data from ``/dev/urandom``
         (or the Windows analogue) if available or seed from the clock
         otherwise.
 
@@ -88,7 +88,7 @@ cdef class RandomState:
 
         self._bit_generator = bit_generator
         capsule = bit_generator.capsule
-        cdef const char *name = "BasicRNG"
+        cdef const char *name = "BitGenerator"
         if not PyCapsule_IsValid(capsule, name):
             raise ValueError("Invalid bit generator. The bit generator must "
                              "be instantized.")
@@ -230,7 +230,7 @@ cdef class RandomState:
             4. an integer ``has_gauss``.
             5. a float ``cached_gaussian``.
 
-            If state is a dictionary, it is directly set using the BasicRNGs
+            If state is a dictionary, it is directly set using the BitGenerators
             `state` property.
 
         Returns
