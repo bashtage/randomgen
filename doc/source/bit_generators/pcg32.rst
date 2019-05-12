@@ -23,6 +23,7 @@ Parallel generation
 
    ~PCG32.advance
    ~PCG32.jump
+   ~PCG32.jumped
 
 Random Generator
 ================

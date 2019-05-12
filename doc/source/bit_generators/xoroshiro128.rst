@@ -22,6 +22,7 @@ Parallel generation
    :toctree: generated/
 
    ~Xoroshiro128.jump
+   ~Xoroshiro128.jumped
 
 Random Generator
 ================

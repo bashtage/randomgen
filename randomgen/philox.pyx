@@ -1,5 +1,5 @@
 from libc.stdlib cimport malloc, free
-from cpython.pycapsule cimport PyCapsule_New
+from cpython.pycapsule cimport PyCapsule_New, PyCapsule_GetPointer
 
 try:
     from threading import Lock
@@ -367,7 +367,42 @@ cdef class Philox:
         Jumping the rng state resets any pre-computed random numbers. This is
         required to ensure exact reproducibility.
         """
+        import warnings
+        warnings.warn('jump (in-place) has been deprecated in favor of jumped'
+                      ', which returns a new instance', DeprecationWarning)
+
         return self.advance(iter * 2 ** 128)
+
+    def jumped(self, np.npy_intp iter=1):
+        """
+        jumped(iter=1)
+
+        Returns a new bit generator with the state jumped
+
+        The state of the returned big generator is jumped as-if
+        2**(128 * iter) random numbers have been generated.
+
+        Parameters
+        ----------
+        iter : integer, positive
+            Number of times to jump the state of the bit generator returned
+
+        Returns
+        -------
+        bit_generator : Xoroshiro128
+            New instance of generator jumped iter times
+        """
+        cdef bitgen_t *new_bitgen
+        cdef np.ndarray delta_a
+        bit_generator = self.__class__()
+        cdef const char *name = "BitGenerator"
+        new_bitgen = <bitgen_t *>PyCapsule_GetPointer(bit_generator.capsule,
+                                                      name)
+
+        delta_a = int_to_array(iter * 2**128, 'step', 256, 64)
+        philox_advance(<uint64_t *>delta_a.data, <philox_state *>new_bitgen.state)
+
+        return bit_generator
 
     def advance(self, delta):
         """

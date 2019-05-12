@@ -22,6 +22,7 @@ Parallel generation
    :toctree: generated/
 
    ~MT19937.jump
+   ~MT19937.jumped
 
 Random Generator
 ================

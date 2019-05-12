@@ -10,7 +10,7 @@ these requirements.
 This example makes use of Python 3 :mod:`concurrent.futures` to fill an array
 using multiple threads.  Threads are long-lived so that repeated calls do not
 require any additional overheads from thread creation. The underlying PRNG is
-xorshift2014 which is fast, has a long period and supports using ``jump`` to
+xorshift2014 which is fast, has a long period and supports using ``jumped`` to
 advance the state. The random numbers generated are reproducible in the sense
 that the same seed will produce the same outputs.
 
@@ -28,14 +28,13 @@ that the same seed will produce the same outputs.
                 threads = multiprocessing.cpu_count()
             self.threads = threads
     
-            self._random_generators = []
+            self._random_generators = [rg]
+            last_rg = rg
             for _ in range(0, threads-1):
-                _rg = Xorshift1024()
-                _rg.state = rg.state
-                self._random_generators.append(_rg.generator)
-                rg.jump()
-            self._random_generators.append(rg.generator)
-    
+                new_rg = last_rg.jumped()
+                self._random_generators.append()
+                last_rg = new_rg
+
             self.n = n
             self.executor = concurrent.futures.ThreadPoolExecutor(threads)
             self.values = np.empty(n)

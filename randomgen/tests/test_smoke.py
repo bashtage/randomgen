@@ -143,14 +143,27 @@ class RNG(object):
     def test_jump(self):
         state = self.rg.bit_generator.state
         if hasattr(self.rg.bit_generator, 'jump'):
-            self.rg.bit_generator.jump()
+            with pytest.deprecated_call():
+                self.rg.bit_generator.jump()
             jumped_state = self.rg.bit_generator.state
             assert_(not comp_state(state, jumped_state))
             self.rg.random(2 * 3 * 5 * 7 * 11 * 13 * 17)
             self.rg.bit_generator.state = state
-            self.rg.bit_generator.jump()
+            with pytest.deprecated_call():
+                self.rg.bit_generator.jump()
             rejumped_state = self.rg.bit_generator.state
             assert_(comp_state(jumped_state, rejumped_state))
+        else:
+            bit_gen_name = self.rg.bit_generator.__class__.__name__
+            pytest.skip('Jump is not supported by {0}'.format(bit_gen_name))
+
+    def test_jumped(self):
+        state = self.rg.bit_generator.state
+        if hasattr(self.rg.bit_generator, 'jumped'):
+            new_bit_gen = self.rg.bit_generator.jumped()
+            assert isinstance(new_bit_gen, self.rg.bit_generator.__class__)
+            assert_(comp_state(state, self.rg.bit_generator.state))
+            Generator(new_bit_gen).random(1000000)
         else:
             bit_gen_name = self.rg.bit_generator.__class__.__name__
             pytest.skip('Jump is not supported by {0}'.format(bit_gen_name))

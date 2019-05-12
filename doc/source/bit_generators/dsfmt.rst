@@ -22,6 +22,7 @@ Parallel generation
 .. autosummary::
    :toctree: generated/
 
+   ~DSFMT.jumped
    ~DSFMT.jump
 
 Random Generator
