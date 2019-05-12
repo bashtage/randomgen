@@ -246,7 +246,8 @@ class Base(object):
 
     def test_generator(self):
         brng = self.brng(*self.data1['seed'])
-        assert isinstance(brng.generator, Generator)
+        with pytest.raises(NotImplementedError):
+            brng.generator
 
     def test_pickle(self):
         import pickle
@@ -256,8 +257,10 @@ class Base(object):
         brng_pkl = pickle.dumps(brng)
         reloaded = pickle.loads(brng_pkl)
         reloaded_state = reloaded.state
-        assert_array_equal(brng.generator.standard_normal(1000),
-                           reloaded.generator.standard_normal(1000))
+        orig_gen = Generator(brng)
+        reloaded_gen = Generator(reloaded)
+        assert_array_equal(orig_gen.standard_normal(1000),
+                           reloaded_gen.standard_normal(1000))
         assert brng is not reloaded
         assert_state_equal(reloaded_state, state)
 

@@ -124,7 +124,6 @@ cdef class Xoshiro512StarStar:
     cdef public object capsule
     cdef object _ctypes
     cdef object _cffi
-    cdef object _generator
     cdef public object lock
 
     def __init__(self, seed=None):
@@ -140,7 +139,6 @@ cdef class Xoshiro512StarStar:
 
         self._ctypes = None
         self._cffi = None
-        self._generator = None
 
         cdef const char *name = "BasicRNG"
         self.capsule = PyCapsule_New(<void *>&self._brng, name, NULL)
@@ -337,14 +335,7 @@ cdef class Xoshiro512StarStar:
     @property
     def generator(self):
         """
-        Return a Generator object
-
-        Returns
-        -------
-        gen : randomgen.generator.Generator
-            Random generator used this instance as the basic RNG
+        Removed, raises NotImplementedError
         """
-        if self._generator is None:
-            from .generator import Generator
-            self._generator = Generator(self)
-        return self._generator
+        raise NotImplementedError('This method for accessing a Generator has'
+                                  'been removed.')
