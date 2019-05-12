@@ -14,7 +14,7 @@ PRNGS = [DSFMT, MT19937, Philox, PCG64, ThreeFry, Xoroshiro128, Xorshift1024,
          Xoshiro256StarStar, Xoshiro512StarStar]
 
 funcs = {'32-bit Unsigned Ints':
-         f'randint(2**32, dtype="uint32", size={SIZE})',
+         f'integers(2**32, dtype="uint32", size={SIZE})',
          '64-bit Unsigned Ints':
          f'_basicrng._benchmark({SIZE}, "uint64")',
          'Uniforms': f'_basicrng._benchmark({SIZE}, "double")',
@@ -52,7 +52,7 @@ npfuncs = OrderedDict()
 npfuncs.update(funcs)
 del npfuncs['Complex Normals']
 npfuncs.update({'64-bit Unsigned Ints':
-                f'randint(2**64, dtype="uint64", size={SIZE})',
+                f'integers(2**64, dtype="uint64", size={SIZE})',
                 'Uniforms': f'random_sample(size={SIZE})'})
 
 setup = """

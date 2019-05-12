@@ -15,26 +15,26 @@ random = RandomGenerator(MT19937())
 
 
 @pytest.fixture(scope='module', params=[True, False])
-def closed(request):
+def endpoint(request):
     return request.param
 
 
 class TestSeed(object):
     def test_scalar(self):
         s = RandomGenerator(MT19937(0))
-        assert_equal(s.randint(1000), 684)
+        assert_equal(s.integers(1000), 684)
         s = RandomGenerator(MT19937(4294967295))
-        assert_equal(s.randint(1000), 419)
+        assert_equal(s.integers(1000), 419)
 
     def test_array(self):
         s = RandomGenerator(MT19937(range(10)))
-        assert_equal(s.randint(1000), 468)
+        assert_equal(s.integers(1000), 468)
         s = RandomGenerator(MT19937(np.arange(10)))
-        assert_equal(s.randint(1000), 468)
+        assert_equal(s.integers(1000), 468)
         s = RandomGenerator(MT19937([0]))
-        assert_equal(s.randint(1000), 973)
+        assert_equal(s.integers(1000), 973)
         s = RandomGenerator(MT19937([4294967295]))
-        assert_equal(s.randint(1000), 265)
+        assert_equal(s.integers(1000), 265)
 
     def test_invalid_scalar(self):
         # seed must be an unsigned 32 bit integer
@@ -76,8 +76,8 @@ class TestMultinomial(object):
         random.multinomial(100, [0.2, 0.8, 0.0, 0.0, 0.0])
 
     def test_int_negative_interval(self):
-        assert_(-5 <= random.randint(-5, -1) < -1)
-        x = random.randint(-5, -1, 5)
+        assert_(-5 <= random.integers(-5, -1) < -1)
+        x = random.integers(-5, -1, 5)
         assert_(np.all(-5 <= x))
         assert_(np.all(x < -1))
 
@@ -145,83 +145,83 @@ class TestSetState(object):
 
 
 class TestRandint(object):
-    rfunc = random.randint
+    rfunc = random.integers
 
     # valid integer/boolean types
     itype = [bool, np.int8, np.uint8, np.int16, np.uint16,
              np.int32, np.uint32, np.int64, np.uint64]
 
-    def test_unsupported_type(self, closed):
-        assert_raises(TypeError, self.rfunc, 1, closed=closed, dtype=float)
+    def test_unsupported_type(self, endpoint):
+        assert_raises(TypeError, self.rfunc, 1, endpoint=endpoint, dtype=float)
 
-    def test_bounds_checking(self, closed):
+    def test_bounds_checking(self, endpoint):
         for dt in self.itype:
             lbnd = 0 if dt is bool else np.iinfo(dt).min
             ubnd = 2 if dt is bool else np.iinfo(dt).max + 1
-            ubnd = ubnd - 1 if closed else ubnd
+            ubnd = ubnd - 1 if endpoint else ubnd
             assert_raises(ValueError, self.rfunc, lbnd - 1, ubnd,
-                          closed=closed, dtype=dt)
+                          endpoint=endpoint, dtype=dt)
             assert_raises(ValueError, self.rfunc, lbnd, ubnd + 1,
-                          closed=closed, dtype=dt)
+                          endpoint=endpoint, dtype=dt)
             assert_raises(ValueError, self.rfunc, ubnd, lbnd,
-                          closed=closed, dtype=dt)
-            assert_raises(ValueError, self.rfunc, 1, 0, closed=closed,
+                          endpoint=endpoint, dtype=dt)
+            assert_raises(ValueError, self.rfunc, 1, 0, endpoint=endpoint,
                           dtype=dt)
 
             assert_raises(ValueError, self.rfunc, [lbnd - 1], ubnd,
-                          closed=closed, dtype=dt)
+                          endpoint=endpoint, dtype=dt)
             assert_raises(ValueError, self.rfunc, [lbnd], [ubnd + 1],
-                          closed=closed, dtype=dt)
+                          endpoint=endpoint, dtype=dt)
             assert_raises(ValueError, self.rfunc, [ubnd], [lbnd],
-                          closed=closed, dtype=dt)
+                          endpoint=endpoint, dtype=dt)
             assert_raises(ValueError, self.rfunc, 1, [0],
-                          closed=closed, dtype=dt)
+                          endpoint=endpoint, dtype=dt)
 
-    def test_bounds_checking_array(self, closed):
+    def test_bounds_checking_array(self, endpoint):
         for dt in self.itype:
             lbnd = 0 if dt is bool else np.iinfo(dt).min
-            ubnd = 2 if dt is bool else np.iinfo(dt).max + (not closed)
+            ubnd = 2 if dt is bool else np.iinfo(dt).max + (not endpoint)
 
             assert_raises(ValueError, self.rfunc, [
-                          lbnd - 1] * 2, [ubnd] * 2, closed=closed, dtype=dt)
+                          lbnd - 1] * 2, [ubnd] * 2, endpoint=endpoint, dtype=dt)
             assert_raises(ValueError, self.rfunc, [
-                          lbnd] * 2, [ubnd + 1] * 2, closed=closed, dtype=dt)
+                          lbnd] * 2, [ubnd + 1] * 2, endpoint=endpoint, dtype=dt)
             assert_raises(ValueError, self.rfunc, ubnd, [lbnd] * 2,
-                          closed=closed, dtype=dt)
+                          endpoint=endpoint, dtype=dt)
             assert_raises(ValueError, self.rfunc, [1] * 2, 0,
-                          closed=closed, dtype=dt)
+                          endpoint=endpoint, dtype=dt)
 
-    def test_rng_zero_and_extremes(self, closed):
+    def test_rng_zero_and_extremes(self, endpoint):
         for dt in self.itype:
             lbnd = 0 if dt is bool else np.iinfo(dt).min
             ubnd = 2 if dt is bool else np.iinfo(dt).max + 1
-            ubnd = ubnd - 1 if closed else ubnd
-            is_open = not closed
+            ubnd = ubnd - 1 if endpoint else ubnd
+            is_open = not endpoint
 
             tgt = ubnd - 1
             assert_equal(self.rfunc(tgt, tgt + is_open, size=1000,
-                                    closed=closed, dtype=dt), tgt)
+                                    endpoint=endpoint, dtype=dt), tgt)
             assert_equal(self.rfunc([tgt], tgt + is_open, size=1000,
-                                    closed=closed, dtype=dt), tgt)
+                                    endpoint=endpoint, dtype=dt), tgt)
 
             tgt = lbnd
             assert_equal(self.rfunc(tgt, tgt + is_open, size=1000,
-                                    closed=closed, dtype=dt), tgt)
+                                    endpoint=endpoint, dtype=dt), tgt)
             assert_equal(self.rfunc(tgt, [tgt + is_open], size=1000,
-                                    closed=closed, dtype=dt), tgt)
+                                    endpoint=endpoint, dtype=dt), tgt)
 
             tgt = (lbnd + ubnd) // 2
             assert_equal(self.rfunc(tgt, tgt + is_open, size=1000,
-                                    closed=closed, dtype=dt), tgt)
+                                    endpoint=endpoint, dtype=dt), tgt)
             assert_equal(self.rfunc([tgt], [tgt + is_open],
-                                    size=1000, closed=closed, dtype=dt), tgt)
+                                    size=1000, endpoint=endpoint, dtype=dt), tgt)
 
-    def test_rng_zero_and_extremes_array(self, closed):
+    def test_rng_zero_and_extremes_array(self, endpoint):
         size = 1000
         for dt in self.itype:
             lbnd = 0 if dt is bool else np.iinfo(dt).min
             ubnd = 2 if dt is bool else np.iinfo(dt).max + 1
-            ubnd = ubnd - 1 if closed else ubnd
+            ubnd = ubnd - 1 if endpoint else ubnd
 
             tgt = ubnd - 1
             assert_equal(self.rfunc([tgt], [tgt + 1],
@@ -247,73 +247,73 @@ class TestRandint(object):
             assert_equal(self.rfunc(
                 [tgt] * size, [tgt + 1] * size, size=size, dtype=dt), tgt)
 
-    def test_full_range(self, closed):
+    def test_full_range(self, endpoint):
         # Test for ticket #1690
 
         for dt in self.itype:
             lbnd = 0 if dt is bool else np.iinfo(dt).min
             ubnd = 2 if dt is bool else np.iinfo(dt).max + 1
-            ubnd = ubnd - 1 if closed else ubnd
+            ubnd = ubnd - 1 if endpoint else ubnd
 
             try:
-                self.rfunc(lbnd, ubnd, closed=closed, dtype=dt)
+                self.rfunc(lbnd, ubnd, endpoint=endpoint, dtype=dt)
             except Exception as e:
                 raise AssertionError("No error should have been raised, "
                                      "but one was with the following "
                                      "message:\n\n%s" % str(e))
 
-    def test_full_range_array(self, closed):
+    def test_full_range_array(self, endpoint):
         # Test for ticket #1690
 
         for dt in self.itype:
             lbnd = 0 if dt is bool else np.iinfo(dt).min
             ubnd = 2 if dt is bool else np.iinfo(dt).max + 1
-            ubnd = ubnd - 1 if closed else ubnd
+            ubnd = ubnd - 1 if endpoint else ubnd
 
             try:
-                self.rfunc([lbnd] * 2, [ubnd], closed=closed, dtype=dt)
+                self.rfunc([lbnd] * 2, [ubnd], endpoint=endpoint, dtype=dt)
             except Exception as e:
                 raise AssertionError("No error should have been raised, "
                                      "but one was with the following "
                                      "message:\n\n%s" % str(e))
 
-    def test_in_bounds_fuzz(self, closed):
+    def test_in_bounds_fuzz(self, endpoint):
         # Don't use fixed seed
         random.brng.seed()
 
         for dt in self.itype[1:]:
             for ubnd in [4, 8, 16]:
-                vals = self.rfunc(2, ubnd - closed, size=2 ** 16,
-                                  closed=closed, dtype=dt)
+                vals = self.rfunc(2, ubnd - endpoint, size=2 ** 16,
+                                  endpoint=endpoint, dtype=dt)
                 assert_(vals.max() < ubnd)
                 assert_(vals.min() >= 2)
 
-        vals = self.rfunc(0, 2 - closed, size=2 ** 16, closed=closed,
+        vals = self.rfunc(0, 2 - endpoint, size=2 ** 16, endpoint=endpoint,
                           dtype=bool)
         assert_(vals.max() < 2)
         assert_(vals.min() >= 0)
 
-    def test_scalar_array_equiv(self, closed):
+    def test_scalar_array_equiv(self, endpoint):
         for dt in self.itype:
             lbnd = 0 if dt is bool else np.iinfo(dt).min
             ubnd = 2 if dt is bool else np.iinfo(dt).max + 1
-            ubnd = ubnd - 1 if closed else ubnd
+            ubnd = ubnd - 1 if endpoint else ubnd
 
             size = 1000
             random.brng.seed(1234)
-            scalar = self.rfunc(lbnd, ubnd, size=size, closed=closed, dtype=dt)
+            scalar = self.rfunc(lbnd, ubnd, size=size, endpoint=endpoint, dtype=dt)
 
             random.brng.seed(1234)
             scalar_array = self.rfunc([lbnd], [ubnd], size=size,
-                                      closed=closed, dtype=dt)
+                                      endpoint=endpoint, dtype=dt)
 
             random.brng.seed(1234)
             array = self.rfunc([lbnd] * size, [ubnd] *
-                               size, size=size, closed=closed, dtype=dt)
+                               size, size=size, endpoint=endpoint, dtype=dt)
             assert_array_equal(scalar, scalar_array)
             assert_array_equal(scalar, array)
 
-    def test_repeatability(self, closed):
+    def test_repeatability(self, endpoint):
         import hashlib
         # We use a md5 hash of generated sequences of 1000 samples
         # in the range [0, 6) for all but bool, where the range
@@ -333,10 +333,10 @@ class TestRandint(object):
 
             # view as little endian for hash
             if sys.byteorder == 'little':
-                val = self.rfunc(0, 6 - closed, size=1000, closed=closed,
+                val = self.rfunc(0, 6 - endpoint, size=1000, endpoint=endpoint,
                                  dtype=dt)
             else:
-                val = self.rfunc(0, 6 - closed, size=1000, closed=closed,
+                val = self.rfunc(0, 6 - endpoint, size=1000, endpoint=endpoint,
                                  dtype=dt).byteswap()
 
             res = hashlib.md5(val.view(np.int8)).hexdigest()
@@ -344,62 +344,62 @@ class TestRandint(object):
 
         # bools do not depend on endianness
         random.brng.seed(1234)
-        val = self.rfunc(0, 2 - closed, size=1000, closed=closed,
+        val = self.rfunc(0, 2 - endpoint, size=1000, endpoint=endpoint,
                          dtype=bool).view(np.int8)
         res = hashlib.md5(val).hexdigest()
         assert_(tgt[np.dtype(bool).name] == res)
 
-    def test_repeatability_broadcasting(self, closed):
+    def test_repeatability_broadcasting(self, endpoint):
         for dt in self.itype:
             lbnd = 0 if dt in (np.bool, bool, np.bool_) else np.iinfo(dt).min
             ubnd = 2 if dt in (
                 np.bool, bool, np.bool_) else np.iinfo(dt).max + 1
-            ubnd = ubnd - 1 if closed else ubnd
+            ubnd = ubnd - 1 if endpoint else ubnd
 
             # view as little endian for hash
             random.brng.seed(1234)
-            val = self.rfunc(lbnd, ubnd, size=1000, closed=closed, dtype=dt)
+            val = self.rfunc(lbnd, ubnd, size=1000, endpoint=endpoint, dtype=dt)
 
             random.brng.seed(1234)
-            val_bc = self.rfunc([lbnd] * 1000, ubnd, closed=closed, dtype=dt)
+            val_bc = self.rfunc([lbnd] * 1000, ubnd, endpoint=endpoint, dtype=dt)
 
             assert_array_equal(val, val_bc)
 
             random.brng.seed(1234)
-            val_bc = self.rfunc([lbnd] * 1000, [ubnd] * 1000, closed=closed,
+            val_bc = self.rfunc([lbnd] * 1000, [ubnd] * 1000, endpoint=endpoint,
                                 dtype=dt)
 
             assert_array_equal(val, val_bc)
 
-    def test_int64_uint64_broadcast_exceptions(self, closed):
+    def test_int64_uint64_broadcast_exceptions(self, endpoint):
         configs = {np.uint64: ((0, 2**65), (-1, 2**62), (10, 9), (0, 0)),
                    np.int64: ((0, 2**64), (-(2**64), 2**62), (10, 9), (0, 0),
                               (-2**63-1, -2**63-1))}
         for dtype in configs:
             for config in configs[dtype]:
                 low, high = config
-                high = high - closed
+                high = high - endpoint
                 low_a = np.array([[low]*10])
                 high_a = np.array([high] * 10)
-                assert_raises(ValueError, random.randint, low, high,
-                              closed=closed, dtype=dtype)
-                assert_raises(ValueError, random.randint, low_a, high,
-                              closed=closed, dtype=dtype)
-                assert_raises(ValueError, random.randint, low, high_a,
-                              closed=closed, dtype=dtype)
-                assert_raises(ValueError, random.randint, low_a, high_a,
-                              closed=closed, dtype=dtype)
+                assert_raises(ValueError, random.integers, low, high,
+                              endpoint=endpoint, dtype=dtype)
+                assert_raises(ValueError, random.integers, low_a, high,
+                              endpoint=endpoint, dtype=dtype)
+                assert_raises(ValueError, random.integers, low, high_a,
+                              endpoint=endpoint, dtype=dtype)
+                assert_raises(ValueError, random.integers, low_a, high_a,
+                              endpoint=endpoint, dtype=dtype)
 
                 low_o = np.array([[low]*10], dtype=np.object)
                 high_o = np.array([high] * 10, dtype=np.object)
-                assert_raises(ValueError, random.randint, low_o, high,
-                              closed=closed, dtype=dtype)
-                assert_raises(ValueError, random.randint, low, high_o,
-                              closed=closed, dtype=dtype)
-                assert_raises(ValueError, random.randint, low_o, high_o,
-                              closed=closed, dtype=dtype)
+                assert_raises(ValueError, random.integers, low_o, high,
+                              endpoint=endpoint, dtype=dtype)
+                assert_raises(ValueError, random.integers, low, high_o,
+                              endpoint=endpoint, dtype=dtype)
+                assert_raises(ValueError, random.integers, low_o, high_o,
+                              endpoint=endpoint, dtype=dtype)
 
-    def test_int64_uint64_corner_case(self, closed):
+    def test_int64_uint64_corner_case(self, endpoint):
         # When stored in Numpy arrays, `lbnd` is casted
         # as np.int64, and `ubnd` is casted as np.uint64.
         # Checking whether `lbnd` >= `ubnd` used to be
@@ -415,58 +415,58 @@ class TestRandint(object):
         dt = np.int64
         tgt = np.iinfo(np.int64).max
         lbnd = np.int64(np.iinfo(np.int64).max)
-        ubnd = np.uint64(np.iinfo(np.int64).max + 1 - closed)
+        ubnd = np.uint64(np.iinfo(np.int64).max + 1 - endpoint)
 
         # None of these function calls should
         # generate a ValueError now.
-        actual = random.randint(lbnd, ubnd, closed=closed, dtype=dt)
+        actual = random.integers(lbnd, ubnd, endpoint=endpoint, dtype=dt)
         assert_equal(actual, tgt)
 
-    def test_respect_dtype_singleton(self, closed):
+    def test_respect_dtype_singleton(self, endpoint):
         # See gh-7203
         for dt in self.itype:
             lbnd = 0 if dt is bool else np.iinfo(dt).min
             ubnd = 2 if dt is bool else np.iinfo(dt).max + 1
-            ubnd = ubnd - 1 if closed else ubnd
+            ubnd = ubnd - 1 if endpoint else ubnd
             dt = np.bool_ if dt is bool else dt
 
-            sample = self.rfunc(lbnd, ubnd, closed=closed, dtype=dt)
+            sample = self.rfunc(lbnd, ubnd, endpoint=endpoint, dtype=dt)
             assert_equal(sample.dtype, dt)
 
         for dt in (bool, int, np.long):
             lbnd = 0 if dt is bool else np.iinfo(dt).min
             ubnd = 2 if dt is bool else np.iinfo(dt).max + 1
-            ubnd = ubnd - 1 if closed else ubnd
+            ubnd = ubnd - 1 if endpoint else ubnd
 
             # gh-7284: Ensure that we get Python data types
-            sample = self.rfunc(lbnd, ubnd, closed=closed, dtype=dt)
+            sample = self.rfunc(lbnd, ubnd, endpoint=endpoint, dtype=dt)
             assert not hasattr(sample, 'dtype')
             assert_equal(type(sample), dt)
 
-    def test_respect_dtype_array(self, closed):
+    def test_respect_dtype_array(self, endpoint):
         # See gh-7203
         for dt in self.itype:
             lbnd = 0 if dt is bool else np.iinfo(dt).min
             ubnd = 2 if dt is bool else np.iinfo(dt).max + 1
-            ubnd = ubnd - 1 if closed else ubnd
+            ubnd = ubnd - 1 if endpoint else ubnd
             dt = np.bool_ if dt is bool else dt
 
-            sample = self.rfunc([lbnd], [ubnd], closed=closed, dtype=dt)
+            sample = self.rfunc([lbnd], [ubnd], endpoint=endpoint, dtype=dt)
             assert_equal(sample.dtype, dt)
-            sample = self.rfunc([lbnd] * 2, [ubnd] * 2, closed=closed,
+            sample = self.rfunc([lbnd] * 2, [ubnd] * 2, endpoint=endpoint,
                                 dtype=dt)
             assert_equal(sample.dtype, dt)
 
-    def test_zero_size(self, closed):
+    def test_zero_size(self, endpoint):
         # See gh-7203
         for dt in self.itype:
-            sample = self.rfunc(0, 0, (3, 0, 4), closed=closed, dtype=dt)
+            sample = self.rfunc(0, 0, (3, 0, 4), endpoint=endpoint, dtype=dt)
             assert sample.shape == (3, 0, 4)
             assert sample.dtype == dt
-            assert self.rfunc(0, -10, 0, closed=closed, dtype=dt).shape == (0,)
-            assert_equal(random.randint(0, 0, size=(3, 0, 4)).shape, (3, 0, 4))
-            assert_equal(random.randint(0, -10, size=0).shape, (0,))
-            assert_equal(random.randint(10, 10, size=0).shape, (0,))
+            assert self.rfunc(0, -10, 0, endpoint=endpoint, dtype=dt).shape == (0,)
+            assert_equal(random.integers(0, 0, size=(3, 0, 4)).shape, (3, 0, 4))
+            assert_equal(random.integers(0, -10, size=0).shape, (0,))
+            assert_equal(random.integers(10, 10, size=0).shape, (0,))
 
 
 class TestRandomDist(object):
@@ -502,40 +502,43 @@ class TestRandomDist(object):
         actual = random.randn()
         assert_array_almost_equal(actual, desired[0, 0], decimal=15)
 
-    def test_randint(self):
+    def test_integers(self):
         random.brng.seed(self.seed)
-        actual = random.randint(-99, 99, size=(3, 2))
+        actual = random.integers(-99, 99, size=(3, 2))
         desired = np.array([[31, 3],
                             [-52, 41],
                             [-48, -66]])
         assert_array_equal(actual, desired)
 
-    def test_randint_masked(self):
+    def test_integers_masked(self):
         # Test masked rejection sampling algorithm to generate array of
         # uint32 in an interval.
         random.brng.seed(self.seed)
-        actual = random.randint(0, 99, size=(3, 2), dtype=np.uint32,
-                                use_masked=True)
+        with pytest.deprecated_call():
+            actual = random.integers(0, 99, size=(3, 2), dtype=np.uint32,
+                                     use_masked=True)
         desired = np.array([[2, 47],
                             [12, 51],
                             [33, 43]], dtype=np.uint32)
         assert_array_equal(actual, desired)
 
-    def test_randint_lemire_32(self):
+    def test_integers_lemire_32(self):
         # Test lemire algorithm to generate array of uint32 in an interval.
         random.brng.seed(self.seed)
-        actual = random.randint(0, 99, size=(3, 2), dtype=np.uint32,
-                                use_masked=False)
+        with pytest.deprecated_call():
+            actual = random.integers(0, 99, size=(3, 2), dtype=np.uint32,
+                                     use_masked=False)
         desired = np.array([[61, 33],
                             [58, 14],
                             [87, 23]], dtype=np.uint32)
         assert_array_equal(actual, desired)
 
-    def test_randint_lemire_64(self):
+    def test_integers_lemire_64(self):
         # Test lemire algorithm to generate array of uint64 in an interval.
         random.brng.seed(self.seed)
-        actual = random.randint(0, 99 + 0xFFFFFFFFF, size=(3, 2),
-                                dtype=np.uint64, use_masked=False)
+        with pytest.deprecated_call():
+            actual = random.integers(0, 99 + 0xFFFFFFFFF, size=(3, 2),
+                                     dtype=np.uint64, use_masked=False)
         desired = np.array([[42523252834, 40656066204],
                             [61069871386, 61274051182],
                             [31443797706, 53476677934]], dtype=np.uint64)
@@ -2120,21 +2123,21 @@ class TestSingleEltArrayInput(object):
             out = func(self.argOne, argTwo[0])
             assert_equal(out.shape, self.tgtShape)
 
-    def test_randint(self, closed):
+    def test_integers(self, endpoint):
         itype = [np.bool, np.int8, np.uint8, np.int16, np.uint16,
                  np.int32, np.uint32, np.int64, np.uint64]
-        func = random.randint
+        func = random.integers
         high = np.array([1])
         low = np.array([0])
 
         for dt in itype:
-            out = func(low, high, closed=closed, dtype=dt)
+            out = func(low, high, endpoint=endpoint, dtype=dt)
             assert_equal(out.shape, self.tgtShape)
 
-            out = func(low[0], high, closed=closed, dtype=dt)
+            out = func(low[0], high, endpoint=endpoint, dtype=dt)
             assert_equal(out.shape, self.tgtShape)
 
-            out = func(low, high[0], closed=closed, dtype=dt)
+            out = func(low, high[0], endpoint=endpoint, dtype=dt)
             assert_equal(out.shape, self.tgtShape)
 
     def test_three_arg_funcs(self):

@@ -5,7 +5,7 @@ import warnings
 
 import numpy as np
 
-from randomgen.bounded_integers import _randint_types
+from randomgen.bounded_integers import _integers_types
 from randomgen.xoroshiro128 import Xoroshiro128
 
 from cpython.pycapsule cimport PyCapsule_IsValid, PyCapsule_GetPointer
@@ -428,10 +428,8 @@ cdef class RandomGenerator:
 
         See Also
         --------
-        randint : Uniform sampling over a given half-open or closed interval
+        integers : Uniform sampling over a given half-open or closed interval
                   of integers.
-        random_integers : Uniform sampling over a given closed interval of
-                          integers.
 
         Examples
         --------
@@ -448,20 +446,32 @@ cdef class RandomGenerator:
                 [ True,  True]]])
 
         """
-        return self.randint(0, np.iinfo(np.int).max + 1, dtype=np.int, size=size)
+        return self.integers(0, np.iinfo(np.int).max + 1, dtype=np.int, size=size)
 
-    def randint(self, low, high=None, size=None, dtype=np.int64, use_masked=True,
-                closed=False):
+    def randint(self, *args, **kwargs):
         """
-        randint(low, high=None, size=None, dtype='int64', use_masked=True, closed=False)
+        Deprecated in favor of integers
+
+        See integers docstring for arguments
+        """
+        import warnings
+        warnings.warn('randint has been deprecated in favor of integers',
+                      DeprecationWarning)
+
+        return self.integers(*args, **kwargs)
+
+    def integers(self, low, high=None, size=None, dtype=np.int64,
+                 use_masked=None, endpoint=False, closed=None):
+        """
+        integers(low, high=None, size=None, dtype='int64', use_masked=True, endpoint=False)
 
         Return random integers from `low` (inclusive) to `high` (exclusive), or
-        if closed=True, `low` (inclusive) to `high` (inclusive).
+        if endpoint=True, `low` (inclusive) to `high` (inclusive).
 
         Return random integers from the "discrete uniform" distribution of
         the specified dtype in the "half-open" interval [`low`, `high`). If
         `high` is None (the default), then results are from [0, `low`). If
-        `closed` is True, then samples from the closed interval [`low`, `high`]
+        `endpoint` is True, then samples from the closed interval [`low`, `high`]
         or [0, `low`] if `high` is None.
 
         Parameters
@@ -493,7 +503,7 @@ cdef class RandomGenerator:
 
             .. versionadded:: 1.15.1
 
-        closed : bool
+        endpoint : bool
             If true, sample from the interval [low, high] instead of the
             default [low, high)
 
@@ -509,38 +519,32 @@ cdef class RandomGenerator:
         cannot be represented as a standard integer type. The high array (or
         low if high is None) must have object dtype, e.g., array([2**64]).
 
-        See Also
-        --------
-        random_integers : similar to `randint`, only for the closed interval
-                          [`low`, `high`], where 1 is the lowest value if
-                          `high` is omitted.
-
         Examples
         --------
-        >>> randomgen.generator.randint(2, size=10)
+        >>> randomgen.generator.integers(2, size=10)
         array([1, 0, 0, 0, 1, 1, 0, 0, 1, 0])  # random
-        >>> randomgen.generator.randint(1, size=10)
+        >>> randomgen.generator.integers(1, size=10)
         array([0, 0, 0, 0, 0, 0, 0, 0, 0, 0])
 
         Generate a 2 x 4 array of ints between 0 and 4, inclusive:
 
-        >>> randomgen.generator.randint(5, size=(2, 4))
+        >>> randomgen.generator.integers(5, size=(2, 4))
         array([[4, 0, 2, 1],
                [3, 2, 2, 0]])  # random
 
         Generate a 1 x 3 array with 3 different upper bounds
 
-        >>> randomgen.generator.randint(1, [3, 5, 10])
+        >>> randomgen.generator.integers(1, [3, 5, 10])
         array([2, 2, 9])  # random
 
         Generate a 1 by 3 array with 3 different lower bounds
 
-        >>> randomgen.generator.randint([1, 5, 7], 10)
+        >>> randomgen.generator.integers([1, 5, 7], 10)
         array([9, 8, 7])  # random
 
         Generate a 2 by 4 array using broadcasting with dtype of uint8
 
-        >>> randomgen.generator.randint([1, 3, 5, 7], [[10], [20]], dtype=np.uint8)
+        >>> randomgen.generator.integers([1, 3, 5, 7], [[10], [20]], dtype=np.uint8)
         array([[ 8,  6,  9,  7],
                [ 1, 16,  9, 12]], dtype=uint8)  # random
 
@@ -550,32 +554,44 @@ cdef class RandomGenerator:
                CoRR, Aug. 13, 2018, http://arxiv.org/abs/1805.10941.
 
         """
+        if use_masked is not None:
+            import warnings
+            warnings.warn('use_masked will be removed in the final release and'
+                          'only the Lemire method will be available.',
+                          DeprecationWarning)
+        if closed is not None:
+            import warnings
+            warnings.warn('closed has been deprecated in favor of endpoint.',
+                          DeprecationWarning)
+            endpoint = closed
+
+        cdef bint _use_masked = use_masked is None or use_masked
         if high is None:
             high = low
             low = 0
 
         key = np.dtype(dtype).name
-        if key not in _randint_types:
-            raise TypeError('Unsupported dtype "%s" for randint' % key)
+        if key not in _integers_types:
+            raise TypeError('Unsupported dtype "%s" for integers' % key)
 
         if key == 'int32':
-            ret = _rand_int32(low, high, size, use_masked, closed, self._brng, self.lock)
+            ret = _rand_int32(low, high, size, _use_masked, endpoint, self._brng, self.lock)
         elif key == 'int64':
-            ret = _rand_int64(low, high, size, use_masked, closed, self._brng, self.lock)
+            ret = _rand_int64(low, high, size, _use_masked, endpoint, self._brng, self.lock)
         elif key == 'int16':
-            ret = _rand_int16(low, high, size, use_masked, closed, self._brng, self.lock)
+            ret = _rand_int16(low, high, size, _use_masked, endpoint, self._brng, self.lock)
         elif key == 'int8':
-            ret = _rand_int8(low, high, size, use_masked, closed, self._brng, self.lock)
+            ret = _rand_int8(low, high, size, _use_masked, endpoint, self._brng, self.lock)
         elif key == 'uint64':
-            ret = _rand_uint64(low, high, size, use_masked, closed, self._brng, self.lock)
+            ret = _rand_uint64(low, high, size, _use_masked, endpoint, self._brng, self.lock)
         elif key == 'uint32':
-            ret = _rand_uint32(low, high, size, use_masked, closed, self._brng, self.lock)
+            ret = _rand_uint32(low, high, size, _use_masked, endpoint, self._brng, self.lock)
         elif key == 'uint16':
-            ret = _rand_uint16(low, high, size, use_masked, closed, self._brng, self.lock)
+            ret = _rand_uint16(low, high, size, _use_masked, endpoint, self._brng, self.lock)
         elif key == 'uint8':
-            ret = _rand_uint8(low, high, size, use_masked, closed, self._brng, self.lock)
+            ret = _rand_uint8(low, high, size, _use_masked, endpoint, self._brng, self.lock)
         elif key == 'bool':
-            ret = _rand_bool(low, high, size, use_masked, closed, self._brng, self.lock)
+            ret = _rand_bool(low, high, size, _use_masked, endpoint, self._brng, self.lock)
 
         if size is None and dtype in (np.bool, np.int, np.long):
             if np.array(ret).shape == ():
@@ -605,7 +621,7 @@ cdef class RandomGenerator:
 
         """
         cdef Py_ssize_t n_uint32 = ((length - 1) // 4 + 1)
-        return self.randint(0, 4294967296, size=n_uint32, dtype=np.uint32).tobytes()[:length]
+        return self.integers(0, 4294967296, size=n_uint32, dtype=np.uint32).tobytes()[:length]
 
     @cython.wraparound(True)
     def choice(self, a, size=None, replace=True, p=None, axis=0):
@@ -651,7 +667,7 @@ cdef class RandomGenerator:
 
         See Also
         --------
-        randint, shuffle, permutation
+        integers, shuffle, permutation
 
         Examples
         --------
@@ -659,7 +675,7 @@ cdef class RandomGenerator:
 
         >>> randomgen.generator.choice(5, 3)
         array([0, 3, 4]) # random
-        >>> #This is equivalent to randomgen.generator.randint(0,5,3)
+        >>> #This is equivalent to randomgen.generator.integers(0,5,3)
 
         Generate a non-uniform random sample from np.arange(5) of size 3:
 
@@ -749,7 +765,7 @@ cdef class RandomGenerator:
                 idx = cdf.searchsorted(uniform_samples, side='right')
                 idx = np.array(idx, copy=False, dtype=np.int64)  # searchsorted returns a scalar
             else:
-                idx = self.randint(0, pop_size, size=shape, dtype=np.int64)
+                idx = self.integers(0, pop_size, size=shape, dtype=np.int64)
         else:
             if size > pop_size:
                 raise ValueError("Cannot take a larger sample than "
@@ -868,9 +884,7 @@ cdef class RandomGenerator:
 
         See Also
         --------
-        randint : Discrete uniform distribution, yielding integers.
-        random_integers : Discrete uniform distribution over the closed
-                          interval ``[low, high]``.
+        integers : Discrete uniform distribution, yielding integers.
         random : Floats uniformly distributed over ``[0, 1)``.
         rand : Convenience function that accepts dimensions as input, e.g.,
                ``rand(2,2)`` would generate a 2-by-2 array of floats,
@@ -1070,7 +1084,7 @@ cdef class RandomGenerator:
         type translates to the C long integer type and its precision
         is platform dependent.
 
-        This function has been deprecated. Use randint instead.
+        This function has been deprecated. Use integers instead.
 
         .. deprecated:: 1.11.0
 
@@ -1096,7 +1110,7 @@ cdef class RandomGenerator:
 
         See Also
         --------
-        randint : Similar to `random_integers`, only for the half-open
+        integers : Similar to `random_integers`, only for the half-open
             interval [`low`, `high`), and 0 is the lowest value if `high` is
             omitted.
 
@@ -1140,18 +1154,18 @@ cdef class RandomGenerator:
         """
         if high is None:
             warnings.warn(("This function is deprecated. Please call "
-                           "randint(1, {low} + 1) instead".format(low=low)),
+                           "integers(1, {low} + 1) instead".format(low=low)),
                           DeprecationWarning)
             high = low
             low = 1
 
         else:
             warnings.warn(("This function is deprecated. Please call "
-                           "randint({low}, {high} + 1)"
+                           "integers({low}, {high} + 1)"
                            "instead".format(low=low, high=high)),
                           DeprecationWarning)
 
-        return self.randint(low, high + 1, size=size, dtype='l')
+        return self.integers(low, high + 1, size=size, dtype='l')
 
     # Complicated, continuous distributions:
     def standard_normal(self, size=None, dtype=np.float64, out=None):
@@ -4390,6 +4404,7 @@ gamma = _random_generator.gamma
 geometric = _random_generator.geometric
 gumbel = _random_generator.gumbel
 hypergeometric = _random_generator.hypergeometric
+integers = _random_generator.integers
 laplace = _random_generator.laplace
 logistic = _random_generator.logistic
 lognormal = _random_generator.lognormal
