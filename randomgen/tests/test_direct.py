@@ -208,30 +208,30 @@ class Base(object):
     def test_seed_float(self):
         # GH #82
         rs = Generator(self.brng(*self.data1['seed']))
-        assert_raises(self.seed_error_type, rs.brng.seed, np.pi)
-        assert_raises(self.seed_error_type, rs.brng.seed, -np.pi)
+        assert_raises(self.seed_error_type, rs.bit_generator.seed, np.pi)
+        assert_raises(self.seed_error_type, rs.bit_generator.seed, -np.pi)
 
     def test_seed_float_array(self):
         # GH #82
         rs = Generator(self.brng(*self.data1['seed']))
-        assert_raises(self.seed_error_type, rs.brng.seed, np.array([np.pi]))
-        assert_raises(self.seed_error_type, rs.brng.seed, np.array([-np.pi]))
-        assert_raises(ValueError, rs.brng.seed, np.array([np.pi, -np.pi]))
-        assert_raises(TypeError, rs.brng.seed, np.array([0, np.pi]))
-        assert_raises(TypeError, rs.brng.seed, [np.pi])
-        assert_raises(TypeError, rs.brng.seed, [0, np.pi])
+        assert_raises(self.seed_error_type, rs.bit_generator.seed, np.array([np.pi]))
+        assert_raises(self.seed_error_type, rs.bit_generator.seed, np.array([-np.pi]))
+        assert_raises(ValueError, rs.bit_generator.seed, np.array([np.pi, -np.pi]))
+        assert_raises(TypeError, rs.bit_generator.seed, np.array([0, np.pi]))
+        assert_raises(TypeError, rs.bit_generator.seed, [np.pi])
+        assert_raises(TypeError, rs.bit_generator.seed, [0, np.pi])
 
     def test_seed_out_of_range(self):
         # GH #82
         rs = Generator(self.brng(*self.data1['seed']))
-        assert_raises(ValueError, rs.brng.seed, 2 ** (2 * self.bits + 1))
-        assert_raises(ValueError, rs.brng.seed, -1)
+        assert_raises(ValueError, rs.bit_generator.seed, 2 ** (2 * self.bits + 1))
+        assert_raises(ValueError, rs.bit_generator.seed, -1)
 
     def test_seed_out_of_range_array(self):
         # GH #82
         rs = Generator(self.brng(*self.data1['seed']))
-        assert_raises(ValueError, rs.brng.seed, [2 ** (2 * self.bits + 1)])
-        assert_raises(ValueError, rs.brng.seed, [-1])
+        assert_raises(ValueError, rs.bit_generator.seed, [2 ** (2 * self.bits + 1)])
+        assert_raises(ValueError, rs.bit_generator.seed, [-1])
 
     def test_repr(self):
         rs = Generator(self.brng(*self.data1['seed']))
@@ -414,19 +414,19 @@ class TestPCG64(Base):
 
     def test_seed_float_array(self):
         rs = Generator(self.brng(*self.data1['seed']))
-        assert_raises(self.seed_error_type, rs.brng.seed, np.array([np.pi]))
-        assert_raises(self.seed_error_type, rs.brng.seed, np.array([-np.pi]))
-        assert_raises(self.seed_error_type, rs.brng.seed,
+        assert_raises(self.seed_error_type, rs.bit_generator.seed, np.array([np.pi]))
+        assert_raises(self.seed_error_type, rs.bit_generator.seed, np.array([-np.pi]))
+        assert_raises(self.seed_error_type, rs.bit_generator.seed,
                       np.array([np.pi, -np.pi]))
-        assert_raises(self.seed_error_type, rs.brng.seed, np.array([0, np.pi]))
-        assert_raises(self.seed_error_type, rs.brng.seed, [np.pi])
-        assert_raises(self.seed_error_type, rs.brng.seed, [0, np.pi])
+        assert_raises(self.seed_error_type, rs.bit_generator.seed, np.array([0, np.pi]))
+        assert_raises(self.seed_error_type, rs.bit_generator.seed, [np.pi])
+        assert_raises(self.seed_error_type, rs.bit_generator.seed, [0, np.pi])
 
     def test_seed_out_of_range_array(self):
         rs = Generator(self.brng(*self.data1['seed']))
-        assert_raises(self.seed_error_type, rs.brng.seed,
+        assert_raises(self.seed_error_type, rs.bit_generator.seed,
                       [2 ** (2 * self.bits + 1)])
-        assert_raises(self.seed_error_type, rs.brng.seed, [-1])
+        assert_raises(self.seed_error_type, rs.bit_generator.seed, [-1])
 
 
 class TestPhilox(Base):
@@ -467,45 +467,45 @@ class TestMT19937(Base):
     def test_seed_out_of_range(self):
         # GH #82
         rs = Generator(self.brng(*self.data1['seed']))
-        assert_raises(ValueError, rs.brng.seed, 2 ** (self.bits + 1))
-        assert_raises(ValueError, rs.brng.seed, -1)
-        assert_raises(ValueError, rs.brng.seed, 2 ** (2 * self.bits + 1))
+        assert_raises(ValueError, rs.bit_generator.seed, 2 ** (self.bits + 1))
+        assert_raises(ValueError, rs.bit_generator.seed, -1)
+        assert_raises(ValueError, rs.bit_generator.seed, 2 ** (2 * self.bits + 1))
 
     def test_seed_out_of_range_array(self):
         # GH #82
         rs = Generator(self.brng(*self.data1['seed']))
-        assert_raises(ValueError, rs.brng.seed, [2 ** (self.bits + 1)])
-        assert_raises(ValueError, rs.brng.seed, [-1])
-        assert_raises(TypeError, rs.brng.seed, [2 ** (2 * self.bits + 1)])
+        assert_raises(ValueError, rs.bit_generator.seed, [2 ** (self.bits + 1)])
+        assert_raises(ValueError, rs.bit_generator.seed, [-1])
+        assert_raises(TypeError, rs.bit_generator.seed, [2 ** (2 * self.bits + 1)])
 
     def test_seed_float(self):
         # GH #82
         rs = Generator(self.brng(*self.data1['seed']))
-        assert_raises(TypeError, rs.brng.seed, np.pi)
-        assert_raises(TypeError, rs.brng.seed, -np.pi)
+        assert_raises(TypeError, rs.bit_generator.seed, np.pi)
+        assert_raises(TypeError, rs.bit_generator.seed, -np.pi)
 
     def test_seed_float_array(self):
         # GH #82
         rs = Generator(self.brng(*self.data1['seed']))
-        brng = rs.brng
-        assert_raises(TypeError, brng.seed, np.array([np.pi]))
-        assert_raises(TypeError, brng.seed, np.array([-np.pi]))
-        assert_raises(TypeError, brng.seed, np.array([np.pi, -np.pi]))
-        assert_raises(TypeError, brng.seed, np.array([0, np.pi]))
-        assert_raises(TypeError, brng.seed, [np.pi])
-        assert_raises(TypeError, brng.seed, [0, np.pi])
+        bit_generator = rs.bit_generator
+        assert_raises(TypeError, bit_generator.seed, np.array([np.pi]))
+        assert_raises(TypeError, bit_generator.seed, np.array([-np.pi]))
+        assert_raises(TypeError, bit_generator.seed, np.array([np.pi, -np.pi]))
+        assert_raises(TypeError, bit_generator.seed, np.array([0, np.pi]))
+        assert_raises(TypeError, bit_generator.seed, [np.pi])
+        assert_raises(TypeError, bit_generator.seed, [0, np.pi])
 
     def test_state_tuple(self):
         rs = Generator(self.brng(*self.data1['seed']))
-        brng = rs.brng
-        state = brng.state
+        bit_generator = rs.bit_generator
+        state = bit_generator.state
         desired = rs.integers(2 ** 16)
         tup = (state['brng'], state['state']['key'], state['state']['pos'])
-        brng.state = tup
+        bit_generator.state = tup
         actual = rs.integers(2 ** 16)
         assert_equal(actual, desired)
         tup = tup + (0, 0.0)
-        brng.state = tup
+        bit_generator.state = tup
         actual = rs.integers(2 ** 16)
         assert_equal(actual, desired)
 
@@ -547,25 +547,25 @@ class TestDSFMT(Base):
     def test_seed_out_of_range_array(self):
         # GH #82
         rs = Generator(self.brng(*self.data1['seed']))
-        assert_raises(ValueError, rs.brng.seed, [2 ** (self.bits + 1)])
-        assert_raises(ValueError, rs.brng.seed, [-1])
-        assert_raises(TypeError, rs.brng.seed, [2 ** (2 * self.bits + 1)])
+        assert_raises(ValueError, rs.bit_generator.seed, [2 ** (self.bits + 1)])
+        assert_raises(ValueError, rs.bit_generator.seed, [-1])
+        assert_raises(TypeError, rs.bit_generator.seed, [2 ** (2 * self.bits + 1)])
 
     def test_seed_float(self):
         # GH #82
         rs = Generator(self.brng(*self.data1['seed']))
-        assert_raises(TypeError, rs.brng.seed, np.pi)
-        assert_raises(TypeError, rs.brng.seed, -np.pi)
+        assert_raises(TypeError, rs.bit_generator.seed, np.pi)
+        assert_raises(TypeError, rs.bit_generator.seed, -np.pi)
 
     def test_seed_float_array(self):
         # GH #82
         rs = Generator(self.brng(*self.data1['seed']))
-        assert_raises(TypeError, rs.brng.seed, np.array([np.pi]))
-        assert_raises(TypeError, rs.brng.seed, np.array([-np.pi]))
-        assert_raises(TypeError, rs.brng.seed, np.array([np.pi, -np.pi]))
-        assert_raises(TypeError, rs.brng.seed, np.array([0, np.pi]))
-        assert_raises(TypeError, rs.brng.seed, [np.pi])
-        assert_raises(TypeError, rs.brng.seed, [0, np.pi])
+        assert_raises(TypeError, rs.bit_generator.seed, np.array([np.pi]))
+        assert_raises(TypeError, rs.bit_generator.seed, np.array([-np.pi]))
+        assert_raises(TypeError, rs.bit_generator.seed, np.array([np.pi, -np.pi]))
+        assert_raises(TypeError, rs.bit_generator.seed, np.array([0, np.pi]))
+        assert_raises(TypeError, rs.bit_generator.seed, [np.pi])
+        assert_raises(TypeError, rs.bit_generator.seed, [0, np.pi])
 
     def test_uniform_float(self):
         rs = Generator(self.brng(*self.data1['seed']))
@@ -583,9 +583,9 @@ class TestDSFMT(Base):
     def test_buffer_reset(self):
         rs = Generator(self.brng(*self.data1['seed']))
         rs.random(1)
-        assert rs.brng.state['buffer_loc'] != 382
-        rs.brng.seed(*self.data1['seed'])
-        assert rs.brng.state['buffer_loc'] == 382
+        assert rs.bit_generator.state['buffer_loc'] != 382
+        rs.bit_generator.seed(*self.data1['seed'])
+        assert rs.bit_generator.state['buffer_loc'] == 382
 
 
 class TestThreeFry32(Base):

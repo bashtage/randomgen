@@ -71,7 +71,7 @@ def run_timer(command, numpy_command=None, setup='', random_type=''):
 
 
 def timer_raw():
-    command = 'rg._basicrng.random_raw(size=1000000, output=False)'
+    command = 'rg._bit_generator.random_raw(size=1000000, output=False)'
     info = np.iinfo(np.int32)
     command_numpy = 'rg.random_integers({max},size=1000000)'
     command_numpy = command_numpy.format(max=info.max)

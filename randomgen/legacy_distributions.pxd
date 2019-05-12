@@ -10,7 +10,7 @@ from randomgen.distributions cimport brng_t
 cdef extern from "../src/legacy/distributions-boxmuller.h":
 
     struct aug_brng:
-        brng_t *basicrng
+        brng_t *bit_generator
         int has_gauss
         double gauss
 
