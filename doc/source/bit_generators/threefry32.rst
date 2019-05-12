@@ -23,6 +23,7 @@ Parallel generation
 
    ~ThreeFry32.advance
    ~ThreeFry32.jump
+   ~ThreeFry32.jumped
 
 Random Generator
 ================

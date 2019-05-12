@@ -1,5 +1,5 @@
 from libc.stdlib cimport malloc, free
-from cpython.pycapsule cimport PyCapsule_New
+from cpython.pycapsule cimport PyCapsule_New, PyCapsule_GetPointer
 
 try:
     from threading import Lock
@@ -357,7 +357,46 @@ cdef class PCG64:
         Jumping the rng state resets any pre-computed random numbers. This is required
         to ensure exact reproducibility.
         """
+        import warnings
+        warnings.warn('jump (in-place) has been deprecated in favor of jumped'
+                      ', which returns a new instance', DeprecationWarning)
+
         return self.advance(iter * 2**64)
+
+    def jumped(self, np.npy_intp iter=1):
+        """
+        jumped(iter=1)
+
+        Returns a new bit generator with the state jumped
+
+        The state of the returned big generator is jumped as-if
+        2**(64 * iter) random numbers have been generated.
+
+        Parameters
+        ----------
+        iter : integer, positive
+            Number of times to jump the state of the bit generator returned
+
+        Returns
+        -------
+        bit_generator : Xoroshiro128
+            New instance of generator jumped iter times
+        """
+        cdef np.ndarray d = np.empty(2, dtype=np.uint64)
+        cdef bitgen_t *new_bitgen
+        cdef np.ndarray delta_a
+
+        delta = iter * 2**64
+        d[0] = delta // 2**64
+        d[1] = delta % 2**64
+
+        bit_generator = self.__class__()
+        cdef const char *name = "BitGenerator"
+        new_bitgen = <bitgen_t *>PyCapsule_GetPointer(bit_generator.capsule,
+                                                      name)
+        pcg64_advance(<pcg64_state *>new_bitgen.state, <uint64_t *>d.data)
+
+        return bit_generator
 
     @property
     def ctypes(self):

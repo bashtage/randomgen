@@ -4,8 +4,8 @@ except ImportError:
     from dummy_threading import Lock
 
 import numpy as np
-from cpython.pycapsule cimport PyCapsule_New
 from libc.stdlib cimport malloc, free
+from cpython.pycapsule cimport PyCapsule_New, PyCapsule_GetPointer
 
 from randomgen.common cimport *
 from randomgen.distributions cimport bitgen_t
@@ -358,7 +358,42 @@ cdef class ThreeFry32:
         Jumping the rng state resets any pre-computed random numbers. This is
         required to ensure exact reproducibility.
         """
+        import warnings
+        warnings.warn('jump (in-place) has been deprecated in favor of jumped'
+                      ', which returns a new instance', DeprecationWarning)
+
         return self.advance(iter * 2 ** 64)
+
+    def jumped(self, np.npy_intp iter=1):
+        """
+        jumped(iter=1)
+
+        Returns a new bit generator with the state jumped
+
+        The state of the returned big generator is jumped as-if
+        2**(64 * iter) random numbers have been generated.
+
+        Parameters
+        ----------
+        iter : integer, positive
+            Number of times to jump the state of the bit generator returned
+
+        Returns
+        -------
+        bit_generator : Xoroshiro128
+            New instance of generator jumped iter times
+        """
+        cdef bitgen_t *new_bitgen
+        cdef np.ndarray delta_a
+        bit_generator = self.__class__()
+        cdef const char *name = "BitGenerator"
+        new_bitgen = <bitgen_t *>PyCapsule_GetPointer(bit_generator.capsule,
+                                                      name)
+
+        delta_a = int_to_array(iter * 2 ** 64, 'step', 128, 32)
+        threefry32_advance(<uint32_t *> delta_a.data, <threefry32_state *>new_bitgen.state)
+        return bit_generator
+
 
     def advance(self, delta):
         """
@@ -398,7 +433,6 @@ cdef class ThreeFry32:
         """
         cdef np.ndarray delta_a
         delta_a = int_to_array(delta, 'step', 128, 32)
-        loc = 0
         threefry32_advance(<uint32_t *> delta_a.data, self.rng_state)
         self._reset_state_variables()
         return self

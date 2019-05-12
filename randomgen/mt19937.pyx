@@ -1,7 +1,8 @@
 import operator
 
 from libc.stdlib cimport malloc, free
-from cpython.pycapsule cimport PyCapsule_New
+from libc.string cimport memcpy
+from cpython.pycapsule cimport PyCapsule_New, PyCapsule_GetPointer
 
 try:
     from threading import Lock
@@ -254,10 +255,45 @@ cdef class MT19937:
         self : DSFMT
             PRNG jumped iter times
         """
+        import warnings
+        warnings.warn('jump (in-place) has been deprecated in favor of jumped'
+                      ', which returns a new instance', DeprecationWarning)
+
         cdef np.npy_intp i
         for i in range(iter):
             mt19937_jump(self.rng_state)
         return self
+
+    def jumped(self, np.npy_intp iter=1):
+        """
+        jumped(iter=1)
+
+        Returns a new bit generator with the state jumped
+
+        The state of the returned big generator is jumped as-if
+        2**(128 * iter) random numbers have been generated.
+
+        Parameters
+        ----------
+        iter : integer, positive
+            Number of times to jump the state of the bit generator returned
+
+        Returns
+        -------
+        bit_generator : Xoroshiro128
+            New instance of generator jumped iter times
+        """
+        cdef np.npy_intp i
+        cdef bitgen_t *new_bitgen
+        cdef mt19937_state *new_rng_state
+        bit_generator = self.__class__()
+        cdef const char *name = "BitGenerator"
+        new_bitgen = <bitgen_t *>PyCapsule_GetPointer(bit_generator.capsule,
+                                                      name)
+        new_rng_state = <mt19937_state *>new_bitgen.state
+        for i in range(iter):
+            mt19937_jump(new_rng_state)
+        return bit_generator
 
     @property
     def state(self):

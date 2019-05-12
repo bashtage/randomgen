@@ -23,6 +23,7 @@ Parallel generation
 
    ~Philox.advance
    ~Philox.jump
+   ~Philox.jumped
 
 Random Generator
 ================

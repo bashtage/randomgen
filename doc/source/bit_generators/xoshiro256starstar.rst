@@ -22,6 +22,7 @@ Parallel generation
    :toctree: generated/
 
    ~Xoshiro256StarStar.jump
+   ~Xoshiro256StarStar.jumped
 
 Random Generator
 ================

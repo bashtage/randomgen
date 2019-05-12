@@ -4,7 +4,7 @@ except ImportError:
     from dummy_threading import Lock
 
 from libc.stdlib cimport malloc, free
-from cpython.pycapsule cimport PyCapsule_New
+from cpython.pycapsule cimport PyCapsule_New, PyCapsule_GetPointer
 
 import numpy as np
 cimport numpy as np
@@ -255,14 +255,50 @@ cdef class Xorshift1024:
 
         Notes
         -----
-        Jumping the rng state resets any pre-computed random numbers. This is required
-        to ensure exact reproducibility.
+        Jumping the rng state resets any pre-computed random numbers. This is
+        required to ensure exact reproducibility.
         """
+        import warnings
+        warnings.warn('jump (in-place) has been deprecated in favor of jumped'
+                      ', which returns a new instance', DeprecationWarning)
+
         cdef np.npy_intp i
         for i in range(iter):
             xorshift1024_jump(self.rng_state)
         self._reset_state_variables()
         return self
+
+    def jumped(self, np.npy_intp iter=1):
+        """
+        jumped(iter=1)
+
+        Returns a new bit generator with the state jumped
+
+        The state of the returned big generator is jumped as-if
+        2**(512 * iter) random numbers have been generated.
+
+        Parameters
+        ----------
+        iter : integer, positive
+            Number of times to jump the state of the bit generator returned
+
+        Returns
+        -------
+        bit_generator : Xoroshiro128
+            New instance of generator jumped iter times
+        """
+        cdef np.npy_intp i
+        cdef bitgen_t *new_bitgen
+        bit_generator = self.__class__()
+        cdef const char *name = "BitGenerator"
+        new_bitgen = <bitgen_t *>PyCapsule_GetPointer(bit_generator.capsule,
+                                                      name)
+        for i in range(iter):
+            xorshift1024_jump(<xorshift1024_state *>new_bitgen.state)
+
+        return bit_generator
+
+
 
     @property
     def state(self):

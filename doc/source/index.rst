@@ -161,7 +161,7 @@ generators, 'in addition' to the standard PRNG in NumPy.  The included PRNGs are
 
 * MT19937 - The standard NumPy generator.  Produces identical results to NumPy
   using the same seed/state. Adds a jump function that advances the generator
-  as-if 2**128 draws have been made (:meth:`~randomgen.mt19937.MT19937.jump`).
+  as-if 2**128 draws have been made (:meth:`~randomgen.mt19937.MT19937.jumped`).
   See `NumPy's documentation`_.
 * dSFMT - SSE2 enabled versions of the MT19937 generator.  Theoretically
   the same, but with a different state and so it is not possible to produce a
@@ -170,19 +170,19 @@ generators, 'in addition' to the standard PRNG in NumPy.  The included PRNGs are
 * XoroShiro128+ - Improved version of XorShift128+ with better performance
   and statistical quality. Like the XorShift generators, it can be jumped
   to produce multiple streams in parallel applications. See
-  :meth:`~randomgen.xoroshiro128.Xoroshiro128.jump` for details.
+  :meth:`~randomgen.xoroshiro128.Xoroshiro128.jumped` for details.
   More information about this PRNG is available at the
   `xorshift, xoroshiro and xoshiro authors' page`_.
 * XorShift1024*φ - Fast fast generator based on the XSadd
   generator. Supports ``jump`` and so can be used in
   parallel applications. See the documentation for
-  :meth:`~randomgen.xorshift1024.Xorshift1024.jump` for details. More information
+  :meth:`~randomgen.xorshift1024.Xorshift1024.jumped` for details. More information
   about these PRNGs is available at the
   `xorshift, xoroshiro and xoshiro authors' page`_.
 * Xorshiro256** and Xorshiro512** - The most recently introduced XOR,
   shift, and rotate generator. Supports ``jump`` and so can be used in
   parallel applications. See the documentation for
-  :meth:`~randomgen.xoshiro256starstar.Xoshirt256StarStar.jump` for details. More
+  :meth:`~randomgen.xoshiro256starstar.Xoshirt256StarStar.jumped` for details. More
   information about these PRNGs is available at the
   `xorshift, xoroshiro and xoshiro authors' page`_.
 * PCG-64 - Fast generator that support many parallel streams and

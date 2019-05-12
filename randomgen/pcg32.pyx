@@ -1,5 +1,5 @@
 from libc.stdlib cimport malloc, free
-from cpython.pycapsule cimport PyCapsule_New
+from cpython.pycapsule cimport PyCapsule_New, PyCapsule_GetPointer
 
 try:
     from threading import Lock
@@ -321,7 +321,43 @@ cdef class PCG32:
         self : PCG32
             RNG jumped iter times
         """
+        import warnings
+        warnings.warn('jump (in-place) has been deprecated in favor of jumped'
+                      ', which returns a new instance', DeprecationWarning)
+
         return self.advance(iter * 2**32)
+
+    def jumped(self, np.npy_intp iter=1):
+        """
+        jumped(iter=1)
+
+        Returns a new bit generator with the state jumped
+
+        The state of the returned big generator is jumped as-if
+        2**(32 * iter) random numbers have been generated.
+
+        Parameters
+        ----------
+        iter : integer, positive
+            Number of times to jump the state of the bit generator returned
+
+        Returns
+        -------
+        bit_generator : Xoroshiro128
+            New instance of generator jumped iter times
+        """
+        cdef bitgen_t *new_bitgen
+
+        delta = iter * 2**32
+
+        bit_generator = self.__class__()
+        cdef const char *name = "BitGenerator"
+        new_bitgen = <bitgen_t *>PyCapsule_GetPointer(bit_generator.capsule,
+                                                      name)
+
+        pcg32_advance_state(<pcg32_state *>new_bitgen.state, <uint64_t>delta)
+
+        return bit_generator
 
     @property
     def ctypes(self):
