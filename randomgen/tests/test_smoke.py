@@ -9,7 +9,7 @@ import pytest
 from numpy.testing import (assert_, assert_almost_equal, assert_array_equal,
                            assert_equal)
 
-from randomgen import (DSFMT, MT19937, PCG32, PCG64, Philox, RandomGenerator,
+from randomgen import (DSFMT, MT19937, PCG32, PCG64, Philox, Generator,
                        ThreeFry, ThreeFry32, Xoroshiro128, Xorshift1024,
                        Xoshiro256StarStar, Xoshiro512StarStar, entropy)
 from randomgen._testing import suppress_warnings
@@ -107,7 +107,7 @@ class RNG(object):
         cls.brng = Xoshiro256StarStar
         cls.advance = None
         cls.seed = [12345]
-        cls.rg = RandomGenerator(cls.brng(*cls.seed))
+        cls.rg = Generator(cls.brng(*cls.seed))
         cls.initial_state = cls.rg.brng.state
         cls.seed_vector_bits = 64
         cls._extra_setup()
@@ -123,7 +123,7 @@ class RNG(object):
         self.rg.brng.state = self.initial_state
 
     def test_init(self):
-        rg = RandomGenerator(self.brng())
+        rg = Generator(self.brng())
         state = rg.brng.state
         rg.standard_normal(1)
         rg.standard_normal(1)
@@ -230,43 +230,43 @@ class RNG(object):
         assert_(int_1 == int_2)
 
     def test_entropy_init(self):
-        rg = RandomGenerator(self.brng())
-        rg2 = RandomGenerator(self.brng())
+        rg = Generator(self.brng())
+        rg2 = Generator(self.brng())
         assert_(not comp_state(rg.brng.state, rg2.brng.state))
 
     def test_seed(self):
-        rg = RandomGenerator(self.brng(*self.seed))
-        rg2 = RandomGenerator(self.brng(*self.seed))
+        rg = Generator(self.brng(*self.seed))
+        rg2 = Generator(self.brng(*self.seed))
         rg.random()
         rg2.random()
         assert_(comp_state(rg.brng.state, rg2.brng.state))
 
     def test_reset_state_gauss(self):
-        rg = RandomGenerator(self.brng(*self.seed))
+        rg = Generator(self.brng(*self.seed))
         rg.standard_normal()
         state = rg.brng.state
         n1 = rg.standard_normal(size=10)
-        rg2 = RandomGenerator(self.brng())
+        rg2 = Generator(self.brng())
         rg2.brng.state = state
         n2 = rg2.standard_normal(size=10)
         assert_array_equal(n1, n2)
 
     def test_reset_state_uint32(self):
-        rg = RandomGenerator(self.brng(*self.seed))
+        rg = Generator(self.brng(*self.seed))
         rg.integers(0, 2 ** 24, 120, dtype=np.uint32)
         state = rg.brng.state
         n1 = rg.integers(0, 2 ** 24, 10, dtype=np.uint32)
-        rg2 = RandomGenerator(self.brng())
+        rg2 = Generator(self.brng())
         rg2.brng.state = state
         n2 = rg2.integers(0, 2 ** 24, 10, dtype=np.uint32)
         assert_array_equal(n1, n2)
 
     def test_reset_state_float(self):
-        rg = RandomGenerator(self.brng(*self.seed))
+        rg = Generator(self.brng(*self.seed))
         rg.random(dtype='float32')
         state = rg.brng.state
         n1 = rg.random(size=10, dtype='float32')
-        rg2 = RandomGenerator(self.brng())
+        rg2 = Generator(self.brng())
         rg2.brng.state = state
         n2 = rg2.random(size=10, dtype='float32')
         assert_((n1 == n2).all())
@@ -558,11 +558,11 @@ class RNG(object):
             self.rg.brng.seed(seed)
 
     def test_uniform_float(self):
-        rg = RandomGenerator(self.brng(12345))
+        rg = Generator(self.brng(12345))
         warmup(rg)
         state = rg.brng.state
         r1 = rg.random(11, dtype=np.float32)
-        rg2 = RandomGenerator(self.brng())
+        rg2 = Generator(self.brng())
         warmup(rg2)
         rg2.brng.state = state
         r2 = rg2.random(11, dtype=np.float32)
@@ -571,11 +571,11 @@ class RNG(object):
         assert_(comp_state(rg.brng.state, rg2.brng.state))
 
     def test_gamma_floats(self):
-        rg = RandomGenerator(self.brng())
+        rg = Generator(self.brng())
         warmup(rg)
         state = rg.brng.state
         r1 = rg.standard_gamma(4.0, 11, dtype=np.float32)
-        rg2 = RandomGenerator(self.brng())
+        rg2 = Generator(self.brng())
         warmup(rg2)
         rg2.brng.state = state
         r2 = rg2.standard_gamma(4.0, 11, dtype=np.float32)
@@ -584,11 +584,11 @@ class RNG(object):
         assert_(comp_state(rg.brng.state, rg2.brng.state))
 
     def test_normal_floats(self):
-        rg = RandomGenerator(self.brng())
+        rg = Generator(self.brng())
         warmup(rg)
         state = rg.brng.state
         r1 = rg.standard_normal(11, dtype=np.float32)
-        rg2 = RandomGenerator(self.brng())
+        rg2 = Generator(self.brng())
         warmup(rg2)
         rg2.brng.state = state
         r2 = rg2.standard_normal(11, dtype=np.float32)
@@ -597,11 +597,11 @@ class RNG(object):
         assert_(comp_state(rg.brng.state, rg2.brng.state))
 
     def test_normal_zig_floats(self):
-        rg = RandomGenerator(self.brng())
+        rg = Generator(self.brng())
         warmup(rg)
         state = rg.brng.state
         r1 = rg.standard_normal(11, dtype=np.float32)
-        rg2 = RandomGenerator(self.brng())
+        rg2 = Generator(self.brng())
         warmup(rg2)
         rg2.brng.state = state
         r2 = rg2.standard_normal(11, dtype=np.float32)
@@ -861,7 +861,7 @@ class TestMT19937(RNG):
         cls.brng = MT19937
         cls.advance = None
         cls.seed = [2 ** 21 + 2 ** 16 + 2 ** 5 + 1]
-        cls.rg = RandomGenerator(cls.brng(*cls.seed))
+        cls.rg = Generator(cls.brng(*cls.seed))
         cls.initial_state = cls.rg.brng.state
         cls.seed_vector_bits = 32
         cls._extra_setup()
@@ -884,7 +884,7 @@ class TestPCG64(RNG):
         cls.advance = 2 ** 96 + 2 ** 48 + 2 ** 21 + 2 ** 16 + 2 ** 5 + 1
         cls.seed = [2 ** 96 + 2 ** 48 + 2 ** 21 + 2 ** 16 + 2 ** 5 + 1,
                     2 ** 21 + 2 ** 16 + 2 ** 5 + 1]
-        cls.rg = RandomGenerator(cls.brng(*cls.seed))
+        cls.rg = Generator(cls.brng(*cls.seed))
         cls.initial_state = cls.rg.brng.state
         cls.seed_vector_bits = None
         cls._extra_setup()
@@ -920,7 +920,7 @@ class TestPhilox(RNG):
         cls.brng = Philox
         cls.advance = 2**63 + 2**31 + 2**15 + 1
         cls.seed = [12345]
-        cls.rg = RandomGenerator(cls.brng(*cls.seed))
+        cls.rg = Generator(cls.brng(*cls.seed))
         cls.initial_state = cls.rg.brng.state
         cls.seed_vector_bits = 64
         cls._extra_setup()
@@ -932,7 +932,7 @@ class TestThreeFry(RNG):
         cls.brng = ThreeFry
         cls.advance = 2 ** 63 + 2 ** 31 + 2 ** 15 + 1
         cls.seed = [12345]
-        cls.rg = RandomGenerator(cls.brng(*cls.seed))
+        cls.rg = Generator(cls.brng(*cls.seed))
         cls.initial_state = cls.rg.brng.state
         cls.seed_vector_bits = 64
         cls._extra_setup()
@@ -944,7 +944,7 @@ class TestXoroshiro128(RNG):
         cls.brng = Xoroshiro128
         cls.advance = None
         cls.seed = [12345]
-        cls.rg = RandomGenerator(cls.brng(*cls.seed))
+        cls.rg = Generator(cls.brng(*cls.seed))
         cls.initial_state = cls.rg.brng.state
         cls.seed_vector_bits = 64
         cls._extra_setup()
@@ -956,7 +956,7 @@ class TestXoshiro256StarStar(RNG):
         cls.brng = Xoshiro256StarStar
         cls.advance = None
         cls.seed = [12345]
-        cls.rg = RandomGenerator(cls.brng(*cls.seed))
+        cls.rg = Generator(cls.brng(*cls.seed))
         cls.initial_state = cls.rg.brng.state
         cls.seed_vector_bits = 64
         cls._extra_setup()
@@ -968,7 +968,7 @@ class TestXoshiro512StarStar(RNG):
         cls.brng = Xoshiro512StarStar
         cls.advance = None
         cls.seed = [12345]
-        cls.rg = RandomGenerator(cls.brng(*cls.seed))
+        cls.rg = Generator(cls.brng(*cls.seed))
         cls.initial_state = cls.rg.brng.state
         cls.seed_vector_bits = 64
         cls._extra_setup()
@@ -980,7 +980,7 @@ class TestXorshift1024(RNG):
         cls.brng = Xorshift1024
         cls.advance = None
         cls.seed = [12345]
-        cls.rg = RandomGenerator(cls.brng(*cls.seed))
+        cls.rg = Generator(cls.brng(*cls.seed))
         cls.initial_state = cls.rg.brng.state
         cls.seed_vector_bits = 64
         cls._extra_setup()
@@ -992,7 +992,7 @@ class TestDSFMT(RNG):
         cls.brng = DSFMT
         cls.advance = None
         cls.seed = [12345]
-        cls.rg = RandomGenerator(cls.brng(*cls.seed))
+        cls.rg = Generator(cls.brng(*cls.seed))
         cls.initial_state = cls.rg.brng.state
         cls._extra_setup()
         cls.seed_vector_bits = 32
@@ -1004,7 +1004,7 @@ class TestThreeFry32(RNG):
         cls.brng = ThreeFry32
         cls.advance = 2**63 + 2**31 + 2**15 + 1
         cls.seed = [2 ** 21 + 2 ** 16 + 2 ** 5 + 1]
-        cls.rg = RandomGenerator(cls.brng(*cls.seed))
+        cls.rg = Generator(cls.brng(*cls.seed))
         cls.initial_state = cls.rg.brng.state
         cls.seed_vector_bits = 64
         cls._extra_setup()
@@ -1037,7 +1037,7 @@ class TestPCG32(TestPCG64):
         cls.advance = 2 ** 48 + 2 ** 21 + 2 ** 16 + 2 ** 5 + 1
         cls.seed = [2 ** 48 + 2 ** 21 + 2 ** 16 + 2 ** 5 + 1,
                     2 ** 21 + 2 ** 16 + 2 ** 5 + 1]
-        cls.rg = RandomGenerator(cls.brng(*cls.seed))
+        cls.rg = Generator(cls.brng(*cls.seed))
         cls.initial_state = cls.rg.brng.state
         cls.seed_vector_bits = None
         cls._extra_setup()

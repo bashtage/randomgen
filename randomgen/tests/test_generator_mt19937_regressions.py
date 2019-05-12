@@ -5,9 +5,9 @@ import pytest
 from numpy.compat import long
 from numpy.testing import assert_, assert_array_equal
 
-from randomgen import MT19937, RandomGenerator
+from randomgen import MT19937, Generator
 
-mt19937 = RandomGenerator(MT19937())
+mt19937 = Generator(MT19937())
 
 
 class TestRegression(object):
@@ -71,7 +71,7 @@ class TestRegression(object):
 
     def test_call_within_randomstate(self):
         # Check that custom RandomState does not call into global state
-        m = RandomGenerator(MT19937())  # mt19937.RandomState()
+        m = Generator(MT19937())  # mt19937.RandomState()
         res = np.array([0, 8, 7, 2, 1, 9, 4, 7, 0, 3])
         for i in range(3):
             mt19937.brng.seed(i)

@@ -10,7 +10,7 @@ from randomgen.xoshiro256starstar import Xoshiro256StarStar
 from randomgen.xoshiro512starstar import Xoshiro512StarStar
 
 from .dsfmt import DSFMT
-from .generator import RandomGenerator
+from .generator import Generator
 from .mt19937 import MT19937
 
 BasicRNGS = {'MT19937': MT19937,
@@ -29,7 +29,7 @@ BasicRNGS = {'MT19937': MT19937,
 
 def __generator_ctor(brng_name='mt19937'):
     """
-    Pickling helper function that returns a RandomGenerator object
+    Pickling helper function that returns a Generator object
 
     Parameters
     ----------
@@ -38,8 +38,8 @@ def __generator_ctor(brng_name='mt19937'):
 
     Returns
     -------
-    rg: RandomGenerator
-        RandomGenerator using the named core BasicRNG
+    rg: Generator
+        Generator using the named core BasicRNG
     """
     try:
         brng_name = brng_name.decode('ascii')
@@ -50,7 +50,7 @@ def __generator_ctor(brng_name='mt19937'):
     else:
         raise ValueError(str(brng_name) + ' is not a known BasicRNG module.')
 
-    return RandomGenerator(brng())
+    return Generator(brng())
 
 
 def __brng_ctor(brng_name='mt19937'):

@@ -31,7 +31,7 @@ are Python 3, with an initial minimum version of 3.5.
 
 ## Compatibility Warning
 
-`RandomGenerator` does not support Box-Muller normal variates and so it not
+`Generator` does not support Box-Muller normal variates and so it not
 100% compatible with NumPy (or randomstate). Box-Muller normals are slow
 to generate and all functions which previously relied on Box-Muller
 normals now use the faster Ziggurat implementation. If you require backward
@@ -43,8 +43,8 @@ which can fully reproduce the sequence produced by NumPy.
 * Replacement for NumPy's RandomState
 
   ```python
-  from randomgen import RandomGenerator, MT19937
-  rnd = RandomGenerator(MT19937())
+  from randomgen import Generator, MT19937
+  rnd = Generator(MT19937())
   x = rnd.standard_normal(100)
   y = rnd.random(100)
   z = rnd.randn(10,10)
@@ -57,9 +57,9 @@ which can fully reproduce the sequence produced by NumPy.
   exponential and standard gamma using the Ziggurat method
 
   ```python
-  from randomgen import RandomGenerator
+  from randomgen import Generator
   # Default basic PRNG is Xoroshiro128
-  rnd = RandomGenerator()
+  rnd = Generator()
   w = rnd.standard_normal(10000)
   x = rnd.standard_exponential(10000)
   y = rnd.standard_gamma(5.5, 10000)
@@ -237,15 +237,15 @@ Python 2.7.
 The separate generators are importable from `randomgen`
 
 ```python
-from randomgen import RandomGenerator, ThreeFry, PCG64, MT19937
-rg = RandomGenerator(ThreeFry())
+from randomgen import Generator, ThreeFry, PCG64, MT19937
+rg = Generator(ThreeFry())
 rg.random(100)
 
-rg = RandomGenerator(PCG64())
+rg = Generator(PCG64())
 rg.random(100)
 
 # Identical to NumPy
-rg = RandomGenerator(MT19937())
+rg = Generator(MT19937())
 rg.random(100)
 ```
 
