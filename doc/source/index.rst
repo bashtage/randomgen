@@ -196,7 +196,7 @@ Basic Random Number Generators
 .. toctree::
    :maxdepth: 3
 
-   Basic Random Number Generators <brng/index>
+   Basic Random Number Generators <bit_generators/index>
 
 New Features
 ------------

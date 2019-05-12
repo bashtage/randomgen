@@ -9,7 +9,7 @@ except ImportError:
 import numpy as np
 
 from randomgen.common cimport *
-from randomgen.distributions cimport brng_t
+from randomgen.distributions cimport bitgen_t
 from randomgen.entropy import random_entropy, seed_by_array
 
 np.import_array()
@@ -119,7 +119,7 @@ cdef class ThreeFry:
     >>> rg = [Generator(ThreeFry(1234)) for _ in range(10)]
     # Advance each ThreeFry instance by i jumps
     >>> for i in range(10):
-    ...     rg[i].brng.jump(i)
+    ...     rg[i].bit_generator.jump(i)
 
     Alternatively, ``ThreeFry`` can be used in parallel applications by using
     a sequence of distinct keys where each instance uses different key.
@@ -153,7 +153,7 @@ cdef class ThreeFry:
            Networking, Storage and Analysis (SC11), New York, NY: ACM, 2011.
     """
     cdef threefry_state *rng_state
-    cdef brng_t _brng
+    cdef bitgen_t _bitgen
     cdef public object capsule
     cdef object _ctypes
     cdef object _cffi
@@ -166,17 +166,17 @@ cdef class ThreeFry:
         self.seed(seed, counter, key)
         self.lock = Lock()
 
-        self._brng.state = <void *>self.rng_state
-        self._brng.next_uint64 = &threefry_uint64
-        self._brng.next_uint32 = &threefry_uint32
-        self._brng.next_double = &threefry_double
-        self._brng.next_raw = &threefry_uint64
+        self._bitgen.state = <void *>self.rng_state
+        self._bitgen.next_uint64 = &threefry_uint64
+        self._bitgen.next_uint32 = &threefry_uint32
+        self._bitgen.next_double = &threefry_double
+        self._bitgen.next_raw = &threefry_uint64
 
         self._ctypes = None
         self._cffi = None
 
         cdef const char *name = 'BasicRNG'
-        self.capsule = PyCapsule_New(<void *>&self._brng, name, NULL)
+        self.capsule = PyCapsule_New(<void *>&self._bitgen, name, NULL)
 
     # Pickling support:
     def __getstate__(self):
@@ -186,8 +186,8 @@ cdef class ThreeFry:
         self.state = state
 
     def __reduce__(self):
-        from randomgen._pickle import __brng_ctor
-        return __brng_ctor, (self.state['brng'],), self.state
+        from randomgen._pickle import __bit_generator_ctor
+        return __bit_generator_ctor, (self.state['bit_generator'],), self.state
 
     def __dealloc__(self):
         if self.rng_state:
@@ -231,10 +231,10 @@ cdef class ThreeFry:
 
         See the class docstring for the number of bits returned.
         """
-        return random_raw(&self._brng, self.lock, size, output)
+        return random_raw(&self._bitgen, self.lock, size, output)
 
     def _benchmark(self, Py_ssize_t cnt, method=u'uint64'):
-        return benchmark(&self._brng, self.lock, cnt, method)
+        return benchmark(&self._bitgen, self.lock, cnt, method)
 
     def seed(self, seed=None, counter=None, key=None):
         """
@@ -313,7 +313,7 @@ cdef class ThreeFry:
         for i in range(THREEFRY_BUFFER_SIZE):
             buffer[i] = self.rng_state.buffer[i]
         state = {'counter': ctr, 'key': key}
-        return {'brng': self.__class__.__name__,
+        return {'bit_generator': self.__class__.__name__,
                 'state': state,
                 'buffer': buffer,
                 'buffer_pos': self.rng_state.buffer_pos,
@@ -324,8 +324,8 @@ cdef class ThreeFry:
     def state(self, value):
         if not isinstance(value, dict):
             raise TypeError('state must be a dict')
-        brng = value.get('brng', '')
-        if brng != self.__class__.__name__:
+        bitgen = value.get('bit_generator', '')
+        if bitgen != self.__class__.__name__:
             raise ValueError('state must be for a {0} '
                              'PRNG'.format(self.__class__.__name__))
         for i in range(4):
@@ -418,10 +418,10 @@ cdef class ThreeFry:
             * next_uint64 - function pointer to produce 64 bit integers
             * next_uint32 - function pointer to produce 32 bit integers
             * next_double - function pointer to produce doubles
-            * brng - pointer to the Basic RNG struct
+            * bitgen - pointer to the Basic RNG struct
         """
         if self._ctypes is None:
-            self._ctypes = prepare_ctypes(&self._brng)
+            self._ctypes = prepare_ctypes(&self._bitgen)
 
         return self._ctypes
 
@@ -440,11 +440,11 @@ cdef class ThreeFry:
             * next_uint64 - function pointer to produce 64 bit integers
             * next_uint32 - function pointer to produce 32 bit integers
             * next_double - function pointer to produce doubles
-            * brng - pointer to the Basic RNG struct
+            * bitgen - pointer to the Basic RNG struct
         """
         if self._cffi is not None:
             return self._cffi
-        self._cffi = prepare_cffi(&self._brng)
+        self._cffi = prepare_cffi(&self._bitgen)
         return self._cffi
 
     @property

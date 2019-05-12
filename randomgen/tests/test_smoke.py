@@ -137,8 +137,8 @@ class RNG(object):
             self.rg.bit_generator.advance(self.advance)
             assert_(not comp_state(state, self.rg.bit_generator.state))
         else:
-            brng_name = self.rg.bit_generator.__class__.__name__
-            pytest.skip('Advance is not supported by {0}'.format(brng_name))
+            bit_gen_name = self.rg.bit_generator.__class__.__name__
+            pytest.skip('Advance is not supported by {0}'.format(bit_gen_name))
 
     def test_jump(self):
         state = self.rg.bit_generator.state
@@ -152,8 +152,8 @@ class RNG(object):
             rejumped_state = self.rg.bit_generator.state
             assert_(comp_state(jumped_state, rejumped_state))
         else:
-            brng_name = self.rg.bit_generator.__class__.__name__
-            pytest.skip('Jump is not supported by {0}'.format(brng_name))
+            bit_gen_name = self.rg.bit_generator.__class__.__name__
+            pytest.skip('Jump is not supported by {0}'.format(bit_gen_name))
 
     def test_uniform(self):
         r = self.rg.uniform(-1.0, 0.0, size=10)
@@ -504,9 +504,9 @@ class RNG(object):
 
     def test_seed_array(self):
         if self.seed_vector_bits is None:
-            brng_name = self.bit_generator.__name__
+            bit_gen_name = self.bit_generator.__name__
             pytest.skip('Vector seeding is not supported by '
-                        '{0}'.format(brng_name))
+                        '{0}'.format(bit_gen_name))
 
         if self.seed_vector_bits == 32:
             dtype = np.uint32

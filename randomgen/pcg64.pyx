@@ -10,7 +10,7 @@ import numpy as np
 cimport numpy as np
 
 from randomgen.common cimport *
-from randomgen.distributions cimport brng_t
+from randomgen.distributions cimport bitgen_t
 from randomgen.entropy import random_entropy
 
 np.import_array()
@@ -101,7 +101,7 @@ cdef class PCG64:
 
     >>> rg = [Generator(PCG64(1234, i + 1)) for i in range(10)]
     >>> for i in range(10):
-    ...     rg[i].brng.advance(i * 2**64)
+    ...     rg[i].bit_generator.advance(i * 2**64)
 
     **Compatibility Guarantee**
 
@@ -116,7 +116,7 @@ cdef class PCG64:
            Statistically Good Algorithms for Random Number Generation"
     """
     cdef pcg64_state *rng_state
-    cdef brng_t _brng
+    cdef bitgen_t _bitgen
     cdef public object capsule
     cdef object _ctypes
     cdef object _cffi
@@ -128,17 +128,17 @@ cdef class PCG64:
         self.seed(seed, inc)
         self.lock = Lock()
 
-        self._brng.state = <void *>self.rng_state
-        self._brng.next_uint64 = &pcg64_uint64
-        self._brng.next_uint32 = &pcg64_uint32
-        self._brng.next_double = &pcg64_double
-        self._brng.next_raw = &pcg64_uint64
+        self._bitgen.state = <void *>self.rng_state
+        self._bitgen.next_uint64 = &pcg64_uint64
+        self._bitgen.next_uint32 = &pcg64_uint32
+        self._bitgen.next_double = &pcg64_double
+        self._bitgen.next_raw = &pcg64_uint64
 
         self._ctypes = None
         self._cffi = None
 
         cdef const char *name = "BasicRNG"
-        self.capsule = PyCapsule_New(<void *>&self._brng, name, NULL)
+        self.capsule = PyCapsule_New(<void *>&self._bitgen, name, NULL)
 
     # Pickling support:
     def __getstate__(self):
@@ -148,8 +148,8 @@ cdef class PCG64:
         self.state = state
 
     def __reduce__(self):
-        from randomgen._pickle import __brng_ctor
-        return __brng_ctor, (self.state['brng'],), self.state
+        from randomgen._pickle import __bit_generator_ctor
+        return __bit_generator_ctor, (self.state['bit_generator'],), self.state
 
     def __dealloc__(self):
         if self.rng_state:
@@ -188,10 +188,10 @@ cdef class PCG64:
 
         See the class docstring for the number of bits returned.
         """
-        return random_raw(&self._brng, self.lock, size, output)
+        return random_raw(&self._bitgen, self.lock, size, output)
 
     def _benchmark(self, Py_ssize_t cnt, method=u'uint64'):
-        return benchmark(&self._brng, self.lock, cnt, method)
+        return benchmark(&self._bitgen, self.lock, cnt, method)
 
     def seed(self, seed=None, inc=0):
         """
@@ -268,7 +268,7 @@ cdef class PCG64:
         pcg64_get_state(self.rng_state, <uint64_t *>state_vec.data, &has_uint32, &uinteger)
         state = int(state_vec[0]) * 2**64 + int(state_vec[1])
         inc = int(state_vec[2]) * 2**64 + int(state_vec[3])
-        return {'brng': self.__class__.__name__,
+        return {'bit_generator': self.__class__.__name__,
                 'state': {'state': state, 'inc': inc},
                 'has_uint32': has_uint32,
                 'uinteger': uinteger}
@@ -280,8 +280,8 @@ cdef class PCG64:
         cdef uint32_t uinteger
         if not isinstance(value, dict):
             raise TypeError('state must be a dict')
-        brng = value.get('brng', '')
-        if brng != self.__class__.__name__:
+        bitgen = value.get('bit_generator', '')
+        if bitgen != self.__class__.__name__:
             raise ValueError('state must be for a {0} '
                              'RNG'.format(self.__class__.__name__))
         state_vec = <np.ndarray>np.empty(4, dtype=np.uint64)
@@ -374,10 +374,10 @@ cdef class PCG64:
             * next_uint64 - function pointer to produce 64 bit integers
             * next_uint32 - function pointer to produce 32 bit integers
             * next_double - function pointer to produce doubles
-            * brng - pointer to the Basic RNG struct
+            * bitgen - pointer to the Basic RNG struct
         """
         if self._ctypes is None:
-            self._ctypes = prepare_ctypes(&self._brng)
+            self._ctypes = prepare_ctypes(&self._bitgen)
 
         return self._ctypes
 
@@ -396,11 +396,11 @@ cdef class PCG64:
             * next_uint64 - function pointer to produce 64 bit integers
             * next_uint32 - function pointer to produce 32 bit integers
             * next_double - function pointer to produce doubles
-            * brng - pointer to the Basic RNG struct
+            * bitgen - pointer to the Basic RNG struct
         """
         if self._cffi is not None:
             return self._cffi
-        self._cffi = prepare_cffi(&self._brng)
+        self._cffi = prepare_cffi(&self._bitgen)
         return self._cffi
 
     @property

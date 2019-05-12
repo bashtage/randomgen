@@ -125,17 +125,17 @@ generator 2 ** 127 steps to set a sequence of random number generators.
 .. code-block:: python
 
    from randomgen import PCG64
-   brng = PCG64()
-   brng_copy = PCG64()
-   brng_copy.state = brng.state
+   bitgen = PCG64()
+   bitgen_copy = PCG64()
+   bitgen_copy.state = bitgen.state
 
    advance = 2**127
-   brngs = [brng]
+   bitgens = [bitgen]
    for _ in range(9):
-       brng_copy.advance(advance)
-       brng = PCG64()
-       brng.state = brng_copy.state
-       brngs.append(brng)
+       bitgen_copy.advance(advance)
+       bitgen = PCG64()
+       bitgen.state = bitgen_copy.state
+       bitgens.append(bitgen)
 
 .. end block
 

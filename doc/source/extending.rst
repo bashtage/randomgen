@@ -84,7 +84,7 @@ removing bounds checks and wrap around, providing array alignment information
    @cython.wraparound(False)
    def normals_zig(Py_ssize_t n):
        cdef Py_ssize_t i
-       cdef brng_t *rng
+       cdef bitgen_t *rng
        cdef const char *capsule_name = "BasicRNG"
        cdef double[::1] random_values
 
@@ -94,7 +94,7 @@ removing bounds checks and wrap around, providing array alignment information
        if not PyCapsule_IsValid(capsule, capsule_name):
            raise ValueError("Invalid pointer to anon_func_state")
        # Cast the pointer
-       rng = <brng_t *> PyCapsule_GetPointer(capsule, capsule_name)
+       rng = <bitgen_t *> PyCapsule_GetPointer(capsule, capsule_name)
        random_values = np.empty(n)
        for i in range(n):
            # Call the function
@@ -112,7 +112,7 @@ RNG structure.
    @cython.wraparound(False)
    def uniforms(Py_ssize_t n):
        cdef Py_ssize_t i
-       cdef brng_t *rng
+       cdef bitgen_t *rng
        cdef const char *capsule_name = "BasicRNG"
        cdef double[::1] random_values
 
@@ -122,7 +122,7 @@ RNG structure.
        if not PyCapsule_IsValid(capsule, capsule_name):
            raise ValueError("Invalid pointer to anon_func_state")
        # Cast the pointer
-       rng = <brng_t *> PyCapsule_GetPointer(capsule, capsule_name)
+       rng = <bitgen_t *> PyCapsule_GetPointer(capsule, capsule_name)
        random_values = np.empty(n)
        for i in range(n):
            # Call the function
@@ -139,17 +139,17 @@ New Basic RNGs
 user-provided basic RNGs.  The simplest way to write a new basic RNG is to
 examine the pyx file of one of the existing basic RNGs. The key structure
 that must be provided is the ``capsule`` which contains a ``PyCapsule`` to a
-struct pointer of type ``brng_t``,
+struct pointer of type ``bitgen_t``,
 
 .. code-block:: c
 
-  typedef struct brng {
+  typedef struct bitgen {
     void *state;
     uint64_t (*next_uint64)(void *st);
     uint32_t (*next_uint32)(void *st);
     double (*next_double)(void *st);
     uint64_t (*next_raw)(void *st);
-  } brng_t;
+  } bitgen_t;
 
 which provides 5 pointers. The first is an opaque pointer to the data structure
 used by the basic RNG.  The next three are function pointers which return the
@@ -160,4 +160,4 @@ the next 64-bit unsigned integer function if not needed. Functions inside
 
 .. code-block:: c
 
-  brng_state->next_uint64(brng_state->state)
+  bitgen_state->next_uint64(bitgen_state->state)

@@ -10,13 +10,13 @@ rs = RandomState()
 
 SETUP = '''
 import numpy as np
-if '{brng}' == 'numpy':
+if '{bitgen}' == 'numpy':
     import numpy.random
     rg = numpy.random.RandomState()
     rg.random_sample()
 else:
-    from randomgen import Generator, {brng}
-    rg = Generator({brng}())
+    from randomgen import Generator, {bitgen}
+    rg = Generator({bitgen}())
     rg.random()
 '''
 
@@ -46,9 +46,9 @@ def run_timer(command, numpy_command=None, setup='', random_type=''):
         numpy_command = command
 
     res = {}
-    for brng in PRNGS:
-        cmd = numpy_command if brng == 'numpy' else command
-        res[brng] = timer(cmd, setup=setup.format(brng=brng))
+    for bitgen in PRNGS:
+        cmd = numpy_command if bitgen == 'numpy' else command
+        res[bitgen] = timer(cmd, setup=setup.format(bitgen=bitgen))
 
     s = pd.Series(res)
     t = s.apply(lambda x: '{0:0.2f} ms'.format(x))
