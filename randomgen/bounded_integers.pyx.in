@@ -65,7 +65,8 @@ cdef object _rand_{{nptype}}_broadcast(np.ndarray low, np.ndarray high, object s
     if np.any(high_comp(high_arr, {{ub}})):
         raise ValueError('high is out of bounds for {{nptype}}')
     if np.any(low_high_comp(low_arr, high_arr)):
-        raise ValueError('low >= high')
+        comp = '>' if closed else '>='
+        raise ValueError('low {comp} high'.format(comp=comp))
 
     low_arr = <np.ndarray>np.PyArray_FROM_OTF(low, np.{{npctype}}, np.NPY_ALIGNED | np.NPY_FORCECAST)
     high_arr = <np.ndarray>np.PyArray_FROM_OTF(high, np.{{npctype}}, np.NPY_ALIGNED | np.NPY_FORCECAST)
@@ -138,7 +139,8 @@ cdef object _rand_{{nptype}}_broadcast(object low, object high, object size,
         # Avoid object dtype path if already an integer
         high_lower_comp = np.less if closed else np.less_equal
         if np.any(high_lower_comp(high_arr, {{lb}})):
-            raise ValueError('low >= high')
+            comp = '>' if closed else '>='
+            raise ValueError('low {comp} high'.format(comp=comp))
         high_m1 = high_arr if closed else high_arr - dt.type(1)
         if np.any(np.greater(high_m1, {{ub}})):
             raise ValueError('high is out of bounds for {{nptype}}')
@@ -155,11 +157,13 @@ cdef object _rand_{{nptype}}_broadcast(object low, object high, object size,
             if closed_upper > {{ub}}:
                 raise ValueError('high is out of bounds for {{nptype}}')
             if closed_upper < {{lb}}:
-                raise ValueError('low >= high')
+                comp = '>' if closed else '>='
+                raise ValueError('low {comp} high'.format(comp=comp))
             highm1_data[i] = <{{nptype}}_t>closed_upper
 
     if np.any(np.greater(low_arr, highm1_arr)):
-        raise ValueError('low >= high')
+        comp = '>' if closed else '>='
+        raise ValueError('low {comp} high'.format(comp=comp))
 
     high_arr = highm1_arr
     low_arr = <np.ndarray>np.PyArray_FROM_OTF(low, np.{{npctype}}, np.NPY_ALIGNED | np.NPY_FORCECAST)
@@ -279,7 +283,8 @@ cdef object _rand_{{nptype}}(object low, object high, object size,
         if high > {{ub}}:
             raise ValueError("high is out of bounds for {{nptype}}")
         if low > high:  # -1 already subtracted, closed interval
-            raise ValueError("low >= high")
+            comp = '>' if closed else '>='
+            raise ValueError('low {comp} high'.format(comp=comp))
 
         rng = <{{utype}}_t>(high - low)
         off = <{{utype}}_t>(<{{nptype}}_t>low)
