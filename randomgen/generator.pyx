@@ -96,7 +96,7 @@ cdef class Generator:
     -0.203  # random
 
     """
-    cdef public object _basicrng
+    cdef public object _bit_generator
     cdef brng_t *_brng
     cdef binomial_t *_binomial
     cdef object lock
@@ -105,7 +105,7 @@ cdef class Generator:
     def __init__(self, brng=None):
         if brng is None:
             brng = Xoroshiro128()
-        self._basicrng = brng
+        self._bit_generator = brng
 
         capsule = brng.capsule
         cdef const char *name = "BasicRNG"
@@ -124,19 +124,20 @@ cdef class Generator:
 
     def __str__(self):
         _str = self.__class__.__name__
-        _str += '(' + self.brng.__class__.__name__ + ')'
+        _str += '(' + self.bit_generator.__class__.__name__ + ')'
         return _str
 
     # Pickling support:
     def __getstate__(self):
-        return self.brng.state
+        return self.bit_generator.state
 
     def __setstate__(self, state):
-        self.brng.state = state
+        self.bit_generator.state = state
 
     def __reduce__(self):
         from randomgen._pickle import __generator_ctor
-        return __generator_ctor, (self.brng.state['brng'],), self.brng.state
+        return (__generator_ctor, (self.bit_generator.state['brng'],),
+                self.bit_generator.state)
 
     @property
     def brng(self):
@@ -145,10 +146,24 @@ cdef class Generator:
 
         Returns
         -------
-        basic_rng : Basic RNG
+        bit_generator : Basic RNG
             The basic RNG instance used by the generator
         """
-        return self._basicrng
+        import warnings
+        warnings.warn('brng is deprecated. Use bit_generator.')
+        return self._bit_generator
+
+    @property
+    def bit_generator(self):
+        """
+        Gets the basic RNG instance used by the generator
+
+        Returns
+        -------
+        bit_generator : Basic RNG
+            The basic RNG instance used by the generator
+        """
+        return self._bit_generator
 
     def seed(self, *args, **kwargs):
         """
@@ -181,7 +196,7 @@ cdef class Generator:
         >>> rg.seed(1110987654321)
 
         """
-        self._basicrng.seed(*args, **kwargs)
+        self._bit_generator.seed(*args, **kwargs)
         return self
 
     @property
@@ -201,11 +216,11 @@ cdef class Generator:
         directly contain or manipulate the basic RNG's state.
 
         """
-        return self._basicrng.state
+        return self._bit_generator.state
 
     @state.setter
     def state(self, value):
-        self._basicrng.state = value
+        self._bit_generator.state = value
 
     def random_sample(self, *args, **kwargs):
         import warnings

@@ -16,8 +16,8 @@ PRNGS = [DSFMT, MT19937, Philox, PCG64, ThreeFry, Xoroshiro128, Xorshift1024,
 funcs = {'32-bit Unsigned Ints':
          f'integers(2**32, dtype="uint32", size={SIZE})',
          '64-bit Unsigned Ints':
-         f'_basicrng._benchmark({SIZE}, "uint64")',
-         'Uniforms': f'_basicrng._benchmark({SIZE}, "double")',
+         f'_bit_generator._benchmark({SIZE}, "uint64")',
+         'Uniforms': f'_bit_generator._benchmark({SIZE}, "double")',
          'Complex Normals': f'complex_normal(size={SIZE})',
          'Normals': f'standard_normal(size={SIZE})',
          'Exponentials': f'standard_exponential(size={SIZE})',

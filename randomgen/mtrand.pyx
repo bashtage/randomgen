@@ -73,7 +73,7 @@ cdef class RandomState:
     randomgen.mt19937.MT19937
 
     """
-    cdef public object _basicrng
+    cdef public object _bit_generator
     cdef brng_t *_brng
     cdef aug_brng_t *_aug_state
     cdef binomial_t *_binomial
@@ -86,14 +86,14 @@ cdef class RandomState:
         elif not hasattr(brng, 'capsule'):
             brng = _MT19937(brng)
 
-        self._basicrng = brng
+        self._bit_generator = brng
         capsule = brng.capsule
         cdef const char *name = "BasicRNG"
         if not PyCapsule_IsValid(capsule, name):
             raise ValueError("Invalid brng. The brng must be instantized.")
         self._brng = <brng_t *> PyCapsule_GetPointer(capsule, name)
         self._aug_state = <aug_brng_t *>malloc(sizeof(aug_brng_t))
-        self._aug_state.basicrng = self._brng
+        self._aug_state.bit_generator = self._brng
         self._binomial = <binomial_t *>malloc(sizeof(binomial_t))
         self._reset_gauss()
         self.lock = brng.lock
@@ -109,7 +109,7 @@ cdef class RandomState:
 
     def __str__(self):
         _str = self.__class__.__name__
-        _str += '(' + self._basicrng.__class__.__name__ + ')'
+        _str += '(' + self._bit_generator.__class__.__name__ + ')'
         return _str
 
     # Pickling support:
@@ -155,7 +155,7 @@ cdef class RandomState:
         >>> rs = RandomState(MT19937())
         >>> rs.seed(987654321)
         """
-        self._basicrng.seed(*args, **kwargs)
+        self._bit_generator.seed(*args, **kwargs)
         self._reset_gauss()
 
     def get_state(self, legacy=True):
@@ -195,7 +195,7 @@ cdef class RandomState:
         the user should know exactly what he/she is doing.
 
         """
-        st = self._basicrng.state
+        st = self._bit_generator.state
         if st['brng'] != 'MT19937' and legacy:
             warnings.warn('get_state and legacy can only be used with the '
                           'MT19937 basic RNG. To silence this warning, '
@@ -278,7 +278,7 @@ cdef class RandomState:
 
         self._aug_state.gauss = st.get('gauss', 0.0)
         self._aug_state.has_gauss = st.get('has_gauss', 0)
-        self._basicrng.state = st
+        self._bit_generator.state = st
 
     def random_sample(self, size=None):
         """

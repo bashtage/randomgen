@@ -1,7 +1,7 @@
 #include "distributions-boxmuller.h"
 
 static NPY_INLINE double legacy_double(aug_brng_t *aug_state) {
-  return aug_state->basicrng->next_double(aug_state->basicrng->state);
+  return aug_state->bit_generator->next_double(aug_state->bit_generator->state);
 }
 
 double legacy_gauss(aug_brng_t *aug_state) {
@@ -112,7 +112,7 @@ double legacy_noncentral_chisquare(aug_brng_t *aug_state, double df,
     const double n = legacy_gauss(aug_state) + sqrt(nonc);
     return Chi2 + n * n;
   } else {
-    const long i = random_poisson(aug_state->basicrng, nonc / 2.0);
+    const long i = random_poisson(aug_state->bit_generator, nonc / 2.0);
     out = legacy_chisquare(aug_state, df + 2 * i);
     /* Insert nan guard here to avoid changing the stream */
     if (npy_isnan(nonc)){
@@ -163,7 +163,7 @@ double legacy_standard_t(aug_brng_t *aug_state, double df) {
 
 int64_t legacy_negative_binomial(aug_brng_t *aug_state, double n, double p) {
   double Y = legacy_gamma(aug_state, n, (1 - p) / p);
-  return random_poisson(aug_state->basicrng, Y);
+  return random_poisson(aug_state->bit_generator, Y);
 }
 
 double legacy_standard_cauchy(aug_brng_t *aug_state) {
