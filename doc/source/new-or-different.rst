@@ -27,9 +27,9 @@ What's New or Different
 
 .. ipython:: python
 
-  from randomgen import Xoroshiro128
+  from randomgen import Generator, Xoroshiro128
   import numpy.random
-  rg = Xoroshiro128().generator
+  rg = Generator(Xoroshiro128())
   %timeit rg.standard_normal(100000)
   %timeit numpy.random.standard_normal(100000)
 
