@@ -1,6 +1,0 @@
-randomgen.generator.RandomGenerator.random\_sample
-==================================================
-
-.. currentmodule:: randomgen.generator
-
-.. automethod:: RandomGenerator.random_sample

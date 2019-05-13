@@ -1,6 +1,0 @@
-randomgen.generator.RandomGenerator.complex\_normal
-===================================================
-
-.. currentmodule:: randomgen.generator
-
-.. automethod:: RandomGenerator.complex_normal

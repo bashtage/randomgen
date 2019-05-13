@@ -1,6 +1,0 @@
-randomgen.generator.RandomGenerator.state
-=========================================
-
-.. currentmodule:: randomgen.generator
-
-.. autoattribute:: RandomGenerator.state

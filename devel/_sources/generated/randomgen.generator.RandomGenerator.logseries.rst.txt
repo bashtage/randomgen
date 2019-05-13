@@ -1,6 +1,0 @@
-randomgen.generator.RandomGenerator.logseries
-=============================================
-
-.. currentmodule:: randomgen.generator
-
-.. automethod:: RandomGenerator.logseries

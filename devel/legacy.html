@@ -13,7 +13,7 @@
   <link rel="stylesheet" type="text/css" href="_static/css/bootstrap-theme.min.css" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-    <title>Legacy Random Generation &#8212; RandomGen v1.16.5 documentation</title>
+    <title>Legacy Random Generation &#8212; RandomGen v1.16.5+29.g1c8a7b6 documentation</title>
     <link rel="stylesheet" href="_static/guzzle.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
@@ -25,7 +25,7 @@
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
     <link rel="next" title="randomgen.mtrand.RandomState.get_state" href="generated/randomgen.mtrand.RandomState.get_state.html" />
-    <link rel="prev" title="randomgen.generator.RandomGenerator.zipf" href="generated/randomgen.generator.RandomGenerator.zipf.html" />
+    <link rel="prev" title="randomgen.generator.Generator.zipf" href="generated/randomgen.generator.Generator.zipf.html" />
   
    
 
@@ -43,9 +43,9 @@
           <a href="generated/randomgen.mtrand.RandomState.get_state.html" title="randomgen.mtrand.RandomState.get_state"
              accesskey="N">next</a> |</li>
         <li class="right" >
-          <a href="generated/randomgen.generator.RandomGenerator.zipf.html" title="randomgen.generator.RandomGenerator.zipf"
+          <a href="generated/randomgen.generator.Generator.zipf.html" title="randomgen.generator.Generator.zipf"
              accesskey="P">previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="index.html">RandomGen v1.16.5 documentation</a> &#187;</li> 
+        <li class="nav-item nav-item-0"><a href="index.html">RandomGen v1.16.5+29.g1c8a7b6 documentation</a> &#187;</li> 
       </ul>
     </div>
     <div class="container-wrapper">
@@ -55,7 +55,7 @@
       </div>
   <div id="left-column">
     <div class="sphinxsidebar"><a href="
-    index.html" class="text-logo">RandomGen v1.16.5</a>
+    index.html" class="text-logo">RandomGen v1.16.5 (+29)</a>
 <div class="sidebar-block">
   <div class="sidebar-wrapper">
     <h2>Table Of Contents</h2>
@@ -74,7 +74,7 @@
 </li>
 </ul>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="brng/index.html">Basic Random Number Generators</a></li>
+<li class="toctree-l1"><a class="reference internal" href="bit_generators/index.html">Bit Generators</a></li>
 </ul>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="parallel.html">Parallel Applications</a></li>
@@ -153,7 +153,7 @@ when accessing the state so that these extra values are saved.</p>
 </div>
 <dl class="class">
 <dt id="randomgen.mtrand.RandomState">
-<em class="property">class </em><code class="descclassname">randomgen.mtrand.</code><code class="descname">RandomState</code><span class="sig-paren">(</span><em>brng=None</em><span class="sig-paren">)</span><a class="headerlink" href="#randomgen.mtrand.RandomState" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">randomgen.mtrand.</code><code class="descname">RandomState</code><span class="sig-paren">(</span><em>bit_generator=None</em><span class="sig-paren">)</span><a class="headerlink" href="#randomgen.mtrand.RandomState" title="Permalink to this definition">¶</a></dt>
 <dd><p>Container for the Mersenne Twister pseudo-random number generator.</p>
 <p><cite>RandomState</cite> exposes a number of methods for generating random numbers
 drawn from a variety of probability distributions. In addition to the
@@ -163,21 +163,21 @@ value is generated and returned. If <cite>size</cite> is an integer, then a 1-D
 array filled with generated values is returned. If <cite>size</cite> is a tuple,
 then an array with that shape is filled and returned.</p>
 <p><strong>Compatibility Guarantee</strong></p>
-<p>A fixed basic RNG using a fixed seed and a fixed series of calls to
+<p>A fixed bit generator using a fixed seed and a fixed series of calls to
 ‘RandomState’ methods using the same parameters will always produce the
 same results up to roundoff error except when the values were incorrect.
 <cite>RandomState</cite> is effectively frozen and will only recieve updates that
 are required by changes in the the internals of Numpy. More substantial
 changes, including algorithmic improvements, are reserved for
-<cite>RandomGenerator</cite>.</p>
+<cite>Generator</cite>.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>brng</strong> (<em>{None</em><em>, </em><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a><em>, </em><em>array_like</em><em>, </em><em>BasicRNG}</em><em>, </em><em>optional</em>) – Random seed used to initialize the pseudo-random number generator or
-an instantized BasicRNG.  If an integer or array, used as a seed for
-the MT19937 BasicRNG. Values can be any integer between 0 and
+<dd class="field-odd"><p><strong>bit_generator</strong> (<em>{None</em><em>, </em><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a><em>, </em><em>array_like</em><em>, </em><em>BitGenerator}</em><em>, </em><em>optional</em>) – Random seed used to initialize the pseudo-random number generator or
+an instantized BitGenerator.  If an integer or array, used as a seed for
+the MT19937 BitGenerator. Values can be any integer between 0 and
 2**32 - 1 inclusive, an array (or other sequence) of such integers,
 or <code class="docutils literal notranslate"><span class="pre">None</span></code> (the default).  If <cite>seed</cite> is <code class="docutils literal notranslate"><span class="pre">None</span></code>, then the <cite>MT19937</cite>
-BasicRNG is initialized by reading data from <code class="docutils literal notranslate"><span class="pre">/dev/urandom</span></code>
+BitGenerator is initialized by reading data from <code class="docutils literal notranslate"><span class="pre">/dev/urandom</span></code>
 (or the Windows analogue) if available or seed from the clock
 otherwise.</p>
 </dd>
@@ -190,7 +190,7 @@ NumPy-aware, has the advantage that it provides a much larger number
 of probability distributions to choose from.</p>
 <div class="admonition seealso">
 <p class="admonition-title">See also</p>
-<p><a class="reference internal" href="generator.html#randomgen.generator.RandomGenerator" title="randomgen.generator.RandomGenerator"><code class="xref py py-class docutils literal notranslate"><span class="pre">randomgen.generator.RandomGenerator</span></code></a>, <a class="reference internal" href="brng/mt19937.html#randomgen.mt19937.MT19937" title="randomgen.mt19937.MT19937"><code class="xref py py-class docutils literal notranslate"><span class="pre">randomgen.mt19937.MT19937</span></code></a></p>
+<p><a class="reference internal" href="generator.html#randomgen.generator.Generator" title="randomgen.generator.Generator"><code class="xref py py-class docutils literal notranslate"><span class="pre">randomgen.generator.Generator</span></code></a>, <a class="reference internal" href="bit_generators/mt19937.html#randomgen.mt19937.MT19937" title="randomgen.mt19937.MT19937"><code class="xref py py-class docutils literal notranslate"><span class="pre">randomgen.mt19937.MT19937</span></code></a></p>
 </div>
 </dd></dl>
 
@@ -384,7 +384,7 @@ of probability distributions to choose from.</p>
   <div class="footer-relations">
     
       <div class="pull-left">
-        <a class="btn btn-default" href="generated/randomgen.generator.RandomGenerator.zipf.html" title="previous chapter (use the left arrow)">randomgen.generator.RandomGenerator.zipf</a>
+        <a class="btn btn-default" href="generated/randomgen.generator.Generator.zipf.html" title="previous chapter (use the left arrow)">randomgen.generator.Generator.zipf</a>
       </div>
     
       <div class="pull-right">
@@ -409,9 +409,9 @@ of probability distributions to choose from.</p>
           <a href="generated/randomgen.mtrand.RandomState.get_state.html" title="randomgen.mtrand.RandomState.get_state"
              >next</a> |</li>
         <li class="right" >
-          <a href="generated/randomgen.generator.RandomGenerator.zipf.html" title="randomgen.generator.RandomGenerator.zipf"
+          <a href="generated/randomgen.generator.Generator.zipf.html" title="randomgen.generator.Generator.zipf"
              >previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="index.html">RandomGen v1.16.5 documentation</a> &#187;</li> 
+        <li class="nav-item nav-item-0"><a href="index.html">RandomGen v1.16.5+29.g1c8a7b6 documentation</a> &#187;</li> 
       </ul>
     </div>
 <script type="text/javascript">

@@ -1,6 +1,0 @@
-randomgen.generator.RandomGenerator.hypergeometric
-==================================================
-
-.. currentmodule:: randomgen.generator
-
-.. automethod:: RandomGenerator.hypergeometric

@@ -1,6 +1,0 @@
-randomgen.generator.RandomGenerator.chisquare
-=============================================
-
-.. currentmodule:: randomgen.generator
-
-.. automethod:: RandomGenerator.chisquare

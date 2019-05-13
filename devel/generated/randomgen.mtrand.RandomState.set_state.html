@@ -13,7 +13,7 @@
   <link rel="stylesheet" type="text/css" href="../_static/css/bootstrap-theme.min.css" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-    <title>randomgen.mtrand.RandomState.set_state &#8212; RandomGen v1.16.5 documentation</title>
+    <title>randomgen.mtrand.RandomState.set_state &#8212; RandomGen v1.16.5+29.g1c8a7b6 documentation</title>
     <link rel="stylesheet" href="../_static/guzzle.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
@@ -45,7 +45,7 @@
         <li class="right" >
           <a href="randomgen.mtrand.RandomState.get_state.html" title="randomgen.mtrand.RandomState.get_state"
              accesskey="P">previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../index.html">RandomGen v1.16.5 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">RandomGen v1.16.5+29.g1c8a7b6 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="../legacy.html" accesskey="U">Legacy Random Generation</a> &#187;</li> 
       </ul>
     </div>
@@ -56,7 +56,7 @@
       </div>
   <div id="left-column">
     <div class="sphinxsidebar"><a href="
-    ../index.html" class="text-logo">RandomGen v1.16.5</a>
+    ../index.html" class="text-logo">RandomGen v1.16.5 (+29)</a>
 <div class="sidebar-block">
   <div class="sidebar-wrapper">
     <h2>Table Of Contents</h2>
@@ -75,7 +75,7 @@
 </li>
 </ul>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="../brng/index.html">Basic Random Number Generators</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../bit_generators/index.html">Bit Generators</a></li>
 </ul>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../parallel.html">Parallel Applications</a></li>
@@ -129,9 +129,10 @@
 <dt id="randomgen.mtrand.RandomState.set_state">
 <code class="descclassname">RandomState.</code><code class="descname">set_state</code><span class="sig-paren">(</span><em>state</em><span class="sig-paren">)</span><a class="headerlink" href="#randomgen.mtrand.RandomState.set_state" title="Permalink to this definition">¶</a></dt>
 <dd><p>Set the internal state of the generator from a tuple.</p>
-<p>For use if one has reason to manually (re-)set the internal state of the
-Basic RNG used by the RandomState instance. By default, RandomState uses
-the “Mersenne Twister”<a class="footnote-reference brackets" href="#id2" id="id1">1</a> pseudo-random number generating algorithm.</p>
+<p>For use if one has reason to manually (re-)set the internal state of
+the bit generator used by the RandomState instance. By default,
+RandomState uses the “Mersenne Twister”<a class="footnote-reference brackets" href="#id2" id="id1">1</a> pseudo-random number
+generating algorithm.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><p><strong>state</strong> (<em>{tuple</em><em>(</em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><em>str</em></a><em>, </em><em>ndarray of 624 uints</em><em>, </em><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a><em>, </em><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a><em>, </em><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.7)"><em>float</em></a><em>)</em><em>, </em><em>dict}</em>) – <p>The <cite>state</cite> tuple has the following items:</p>
@@ -142,7 +143,7 @@ the “Mersenne Twister”<a class="footnote-reference brackets" href="#id2" id=
 <li><p>an integer <code class="docutils literal notranslate"><span class="pre">has_gauss</span></code>.</p></li>
 <li><p>a float <code class="docutils literal notranslate"><span class="pre">cached_gaussian</span></code>.</p></li>
 </ol>
-<p>If state is a dictionary, it is directly set using the BasicRNGs
+<p>If state is a dictionary, it is directly set using the BitGenerators
 <cite>state</cite> property.</p>
 </p>
 </dd>
@@ -210,7 +211,7 @@ Vol. 8, No. 1, pp. 3-30, Jan. 1998.</p>
         <li class="right" >
           <a href="randomgen.mtrand.RandomState.get_state.html" title="randomgen.mtrand.RandomState.get_state"
              >previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../index.html">RandomGen v1.16.5 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">RandomGen v1.16.5+29.g1c8a7b6 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="../legacy.html" >Legacy Random Generation</a> &#187;</li> 
       </ul>
     </div>

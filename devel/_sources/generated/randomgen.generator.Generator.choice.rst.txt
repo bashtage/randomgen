@@ -1,0 +1,6 @@
+randomgen.generator.Generator.choice
+====================================
+
+.. currentmodule:: randomgen.generator
+
+.. automethod:: Generator.choice

@@ -1,0 +1,324 @@
+
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta charset="utf-8" />
+  
+  <!-- Licensed under the Apache 2.0 License -->
+  <link rel="stylesheet" type="text/css" href="../_static/fonts/open-sans/stylesheet.css" />
+  <!-- Licensed under the SIL Open Font License -->
+  <link rel="stylesheet" type="text/css" href="../_static/fonts/source-serif-pro/source-serif-pro.css" />
+  <link rel="stylesheet" type="text/css" href="../_static/css/bootstrap.min.css" />
+  <link rel="stylesheet" type="text/css" href="../_static/css/bootstrap-theme.min.css" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+    <title>Parallel Congruent Generator (64-bit, PCG64) &#8212; RandomGen v1.16.5+29.g1c8a7b6 documentation</title>
+    <link rel="stylesheet" href="../_static/guzzle.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/language_data.js"></script>
+    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="randomgen.pcg64.PCG64.seed" href="generated/randomgen.pcg64.PCG64.seed.html" />
+    <link rel="prev" title="randomgen.mt19937.MT19937.random_raw" href="generated/randomgen.mt19937.MT19937.random_raw.html" />
+  
+   
+
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="generated/randomgen.pcg64.PCG64.seed.html" title="randomgen.pcg64.PCG64.seed"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="generated/randomgen.mt19937.MT19937.random_raw.html" title="randomgen.mt19937.MT19937.random_raw"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">RandomGen v1.16.5+29.g1c8a7b6 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="index.html" accesskey="U">Bit Generators</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="container-wrapper">
+
+      <div id="mobile-toggle">
+        <a href="#"><span class="glyphicon glyphicon-align-justify" aria-hidden="true"></span></a>
+      </div>
+  <div id="left-column">
+    <div class="sphinxsidebar"><a href="
+    ../index.html" class="text-logo">RandomGen v1.16.5 (+29)</a>
+<div class="sidebar-block">
+  <div class="sidebar-wrapper">
+    <h2>Table Of Contents</h2>
+  </div>
+  <div class="sidebar-toc">
+    
+    
+      <ul>
+<li class="toctree-l1"><a class="reference internal" href="../generator.html">Random Generation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../legacy.html">Legacy Random Generation</a></li>
+</ul>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">Bit Generators</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="index.html#stable-rngs">Stable RNGs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="index.html#experimental-rngs">Experimental RNGs</a></li>
+</ul>
+</li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../parallel.html">Parallel Applications</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../multithreading.html">Multithreaded Generation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../new-or-different.html">What’s New or Different</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../performance.html">Comparing Performance</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../extending.html">Extending</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../entropy.html">Reading System Entropy</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../references.html">References</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../change-log.html">Change Log</a></li>
+</ul>
+
+    
+  </div>
+</div>
+<div class="sidebar-block">
+  <div class="sidebar-wrapper">
+    <div id="main-search">
+      <form class="form-inline" action="../search.html" method="GET" role="form">
+        <div class="input-group">
+          <input name="q" type="text" class="form-control" placeholder="Search...">
+        </div>
+        <input type="hidden" name="check_keywords" value="yes" />
+        <input type="hidden" name="area" value="default" />
+      </form>
+    </div>
+  </div>
+</div>
+      
+    </div>
+  </div>
+        <div id="right-column">
+          
+          <div role="navigation" aria-label="breadcrumbs navigation">
+            <ol class="breadcrumb">
+              <li><a href="../index.html">Docs</a></li>
+              
+                <li><a href="index.html">Bit Generators</a></li>
+              
+              <li>Parallel Congruent Generator (64-bit, PCG64)</li>
+            </ol>
+          </div>
+          
+          <div class="document clearer body">
+            
+  <div class="section" id="module-randomgen.pcg64">
+<span id="parallel-congruent-generator-64-bit-pcg64"></span><h1>Parallel Congruent Generator (64-bit, PCG64)<a class="headerlink" href="#module-randomgen.pcg64" title="Permalink to this headline">¶</a></h1>
+<dl class="class">
+<dt id="randomgen.pcg64.PCG64">
+<em class="property">class </em><code class="descclassname">randomgen.pcg64.</code><code class="descname">PCG64</code><span class="sig-paren">(</span><em>seed=None</em>, <em>inc=0</em><span class="sig-paren">)</span><a class="headerlink" href="#randomgen.pcg64.PCG64" title="Permalink to this definition">¶</a></dt>
+<dd><p>Container for the PCG-64 pseudo-random number generator.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>seed</strong> (<em>{None</em><em>, </em><em>long}</em><em>, </em><em>optional</em>) – Random seed initializing the pseudo-random number generator.
+Can be an integer in [0, 2**128] or <code class="docutils literal notranslate"><span class="pre">None</span></code> (the default).
+If <cite>seed</cite> is <code class="docutils literal notranslate"><span class="pre">None</span></code>, then <code class="docutils literal notranslate"><span class="pre">PCG64</span></code> will try to read data
+from <code class="docutils literal notranslate"><span class="pre">/dev/urandom</span></code> (or the Windows analog) if available. If
+unavailable, a 64-bit hash of the time and process ID is used.</p></li>
+<li><p><strong>inc</strong> (<em>{None</em><em>, </em><em>int}</em><em>, </em><em>optional</em>) – Stream to return.
+Can be an integer in [0, 2**128] or <code class="docutils literal notranslate"><span class="pre">None</span></code> (the default).  If <cite>inc</cite> is
+<code class="docutils literal notranslate"><span class="pre">None</span></code>, then 0 is used.  Can be used with the same seed to
+produce multiple streams using other values of inc.</p></li>
+</ul>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<p>PCG-64 is a 128-bit implementation of O’Neill’s permutation congruential
+generator (<a class="footnote-reference brackets" href="#id3" id="id1">1</a>, <a class="footnote-reference brackets" href="#id4" id="id2">2</a>). PCG-64 has a period of <span class="math notranslate nohighlight">\(2^{128}\)</span> and supports
+advancing an arbitrary number of steps as well as <span class="math notranslate nohighlight">\(2^{127}\)</span> streams.</p>
+<p><code class="docutils literal notranslate"><span class="pre">PCG64</span></code> provides a capsule containing function pointers that produce
+doubles, and unsigned 32 and 64- bit integers. These are not
+directly consumable in Python and must be consumed by a <code class="docutils literal notranslate"><span class="pre">Generator</span></code>
+or similar object that supports low-level access.</p>
+<p>Supports the method advance to advance the RNG an arbitrary number of
+steps. The state of the PCG-64 RNG is represented by 2 128-bit unsigned
+integers.</p>
+<p>See <code class="docutils literal notranslate"><span class="pre">PCG32</span></code> for a similar implementation with a smaller period.</p>
+<p><strong>State and Seeding</strong></p>
+<p>The <code class="docutils literal notranslate"><span class="pre">PCG64</span></code> state vector consists of 2 unsigned 128-bit values,
+which are represented externally as Python ints.
+<code class="docutils literal notranslate"><span class="pre">PCG64</span></code> is seeded using a single 128-bit unsigned integer.
+In addition, a second 128-bit unsigned integer is used to set the stream.</p>
+<p><strong>Parallel Features</strong></p>
+<p><code class="docutils literal notranslate"><span class="pre">PCG64</span></code> can be used in parallel applications in one of two ways.
+The preferable method is to use sub-streams, which are generated by using the
+same value of <code class="docutils literal notranslate"><span class="pre">seed</span></code> and incrementing the second value, <code class="docutils literal notranslate"><span class="pre">inc</span></code>.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">randomgen</span> <span class="k">import</span> <span class="n">Generator</span><span class="p">,</span> <span class="n">PCG64</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">rg</span> <span class="o">=</span> <span class="p">[</span><span class="n">Generator</span><span class="p">(</span><span class="n">PCG64</span><span class="p">(</span><span class="mi">1234</span><span class="p">,</span> <span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">))</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">10</span><span class="p">)]</span>
+</pre></div>
+</div>
+<p>The alternative method is to call <code class="docutils literal notranslate"><span class="pre">advance</span></code> with a different value on
+each instance to produce non-overlapping sequences.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">rg</span> <span class="o">=</span> <span class="p">[</span><span class="n">Generator</span><span class="p">(</span><span class="n">PCG64</span><span class="p">(</span><span class="mi">1234</span><span class="p">,</span> <span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">))</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">10</span><span class="p">)]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">10</span><span class="p">):</span>
+<span class="gp">... </span>    <span class="n">rg</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">bit_generator</span><span class="o">.</span><span class="n">advance</span><span class="p">(</span><span class="n">i</span> <span class="o">*</span> <span class="mi">2</span><span class="o">**</span><span class="mi">64</span><span class="p">)</span>
+</pre></div>
+</div>
+<p><strong>Compatibility Guarantee</strong></p>
+<p><code class="docutils literal notranslate"><span class="pre">PCG64</span></code> makes a guarantee that a fixed seed and will always produce
+the same random integer stream.</p>
+<p class="rubric">References</p>
+<dl class="footnote brackets">
+<dt class="label" id="id3"><span class="brackets"><a class="fn-backref" href="#id1">1</a></span></dt>
+<dd><p>“PCG, A Family of Better Random Number Generators”,
+<a class="reference external" href="http://www.pcg-random.org/">http://www.pcg-random.org/</a></p>
+</dd>
+<dt class="label" id="id4"><span class="brackets"><a class="fn-backref" href="#id2">2</a></span></dt>
+<dd><p>O’Neill, Melissa E. “PCG: A Family of Simple Fast Space-Efficient
+Statistically Good Algorithms for Random Number Generation”</p>
+</dd>
+</dl>
+</dd></dl>
+
+<div class="section" id="seeding-and-state">
+<h2>Seeding and State<a class="headerlink" href="#seeding-and-state" title="Permalink to this headline">¶</a></h2>
+<table class="longtable docutils align-center">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="generated/randomgen.pcg64.PCG64.seed.html#randomgen.pcg64.PCG64.seed" title="randomgen.pcg64.PCG64.seed"><code class="xref py py-obj docutils literal notranslate"><span class="pre">seed</span></code></a>([seed, inc])</p></td>
+<td><p>Seed the generator.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="generated/randomgen.pcg64.PCG64.state.html#randomgen.pcg64.PCG64.state" title="randomgen.pcg64.PCG64.state"><code class="xref py py-obj docutils literal notranslate"><span class="pre">state</span></code></a></p></td>
+<td><p>Get or set the RNG state</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="parallel-generation">
+<h2>Parallel generation<a class="headerlink" href="#parallel-generation" title="Permalink to this headline">¶</a></h2>
+<table class="longtable docutils align-center">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="generated/randomgen.pcg64.PCG64.advance.html#randomgen.pcg64.PCG64.advance" title="randomgen.pcg64.PCG64.advance"><code class="xref py py-obj docutils literal notranslate"><span class="pre">advance</span></code></a>(delta)</p></td>
+<td><p>Advance the underlying RNG as-if delta draws have occurred.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="generated/randomgen.pcg64.PCG64.jump.html#randomgen.pcg64.PCG64.jump" title="randomgen.pcg64.PCG64.jump"><code class="xref py py-obj docutils literal notranslate"><span class="pre">jump</span></code></a>([iter])</p></td>
+<td><p>Jumps the state as-if 2**64 random numbers have been generated</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="generated/randomgen.pcg64.PCG64.jumped.html#randomgen.pcg64.PCG64.jumped" title="randomgen.pcg64.PCG64.jumped"><code class="xref py py-obj docutils literal notranslate"><span class="pre">jumped</span></code></a>([iter])</p></td>
+<td><p>Returns a new bit generator with the state jumped</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="random-generator">
+<h2>Random Generator<a class="headerlink" href="#random-generator" title="Permalink to this headline">¶</a></h2>
+<table class="longtable docutils align-center">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="generated/randomgen.pcg64.PCG64.generator.html#randomgen.pcg64.PCG64.generator" title="randomgen.pcg64.PCG64.generator"><code class="xref py py-obj docutils literal notranslate"><span class="pre">generator</span></code></a></p></td>
+<td><p>Removed, raises NotImplementedError</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="extending">
+<h2>Extending<a class="headerlink" href="#extending" title="Permalink to this headline">¶</a></h2>
+<table class="longtable docutils align-center">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="generated/randomgen.pcg64.PCG64.cffi.html#randomgen.pcg64.PCG64.cffi" title="randomgen.pcg64.PCG64.cffi"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cffi</span></code></a></p></td>
+<td><p>CFFI interface</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="generated/randomgen.pcg64.PCG64.ctypes.html#randomgen.pcg64.PCG64.ctypes" title="randomgen.pcg64.PCG64.ctypes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ctypes</span></code></a></p></td>
+<td><p>ctypes interface</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="testing">
+<h2>Testing<a class="headerlink" href="#testing" title="Permalink to this headline">¶</a></h2>
+<table class="longtable docutils align-center">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="generated/randomgen.pcg64.PCG64.random_raw.html#randomgen.pcg64.PCG64.random_raw" title="randomgen.pcg64.PCG64.random_raw"><code class="xref py py-obj docutils literal notranslate"><span class="pre">random_raw</span></code></a>(self[, size])</p></td>
+<td><p>Return randoms as generated by the underlying BitGenerator</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+
+
+          </div>
+            
+  <div class="footer-relations">
+    
+      <div class="pull-left">
+        <a class="btn btn-default" href="generated/randomgen.mt19937.MT19937.random_raw.html" title="previous chapter (use the left arrow)">randomgen.mt19937.MT19937.random_raw</a>
+      </div>
+    
+      <div class="pull-right">
+        <a class="btn btn-default" href="generated/randomgen.pcg64.PCG64.seed.html" title="next chapter (use the right arrow)">randomgen.pcg64.PCG64.seed</a>
+      </div>
+    </div>
+    <div class="clearer"></div>
+  
+        </div>
+        <div class="clearfix"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="generated/randomgen.pcg64.PCG64.seed.html" title="randomgen.pcg64.PCG64.seed"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="generated/randomgen.mt19937.MT19937.random_raw.html" title="randomgen.mt19937.MT19937.random_raw"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">RandomGen v1.16.5+29.g1c8a7b6 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="index.html" >Bit Generators</a> &#187;</li> 
+      </ul>
+    </div>
+<script type="text/javascript">
+  $("#mobile-toggle a").click(function () {
+    $("#left-column").toggle();
+  });
+</script>
+<script type="text/javascript" src="../_static/js/bootstrap.js"></script>
+  <div class="footer">
+    &copy; Copyright 2018, Kevin Sheppard. Created using <a href="http://sphinx.pocoo.org/">Sphinx</a>.
+  </div>
+  </body>
+</html>

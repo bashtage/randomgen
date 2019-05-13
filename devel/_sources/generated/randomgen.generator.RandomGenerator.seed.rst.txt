@@ -1,6 +1,0 @@
-randomgen.generator.RandomGenerator.seed
-========================================
-
-.. currentmodule:: randomgen.generator
-
-.. automethod:: RandomGenerator.seed
