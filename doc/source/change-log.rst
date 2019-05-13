@@ -3,6 +3,35 @@
 Change Log
 ----------
 
+v1.17.0
+=======
+- This release brings many breaking changes.  Most of these have been
+  implemented using ``DeprecationWarnings``. This has been done to
+  bring ``randomgen`` in-line with the API changes of the version
+  going into NumPy.
+- Two changes that are more abrupt are:
+
+  * The ``.generator`` method of the bit generators raise
+    ``NotImplementedError``
+  * The internal structures that is used in C have been renamed.
+    The main rename is ``brng_t`` to ``bitgen_t``
+
+- The other key changes are:
+
+  * Rename ``RandomGenerator`` to :class:`~randomgen.generator.Generator`.
+  * Rename :meth:`~randomgen.generator.Generator.randint` to
+    :meth:`~randomgen.generator.Generator.integers`.
+  * Rename :meth:`~randomgen.generator.Generator.random_integers` to
+    :meth:`~randomgen.generator.Generator.integers`.
+  * Rename :meth:`~randomgen.generator.Generator.random_sample`
+    to :meth:`~randomgen.generator.Generator.random`.
+  * Change ``jump`` which operated in-place to
+    :meth:`~randomgen.xoshiro256starstar.Xoshiro256StarStar.jumped` which
+    returns a new ``BitGenerator``.
+  * Rename Basic RNG to bit generator, which has been consistently applied
+    across the docs and references
+
+
 v1.16.5
 =======
 - Fixed bugs in :func:`~randomgen.mtrand.RandomState.laplace`,
@@ -42,13 +71,13 @@ v1.16.3
 
 v1.16.2
 =======
-- Updated Xoroshiro120 to use AUthor's latest parameterization
+- Updated Xoroshiro120 to use Author's latest parametrization
 - Closely synchronized with the version of randomgen being integrated
   into NumPy, including removing:
 
-    - ``random_raw``, which have been moved to the individual bit generators
-    - ``random_uintegers``, which can be replaced with
-      :func:`~randomgen.generator.Generator.randint`.
+  * ``random_raw``, which have been moved to the individual bit generators
+  * ``random_uintegers``, which can be replaced with
+    :func:`~randomgen.generator.Generator.randint`.
 
 - Added :class:`~randomgen.mtrand.RandomState` as a clone of NumPy's
   RandomState.

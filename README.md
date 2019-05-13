@@ -33,7 +33,7 @@ generators in Python and NumPy.
 ## Changes in v1.17
 
 There are many changes between v1.16.x and v1.17.x. These reflect API 
-decision taken in conjunction with NumPy in preperation of the core 
+decision taken in conjunction with NumPy in preparation of the core 
 of `randomgen` being used as the preferred random number generator in 
 NumPy. These all issue `DeprecationWarning`s except for `BasicRNG.generator` 
 which raises `NotImplementedError`. The C-API has also changed to reflect
