@@ -1,11 +1,11 @@
-Xoshiro256**
-------------
+ThreeFry32 Counter-based RNG
+----------------------------
 
-.. module:: randomgen.xoshiro256starstar
+.. module:: randomgen.threefry32
 
-.. currentmodule:: randomgen.xoshiro256starstar
+.. currentmodule:: randomgen.threefry32
 
-.. autoclass:: Xoshiro256StarStar
+.. autoclass:: ThreeFry32
 
 Seeding and State
 =================
@@ -13,34 +13,36 @@ Seeding and State
 .. autosummary::
    :toctree: generated/
 
-   ~Xoshiro256StarStar.seed
-   ~Xoshiro256StarStar.state
+   ~ThreeFry32.seed
+   ~ThreeFry32.state
 
 Parallel generation
 ===================
 .. autosummary::
    :toctree: generated/
 
-   ~Xoshiro256StarStar.jump
+   ~ThreeFry32.advance
+   ~ThreeFry32.jump
+   ~ThreeFry32.jumped
 
 Random Generator
 ================
 .. autosummary::
    :toctree: generated/
 
-   ~Xoshiro256StarStar.generator
+   ~ThreeFry32.generator
 
 Extending
 =========
 .. autosummary::
    :toctree: generated/
 
-   ~Xoshiro256StarStar.cffi
-   ~Xoshiro256StarStar.ctypes
+   ~ThreeFry32.cffi
+   ~ThreeFry32.ctypes
 
 Testing
 =======
 .. autosummary::
    :toctree: generated/
 
-   ~Xoshiro256StarStar.random_raw
+   ~ThreeFry32.random_raw

@@ -1,11 +1,11 @@
-Xoshiro512**
+Xoshiro256**
 ------------
 
-.. module:: randomgen.xoshiro512starstar
+.. module:: randomgen.xoshiro256starstar
 
-.. currentmodule:: randomgen.xoshiro512starstar
+.. currentmodule:: randomgen.xoshiro256starstar
 
-.. autoclass:: Xoshiro512StarStar
+.. autoclass:: Xoshiro256StarStar
 
 Seeding and State
 =================
@@ -13,34 +13,35 @@ Seeding and State
 .. autosummary::
    :toctree: generated/
 
-   ~Xoshiro512StarStar.seed
-   ~Xoshiro512StarStar.state
+   ~Xoshiro256StarStar.seed
+   ~Xoshiro256StarStar.state
 
 Parallel generation
 ===================
 .. autosummary::
    :toctree: generated/
 
-   ~Xoshiro512StarStar.jump
+   ~Xoshiro256StarStar.jump
+   ~Xoshiro256StarStar.jumped
 
 Random Generator
 ================
 .. autosummary::
    :toctree: generated/
 
-   ~Xoshiro512StarStar.generator
+   ~Xoshiro256StarStar.generator
 
 Extending
 =========
 .. autosummary::
    :toctree: generated/
 
-   ~Xoshiro512StarStar.cffi
-   ~Xoshiro512StarStar.ctypes
+   ~Xoshiro256StarStar.cffi
+   ~Xoshiro256StarStar.ctypes
 
 Testing
 =======
 .. autosummary::
    :toctree: generated/
 
-   ~Xoshiro512StarStar.random_raw
+   ~Xoshiro256StarStar.random_raw

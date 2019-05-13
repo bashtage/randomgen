@@ -8,7 +8,7 @@ from randomgen.distributions cimport *
 
 np.import_array()
 
-_randint_types = {'bool': (0, 2),
+_integers_types = {'bool': (0, 2),
                  'int8': (-2**7, 2**7),
                  'int16': (-2**15, 2**15),
                  'int32': (-2**31, 2**31),
@@ -31,7 +31,7 @@ type_info = (('uint32', 'uint32', 'uint64', 'NPY_UINT64', 0, 0, 0, '0X100000000U
 {{ py: otype = nptype + '_' if nptype == 'bool' else nptype }}
 cdef object _rand_{{nptype}}_broadcast(np.ndarray low, np.ndarray high, object size,
                                        bint use_masked, bint closed,
-                                       brng_t *state, object lock):
+                                       bitgen_t *state, object lock):
     """
     Array path for smaller integer types
 
@@ -65,7 +65,8 @@ cdef object _rand_{{nptype}}_broadcast(np.ndarray low, np.ndarray high, object s
     if np.any(high_comp(high_arr, {{ub}})):
         raise ValueError('high is out of bounds for {{nptype}}')
     if np.any(low_high_comp(low_arr, high_arr)):
-        raise ValueError('low >= high')
+        comp = '>' if closed else '>='
+        raise ValueError('low {comp} high'.format(comp=comp))
 
     low_arr = <np.ndarray>np.PyArray_FROM_OTF(low, np.{{npctype}}, np.NPY_ALIGNED | np.NPY_FORCECAST)
     high_arr = <np.ndarray>np.PyArray_FROM_OTF(high, np.{{npctype}}, np.NPY_ALIGNED | np.NPY_FORCECAST)
@@ -106,7 +107,7 @@ big_type_info = (('uint64', 'uint64', 'NPY_UINT64', '0x0ULL', '0xFFFFFFFFFFFFFFF
 {{ py: otype = nptype}}
 cdef object _rand_{{nptype}}_broadcast(object low, object high, object size,
                                        bint use_masked, bint closed,
-                                       brng_t *state, object lock):
+                                       bitgen_t *state, object lock):
     """
     Array path for 64-bit integer types
 
@@ -138,7 +139,8 @@ cdef object _rand_{{nptype}}_broadcast(object low, object high, object size,
         # Avoid object dtype path if already an integer
         high_lower_comp = np.less if closed else np.less_equal
         if np.any(high_lower_comp(high_arr, {{lb}})):
-            raise ValueError('low >= high')
+            comp = '>' if closed else '>='
+            raise ValueError('low {comp} high'.format(comp=comp))
         high_m1 = high_arr if closed else high_arr - dt.type(1)
         if np.any(np.greater(high_m1, {{ub}})):
             raise ValueError('high is out of bounds for {{nptype}}')
@@ -155,11 +157,13 @@ cdef object _rand_{{nptype}}_broadcast(object low, object high, object size,
             if closed_upper > {{ub}}:
                 raise ValueError('high is out of bounds for {{nptype}}')
             if closed_upper < {{lb}}:
-                raise ValueError('low >= high')
+                comp = '>' if closed else '>='
+                raise ValueError('low {comp} high'.format(comp=comp))
             highm1_data[i] = <{{nptype}}_t>closed_upper
 
     if np.any(np.greater(low_arr, highm1_arr)):
-        raise ValueError('low >= high')
+        comp = '>' if closed else '>='
+        raise ValueError('low {comp} high'.format(comp=comp))
 
     high_arr = highm1_arr
     low_arr = <np.ndarray>np.PyArray_FROM_OTF(low, np.{{npctype}}, np.NPY_ALIGNED | np.NPY_FORCECAST)
@@ -206,7 +210,7 @@ type_info = (('uint64', 'uint64', '0x0ULL', '0xFFFFFFFFFFFFFFFFULL'),
 {{ py: otype = nptype + '_' if nptype == 'bool' else nptype }}
 cdef object _rand_{{nptype}}(object low, object high, object size,
                              bint use_masked, bint closed,
-                             brng_t *state, object lock):
+                             bitgen_t *state, object lock):
     """
     _rand_{{nptype}}(low, high, size, use_masked, *state, lock)
 
@@ -234,8 +238,8 @@ cdef object _rand_{{nptype}}(object low, object high, object size,
         If True then rejection sampling with a range mask is used else Lemire's algorithm is used.
     closed : bool
         If True then sample from [low, high].  If False, sample [low, high)
-    state : basic random state
-        State to use in the core random number generators
+    state : bit generator
+        Bit generator state to use in the core random number generators
     lock : threading.Lock
         Lock to prevent multiple using a single generator simultaneously
 
@@ -279,7 +283,8 @@ cdef object _rand_{{nptype}}(object low, object high, object size,
         if high > {{ub}}:
             raise ValueError("high is out of bounds for {{nptype}}")
         if low > high:  # -1 already subtracted, closed interval
-            raise ValueError("low >= high")
+            comp = '>' if closed else '>='
+            raise ValueError('low {comp} high'.format(comp=comp))
 
         rng = <{{utype}}_t>(high - low)
         off = <{{utype}}_t>(<{{nptype}}_t>low)

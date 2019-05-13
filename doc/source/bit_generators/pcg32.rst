@@ -1,11 +1,11 @@
-Xoroshiro128+
--------------
+Parallel Congruent Generator (32-bit, PCG32)
+--------------------------------------------
 
-.. module:: randomgen.xoroshiro128
+.. module:: randomgen.pcg32
 
-.. currentmodule:: randomgen.xoroshiro128
+.. currentmodule:: randomgen.pcg32
 
-.. autoclass:: Xoroshiro128
+.. autoclass:: PCG32
 
 Seeding and State
 =================
@@ -13,34 +13,36 @@ Seeding and State
 .. autosummary::
    :toctree: generated/
 
-   ~Xoroshiro128.seed
-   ~Xoroshiro128.state
+   ~PCG32.seed
+   ~PCG32.state
 
 Parallel generation
 ===================
 .. autosummary::
    :toctree: generated/
 
-   ~Xoroshiro128.jump
+   ~PCG32.advance
+   ~PCG32.jump
+   ~PCG32.jumped
 
 Random Generator
 ================
 .. autosummary::
    :toctree: generated/
 
-   ~Xoroshiro128.generator
+   ~PCG32.generator
 
 Extending
 =========
 .. autosummary::
    :toctree: generated/
 
-   ~Xoroshiro128.cffi
-   ~Xoroshiro128.ctypes
+   ~PCG32.cffi
+   ~PCG32.ctypes
 
 Testing
 =======
 .. autosummary::
    :toctree: generated/
 
-   ~Xoroshiro128.random_raw
+   ~PCG32.random_raw

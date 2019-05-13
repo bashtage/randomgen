@@ -3,25 +3,43 @@
 Random Number Generator using settable Basic RNG interface for future
 NumPy RandomState evolution.
 
-### Continuous Integration
+**Continuous Integration**
+
 [![Travis Build Status](https://travis-ci.org/bashtage/randomgen.svg?branch=master)](https://travis-ci.org/bashtage/randomgen)
 [![Appveyor Build Status](https://ci.appveyor.com/api/projects/status/odc5c4ukhru5xicl/branch/master?svg=true)](https://ci.appveyor.com/project/bashtage/randomgen/branch/master)
 
-### Coverage
+**Coverage**
+
 [![Coverage Status](https://coveralls.io/repos/github/bashtage/randomgen/badge.svg)](https://coveralls.io/github/bashtage/randomgen)
 [![codecov](https://codecov.io/gh/bashtage/randomgen/branch/master/graph/badge.svg)](https://codecov.io/gh/bashtage/randomgen)
 
-### Latest Release
+**Latest Release**
+
 [![PyPI version](https://badge.fury.io/py/randomgen.svg)](https://pypi.org/project/randomgen/)
 [![Anacnoda Cloud](https://anaconda.org/bashtage/randomgen/badges/version.svg)](https://anaconda.org/bashtage/randomgen)
 
-### License
+**License**
+
 [![NCSA License](https://img.shields.io/badge/License-NCSA-blue.svg)](https://opensource.org/licenses/NCSA)
 [![BSD License](https://img.shields.io/badge/License-BSD%203--Clause-blue.svg)](https://opensource.org/licenses/BSD-3-Clause)
 [![DOI](https://zenodo.org/badge/122181085.svg)](https://zenodo.org/badge/latestdoi/122181085)
 
 This is a library and generic interface for alternative random 
 generators in Python and NumPy.
+
+
+# WARNINGS
+
+## Changes in v1.17
+
+There are many changes between v1.16.x and v1.17.x. These reflect API 
+decision taken in conjunction with NumPy in preparation of the core 
+of `randomgen` being used as the preferred random number generator in 
+NumPy. These all issue `DeprecationWarning`s except for `BasicRNG.generator` 
+which raises `NotImplementedError`. The C-API has also changed to reflect
+the preferred naming the underlying Pseudo-RNGs, which are now known as
+bit generators (or `BigGenerator`s).
+
 
 ## Python 2.7 Support
 
@@ -31,22 +49,22 @@ are Python 3, with an initial minimum version of 3.5.
 
 ## Compatibility Warning
 
-`RandomGenerator` does not support Box-Muller normal variates and so it not
+`Generator` does not support Box-Muller normal variates and so it not
 100% compatible with NumPy (or randomstate). Box-Muller normals are slow
 to generate and all functions which previously relied on Box-Muller
 normals now use the faster Ziggurat implementation. If you require backward
 compatibility, a legacy generator, ``RandomState``, has been created
 which can fully reproduce the sequence produced by NumPy.
 
-## Features
+# Features
 
 * Replacement for NumPy's RandomState
 
   ```python
-  from randomgen import RandomGenerator, MT19937
-  rnd = RandomGenerator(MT19937())
+  from randomgen import Generator, MT19937
+  rnd = Generator(MT19937())
   x = rnd.standard_normal(100)
-  y = rnd.random_sample(100)
+  y = rnd.random(100)
   z = rnd.randn(10,10)
   ```
 
@@ -57,9 +75,9 @@ which can fully reproduce the sequence produced by NumPy.
   exponential and standard gamma using the Ziggurat method
 
   ```python
-  from randomgen import RandomGenerator
-  # Default basic PRNG is Xoroshiro128
-  rnd = RandomGenerator()
+  from randomgen import Generator
+  # Default bit generator is Xoroshiro128
+  rnd = Generator()
   w = rnd.standard_normal(10000)
   x = rnd.standard_exponential(10000)
   y = rnd.standard_gamma(5.5, 10000)
@@ -68,7 +86,7 @@ which can fully reproduce the sequence produced by NumPy.
 * Support for 32-bit floating randoms for core generators. 
   Currently supported:
 
-  * Uniforms (`random_sample`)
+  * Uniforms (`random`)
   * Exponentials (`standard_exponential`, both Inverse CDF and Ziggurat)
   * Normals (`standard_normal`)
   * Standard Gammas (via `standard_gamma`)
@@ -82,7 +100,7 @@ which can fully reproduce the sequence produced by NumPy.
 * Support for filling existing arrays using `out` keyword argument. Currently
   supported in (both 32- and 64-bit outputs)
 
-  * Uniforms (`random_sample`)
+  * Uniforms (`random`)
   * Exponentials (`standard_exponential`)
   * Normals (`standard_normal`)
   * Standard Gammas (via `standard_gamma`)
@@ -192,7 +210,7 @@ All development has been on 64-bit Linux, and it is regularly tested on
 Travis-CI (Linux/OSX) and Appveyor (Windows). The library is occasionally
 tested on Linux 32-bit and Free BSD 11.1.
 
-Basic tests are in place for all RNGs. The MT19937 is tested against
+Tests are in place for all RNGs. The MT19937 is tested against
 NumPy's implementation for identical results. It also passes NumPy's 
 test suite where still relevant.
 
@@ -237,16 +255,16 @@ Python 2.7.
 The separate generators are importable from `randomgen`
 
 ```python
-from randomgen import RandomGenerator, ThreeFry, PCG64, MT19937
-rg = RandomGenerator(ThreeFry())
-rg.random_sample(100)
+from randomgen import Generator, ThreeFry, PCG64, MT19937
+rg = Generator(ThreeFry())
+rg.random(100)
 
-rg = RandomGenerator(PCG64())
-rg.random_sample(100)
+rg = Generator(PCG64())
+rg.random(100)
 
 # Identical to NumPy
-rg = RandomGenerator(MT19937())
-rg.random_sample(100)
+rg = Generator(MT19937())
+rg.random(100)
 ```
 
 ## License

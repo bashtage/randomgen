@@ -1,8 +1,14 @@
-Basic Random Number Generators
-------------------------------
+Bit Generators
+--------------
 
-The random values produced by :class:`~randomgen.generator.RandomGenerator` 
-are produced by a basic RNG.  These basic RNGs do not directly provide
+.. warning::
+
+   These for formerly called Basic Random Number Generators. They have been
+   renamed Bit Generators for compatibility with the version that will ship
+   with NumPy.
+
+The random values produced by :class:`~randomgen.generator.Generator`
+are produced by a bit generator.  These bit generators do not directly provide
 random numbers and only contains methods used for seeding, getting or
 setting the state, jumping or advancing the state, and for accessing 
 low-level wrappers for consumption by code that can efficiently 

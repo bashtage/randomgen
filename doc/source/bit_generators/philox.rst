@@ -1,12 +1,11 @@
-Double SIMD Mersenne Twister (dSFMT) 
-------------------------------------
+Philox Counter-based RNG
+------------------------
 
-.. module:: randomgen.dsfmt
+.. module:: randomgen.philox
 
-.. currentmodule:: randomgen.dsfmt
+.. currentmodule:: randomgen.philox
 
-
-.. autoclass:: DSFMT
+.. autoclass:: Philox
 
 Seeding and State
 =================
@@ -14,35 +13,36 @@ Seeding and State
 .. autosummary::
    :toctree: generated/
 
-   ~DSFMT.seed
-   ~DSFMT.state
+   ~Philox.seed
+   ~Philox.state
 
 Parallel generation
 ===================
 .. autosummary::
    :toctree: generated/
 
-   ~DSFMT.jump
+   ~Philox.advance
+   ~Philox.jump
+   ~Philox.jumped
 
 Random Generator
 ================
 .. autosummary::
    :toctree: generated/
 
-   ~DSFMT.generator
+   ~Philox.generator
 
 Extending
 =========
 .. autosummary::
    :toctree: generated/
 
-   ~DSFMT.cffi
-   ~DSFMT.ctypes
+   ~Philox.cffi
+   ~Philox.ctypes
 
 Testing
 =======
 .. autosummary::
    :toctree: generated/
 
-   ~DSFMT.random_raw
-
+   ~Philox.random_raw

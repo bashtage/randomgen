@@ -1,11 +1,11 @@
-Parallel Congruent Generator (64-bit, PCG64)
---------------------------------------------
+ThreeFry Counter-based RNG
+--------------------------
 
-.. module:: randomgen.pcg64
+.. module:: randomgen.threefry
 
-.. currentmodule:: randomgen.pcg64
+.. currentmodule:: randomgen.threefry
 
-.. autoclass:: PCG64
+.. autoclass:: ThreeFry
 
 Seeding and State
 =================
@@ -13,35 +13,36 @@ Seeding and State
 .. autosummary::
    :toctree: generated/
 
-   ~PCG64.seed
-   ~PCG64.state
+   ~ThreeFry.seed
+   ~ThreeFry.state
 
 Parallel generation
 ===================
 .. autosummary::
    :toctree: generated/
 
-   ~PCG64.advance
-   ~PCG64.jump
+   ~ThreeFry.advance
+   ~ThreeFry.jump
+   ~ThreeFry.jumped
 
 Random Generator
 ================
 .. autosummary::
    :toctree: generated/
 
-   ~PCG64.generator
+   ~ThreeFry.generator
 
 Extending
 =========
 .. autosummary::
    :toctree: generated/
 
-   ~PCG64.cffi
-   ~PCG64.ctypes
+   ~ThreeFry.cffi
+   ~ThreeFry.ctypes
 
 Testing
 =======
 .. autosummary::
    :toctree: generated/
 
-   ~PCG64.random_raw
+   ~ThreeFry.random_raw

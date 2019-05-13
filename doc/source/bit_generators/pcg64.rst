@@ -1,11 +1,11 @@
-Mersenne Twister (MT19937) 
---------------------------
+Parallel Congruent Generator (64-bit, PCG64)
+--------------------------------------------
 
-.. module:: randomgen.mt19937
+.. module:: randomgen.pcg64
 
-.. currentmodule:: randomgen.mt19937
+.. currentmodule:: randomgen.pcg64
 
-.. autoclass:: MT19937
+.. autoclass:: PCG64
 
 Seeding and State
 =================
@@ -13,34 +13,36 @@ Seeding and State
 .. autosummary::
    :toctree: generated/
 
-   ~MT19937.seed
-   ~MT19937.state
+   ~PCG64.seed
+   ~PCG64.state
 
 Parallel generation
 ===================
 .. autosummary::
    :toctree: generated/
 
-   ~MT19937.jump
+   ~PCG64.advance
+   ~PCG64.jump
+   ~PCG64.jumped
 
 Random Generator
 ================
 .. autosummary::
    :toctree: generated/
 
-   ~MT19937.generator
+   ~PCG64.generator
 
 Extending
 =========
 .. autosummary::
    :toctree: generated/
 
-   ~MT19937.cffi
-   ~MT19937.ctypes
+   ~PCG64.cffi
+   ~PCG64.ctypes
 
 Testing
 =======
 .. autosummary::
    :toctree: generated/
 
-   ~MT19937.random_raw
+   ~PCG64.random_raw

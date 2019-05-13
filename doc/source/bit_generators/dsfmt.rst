@@ -1,11 +1,12 @@
-ThreeFry32 Counter-based RNG
-----------------------------
+Double SIMD Mersenne Twister (dSFMT) 
+------------------------------------
 
-.. module:: randomgen.threefry32
+.. module:: randomgen.dsfmt
 
-.. currentmodule:: randomgen.threefry32
+.. currentmodule:: randomgen.dsfmt
 
-.. autoclass:: ThreeFry32
+
+.. autoclass:: DSFMT
 
 Seeding and State
 =================
@@ -13,35 +14,36 @@ Seeding and State
 .. autosummary::
    :toctree: generated/
 
-   ~ThreeFry32.seed
-   ~ThreeFry32.state
+   ~DSFMT.seed
+   ~DSFMT.state
 
 Parallel generation
 ===================
 .. autosummary::
    :toctree: generated/
 
-   ~ThreeFry32.advance
-   ~ThreeFry32.jump
+   ~DSFMT.jumped
+   ~DSFMT.jump
 
 Random Generator
 ================
 .. autosummary::
    :toctree: generated/
 
-   ~ThreeFry32.generator
+   ~DSFMT.generator
 
 Extending
 =========
 .. autosummary::
    :toctree: generated/
 
-   ~ThreeFry32.cffi
-   ~ThreeFry32.ctypes
+   ~DSFMT.cffi
+   ~DSFMT.ctypes
 
 Testing
 =======
 .. autosummary::
    :toctree: generated/
 
-   ~ThreeFry32.random_raw
+   ~DSFMT.random_raw
+

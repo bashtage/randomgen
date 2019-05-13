@@ -1,11 +1,11 @@
-ThreeFry Counter-based RNG
---------------------------
+Xoroshiro128+
+-------------
 
-.. module:: randomgen.threefry
+.. module:: randomgen.xoroshiro128
 
-.. currentmodule:: randomgen.threefry
+.. currentmodule:: randomgen.xoroshiro128
 
-.. autoclass:: ThreeFry
+.. autoclass:: Xoroshiro128
 
 Seeding and State
 =================
@@ -13,35 +13,35 @@ Seeding and State
 .. autosummary::
    :toctree: generated/
 
-   ~ThreeFry.seed
-   ~ThreeFry.state
+   ~Xoroshiro128.seed
+   ~Xoroshiro128.state
 
 Parallel generation
 ===================
 .. autosummary::
    :toctree: generated/
 
-   ~ThreeFry.advance
-   ~ThreeFry.jump
+   ~Xoroshiro128.jump
+   ~Xoroshiro128.jumped
 
 Random Generator
 ================
 .. autosummary::
    :toctree: generated/
 
-   ~ThreeFry.generator
+   ~Xoroshiro128.generator
 
 Extending
 =========
 .. autosummary::
    :toctree: generated/
 
-   ~ThreeFry.cffi
-   ~ThreeFry.ctypes
+   ~Xoroshiro128.cffi
+   ~Xoroshiro128.ctypes
 
 Testing
 =======
 .. autosummary::
    :toctree: generated/
 
-   ~ThreeFry.random_raw
+   ~Xoroshiro128.random_raw
