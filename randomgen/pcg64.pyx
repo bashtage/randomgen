@@ -1,4 +1,3 @@
-from libc.stdlib cimport malloc, free
 from cpython.pycapsule cimport PyCapsule_New, PyCapsule_GetPointer
 
 try:
@@ -115,7 +114,8 @@ cdef class PCG64:
     .. [2] O'Neill, Melissa E. "PCG: A Family of Simple Fast Space-Efficient
            Statistically Good Algorithms for Random Number Generation"
     """
-    cdef pcg64_state *rng_state
+    cdef pcg64_state rng_state
+    cdef pcg64_random_t pcg64_random_state
     cdef bitgen_t _bitgen
     cdef public object capsule
     cdef object _ctypes
@@ -123,12 +123,11 @@ cdef class PCG64:
     cdef public object lock
 
     def __init__(self, seed=None, inc=0):
-        self.rng_state = <pcg64_state *>malloc(sizeof(pcg64_state))
-        self.rng_state.pcg_state = <pcg64_random_t *>malloc(sizeof(pcg64_random_t))
+        self.rng_state.pcg_state = &self.pcg64_random_state
         self.seed(seed, inc)
         self.lock = Lock()
 
-        self._bitgen.state = <void *>self.rng_state
+        self._bitgen.state = <void *>&self.rng_state
         self._bitgen.next_uint64 = &pcg64_uint64
         self._bitgen.next_uint32 = &pcg64_uint32
         self._bitgen.next_double = &pcg64_double
@@ -150,10 +149,6 @@ cdef class PCG64:
     def __reduce__(self):
         from randomgen._pickle import __bit_generator_ctor
         return __bit_generator_ctor, (self.state['bit_generator'],), self.state
-
-    def __dealloc__(self):
-        if self.rng_state:
-            free(self.rng_state)
 
     cdef _reset_state_variables(self):
         self.rng_state.has_uint32 = 0
@@ -245,7 +240,7 @@ cdef class PCG64:
         _inc[0] = int(inc) // 2**64
         _inc[1] = int(inc) % 2**64
 
-        pcg64_set_seed(self.rng_state, <uint64_t *>_seed.data, <uint64_t *>_inc.data)
+        pcg64_set_seed(&self.rng_state, <uint64_t *>_seed.data, <uint64_t *>_inc.data)
         self._reset_state_variables()
 
     @property
@@ -265,7 +260,7 @@ cdef class PCG64:
 
         # state_vec is state.high, state.low, inc.high, inc.low
         state_vec = <np.ndarray>np.empty(4, dtype=np.uint64)
-        pcg64_get_state(self.rng_state, <uint64_t *>state_vec.data, &has_uint32, &uinteger)
+        pcg64_get_state(&self.rng_state, <uint64_t *>state_vec.data, &has_uint32, &uinteger)
         state = int(state_vec[0]) * 2**64 + int(state_vec[1])
         inc = int(state_vec[2]) * 2**64 + int(state_vec[3])
         return {'bit_generator': self.__class__.__name__,
@@ -291,7 +286,7 @@ cdef class PCG64:
         state_vec[3] = value['state']['inc'] % 2 ** 64
         has_uint32 = value['has_uint32']
         uinteger = value['uinteger']
-        pcg64_set_state(self.rng_state, <uint64_t *>state_vec.data, has_uint32, uinteger)
+        pcg64_set_state(&self.rng_state, <uint64_t *>state_vec.data, has_uint32, uinteger)
 
     def advance(self, delta):
         """
@@ -332,7 +327,7 @@ cdef class PCG64:
         cdef np.ndarray d = np.empty(2, dtype=np.uint64)
         d[0] = delta // 2**64
         d[1] = delta % 2**64
-        pcg64_advance(self.rng_state, <uint64_t *>d.data)
+        pcg64_advance(&self.rng_state, <uint64_t *>d.data)
         self._reset_state_variables()
         return self
 

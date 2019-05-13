@@ -1,6 +1,4 @@
 import operator
-from libc.stdlib cimport malloc, free
-from libc.string cimport memcpy
 from cpython.pycapsule cimport PyCapsule_New, PyCapsule_GetPointer
 
 try:
@@ -140,7 +138,7 @@ cdef class DSFMT:
            Jump Ahead Algorithm for Linear Recurrences in a Polynomial Space",
            Sequences and Their Applications - SETA, 290--298, 2008.
     """
-    cdef dsfmt_state *rng_state
+    cdef dsfmt_state rng_state
     cdef bitgen_t _bitgen
     cdef public object capsule
     cdef object _cffi
@@ -148,14 +146,13 @@ cdef class DSFMT:
     cdef public object lock
 
     def __init__(self, seed=None):
-        self.rng_state = <dsfmt_state *>malloc(sizeof(dsfmt_state))
         self.rng_state.state = <dsfmt_t *>PyArray_malloc_aligned(sizeof(dsfmt_t))
         self.rng_state.buffered_uniforms = <double *>PyArray_calloc_aligned(DSFMT_N64, sizeof(double))
         self.rng_state.buffer_loc = DSFMT_N64
         self.seed(seed)
         self.lock = Lock()
 
-        self._bitgen.state = <void *>self.rng_state
+        self._bitgen.state = <void *>&self.rng_state
         self._bitgen.next_uint64 = &dsfmt_uint64
         self._bitgen.next_uint32 = &dsfmt_uint32
         self._bitgen.next_double = &dsfmt_double
@@ -178,10 +175,10 @@ cdef class DSFMT:
         return __bit_generator_ctor, (self.state['bit_generator'],), self.state
 
     def __dealloc__(self):
-        if self.rng_state:
+        if self.rng_state.state:
             PyArray_free_aligned(self.rng_state.state)
+        if self.rng_state.buffered_uniforms:
             PyArray_free_aligned(self.rng_state.buffered_uniforms)
-            free(self.rng_state)
 
     cdef _reset_state_variables(self):
         self.rng_state.buffer_loc = DSFMT_N64
@@ -290,7 +287,7 @@ cdef class DSFMT:
 
         cdef np.npy_intp i
         for i in range(iter):
-            dsfmt_jump(self.rng_state)
+            dsfmt_jump(&self.rng_state)
         # Clear the buffer
         self._reset_state_variables()
         return self

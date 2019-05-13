@@ -3,7 +3,6 @@ try:
 except ImportError:
     from dummy_threading import Lock
 
-from libc.stdlib cimport malloc, free
 from cpython.pycapsule cimport PyCapsule_New, PyCapsule_GetPointer
 
 import numpy as np
@@ -119,7 +118,7 @@ cdef class Xoshiro256StarStar:
     .. [1] "xoroshiro+ / xorshift* / xorshift+ generators and the PRNG shootout",
            http://xorshift.di.unimi.it/
     """
-    cdef xoshiro256starstar_state *rng_state
+    cdef xoshiro256starstar_state rng_state
     cdef bitgen_t _bitgen
     cdef public object capsule
     cdef object _ctypes
@@ -127,11 +126,10 @@ cdef class Xoshiro256StarStar:
     cdef public object lock
 
     def __init__(self, seed=None):
-        self.rng_state = <xoshiro256starstar_state *>malloc(sizeof(xoshiro256starstar_state))
         self.seed(seed)
         self.lock = Lock()
 
-        self._bitgen.state = <void *>self.rng_state
+        self._bitgen.state = <void *>&self.rng_state
         self._bitgen.next_uint64 = &xoshiro256starstar_uint64
         self._bitgen.next_uint32 = &xoshiro256starstar_uint32
         self._bitgen.next_double = &xoshiro256starstar_double
@@ -153,10 +151,6 @@ cdef class Xoshiro256StarStar:
     def __reduce__(self):
         from randomgen._pickle import __bit_generator_ctor
         return __bit_generator_ctor, (self.state['bit_generator'],), self.state
-
-    def __dealloc__(self):
-        if self.rng_state:
-            free(self.rng_state)
 
     cdef _reset_state_variables(self):
         self.rng_state.has_uint32 = 0
@@ -258,7 +252,7 @@ cdef class Xoshiro256StarStar:
 
         cdef np.npy_intp i
         for i in range(iter):
-            xoshiro256starstar_jump(self.rng_state)
+            xoshiro256starstar_jump(&self.rng_state)
         self._reset_state_variables()
         return self
 

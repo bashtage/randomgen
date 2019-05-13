@@ -1,5 +1,3 @@
-from libc.stdlib cimport malloc, free
-from libc.string cimport memcpy
 from cpython.pycapsule cimport PyCapsule_New, PyCapsule_GetPointer
 
 try:
@@ -153,7 +151,9 @@ cdef class ThreeFry:
            the International Conference for High Performance Computing,
            Networking, Storage and Analysis (SC11), New York, NY: ACM, 2011.
     """
-    cdef threefry_state *rng_state
+    cdef threefry_state rng_state
+    cdef threefry4x64_ctr_t threefry_ctr
+    cdef threefry4x64_key_t threefry_key
     cdef bitgen_t _bitgen
     cdef public object capsule
     cdef object _ctypes
@@ -161,13 +161,12 @@ cdef class ThreeFry:
     cdef public object lock
 
     def __init__(self, seed=None, counter=None, key=None):
-        self.rng_state = <threefry_state *>malloc(sizeof(threefry_state))
-        self.rng_state.ctr = <threefry4x64_ctr_t *>malloc(sizeof(threefry4x64_ctr_t))
-        self.rng_state.key = <threefry4x64_key_t *>malloc(sizeof(threefry4x64_key_t))
+        self.rng_state.ctr = &self.threefry_ctr
+        self.rng_state.key = &self.threefry_key
         self.seed(seed, counter, key)
         self.lock = Lock()
 
-        self._bitgen.state = <void *>self.rng_state
+        self._bitgen.state = <void *>&self.rng_state
         self._bitgen.next_uint64 = &threefry_uint64
         self._bitgen.next_uint32 = &threefry_uint32
         self._bitgen.next_double = &threefry_double
@@ -189,12 +188,6 @@ cdef class ThreeFry:
     def __reduce__(self):
         from randomgen._pickle import __bit_generator_ctor
         return __bit_generator_ctor, (self.state['bit_generator'],), self.state
-
-    def __dealloc__(self):
-        if self.rng_state:
-            free(self.rng_state.ctr)
-            free(self.rng_state.key)
-            free(self.rng_state)
 
     cdef _reset_state_variables(self):
         self.rng_state.has_uint32 = 0
@@ -434,7 +427,7 @@ cdef class ThreeFry:
         """
         cdef np.ndarray delta_a
         delta_a = int_to_array(delta, 'step', 256, 64)
-        threefry_advance(<uint64_t *>delta_a.data, self.rng_state)
+        threefry_advance(<uint64_t *>delta_a.data, &self.rng_state)
         self._reset_state_variables()
         return self
 
