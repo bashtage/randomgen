@@ -3,7 +3,6 @@ try:
 except ImportError:
     from dummy_threading import Lock
 
-from libc.stdlib cimport malloc, free
 from cpython.pycapsule cimport PyCapsule_New, PyCapsule_GetPointer
 
 import numpy as np
@@ -125,7 +124,7 @@ cdef class Xorshift1024:
            generators." CoRR, abs/1403.0930, 2014.
     """
 
-    cdef xorshift1024_state *rng_state
+    cdef xorshift1024_state rng_state
     cdef bitgen_t _bitgen
     cdef public object capsule
     cdef object _ctypes
@@ -133,11 +132,10 @@ cdef class Xorshift1024:
     cdef public object lock
 
     def __init__(self, seed=None):
-        self.rng_state = <xorshift1024_state *>malloc(sizeof(xorshift1024_state))
         self.seed(seed)
         self.lock = Lock()
 
-        self._bitgen.state = <void *>self.rng_state
+        self._bitgen.state = <void *>&self.rng_state
         self._bitgen.next_uint64 = &xorshift1024_uint64
         self._bitgen.next_uint32 = &xorshift1024_uint32
         self._bitgen.next_double = &xorshift1024_double
@@ -159,10 +157,6 @@ cdef class Xorshift1024:
     def __reduce__(self):
         from randomgen._pickle import __bit_generator_ctor
         return __bit_generator_ctor, (self.state['bit_generator'],), self.state
-
-    def __dealloc__(self):
-        if self.rng_state:
-            free(self.rng_state)
 
     cdef _reset_state_variables(self):
         self.rng_state.has_uint32 = 0
@@ -264,7 +258,7 @@ cdef class Xorshift1024:
 
         cdef np.npy_intp i
         for i in range(iter):
-            xorshift1024_jump(self.rng_state)
+            xorshift1024_jump(&self.rng_state)
         self._reset_state_variables()
         return self
 
@@ -297,8 +291,6 @@ cdef class Xorshift1024:
             xorshift1024_jump(<xorshift1024_state *>new_bitgen.state)
 
         return bit_generator
-
-
 
     @property
     def state(self):

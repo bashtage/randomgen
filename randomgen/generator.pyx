@@ -23,7 +23,6 @@ from randomgen.distributions cimport *
 
 np.import_array()
 
-
 # TODO: Remove after deprecation
 def _rand_dep_message(old, new, args, dtype):
     msg = '{old} is deprecated. Use {new}({call}) instead'
@@ -2160,7 +2159,6 @@ cdef class Generator:
         and many other problems, including the download frequency for
         projects in Sourceforge [1]_.  It is one of the so-called
         "fat-tailed" distributions.
-
 
         References
         ----------
