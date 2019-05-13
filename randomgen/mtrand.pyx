@@ -2076,7 +2076,6 @@ cdef class RandomState:
         projects in Sourceforge [1]_.  It is one of the so-called
         "fat-tailed" distributions.
 
-
         References
         ----------
         .. [1] Francis Hunt and Paul Johnson, On the Pareto Distribution of

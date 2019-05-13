@@ -1,4 +1,3 @@
-from libc.stdlib cimport malloc, free
 from cpython.pycapsule cimport PyCapsule_New
 
 try:
@@ -152,8 +151,10 @@ cdef class ThreeFry:
            the International Conference for High Performance Computing,
            Networking, Storage and Analysis (SC11), New York, NY: ACM, 2011.
     """
-    cdef threefry_state *rng_state
-    cdef brng_t *_brng
+    cdef threefry_state rng_state
+    cdef threefry4x64_ctr_t threefry_ctr
+    cdef threefry4x64_key_t threefry_key
+    cdef brng_t _brng
     cdef public object capsule
     cdef object _ctypes
     cdef object _cffi
@@ -161,14 +162,12 @@ cdef class ThreeFry:
     cdef public object lock
 
     def __init__(self, seed=None, counter=None, key=None):
-        self.rng_state = <threefry_state *>malloc(sizeof(threefry_state))
-        self.rng_state.ctr = <threefry4x64_ctr_t *>malloc(sizeof(threefry4x64_ctr_t))
-        self.rng_state.key = <threefry4x64_key_t *>malloc(sizeof(threefry4x64_key_t))
-        self._brng = <brng_t *>malloc(sizeof(brng_t))
+        self.rng_state.ctr = &self.threefry_ctr
+        self.rng_state.key = &self.threefry_key
         self.seed(seed, counter, key)
         self.lock = Lock()
 
-        self._brng.state = <void *>self.rng_state
+        self._brng.state = <void *>&self.rng_state
         self._brng.next_uint64 = &threefry_uint64
         self._brng.next_uint32 = &threefry_uint32
         self._brng.next_double = &threefry_double
@@ -179,7 +178,7 @@ cdef class ThreeFry:
         self._generator = None
 
         cdef const char *name = 'BasicRNG'
-        self.capsule = PyCapsule_New(<void *>self._brng, name, NULL)
+        self.capsule = PyCapsule_New(<void *>&self._brng, name, NULL)
 
     # Pickling support:
     def __getstate__(self):
@@ -191,14 +190,6 @@ cdef class ThreeFry:
     def __reduce__(self):
         from randomgen._pickle import __brng_ctor
         return __brng_ctor, (self.state['brng'],), self.state
-
-    def __dealloc__(self):
-        if self.rng_state:
-            free(self.rng_state.ctr)
-            free(self.rng_state.key)
-            free(self.rng_state)
-        if self._brng:
-            free(self._brng)
 
     cdef _reset_state_variables(self):
         self.rng_state.has_uint32 = 0
@@ -236,10 +227,10 @@ cdef class ThreeFry:
 
         See the class docstring for the number of bits returned.
         """
-        return random_raw(self._brng, self.lock, size, output)
+        return random_raw(&self._brng, self.lock, size, output)
 
     def _benchmark(self, Py_ssize_t cnt, method=u'uint64'):
-        return benchmark(self._brng, self.lock, cnt, method)
+        return benchmark(&self._brng, self.lock, cnt, method)
 
     def seed(self, seed=None, counter=None, key=None):
         """
@@ -403,8 +394,7 @@ cdef class ThreeFry:
         """
         cdef np.ndarray delta_a
         delta_a = int_to_array(delta, 'step', 256, 64)
-        loc = 0
-        threefry_advance(<uint64_t *>delta_a.data, self.rng_state)
+        threefry_advance(<uint64_t *>delta_a.data, &self.rng_state)
         self._reset_state_variables()
         return self
 
@@ -426,7 +416,7 @@ cdef class ThreeFry:
             * brng - pointer to the Basic RNG struct
         """
         if self._ctypes is None:
-            self._ctypes = prepare_ctypes(self._brng)
+            self._ctypes = prepare_ctypes(&self._brng)
 
         return self._ctypes
 
@@ -449,7 +439,7 @@ cdef class ThreeFry:
         """
         if self._cffi is not None:
             return self._cffi
-        self._cffi = prepare_cffi(self._brng)
+        self._cffi = prepare_cffi(&self._brng)
         return self._cffi
 
     @property

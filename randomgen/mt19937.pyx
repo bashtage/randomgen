@@ -1,6 +1,5 @@
 import operator
 
-from libc.stdlib cimport malloc, free
 from cpython.pycapsule cimport PyCapsule_New
 
 try:
@@ -116,8 +115,8 @@ cdef class MT19937:
         No. 3, Summer 2008, pp. 385-390.
 
     """
-    cdef mt19937_state *rng_state
-    cdef brng_t *_brng
+    cdef mt19937_state rng_state
+    cdef brng_t _brng
     cdef public object capsule
     cdef object _ctypes
     cdef object _cffi
@@ -125,12 +124,10 @@ cdef class MT19937:
     cdef public object lock
 
     def __init__(self, seed=None):
-        self.rng_state = <mt19937_state *>malloc(sizeof(mt19937_state))
-        self._brng = <brng_t *>malloc(sizeof(brng_t))
         self.seed(seed)
         self.lock = Lock()
 
-        self._brng.state = <void *>self.rng_state
+        self._brng.state = <void *>&self.rng_state
         self._brng.next_uint64 = &mt19937_uint64
         self._brng.next_uint32 = &mt19937_uint32
         self._brng.next_double = &mt19937_double
@@ -141,13 +138,7 @@ cdef class MT19937:
         self._generator = None
 
         cdef const char *name = "BasicRNG"
-        self.capsule = PyCapsule_New(<void *>self._brng, name, NULL)
-
-    def __dealloc__(self):
-        if self.rng_state:
-            free(self.rng_state)
-        if self._brng:
-            free(self._brng)
+        self.capsule = PyCapsule_New(<void *>&self._brng, name, NULL)
 
     # Pickling support:
     def __getstate__(self):
@@ -189,10 +180,10 @@ cdef class MT19937:
 
         See the class docstring for the number of bits returned.
         """
-        return random_raw(self._brng, self.lock, size, output)
+        return random_raw(&self._brng, self.lock, size, output)
 
     def _benchmark(self, Py_ssize_t cnt, method=u'uint64'):
-        return benchmark(self._brng, self.lock, cnt, method)
+        return benchmark(&self._brng, self.lock, cnt, method)
 
     def seed(self, seed=None):
         """
@@ -223,14 +214,14 @@ cdef class MT19937:
                     seed = random_entropy(1)
                 except RuntimeError:
                     seed = random_entropy(1, 'fallback')
-                mt19937_seed(self.rng_state, seed[0])
+                mt19937_seed(&self.rng_state, seed[0])
             else:
                 if hasattr(seed, 'squeeze'):
                     seed = seed.squeeze()
                 idx = operator.index(seed)
                 if idx > int(2**32 - 1) or idx < 0:
                     raise ValueError("Seed must be between 0 and 2**32 - 1")
-                mt19937_seed(self.rng_state, seed)
+                mt19937_seed(&self.rng_state, seed)
         except TypeError:
             obj = np.asarray(seed)
             if obj.size == 0:
@@ -241,7 +232,7 @@ cdef class MT19937:
             if ((obj > int(2**32 - 1)) | (obj < 0)).any():
                 raise ValueError("Seed must be between 0 and 2**32 - 1")
             obj = obj.astype(np.uint32, casting='unsafe', order='C')
-            mt19937_init_by_array(self.rng_state, <uint32_t*> obj.data, np.PyArray_DIM(obj, 0))
+            mt19937_init_by_array(&self.rng_state, <uint32_t*> obj.data, np.PyArray_DIM(obj, 0))
 
     def jump(self, np.npy_intp iter=1):
         """
@@ -261,7 +252,7 @@ cdef class MT19937:
         """
         cdef np.npy_intp i
         for i in range(iter):
-            mt19937_jump(self.rng_state)
+            mt19937_jump(&self.rng_state)
         return self
 
     @property
@@ -319,7 +310,7 @@ cdef class MT19937:
             * brng - pointer to the Basic RNG struct
         """
         if self._ctypes is None:
-            self._ctypes = prepare_ctypes(self._brng)
+            self._ctypes = prepare_ctypes(&self._brng)
 
         return self._ctypes
 
@@ -342,7 +333,7 @@ cdef class MT19937:
         """
         if self._cffi is not None:
             return self._cffi
-        self._cffi = prepare_cffi(self._brng)
+        self._cffi = prepare_cffi(&self._brng)
         return self._cffi
 
     @property
