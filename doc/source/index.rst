@@ -17,11 +17,13 @@ generator be be changed.
     The main changes are
 
     * Rename ``RandomGenerator`` to :class:`~randomgen.generator.Generator`.
-    * Rename `:meth:`~randomgen.generator.Generator.randint` to `:meth:`~randomgen.generator.Generator.integers`.
-    * Rename `:meth:`~randomgen.generator.Generator.random_integers` to `:meth:`~randomgen.generator.Generator.integers`.
-    * Rename `:meth:`~randomgen.generator.Generator.random_sample` to `:meth:`~randomgen.generator.Generator.random`.
+    * Rename :meth:`~randomgen.generator.Generator.randint` to :meth:`~randomgen.generator.Generator.integers`.
+    * Rename :meth:`~randomgen.generator.Generator.random_integers` to :meth:`~randomgen.generator.Generator.integers`.
+    * Rename :meth:`~randomgen.generator.Generator.random_sample` to :meth:`~randomgen.generator.Generator.random`.
     * Change ``jump`` which operated in-place to ``jumped`` which returns a new ``BitGenerator``.
     * Rename Basic RNG to bit generator, which impacts the API in multiple places where names like ``brng`` and ``basic_rng`` have been replaced by ``bitgen`` or ``bit_generator``.
+
+    v1.16.x will be updated until the end of 2019 if you want to avoid these changes.
 
 Quick Start
 -----------
