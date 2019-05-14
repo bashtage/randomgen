@@ -338,6 +338,19 @@ cdef class Philox:
         self.rng_state.uinteger = value['uinteger']
         self.rng_state.buffer_pos = value['buffer_pos']
 
+    cdef jump_inplace(self, np.npy_intp iter):
+        """
+        Jump state in-place
+        
+        Not part of public API
+        
+        Parameters
+        ----------
+        iter : integer, positive
+            Number of times to jump the state of the rng.
+        """
+        self.advance(iter * 2 ** 128)
+
     def jump(self, np.npy_intp iter=1):
         """
         jump(iter=1)
@@ -362,8 +375,8 @@ cdef class Philox:
         import warnings
         warnings.warn('jump (in-place) has been deprecated in favor of jumped'
                       ', which returns a new instance', DeprecationWarning)
-
-        return self.advance(iter * 2 ** 128)
+        self.jump_inplace(iter)
+        return self
 
     def jumped(self, np.npy_intp iter=1):
         """
@@ -384,15 +397,11 @@ cdef class Philox:
         bit_generator : Xoroshiro128
             New instance of generator jumped iter times
         """
-        cdef bitgen_t *new_bitgen
-        cdef np.ndarray delta_a
-        bit_generator = self.__class__()
-        cdef const char *name = "BitGenerator"
-        new_bitgen = <bitgen_t *>PyCapsule_GetPointer(bit_generator.capsule,
-                                                      name)
+        cdef Philox bit_generator
 
-        delta_a = int_to_array(iter * 2**128, 'step', 256, 64)
-        philox_advance(<uint64_t *>delta_a.data, <philox_state *>new_bitgen.state)
+        bit_generator = self.__class__()
+        bit_generator.state = self.state
+        bit_generator.jump_inplace(iter)
 
         return bit_generator
 

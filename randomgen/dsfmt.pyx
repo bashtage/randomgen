@@ -1,5 +1,6 @@
 import operator
 from cpython.pycapsule cimport PyCapsule_New, PyCapsule_GetPointer
+from libc.string cimport memcpy
 
 try:
     from threading import Lock
@@ -265,6 +266,23 @@ cdef class DSFMT:
         # Clear the buffer
         self._reset_state_variables()
 
+    cdef jump_inplace(self, iter):
+        """
+        Jump state in-place
+        
+        Not part of public API
+        
+        Parameters
+        ----------
+        iter : integer, positive
+            Number of times to jump the state of the rng.
+        """
+        cdef np.npy_intp i
+        for i in range(iter):
+            dsfmt_jump(&self.rng_state)
+        # Clear the buffer
+        self._reset_state_variables()
+
     def jump(self, np.npy_intp iter=1):
         """
         jump(iter=1)
@@ -285,11 +303,7 @@ cdef class DSFMT:
         warnings.warn('jump (in-place) has been deprecated in favor of jumped'
                       ', which returns a new instance', DeprecationWarning)
 
-        cdef np.npy_intp i
-        for i in range(iter):
-            dsfmt_jump(&self.rng_state)
-        # Clear the buffer
-        self._reset_state_variables()
+        self.jump_inplace(iter)
         return self
 
     def jumped(self, np.npy_intp iter=1):
@@ -311,16 +325,12 @@ cdef class DSFMT:
         bit_generator : Xoroshiro128
             New instance of generator jumped iter times
         """
-        cdef np.npy_intp i
-        cdef bitgen_t *new_bitgen
-        cdef dsfmt_state *new_rng_state
+        cdef DSFMT bit_generator
+
         bit_generator = self.__class__()
-        cdef const char *name = "BitGenerator"
-        new_bitgen = <bitgen_t *>PyCapsule_GetPointer(bit_generator.capsule,
-                                                      name)
-        new_rng_state = <dsfmt_state *>new_bitgen.state
-        for i in range(iter):
-            dsfmt_jump(new_rng_state)
+        bit_generator.state = self.state
+        bit_generator.jump_inplace(iter)
+
         return bit_generator
 
     @property

@@ -331,6 +331,19 @@ cdef class PCG64:
         self._reset_state_variables()
         return self
 
+    cdef jump_inplace(self, iter):
+        """
+        Jump state in-place
+        
+        Not part of public API
+        
+        Parameters
+        ----------
+        iter : integer, positive
+            Number of times to jump the state of the rng.
+        """
+        self.advance(iter * 2**64)
+
     def jump(self, np.npy_intp iter=1):
         """
         jump(iter=1)
@@ -356,7 +369,9 @@ cdef class PCG64:
         warnings.warn('jump (in-place) has been deprecated in favor of jumped'
                       ', which returns a new instance', DeprecationWarning)
 
-        return self.advance(iter * 2**64)
+        self.jump_inplace(iter)
+
+        return self
 
     def jumped(self, np.npy_intp iter=1):
         """
@@ -377,19 +392,11 @@ cdef class PCG64:
         bit_generator : Xoroshiro128
             New instance of generator jumped iter times
         """
-        cdef np.ndarray d = np.empty(2, dtype=np.uint64)
-        cdef bitgen_t *new_bitgen
-        cdef np.ndarray delta_a
-
-        delta = iter * 2**64
-        d[0] = delta // 2**64
-        d[1] = delta % 2**64
+        cdef PCG64 bit_generator
 
         bit_generator = self.__class__()
-        cdef const char *name = "BitGenerator"
-        new_bitgen = <bitgen_t *>PyCapsule_GetPointer(bit_generator.capsule,
-                                                      name)
-        pcg64_advance(<pcg64_state *>new_bitgen.state, <uint64_t *>d.data)
+        bit_generator.state = self.state
+        bit_generator.jump_inplace(iter)
 
         return bit_generator
 

@@ -3,6 +3,7 @@ try:
 except ImportError:
     from dummy_threading import Lock
 
+from libc.string cimport memcpy
 from cpython.pycapsule cimport PyCapsule_New, PyCapsule_GetPointer
 
 import numpy as np
@@ -225,6 +226,22 @@ cdef class Xoshiro256StarStar:
         self.rng_state.s[3] = <uint64_t>int(state[3])
         self._reset_state_variables()
 
+    cdef jump_inplace(self, np.npy_intp iter):
+        """
+        Jump state in-place
+        
+        Not part of public API
+        
+        Parameters
+        ----------
+        iter : integer, positive
+            Number of times to jump the state of the rng.
+        """
+        cdef np.npy_intp i
+        for i in range(iter):
+            xoshiro256starstar_jump(&self.rng_state)
+        self._reset_state_variables()
+
     def jump(self, np.npy_intp iter=1):
         """
         jump(iter=1)
@@ -250,10 +267,7 @@ cdef class Xoshiro256StarStar:
         warnings.warn('jump (in-place) has been deprecated in favor of jumped'
                       ', which returns a new instance', DeprecationWarning)
 
-        cdef np.npy_intp i
-        for i in range(iter):
-            xoshiro256starstar_jump(&self.rng_state)
-        self._reset_state_variables()
+        self.jump_inplace(iter)
         return self
 
     def jumped(self, np.npy_intp iter=1):
@@ -275,14 +289,11 @@ cdef class Xoshiro256StarStar:
         bit_generator : Xoroshiro128
             New instance of generator jumped iter times
         """
-        cdef np.npy_intp i
-        cdef bitgen_t *new_bitgen
+        cdef Xoshiro256StarStar bit_generator
+
         bit_generator = self.__class__()
-        cdef const char *name = "BitGenerator"
-        new_bitgen = <bitgen_t *>PyCapsule_GetPointer(bit_generator.capsule,
-                                                      name)
-        for i in range(iter):
-            xoshiro256starstar_jump(<xoshiro256starstar_state *>new_bitgen.state)
+        bit_generator.state = self.state
+        bit_generator.jump_inplace(iter)
 
         return bit_generator
 
