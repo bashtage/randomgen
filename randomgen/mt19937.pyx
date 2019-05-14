@@ -232,6 +232,21 @@ cdef class MT19937:
             obj = obj.astype(np.uint32, casting='unsafe', order='C')
             mt19937_init_by_array(&self.rng_state, <uint32_t*> obj.data, np.PyArray_DIM(obj, 0))
 
+    cdef jump_inplace(self, iter):
+        """
+        Jump state in-place
+        
+        Not part of public API
+        
+        Parameters
+        ----------
+        iter : integer, positive
+            Number of times to jump the state of the rng.
+        """
+        cdef np.npy_intp i
+        for i in range(iter):
+            mt19937_jump(&self.rng_state)
+
     def jump(self, np.npy_intp iter=1):
         """
         jump(iter=1)
@@ -252,9 +267,7 @@ cdef class MT19937:
         warnings.warn('jump (in-place) has been deprecated in favor of jumped'
                       ', which returns a new instance', DeprecationWarning)
 
-        cdef np.npy_intp i
-        for i in range(iter):
-            mt19937_jump(&self.rng_state)
+        self.jump_inplace(iter)
         return self
 
     def jumped(self, np.npy_intp iter=1):
@@ -276,16 +289,12 @@ cdef class MT19937:
         bit_generator : Xoroshiro128
             New instance of generator jumped iter times
         """
-        cdef np.npy_intp i
-        cdef bitgen_t *new_bitgen
-        cdef mt19937_state *new_rng_state
+        cdef MT19937 bit_generator
+
         bit_generator = self.__class__()
-        cdef const char *name = "BitGenerator"
-        new_bitgen = <bitgen_t *>PyCapsule_GetPointer(bit_generator.capsule,
-                                                      name)
-        new_rng_state = <mt19937_state *>new_bitgen.state
-        for i in range(iter):
-            mt19937_jump(new_rng_state)
+        bit_generator.state = self.state
+        bit_generator.jump_inplace(iter)
+
         return bit_generator
 
     @property

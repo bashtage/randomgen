@@ -155,7 +155,7 @@ class RNG(object):
             assert_(comp_state(jumped_state, rejumped_state))
         else:
             bit_gen_name = self.rg.bit_generator.__class__.__name__
-            pytest.skip('Jump is not supported by {0}'.format(bit_gen_name))
+            pytest.skip('jump is not supported by {0}'.format(bit_gen_name))
 
     def test_jumped(self):
         state = self.rg.bit_generator.state
@@ -166,7 +166,38 @@ class RNG(object):
             Generator(new_bit_gen).random(1000000)
         else:
             bit_gen_name = self.rg.bit_generator.__class__.__name__
-            pytest.skip('Jump is not supported by {0}'.format(bit_gen_name))
+            pytest.skip('jumped is not supported by {0}'.format(bit_gen_name))
+
+    def test_jumped_against_jump(self):
+        if hasattr(self.rg.bit_generator, 'jumped') and hasattr(self.rg.bit_generator, 'jump'):
+            bg = self.rg.bit_generator
+            state = bg.state
+            new_bg = bg.jumped()
+            with pytest.deprecated_call():
+                bg.jump()
+            assert_(not comp_state(state, bg.state))
+            assert_(not comp_state(state, new_bg.state))
+            assert_(comp_state(bg.state, new_bg.state))
+        else:
+            bit_gen_name = self.rg.bit_generator.__class__.__name__
+            pytest.skip('jump or jumped is not supported by {0}'.format(bit_gen_name))
+
+    def test_jumped_against_jump_32bit(self):
+        if hasattr(self.rg.bit_generator, 'jumped') and hasattr(self.rg.bit_generator, 'jump'):
+            bg = self.rg.bit_generator
+            bg.seed(*self.seed)
+            # Draw large prime number of 32bits to move internal state values
+            self.rg.random(11587, dtype=np.float32)
+            state = bg.state
+            new_bg = bg.jumped()
+            with pytest.deprecated_call():
+                bg.jump()
+            assert_(not comp_state(state, bg.state))
+            assert_(not comp_state(state, new_bg.state))
+            assert_(comp_state(bg.state, new_bg.state))
+        else:
+            bit_gen_name = self.rg.bit_generator.__class__.__name__
+            pytest.skip('jump or jumped is not supported by {0}'.format(bit_gen_name))
 
     def test_uniform(self):
         r = self.rg.uniform(-1.0, 0.0, size=10)
