@@ -56,7 +56,7 @@ if '--no-sse2' in sys.argv:
 
 MOD_DIR = './randomgen'
 
-DEBUG = True
+DEBUG = False
 
 EXTRA_INCLUDE_DIRS = []
 EXTRA_LINK_ARGS = []
