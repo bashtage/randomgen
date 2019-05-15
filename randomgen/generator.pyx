@@ -144,7 +144,7 @@ cdef class Generator:
             The bit generator instance used by the generator
         """
         import warnings
-        warnings.warn('brng is deprecated. Use bit_generator.')
+        warnings.warn('brng is deprecated. Use bit_generator.', DeprecationWarning)
         return self._bit_generator
 
     @property
