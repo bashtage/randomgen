@@ -1,6 +1,6 @@
 import pytest
 
-from randomgen import (DSFMT, MT19937, PCG32, PCG64, Philox, Generator,
+from randomgen import (DSFMT, MT19937, PCG32, PCG64, Generator, Philox,
                        ThreeFry, ThreeFry32, Xoroshiro128, Xorshift1024,
                        Xoshiro256StarStar, Xoshiro512StarStar)
 

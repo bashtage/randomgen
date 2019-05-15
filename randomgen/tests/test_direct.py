@@ -7,7 +7,7 @@ import pytest
 from numpy.testing import (assert_allclose, assert_array_equal, assert_equal,
                            assert_raises)
 
-from randomgen import (DSFMT, MT19937, PCG32, PCG64, Philox, Generator,
+from randomgen import (DSFMT, MT19937, PCG32, PCG64, Generator, Philox,
                        RandomState, ThreeFry, ThreeFry32, Xoroshiro128,
                        Xorshift1024, Xoshiro256StarStar, Xoshiro512StarStar)
 from randomgen.common import interface
@@ -214,9 +214,12 @@ class Base(object):
     def test_seed_float_array(self):
         # GH #82
         rs = Generator(self.bit_generator(*self.data1['seed']))
-        assert_raises(self.seed_error_type, rs.bit_generator.seed, np.array([np.pi]))
-        assert_raises(self.seed_error_type, rs.bit_generator.seed, np.array([-np.pi]))
-        assert_raises(ValueError, rs.bit_generator.seed, np.array([np.pi, -np.pi]))
+        assert_raises(self.seed_error_type, rs.bit_generator.seed,
+                      np.array([np.pi]))
+        assert_raises(self.seed_error_type, rs.bit_generator.seed,
+                      np.array([-np.pi]))
+        assert_raises(ValueError, rs.bit_generator.seed,
+                      np.array([np.pi, -np.pi]))
         assert_raises(TypeError, rs.bit_generator.seed, np.array([0, np.pi]))
         assert_raises(TypeError, rs.bit_generator.seed, [np.pi])
         assert_raises(TypeError, rs.bit_generator.seed, [0, np.pi])
@@ -224,13 +227,15 @@ class Base(object):
     def test_seed_out_of_range(self):
         # GH #82
         rs = Generator(self.bit_generator(*self.data1['seed']))
-        assert_raises(ValueError, rs.bit_generator.seed, 2 ** (2 * self.bits + 1))
+        assert_raises(ValueError, rs.bit_generator.seed,
+                      2 ** (2 * self.bits + 1))
         assert_raises(ValueError, rs.bit_generator.seed, -1)
 
     def test_seed_out_of_range_array(self):
         # GH #82
         rs = Generator(self.bit_generator(*self.data1['seed']))
-        assert_raises(ValueError, rs.bit_generator.seed, [2 ** (2 * self.bits + 1)])
+        assert_raises(ValueError, rs.bit_generator.seed,
+                      [2 ** (2 * self.bits + 1)])
         assert_raises(ValueError, rs.bit_generator.seed, [-1])
 
     def test_repr(self):
@@ -395,7 +400,7 @@ class TestThreeFry(Base):
         bit_generator = self.bit_generator(*self.data1['seed'])
         state = bit_generator.state
         keyed = self.bit_generator(counter=state['state']['counter'],
-                          key=state['state']['key'])
+                                   key=state['state']['key'])
         assert_state_equal(bit_generator.state, keyed.state)
 
 
@@ -415,11 +420,14 @@ class TestPCG64(Base):
 
     def test_seed_float_array(self):
         rs = Generator(self.bit_generator(*self.data1['seed']))
-        assert_raises(self.seed_error_type, rs.bit_generator.seed, np.array([np.pi]))
-        assert_raises(self.seed_error_type, rs.bit_generator.seed, np.array([-np.pi]))
+        assert_raises(self.seed_error_type, rs.bit_generator.seed,
+                      np.array([np.pi]))
+        assert_raises(self.seed_error_type, rs.bit_generator.seed,
+                      np.array([-np.pi]))
         assert_raises(self.seed_error_type, rs.bit_generator.seed,
                       np.array([np.pi, -np.pi]))
-        assert_raises(self.seed_error_type, rs.bit_generator.seed, np.array([0, np.pi]))
+        assert_raises(self.seed_error_type, rs.bit_generator.seed,
+                      np.array([0, np.pi]))
         assert_raises(self.seed_error_type, rs.bit_generator.seed, [np.pi])
         assert_raises(self.seed_error_type, rs.bit_generator.seed, [0, np.pi])
 
@@ -449,7 +457,7 @@ class TestPhilox(Base):
         bit_generator = self.bit_generator(*self.data1['seed'])
         state = bit_generator.state
         keyed = self.bit_generator(counter=state['state']['counter'],
-                          key=state['state']['key'])
+                                   key=state['state']['key'])
         assert_state_equal(bit_generator.state, keyed.state)
 
 
@@ -470,14 +478,17 @@ class TestMT19937(Base):
         rs = Generator(self.bit_generator(*self.data1['seed']))
         assert_raises(ValueError, rs.bit_generator.seed, 2 ** (self.bits + 1))
         assert_raises(ValueError, rs.bit_generator.seed, -1)
-        assert_raises(ValueError, rs.bit_generator.seed, 2 ** (2 * self.bits + 1))
+        assert_raises(ValueError,
+                      rs.bit_generator.seed, 2 ** (2 * self.bits + 1))
 
     def test_seed_out_of_range_array(self):
         # GH #82
         rs = Generator(self.bit_generator(*self.data1['seed']))
-        assert_raises(ValueError, rs.bit_generator.seed, [2 ** (self.bits + 1)])
+        assert_raises(ValueError, rs.bit_generator.seed,
+                      [2 ** (self.bits + 1)])
         assert_raises(ValueError, rs.bit_generator.seed, [-1])
-        assert_raises(TypeError, rs.bit_generator.seed, [2 ** (2 * self.bits + 1)])
+        assert_raises(TypeError, rs.bit_generator.seed,
+                      [2 ** (2 * self.bits + 1)])
 
     def test_seed_float(self):
         # GH #82
@@ -501,7 +512,8 @@ class TestMT19937(Base):
         bit_generator = rs.bit_generator
         state = bit_generator.state
         desired = rs.integers(2 ** 16)
-        tup = (state['bit_generator'], state['state']['key'], state['state']['pos'])
+        tup = (state['bit_generator'], state['state']['key'],
+               state['state']['pos'])
         bit_generator.state = tup
         actual = rs.integers(2 ** 16)
         assert_equal(actual, desired)
@@ -548,9 +560,11 @@ class TestDSFMT(Base):
     def test_seed_out_of_range_array(self):
         # GH #82
         rs = Generator(self.bit_generator(*self.data1['seed']))
-        assert_raises(ValueError, rs.bit_generator.seed, [2 ** (self.bits + 1)])
+        assert_raises(ValueError, rs.bit_generator.seed,
+                      [2 ** (self.bits + 1)])
         assert_raises(ValueError, rs.bit_generator.seed, [-1])
-        assert_raises(TypeError, rs.bit_generator.seed, [2 ** (2 * self.bits + 1)])
+        assert_raises(TypeError, rs.bit_generator.seed,
+                      [2 ** (2 * self.bits + 1)])
 
     def test_seed_float(self):
         # GH #82
@@ -563,7 +577,8 @@ class TestDSFMT(Base):
         rs = Generator(self.bit_generator(*self.data1['seed']))
         assert_raises(TypeError, rs.bit_generator.seed, np.array([np.pi]))
         assert_raises(TypeError, rs.bit_generator.seed, np.array([-np.pi]))
-        assert_raises(TypeError, rs.bit_generator.seed, np.array([np.pi, -np.pi]))
+        assert_raises(TypeError, rs.bit_generator.seed,
+                      np.array([np.pi, -np.pi]))
         assert_raises(TypeError, rs.bit_generator.seed, np.array([0, np.pi]))
         assert_raises(TypeError, rs.bit_generator.seed, [np.pi])
         assert_raises(TypeError, rs.bit_generator.seed, [0, np.pi])
@@ -606,7 +621,7 @@ class TestThreeFry32(Base):
         bit_generator = self.bit_generator(*self.data1['seed'])
         state = bit_generator.state
         keyed = self.bit_generator(counter=state['state']['counter'],
-                          key=state['state']['key'])
+                                   key=state['state']['key'])
         assert_state_equal(bit_generator.state, keyed.state)
 
 

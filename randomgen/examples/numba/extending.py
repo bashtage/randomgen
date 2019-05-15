@@ -1,8 +1,8 @@
 import datetime as dt
 
-import numba as nb
 import numpy as np
 
+import numba as nb
 from randomgen import Xoroshiro128
 
 x = Xoroshiro128()

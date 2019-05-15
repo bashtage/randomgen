@@ -20,10 +20,10 @@ move distributions.dll ../../examples/numba/
 """
 import os
 
-import numba as nb
 import numpy as np
 from cffi import FFI
 
+import numba as nb
 from randomgen import Xoroshiro128
 
 ffi = FFI()

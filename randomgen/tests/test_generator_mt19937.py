@@ -2,10 +2,10 @@ import sys
 import warnings
 
 import numpy as np
+import pytest
 from numpy.testing import (assert_, assert_array_almost_equal,
                            assert_array_equal, assert_equal,
                            assert_no_warnings, assert_raises, assert_warns)
-import pytest
 
 from randomgen import MT19937, Generator
 from randomgen._testing import suppress_warnings
@@ -182,10 +182,10 @@ class TestRandint(object):
             lbnd = 0 if dt is bool else np.iinfo(dt).min
             ubnd = 2 if dt is bool else np.iinfo(dt).max + (not endpoint)
 
-            assert_raises(ValueError, self.rfunc, [
-                          lbnd - 1] * 2, [ubnd] * 2, endpoint=endpoint, dtype=dt)
-            assert_raises(ValueError, self.rfunc, [
-                          lbnd] * 2, [ubnd + 1] * 2, endpoint=endpoint, dtype=dt)
+            assert_raises(ValueError, self.rfunc, [lbnd - 1] * 2, [ubnd] * 2,
+                          endpoint=endpoint, dtype=dt)
+            assert_raises(ValueError, self.rfunc, [lbnd] * 2,
+                          [ubnd + 1] * 2, endpoint=endpoint, dtype=dt)
             assert_raises(ValueError, self.rfunc, ubnd, [lbnd] * 2,
                           endpoint=endpoint, dtype=dt)
             assert_raises(ValueError, self.rfunc, [1] * 2, 0,
@@ -214,7 +214,8 @@ class TestRandint(object):
             assert_equal(self.rfunc(tgt, tgt + is_open, size=1000,
                                     endpoint=endpoint, dtype=dt), tgt)
             assert_equal(self.rfunc([tgt], [tgt + is_open],
-                                    size=1000, endpoint=endpoint, dtype=dt), tgt)
+                                    size=1000, endpoint=endpoint, dtype=dt),
+                         tgt)
 
     def test_rng_zero_and_extremes_array(self, endpoint):
         size = 1000
@@ -301,7 +302,8 @@ class TestRandint(object):
 
             size = 1000
             random.bit_generator.seed(1234)
-            scalar = self.rfunc(lbnd, ubnd, size=size, endpoint=endpoint, dtype=dt)
+            scalar = self.rfunc(lbnd, ubnd, size=size, endpoint=endpoint,
+                                dtype=dt)
 
             random.bit_generator.seed(1234)
             scalar_array = self.rfunc([lbnd], [ubnd], size=size,
@@ -358,16 +360,18 @@ class TestRandint(object):
 
             # view as little endian for hash
             random.bit_generator.seed(1234)
-            val = self.rfunc(lbnd, ubnd, size=1000, endpoint=endpoint, dtype=dt)
+            val = self.rfunc(lbnd, ubnd, size=1000, endpoint=endpoint,
+                             dtype=dt)
 
             random.bit_generator.seed(1234)
-            val_bc = self.rfunc([lbnd] * 1000, ubnd, endpoint=endpoint, dtype=dt)
+            val_bc = self.rfunc([lbnd] * 1000, ubnd, endpoint=endpoint,
+                                dtype=dt)
 
             assert_array_equal(val, val_bc)
 
             random.bit_generator.seed(1234)
-            val_bc = self.rfunc([lbnd] * 1000, [ubnd] * 1000, endpoint=endpoint,
-                                dtype=dt)
+            val_bc = self.rfunc([lbnd] * 1000, [ubnd] * 1000,
+                                endpoint=endpoint, dtype=dt)
 
             assert_array_equal(val, val_bc)
 
@@ -463,8 +467,10 @@ class TestRandint(object):
             sample = self.rfunc(0, 0, (3, 0, 4), endpoint=endpoint, dtype=dt)
             assert sample.shape == (3, 0, 4)
             assert sample.dtype == dt
-            assert self.rfunc(0, -10, 0, endpoint=endpoint, dtype=dt).shape == (0,)
-            assert_equal(random.integers(0, 0, size=(3, 0, 4)).shape, (3, 0, 4))
+            assert self.rfunc(0, -10, 0, endpoint=endpoint,
+                              dtype=dt).shape == (0,)
+            assert_equal(random.integers(0, 0, size=(3, 0, 4)).shape,
+                         (3, 0, 4))
             assert_equal(random.integers(0, -10, size=0).shape, (0,))
             assert_equal(random.integers(10, 10, size=0).shape, (0,))
 

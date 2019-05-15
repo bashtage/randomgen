@@ -13,18 +13,18 @@ from .dsfmt import DSFMT
 from .generator import Generator
 from .mt19937 import MT19937
 
-BitGeneratorS = {'MT19937': MT19937,
-             'DSFMT': DSFMT,
-             'PCG32': PCG32,
-             'PCG64': PCG64,
-             'Philox': Philox,
-             'ThreeFry': ThreeFry,
-             'ThreeFry32': ThreeFry32,
-             'Xorshift1024': Xorshift1024,
-             'Xoroshiro128': Xoroshiro128,
-             'Xoshiro256StarStar': Xoshiro256StarStar,
-             'Xoshiro512StarStar': Xoshiro512StarStar,
-             }
+BitGenerators = {'MT19937': MT19937,
+                 'DSFMT': DSFMT,
+                 'PCG32': PCG32,
+                 'PCG64': PCG64,
+                 'Philox': Philox,
+                 'ThreeFry': ThreeFry,
+                 'ThreeFry32': ThreeFry32,
+                 'Xorshift1024': Xorshift1024,
+                 'Xoroshiro128': Xoroshiro128,
+                 'Xoshiro256StarStar': Xoshiro256StarStar,
+                 'Xoshiro512StarStar': Xoshiro512StarStar,
+                 }
 
 
 def __generator_ctor(bit_generator_name='mt19937'):
@@ -45,10 +45,11 @@ def __generator_ctor(bit_generator_name='mt19937'):
         bit_generator_name = bit_generator_name.decode('ascii')
     except AttributeError:
         pass
-    if bit_generator_name in BitGeneratorS:
-        bit_generator = BitGeneratorS[bit_generator_name]
+    if bit_generator_name in BitGenerators:
+        bit_generator = BitGenerators[bit_generator_name]
     else:
-        raise ValueError(str(bit_generator_name) + ' is not a known BitGenerator module.')
+        raise ValueError(
+            str(bit_generator_name) + ' is not a known BitGenerator module.')
 
     return Generator(bit_generator())
 
@@ -71,10 +72,11 @@ def __bit_generator_ctor(bit_generator_name='mt19937'):
         bit_generator_name = bit_generator_name.decode('ascii')
     except AttributeError:
         pass
-    if bit_generator_name in BitGeneratorS:
-        bit_generator = BitGeneratorS[bit_generator_name]
+    if bit_generator_name in BitGenerators:
+        bit_generator = BitGenerators[bit_generator_name]
     else:
-        raise ValueError(str(bit_generator_name) + ' is not a known BitGenerator module.')
+        raise ValueError(
+            str(bit_generator_name) + ' is not a known BitGenerator module.')
 
     return bit_generator()
 
@@ -97,9 +99,10 @@ def __randomstate_ctor(bit_generator_name='mt19937'):
         bit_generator_name = bit_generator_name.decode('ascii')
     except AttributeError:
         pass
-    if bit_generator_name in BitGeneratorS:
-        bit_generator = BitGeneratorS[bit_generator_name]
+    if bit_generator_name in BitGenerators:
+        bit_generator = BitGenerators[bit_generator_name]
     else:
-        raise ValueError(str(bit_generator_name) + ' is not a known BitGenerator module.')
+        raise ValueError(
+            str(bit_generator_name) + ' is not a known BitGenerator module.')
 
     return RandomState(bit_generator())
