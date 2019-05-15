@@ -9,7 +9,7 @@ import pytest
 from numpy.testing import (assert_, assert_almost_equal, assert_array_equal,
                            assert_equal)
 
-from randomgen import (DSFMT, MT19937, PCG32, PCG64, Philox, Generator,
+from randomgen import (DSFMT, MT19937, PCG32, PCG64, Generator, Philox,
                        ThreeFry, ThreeFry32, Xoroshiro128, Xorshift1024,
                        Xoshiro256StarStar, Xoshiro512StarStar, entropy)
 from randomgen._testing import suppress_warnings
@@ -169,7 +169,8 @@ class RNG(object):
             pytest.skip('jumped is not supported by {0}'.format(bit_gen_name))
 
     def test_jumped_against_jump(self):
-        if hasattr(self.rg.bit_generator, 'jumped') and hasattr(self.rg.bit_generator, 'jump'):
+        if (hasattr(self.rg.bit_generator, 'jumped') and
+                hasattr(self.rg.bit_generator, 'jump')):
             bg = self.rg.bit_generator
             state = bg.state
             new_bg = bg.jumped()
@@ -180,10 +181,12 @@ class RNG(object):
             assert_(comp_state(bg.state, new_bg.state))
         else:
             bit_gen_name = self.rg.bit_generator.__class__.__name__
-            pytest.skip('jump or jumped is not supported by {0}'.format(bit_gen_name))
+            pytest.skip('jump or jumped is not supported by '
+                        '{0}'.format(bit_gen_name))
 
     def test_jumped_against_jump_32bit(self):
-        if hasattr(self.rg.bit_generator, 'jumped') and hasattr(self.rg.bit_generator, 'jump'):
+        if (hasattr(self.rg.bit_generator, 'jumped') and
+                hasattr(self.rg.bit_generator, 'jump')):
             bg = self.rg.bit_generator
             bg.seed(*self.seed)
             # Draw large prime number of 32bits to move internal state values
@@ -197,7 +200,8 @@ class RNG(object):
             assert_(comp_state(bg.state, new_bg.state))
         else:
             bit_gen_name = self.rg.bit_generator.__class__.__name__
-            pytest.skip('jump or jumped is not supported by {0}'.format(bit_gen_name))
+            pytest.skip('jump or jumped is not supported by '
+                        '{0}'.format(bit_gen_name))
 
     def test_uniform(self):
         r = self.rg.uniform(-1.0, 0.0, size=10)
@@ -276,7 +280,8 @@ class RNG(object):
     def test_entropy_init(self):
         rg = Generator(self.bit_generator())
         rg2 = Generator(self.bit_generator())
-        assert_(not comp_state(rg.bit_generator.state, rg2.bit_generator.state))
+        assert_(not comp_state(rg.bit_generator.state,
+                               rg2.bit_generator.state))
 
     def test_seed(self):
         rg = Generator(self.bit_generator(*self.seed))
@@ -539,12 +544,14 @@ class RNG(object):
         pick = pickle.dumps(self.rg)
         unpick = pickle.loads(pick)
         assert_((type(self.rg) == type(unpick)))
-        assert_(comp_state(self.rg.bit_generator.state, unpick.bit_generator.state))
+        assert_(comp_state(self.rg.bit_generator.state,
+                           unpick.bit_generator.state))
 
         pick = pickle.dumps(self.rg)
         unpick = pickle.loads(pick)
         assert_((type(self.rg) == type(unpick)))
-        assert_(comp_state(self.rg.bit_generator.state, unpick.bit_generator.state))
+        assert_(comp_state(self.rg.bit_generator.state,
+                           unpick.bit_generator.state))
 
     def test_seed_array(self):
         if self.seed_vector_bits is None:
