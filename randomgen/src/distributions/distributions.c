@@ -603,7 +603,7 @@ double random_laplace(bitgen_t *bitgen_state, double loc, double scale) {
   } else if (U > 0.0) {
     U = loc + scale * log(U + U);
   } else {
-    /* Reject U == 0.0 */
+    /* Reject U == 0.0 and call again to get next value */
     U = random_laplace(bitgen_state, loc, scale);
   }
   return U;
@@ -616,6 +616,7 @@ double random_gumbel(bitgen_t *bitgen_state, double loc, double scale) {
   if (U < 1.0) {
     return loc - scale * log(-log(U));
   }
+  /* Reject U == 1.0 and call again to get next value */
   return random_gumbel(bitgen_state, loc, scale);
 }
 
@@ -626,6 +627,7 @@ double random_logistic(bitgen_t *bitgen_state, double loc, double scale) {
   if (U > 0.0) {
     return loc + scale * log(U / (1.0 - U));
   }
+  /* Reject U == 0.0 and call again to get next value */
   return random_logistic(bitgen_state, loc, scale);
 }
 
