@@ -291,7 +291,7 @@ cdef class Xorshift1024:
 
         Returns
         -------
-        bit_generator : Xoroshiro128
+        bit_generator : Xorshift1024
             New instance of generator jumped iter times
         """
         cdef Xorshift1024 bit_generator

@@ -389,7 +389,7 @@ cdef class PCG64:
 
         Returns
         -------
-        bit_generator : Xoroshiro128
+        bit_generator : PCG64
             New instance of generator jumped iter times
         """
         cdef PCG64 bit_generator

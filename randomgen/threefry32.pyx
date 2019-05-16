@@ -386,7 +386,7 @@ cdef class ThreeFry32:
 
         Returns
         -------
-        bit_generator : Xoroshiro128
+        bit_generator : ThreeFry32
             New instance of generator jumped iter times
         """
         cdef ThreeFry32 bit_generator

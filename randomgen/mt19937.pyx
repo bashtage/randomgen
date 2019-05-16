@@ -260,7 +260,7 @@ cdef class MT19937:
 
         Returns
         -------
-        self : DSFMT
+        self : MT19937
             PRNG jumped iter times
         """
         import warnings
@@ -286,7 +286,7 @@ cdef class MT19937:
 
         Returns
         -------
-        bit_generator : Xoroshiro128
+        bit_generator : MT19937
             New instance of generator jumped iter times
         """
         cdef MT19937 bit_generator

@@ -368,7 +368,6 @@ cdef class ThreeFry:
         import warnings
         warnings.warn('jump (in-place) has been deprecated in favor of jumped'
                       ', which returns a new instance', DeprecationWarning)
-
         self.jump_inplace(iter)
         return self
 
@@ -388,7 +387,7 @@ cdef class ThreeFry:
 
         Returns
         -------
-        bit_generator : Xoroshiro128
+        bit_generator : ThreeFry
             New instance of generator jumped iter times
         """
         cdef ThreeFry bit_generator

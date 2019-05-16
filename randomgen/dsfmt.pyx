@@ -322,7 +322,7 @@ cdef class DSFMT:
 
         Returns
         -------
-        bit_generator : Xoroshiro128
+        bit_generator : DSFMT
             New instance of generator jumped iter times
         """
         cdef DSFMT bit_generator

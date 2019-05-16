@@ -286,7 +286,7 @@ cdef class Xoshiro256StarStar:
 
         Returns
         -------
-        bit_generator : Xoroshiro128
+        bit_generator : Xoshiro256StarStar
             New instance of generator jumped iter times
         """
         cdef Xoshiro256StarStar bit_generator
