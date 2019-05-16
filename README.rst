@@ -7,7 +7,7 @@ NumPy RandomState evolution.
 Continuous Integration
 ~~~~~~~~~~~~~~~~~~~~~~
 
-|Travis Build Status| |Appveyor Build Status|
+|Travis Build Status| |Appveyor Build Status| |Build Status|
 
 Coverage
 ~~~~~~~~
@@ -165,9 +165,10 @@ Status
 -  Builds and passes all tests on:
 
    -  Linux 32/64 bit, Python 2.7, 3.5, 3.6, 3.7
-   -  PC-BSD (FreeBSD) 64-bit, Python 2.7
+   -  Linux (ARM/ARM64), Python 3.7
    -  OSX 64-bit, Python 2.7, 3.5, 3.6, 3.7
-   -  Windows 32/64 bit, Python 2.7, 3.5 and 3.6, 3.7
+   -  Windows 32/64 bit, Python 2.7, 3.5, 3.6, 3.7
+   -  PC-BSD (FreeBSD) 64-bit, Python 2.7 *(Occasional, no CI)*
 
 Version
 -------
@@ -335,6 +336,8 @@ NumPy’s mt19937.
    :target: https://travis-ci.org/bashtage/randomgen
 .. |Appveyor Build Status| image:: https://ci.appveyor.com/api/projects/status/odc5c4ukhru5xicl/branch/master?svg=true
    :target: https://ci.appveyor.com/project/bashtage/randomgen/branch/master
+.. |Build Status| image:: https://cloud.drone.io/api/badges/bashtage/randomgen/status.svg
+   :target: https://cloud.drone.io/bashtage/randomgen
 .. |Coverage Status| image:: https://coveralls.io/repos/github/bashtage/randomgen/badge.svg
    :target: https://coveralls.io/github/bashtage/randomgen
 .. |codecov| image:: https://codecov.io/gh/bashtage/randomgen/branch/master/graph/badge.svg

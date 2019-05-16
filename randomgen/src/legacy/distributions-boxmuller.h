@@ -30,11 +30,14 @@ extern double legacy_lognormal(aug_brng_t *aug_state, double mean,
 extern double legacy_standard_t(aug_brng_t *aug_state, double df);
 extern int64_t legacy_negative_binomial(aug_brng_t *aug_state, double n,
                                         double p);
+extern int64_t legacy_logseries(aug_brng_t *aug_state, double p);
+
 extern double legacy_standard_cauchy(aug_brng_t *state);
 extern double legacy_beta(aug_brng_t *aug_state, double a, double b);
 extern double legacy_f(aug_brng_t *aug_state, double dfnum, double dfden);
 extern double legacy_normal(aug_brng_t *aug_state, double loc, double scale);
 extern double legacy_standard_gamma(aug_brng_t *aug_state, double shape);
 extern double legacy_exponential(aug_brng_t *aug_state, double scale);
+extern double legacy_rayleigh(aug_brng_t *aug_state, double mode);
 
 #endif

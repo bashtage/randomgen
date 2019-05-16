@@ -150,9 +150,10 @@ The RNGs include:
 
 * Builds and passes all tests on:
   * Linux 32/64 bit, Python 2.7, 3.5, 3.6, 3.7
-  * PC-BSD (FreeBSD) 64-bit, Python 2.7
+  * Linux (ARM/ARM64), Python 3.7
   * OSX 64-bit, Python 2.7, 3.5, 3.6, 3.7
-  * Windows 32/64 bit, Python 2.7, 3.5 and 3.6, 3.7
+  * Windows 32/64 bit, Python 2.7, 3.5, 3.6, 3.7
+  * PC-BSD (FreeBSD) 64-bit, Python 2.7 _(Occasional, no CI)_
 
 ## Version
 

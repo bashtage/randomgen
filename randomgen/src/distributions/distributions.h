@@ -34,6 +34,15 @@ static NPY_INLINE int64_t llabs(int64_t x) {
   }
   return o;
 }
+
+static NPY_INLINE double log1p(double x) {
+  return npy_log1p(x);
+}
+
+static NPY_INLINE float log1pf(float x) {
+  return npy_log1pf(x);
+}
+
 #endif
 #endif
 
