@@ -7,6 +7,7 @@ NumPy RandomState evolution.
 
 [![Travis Build Status](https://travis-ci.org/bashtage/randomgen.svg?branch=master)](https://travis-ci.org/bashtage/randomgen)
 [![Appveyor Build Status](https://ci.appveyor.com/api/projects/status/odc5c4ukhru5xicl/branch/master?svg=true)](https://ci.appveyor.com/project/bashtage/randomgen/branch/master)
+[![Build Status](https://cloud.drone.io/api/badges/bashtage/randomgen/status.svg)](https://cloud.drone.io/bashtage/randomgen)
 
 **Coverage**
 
