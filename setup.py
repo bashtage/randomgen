@@ -8,6 +8,7 @@ from os.path import join
 
 import Cython.Compiler.Options
 import numpy as np
+import numpy.distutils.misc_util
 from Cython.Build import cythonize
 from setuptools import setup, find_packages, Distribution
 from setuptools.extension import Extension
@@ -57,6 +58,10 @@ if '--no-sse2' in sys.argv:
 MOD_DIR = './randomgen'
 
 DEBUG = False
+
+numpy_math_libs = numpy.distutils.misc_util.get_info('npymath')
+NUMPY_MATH_LIBRARIES = numpy_math_libs['libraries']
+NUMPY_MATH_LIBRARY_DIRS = numpy_math_libs['library_dirs']
 
 EXTRA_INCLUDE_DIRS = []
 EXTRA_LINK_ARGS = []
@@ -250,7 +255,8 @@ extensions = [Extension('randomgen.entropy',
                         ["randomgen/generator.pyx",
                          join(MOD_DIR, 'src', 'distributions',
                               'distributions.c')],
-                        libraries=EXTRA_LIBRARIES,
+                        libraries=EXTRA_LIBRARIES + NUMPY_MATH_LIBRARIES,
+                        library_dirs=NUMPY_MATH_LIBRARY_DIRS,
                         include_dirs=EXTRA_INCLUDE_DIRS + [np.get_include()],
                         extra_compile_args=EXTRA_COMPILE_ARGS,
                         extra_link_args=EXTRA_LINK_ARGS,
@@ -268,7 +274,8 @@ extensions = [Extension('randomgen.entropy',
                         ["randomgen/bounded_integers.pyx",
                          join(MOD_DIR, 'src', 'distributions',
                               'distributions.c')],
-                        libraries=EXTRA_LIBRARIES,
+                        libraries=EXTRA_LIBRARIES + NUMPY_MATH_LIBRARIES,
+                        library_dirs=NUMPY_MATH_LIBRARY_DIRS,
                         include_dirs=EXTRA_INCLUDE_DIRS + [np.get_include()],
                         extra_compile_args=EXTRA_COMPILE_ARGS,
                         extra_link_args=EXTRA_LINK_ARGS,
@@ -279,7 +286,8 @@ extensions = [Extension('randomgen.entropy',
                          join(MOD_DIR, 'src', 'legacy',
                               'distributions-boxmuller.c'),
                          join(MOD_DIR, 'src', 'distributions', 'distributions.c')],
-                        libraries=EXTRA_LIBRARIES,
+                        libraries=EXTRA_LIBRARIES + NUMPY_MATH_LIBRARIES,
+                        library_dirs=NUMPY_MATH_LIBRARY_DIRS,
                         include_dirs=EXTRA_INCLUDE_DIRS +
                         [np.get_include()] + [join(MOD_DIR, 'legacy')],
                         extra_compile_args=EXTRA_COMPILE_ARGS,
