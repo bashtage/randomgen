@@ -16,7 +16,7 @@ double random_double(bitgen_t *bitgen_state) {
 }
 
 static NPY_INLINE double next_standard_exponential(bitgen_t *bitgen_state) {
-  return -log1p(-next_double(bitgen_state));
+  return -log(1.0 - next_double(bitgen_state));
 }
 
 double random_standard_exponential(bitgen_t *bitgen_state) {
@@ -32,7 +32,7 @@ void random_standard_exponential_fill(bitgen_t *bitgen_state, npy_intp cnt,
 }
 
 float random_standard_exponential_f(bitgen_t *bitgen_state) {
-  return -log1pf(-next_float(bitgen_state));
+  return -logf(1.0f - next_float(bitgen_state));
 }
 
 void random_double_fill(bitgen_t *bitgen_state, npy_intp cnt, double *out) {
@@ -97,7 +97,7 @@ static double standard_exponential_zig_unlikely(bitgen_t *bitgen_state, uint8_t 
                                                 double x) {
   if (idx == 0) {
     /* Switch to 1.0 - U to avoid log(0.0), see GH 13361 */
-    return ziggurat_exp_r - log1p(-next_double(bitgen_state));
+    return ziggurat_exp_r - log(1.0 - next_double(bitgen_state));
   } else if ((fe_double[idx - 1] - fe_double[idx]) * next_double(bitgen_state) +
                  fe_double[idx] <
              exp(-x)) {
@@ -140,7 +140,7 @@ static float standard_exponential_zig_unlikely_f(bitgen_t *bitgen_state,
                                                  uint8_t idx, float x) {
   if (idx == 0) {
     /* Switch to 1.0 - U to avoid log(0.0), see GH 13361 */
-    return ziggurat_exp_r_f - log1pf(-next_float(bitgen_state));
+    return ziggurat_exp_r_f - logf(1.0f - next_float(bitgen_state));
   } else if ((fe_float[idx - 1] - fe_float[idx]) * next_float(bitgen_state) +
                  fe_float[idx] <
              expf(-x)) {
@@ -190,8 +190,8 @@ static NPY_INLINE double next_gauss_zig(bitgen_t *bitgen_state) {
     if (idx == 0) {
       for (;;) {
         /* Switch to 1.0 - U to avoid log(0.0), see GH 13361 */
-        xx = -ziggurat_nor_inv_r * log1p(-next_double(bitgen_state));
-        yy = -log1p(-next_double(bitgen_state));
+        xx = -ziggurat_nor_inv_r * log(1.0 - next_double(bitgen_state));
+        yy = -log(1.0 - next_double(bitgen_state));
         if (yy + yy > xx * xx)
           return ((rabs >> 8) & 0x1) ? -(ziggurat_nor_r + xx)
                                      : ziggurat_nor_r + xx;
@@ -235,8 +235,8 @@ float random_gauss_zig_f(bitgen_t *bitgen_state) {
     if (idx == 0) {
       for (;;) {
         /* Switch to 1.0 - U to avoid log(0.0), see GH 13361 */
-        xx = -ziggurat_nor_inv_r_f * log1pf(-next_float(bitgen_state));
-        yy = -log1pf(-next_float(bitgen_state));
+        xx = -ziggurat_nor_inv_r_f * logf(1.0f - next_float(bitgen_state));
+        yy = -logf(1.0f - next_float(bitgen_state));
         if (yy + yy > xx * xx)
           return ((rabs >> 8) & 0x1) ? -(ziggurat_nor_r_f + xx)
                                      : ziggurat_nor_r_f + xx;
@@ -636,7 +636,7 @@ double random_lognormal(bitgen_t *bitgen_state, double mean, double sigma) {
 }
 
 double random_rayleigh(bitgen_t *bitgen_state, double mode) {
-  return mode * sqrt(-2.0 * log1p(-next_double(bitgen_state)));
+  return mode * sqrt(-2.0 * log(1.0 - next_double(bitgen_state)));
 }
 
 double random_standard_t(bitgen_t *bitgen_state, double df) {
@@ -1021,7 +1021,7 @@ int64_t random_logseries(bitgen_t *bitgen_state, double p) {
   double q, r, U, V;
   int64_t result;
 
-  r = log1p(-p);
+  r = log(1.0 - p);
 
   while (1) {
     V = next_double(bitgen_state);
@@ -1062,7 +1062,6 @@ int64_t random_geometric_search(bitgen_t *bitgen_state, double p) {
   return X;
 }
 
-// TODO: Split
 int64_t random_geometric_inversion(bitgen_t *bitgen_state, double p) {
   return (int64_t)ceil(log(1.0 - next_double(bitgen_state)) / log(1.0 - p));
 }
