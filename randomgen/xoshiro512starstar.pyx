@@ -3,7 +3,6 @@ try:
 except ImportError:
     from dummy_threading import Lock
 
-from libc.stdlib cimport malloc, free
 from cpython.pycapsule cimport PyCapsule_New
 
 import numpy as np
@@ -119,8 +118,8 @@ cdef class Xoshiro512StarStar:
     .. [1] "xoroshiro+ / xorshift* / xorshift+ generators and the PRNG shootout",
            http://xorshift.di.unimi.it/
     """
-    cdef xoshiro512starstar_state *rng_state
-    cdef brng_t *_brng
+    cdef brng_t _brng
+    cdef xoshiro512starstar_state rng_state
     cdef public object capsule
     cdef object _ctypes
     cdef object _cffi
@@ -128,12 +127,11 @@ cdef class Xoshiro512StarStar:
     cdef public object lock
 
     def __init__(self, seed=None):
-        self.rng_state = <xoshiro512starstar_state *>malloc(sizeof(xoshiro512starstar_state))
-        self._brng = <brng_t *>malloc(sizeof(brng_t))
+
         self.seed(seed)
         self.lock = Lock()
 
-        self._brng.state = <void *>self.rng_state
+        self._brng.state = <void *>&self.rng_state
         self._brng.next_uint64 = &xoshiro512starstar_uint64
         self._brng.next_uint32 = &xoshiro512starstar_uint32
         self._brng.next_double = &xoshiro512starstar_double
@@ -144,7 +142,7 @@ cdef class Xoshiro512StarStar:
         self._generator = None
 
         cdef const char *name = "BasicRNG"
-        self.capsule = PyCapsule_New(<void *>self._brng, name, NULL)
+        self.capsule = PyCapsule_New(<void *>&self._brng, name, NULL)
 
     # Pickling support:
     def __getstate__(self):
@@ -156,12 +154,6 @@ cdef class Xoshiro512StarStar:
     def __reduce__(self):
         from randomgen._pickle import __brng_ctor
         return __brng_ctor, (self.state['brng'],), self.state
-
-    def __dealloc__(self):
-        if self.rng_state:
-            free(self.rng_state)
-        if self._brng:
-            free(self._brng)
 
     cdef _reset_state_variables(self):
         self.rng_state.has_uint32 = 0
@@ -196,10 +188,10 @@ cdef class Xoshiro512StarStar:
 
         See the class docstring for the number of bits returned.
         """
-        return random_raw(self._brng, self.lock, size, output)
+        return random_raw(&self._brng, self.lock, size, output)
 
     def _benchmark(self, Py_ssize_t cnt, method=u'uint64'):
-        return benchmark(self._brng, self.lock, cnt, method)
+        return benchmark(&self._brng, self.lock, cnt, method)
 
     def seed(self, seed=None):
         """
@@ -257,7 +249,7 @@ cdef class Xoshiro512StarStar:
         """
         cdef np.npy_intp i
         for i in range(iter):
-            xoshiro512starstar_jump(self.rng_state)
+            xoshiro512starstar_jump(&self.rng_state)
         self._reset_state_variables()
         return self
 
@@ -311,7 +303,7 @@ cdef class Xoshiro512StarStar:
             * brng - pointer to the Basic RNG struct
         """
         if self._ctypes is None:
-            self._ctypes = prepare_ctypes(self._brng)
+            self._ctypes = prepare_ctypes(&self._brng)
 
         return self._ctypes
 
@@ -334,7 +326,7 @@ cdef class Xoshiro512StarStar:
         """
         if self._cffi is not None:
             return self._cffi
-        self._cffi = prepare_cffi(self._brng)
+        self._cffi = prepare_cffi(&self._brng)
         return self._cffi
 
     @property

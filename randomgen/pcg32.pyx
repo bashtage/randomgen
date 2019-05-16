@@ -1,4 +1,3 @@
-from libc.stdlib cimport malloc, free
 from cpython.pycapsule cimport PyCapsule_New
 
 try:
@@ -14,7 +13,6 @@ from randomgen.distributions cimport brng_t
 from randomgen.entropy import random_entropy
 
 np.import_array()
-
 
 cdef extern from "src/pcg32/pcg32.h":
 
@@ -54,7 +52,6 @@ cdef class PCG32:
     PCG32(seed=None, inc=0)
 
     Container for the PCG-32 pseudo-random number generator.
-
 
     Parameters
     ----------
@@ -121,8 +118,9 @@ cdef class PCG32:
     .. [2] O'Neill, Melissa E. "PCG: A Family of Simple Fast Space-Efficient
            Statistically Good Algorithms for Random Number Generation"
     """
-    cdef pcg32_state *rng_state
-    cdef brng_t *_brng
+    cdef pcg32_state rng_state
+    cdef pcg32_random_t pcg32_random_state
+    cdef brng_t _brng
     cdef public object capsule
     cdef object _ctypes
     cdef object _cffi
@@ -130,13 +128,11 @@ cdef class PCG32:
     cdef public object lock
 
     def __init__(self, seed=None, inc=0):
-        self.rng_state = <pcg32_state *>malloc(sizeof(pcg32_state))
-        self.rng_state.pcg_state = <pcg32_random_t *>malloc(sizeof(pcg32_random_t))
-        self._brng = <brng_t *>malloc(sizeof(brng_t))
+        self.rng_state.pcg_state = &self.pcg32_random_state
         self.seed(seed, inc)
         self.lock = Lock()
 
-        self._brng.state = <void *>self.rng_state
+        self._brng.state = <void *>&self.rng_state
         self._brng.next_uint64 = &pcg32_uint64
         self._brng.next_uint32 = &pcg32_uint32
         self._brng.next_double = &pcg32_double
@@ -147,7 +143,7 @@ cdef class PCG32:
         self._generator = None
 
         cdef const char *name = "BasicRNG"
-        self.capsule = PyCapsule_New(<void *>self._brng, name, NULL)
+        self.capsule = PyCapsule_New(<void *>&self._brng, name, NULL)
 
     # Pickling support:
     def __getstate__(self):
@@ -159,12 +155,6 @@ cdef class PCG32:
     def __reduce__(self):
         from randomgen._pickle import __brng_ctor
         return __brng_ctor, (self.state['brng'],), self.state
-
-    def __dealloc__(self):
-        if self.rng_state:
-            free(self.rng_state)
-        if self._brng:
-            free(self._brng)
 
     def random_raw(self, size=None, output=True):
         """
@@ -195,10 +185,10 @@ cdef class PCG32:
 
         See the class docstring for the number of bits returned.
         """
-        return random_raw(self._brng, self.lock, size, output)
+        return random_raw(&self._brng, self.lock, size, output)
 
     def _benchmark(self, Py_ssize_t cnt, method=u'uint64'):
-        return benchmark(self._brng, self.lock, cnt, method)
+        return benchmark(&self._brng, self.lock, cnt, method)
 
     def seed(self, seed=None, inc=0):
         """
@@ -246,7 +236,7 @@ cdef class PCG32:
             raise ValueError('inc must be a scalar integer between 0 '
                              'and {ub}'.format(ub=ub))
 
-        pcg32_set_seed(self.rng_state, <uint64_t>seed, <uint64_t>inc)
+        pcg32_set_seed(&self.rng_state, <uint64_t>seed, <uint64_t>inc)
 
     @property
     def state(self):
@@ -307,7 +297,7 @@ cdef class PCG32:
           RNG.  For example, two 16-bit integer values can be simulated
           from a single draw of a 32-bit RNG.
         """
-        pcg32_advance_state(self.rng_state, <uint64_t>delta)
+        pcg32_advance_state(&self.rng_state, <uint64_t>delta)
         return self
 
     def jump(self, np.npy_intp iter=1):
@@ -346,7 +336,7 @@ cdef class PCG32:
             * brng - pointer to the Basic RNG struct
         """
         if self._ctypes is None:
-            self._ctypes = prepare_ctypes(self._brng)
+            self._ctypes = prepare_ctypes(&self._brng)
 
         return self._ctypes
 
@@ -369,7 +359,7 @@ cdef class PCG32:
         """
         if self._cffi is not None:
             return self._cffi
-        self._cffi = prepare_cffi(self._brng)
+        self._cffi = prepare_cffi(&self._brng)
         return self._cffi
 
     @property

@@ -1,4 +1,3 @@
-from libc.stdlib cimport malloc, free
 from cpython.pycapsule cimport PyCapsule_New
 
 try:
@@ -156,8 +155,10 @@ cdef class Philox:
            the International Conference for High Performance Computing,
            Networking, Storage and Analysis (SC11), New York, NY: ACM, 2011.
     """
-    cdef philox_state *rng_state
-    cdef brng_t *_brng
+    cdef philox_state rng_state
+    cdef philox4x64_key_t philox_key
+    cdef philox4x64_ctr_t philox_ctr
+    cdef brng_t _brng
     cdef public object capsule
     cdef object _ctypes
     cdef object _cffi
@@ -165,16 +166,12 @@ cdef class Philox:
     cdef public object lock
 
     def __init__(self, seed=None, counter=None, key=None):
-        self.rng_state = <philox_state *> malloc(sizeof(philox_state))
-        self.rng_state.ctr = <philox4x64_ctr_t *> malloc(
-            sizeof(philox4x64_ctr_t))
-        self.rng_state.key = <philox4x64_key_t *> malloc(
-            sizeof(philox4x64_key_t))
-        self._brng = <brng_t *> malloc(sizeof(brng_t))
+        self.rng_state.ctr = &self.philox_ctr
+        self.rng_state.key = &self.philox_key
         self.seed(seed, counter, key)
         self.lock = Lock()
 
-        self._brng.state = <void *> self.rng_state
+        self._brng.state = <void *>&self.rng_state
         self._brng.next_uint64 = &philox_uint64
         self._brng.next_uint32 = &philox_uint32
         self._brng.next_double = &philox_double
@@ -185,7 +182,7 @@ cdef class Philox:
         self._generator = None
 
         cdef const char *name = 'BasicRNG'
-        self.capsule = PyCapsule_New(<void *> self._brng, name, NULL)
+        self.capsule = PyCapsule_New(<void *>&self._brng, name, NULL)
 
     # Pickling support:
     def __getstate__(self):
@@ -197,14 +194,6 @@ cdef class Philox:
     def __reduce__(self):
         from randomgen._pickle import __brng_ctor
         return __brng_ctor, (self.state['brng'],), self.state
-
-    def __dealloc__(self):
-        if self.rng_state:
-            free(self.rng_state.ctr)
-            free(self.rng_state.key)
-            free(self.rng_state)
-        if self._brng:
-            free(self._brng)
 
     cdef _reset_state_variables(self):
         self.rng_state.has_uint32 = 0
@@ -242,10 +231,10 @@ cdef class Philox:
 
         See the class docstring for the number of bits returned.
         """
-        return random_raw(self._brng, self.lock, size, output)
+        return random_raw(&self._brng, self.lock, size, output)
 
     def _benchmark(self, Py_ssize_t cnt, method=u'uint64'):
-        return benchmark(self._brng, self.lock, cnt, method)
+        return benchmark(&self._brng, self.lock, cnt, method)
 
     def seed(self, seed=None, counter=None, key=None):
         """
@@ -412,7 +401,7 @@ cdef class Philox:
         """
         cdef np.ndarray delta_a
         delta_a = int_to_array(delta, 'step', 256, 64)
-        philox_advance(<uint64_t *> delta_a.data, self.rng_state)
+        philox_advance(<uint64_t *> delta_a.data, &self.rng_state)
         self._reset_state_variables()
         return self
 
@@ -434,7 +423,7 @@ cdef class Philox:
             * brng - pointer to the Basic RNG struct
         """
         if self._ctypes is None:
-            self._ctypes = prepare_ctypes(self._brng)
+            self._ctypes = prepare_ctypes(&self._brng)
 
         return self._ctypes
 
@@ -457,7 +446,7 @@ cdef class Philox:
         """
         if self._cffi is not None:
             return self._cffi
-        self._cffi = prepare_cffi(self._brng)
+        self._cffi = prepare_cffi(&self._brng)
         return self._cffi
 
     @property

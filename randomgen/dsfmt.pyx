@@ -1,5 +1,5 @@
 import operator
-from libc.stdlib cimport malloc, free
+
 from cpython.pycapsule cimport PyCapsule_New
 
 try:
@@ -139,8 +139,8 @@ cdef class DSFMT:
            Jump Ahead Algorithm for Linear Recurrences in a Polynomial Space",
            Sequences and Their Applications - SETA, 290--298, 2008.
     """
-    cdef dsfmt_state *rng_state
-    cdef brng_t *_brng
+    cdef dsfmt_state rng_state
+    cdef brng_t _brng
     cdef public object capsule
     cdef public object _cffi
     cdef public object _ctypes
@@ -148,21 +148,19 @@ cdef class DSFMT:
     cdef public object lock
 
     def __init__(self, seed=None):
-        self.rng_state = <dsfmt_state *>malloc(sizeof(dsfmt_state))
         self.rng_state.state = <dsfmt_t *>PyArray_malloc_aligned(sizeof(dsfmt_t))
         self.rng_state.buffered_uniforms = <double *>PyArray_calloc_aligned(DSFMT_N64, sizeof(double))
         self.rng_state.buffer_loc = DSFMT_N64
-        self._brng = <brng_t *>malloc(sizeof(brng_t))
         self.seed(seed)
         self.lock = Lock()
 
-        self._brng.state = <void *>self.rng_state
+        self._brng.state = <void *>&self.rng_state
         self._brng.next_uint64 = &dsfmt_uint64
         self._brng.next_uint32 = &dsfmt_uint32
         self._brng.next_double = &dsfmt_double
         self._brng.next_raw = &dsfmt_raw
         cdef const char *name = "BasicRNG"
-        self.capsule = PyCapsule_New(<void *>self._brng, name, NULL)
+        self.capsule = PyCapsule_New(<void *>&self._brng, name, NULL)
 
         self._cffi = None
         self._ctypes = None
@@ -180,12 +178,10 @@ cdef class DSFMT:
         return __brng_ctor, (self.state['brng'],), self.state
 
     def __dealloc__(self):
-        if self.rng_state:
+        if self.rng_state.state:
             PyArray_free_aligned(self.rng_state.state)
+        if self.rng_state.buffered_uniforms:
             PyArray_free_aligned(self.rng_state.buffered_uniforms)
-            free(self.rng_state)
-        if self._brng:
-            free(self._brng)
 
     cdef _reset_state_variables(self):
         self.rng_state.buffer_loc = DSFMT_N64
@@ -219,10 +215,10 @@ cdef class DSFMT:
 
         See the class docstring for the number of bits returned.
         """
-        return random_raw(self._brng, self.lock, size, output)
+        return random_raw(&self._brng, self.lock, size, output)
 
     def _benchmark(self, Py_ssize_t cnt, method=u'uint64'):
-        return benchmark(self._brng, self.lock, cnt, method)
+        return benchmark(&self._brng, self.lock, cnt, method)
 
     def seed(self, seed=None):
         """
@@ -290,7 +286,7 @@ cdef class DSFMT:
         """
         cdef np.npy_intp i
         for i in range(iter):
-            dsfmt_jump(self.rng_state)
+            dsfmt_jump(&self.rng_state)
         # Clear the buffer
         self._reset_state_variables()
         return self
@@ -363,7 +359,7 @@ cdef class DSFMT:
             * brng - pointer to the Basic RNG struct
         """
         if self._ctypes is None:
-            self._ctypes = prepare_ctypes(self._brng)
+            self._ctypes = prepare_ctypes(&self._brng)
 
         return self._ctypes
 
@@ -386,7 +382,7 @@ cdef class DSFMT:
         """
         if self._cffi is not None:
             return self._cffi
-        self._cffi = prepare_cffi(self._brng)
+        self._cffi = prepare_cffi(&self._brng)
         return self._cffi
 
     @property
