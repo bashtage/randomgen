@@ -2755,7 +2755,7 @@ cdef class RandomState:
         0.087300000000000003 # random
 
         """
-        return cont(&random_rayleigh, &self._bitgen, size, self.lock, 1,
+        return cont(&legacy_rayleigh, &self._aug_state, size, self.lock, 1,
                     scale, 'scale', CONS_NON_NEGATIVE,
                     0.0, '', CONS_NONE,
                     0.0, '', CONS_NONE, None)
@@ -3542,7 +3542,7 @@ cdef class RandomState:
         >>> plt.show()
 
         """
-        return disc(&random_logseries, &self._bitgen, size, self.lock, 1, 0,
+        return disc(&legacy_logseries, &self._aug_state, size, self.lock, 1, 0,
                  p, 'p', CONS_BOUNDED_0_1,
                  0.0, '', CONS_NONE,
                  0.0, '', CONS_NONE)
