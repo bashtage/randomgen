@@ -35,10 +35,8 @@ cdef extern from "../src/legacy/distributions-boxmuller.h":
     double legacy_wald(aug_bitgen_t *aug_state, double mean, double scale) nogil
     double legacy_lognormal(aug_bitgen_t *aug_state, double mean, double sigma) nogil
     int64_t legacy_negative_binomial(aug_bitgen_t *aug_state, double n, double p) nogil
-    int64_t legacy_logseries(aug_bitgen_t *aug_state, double p) nogil
     double legacy_standard_cauchy(aug_bitgen_t *state) nogil
     double legacy_beta(aug_bitgen_t *aug_state, double a, double b) nogil
     double legacy_f(aug_bitgen_t *aug_state, double dfnum, double dfden) nogil
     double legacy_exponential(aug_bitgen_t *aug_state, double scale) nogil
     double legacy_power(aug_bitgen_t *state, double a) nogil
-    double legacy_rayleigh(aug_bitgen_t *state, double mode) nogil
