@@ -7,9 +7,7 @@
 #endif
 
 /* Random generators for external use */
-float random_float(bitgen_t *bitgen_state) {
-  return next_float(bitgen_state);
-}
+float random_float(bitgen_t *bitgen_state) { return next_float(bitgen_state); }
 
 double random_double(bitgen_t *bitgen_state) {
   return next_double(bitgen_state);
@@ -93,8 +91,8 @@ float random_gauss_f(bitgen_t *bitgen_state) {
 
 static NPY_INLINE double standard_exponential_zig(bitgen_t *bitgen_state);
 
-static double standard_exponential_zig_unlikely(bitgen_t *bitgen_state, uint8_t idx,
-                                                double x) {
+static double standard_exponential_zig_unlikely(bitgen_t *bitgen_state,
+                                                uint8_t idx, double x) {
   if (idx == 0) {
     /* Switch to 1.0 - U to avoid log(0.0), see GH 13361 */
     return ziggurat_exp_r - log(1.0 - next_double(bitgen_state));
@@ -292,9 +290,8 @@ static NPY_INLINE double standard_gamma(bitgen_t *bitgen_state, double shape) {
   }
 }
 
-static NPY_INLINE float standard_gamma_float(bitgen_t *bitgen_state, float shape) {
-  float b, c;
-  float U, V, X, Y;
+static NPY_INLINE float standard_gamma_float(bitgen_t *bitgen_state, float
+shape) { float b, c; float U, V, X, Y;
 
   if (shape == 1.0f) {
     return random_standard_exponential_f(bitgen_state);
@@ -344,7 +341,8 @@ float random_standard_gamma_f(bitgen_t *bitgen_state, float shape) {
 }
 */
 
-static NPY_INLINE double standard_gamma_zig(bitgen_t *bitgen_state, double shape) {
+static NPY_INLINE double standard_gamma_zig(bitgen_t *bitgen_state,
+                                            double shape) {
   double b, c;
   double U, V, X, Y;
 
@@ -389,7 +387,8 @@ static NPY_INLINE double standard_gamma_zig(bitgen_t *bitgen_state, double shape
   }
 }
 
-static NPY_INLINE float standard_gamma_zig_f(bitgen_t *bitgen_state, float shape) {
+static NPY_INLINE float standard_gamma_zig_f(bitgen_t *bitgen_state,
+                                             float shape) {
   float b, c;
   float U, V, X, Y;
 
@@ -921,8 +920,9 @@ int64_t random_binomial(bitgen_t *bitgen_state, double p, int64_t n,
   }
 }
 
-double random_noncentral_chisquare(bitgen_t *bitgen_state, double df, double nonc) {
-  if (npy_isnan(nonc)){
+double random_noncentral_chisquare(bitgen_t *bitgen_state, double df,
+                                   double nonc) {
+  if (npy_isnan(nonc)) {
     return NPY_NAN;
   }
   if (nonc == 0) {
@@ -965,7 +965,7 @@ double random_vonmises(bitgen_t *bitgen_state, double mu, double kappa) {
   double U, V, W, Y, Z;
   double result, mod;
   int neg;
-  if (npy_isnan(kappa)){
+  if (npy_isnan(kappa)) {
     return NPY_NAN;
   }
   if (kappa < 1e-8) {
@@ -1032,7 +1032,7 @@ int64_t random_logseries(bitgen_t *bitgen_state, double p) {
     q = 1.0 - exp(r * U);
     if (V <= q * q) {
       result = (int64_t)floor(1 + log(V) / log(q));
-      if ((result < 1) || (V==0.0)) {
+      if ((result < 1) || (V == 0.0)) {
         continue;
       } else {
         return result;
@@ -1121,8 +1121,8 @@ double random_triangular(bitgen_t *bitgen_state, double left, double mode,
   }
 }
 
-int64_t random_hypergeometric_hyp(bitgen_t *bitgen_state, int64_t good, int64_t bad,
-                                  int64_t sample) {
+int64_t random_hypergeometric_hyp(bitgen_t *bitgen_state, int64_t good,
+                                  int64_t bad, int64_t sample) {
   int64_t d1, k, z;
   double d2, u, y;
 
@@ -1215,7 +1215,7 @@ int64_t random_hypergeometric(bitgen_t *bitgen_state, int64_t good, int64_t bad,
   } else if (sample > 0) {
     return random_hypergeometric_hyp(bitgen_state, good, bad, sample);
   } else {
-  return 0;
+    return 0;
   }
 }
 
@@ -1244,100 +1244,6 @@ uint64_t random_interval(bitgen_t *bitgen_state, uint64_t max) {
       ;
   }
   return value;
-}
-
-static NPY_INLINE uint64_t gen_mask(uint64_t max) {
-  uint64_t mask = max;
-  mask |= mask >> 1;
-  mask |= mask >> 2;
-  mask |= mask >> 4;
-  mask |= mask >> 8;
-  mask |= mask >> 16;
-  mask |= mask >> 32;
-  return mask;
-}
-
-/* Generate 16 bit random numbers using a 32 bit buffer. */
-static NPY_INLINE uint16_t buffered_uint16(bitgen_t *bitgen_state, int *bcnt,
-                                           uint32_t *buf) {
-  if (!(bcnt[0])) {
-    buf[0] = next_uint32(bitgen_state);
-    bcnt[0] = 1;
-  } else {
-    buf[0] >>= 16;
-    bcnt[0] -= 1;
-  }
-
-  return (uint16_t)buf[0];
-}
-
-/* Generate 8 bit random numbers using a 32 bit buffer. */
-static NPY_INLINE uint8_t buffered_uint8(bitgen_t *bitgen_state, int *bcnt,
-                                         uint32_t *buf) {
-  if (!(bcnt[0])) {
-    buf[0] = next_uint32(bitgen_state);
-    bcnt[0] = 3;
-  } else {
-    buf[0] >>= 8;
-    bcnt[0] -= 1;
-  }
-
-  return (uint8_t)buf[0];
-}
-
-/* Static `masked rejection` function called by random_bounded_uint64(...) */
-static NPY_INLINE uint64_t bounded_masked_uint64(bitgen_t *bitgen_state,
-                                                 uint64_t rng, uint64_t mask) {
-  uint64_t val;
-
-  while ((val = (next_uint64(bitgen_state) & mask)) > rng)
-    ;
-
-  return val;
-}
-
-/* Static `masked rejection` function called by
- * random_buffered_bounded_uint32(...) */
-static NPY_INLINE uint32_t buffered_bounded_masked_uint32(
-    bitgen_t *bitgen_state, uint32_t rng, uint32_t mask, int *bcnt, uint32_t *buf) {
-  /*
-   * The buffer and buffer count are not used here but are included to allow
-   * this function to be templated with the similar uint8 and uint16
-   * functions
-   */
-
-  uint32_t val;
-
-  while ((val = (next_uint32(bitgen_state) & mask)) > rng)
-    ;
-
-  return val;
-}
-
-/* Static `masked rejection` function called by
- * random_buffered_bounded_uint16(...) */
-static NPY_INLINE uint16_t buffered_bounded_masked_uint16(
-    bitgen_t *bitgen_state, uint16_t rng, uint16_t mask, int *bcnt, uint32_t *buf) {
-  uint16_t val;
-
-  while ((val = (buffered_uint16(bitgen_state, bcnt, buf) & mask)) > rng)
-    ;
-
-  return val;
-}
-
-/* Static `masked rejection` function called by
- * random_buffered_bounded_uint8(...) */
-static NPY_INLINE uint8_t buffered_bounded_masked_uint8(bitgen_t *bitgen_state,
-                                                        uint8_t rng,
-                                                        uint8_t mask, int *bcnt,
-                                                        uint32_t *buf) {
-  uint8_t val;
-
-  while ((val = (buffered_uint8(bitgen_state, bcnt, buf) & mask)) > rng)
-    ;
-
-  return val;
 }
 
 /* Static `Lemire rejection` function called by random_bounded_uint64(...) */
@@ -1430,10 +1336,8 @@ static NPY_INLINE uint64_t bounded_lemire_uint64(bitgen_t *bitgen_state,
 
 /* Static `Lemire rejection` function called by
  * random_buffered_bounded_uint32(...) */
-static NPY_INLINE uint32_t buffered_bounded_lemire_uint32(bitgen_t *bitgen_state,
-                                                          uint32_t rng,
-                                                          int *bcnt,
-                                                          uint32_t *buf) {
+static NPY_INLINE uint32_t buffered_bounded_lemire_uint32(
+    bitgen_t *bitgen_state, uint32_t rng, int *bcnt, uint32_t *buf) {
   /*
    * Uses Lemire's algorithm - https://arxiv.org/abs/1805.10941
    *
@@ -1471,10 +1375,8 @@ static NPY_INLINE uint32_t buffered_bounded_lemire_uint32(bitgen_t *bitgen_state
 
 /* Static `Lemire rejection` function called by
  * random_buffered_bounded_uint16(...) */
-static NPY_INLINE uint16_t buffered_bounded_lemire_uint16(bitgen_t *bitgen_state,
-                                                          uint16_t rng,
-                                                          int *bcnt,
-                                                          uint32_t *buf) {
+static NPY_INLINE uint16_t buffered_bounded_lemire_uint16(
+    bitgen_t *bitgen_state, uint16_t rng, int *bcnt, uint32_t *buf) {
   /*
    * Uses Lemire's algorithm - https://arxiv.org/abs/1805.10941
    *
@@ -1546,17 +1448,18 @@ static NPY_INLINE uint8_t buffered_bounded_lemire_uint8(bitgen_t *bitgen_state,
  * Returns a single random npy_uint64 between off and off + rng
  * inclusive. The numbers wrap if rng is sufficiently large.
  */
-uint64_t random_bounded_uint64(bitgen_t *bitgen_state, uint64_t off, uint64_t rng,
-                               uint64_t mask, bool use_masked) {
+uint64_t random_bounded_uint64(bitgen_t *bitgen_state, uint64_t off,
+                               uint64_t rng, uint64_t mask, bool use_masked) {
   if (rng == 0) {
     return off;
   } else if (rng < 0xFFFFFFFFUL) {
     /* Call 32-bit generator if range in 32-bit. */
     if (use_masked) {
-      return off +
-             buffered_bounded_masked_uint32(bitgen_state, rng, mask, NULL, NULL);
+      return off + buffered_bounded_masked_uint32(bitgen_state, rng, mask, NULL,
+                                                  NULL);
     } else {
-      return off + buffered_bounded_lemire_uint32(bitgen_state, rng, NULL, NULL);
+      return off +
+             buffered_bounded_lemire_uint32(bitgen_state, rng, NULL, NULL);
     }
   } else if (rng == 0xFFFFFFFFFFFFFFFFULL) {
     /* Lemire64 doesn't support inclusive rng = 0xFFFFFFFFFFFFFFFF. */
@@ -1643,22 +1546,6 @@ uint8_t random_buffered_bounded_uint8(bitgen_t *bitgen_state, uint8_t off,
   }
 }
 
-static NPY_INLINE npy_bool buffered_bounded_bool(bitgen_t *bitgen_state,
-                                                 npy_bool off, npy_bool rng,
-                                                 npy_bool mask, int *bcnt,
-                                                 uint32_t *buf) {
-  if (rng == 0)
-    return off;
-  if (!(bcnt[0])) {
-    buf[0] = next_uint32(bitgen_state);
-    bcnt[0] = 31;
-  } else {
-    buf[0] >>= 1;
-    bcnt[0] -= 1;
-  }
-  return (buf[0] & 0x00000001UL) != 0;
-}
-
 npy_bool random_buffered_bounded_bool(bitgen_t *bitgen_state, npy_bool off,
                                       npy_bool rng, npy_bool mask,
                                       bool use_masked, int *bcnt,
@@ -1670,8 +1557,9 @@ npy_bool random_buffered_bounded_bool(bitgen_t *bitgen_state, npy_bool off,
  * Fills an array with cnt random npy_uint64 between off and off + rng
  * inclusive. The numbers wrap if rng is sufficiently large.
  */
-void random_bounded_uint64_fill(bitgen_t *bitgen_state, uint64_t off, uint64_t rng,
-                                npy_intp cnt, bool use_masked, uint64_t *out) {
+void random_bounded_uint64_fill(bitgen_t *bitgen_state, uint64_t off,
+                                uint64_t rng, npy_intp cnt, bool use_masked,
+                                uint64_t *out) {
   npy_intp i;
 
   if (rng == 0) {
@@ -1693,8 +1581,8 @@ void random_bounded_uint64_fill(bitgen_t *bitgen_state, uint64_t off, uint64_t r
       }
     } else {
       for (i = 0; i < cnt; i++) {
-        out[i] =
-            off + buffered_bounded_lemire_uint32(bitgen_state, rng, &bcnt, &buf);
+        out[i] = off +
+                 buffered_bounded_lemire_uint32(bitgen_state, rng, &bcnt, &buf);
       }
     }
   } else if (rng == 0xFFFFFFFFFFFFFFFFULL) {
@@ -1722,8 +1610,9 @@ void random_bounded_uint64_fill(bitgen_t *bitgen_state, uint64_t off, uint64_t r
  * Fills an array with cnt random npy_uint32 between off and off + rng
  * inclusive. The numbers wrap if rng is sufficiently large.
  */
-void random_bounded_uint32_fill(bitgen_t *bitgen_state, uint32_t off, uint32_t rng,
-                                npy_intp cnt, bool use_masked, uint32_t *out) {
+void random_bounded_uint32_fill(bitgen_t *bitgen_state, uint32_t off,
+                                uint32_t rng, npy_intp cnt, bool use_masked,
+                                uint32_t *out) {
   npy_intp i;
   uint32_t buf = 0;
   int bcnt = 0;
@@ -1748,8 +1637,8 @@ void random_bounded_uint32_fill(bitgen_t *bitgen_state, uint32_t off, uint32_t r
       }
     } else {
       for (i = 0; i < cnt; i++) {
-        out[i] =
-            off + buffered_bounded_lemire_uint32(bitgen_state, rng, &bcnt, &buf);
+        out[i] = off +
+                 buffered_bounded_lemire_uint32(bitgen_state, rng, &bcnt, &buf);
       }
     }
   }
@@ -1759,8 +1648,9 @@ void random_bounded_uint32_fill(bitgen_t *bitgen_state, uint32_t off, uint32_t r
  * Fills an array with cnt random npy_uint16 between off and off + rng
  * inclusive. The numbers wrap if rng is sufficiently large.
  */
-void random_bounded_uint16_fill(bitgen_t *bitgen_state, uint16_t off, uint16_t rng,
-                                npy_intp cnt, bool use_masked, uint16_t *out) {
+void random_bounded_uint16_fill(bitgen_t *bitgen_state, uint16_t off,
+                                uint16_t rng, npy_intp cnt, bool use_masked,
+                                uint16_t *out) {
   npy_intp i;
   uint32_t buf = 0;
   int bcnt = 0;
@@ -1785,8 +1675,8 @@ void random_bounded_uint16_fill(bitgen_t *bitgen_state, uint16_t off, uint16_t r
       }
     } else {
       for (i = 0; i < cnt; i++) {
-        out[i] =
-            off + buffered_bounded_lemire_uint16(bitgen_state, rng, &bcnt, &buf);
+        out[i] = off +
+                 buffered_bounded_lemire_uint16(bitgen_state, rng, &bcnt, &buf);
       }
     }
   }
@@ -1833,8 +1723,9 @@ void random_bounded_uint8_fill(bitgen_t *bitgen_state, uint8_t off, uint8_t rng,
  * Fills an array with cnt random npy_bool between off and off + rng
  * inclusive.
  */
-void random_bounded_bool_fill(bitgen_t *bitgen_state, npy_bool off, npy_bool rng,
-                              npy_intp cnt, bool use_masked, npy_bool *out) {
+void random_bounded_bool_fill(bitgen_t *bitgen_state, npy_bool off,
+                              npy_bool rng, npy_intp cnt, bool use_masked,
+                              npy_bool *out) {
   npy_bool mask = 0;
   npy_intp i;
   uint32_t buf = 0;

@@ -1,7 +1,6 @@
 #ifndef _RANDOMDGEN__DISTRIBUTIONS_LEGACY_H_
 #define _RANDOMDGEN__DISTRIBUTIONS_LEGACY_H_
 
-
 #include "../distributions/distributions.h"
 
 typedef struct aug_bitgen {
@@ -36,5 +35,19 @@ extern double legacy_f(aug_bitgen_t *aug_state, double dfnum, double dfden);
 extern double legacy_normal(aug_bitgen_t *aug_state, double loc, double scale);
 extern double legacy_standard_gamma(aug_bitgen_t *aug_state, double shape);
 extern double legacy_exponential(aug_bitgen_t *aug_state, double scale);
+
+void legacy_random_bounded_uint64_fill(aug_bitgen_t *aug_state, uint64_t off,
+                                       uint64_t rng, npy_intp cnt,
+                                       uint64_t *out);
+void legacy_random_bounded_uint32_fill(aug_bitgen_t *aug_state, uint32_t off,
+                                       uint32_t rng, npy_intp cnt,
+                                       uint32_t *out);
+void legacy_random_bounded_uint16_fill(aug_bitgen_t *aug_state, uint16_t off,
+                                       uint16_t rng, npy_intp cnt,
+                                       uint16_t *out);
+void legacy_random_bounded_uint8_fill(aug_bitgen_t *aug_state, uint8_t off,
+                                      uint8_t rng, npy_intp cnt, uint8_t *out);
+void legacy_random_bounded_bool_fill(aug_bitgen_t *aug_state, npy_bool off,
+                                     npy_bool rng, npy_intp cnt, npy_bool *out);
 
 #endif

@@ -97,9 +97,123 @@ static NPY_INLINE double next_double(bitgen_t *bitgen_state) {
   return bitgen_state->next_double(bitgen_state->state);
 }
 
+/* Bounded generators */
+static NPY_INLINE uint64_t gen_mask(uint64_t max) {
+  uint64_t mask = max;
+  mask |= mask >> 1;
+  mask |= mask >> 2;
+  mask |= mask >> 4;
+  mask |= mask >> 8;
+  mask |= mask >> 16;
+  mask |= mask >> 32;
+  return mask;
+}
+
+/* Generate 16 bit random numbers using a 32 bit buffer. */
+static NPY_INLINE uint16_t buffered_uint16(bitgen_t *bitgen_state, int *bcnt,
+                                           uint32_t *buf) {
+  if (!(bcnt[0])) {
+    buf[0] = next_uint32(bitgen_state);
+    bcnt[0] = 1;
+  } else {
+    buf[0] >>= 16;
+    bcnt[0] -= 1;
+  }
+
+  return (uint16_t)buf[0];
+}
+
+/* Generate 8 bit random numbers using a 32 bit buffer. */
+static NPY_INLINE uint8_t buffered_uint8(bitgen_t *bitgen_state, int *bcnt,
+                                         uint32_t *buf) {
+  if (!(bcnt[0])) {
+    buf[0] = next_uint32(bitgen_state);
+    bcnt[0] = 3;
+  } else {
+    buf[0] >>= 8;
+    bcnt[0] -= 1;
+  }
+
+  return (uint8_t)buf[0];
+}
+
+/* Static `masked rejection` function called by random_bounded_uint64(...) */
+static NPY_INLINE uint64_t bounded_masked_uint64(bitgen_t *bitgen_state,
+                                                 uint64_t rng, uint64_t mask) {
+  uint64_t val;
+
+  while ((val = (next_uint64(bitgen_state) & mask)) > rng)
+    ;
+
+  return val;
+}
+
+/* Static `masked rejection` function called by
+ * random_buffered_bounded_uint32(...) */
+static NPY_INLINE uint32_t
+buffered_bounded_masked_uint32(bitgen_t *bitgen_state, uint32_t rng,
+                               uint32_t mask, int *bcnt, uint32_t *buf) {
+  /*
+   * The buffer and buffer count are not used here but are included to allow
+   * this function to be templated with the similar uint8 and uint16
+   * functions
+   */
+
+  uint32_t val;
+
+  while ((val = (next_uint32(bitgen_state) & mask)) > rng)
+    ;
+
+  return val;
+}
+
+/* Static `masked rejection` function called by
+ * random_buffered_bounded_uint16(...) */
+static NPY_INLINE uint16_t
+buffered_bounded_masked_uint16(bitgen_t *bitgen_state, uint16_t rng,
+                               uint16_t mask, int *bcnt, uint32_t *buf) {
+  uint16_t val;
+
+  while ((val = (buffered_uint16(bitgen_state, bcnt, buf) & mask)) > rng)
+    ;
+
+  return val;
+}
+
+/* Static `masked rejection` function called by
+ * random_buffered_bounded_uint8(...) */
+static NPY_INLINE uint8_t buffered_bounded_masked_uint8(bitgen_t *bitgen_state,
+                                                        uint8_t rng,
+                                                        uint8_t mask, int *bcnt,
+                                                        uint32_t *buf) {
+  uint8_t val;
+
+  while ((val = (buffered_uint8(bitgen_state, bcnt, buf) & mask)) > rng)
+    ;
+
+  return val;
+}
+
+static NPY_INLINE npy_bool buffered_bounded_bool(bitgen_t *bitgen_state,
+                                                 npy_bool off, npy_bool rng,
+                                                 npy_bool mask, int *bcnt,
+                                                 uint32_t *buf) {
+  if (rng == 0)
+    return off;
+  if (!(bcnt[0])) {
+    buf[0] = next_uint32(bitgen_state);
+    bcnt[0] = 31;
+  } else {
+    buf[0] >>= 1;
+    bcnt[0] -= 1;
+  }
+  return (buf[0] & 0x00000001UL) != 0;
+}
+
 DECLDIR float random_float(bitgen_t *bitgen_state);
 DECLDIR double random_double(bitgen_t *bitgen_state);
-DECLDIR void random_double_fill(bitgen_t *bitgen_state, npy_intp cnt, double *out);
+DECLDIR void random_double_fill(bitgen_t *bitgen_state, npy_intp cnt,
+                                double *out);
 
 DECLDIR int64_t random_positive_int64(bitgen_t *bitgen_state);
 DECLDIR int32_t random_positive_int32(bitgen_t *bitgen_state);
@@ -107,8 +221,8 @@ DECLDIR int64_t random_positive_int(bitgen_t *bitgen_state);
 DECLDIR uint64_t random_uint(bitgen_t *bitgen_state);
 
 DECLDIR double random_standard_exponential(bitgen_t *bitgen_state);
-DECLDIR void random_standard_exponential_fill(bitgen_t *bitgen_state, npy_intp cnt,
-                                              double *out);
+DECLDIR void random_standard_exponential_fill(bitgen_t *bitgen_state,
+                                              npy_intp cnt, double *out);
 DECLDIR float random_standard_exponential_f(bitgen_t *bitgen_state);
 DECLDIR double random_standard_exponential_zig(bitgen_t *bitgen_state);
 DECLDIR void random_standard_exponential_zig_fill(bitgen_t *bitgen_state,
@@ -134,13 +248,16 @@ DECLDIR float random_standard_gamma_zig_f(bitgen_t *bitgen_state, float shape);
 /*
 DECLDIR double random_normal(bitgen_t *bitgen_state, double loc, double scale);
 */
-DECLDIR double random_normal_zig(bitgen_t *bitgen_state, double loc, double scale);
+DECLDIR double random_normal_zig(bitgen_t *bitgen_state, double loc,
+                                 double scale);
 
 DECLDIR double random_gamma(bitgen_t *bitgen_state, double shape, double scale);
-DECLDIR float random_gamma_float(bitgen_t *bitgen_state, float shape, float scale);
+DECLDIR float random_gamma_float(bitgen_t *bitgen_state, float shape,
+                                 float scale);
 
 DECLDIR double random_exponential(bitgen_t *bitgen_state, double scale);
-DECLDIR double random_uniform(bitgen_t *bitgen_state, double lower, double range);
+DECLDIR double random_uniform(bitgen_t *bitgen_state, double lower,
+                              double range);
 DECLDIR double random_beta(bitgen_t *bitgen_state, double a, double b);
 DECLDIR double random_chisquare(bitgen_t *bitgen_state, double df);
 DECLDIR double random_f(bitgen_t *bitgen_state, double dfnum, double dfden);
@@ -150,8 +267,10 @@ DECLDIR double random_weibull(bitgen_t *bitgen_state, double a);
 DECLDIR double random_power(bitgen_t *bitgen_state, double a);
 DECLDIR double random_laplace(bitgen_t *bitgen_state, double loc, double scale);
 DECLDIR double random_gumbel(bitgen_t *bitgen_state, double loc, double scale);
-DECLDIR double random_logistic(bitgen_t *bitgen_state, double loc, double scale);
-DECLDIR double random_lognormal(bitgen_t *bitgen_state, double mean, double sigma);
+DECLDIR double random_logistic(bitgen_t *bitgen_state, double loc,
+                               double scale);
+DECLDIR double random_lognormal(bitgen_t *bitgen_state, double mean,
+                                double sigma);
 DECLDIR double random_rayleigh(bitgen_t *bitgen_state, double mode);
 DECLDIR double random_standard_t(bitgen_t *bitgen_state, double df);
 DECLDIR double random_noncentral_chisquare(bitgen_t *bitgen_state, double df,
@@ -160,8 +279,8 @@ DECLDIR double random_noncentral_f(bitgen_t *bitgen_state, double dfnum,
                                    double dfden, double nonc);
 DECLDIR double random_wald(bitgen_t *bitgen_state, double mean, double scale);
 DECLDIR double random_vonmises(bitgen_t *bitgen_state, double mu, double kappa);
-DECLDIR double random_triangular(bitgen_t *bitgen_state, double left, double mode,
-                                 double right);
+DECLDIR double random_triangular(bitgen_t *bitgen_state, double left,
+                                 double mode, double right);
 
 DECLDIR int64_t random_poisson(bitgen_t *bitgen_state, double lam);
 DECLDIR int64_t random_negative_binomial(bitgen_t *bitgen_state, double n,
@@ -192,14 +311,14 @@ DECLDIR uint16_t random_buffered_bounded_uint16(bitgen_t *bitgen_state,
                                                 uint16_t off, uint16_t rng,
                                                 uint16_t mask, bool use_masked,
                                                 int *bcnt, uint32_t *buf);
-DECLDIR uint8_t random_buffered_bounded_uint8(bitgen_t *bitgen_state, uint8_t off,
-                                              uint8_t rng, uint8_t mask,
-                                              bool use_masked, int *bcnt,
-                                              uint32_t *buf);
-DECLDIR npy_bool random_buffered_bounded_bool(bitgen_t *bitgen_state, npy_bool off,
-                                              npy_bool rng, npy_bool mask,
-                                              bool use_masked, int *bcnt,
-                                              uint32_t *buf);
+DECLDIR uint8_t random_buffered_bounded_uint8(bitgen_t *bitgen_state,
+                                              uint8_t off, uint8_t rng,
+                                              uint8_t mask, bool use_masked,
+                                              int *bcnt, uint32_t *buf);
+DECLDIR npy_bool random_buffered_bounded_bool(bitgen_t *bitgen_state,
+                                              npy_bool off, npy_bool rng,
+                                              npy_bool mask, bool use_masked,
+                                              int *bcnt, uint32_t *buf);
 
 DECLDIR void random_bounded_uint64_fill(bitgen_t *bitgen_state, uint64_t off,
                                         uint64_t rng, npy_intp cnt,
@@ -217,7 +336,8 @@ DECLDIR void random_bounded_bool_fill(bitgen_t *bitgen_state, npy_bool off,
                                       npy_bool rng, npy_intp cnt,
                                       bool use_masked, npy_bool *out);
 
-DECLDIR void random_multinomial(bitgen_t *bitgen_state, int64_t n, int64_t *mnix,
-                                double *pix, npy_intp d, binomial_t *binomial);
+DECLDIR void random_multinomial(bitgen_t *bitgen_state, int64_t n,
+                                int64_t *mnix, double *pix, npy_intp d,
+                                binomial_t *binomial);
 
 #endif

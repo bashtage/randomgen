@@ -13,12 +13,11 @@ from cpython cimport (Py_INCREF, PyFloat_AsDouble)
 from libc cimport string
 
 cimport cython
-cimport numpy as np
 
-from randomgen.bounded_integers cimport *
+from randomgen.legacy.bounded_integers cimport *
 from randomgen.common cimport *
 from randomgen.distributions cimport *
-from randomgen.legacy_distributions cimport *
+from randomgen.legacy.distributions cimport *
 
 np.import_array()
 
@@ -590,23 +589,23 @@ cdef class RandomState:
             raise TypeError('Unsupported dtype "%s" for randint' % key)
 
         if key == 'int32':
-            ret = _rand_int32(low, high, size, use_masked, False, &self._bitgen, self.lock)
+            ret = _legacy_rand_int32(low, high, size, &self._aug_state, self.lock)
         elif key == 'int64':
-            ret = _rand_int64(low, high, size, use_masked, False, &self._bitgen, self.lock)
+            ret = _legacy_rand_int64(low, high, size, &self._aug_state, self.lock)
         elif key == 'int16':
-            ret = _rand_int16(low, high, size, use_masked, False, &self._bitgen, self.lock)
+            ret = _legacy_rand_int16(low, high, size, &self._aug_state, self.lock)
         elif key == 'int8':
-            ret = _rand_int8(low, high, size, use_masked, False, &self._bitgen, self.lock)
+            ret = _legacy_rand_int8(low, high, size, &self._aug_state, self.lock)
         elif key == 'uint64':
-            ret = _rand_uint64(low, high, size, use_masked, False, &self._bitgen, self.lock)
+            ret = _legacy_rand_uint64(low, high, size, &self._aug_state, self.lock)
         elif key == 'uint32':
-            ret = _rand_uint32(low, high, size, use_masked, False, &self._bitgen, self.lock)
+            ret = _legacy_rand_uint32(low, high, size, &self._aug_state, self.lock)
         elif key == 'uint16':
-            ret = _rand_uint16(low, high, size, use_masked, False, &self._bitgen, self.lock)
+            ret = _legacy_rand_uint16(low, high, size, &self._aug_state, self.lock)
         elif key == 'uint8':
-            ret = _rand_uint8(low, high, size, use_masked, False, &self._bitgen, self.lock)
+            ret = _legacy_rand_uint8(low, high, size, &self._aug_state, self.lock)
         elif key == 'bool':
-            ret = _rand_bool(low, high, size, use_masked, False, &self._bitgen, self.lock)
+            ret = _legacy_rand_bool(low, high, size, &self._aug_state, self.lock)
 
         if size is None and dtype in (np.bool, np.int, np.long):
             if np.array(ret).shape == ():
