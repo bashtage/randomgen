@@ -1,6 +1,6 @@
 #cython: language_level=3
 
-from libc.stdint cimport uint64_t
+from libc.stdint cimport int64_t
 
 import numpy as np
 cimport numpy as np
@@ -34,9 +34,11 @@ cdef extern from "../src/legacy/distributions-boxmuller.h":
                             double nonc) nogil
     double legacy_wald(aug_bitgen_t *aug_state, double mean, double scale) nogil
     double legacy_lognormal(aug_bitgen_t *aug_state, double mean, double sigma) nogil
-    uint64_t legacy_negative_binomial(aug_bitgen_t *aug_state, double n, double p) nogil
+    int64_t legacy_negative_binomial(aug_bitgen_t *aug_state, double n, double p) nogil
+    int64_t legacy_logseries(aug_bitgen_t *aug_state, double p) nogil
     double legacy_standard_cauchy(aug_bitgen_t *state) nogil
     double legacy_beta(aug_bitgen_t *aug_state, double a, double b) nogil
     double legacy_f(aug_bitgen_t *aug_state, double dfnum, double dfden) nogil
     double legacy_exponential(aug_bitgen_t *aug_state, double scale) nogil
     double legacy_power(aug_bitgen_t *state, double a) nogil
+    double legacy_rayleigh(aug_bitgen_t *state, double mode) nogil

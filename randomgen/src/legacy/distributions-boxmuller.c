@@ -212,3 +212,36 @@ double legacy_f(aug_bitgen_t *aug_state, double dfnum, double dfden) {
 double legacy_exponential(aug_bitgen_t *aug_state, double scale) {
   return scale * legacy_standard_exponential(aug_state);
 }
+
+double legacy_rayleigh(aug_bitgen_t *aug_state, double mode) {
+  return mode * sqrt(-2.0 * log(1.0 - legacy_double(aug_state)));
+}
+
+int64_t legacy_logseries(aug_bitgen_t *aug_state, double p) {
+  double q, r, U, V;
+  int64_t result;
+
+  r = log(1.0 - p);
+
+  while (1) {
+    V = legacy_double(aug_state);
+    if (V >= p) {
+      return 1;
+    }
+    U = legacy_double(aug_state);
+    q = 1.0 - exp(r * U);
+    if (V <= q * q) {
+      result = (int64_t)floor(1 + log(V) / log(q));
+      if ((result < 1) || (V==0.0)) {
+        continue;
+      } else {
+        return result;
+      }
+    }
+    if (V >= q) {
+      return 1;
+    }
+    return 2;
+  }
+}
+
