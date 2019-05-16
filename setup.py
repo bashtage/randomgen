@@ -92,7 +92,7 @@ if USE_SSE2:
         EXTRA_COMPILE_ARGS += ['-msse2']
     DSFMT_DEFS += [('HAVE_SSE2', '1')]
 
-files = glob.glob('./randomgen/*.in')
+files = glob.glob('./randomgen/*.in') + glob.glob('./randomgen/legacy/*.in')
 for templated_file in files:
     output_file_name = os.path.splitext(templated_file)[0]
     if (os.path.exists(output_file_name) and
@@ -274,10 +274,24 @@ extensions = [Extension('randomgen.entropy',
                         extra_link_args=EXTRA_LINK_ARGS,
                         define_macros=DEFS
                         ),
+              Extension("randomgen.legacy.bounded_integers",
+                        ["randomgen/legacy/bounded_integers.pyx",
+                         join(MOD_DIR, 'src', 'legacy',
+                              'legacy-distributions.c'),
+                         join(MOD_DIR, 'src', 'distributions',
+                              'distributions.c')],
+                        libraries=EXTRA_LIBRARIES,
+                        include_dirs=EXTRA_INCLUDE_DIRS +
+                        [np.get_include()] + [join(MOD_DIR, 'legacy')],
+                        extra_compile_args=EXTRA_COMPILE_ARGS,
+                        extra_link_args=EXTRA_LINK_ARGS,
+                        define_macros=DEFS
+                        ),
+
               Extension("randomgen.mtrand",
                         ["randomgen/mtrand.pyx",
                          join(MOD_DIR, 'src', 'legacy',
-                              'distributions-boxmuller.c'),
+                              'legacy-distributions.c'),
                          join(MOD_DIR, 'src', 'distributions', 'distributions.c')],
                         libraries=EXTRA_LIBRARIES,
                         include_dirs=EXTRA_INCLUDE_DIRS +
