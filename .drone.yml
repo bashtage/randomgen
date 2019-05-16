@@ -1,0 +1,39 @@
+---
+kind: pipeline
+name: test-on-arm64
+
+platform:
+  os: linux
+  arch: arm64
+
+steps:
+- name: test
+  image: python
+  commands:
+    - uname -a
+    - apt-get update
+    - apt-get install libatlas-base-dev build-essential -y
+    - pip install -r requirements.txt
+    - pip install -r requirements-dev.txt
+    - python setup.py develop
+    - pytest -r a randomgen
+
+---
+kind: pipeline
+name: test-on-arm
+
+platform:
+  os: linux
+  arch: arm
+
+steps:
+- name: test
+  image: python
+  commands:
+    - uname -a
+    - apt-get update
+    - apt-get install libatlas-base-dev build-essential -y
+    - pip install -r requirements.txt
+    - pip install -r requirements-dev.txt
+    - python setup.py develop
+    - pytest -r a randomgen
