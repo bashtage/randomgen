@@ -212,3 +212,191 @@ double legacy_f(aug_brng_t *aug_state, double dfnum, double dfden) {
 double legacy_exponential(aug_brng_t *aug_state, double scale) {
   return scale * legacy_standard_exponential(aug_state);
 }
+
+
+/*
+ * Fills an array with cnt random npy_uint64 between off and off + rng
+ * inclusive. The numbers wrap if rng is sufficiently large.
+ */
+void legacy_random_bounded_uint64_fill(aug_brng_t *aug_state, uint64_t off,
+                                       uint64_t rng, npy_intp cnt,
+                                       uint64_t *out) {
+  npy_intp i;
+
+  if (rng == 0) {
+    for (i = 0; i < cnt; i++) {
+      out[i] = off;
+    }
+  } else if (rng < 0xFFFFFFFFUL) {
+    uint32_t buf = 0;
+    int bcnt = 0;
+
+    /* Call 32-bit generator if range in 32-bit. */
+
+    /* Smallest bit mask >= max */
+    uint64_t mask = gen_mask(rng);
+
+    for (i = 0; i < cnt; i++) {
+      out[i] = off + buffered_bounded_masked_uint32(aug_state->basicrng,
+                                                    rng, mask, &bcnt, &buf);
+    }
+  } else if (rng == 0xFFFFFFFFFFFFFFFFULL) {
+    for (i = 0; i < cnt; i++) {
+      out[i] = off + next_uint64(aug_state->basicrng);
+    }
+  } else {
+
+    /* Smallest bit mask >= max */
+    uint64_t mask = gen_mask(rng);
+
+    for (i = 0; i < cnt; i++) {
+      out[i] = off + bounded_masked_uint64(aug_state->basicrng, rng, mask);
+    }
+  }
+}
+
+/*
+ * Fills an array with cnt random npy_uint32 between off and off + rng
+ * inclusive. The numbers wrap if rng is sufficiently large.
+ */
+void legacy_random_bounded_uint32_fill(aug_brng_t *aug_state, uint32_t off,
+                                       uint32_t rng, npy_intp cnt,
+                                       uint32_t *out) {
+  npy_intp i;
+  uint32_t buf = 0;
+  int bcnt = 0;
+
+  if (rng == 0) {
+    for (i = 0; i < cnt; i++) {
+      out[i] = off;
+    }
+  } else if (rng == 0xFFFFFFFFUL) {
+    for (i = 0; i < cnt; i++) {
+      out[i] = off + next_uint32(aug_state->basicrng);
+    }
+  } else {
+    /* Smallest bit mask >= max */
+    uint32_t mask = (uint32_t)gen_mask(rng);
+
+    for (i = 0; i < cnt; i++) {
+      out[i] = off + buffered_bounded_masked_uint32(aug_state->basicrng,
+                                                    rng, mask, &bcnt, &buf);
+    }
+  }
+}
+
+/*
+ * Fills an array with cnt random npy_uint16 between off and off + rng
+ * inclusive. The numbers wrap if rng is sufficiently large.
+ */
+void legacy_random_bounded_uint16_fill(aug_brng_t *aug_state, uint16_t off,
+                                       uint16_t rng, npy_intp cnt,
+                                       uint16_t *out) {
+  npy_intp i;
+  uint32_t buf = 0;
+  int bcnt = 0;
+
+  if (rng == 0) {
+    for (i = 0; i < cnt; i++) {
+      out[i] = off;
+    }
+  } else if (rng == 0xFFFFUL) {
+    for (i = 0; i < cnt; i++) {
+      out[i] = off + buffered_uint16(aug_state->basicrng, &bcnt, &buf);
+    }
+  } else {
+    /* Smallest bit mask >= max */
+    uint16_t mask = (uint16_t)gen_mask(rng);
+
+    for (i = 0; i < cnt; i++) {
+      out[i] = off + buffered_bounded_masked_uint16(aug_state->basicrng,
+                                                    rng, mask, &bcnt, &buf);
+    }
+  }
+}
+
+/*
+ * Fills an array with cnt random npy_uint8 between off and off + rng
+ * inclusive. The numbers wrap if rng is sufficiently large.
+ */
+void legacy_random_bounded_uint8_fill(aug_brng_t *aug_state, uint8_t off,
+                                      uint8_t rng, npy_intp cnt, uint8_t *out) {
+  npy_intp i;
+  uint32_t buf = 0;
+  int bcnt = 0;
+
+  if (rng == 0) {
+    for (i = 0; i < cnt; i++) {
+      out[i] = off;
+    }
+  } else if (rng == 0xFFUL) {
+
+    for (i = 0; i < cnt; i++) {
+      out[i] = off + buffered_uint8(aug_state->basicrng, &bcnt, &buf);
+    }
+  } else {
+    /* Smallest bit mask >= max */
+    uint8_t mask = (uint8_t)gen_mask(rng);
+
+    for (i = 0; i < cnt; i++) {
+      out[i] = off + buffered_bounded_masked_uint8(aug_state->basicrng,
+                                                   rng, mask, &bcnt, &buf);
+    }
+  }
+}
+
+/*
+ * Fills an array with cnt random npy_bool between off and off + rng
+ * inclusive.
+ */
+void legacy_random_bounded_bool_fill(aug_brng_t *aug_state, npy_bool off,
+                                     npy_bool rng, npy_intp cnt,
+                                     npy_bool *out) {
+  npy_bool mask = 0;
+  npy_intp i;
+  uint32_t buf = 0;
+  int bcnt = 0;
+
+  for (i = 0; i < cnt; i++) {
+    out[i] = buffered_bounded_bool(aug_state->basicrng, off, rng, mask,
+                                   &bcnt, &buf);
+  }
+}
+
+
+/*
+ * This is a wrapper function that matches the expected template. In the legacy
+ * generator, all int types are long, so this accepts int64 and then converts
+ * them to longs. These values must be in bounds for long and this is checked
+ * outside this function
+ *
+ * The remaining are included for the return type only
+ */
+int64_t legacy_random_hypergeometric(brng_t *brng_state, int64_t good,
+                                     int64_t bad, int64_t sample) {
+  return (int64_t)random_hypergeometric(brng_state, (RAND_INT_TYPE)good,
+                                        (RAND_INT_TYPE)bad,
+                                        (RAND_INT_TYPE)sample);
+}
+
+int64_t legacy_random_logseries(brng_t *brng_state, double p) {
+  return (int64_t)random_logseries(brng_state, p);
+}
+
+int64_t legacy_random_poisson(brng_t *brng_state, double lam) {
+  return (int64_t)random_poisson(brng_state, lam);
+}
+
+int64_t legacy_random_zipf(brng_t *brng_state, double a) {
+  return (int64_t)random_zipf(brng_state, a);
+}
+
+int64_t legacy_random_geometric(brng_t *brng_state, double p) {
+  return (int64_t)random_geometric(brng_state, p);
+}
+
+void legacy_random_multinomial(brng_t *brng_state, RAND_INT_TYPE n,
+                               RAND_INT_TYPE *mnix, double *pix, npy_intp d,
+                               binomial_t *binomial) {
+  random_multinomial(brng_state, n, mnix, pix, d, binomial);
+}

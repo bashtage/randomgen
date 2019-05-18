@@ -645,8 +645,8 @@ double random_standard_t(brng_t *brng_state, double df) {
   return sqrt(df / 2) * num / sqrt(denom);
 }
 
-static int64_t random_poisson_mult(brng_t *brng_state, double lam) {
-  int64_t X;
+static RAND_INT_TYPE random_poisson_mult(brng_t *brng_state, double lam) {
+  RAND_INT_TYPE X;
   double prod, U, enlam;
 
   enlam = exp(-lam);
@@ -670,8 +670,8 @@ static int64_t random_poisson_mult(brng_t *brng_state, double lam) {
  */
 #define LS2PI 0.91893853320467267
 #define TWELFTH 0.083333333333333333333333
-static int64_t random_poisson_ptrs(brng_t *brng_state, double lam) {
-  int64_t k;
+static RAND_INT_TYPE random_poisson_ptrs(brng_t *brng_state, double lam) {
+  RAND_INT_TYPE k;
   double U, V, slam, loglam, a, b, invalpha, vr, us;
 
   slam = sqrt(lam);
@@ -685,7 +685,7 @@ static int64_t random_poisson_ptrs(brng_t *brng_state, double lam) {
     U = next_double(brng_state) - 0.5;
     V = next_double(brng_state);
     us = 0.5 - fabs(U);
-    k = (int64_t)floor((2 * a / us + b) * U + lam + 0.43);
+    k = (RAND_INT_TYPE)floor((2 * a / us + b) * U + lam + 0.43);
     if ((us >= 0.07) && (V <= vr)) {
       return k;
     }
@@ -701,7 +701,7 @@ static int64_t random_poisson_ptrs(brng_t *brng_state, double lam) {
   }
 }
 
-int64_t random_poisson(brng_t *brng_state, double lam) {
+RAND_INT_TYPE random_poisson(brng_t *brng_state, double lam) {
   if (lam >= 10) {
     return random_poisson_ptrs(brng_state, lam);
   } else if (lam == 0) {
@@ -711,16 +711,17 @@ int64_t random_poisson(brng_t *brng_state, double lam) {
   }
 }
 
-int64_t random_negative_binomial(brng_t *brng_state, double n, double p) {
+RAND_INT_TYPE random_negative_binomial(brng_t *brng_state, double n,
+                                       double p) {
   double Y = random_gamma(brng_state, n, (1 - p) / p);
   return random_poisson(brng_state, Y);
 }
 
-int64_t random_binomial_btpe(brng_t *brng_state, int64_t n, double p,
-                             binomial_t *binomial) {
+RAND_INT_TYPE random_binomial_btpe(brng_t *brng_state, RAND_INT_TYPE n,
+                                   double p, binomial_t *binomial) {
   double r, q, fm, p1, xm, xl, xr, c, laml, lamr, p2, p3, p4;
   double a, u, v, s, F, rho, t, A, nrq, x1, x2, f1, f2, z, z2, w, w2, x;
-  int64_t m, y, k, i;
+  RAND_INT_TYPE m, y, k, i;
 
   if (!(binomial->has_binomial) || (binomial->nsave != n) ||
       (binomial->psave != p)) {
@@ -731,7 +732,7 @@ int64_t random_binomial_btpe(brng_t *brng_state, int64_t n, double p,
     binomial->r = r = MIN(p, 1.0 - p);
     binomial->q = q = 1.0 - r;
     binomial->fm = fm = n * r + r;
-    binomial->m = m = (int64_t)floor(binomial->fm);
+    binomial->m = m = (RAND_INT_TYPE)floor(binomial->fm);
     binomial->p1 = p1 = floor(2.195 * sqrt(n * r * q) - 4.6 * q) + 0.5;
     binomial->xm = xm = m + 0.5;
     binomial->xl = xl = xm - p1;
@@ -768,7 +769,7 @@ Step10:
   v = next_double(brng_state);
   if (u > p1)
     goto Step20;
-  y = (int64_t)floor(xm - p1 * v + u);
+  y = (RAND_INT_TYPE)floor(xm - p1 * v + u);
   goto Step60;
 
 Step20:
@@ -778,13 +779,13 @@ Step20:
   v = v * c + 1.0 - fabs(m - x + 0.5) / p1;
   if (v > 1.0)
     goto Step10;
-  y = (int64_t)floor(x);
+  y = (RAND_INT_TYPE)floor(x);
   goto Step50;
 
 Step30:
   if (u > p3)
     goto Step40;
-  y = (int64_t)floor(xl + log(v) / laml);
+  y = (RAND_INT_TYPE)floor(xl + log(v) / laml);
   /* Reject if v==0.0 since previous cast is undefined */
   if ((y < 0) || (v == 0.0))
     goto Step10;
@@ -792,7 +793,7 @@ Step30:
   goto Step50;
 
 Step40:
-  y = (int64_t)floor(xr - log(v) / lamr);
+  y = (RAND_INT_TYPE)floor(xr - log(v) / lamr);
   /* Reject if v==0.0 since previous cast is undefined */
   if ((y > n) || (v == 0.0))
     goto Step10;
@@ -859,10 +860,10 @@ Step60:
   return y;
 }
 
-int64_t random_binomial_inversion(brng_t *brng_state, int64_t n, double p,
-                                  binomial_t *binomial) {
+RAND_INT_TYPE random_binomial_inversion(brng_t *brng_state, RAND_INT_TYPE n,
+                                        double p, binomial_t *binomial) {
   double q, qn, np, px, U;
-  int64_t X, bound;
+  RAND_INT_TYPE X, bound;
 
   if (!(binomial->has_binomial) || (binomial->nsave != n) ||
       (binomial->psave != p)) {
@@ -872,7 +873,7 @@ int64_t random_binomial_inversion(brng_t *brng_state, int64_t n, double p,
     binomial->q = q = 1.0 - p;
     binomial->r = qn = exp(n * log(q));
     binomial->c = np = n * p;
-    binomial->m = bound = (int64_t)MIN(n, np + 10.0 * sqrt(np * q + 1));
+    binomial->m = bound = (RAND_INT_TYPE)MIN(n, np + 10.0 * sqrt(np * q + 1));
   } else {
     q = binomial->q;
     qn = binomial->r;
@@ -896,8 +897,8 @@ int64_t random_binomial_inversion(brng_t *brng_state, int64_t n, double p,
   return X;
 }
 
-int64_t random_binomial(brng_t *brng_state, double p, int64_t n,
-                        binomial_t *binomial) {
+RAND_INT_TYPE random_binomial(brng_t *brng_state, double p, RAND_INT_TYPE n,
+                              binomial_t *binomial) {
   double q;
 
   if ((n == 0LL) || (p == 0.0f))
@@ -931,7 +932,7 @@ double random_noncentral_chisquare(brng_t *brng_state, double df, double nonc) {
     const double n = random_gauss_zig(brng_state) + sqrt(nonc);
     return Chi2 + n * n;
   } else {
-    const int64_t i = random_poisson(brng_state, nonc / 2.0);
+    const RAND_INT_TYPE i = random_poisson(brng_state, nonc / 2.0);
     return random_chisquare(brng_state, df + 2 * i);
   }
 }
@@ -1015,9 +1016,15 @@ double random_vonmises(brng_t *brng_state, double mu, double kappa) {
   }
 }
 
-int64_t random_logseries(brng_t *brng_state, double p) {
+/*
+ * RAND_INT_TYPE is used to share integer generators with RandomState which
+ * used long in place of int64_t. If changing a distribution that uses
+ * RAND_INT_TYPE, then the original unmodified copy must be retained for
+ * use in RandomState by copying to the legacy distributions source file.
+ */
+RAND_INT_TYPE random_logseries(brng_t *brng_state, double p) {
   double q, r, U, V;
-  int64_t result;
+  RAND_INT_TYPE result;
 
   r = log(1.0 - p);
 
@@ -1029,8 +1036,8 @@ int64_t random_logseries(brng_t *brng_state, double p) {
     U = next_double(brng_state);
     q = 1.0 - exp(r * U);
     if (V <= q * q) {
-      result = (int64_t)floor(1 + log(V) / log(q));
-      if ((result < 1) || (V==0.0)) {
+      result = (RAND_INT_TYPE)floor(1 + log(V) / log(q));
+      if ((result < 1) || (V == 0.0)) {
         continue;
       } else {
         return result;
@@ -1043,9 +1050,9 @@ int64_t random_logseries(brng_t *brng_state, double p) {
   }
 }
 
-int64_t random_geometric_search(brng_t *brng_state, double p) {
+RAND_INT_TYPE random_geometric_search(brng_t *brng_state, double p) {
   double U;
-  int64_t X;
+  RAND_INT_TYPE X;
   double sum, prod, q;
 
   X = 1;
@@ -1060,11 +1067,12 @@ int64_t random_geometric_search(brng_t *brng_state, double p) {
   return X;
 }
 
-int64_t random_geometric_inversion(brng_t *brng_state, double p) {
-  return (int64_t)ceil(log(1.0 - next_double(brng_state)) / log(1.0 - p));
+RAND_INT_TYPE random_geometric_inversion(brng_t *brng_state, double p) {
+  return (RAND_INT_TYPE)ceil(log(1.0 - next_double(brng_state)) /
+                             log(1.0 - p));
 }
 
-int64_t random_geometric(brng_t *brng_state, double p) {
+RAND_INT_TYPE random_geometric(brng_t *brng_state, double p) {
   if (p >= 0.333333333333333333333333) {
     return random_geometric_search(brng_state, p);
   } else {
@@ -1072,7 +1080,7 @@ int64_t random_geometric(brng_t *brng_state, double p) {
   }
 }
 
-int64_t random_zipf(brng_t *brng_state, double a) {
+RAND_INT_TYPE random_zipf(brng_t *brng_state, double a) {
   double am1, b;
 
   am1 = a - 1.0;
@@ -1089,13 +1097,13 @@ int64_t random_zipf(brng_t *brng_state, double a) {
      * just reject this value. This function then models a Zipf
      * distribution truncated to sys.maxint.
      */
-    if (X > LONG_MAX || X < 1.0) {
+    if (X > RAND_INT_MAX || X < 1.0) {
       continue;
     }
 
     T = pow(1.0 + 1.0 / X, am1);
     if (V * X * (T - 1.0) / (b - 1.0) <= T / b) {
-      return (int64_t)X;
+      return (RAND_INT_TYPE)X;
     }
   }
 }
@@ -1119,9 +1127,10 @@ double random_triangular(brng_t *brng_state, double left, double mode,
   }
 }
 
-int64_t random_hypergeometric_hyp(brng_t *brng_state, int64_t good, int64_t bad,
-                                  int64_t sample) {
-  int64_t d1, k, z;
+RAND_INT_TYPE random_hypergeometric_hyp(brng_t *brng_state,
+                                        RAND_INT_TYPE good, RAND_INT_TYPE bad,
+                                        RAND_INT_TYPE sample) {
+  RAND_INT_TYPE d1, k, z;
   double d2, u, y;
 
   d1 = bad + good - sample;
@@ -1131,12 +1140,12 @@ int64_t random_hypergeometric_hyp(brng_t *brng_state, int64_t good, int64_t bad,
   k = sample;
   while (y > 0.0) {
     u = next_double(brng_state);
-    y -= (int64_t)floor(u + y / (d1 + k));
+    y -= (RAND_INT_TYPE)floor(u + y / (d1 + k));
     k--;
     if (k == 0)
       break;
   }
-  z = (int64_t)(d2 - y);
+  z = (RAND_INT_TYPE)(d2 - y);
   if (good > bad)
     z = sample - z;
   return z;
@@ -1146,11 +1155,12 @@ int64_t random_hypergeometric_hyp(brng_t *brng_state, int64_t good, int64_t bad,
 /* D2 = 3 - 2*sqrt(3/e) */
 #define D1 1.7155277699214135
 #define D2 0.8989161620588988
-int64_t random_hypergeometric_hrua(brng_t *brng_state, int64_t good,
-                                   int64_t bad, int64_t sample) {
-  int64_t mingoodbad, maxgoodbad, popsize, m, d9;
+RAND_INT_TYPE random_hypergeometric_hrua(brng_t *brng_state,
+                                         RAND_INT_TYPE good, RAND_INT_TYPE bad,
+                                         RAND_INT_TYPE sample) {
+  RAND_INT_TYPE mingoodbad, maxgoodbad, popsize, m, d9;
   double d4, d5, d6, d7, d8, d10, d11;
-  int64_t Z;
+  RAND_INT_TYPE Z;
   double T, W, X, Y;
 
   mingoodbad = MIN(good, bad);
@@ -1162,7 +1172,7 @@ int64_t random_hypergeometric_hrua(brng_t *brng_state, int64_t good,
   d6 = m * d4 + 0.5;
   d7 = sqrt((double)(popsize - m) * sample * d4 * d5 / (popsize - 1) + 0.5);
   d8 = D1 * d7 + D2;
-  d9 = (int64_t)floor((double)(m + 1) * (mingoodbad + 1) / (popsize + 2));
+  d9 = (RAND_INT_TYPE)floor((double)(m + 1) * (mingoodbad + 1) / (popsize + 2));
   d10 = (loggam(d9 + 1) + loggam(mingoodbad - d9 + 1) + loggam(m - d9 + 1) +
          loggam(maxgoodbad - m + d9 + 1));
   d11 = MIN(MIN(m, mingoodbad) + 1.0, floor(d6 + 16 * d7));
@@ -1177,7 +1187,7 @@ int64_t random_hypergeometric_hrua(brng_t *brng_state, int64_t good,
     if ((W < 0.0) || (W >= d11))
       continue;
 
-    Z = (int64_t)floor(W);
+    Z = (RAND_INT_TYPE)floor(W);
     T = d10 - (loggam(Z + 1) + loggam(mingoodbad - Z + 1) + loggam(m - Z + 1) +
                loggam(maxgoodbad - m + Z + 1));
 
@@ -1206,8 +1216,8 @@ int64_t random_hypergeometric_hrua(brng_t *brng_state, int64_t good,
 #undef D1
 #undef D2
 
-int64_t random_hypergeometric(brng_t *brng_state, int64_t good, int64_t bad,
-                              int64_t sample) {
+RAND_INT_TYPE random_hypergeometric(brng_t *brng_state, RAND_INT_TYPE good,
+                                    RAND_INT_TYPE bad, RAND_INT_TYPE sample) {
   if (sample > 10) {
     return random_hypergeometric_hrua(brng_state, good, bad, sample);
   } else if (sample > 0) {
@@ -1242,100 +1252,6 @@ uint64_t random_interval(brng_t *brng_state, uint64_t max) {
       ;
   }
   return value;
-}
-
-static NPY_INLINE uint64_t gen_mask(uint64_t max) {
-  uint64_t mask = max;
-  mask |= mask >> 1;
-  mask |= mask >> 2;
-  mask |= mask >> 4;
-  mask |= mask >> 8;
-  mask |= mask >> 16;
-  mask |= mask >> 32;
-  return mask;
-}
-
-/* Generate 16 bit random numbers using a 32 bit buffer. */
-static NPY_INLINE uint16_t buffered_uint16(brng_t *brng_state, int *bcnt,
-                                           uint32_t *buf) {
-  if (!(bcnt[0])) {
-    buf[0] = next_uint32(brng_state);
-    bcnt[0] = 1;
-  } else {
-    buf[0] >>= 16;
-    bcnt[0] -= 1;
-  }
-
-  return (uint16_t)buf[0];
-}
-
-/* Generate 8 bit random numbers using a 32 bit buffer. */
-static NPY_INLINE uint8_t buffered_uint8(brng_t *brng_state, int *bcnt,
-                                         uint32_t *buf) {
-  if (!(bcnt[0])) {
-    buf[0] = next_uint32(brng_state);
-    bcnt[0] = 3;
-  } else {
-    buf[0] >>= 8;
-    bcnt[0] -= 1;
-  }
-
-  return (uint8_t)buf[0];
-}
-
-/* Static `masked rejection` function called by random_bounded_uint64(...) */
-static NPY_INLINE uint64_t bounded_masked_uint64(brng_t *brng_state,
-                                                 uint64_t rng, uint64_t mask) {
-  uint64_t val;
-
-  while ((val = (next_uint64(brng_state) & mask)) > rng)
-    ;
-
-  return val;
-}
-
-/* Static `masked rejection` function called by
- * random_buffered_bounded_uint32(...) */
-static NPY_INLINE uint32_t buffered_bounded_masked_uint32(
-    brng_t *brng_state, uint32_t rng, uint32_t mask, int *bcnt, uint32_t *buf) {
-  /*
-   * The buffer and buffer count are not used here but are included to allow
-   * this function to be templated with the similar uint8 and uint16
-   * functions
-   */
-
-  uint32_t val;
-
-  while ((val = (next_uint32(brng_state) & mask)) > rng)
-    ;
-
-  return val;
-}
-
-/* Static `masked rejection` function called by
- * random_buffered_bounded_uint16(...) */
-static NPY_INLINE uint16_t buffered_bounded_masked_uint16(
-    brng_t *brng_state, uint16_t rng, uint16_t mask, int *bcnt, uint32_t *buf) {
-  uint16_t val;
-
-  while ((val = (buffered_uint16(brng_state, bcnt, buf) & mask)) > rng)
-    ;
-
-  return val;
-}
-
-/* Static `masked rejection` function called by
- * random_buffered_bounded_uint8(...) */
-static NPY_INLINE uint8_t buffered_bounded_masked_uint8(brng_t *brng_state,
-                                                        uint8_t rng,
-                                                        uint8_t mask, int *bcnt,
-                                                        uint32_t *buf) {
-  uint8_t val;
-
-  while ((val = (buffered_uint8(brng_state, bcnt, buf) & mask)) > rng)
-    ;
-
-  return val;
 }
 
 /* Static `Lemire rejection` function called by random_bounded_uint64(...) */
@@ -1641,22 +1557,6 @@ uint8_t random_buffered_bounded_uint8(brng_t *brng_state, uint8_t off,
   }
 }
 
-static NPY_INLINE npy_bool buffered_bounded_bool(brng_t *brng_state,
-                                                 npy_bool off, npy_bool rng,
-                                                 npy_bool mask, int *bcnt,
-                                                 uint32_t *buf) {
-  if (rng == 0)
-    return off;
-  if (!(bcnt[0])) {
-    buf[0] = next_uint32(brng_state);
-    bcnt[0] = 31;
-  } else {
-    buf[0] >>= 1;
-    bcnt[0] -= 1;
-  }
-  return (buf[0] & 0x00000001UL) != 0;
-}
-
 npy_bool random_buffered_bounded_bool(brng_t *brng_state, npy_bool off,
                                       npy_bool rng, npy_bool mask,
                                       bool use_masked, int *bcnt,
@@ -1843,11 +1743,12 @@ void random_bounded_bool_fill(brng_t *brng_state, npy_bool off, npy_bool rng,
   }
 }
 
-void random_multinomial(brng_t *brng_state, int64_t n, int64_t *mnix,
-                        double *pix, npy_intp d, binomial_t *binomial) {
+void random_multinomial(brng_t *brng_state, RAND_INT_TYPE n,
+                        RAND_INT_TYPE *mnix, double *pix, npy_intp d,
+                        binomial_t *binomial) {
   double remaining_p = 1.0;
   npy_intp j;
-  int64_t dn = n;
+  RAND_INT_TYPE dn = n;
   for (j = 0; j < (d - 1); j++) {
     mnix[j] = random_binomial(brng_state, pix[j] / remaining_p, dn, binomial);
     dn = dn - mnix[j];

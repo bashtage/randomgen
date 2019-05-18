@@ -22,6 +22,20 @@ typedef int bool;
 #include "numpy/npy_common.h"
 #include "numpy/npy_math.h"
 
+/*
+ * RAND_INT_TYPE is used to share integer generators with RandomState which
+ * used long in place of int64_t. If changing a distribution that uses
+ * RAND_INT_TYPE, then the original unmodified copy must be retained for
+ * use in RandomState by copying to the legacy distributions source file.
+ */
+#ifdef RANDOMGEN_LEGACY
+#define RAND_INT_TYPE long
+#define RAND_INT_MAX LONG_MAX
+#else
+#define RAND_INT_TYPE int64_t
+#define RAND_INT_MAX INT64_MAX
+#endif
+
 #ifdef _WIN32
 #if _MSC_VER == 1500
 
@@ -97,6 +111,121 @@ static NPY_INLINE double next_double(brng_t *brng_state) {
   return brng_state->next_double(brng_state->state);
 }
 
+
+/* Bounded generators */
+static NPY_INLINE uint64_t gen_mask(uint64_t max) {
+  uint64_t mask = max;
+  mask |= mask >> 1;
+  mask |= mask >> 2;
+  mask |= mask >> 4;
+  mask |= mask >> 8;
+  mask |= mask >> 16;
+  mask |= mask >> 32;
+  return mask;
+}
+
+/* Generate 16 bit random numbers using a 32 bit buffer. */
+static NPY_INLINE uint16_t buffered_uint16(brng_t *brng_state, int *bcnt,
+                                           uint32_t *buf) {
+  if (!(bcnt[0])) {
+    buf[0] = next_uint32(brng_state);
+    bcnt[0] = 1;
+  } else {
+    buf[0] >>= 16;
+    bcnt[0] -= 1;
+  }
+
+  return (uint16_t)buf[0];
+}
+
+/* Generate 8 bit random numbers using a 32 bit buffer. */
+static NPY_INLINE uint8_t buffered_uint8(brng_t *brng_state, int *bcnt,
+                                         uint32_t *buf) {
+  if (!(bcnt[0])) {
+    buf[0] = next_uint32(brng_state);
+    bcnt[0] = 3;
+  } else {
+    buf[0] >>= 8;
+    bcnt[0] -= 1;
+  }
+
+  return (uint8_t)buf[0];
+}
+
+/* Static `masked rejection` function called by random_bounded_uint64(...) */
+static NPY_INLINE uint64_t bounded_masked_uint64(brng_t *brng_state,
+                                                 uint64_t rng, uint64_t mask) {
+  uint64_t val;
+
+  while ((val = (next_uint64(brng_state) & mask)) > rng)
+    ;
+
+  return val;
+}
+
+/* Static `masked rejection` function called by
+ * random_buffered_bounded_uint32(...) */
+static NPY_INLINE uint32_t
+buffered_bounded_masked_uint32(brng_t *brng_state, uint32_t rng,
+                               uint32_t mask, int *bcnt, uint32_t *buf) {
+  /*
+   * The buffer and buffer count are not used here but are included to allow
+   * this function to be templated with the similar uint8 and uint16
+   * functions
+   */
+
+  uint32_t val;
+
+  while ((val = (next_uint32(brng_state) & mask)) > rng)
+    ;
+
+  return val;
+}
+
+/* Static `masked rejection` function called by
+ * random_buffered_bounded_uint16(...) */
+static NPY_INLINE uint16_t
+buffered_bounded_masked_uint16(brng_t *brng_state, uint16_t rng,
+                               uint16_t mask, int *bcnt, uint32_t *buf) {
+  uint16_t val;
+
+  while ((val = (buffered_uint16(brng_state, bcnt, buf) & mask)) > rng)
+    ;
+
+  return val;
+}
+
+/* Static `masked rejection` function called by
+ * random_buffered_bounded_uint8(...) */
+static NPY_INLINE uint8_t buffered_bounded_masked_uint8(brng_t *brng_state,
+                                                        uint8_t rng,
+                                                        uint8_t mask, int *bcnt,
+                                                        uint32_t *buf) {
+  uint8_t val;
+
+  while ((val = (buffered_uint8(brng_state, bcnt, buf) & mask)) > rng)
+    ;
+
+  return val;
+}
+
+static NPY_INLINE npy_bool buffered_bounded_bool(brng_t *brng_state,
+                                                 npy_bool off, npy_bool rng,
+                                                 npy_bool mask, int *bcnt,
+                                                 uint32_t *buf) {
+  if (rng == 0)
+    return off;
+  if (!(bcnt[0])) {
+    buf[0] = next_uint32(brng_state);
+    bcnt[0] = 31;
+  } else {
+    buf[0] >>= 1;
+    bcnt[0] -= 1;
+  }
+  return (buf[0] & 0x00000001UL) != 0;
+}
+
+
 DECLDIR float random_float(brng_t *brng_state);
 DECLDIR double random_double(brng_t *brng_state);
 DECLDIR void random_double_fill(brng_t *brng_state, npy_intp cnt, double *out);
@@ -163,18 +292,21 @@ DECLDIR double random_vonmises(brng_t *brng_state, double mu, double kappa);
 DECLDIR double random_triangular(brng_t *brng_state, double left, double mode,
                                  double right);
 
-DECLDIR int64_t random_poisson(brng_t *brng_state, double lam);
-DECLDIR int64_t random_negative_binomial(brng_t *brng_state, double n,
-                                         double p);
-DECLDIR int64_t random_binomial(brng_t *brng_state, double p, int64_t n,
-                                binomial_t *binomial);
-DECLDIR int64_t random_logseries(brng_t *brng_state, double p);
-DECLDIR int64_t random_geometric_search(brng_t *brng_state, double p);
-DECLDIR int64_t random_geometric_inversion(brng_t *brng_state, double p);
-DECLDIR int64_t random_geometric(brng_t *brng_state, double p);
-DECLDIR int64_t random_zipf(brng_t *brng_state, double a);
-DECLDIR int64_t random_hypergeometric(brng_t *brng_state, int64_t good,
-                                      int64_t bad, int64_t sample);
+DECLDIR RAND_INT_TYPE random_poisson(brng_t *brng_state, double lam);
+DECLDIR RAND_INT_TYPE random_negative_binomial(brng_t *brng_state, double n,
+                                               double p);
+DECLDIR RAND_INT_TYPE random_binomial(brng_t *brng_state, double p,
+                                      RAND_INT_TYPE n, binomial_t *binomial);
+DECLDIR RAND_INT_TYPE random_logseries(brng_t *brng_state, double p);
+DECLDIR RAND_INT_TYPE random_geometric_search(brng_t *brng_state, double p);
+DECLDIR RAND_INT_TYPE random_geometric_inversion(brng_t *brng_state,
+                                                 double p);
+DECLDIR RAND_INT_TYPE random_geometric(brng_t *brng_state, double p);
+DECLDIR RAND_INT_TYPE random_zipf(brng_t *brng_state, double a);
+DECLDIR RAND_INT_TYPE random_hypergeometric(brng_t *brng_state,
+                                            RAND_INT_TYPE good,
+                                            RAND_INT_TYPE bad,
+                                            RAND_INT_TYPE sample);
 
 DECLDIR uint64_t random_interval(brng_t *brng_state, uint64_t max);
 
@@ -217,7 +349,8 @@ DECLDIR void random_bounded_bool_fill(brng_t *brng_state, npy_bool off,
                                       npy_bool rng, npy_intp cnt,
                                       bool use_masked, npy_bool *out);
 
-DECLDIR void random_multinomial(brng_t *brng_state, int64_t n, int64_t *mnix,
-                                double *pix, npy_intp d, binomial_t *binomial);
+DECLDIR void random_multinomial(brng_t *brng_state, RAND_INT_TYPE n,
+                                RAND_INT_TYPE *mnix, double *pix, npy_intp d,
+                                binomial_t *binomial);
 
 #endif

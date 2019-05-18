@@ -1,0 +1,123 @@
+#!python
+#cython: wraparound=False, nonecheck=False, boundscheck=False, cdivision=True
+
+import numpy as np
+
+cimport numpy as np
+
+from randomgen.legacy.distributions cimport *
+
+np.import_array()
+
+_integers_types = {'bool': (0, 2),
+                 'int8': (-2**7, 2**7),
+                 'int16': (-2**15, 2**15),
+                 'int32': (-2**31, 2**31),
+                 'int64': (-2**63, 2**63),
+                 'uint8': (0, 2**8),
+                 'uint16': (0, 2**16),
+                 'uint32': (0, 2**32),
+                 'uint64': (0, 2**64)}
+
+{{
+py:
+type_info = (('uint64', 'uint64', '0x0ULL', '0xFFFFFFFFFFFFFFFFULL'),
+             ('uint32', 'uint32', '0x0UL', '0XFFFFFFFFUL'),
+             ('uint16', 'uint16', '0x0UL', '0XFFFFUL'),
+             ('uint8', 'uint8', '0x0UL', '0XFFUL'),
+             ('bool', 'bool', '0x0UL', '0x1UL'),
+             ('int64', 'uint64', '-0x8000000000000000LL', '0x7FFFFFFFFFFFFFFFL'),
+             ('int32', 'uint32', '-0x80000000L', '0x7FFFFFFFL'),
+             ('int16', 'uint16', '-0x8000L', '0x7FFFL' ),
+             ('int8', 'uint8', '-0x80L', '0x7FL' )
+)}}
+{{for  nptype, utype, lb, ub in type_info}}
+{{ py: otype = nptype + '_' if nptype == 'bool' else nptype }}
+cdef object _legacy_rand_{{nptype}}(object low, object high, object size,
+                                    aug_brng_t *aug_state, object lock):
+    """
+    _legacy_rand_{{nptype}}(low, high, size, *state, lock)
+
+    Return random np.{{nptype}} integers from `low` (inclusive) to `high` (exclusive).
+
+    Return random integers from the "discrete uniform" distribution in the
+    interval [`low`, `high`).  If `high` is None (the default),
+    then results are from [0, `low`). On entry the arguments are presumed
+    to have been validated for size and order for the np.{{nptype}} type.
+
+    Parameters
+    ----------
+    low : int or array-like
+        Lowest (signed) integer to be drawn from the distribution (unless
+        ``high=None``, in which case this parameter is the *highest* such
+        integer).
+    high : int or array-like
+        If provided, one above the largest (signed) integer to be drawn from the
+        distribution (see above for behavior if ``high=None``).
+    size : int or tuple of ints
+        Output shape.  If the given shape is, e.g., ``(m, n, k)``, then
+        ``m * n * k`` samples are drawn.  Default is None, in which case a
+        single value is returned.
+    state : bit generator
+        Bit generator state to use in the core random number generators
+    lock : threading.Lock
+        Lock to prevent multiple using a single generator simultaneously
+
+    Returns
+    -------
+    out : python scalar or ndarray of np.{{nptype}}
+          `size`-shaped array of random integers from the appropriate
+          distribution, or a single such random int if `size` not provided.
+
+    Notes
+    -----
+    The internal integer generator produces values from the closed
+    interval [low, high].  This requires some care since
+    high can be out-of-range for {{utype}}. The scalar path leaves
+    integers as Python integers until the 1 has been subtracted to
+    avoid needing to cast to a larger type.
+    """
+    cdef np.ndarray out_arr, low_arr, high_arr
+    cdef {{utype}}_t rng, off, out_val
+    cdef {{utype}}_t *out_data
+    cdef np.npy_intp i, n, cnt
+
+    if size is not None:
+        if (np.prod(size) == 0):
+            return np.empty(size, dtype=np.{{nptype}})
+
+    low_arr = <np.ndarray>np.array(low, copy=False)
+    high_arr = <np.ndarray>np.array(high, copy=False)
+    low_ndim = np.PyArray_NDIM(low_arr)
+    high_ndim = np.PyArray_NDIM(high_arr)
+    scalar = ((low_ndim == 0 or (low_ndim == 1 and low_arr.size == 1 and size is not None)) and
+            (high_ndim == 0 or (high_ndim == 1 and high_arr.size == 1 and size is not None)))
+    if not scalar:
+        raise ValueError('Only scalar-compatible inputs are accepted for low and high')
+
+    low = int(low_arr)
+    high = int(high_arr)
+    # Subtract 1 since internal generator produces on closed interval [low, high]
+    high -= 1
+
+    if low < {{lb}}:
+        raise ValueError("low is out of bounds for {{nptype}}")
+    if high > {{ub}}:
+        raise ValueError("high is out of bounds for {{nptype}}")
+    if low > high:  # -1 already subtracted, closed interval
+        raise ValueError('low >= high')
+
+    rng = <{{utype}}_t>(high - low)
+    off = <{{utype}}_t>(<{{nptype}}_t>low)
+    if size is None:
+        with lock:
+            legacy_random_bounded_{{utype}}_fill(aug_state, off, rng, 1, &out_val)
+        return np.{{otype}}(<{{nptype}}_t>out_val)
+    else:
+        out_arr = <np.ndarray>np.empty(size, np.{{nptype}})
+        cnt = np.PyArray_SIZE(out_arr)
+        out_data = <{{utype}}_t *>np.PyArray_DATA(out_arr)
+        with lock, nogil:
+            legacy_random_bounded_{{utype}}_fill(aug_state, off, rng, cnt, out_data)
+        return out_arr
+{{endfor}}
