@@ -22,6 +22,20 @@ typedef int bool;
 #include "numpy/npy_common.h"
 #include "numpy/npy_math.h"
 
+/*
+ * RAND_INT_TYPE is used to share integer generators with RandomState which
+ * used long in place of int64_t. If changing a distribution that uses
+ * RAND_INT_TYPE, then the original unmodified copy must be retained for
+ * use in RandomState by copying to the legacy distributions source file.
+ */
+#ifdef RANDOMGEN_LEGACY
+#define RAND_INT_TYPE long
+#define RAND_INT_MAX LONG_MAX
+#else
+#define RAND_INT_TYPE int64_t
+#define RAND_INT_MAX INT64_MAX
+#endif
+
 #ifdef _WIN32
 #if _MSC_VER == 1500
 
@@ -282,18 +296,21 @@ DECLDIR double random_vonmises(bitgen_t *bitgen_state, double mu, double kappa);
 DECLDIR double random_triangular(bitgen_t *bitgen_state, double left,
                                  double mode, double right);
 
-DECLDIR int64_t random_poisson(bitgen_t *bitgen_state, double lam);
-DECLDIR int64_t random_negative_binomial(bitgen_t *bitgen_state, double n,
-                                         double p);
-DECLDIR int64_t random_binomial(bitgen_t *bitgen_state, double p, int64_t n,
-                                binomial_t *binomial);
-DECLDIR int64_t random_logseries(bitgen_t *bitgen_state, double p);
-DECLDIR int64_t random_geometric_search(bitgen_t *bitgen_state, double p);
-DECLDIR int64_t random_geometric_inversion(bitgen_t *bitgen_state, double p);
-DECLDIR int64_t random_geometric(bitgen_t *bitgen_state, double p);
-DECLDIR int64_t random_zipf(bitgen_t *bitgen_state, double a);
-DECLDIR int64_t random_hypergeometric(bitgen_t *bitgen_state, int64_t good,
-                                      int64_t bad, int64_t sample);
+DECLDIR RAND_INT_TYPE random_poisson(bitgen_t *bitgen_state, double lam);
+DECLDIR RAND_INT_TYPE random_negative_binomial(bitgen_t *bitgen_state, double n,
+                                               double p);
+DECLDIR RAND_INT_TYPE random_binomial(bitgen_t *bitgen_state, double p,
+                                      RAND_INT_TYPE n, binomial_t *binomial);
+DECLDIR RAND_INT_TYPE random_logseries(bitgen_t *bitgen_state, double p);
+DECLDIR RAND_INT_TYPE random_geometric_search(bitgen_t *bitgen_state, double p);
+DECLDIR RAND_INT_TYPE random_geometric_inversion(bitgen_t *bitgen_state,
+                                                 double p);
+DECLDIR RAND_INT_TYPE random_geometric(bitgen_t *bitgen_state, double p);
+DECLDIR RAND_INT_TYPE random_zipf(bitgen_t *bitgen_state, double a);
+DECLDIR RAND_INT_TYPE random_hypergeometric(bitgen_t *bitgen_state,
+                                            RAND_INT_TYPE good,
+                                            RAND_INT_TYPE bad,
+                                            RAND_INT_TYPE sample);
 
 DECLDIR uint64_t random_interval(bitgen_t *bitgen_state, uint64_t max);
 
@@ -336,8 +353,8 @@ DECLDIR void random_bounded_bool_fill(bitgen_t *bitgen_state, npy_bool off,
                                       npy_bool rng, npy_intp cnt,
                                       bool use_masked, npy_bool *out);
 
-DECLDIR void random_multinomial(bitgen_t *bitgen_state, int64_t n,
-                                int64_t *mnix, double *pix, npy_intp d,
+DECLDIR void random_multinomial(bitgen_t *bitgen_state, RAND_INT_TYPE n,
+                                RAND_INT_TYPE *mnix, double *pix, npy_intp d,
                                 binomial_t *binomial);
 
 #endif

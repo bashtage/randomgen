@@ -285,7 +285,7 @@ extensions = [Extension('randomgen.entropy',
                         [np.get_include()] + [join(MOD_DIR, 'legacy')],
                         extra_compile_args=EXTRA_COMPILE_ARGS,
                         extra_link_args=EXTRA_LINK_ARGS,
-                        define_macros=DEFS
+                        define_macros=DEFS + [('RANDOMGEN_LEGACY', '1')]
                         ),
 
               Extension("randomgen.mtrand",
@@ -298,7 +298,7 @@ extensions = [Extension('randomgen.entropy',
                         [np.get_include()] + [join(MOD_DIR, 'legacy')],
                         extra_compile_args=EXTRA_COMPILE_ARGS,
                         extra_link_args=EXTRA_LINK_ARGS,
-                        define_macros=DEFS
+                        define_macros=DEFS + [('RANDOMGEN_LEGACY', '1')]
                         ),
               ]
 
