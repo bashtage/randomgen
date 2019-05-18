@@ -27,15 +27,24 @@ extern double legacy_wald(aug_bitgen_t *aug_state, double mean, double scale);
 extern double legacy_lognormal(aug_bitgen_t *aug_state, double mean,
                                double sigma);
 extern double legacy_standard_t(aug_bitgen_t *aug_state, double df);
-extern int64_t legacy_negative_binomial(aug_bitgen_t *aug_state, double n,
-                                        double p);
 extern double legacy_standard_cauchy(aug_bitgen_t *state);
 extern double legacy_beta(aug_bitgen_t *aug_state, double a, double b);
 extern double legacy_f(aug_bitgen_t *aug_state, double dfnum, double dfden);
 extern double legacy_normal(aug_bitgen_t *aug_state, double loc, double scale);
 extern double legacy_standard_gamma(aug_bitgen_t *aug_state, double shape);
 extern double legacy_exponential(aug_bitgen_t *aug_state, double scale);
-
+extern int64_t legacy_negative_binomial(aug_bitgen_t *aug_state, double n,
+                                        double p);
+extern int64_t legacy_random_hypergeometric(bitgen_t *bitgen_state,
+                                            int64_t good, int64_t bad,
+                                            int64_t sample);
+extern int64_t legacy_random_logseries(bitgen_t *bitgen_state, double p);
+extern int64_t legacy_random_poisson(bitgen_t *bitgen_state, double lam);
+extern int64_t legacy_random_zipf(bitgen_t *bitgen_state, double a);
+extern int64_t legacy_random_geometric(bitgen_t *bitgen_state, double p);
+void legacy_random_multinomial(bitgen_t *bitgen_state, RAND_INT_TYPE n,
+                               RAND_INT_TYPE *mnix, double *pix, npy_intp d,
+                               binomial_t *binomial);
 void legacy_random_bounded_uint64_fill(aug_bitgen_t *aug_state, uint64_t off,
                                        uint64_t rng, npy_intp cnt,
                                        uint64_t *out);

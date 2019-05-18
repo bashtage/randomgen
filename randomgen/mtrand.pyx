@@ -21,6 +21,19 @@ from randomgen.legacy.distributions cimport *
 
 np.import_array()
 
+cdef object int64_to_long(object x):
+    """
+    Convert int64 to long for legacy compatibility, which used long for integer
+    distributions
+    """
+    cdef int64_t x64
+
+    if np.isscalar(x):
+        x64 = x
+        return <long>x64
+    return x.astype('l', casting='unsafe')
+
+
 cdef class RandomState:
     """
     RandomState(bit_generator=None)
@@ -3141,10 +3154,12 @@ cdef class RandomState:
         ...    print(i, "wells drilled, probability of one success =", probability)
 
         """
-        return disc(&legacy_negative_binomial, &self._aug_state, size, self.lock, 2, 0,
-                    n, 'n', CONS_POSITIVE,
-                    p, 'p', CONS_BOUNDED_0_1,
-                    0.0, '', CONS_NONE)
+        out = disc(&legacy_negative_binomial, &self._aug_state, size, self.lock, 2, 0,
+                   n, 'n', CONS_POSITIVE,
+                   p, 'p', CONS_BOUNDED_0_1,
+                   0.0, '', CONS_NONE)
+        # Match historical output type
+        return int64_to_long(out)
 
     def poisson(self, lam=1.0, size=None):
         """
@@ -3212,10 +3227,12 @@ cdef class RandomState:
         >>> s = np.random.poisson(lam=(100., 500.), size=(100, 2))
 
         """
-        return disc(&random_poisson, &self._bitgen, size, self.lock, 1, 0,
-                    lam, 'lam', CONS_POISSON,
-                    0.0, '', CONS_NONE,
-                    0.0, '', CONS_NONE)
+        out = disc(&legacy_random_poisson, &self._bitgen, size, self.lock, 1, 0,
+                   lam, 'lam', CONS_POISSON,
+                   0.0, '', CONS_NONE,
+                   0.0, '', CONS_NONE)
+        # Match historical output type
+        return int64_to_long(out)
 
     def zipf(self, a, size=None):
         """
@@ -3291,10 +3308,13 @@ cdef class RandomState:
         >>> plt.show()
 
         """
-        return disc(&random_zipf, &self._bitgen, size, self.lock, 1, 0,
-                    a, 'a', CONS_GT_1,
-                    0.0, '', CONS_NONE,
-                    0.0, '', CONS_NONE)
+        out = disc(&legacy_random_zipf, &self._bitgen, size, self.lock, 1, 0,
+                   a, 'a', CONS_GT_1,
+                   0.0, '', CONS_NONE,
+                   0.0, '', CONS_NONE)
+        # Match historical output type
+        return int64_to_long(out)
+
 
     def geometric(self, p, size=None):
         """
@@ -3342,10 +3362,12 @@ cdef class RandomState:
         0.34889999999999999 #random
 
         """
-        return disc(&random_geometric, &self._bitgen, size, self.lock, 1, 0,
+        out = disc(&legacy_random_geometric, &self._bitgen, size, self.lock, 1, 0,
                     p, 'p', CONS_BOUNDED_GT_0_1,
                     0.0, '', CONS_NONE,
                     0.0, '', CONS_NONE)
+        # Match historical output type
+        return int64_to_long(out)
 
     def hypergeometric(self, ngood, nbad, nsample, size=None):
         """
@@ -3438,13 +3460,13 @@ cdef class RandomState:
         #   answer = 0.003 ... pretty unlikely!
 
         """
-        cdef bint is_scalar = True
         cdef np.ndarray ongood, onbad, onsample
         cdef int64_t lngood, lnbad, lnsample
 
-        ongood = <np.ndarray>np.PyArray_FROM_OTF(ngood, np.NPY_INT64, np.NPY_ALIGNED)
-        onbad = <np.ndarray>np.PyArray_FROM_OTF(nbad, np.NPY_INT64, np.NPY_ALIGNED)
-        onsample = <np.ndarray>np.PyArray_FROM_OTF(nsample, np.NPY_INT64, np.NPY_ALIGNED)
+        # This cast to long is required to ensure that the values are inbounds
+        ongood = <np.ndarray>np.PyArray_FROM_OTF(ngood, np.NPY_LONG, np.NPY_ALIGNED)
+        onbad = <np.ndarray>np.PyArray_FROM_OTF(nbad, np.NPY_LONG, np.NPY_ALIGNED)
+        onsample = <np.ndarray>np.PyArray_FROM_OTF(nsample, np.NPY_LONG, np.NPY_ALIGNED)
 
         if np.PyArray_NDIM(ongood) == np.PyArray_NDIM(onbad) == np.PyArray_NDIM(onsample) == 0:
 
@@ -3454,17 +3476,25 @@ cdef class RandomState:
 
             if lngood + lnbad < lnsample:
                 raise ValueError("ngood + nbad < nsample")
-            return disc(&random_hypergeometric, &self._bitgen, size, self.lock, 0, 3,
-                        lngood, 'ngood', CONS_NON_NEGATIVE,
-                        lnbad, 'nbad', CONS_NON_NEGATIVE,
-                        lnsample, 'nsample', CONS_GTE_1)
+            out = disc(&legacy_random_hypergeometric, &self._bitgen, size, self.lock, 0, 3,
+                       lngood, 'ngood', CONS_NON_NEGATIVE,
+                       lnbad, 'nbad', CONS_NON_NEGATIVE,
+                       lnsample, 'nsample', CONS_GTE_1)
+            # Match historical output type
+            return int64_to_long(out)
 
         if np.any(np.less(np.add(ongood, onbad), onsample)):
             raise ValueError("ngood + nbad < nsample")
-        return discrete_broadcast_iii(&random_hypergeometric, &self._bitgen, size, self.lock,
-                                      ongood, 'ngood', CONS_NON_NEGATIVE,
-                                      onbad, 'nbad', CONS_NON_NEGATIVE,
-                                      onsample, 'nsample', CONS_GTE_1)
+        # Convert to int64, if necessary, to use int64 infrastructure
+        ongood = ongood.astype(np.int64)
+        onbad = onbad.astype(np.int64)
+        onsample = onsample.astype(np.int64)
+        out = discrete_broadcast_iii(&legacy_random_hypergeometric,&self._bitgen, size, self.lock,
+                                     ongood, 'ngood', CONS_NON_NEGATIVE,
+                                     onbad, 'nbad', CONS_NON_NEGATIVE,
+                                     onsample, 'nsample', CONS_GTE_1)
+        # Match historical output type
+        return int64_to_long(out)
 
     def logseries(self, p, size=None):
         """
@@ -3541,10 +3571,12 @@ cdef class RandomState:
         >>> plt.show()
 
         """
-        return disc(&random_logseries, &self._bitgen, size, self.lock, 1, 0,
-                 p, 'p', CONS_BOUNDED_0_1,
-                 0.0, '', CONS_NONE,
-                 0.0, '', CONS_NONE)
+        out = disc(&legacy_random_logseries, &self._bitgen, size, self.lock, 1, 0,
+                   p, 'p', CONS_BOUNDED_0_1,
+                   0.0, '', CONS_NONE,
+                   0.0, '', CONS_NONE)
+        # Match historical output type
+        return int64_to_long(out)
 
     # Multivariate distributions:
     def multivariate_normal(self, mean, cov, size=None, check_valid='warn',
@@ -3792,8 +3824,8 @@ cdef class RandomState:
         cdef np.npy_intp d, i, sz, offset
         cdef np.ndarray parr, mnarr
         cdef double *pix
-        cdef int64_t *mnix
-        cdef int64_t ni
+        cdef long *mnix
+        cdef long ni
 
         d = len(pvals)
         parr = <np.ndarray>np.PyArray_FROM_OTF(pvals, np.NPY_DOUBLE, np.NPY_ALIGNED)
@@ -3810,16 +3842,16 @@ cdef class RandomState:
             except:
                 shape = tuple(size) + (d,)
 
-        multin = np.zeros(shape, dtype=np.int64)
+        multin = np.zeros(shape, int)
         mnarr = <np.ndarray>multin
-        mnix = <int64_t*>np.PyArray_DATA(mnarr)
+        mnix = <long*>np.PyArray_DATA(mnarr)
         sz = np.PyArray_SIZE(mnarr)
         ni = n
         check_constraint(ni, 'n', CONS_NON_NEGATIVE)
         offset = 0
         with self.lock, nogil:
             for i in range(sz // d):
-                random_multinomial(&self._bitgen, ni, &mnix[offset], pix, d, &self._binomial)
+                legacy_random_multinomial(&self._bitgen, ni, &mnix[offset], pix, d, &self._binomial)
                 offset += d
 
         return multin
