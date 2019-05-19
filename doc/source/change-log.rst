@@ -26,7 +26,7 @@ v1.17.0
   * Rename :meth:`~randomgen.generator.Generator.random_sample`
     to :meth:`~randomgen.generator.Generator.random`.
   * Change ``jump`` which operated in-place to
-    :meth:`~randomgen.xoshiro256starstar.Xoshiro256StarStar.jumped` which
+    :meth:`~randomgen.xoshiro256.Xoshiro256.jumped` which
     returns a new ``BitGenerator``.
   * Rename Basic RNG to bit generator, which has been consistently applied
     across the docs and references
@@ -96,7 +96,7 @@ v1.16.0
   :func:`~randomgen.dsfmt.DSFMT.jump` or :func:`~randomgen.dsfmt.DSFMT.seed`
   that failed to reset the buffer.  This resulted in upto 381 values from the
   previous state being used before the buffer was refilled at the new state.
-- Fixed bugs in :class:`~randomgen.xoshiro512starstar.Xoshiro512StarStar`
+- Fixed bugs in :class:`~randomgen.xoshiro512.Xoshiro512`
   and :class:`~randomgen.xorshift1024.Xorshift1024` where the fallback
   entropy initialization used too few bytes. This bug is unlikely to be
   encountered since this path is only encountered if the system random

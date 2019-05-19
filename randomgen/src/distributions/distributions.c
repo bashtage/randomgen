@@ -1070,8 +1070,7 @@ RAND_INT_TYPE random_geometric_search(bitgen_t *bitgen_state, double p) {
 }
 
 RAND_INT_TYPE random_geometric_inversion(bitgen_t *bitgen_state, double p) {
-  return (RAND_INT_TYPE)ceil(log(1.0 - next_double(bitgen_state)) /
-                             log(1.0 - p));
+  return (RAND_INT_TYPE)ceil(log(1.0 - next_double(bitgen_state)) / log(1.0 - p));
 }
 
 RAND_INT_TYPE random_geometric(bitgen_t *bitgen_state, double p) {
@@ -1764,4 +1763,3 @@ void random_multinomial(bitgen_t *bitgen_state, RAND_INT_TYPE n,
       mnix[d - 1] = dn;
   }
 }
-

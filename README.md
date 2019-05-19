@@ -289,8 +289,8 @@ NumPy's mt19937.
     ThreeFry32            -63.9%
     Xoroshiro128          159.5%
     Xorshift1024          150.4%
-    Xoshiro256StarStar    145.7%
-    Xoshiro512StarStar    113.1%
+    Xoshiro256    145.7%
+    Xoshiro512    113.1%
 
     Speed-up relative to NumPy (64-bit unsigned integers)
     ************************************************************
@@ -303,8 +303,8 @@ NumPy's mt19937.
     ThreeFry32            -67.8%
     Xoroshiro128          124.0%
     Xorshift1024          109.4%
-    Xoshiro256StarStar    100.3%
-    Xoshiro512StarStar     63.5%
+    Xoshiro256    100.3%
+    Xoshiro512     63.5%
 
     Speed-up relative to NumPy (Standard normals)
     ************************************************************
@@ -317,5 +317,5 @@ NumPy's mt19937.
     ThreeFry32             21.6%
     Xoroshiro128          332.1%
     Xorshift1024          232.4%
-    Xoshiro256StarStar    306.6%
-    Xoshiro512StarStar    274.6%
+    Xoshiro256    306.6%
+    Xoshiro512    274.6%

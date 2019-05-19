@@ -15,33 +15,33 @@ from randomgen.entropy import random_entropy, seed_by_array
 
 np.import_array()
 
-cdef extern from "src/xoshiro256starstar/xoshiro256starstar.h":
+cdef extern from "src/xoshiro512/xoshiro512.h":
 
-    struct s_xoshiro256starstar_state:
-        uint64_t s[4]
+    struct s_xoshiro512_state:
+        uint64_t s[8]
         int has_uint32
         uint32_t uinteger
 
-    ctypedef s_xoshiro256starstar_state xoshiro256starstar_state
+    ctypedef s_xoshiro512_state xoshiro512_state
 
-    uint64_t xoshiro256starstar_next64(xoshiro256starstar_state *state)  nogil
-    uint32_t xoshiro256starstar_next32(xoshiro256starstar_state *state)  nogil
-    void xoshiro256starstar_jump(xoshiro256starstar_state *state)
+    uint64_t xoshiro512_next64(xoshiro512_state *state)  nogil
+    uint32_t xoshiro512_next32(xoshiro512_state *state)  nogil
+    void xoshiro512_jump(xoshiro512_state *state)
 
-cdef uint64_t xoshiro256starstar_uint64(void* st) nogil:
-    return xoshiro256starstar_next64(<xoshiro256starstar_state *>st)
+cdef uint64_t xoshiro512_uint64(void* st) nogil:
+    return xoshiro512_next64(<xoshiro512_state *>st)
 
-cdef uint32_t xoshiro256starstar_uint32(void *st) nogil:
-    return xoshiro256starstar_next32(<xoshiro256starstar_state *> st)
+cdef uint32_t xoshiro512_uint32(void *st) nogil:
+    return xoshiro512_next32(<xoshiro512_state *> st)
 
-cdef double xoshiro256starstar_double(void* st) nogil:
-    return uint64_to_double(xoshiro256starstar_next64(<xoshiro256starstar_state *>st))
+cdef double xoshiro512_double(void* st) nogil:
+    return uint64_to_double(xoshiro512_next64(<xoshiro512_state *>st))
 
-cdef class Xoshiro256StarStar:
+cdef class Xoshiro512:
     """
-    Xoshiro256StarStar(seed=None)
+    Xoshiro512(seed=None)
 
-    Container for the xoshiro256** pseudo-random number generator.
+    Container for the xoshiro512** pseudo-random number generator.
 
     Parameters
     ----------
@@ -54,14 +54,14 @@ cdef class Xoshiro256StarStar:
 
     Notes
     -----
-    xoshiro256** is written by David Blackman and Sebastiano Vigna.
+    xoshiro512** is written by David Blackman and Sebastiano Vigna.
     It is a 64-bit PRNG that uses a carefully constructed linear transformation.
     This produces a fast PRNG with excellent statistical quality
-    [1]_. xoshiro256** has a period of :math:`2^{256} - 1`
-    and supports jumping the sequence in increments of :math:`2^{128}`,
+    [1]_. xoshiro512** has a period of :math:`2^{512} - 1`
+    and supports jumping the sequence in increments of :math:`2^{256}`,
     which allows multiple non-overlapping subsequences to be generated.
 
-    ``Xoshiro256StarStar`` provides a capsule containing function pointers that
+    ``Xoshiro512`` provides a capsule containing function pointers that
     produce doubles, and unsigned 32 and 64- bit integers. These are not
     directly consumable in Python and must be consumed by a ``Generator``
     or similar object that supports low-level access.
@@ -71,10 +71,10 @@ cdef class Xoshiro256StarStar:
 
     **State and Seeding**
 
-    The ``Xoshiro256StarStar`` state vector consists of a 4-element array
+    The ``Xoshiro512`` state vector consists of a 4 element array
     of 64-bit unsigned integers.
 
-    ``Xoshiro256StarStar`` is seeded using either a single 64-bit unsigned
+    ``Xoshiro512`` is seeded using either a single 64-bit unsigned
     integer or a vector of 64-bit unsigned integers.  In either case, the seed
     is used as an input for another simple random number generator, SplitMix64,
     and the output of this PRNG function is used as the initial state. Using
@@ -83,34 +83,34 @@ cdef class Xoshiro256StarStar:
 
     **Parallel Features**
 
-    ``Xoshiro256StarStar`` can be used in parallel applications by calling the
+    ``Xoshiro512`` can be used in parallel applications by calling the
     method ``jump`` which advances the state as-if :math:`2^{128}` random
     numbers have been generated. This allows the original sequence to be split
     so that distinct segments can be used in each worker process. All
     generators should be initialized with the same seed to ensure that the
     segments come from the same sequence.
 
-    >>> from randomgen import Generator, Xoshiro256StarStar
-    >>> rg = [Generator(Xoshiro256StarStar(1234)) for _ in range(10)]
-    # Advance each Xoshiro256StarStar instance by i jumps
+    >>> from randomgen import Generator, Xoshiro512
+    >>> rg = [Generator(Xoshiro512(1234)) for _ in range(10)]
+    # Advance each Xoshiro512 instance by i jumps
     >>> for i in range(10):
     ...     rg[i].bit_generator.jump(i)
 
     **Compatibility Guarantee**
 
-    ``Xoshiro256StarStar`` makes a guarantee that a fixed seed will always
+    ``Xoshiro512`` makes a guarantee that a fixed seed will always
     produce the same random integer stream.
 
     Examples
     --------
-    >>> from randomgen import Generator, Xoshiro256StarStar
-    >>> rg = Generator(Xoshiro256StarStar(1234))
+    >>> from randomgen import Generator, Xoshiro512
+    >>> rg = Generator(Xoshiro512(1234))
     >>> rg.standard_normal()
     0.123  # random
 
-    Identical method using only Xoshiro256StarStar
+    Identical method using only Xoshiro512
 
-    >>> rg = Xoshiro256StarStar(1234).generator
+    >>> rg = Xoshiro512(1234).generator
     >>> rg.standard_normal()
     0.123  # random
 
@@ -119,7 +119,7 @@ cdef class Xoshiro256StarStar:
     .. [1] "xoroshiro+ / xorshift* / xorshift+ generators and the PRNG shootout",
            http://xorshift.di.unimi.it/
     """
-    cdef xoshiro256starstar_state rng_state
+    cdef xoshiro512_state rng_state
     cdef bitgen_t _bitgen
     cdef public object capsule
     cdef object _ctypes
@@ -131,10 +131,10 @@ cdef class Xoshiro256StarStar:
         self.lock = Lock()
 
         self._bitgen.state = <void *>&self.rng_state
-        self._bitgen.next_uint64 = &xoshiro256starstar_uint64
-        self._bitgen.next_uint32 = &xoshiro256starstar_uint32
-        self._bitgen.next_double = &xoshiro256starstar_double
-        self._bitgen.next_raw = &xoshiro256starstar_uint64
+        self._bitgen.next_uint64 = &xoshiro512_uint64
+        self._bitgen.next_uint32 = &xoshiro512_uint32
+        self._bitgen.next_double = &xoshiro512_double
+        self._bitgen.next_raw = &xoshiro512_uint64
 
         self._ctypes = None
         self._cffi = None
@@ -214,16 +214,14 @@ cdef class Xoshiro256StarStar:
         ub = 2 ** 64
         if seed is None:
             try:
-                state = random_entropy(8)
+                state = random_entropy(16)
             except RuntimeError:
-                state = random_entropy(8, 'fallback')
+                state = random_entropy(16, 'fallback')
             state = state.view(np.uint64)
         else:
-            state = seed_by_array(seed, 4)
-        self.rng_state.s[0] = <uint64_t>int(state[0])
-        self.rng_state.s[1] = <uint64_t>int(state[1])
-        self.rng_state.s[2] = <uint64_t>int(state[2])
-        self.rng_state.s[3] = <uint64_t>int(state[3])
+            state = seed_by_array(seed, 8)
+        for i in range(8):
+            self.rng_state.s[i] = <uint64_t>int(state[i])
         self._reset_state_variables()
 
     cdef jump_inplace(self, np.npy_intp iter):
@@ -239,14 +237,14 @@ cdef class Xoshiro256StarStar:
         """
         cdef np.npy_intp i
         for i in range(iter):
-            xoshiro256starstar_jump(&self.rng_state)
+            xoshiro512_jump(&self.rng_state)
         self._reset_state_variables()
 
     def jump(self, np.npy_intp iter=1):
         """
         jump(iter=1)
 
-        Jumps the state as-if 2**128 random numbers have been generated.
+        Jumps the state as-if 2**256 random numbers have been generated.
 
         Parameters
         ----------
@@ -255,7 +253,7 @@ cdef class Xoshiro256StarStar:
 
         Returns
         -------
-        self : Xoshiro256StarStar
+        self : Xoshiro512
             PRNG jumped iter times
 
         Notes
@@ -277,7 +275,7 @@ cdef class Xoshiro256StarStar:
         Returns a new bit generator with the state jumped
 
         The state of the returned big generator is jumped as-if
-        2**(128 * iter) random numbers have been generated.
+        2**(256 * iter) random numbers have been generated.
 
         Parameters
         ----------
@@ -286,10 +284,10 @@ cdef class Xoshiro256StarStar:
 
         Returns
         -------
-        bit_generator : Xoshiro256StarStar
+        bit_generator : Xoshiro512
             New instance of generator jumped iter times
         """
-        cdef Xoshiro256StarStar bit_generator
+        cdef Xoshiro512 bit_generator
 
         bit_generator = self.__class__()
         bit_generator.state = self.state
@@ -308,11 +306,9 @@ cdef class Xoshiro256StarStar:
             Dictionary containing the information required to describe the
             state of the PRNG
         """
-        state = np.empty(4, dtype=np.uint64)
-        state[0] = self.rng_state.s[0]
-        state[1] = self.rng_state.s[1]
-        state[2] = self.rng_state.s[2]
-        state[3] = self.rng_state.s[3]
+        state = np.empty(8, dtype=np.uint64)
+        for i in range(8):
+            state[i] = self.rng_state.s[i]
         return {'bit_generator': self.__class__.__name__,
                 's': state,
                 'has_uint32': self.rng_state.has_uint32,
@@ -326,10 +322,8 @@ cdef class Xoshiro256StarStar:
         if bitgen != self.__class__.__name__:
             raise ValueError('state must be for a {0} '
                              'PRNG'.format(self.__class__.__name__))
-        self.rng_state.s[0] = <uint64_t>value['s'][0]
-        self.rng_state.s[1] = <uint64_t>value['s'][1]
-        self.rng_state.s[2] = <uint64_t>value['s'][2]
-        self.rng_state.s[3] = <uint64_t>value['s'][3]
+        for i in range(8):
+            self.rng_state.s[i] = <uint64_t>value['s'][i]
         self.rng_state.has_uint32 = value['has_uint32']
         self.rng_state.uinteger = value['uinteger']
 

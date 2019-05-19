@@ -1,4 +1,4 @@
-# XOSHIRO512STARSTAR
+# XOSHIRO512
 
 Written in 2018 by David Blackman and Sebastiano Vigna (vigna@acm.org)
 

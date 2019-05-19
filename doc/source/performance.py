@@ -5,13 +5,13 @@ import numpy as np
 import pandas as pd
 
 from randomgen import MT19937, DSFMT, ThreeFry, PCG64, Xoroshiro128, \
-    Xorshift1024, Philox, Xoshiro256StarStar, Xoshiro512StarStar
+    Xorshift1024, Philox, Xoshiro256, Xoshiro512
 
 NUMBER = 100
 REPEAT = 10
 SIZE = 10000
 PRNGS = [DSFMT, MT19937, Philox, PCG64, ThreeFry, Xoroshiro128, Xorshift1024,
-         Xoshiro256StarStar, Xoshiro512StarStar]
+         Xoshiro256, Xoshiro512]
 
 funcs = {'32-bit Unsigned Ints':
          f'integers(2**32, dtype="uint32", size={SIZE})',
@@ -73,7 +73,7 @@ order = np.log(table).mean().sort_values().index
 table = table.T
 table = table.reindex(order)
 table = table.T
-table.pop('Xoshiro512StarStar')
+table.pop('Xoshiro512')
 table.pop('DSFMT')
 table = 1000000 * table / (SIZE * NUMBER)
 print(table.to_csv(float_format='%0.1f'))
