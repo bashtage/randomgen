@@ -1759,8 +1759,9 @@ void random_multinomial(bitgen_t *bitgen_state, RAND_INT_TYPE n,
       break;
     }
     remaining_p -= pix[j];
-    if (dn > 0) {
+  }
+  if (dn > 0) {
       mnix[d - 1] = dn;
-    }
   }
 }
+
