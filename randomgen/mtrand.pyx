@@ -3028,43 +3028,43 @@ cdef class RandomState:
 
         # Uses a custom implementation since self._binomial is required
         cdef double _dp = 0
-        cdef int64_t _in = 0
+        cdef long _in = 0
         cdef bint is_scalar = True
         cdef np.npy_intp i, cnt
         cdef np.ndarray randoms
-        cdef np.int64_t *randoms_data
+        cdef long *randoms_data
         cdef np.broadcast it
 
         p_arr = <np.ndarray>np.PyArray_FROM_OTF(p, np.NPY_DOUBLE, np.NPY_ALIGNED)
         is_scalar = is_scalar and np.PyArray_NDIM(p_arr) == 0
-        n_arr = <np.ndarray>np.PyArray_FROM_OTF(n, np.NPY_INT64, np.NPY_ALIGNED)
+        n_arr = <np.ndarray>np.PyArray_FROM_OTF(n, np.NPY_LONG, np.NPY_ALIGNED)
         is_scalar = is_scalar and np.PyArray_NDIM(n_arr) == 0
 
         if not is_scalar:
             check_array_constraint(p_arr, 'p', CONS_BOUNDED_0_1)
             check_array_constraint(n_arr, 'n', CONS_NON_NEGATIVE)
             if size is not None:
-                randoms = <np.ndarray>np.empty(size, np.int64)
+                randoms = <np.ndarray>np.empty(size, int)
             else:
                 it = np.PyArray_MultiIterNew2(p_arr, n_arr)
-                randoms = <np.ndarray>np.empty(it.shape, np.int64)
+                randoms = <np.ndarray>np.empty(it.shape, int)
 
-            randoms_data = <np.int64_t *>np.PyArray_DATA(randoms)
+            randoms_data = <long *>np.PyArray_DATA(randoms)
             cnt = np.PyArray_SIZE(randoms)
 
             it = np.PyArray_MultiIterNew3(randoms, p_arr, n_arr)
             with self.lock, nogil:
                 for i in range(cnt):
                     _dp = (<double*>np.PyArray_MultiIter_DATA(it, 1))[0]
-                    _in = (<int64_t*>np.PyArray_MultiIter_DATA(it, 2))[0]
-                    (<int64_t*>np.PyArray_MultiIter_DATA(it, 0))[0] = random_binomial(&self._bitgen, _dp, _in, &self._binomial)
+                    _in = (<long*>np.PyArray_MultiIter_DATA(it, 2))[0]
+                    (<long*>np.PyArray_MultiIter_DATA(it, 0))[0] = random_binomial(&self._bitgen, _dp, _in, &self._binomial)
 
                     np.PyArray_MultiIter_NEXT(it)
 
             return randoms
 
         _dp = PyFloat_AsDouble(p)
-        _in = <int64_t>n
+        _in = <long>n
         check_constraint(_dp, 'p', CONS_BOUNDED_0_1)
         check_constraint(<double>_in, 'n', CONS_NON_NEGATIVE)
 
@@ -3072,9 +3072,9 @@ cdef class RandomState:
             with self.lock:
                 return random_binomial(&self._bitgen, _dp, _in, &self._binomial)
 
-        randoms = <np.ndarray>np.empty(size, np.int64)
+        randoms = <np.ndarray>np.empty(size, int)
         cnt = np.PyArray_SIZE(randoms)
-        randoms_data = <np.int64_t *>np.PyArray_DATA(randoms)
+        randoms_data = <long *>np.PyArray_DATA(randoms)
 
         with self.lock, nogil:
             for i in range(cnt):
