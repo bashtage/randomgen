@@ -29,8 +29,8 @@ These RNGs will be included in future releases.
    ThreeFry <threefry>
    XoroShiro128+ <xoroshiro128>
    Xorshift1024*φ <xorshift1024>
-   Xoshiro256** <xoshiro256starstar>
-   Xoshiro512** <xoshiro512starstar>
+   Xoshiro256** <xoshiro256>
+   Xoshiro512** <xoshiro512>
 
 
 Experimental RNGs

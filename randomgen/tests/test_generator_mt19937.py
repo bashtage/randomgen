@@ -144,7 +144,7 @@ class TestSetState(object):
         self.rg.negative_binomial(0.5, 0.5)
 
 
-class TestRandint(object):
+class TestIntegers(object):
     rfunc = random.integers
 
     # valid integer/boolean types
@@ -214,8 +214,7 @@ class TestRandint(object):
             assert_equal(self.rfunc(tgt, tgt + is_open, size=1000,
                                     endpoint=endpoint, dtype=dt), tgt)
             assert_equal(self.rfunc([tgt], [tgt + is_open],
-                                    size=1000, endpoint=endpoint, dtype=dt),
-                         tgt)
+                                    size=1000, endpoint=endpoint, dtype=dt), tgt)
 
     def test_rng_zero_and_extremes_array(self, endpoint):
         size = 1000
@@ -720,6 +719,9 @@ class TestRandomDist(object):
         assert_equal(random.choice(np.arange(6), s, replace=True).shape, s)
 
         # Check zero-size
+        assert_equal(random.integers(0, 0, size=(3, 0, 4)).shape, (3, 0, 4))
+        assert_equal(random.integers(0, -10, size=0).shape, (0,))
+        assert_equal(random.integers(10, 10, size=0).shape, (0,))
         assert_equal(random.choice(0, size=0).shape, (0,))
         assert_equal(random.choice([], size=(0,)).shape, (0,))
         assert_equal(random.choice(['a', 'b'], size=(3, 0, 4)).shape,

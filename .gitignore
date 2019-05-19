@@ -24,8 +24,8 @@ randomgen/threefry.c
 randomgen/threefry32.c
 randomgen/xoroshiro128.c
 randomgen/xorshift1024.c
-randomgen/xoshiro256starstar.c
-randomgen/xoshiro512starstar.c
+randomgen/xoshiro256.c
+randomgen/xoshiro512.c
 randomgen/legacy/bounded_integers.c
 randomgen/legacy/bounded_integers.pyx
 randomgen/legacy/bounded_integers.pxd

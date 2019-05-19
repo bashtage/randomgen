@@ -11,7 +11,7 @@ from numpy.testing import (assert_, assert_array_almost_equal,
                            assert_no_warnings, assert_raises, assert_warns,
                            suppress_warnings)
 from randomgen.mt19937 import MT19937
-from randomgen.xoshiro256starstar import Xoshiro256StarStar
+from randomgen.xoshiro256 import Xoshiro256
 
 random = randomgen.mtrand
 
@@ -208,13 +208,13 @@ class TestSetState(object):
         self.random_state.negative_binomial(0.5, 0.5)
 
     def test_get_state_warning(self):
-        rs = random.RandomState(Xoshiro256StarStar())
+        rs = random.RandomState(Xoshiro256())
         with suppress_warnings() as sup:
             w = sup.record(RuntimeWarning)
             state = rs.get_state()
             assert_(len(w) == 1)
             assert isinstance(state, dict)
-            assert state['bit_generator'] == 'Xoshiro256StarStar'
+            assert state['bit_generator'] == 'Xoshiro256'
 
     def test_invalid_legacy_state_setting(self):
         state = self.random_state.get_state()
@@ -1905,6 +1905,7 @@ class TestSingleEltArrayInput(object):
             assert_equal(out.shape, self.tgtShape)
 
 
+# Ensure returned array dtype is corect for platform
 def test_integer_dtype(int_func):
     random.seed(123456789)
     fname, args, md5 = int_func

@@ -28,7 +28,7 @@ else:
     scale_64 = 2
 
 PRNGS = ['DSFMT', 'PCG64', 'PCG32', 'MT19937', 'Xoroshiro128', 'Xorshift1024',
-         'Xoshiro256StarStar', 'Xoshiro512StarStar', 'Philox', 'ThreeFry',
+         'Xoshiro256', 'Xoshiro512', 'Philox', 'ThreeFry',
          'ThreeFry32', 'numpy']
 
 

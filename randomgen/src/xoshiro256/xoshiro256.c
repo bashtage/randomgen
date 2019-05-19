@@ -6,7 +6,7 @@ worldwide. This software is distributed without any warranty.
 
 See <http://creativecommons.org/publicdomain/zero/1.0/>. */
 
-#include "xoshiro256starstar.h"
+#include "xoshiro256.h"
 
 /* This is xoshiro256** 1.0, our all-purpose, rock-solid generator. It has
    excellent (sub-ns) speed, a state (256 bits) that is large enough for
@@ -18,15 +18,15 @@ See <http://creativecommons.org/publicdomain/zero/1.0/>. */
    a 64-bit seed, we suggest to seed a splitmix64 generator and use its
    output to fill s. */
 
-extern INLINE uint64_t xoshiro256starstar_next64(xoshiro256starstar_state *state);
+extern INLINE uint64_t xoshiro256_next64(xoshiro256_state *state);
 
-extern INLINE uint32_t xoshiro256starstar_next32(xoshiro256starstar_state *state);
+extern INLINE uint32_t xoshiro256_next32(xoshiro256_state *state);
 
 /* This is the jump function for the generator. It is equivalent
    to 2^128 calls to next(); it can be used to generate 2^128
    non-overlapping subsequences for parallel computations. */
 
-void xoshiro256starstar_jump(xoshiro256starstar_state *state)
+void xoshiro256_jump(xoshiro256_state *state)
 {
 	int i, b;
 	static const uint64_t JUMP[] = {0x180ec6d33cfd0aba, 0xd5a61266f0c9392c, 0xa9582618e03fc9aa, 0x39abdc4529b1661c};
@@ -45,7 +45,7 @@ void xoshiro256starstar_jump(xoshiro256starstar_state *state)
 				s2 ^= state->s[2];
 				s3 ^= state->s[3];
 			}
-			xoshiro256starstar_next(&state->s[0]);
+			xoshiro256_next(&state->s[0]);
 		}
 
 	state->s[0] = s0;
