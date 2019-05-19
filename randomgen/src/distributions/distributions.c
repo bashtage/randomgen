@@ -1855,8 +1855,9 @@ void random_multinomial(brng_t *brng_state, int64_t n, int64_t *mnix,
       break;
     }
     remaining_p -= pix[j];
-    if (dn > 0) {
+  }
+  if (dn > 0) {
       mnix[d - 1] = dn;
-    }
   }
 }
+

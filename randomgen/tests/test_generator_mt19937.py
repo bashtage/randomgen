@@ -2009,7 +2009,7 @@ class TestBroadcast(object):
                              [4, 5, 1, 4, 3, 3]],
                             [[1, 1, 1, 0, 0, 2],
                              [2, 0, 4, 3, 7, 4]],
-                            [[1, 2, 0, 0, 2, 2],
+                            [[1, 2, 0, 0, 2, 0],
                              [3, 2, 3, 4, 2, 6]]], dtype=np.int64)
         assert_array_equal(actual, desired)
 
