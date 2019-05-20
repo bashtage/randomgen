@@ -4,7 +4,7 @@ import glob
 import platform
 import struct
 import sys
-from os.path import join
+from os.path import join, getmtime, splitext, exists
 
 import Cython.Compiler.Options
 import numpy as np
@@ -36,9 +36,11 @@ import versioneer
 with open('requirements.txt') as f:
     required = f.read().splitlines()
 
-CYTHON_COVERAGE = os.environ.get('RANDOMGEN_CYTHON_COVERAGE', '0') in ('true', '1', 'True')
+CYTHON_COVERAGE = os.environ.get('RANDOMGEN_CYTHON_COVERAGE', '0') in \
+                  ('true', '1', 'True')
 if CYTHON_COVERAGE:
-    print('Building with coverage for cython modules, RANDOMGEN_CYTHON_COVERAGE=' +
+    print('Building with coverage for cython modules, '
+          'RANDOMGEN_CYTHON_COVERAGE=' +
           os.environ['RANDOMGEN_CYTHON_COVERAGE'])
 
 LONG_DESCRIPTION = io.open('README.rst', encoding="utf-8").read()
@@ -59,10 +61,10 @@ MOD_DIR = './randomgen'
 DEBUG = False
 
 EXTRA_INCLUDE_DIRS = []
-EXTRA_LINK_ARGS = []
+EXTRA_LINK_ARGS = [] if os.name == 'nt' else ['-flto']
 EXTRA_LIBRARIES = ['m'] if os.name != 'nt' else []
 # Undef for manylinux
-EXTRA_COMPILE_ARGS = [] if os.name == 'nt' else [
+EXTRA_COMPILE_ARGS = ['-flto'] if os.name == 'nt' else [
     '-std=c99', '-U__GNUC_GNU_INLINE__']
 if os.name == 'nt':
     EXTRA_LINK_ARGS = ['/LTCG', '/OPT:REF', 'Advapi32.lib', 'Kernel32.lib']
@@ -72,7 +74,7 @@ if os.name == 'nt':
     if sys.version_info < (3, 0):
         EXTRA_INCLUDE_DIRS += [join(MOD_DIR, 'src', 'common')]
 
-DEFS = []
+DEFS = [('NPY_NO_DEPRECATED_API', '0')]
 if CYTHON_COVERAGE:
     DEFS.extend([('CYTHON_TRACE', '1'),
                  ('CYTHON_TRACE_NOGIL','1')])
@@ -94,9 +96,9 @@ if USE_SSE2:
 
 files = glob.glob('./randomgen/*.in') + glob.glob('./randomgen/legacy/*.in')
 for templated_file in files:
-    output_file_name = os.path.splitext(templated_file)[0]
-    if (os.path.exists(output_file_name) and
-            (os.path.getmtime(templated_file) < os.path.getmtime(output_file_name))):
+    output_file_name = splitext(templated_file)[0]
+    if (exists(output_file_name) and
+            (getmtime(templated_file) < getmtime(output_file_name))):
         continue
     with open(templated_file, 'r') as source_file:
         template = tempita.Template(source_file.read())
@@ -119,7 +121,8 @@ extensions = [Extension('randomgen.entropy',
                         ["randomgen/dsfmt.pyx",
                          join(MOD_DIR, 'src', 'dsfmt', 'dSFMT.c'),
                          join(MOD_DIR, 'src', 'dsfmt', 'dSFMT-jump.c'),
-                         join(MOD_DIR, 'src', 'aligned_malloc', 'aligned_malloc.c')],
+                         join(MOD_DIR, 'src', 'aligned_malloc',
+                              'aligned_malloc.c')],
                         include_dirs=EXTRA_INCLUDE_DIRS + [np.get_include(),
                                                            join(MOD_DIR, 'src',
                                                                 'dsfmt')],
@@ -135,6 +138,17 @@ extensions = [Extension('randomgen.entropy',
                         include_dirs=EXTRA_INCLUDE_DIRS + [np.get_include(),
                                                            join(MOD_DIR, 'src',
                                                                 'mt19937')],
+                        libraries=EXTRA_LIBRARIES,
+                        extra_compile_args=EXTRA_COMPILE_ARGS,
+                        extra_link_args=EXTRA_LINK_ARGS,
+                        define_macros=DEFS
+                        ),
+              Extension("randomgen.mt64",
+                        ["randomgen/mt64.pyx",
+                         join(MOD_DIR, 'src', 'mt64', 'mt64.c')],
+                        include_dirs=EXTRA_INCLUDE_DIRS + [np.get_include(),
+                                                           join(MOD_DIR, 'src',
+                                                                'mt64')],
                         libraries=EXTRA_LIBRARIES,
                         extra_compile_args=EXTRA_COMPILE_ARGS,
                         extra_link_args=EXTRA_LINK_ARGS,
@@ -292,7 +306,8 @@ extensions = [Extension('randomgen.entropy',
                         ["randomgen/mtrand.pyx",
                          join(MOD_DIR, 'src', 'legacy',
                               'legacy-distributions.c'),
-                         join(MOD_DIR, 'src', 'distributions', 'distributions.c')],
+                         join(MOD_DIR, 'src', 'distributions',
+                              'distributions.c')],
                         libraries=EXTRA_LIBRARIES,
                         include_dirs=EXTRA_INCLUDE_DIRS +
                         [np.get_include()] + [join(MOD_DIR, 'legacy')],

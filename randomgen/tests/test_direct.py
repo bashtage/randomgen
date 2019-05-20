@@ -9,7 +9,7 @@ from numpy.testing import (assert_allclose, assert_array_equal, assert_equal,
 
 from randomgen import (DSFMT, MT19937, PCG32, PCG64, Generator, Philox,
                        RandomState, ThreeFry, ThreeFry32, Xoroshiro128,
-                       Xorshift1024, Xoshiro256, Xoshiro512)
+                       Xorshift1024, Xoshiro256, Xoshiro512, MT64)
 from randomgen.common import interface
 
 try:
@@ -650,3 +650,29 @@ class TestPCG32(TestPCG64):
                                   (None, np.zeros(1))]
         cls.invalid_seed_values = [(-1,), (2 ** 129 + 1,), (None, -1),
                                    (None, 2 ** 129 + 1)]
+
+
+class TestMT64(Base):
+    @classmethod
+    def setup_class(cls):
+        cls.bit_generator = MT64
+        cls.bits = 64
+        cls.dtype = np.uint64
+        cls.data1 = cls._read_csv(join(pwd, './data/mt64-testset-1.csv'))
+        cls.data2 = cls._read_csv(join(pwd, './data/mt64-testset-2.csv'))
+        cls.seed_error_type = TypeError
+        cls.seed_error_type = ValueError
+        cls.invalid_seed_types = []
+        cls.invalid_seed_values = [(-1,), np.array([2 ** 65])]
+
+    def test_seed_float_array(self):
+        # GH #82
+        rs = Generator(self.bit_generator(*self.data1['seed']))
+        bit_generator = rs.bit_generator
+        assert_raises(ValueError, bit_generator.seed, np.array([np.pi]))
+        assert_raises(ValueError, bit_generator.seed, np.array([-np.pi]))
+        assert_raises(ValueError, bit_generator.seed,
+                      np.array([np.pi, -np.pi]))
+        assert_raises(ValueError, bit_generator.seed, np.array([0, np.pi]))
+        assert_raises(ValueError, bit_generator.seed, [np.pi])
+        assert_raises(ValueError, bit_generator.seed, [0, np.pi])

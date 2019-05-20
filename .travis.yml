@@ -51,7 +51,7 @@ install:
 
 script:
   - set -e
-  - pytest -r a ${COVERAGE_OPTIONS} randomgen
+  - pytest -v -r a ${COVERAGE_OPTIONS} randomgen
   - |
     if [[ ${DOCBUILD} == true ]]; then
       cd ${BUILD_DIR}/doc
