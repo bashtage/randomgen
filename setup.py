@@ -74,7 +74,10 @@ if os.name == 'nt':
     if sys.version_info < (3, 0):
         EXTRA_INCLUDE_DIRS += [join(MOD_DIR, 'src', 'common')]
 
-DEFS = [('NPY_NO_DEPRECATED_API', 'NPY_1_7_API_VERSION')]
+DEFS = [('NPY_NO_DEPRECATED_API', '0')]
+# TODO: Enable once Cython >= 0.29
+#  [('NPY_NO_DEPRECATED_API', 'NPY_1_7_API_VERSION')]
+
 if CYTHON_COVERAGE:
     DEFS.extend([('CYTHON_TRACE', '1'),
                  ('CYTHON_TRACE_NOGIL','1')])

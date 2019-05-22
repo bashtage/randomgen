@@ -18,6 +18,7 @@ from randomgen.legacy.bounded_integers cimport *
 from randomgen.common cimport *
 from randomgen.distributions cimport *
 from randomgen.legacy.distributions cimport *
+from randomgen cimport api
 
 np.import_array()
 
@@ -754,7 +755,7 @@ cdef class RandomState:
                 if np.issubdtype(p.dtype, np.floating):
                     atol = max(atol, np.sqrt(np.finfo(p.dtype).eps))
 
-            p = <np.ndarray>np.PyArray_FROM_OTF(p, np.NPY_DOUBLE, np.NPY_ARRAY_ALIGNED)
+            p = <np.ndarray>np.PyArray_FROM_OTF(p, np.NPY_DOUBLE, api.NPY_ARRAY_ALIGNED)
             pix = <double*>np.PyArray_DATA(p)
 
             if p.ndim != 1:
@@ -919,8 +920,8 @@ cdef class RandomState:
         cdef double _low, _high, range
         cdef object temp
 
-        alow = <np.ndarray>np.PyArray_FROM_OTF(low, np.NPY_DOUBLE, np.NPY_ARRAY_ALIGNED)
-        ahigh = <np.ndarray>np.PyArray_FROM_OTF(high, np.NPY_DOUBLE, np.NPY_ARRAY_ALIGNED)
+        alow = <np.ndarray>np.PyArray_FROM_OTF(low, np.NPY_DOUBLE, api.NPY_ARRAY_ALIGNED)
+        ahigh = <np.ndarray>np.PyArray_FROM_OTF(high, np.NPY_DOUBLE, api.NPY_ARRAY_ALIGNED)
 
         if np.PyArray_NDIM(alow) == np.PyArray_NDIM(ahigh) == 0:
             _low = PyFloat_AsDouble(low)
@@ -2907,9 +2908,9 @@ cdef class RandomState:
         cdef double fleft, fmode, fright
         cdef np.ndarray oleft, omode, oright
 
-        oleft = <np.ndarray>np.PyArray_FROM_OTF(left, np.NPY_DOUBLE, np.NPY_ARRAY_ALIGNED)
-        omode = <np.ndarray>np.PyArray_FROM_OTF(mode, np.NPY_DOUBLE, np.NPY_ARRAY_ALIGNED)
-        oright = <np.ndarray>np.PyArray_FROM_OTF(right, np.NPY_DOUBLE, np.NPY_ARRAY_ALIGNED)
+        oleft = <np.ndarray>np.PyArray_FROM_OTF(left, np.NPY_DOUBLE, api.NPY_ARRAY_ALIGNED)
+        omode = <np.ndarray>np.PyArray_FROM_OTF(mode, np.NPY_DOUBLE, api.NPY_ARRAY_ALIGNED)
+        oright = <np.ndarray>np.PyArray_FROM_OTF(right, np.NPY_DOUBLE, api.NPY_ARRAY_ALIGNED)
 
         if np.PyArray_NDIM(oleft) == np.PyArray_NDIM(omode) == np.PyArray_NDIM(oright) == 0:
             fleft = PyFloat_AsDouble(left)
@@ -3035,9 +3036,9 @@ cdef class RandomState:
         cdef long *randoms_data
         cdef np.broadcast it
 
-        p_arr = <np.ndarray>np.PyArray_FROM_OTF(p, np.NPY_DOUBLE, np.NPY_ARRAY_ALIGNED)
+        p_arr = <np.ndarray>np.PyArray_FROM_OTF(p, np.NPY_DOUBLE, api.NPY_ARRAY_ALIGNED)
         is_scalar = is_scalar and np.PyArray_NDIM(p_arr) == 0
-        n_arr = <np.ndarray>np.PyArray_FROM_OTF(n, np.NPY_LONG, np.NPY_ARRAY_ALIGNED)
+        n_arr = <np.ndarray>np.PyArray_FROM_OTF(n, np.NPY_LONG, api.NPY_ARRAY_ALIGNED)
         is_scalar = is_scalar and np.PyArray_NDIM(n_arr) == 0
 
         if not is_scalar:
@@ -3464,9 +3465,9 @@ cdef class RandomState:
         cdef int64_t lngood, lnbad, lnsample
 
         # This cast to long is required to ensure that the values are inbounds
-        ongood = <np.ndarray>np.PyArray_FROM_OTF(ngood, np.NPY_LONG, np.NPY_ARRAY_ALIGNED)
-        onbad = <np.ndarray>np.PyArray_FROM_OTF(nbad, np.NPY_LONG, np.NPY_ARRAY_ALIGNED)
-        onsample = <np.ndarray>np.PyArray_FROM_OTF(nsample, np.NPY_LONG, np.NPY_ARRAY_ALIGNED)
+        ongood = <np.ndarray>np.PyArray_FROM_OTF(ngood, np.NPY_LONG, api.NPY_ARRAY_ALIGNED)
+        onbad = <np.ndarray>np.PyArray_FROM_OTF(nbad, np.NPY_LONG, api.NPY_ARRAY_ALIGNED)
+        onsample = <np.ndarray>np.PyArray_FROM_OTF(nsample, np.NPY_LONG, api.NPY_ARRAY_ALIGNED)
 
         if np.PyArray_NDIM(ongood) == np.PyArray_NDIM(onbad) == np.PyArray_NDIM(onsample) == 0:
 
@@ -3828,7 +3829,7 @@ cdef class RandomState:
         cdef long ni
 
         d = len(pvals)
-        parr = <np.ndarray>np.PyArray_FROM_OTF(pvals, np.NPY_DOUBLE, np.NPY_ARRAY_ALIGNED)
+        parr = <np.ndarray>np.PyArray_FROM_OTF(pvals, np.NPY_DOUBLE, api.NPY_ARRAY_ALIGNED)
         pix = <double*>np.PyArray_DATA(parr)
         check_array_constraint(parr, 'pvals', CONS_BOUNDED_0_1)
         if kahan_sum(pix, d-1) > (1.0 + 1e-12):
@@ -3960,7 +3961,7 @@ cdef class RandomState:
         cdef double  acc, invacc
 
         k = len(alpha)
-        alpha_arr = <np.ndarray>np.PyArray_FROM_OTF(alpha, np.NPY_DOUBLE, np.NPY_ARRAY_ALIGNED)
+        alpha_arr = <np.ndarray>np.PyArray_FROM_OTF(alpha, np.NPY_DOUBLE, api.NPY_ARRAY_ALIGNED)
         if np.any(np.less_equal(alpha_arr, 0)):
             raise ValueError('alpha <= 0')
         alpha_data = <double*>np.PyArray_DATA(alpha_arr)

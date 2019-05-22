@@ -29,9 +29,9 @@ matrix:
       language: generic
       env: [PYTHON=3.6]
     - os: linux
-      env: [PYTHON=3.6, NUMPY=1.14, CYTHON=0.29]
+      env: [PYTHON=3.6, NUMPY=1.14, CYTHON=0.27]
     - os: linux
-      env: [PYTHON=3.5, NUMPY=1.13, PIP_CYTHON=true]
+      env: [PYTHON=3.5, NUMPY=1.13, CYTHON=0.26]
 
 
 before_install:
