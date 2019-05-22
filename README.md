@@ -198,7 +198,7 @@ Building requires:
 
 * Python (3.5, 3.6, 3.7, tested on 2.7 but officially dropped)
 * NumPy (1.13, 1.14, 1.15, 1.16)
-* Cython (0.29+)
+* Cython (0.26+)
 * tempita (0.5+), if not provided by Cython
  
 Testing requires pytest (4.0+).
