@@ -24,13 +24,6 @@ Parallel generation
    ~Xoshiro512.jump
    ~Xoshiro512.jumped
 
-Random Generator
-================
-.. autosummary::
-   :toctree: generated/
-
-   ~Xoshiro512.generator
-
 Extending
 =========
 .. autosummary::

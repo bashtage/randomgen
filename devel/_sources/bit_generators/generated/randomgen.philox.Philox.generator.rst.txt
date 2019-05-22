@@ -1,6 +1,0 @@
-randomgen.philox.Philox.generator
-=================================
-
-.. currentmodule:: randomgen.philox
-
-.. autoattribute:: Philox.generator

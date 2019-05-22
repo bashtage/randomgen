@@ -1,6 +1,0 @@
-randomgen.pcg32.PCG32.generator
-===============================
-
-.. currentmodule:: randomgen.pcg32
-
-.. autoattribute:: PCG32.generator
