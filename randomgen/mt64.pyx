@@ -198,7 +198,7 @@ cdef class MT64:
             if obj.size == 0:
                 raise ValueError("Seed must be non-empty")
             obj = obj.astype(np.object, casting='safe')
-            if obj.ndim != 1:
+            if np.PyArray_NDIM(obj) != 1:
                 raise ValueError("Seed array must be 1-d")
             if ((obj > int(2**64 - 1)) | (obj < 0)).any():
                 raise ValueError("Seed must be between 0 and 2**64 - 1")
@@ -208,7 +208,9 @@ cdef class MT64:
                 if np.floor(val) != val:
                     raise ValueError("Seed must contains integers")
             obj = obj.astype(np.uint64, casting='unsafe', order='C')
-            mt64_init_by_array(&self.rng_state, <uint64_t*> obj.data, np.PyArray_DIM(obj, 0))
+            mt64_init_by_array(&self.rng_state,
+                               <uint64_t*>np.PyArray_DATA(obj),
+                               np.PyArray_DIM(obj, 0))
 
     @property
     def state(self):

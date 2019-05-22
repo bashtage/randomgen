@@ -69,8 +69,8 @@ cdef object _rand_{{nptype}}_broadcast(np.ndarray low, np.ndarray high, object s
         comp = '>' if closed else '>='
         raise ValueError('low {comp} high'.format(comp=comp))
 
-    low_arr = <np.ndarray>np.PyArray_FROM_OTF(low, np.{{npctype}}, np.NPY_ALIGNED | np.NPY_FORCECAST)
-    high_arr = <np.ndarray>np.PyArray_FROM_OTF(high, np.{{npctype}}, np.NPY_ALIGNED | np.NPY_FORCECAST)
+    low_arr = <np.ndarray>np.PyArray_FROM_OTF(low, np.{{npctype}}, np.NPY_ARRAY_ALIGNED | np.NPY_ARRAY_FORCECAST)
+    high_arr = <np.ndarray>np.PyArray_FROM_OTF(high, np.{{npctype}}, np.NPY_ARRAY_ALIGNED | np.NPY_ARRAY_FORCECAST)
 
     if size is not None:
         out_arr = <np.ndarray>np.empty(size, np.{{otype}})
@@ -145,7 +145,7 @@ cdef object _rand_{{nptype}}_broadcast(object low, object high, object size,
         high_m1 = high_arr if closed else high_arr - dt.type(1)
         if np.any(np.greater(high_m1, {{ub}})):
             raise ValueError('high is out of bounds for {{nptype}}')
-        highm1_arr = <np.ndarray>np.PyArray_FROM_OTF(high_m1, np.{{npctype}}, np.NPY_ALIGNED | np.NPY_FORCECAST)
+        highm1_arr = <np.ndarray>np.PyArray_FROM_OTF(high_m1, np.{{npctype}}, np.NPY_ARRAY_ALIGNED | np.NPY_ARRAY_FORCECAST)
     else:
         # If input is object or a floating type
         highm1_arr = <np.ndarray>np.empty_like(high_arr, dtype=np.{{nptype}})
@@ -167,7 +167,7 @@ cdef object _rand_{{nptype}}_broadcast(object low, object high, object size,
         raise ValueError('low {comp} high'.format(comp=comp))
 
     high_arr = highm1_arr
-    low_arr = <np.ndarray>np.PyArray_FROM_OTF(low, np.{{npctype}}, np.NPY_ALIGNED | np.NPY_FORCECAST)
+    low_arr = <np.ndarray>np.PyArray_FROM_OTF(low, np.{{npctype}}, np.NPY_ARRAY_ALIGNED | np.NPY_ARRAY_FORCECAST)
 
     if size is not None:
         out_arr = <np.ndarray>np.empty(size, np.{{nptype}})

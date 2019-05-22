@@ -206,8 +206,8 @@ cdef check_output(object out, object dtype, object size):
     if out is None:
         return
     cdef np.ndarray out_array = <np.ndarray>out
-    if not (np.PyArray_CHKFLAGS(out_array, np.NPY_CARRAY) or
-            np.PyArray_CHKFLAGS(out_array, np.NPY_FARRAY)):
+    if not (np.PyArray_CHKFLAGS(out_array, np.NPY_ARRAY_CARRAY) or
+            np.PyArray_CHKFLAGS(out_array, np.NPY_ARRAY_FARRAY)):
         raise ValueError('Supplied output array is not contiguous, writable or aligned.')
     if out_array.dtype != dtype:
         raise TypeError('Supplied output array has the wrong type. '
@@ -481,13 +481,13 @@ cdef object cont(void *func, void *state, object size, object lock, int narg,
     cdef bint is_scalar = True
     check_output(out, np.float64, size)
     if narg > 0:
-        a_arr = <np.ndarray>np.PyArray_FROM_OTF(a, np.NPY_DOUBLE, np.NPY_ALIGNED)
+        a_arr = <np.ndarray>np.PyArray_FROM_OTF(a, np.NPY_DOUBLE, np.NPY_ARRAY_ALIGNED)
         is_scalar = is_scalar and np.PyArray_NDIM(a_arr) == 0
     if narg > 1:
-        b_arr = <np.ndarray>np.PyArray_FROM_OTF(b, np.NPY_DOUBLE, np.NPY_ALIGNED)
+        b_arr = <np.ndarray>np.PyArray_FROM_OTF(b, np.NPY_DOUBLE, np.NPY_ARRAY_ALIGNED)
         is_scalar = is_scalar and np.PyArray_NDIM(b_arr) == 0
     if narg == 3:
-        c_arr = <np.ndarray>np.PyArray_FROM_OTF(c, np.NPY_DOUBLE, np.NPY_ALIGNED)
+        c_arr = <np.ndarray>np.PyArray_FROM_OTF(c, np.NPY_DOUBLE, np.NPY_ARRAY_ALIGNED)
         is_scalar = is_scalar and np.PyArray_NDIM(c_arr) == 0
 
     if not is_scalar:
@@ -747,23 +747,23 @@ cdef object disc(void *func, void *state, object size, object lock,
     cdef int64_t _ia = 0, _ib = 0, _ic = 0
     cdef bint is_scalar = True
     if narg_double > 0:
-        a_arr = <np.ndarray>np.PyArray_FROM_OTF(a, np.NPY_DOUBLE, np.NPY_ALIGNED)
+        a_arr = <np.ndarray>np.PyArray_FROM_OTF(a, np.NPY_DOUBLE, np.NPY_ARRAY_ALIGNED)
         is_scalar = is_scalar and np.PyArray_NDIM(a_arr) == 0
         if narg_double > 1:
-            b_arr = <np.ndarray>np.PyArray_FROM_OTF(b, np.NPY_DOUBLE, np.NPY_ALIGNED)
+            b_arr = <np.ndarray>np.PyArray_FROM_OTF(b, np.NPY_DOUBLE, np.NPY_ARRAY_ALIGNED)
             is_scalar = is_scalar and np.PyArray_NDIM(b_arr) == 0
         elif narg_int64 == 1:
-            b_arr = <np.ndarray>np.PyArray_FROM_OTF(b, np.NPY_INT64, np.NPY_ALIGNED)
+            b_arr = <np.ndarray>np.PyArray_FROM_OTF(b, np.NPY_INT64, np.NPY_ARRAY_ALIGNED)
             is_scalar = is_scalar and np.PyArray_NDIM(b_arr) == 0
     else:
         if narg_int64 > 0:
-            a_arr = <np.ndarray>np.PyArray_FROM_OTF(a, np.NPY_INT64, np.NPY_ALIGNED)
+            a_arr = <np.ndarray>np.PyArray_FROM_OTF(a, np.NPY_INT64, np.NPY_ARRAY_ALIGNED)
             is_scalar = is_scalar and np.PyArray_NDIM(a_arr) == 0
         if narg_int64 > 1:
-            b_arr = <np.ndarray>np.PyArray_FROM_OTF(b, np.NPY_INT64, np.NPY_ALIGNED)
+            b_arr = <np.ndarray>np.PyArray_FROM_OTF(b, np.NPY_INT64, np.NPY_ARRAY_ALIGNED)
             is_scalar = is_scalar and np.PyArray_NDIM(b_arr) == 0
         if narg_int64 > 2:
-            c_arr = <np.ndarray>np.PyArray_FROM_OTF(c, np.NPY_INT64, np.NPY_ALIGNED)
+            c_arr = <np.ndarray>np.PyArray_FROM_OTF(c, np.NPY_INT64, np.NPY_ARRAY_ALIGNED)
             is_scalar = is_scalar and np.PyArray_NDIM(c_arr) == 0
 
     if not is_scalar:
@@ -917,10 +917,10 @@ cdef object cont_f(void *func, bitgen_t *state, object size, object lock,
     cdef np.ndarray a_arr, b_arr, c_arr
     cdef float _a
     cdef bint is_scalar = True
-    cdef int requirements = np.NPY_ALIGNED | np.NPY_FORCECAST
+    cdef int requirements = np.NPY_ARRAY_ALIGNED | np.NPY_ARRAY_FORCECAST
     check_output(out, np.float32, size)
     a_arr = <np.ndarray>np.PyArray_FROMANY(a, np.NPY_FLOAT32, 0, 0, requirements)
-    # a_arr = <np.ndarray>np.PyArray_FROM_OTF(a, np.NPY_FLOAT32, np.NPY_ALIGNED)
+    # a_arr = <np.ndarray>np.PyArray_FROM_OTF(a, np.NPY_FLOAT32, np.NPY_ARRAY_ALIGNED)
     is_scalar = np.PyArray_NDIM(a_arr) == 0
 
     if not is_scalar:
