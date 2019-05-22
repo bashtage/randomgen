@@ -27,11 +27,11 @@ matrix:
       env: [PYPI=true, COVERAGE=false]
     - os: osx
       language: generic
-      env: [PYTHON=3.6]
+      env: [PYPI=true, PYTHON=3.6]
     - os: linux
-      env: [PYTHON=3.6, NUMPY=1.14, CYTHON=0.29]
+      env: [PYTHON=3.6, NUMPY=1.14, CYTHON=0.27]
     - os: linux
-      env: [PYTHON=3.5, NUMPY=1.13, PIP_CYTHON=true]
+      env: [PYTHON=3.5, NUMPY=1.13, CYTHON=0.26]
 
 
 before_install:
@@ -53,7 +53,7 @@ install:
 
 script:
   - set -e
-  - pytest -r a ${COVERAGE_OPTIONS} randomgen
+  - pytest -v -r a ${COVERAGE_OPTIONS} randomgen
   - |
     if [[ ${DOCBUILD} == true ]]; then
       cd ${BUILD_DIR}/doc

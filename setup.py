@@ -61,11 +61,11 @@ MOD_DIR = './randomgen'
 DEBUG = False
 
 EXTRA_INCLUDE_DIRS = []
-EXTRA_LINK_ARGS = [] if os.name == 'nt' else []
+EXTRA_LINK_ARGS = [] if os.name == 'nt' else ['-flto']
 EXTRA_LIBRARIES = ['m'] if os.name != 'nt' else []
 # Undef for manylinux
 EXTRA_COMPILE_ARGS = [] if os.name == 'nt' else [
-    '-std=c99', '-U__GNUC_GNU_INLINE__']
+    '-std=c99', '-U__GNUC_GNU_INLINE__', '-flto']
 if os.name == 'nt':
     EXTRA_LINK_ARGS = ['/LTCG', '/OPT:REF', 'Advapi32.lib', 'Kernel32.lib']
     if DEBUG:
@@ -74,7 +74,10 @@ if os.name == 'nt':
     if sys.version_info < (3, 0):
         EXTRA_INCLUDE_DIRS += [join(MOD_DIR, 'src', 'common')]
 
-DEFS = [('NPY_NO_DEPRECATED_API', 'NPY_1_7_API_VERSION')]
+DEFS = []
+# TODO: Enable once Cython >= 0.29
+#  [('NPY_NO_DEPRECATED_API', 'NPY_1_7_API_VERSION')]
+
 if CYTHON_COVERAGE:
     DEFS.extend([('CYTHON_TRACE', '1'),
                  ('CYTHON_TRACE_NOGIL','1')])
