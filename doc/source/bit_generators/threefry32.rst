@@ -25,13 +25,6 @@ Parallel generation
    ~ThreeFry32.jump
    ~ThreeFry32.jumped
 
-Random Generator
-================
-.. autosummary::
-   :toctree: generated/
-
-   ~ThreeFry32.generator
-
 Extending
 =========
 .. autosummary::

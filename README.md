@@ -196,9 +196,9 @@ need to be smoothed.
 ## Requirements
 Building requires:
 
-* Python (2.7, 3.5, 3.6, 3.7)
+* Python (3.5, 3.6, 3.7, tested on 2.7 but officially dropped)
 * NumPy (1.13, 1.14, 1.15, 1.16)
-* Cython (0.26+)
+* Cython (0.29+)
 * tempita (0.5+), if not provided by Cython
  
 Testing requires pytest (4.0+).
@@ -248,7 +248,7 @@ python setup.py install --no-sse2
 ### Windows
 
 Either use a binary installer, or if building from scratch, use 
-Python 3.6 with Visual Studio 2015/2017 Community Edition. It can also
+Python 3.6/3.7 with Visual Studio 2015/2017 Community Edition. It can also
 be build using Microsoft Visual C++ Compiler for Python 2.7 and
 Python 2.7.
 
@@ -271,7 +271,7 @@ rg.random(100)
 
 ## License
 
-Standard NCSA, plus sub licenses for components.
+Dual: BSD 3-Clause and NCSA, plus sub licenses for components.
 
 ## Performance
 
@@ -289,8 +289,8 @@ NumPy's mt19937.
     ThreeFry32            -63.9%
     Xoroshiro128          159.5%
     Xorshift1024          150.4%
-    Xoshiro256    145.7%
-    Xoshiro512    113.1%
+    Xoshiro256            145.7%
+    Xoshiro512            113.1%
 
     Speed-up relative to NumPy (64-bit unsigned integers)
     ************************************************************
@@ -303,8 +303,8 @@ NumPy's mt19937.
     ThreeFry32            -67.8%
     Xoroshiro128          124.0%
     Xorshift1024          109.4%
-    Xoshiro256    100.3%
-    Xoshiro512     63.5%
+    Xoshiro256            100.3%
+    Xoshiro512             63.5%
 
     Speed-up relative to NumPy (Standard normals)
     ************************************************************
@@ -317,5 +317,6 @@ NumPy's mt19937.
     ThreeFry32             21.6%
     Xoroshiro128          332.1%
     Xorshift1024          232.4%
-    Xoshiro256    306.6%
-    Xoshiro512    274.6%
+    Xoshiro256            306.6%
+    Xoshiro512            274.6%
+

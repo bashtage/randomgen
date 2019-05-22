@@ -9,9 +9,6 @@
  * ../splitmix64/splitmix64.c -o xorshift1024-test-data-gen
  *  ./xorshift1024-test-data-gen
  *
- * Requres the Random123 directory containing header files to be located in the
- * same directory (not included).
- *
  */
 
 #include "../splitmix64/splitmix64.h"

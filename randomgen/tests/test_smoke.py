@@ -11,7 +11,7 @@ from numpy.testing import (assert_, assert_almost_equal, assert_array_equal,
 
 from randomgen import (DSFMT, MT19937, PCG32, PCG64, Generator, Philox,
                        ThreeFry, ThreeFry32, Xoroshiro128, Xorshift1024,
-                       Xoshiro256, Xoshiro512, entropy)
+                       Xoshiro256, Xoshiro512, entropy, MT64)
 from randomgen._testing import suppress_warnings
 
 
@@ -272,9 +272,9 @@ class RNG(object):
 
     def test_reset_state(self):
         state = self.rg.bit_generator.state
-        int_1 = self.rg.integers(2**31)
+        int_1 = self.rg.integers(2 ** 31)
         self.rg.bit_generator.state = state
-        int_2 = self.rg.integers(2**31)
+        int_2 = self.rg.integers(2 ** 31)
         assert_(int_1 == int_2)
 
     def test_entropy_init(self):
@@ -934,6 +934,19 @@ class TestMT19937(RNG):
         assert_((state[2] == state2['state']['pos']))
 
 
+class TestMT64(RNG):
+    @classmethod
+    def setup_class(cls):
+        cls.bit_generator = MT64
+        cls.advance = None
+        cls.seed = [2 ** 43 + 2 ** 21 + 2 ** 16 + 2 ** 5 + 1]
+        cls.rg = Generator(cls.bit_generator(*cls.seed))
+        cls.initial_state = cls.rg.bit_generator.state
+        cls.seed_vector_bits = 64
+        cls._extra_setup()
+        cls.seed_error = ValueError
+
+
 class TestPCG64(RNG):
     @classmethod
     def setup_class(cls):
@@ -975,7 +988,7 @@ class TestPhilox(RNG):
     @classmethod
     def setup_class(cls):
         cls.bit_generator = Philox
-        cls.advance = 2**63 + 2**31 + 2**15 + 1
+        cls.advance = 2 ** 63 + 2 ** 31 + 2 ** 15 + 1
         cls.seed = [12345]
         cls.rg = Generator(cls.bit_generator(*cls.seed))
         cls.initial_state = cls.rg.bit_generator.state
@@ -1059,7 +1072,7 @@ class TestThreeFry32(RNG):
     @classmethod
     def setup_class(cls):
         cls.bit_generator = ThreeFry32
-        cls.advance = 2**63 + 2**31 + 2**15 + 1
+        cls.advance = 2 ** 63 + 2 ** 31 + 2 ** 15 + 1
         cls.seed = [2 ** 21 + 2 ** 16 + 2 ** 5 + 1]
         cls.rg = Generator(cls.bit_generator(*cls.seed))
         cls.initial_state = cls.rg.bit_generator.state

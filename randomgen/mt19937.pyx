@@ -225,12 +225,14 @@ cdef class MT19937:
             if obj.size == 0:
                 raise ValueError("Seed must be non-empty")
             obj = obj.astype(np.int64, casting='safe')
-            if obj.ndim != 1:
+            if np.PyArray_NDIM(obj) != 1:
                 raise ValueError("Seed array must be 1-d")
             if ((obj > int(2**32 - 1)) | (obj < 0)).any():
                 raise ValueError("Seed must be between 0 and 2**32 - 1")
             obj = obj.astype(np.uint32, casting='unsafe', order='C')
-            mt19937_init_by_array(&self.rng_state, <uint32_t*> obj.data, np.PyArray_DIM(obj, 0))
+            mt19937_init_by_array(&self.rng_state,
+                                  <uint32_t*>np.PyArray_DATA(obj),
+                                  np.PyArray_DIM(obj, 0))
 
     cdef jump_inplace(self, iter):
         """

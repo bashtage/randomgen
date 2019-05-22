@@ -435,7 +435,8 @@ cdef class ThreeFry32:
         """
         cdef np.ndarray delta_a
         delta_a = int_to_array(delta, 'step', 128, 32)
-        threefry32_advance(<uint32_t *> delta_a.data, &self.rng_state)
+        threefry32_advance(<uint32_t *>np.PyArray_DATA(delta_a),
+                           &self.rng_state)
         self._reset_state_variables()
         return self
 

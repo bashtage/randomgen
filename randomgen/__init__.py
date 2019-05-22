@@ -1,6 +1,7 @@
 from randomgen.dsfmt import DSFMT
 from randomgen.generator import Generator
 from randomgen.mt19937 import MT19937
+from randomgen.mt64 import MT64
 from randomgen.mtrand import RandomState
 from randomgen.pcg32 import PCG32
 from randomgen.pcg64 import PCG64

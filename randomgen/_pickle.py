@@ -1,3 +1,6 @@
+from randomgen.dsfmt import DSFMT
+from randomgen.generator import Generator
+from randomgen.mt19937 import MT19937
 from randomgen.mtrand import RandomState
 from randomgen.pcg32 import PCG32
 from randomgen.pcg64 import PCG64
@@ -6,14 +9,13 @@ from randomgen.threefry import ThreeFry
 from randomgen.threefry32 import ThreeFry32
 from randomgen.xoroshiro128 import Xoroshiro128
 from randomgen.xorshift1024 import Xorshift1024
+
+from randomgen.mt64 import MT64
 from randomgen.xoshiro256 import Xoshiro256
 from randomgen.xoshiro512 import Xoshiro512
 
-from .dsfmt import DSFMT
-from .generator import Generator
-from .mt19937 import MT19937
-
 BitGenerators = {'MT19937': MT19937,
+                 'MT64': MT64,
                  'DSFMT': DSFMT,
                  'PCG32': PCG32,
                  'PCG64': PCG64,

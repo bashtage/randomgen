@@ -1,2 +1,5 @@
 pytest>=4
 pytest-cov
+sphinx>=1.8
+ipython>=5
+guzzle_sphinx_theme
