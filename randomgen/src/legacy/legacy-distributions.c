@@ -236,7 +236,8 @@ void legacy_random_bounded_uint64_fill(aug_bitgen_t *aug_state, uint64_t off,
 
     for (i = 0; i < cnt; i++) {
       out[i] = off + buffered_bounded_masked_uint32(aug_state->bit_generator,
-                                                    rng, mask, &bcnt, &buf);
+                                                    (uint32_t)rng, (uint32_t)mask,
+                                                    &bcnt, &buf);
     }
   } else if (rng == 0xFFFFFFFFFFFFFFFFULL) {
     for (i = 0; i < cnt; i++) {

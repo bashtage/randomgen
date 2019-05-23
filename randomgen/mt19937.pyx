@@ -242,7 +242,7 @@ cdef class MT19937:
             obj = obj.astype(np.uint32, casting='unsafe', order='C')
             mt19937_init_by_array(&self.rng_state,
                                   <uint32_t*>np.PyArray_DATA(obj),
-                                  np.PyArray_DIM(obj, 0))
+                                  <int>np.PyArray_DIM(obj, 0))
 
     cdef jump_inplace(self, iter):
         """

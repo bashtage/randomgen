@@ -272,7 +272,7 @@ cdef class DSFMT:
             obj = obj.astype(np.uint32, casting='unsafe', order='C')
             dsfmt_init_by_array(self.rng_state.state,
                                 <uint32_t *>np.PyArray_DATA(obj),
-                                np.PyArray_DIM(obj, 0))
+                                <int>np.PyArray_DIM(obj, 0))
         # Clear the buffer
         self._reset_state_variables()
 

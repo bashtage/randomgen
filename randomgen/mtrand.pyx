@@ -3847,7 +3847,7 @@ cdef class RandomState:
         mnarr = <np.ndarray>multin
         mnix = <long*>np.PyArray_DATA(mnarr)
         sz = np.PyArray_SIZE(mnarr)
-        ni = n
+        ni = <long>n
         check_constraint(ni, 'n', CONS_NON_NEGATIVE)
         offset = 0
         with self.lock, nogil:
