@@ -67,6 +67,14 @@ cdef class PCG32:
         ``None``, then 0 is used.  Can be used with the same seed to
         produce multiple streams using other values of inc.
 
+    Attributes
+    ----------
+    lock: threading.Lock
+        Lock instance that is shared so that the same bit git generator can
+        be used in multiple Generators without corrupting the state. Code that
+        generates values from a bit generator should hold the bit generator's
+        lock.
+
     Notes
     -----
     PCG-32 is a 64-bit implementation of O'Neill's permutation congruential

@@ -52,6 +52,14 @@ cdef class Xoshiro512:
         from ``/dev/urandom`` (or the Windows analog) if available.  If
         unavailable, a hash of the time and process ID is used.
 
+    Attributes
+    ----------
+    lock: threading.Lock
+        Lock instance that is shared so that the same bit git generator can
+        be used in multiple Generators without corrupting the state. Code that
+        generates values from a bit generator should hold the bit generator's
+        lock.
+
     Notes
     -----
     xoshiro512** is written by David Blackman and Sebastiano Vigna.

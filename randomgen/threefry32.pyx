@@ -75,6 +75,14 @@ cdef class ThreeFry32:
         a Python int in [0, 2**128) or a 4-element uint32 array.
         key and seed cannot both be used.
 
+    Attributes
+    ----------
+    lock: threading.Lock
+        Lock instance that is shared so that the same bit git generator can
+        be used in multiple Generators without corrupting the state. Code that
+        generates values from a bit generator should hold the bit generator's
+        lock.
+
     Notes
     -----
     ThreeFry32 is a 32-bit PRNG that uses a counter-based design based on

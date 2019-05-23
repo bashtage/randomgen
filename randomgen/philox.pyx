@@ -78,6 +78,14 @@ cdef class Philox:
         a Python int (long in 2.x) in [0, 2**128) or a 2-element uint64 array.
         key and seed cannot both be used.
 
+    Attributes
+    ----------
+    lock: threading.Lock
+        Lock instance that is shared so that the same bit git generator can
+        be used in multiple Generators without corrupting the state. Code that
+        generates values from a bit generator should hold the bit generator's
+        lock.
+
     Notes
     -----
     Philox is a 64-bit PRNG that uses a counter-based design based on
