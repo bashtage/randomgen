@@ -84,7 +84,7 @@ cdef class RandomGenerator:
     cdef brng_t *_brng
     cdef binomial_t *_binomial
     cdef object lock
-    poisson_lam_max = POISSON_LAM_MAX
+    _poisson_lam_max = POISSON_LAM_MAX
 
     def __init__(self, brng=None):
         if brng is None:

@@ -78,7 +78,7 @@ cdef class RandomState:
     cdef aug_brng_t *_aug_state
     cdef binomial_t *_binomial
     cdef object lock
-    poisson_lam_max = POISSON_LAM_MAX
+    _poisson_lam_max = LEGACY_POISSON_LAM_MAX
 
     def __init__(self, brng=None):
         if brng is None:
@@ -3221,7 +3221,7 @@ cdef class RandomState:
 
         """
         return disc(&random_poisson, self._brng, size, self.lock, 1, 0,
-                    lam, 'lam', CONS_POISSON,
+                    lam, 'lam', LEGACY_CONS_POISSON,
                     0.0, '', CONS_NONE,
                     0.0, '', CONS_NONE)
 
