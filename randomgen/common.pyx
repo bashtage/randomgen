@@ -11,6 +11,8 @@ cimport numpy as np
 from randomgen.common cimport *
 from randomgen cimport api
 
+__all__ = ['interface']
+
 np.import_array()
 
 interface = namedtuple('interface', ['state_address', 'state', 'next_uint64',

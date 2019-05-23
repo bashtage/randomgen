@@ -14,6 +14,8 @@ from randomgen.common cimport *
 from randomgen.distributions cimport bitgen_t
 from randomgen.entropy import random_entropy
 
+__all__ = ['DSFMT']
+
 np.import_array()
 
 DEF DSFMT_MEXP = 19937

@@ -11,6 +11,8 @@ from randomgen.common cimport *
 from randomgen.distributions cimport bitgen_t
 from randomgen.entropy import random_entropy, seed_by_array
 
+__all__ = ['Philox']
+
 np.import_array()
 
 DEF PHILOX_BUFFER_SIZE=4

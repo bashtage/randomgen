@@ -14,6 +14,8 @@ from randomgen.common cimport *
 from randomgen.distributions cimport bitgen_t
 from randomgen.entropy import random_entropy
 
+__all__ = ['MT64']
+
 np.import_array()
 
 cdef extern from "src/mt64/mt64.h":
