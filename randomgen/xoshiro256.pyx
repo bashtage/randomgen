@@ -13,6 +13,8 @@ from randomgen.common cimport *
 from randomgen.distributions cimport bitgen_t
 from randomgen.entropy import random_entropy, seed_by_array
 
+__all__ = ['Xoshiro256']
+
 np.import_array()
 
 cdef extern from "src/xoshiro256/xoshiro256.h":

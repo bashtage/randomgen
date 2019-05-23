@@ -12,6 +12,8 @@ from randomgen.common cimport *
 from randomgen.distributions cimport bitgen_t
 from randomgen.entropy import random_entropy
 
+__all__ = ['PCG32']
+
 np.import_array()
 
 cdef extern from "src/pcg32/pcg32.h":

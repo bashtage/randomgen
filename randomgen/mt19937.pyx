@@ -14,6 +14,8 @@ from randomgen.common cimport *
 from randomgen.distributions cimport bitgen_t
 from randomgen.entropy import random_entropy
 
+__all__ = ['MT19937']
+
 np.import_array()
 
 cdef extern from "src/mt19937/mt19937.h":

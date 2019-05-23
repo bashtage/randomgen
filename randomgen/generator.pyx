@@ -22,6 +22,17 @@ from randomgen.common cimport *
 from randomgen.distributions cimport *
 from randomgen cimport api
 
+__all__ = ['Generator', 'beta', 'binomial', 'bytes', 'chisquare', 'choice',
+           'complex_normal', 'dirichlet', 'exponential', 'f', 'gamma',
+           'geometric', 'gumbel', 'hypergeometric', 'integers', 'laplace',
+           'logistic', 'lognormal', 'logseries', 'multinomial',
+           'multivariate_normal', 'negative_binomial', 'noncentral_chisquare',
+           'noncentral_f', 'normal', 'pareto', 'permutation',
+           'poisson', 'power', 'randint', 'random',  'rayleigh', 'shuffle',
+           'standard_cauchy', 'standard_exponential', 'standard_gamma',
+           'standard_normal', 'standard_t', 'triangular',
+           'uniform', 'vonmises', 'wald', 'weibull', 'zipf']
+
 np.import_array()
 
 # TODO: Remove after deprecation
@@ -472,6 +483,10 @@ cdef class Generator:
                 [ True,  True]]])
 
         """
+        import warnings
+        warnings.warn('tomaxint is deprecated. Use integers.',
+                      DeprecationWarning)
+
         return self.integers(0, np.iinfo(np.int).max + 1, dtype=np.int, size=size)
 
     def randint(self, *args, **kwargs):
