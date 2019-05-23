@@ -292,6 +292,7 @@ class TestAgainstNumPy(object):
         with pytest.deprecated_call():
             assert_allclose(f(3, 4, 5), g(3, 4, 5))
 
+    @pytest.mark.xfail(reason='Definition of poisson_lam_max changed')
     def test_poisson_lam_max(self):
         assert_allclose(self.rg.poisson_lam_max, self.nprs.poisson_lam_max)
 
@@ -408,7 +409,7 @@ class TestAgainstNumPy(object):
     def test_dir(self):
         nprs_d = set(dir(self.nprs))
         rs_d = dir(self.rg)
-        excluded = {'get_state', 'set_state'}
+        excluded = {'get_state', 'set_state', 'poisson_lam_max'}
         nprs_d.difference_update(excluded)
         assert (len(nprs_d.difference(rs_d)) == 0)
 
