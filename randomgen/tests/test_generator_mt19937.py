@@ -115,9 +115,11 @@ class TestSetState(object):
                              self.state['state']['pos'])
 
     def test_basic(self):
-        old = self.rg.tomaxint(16)
+        with pytest.deprecated_call():
+            old = self.rg.tomaxint(16)
         self.bit_generator.state = self.state
-        new = self.rg.tomaxint(16)
+        with pytest.deprecated_call():
+            new = self.rg.tomaxint(16)
         assert_(np.all(old == new))
 
     def test_gaussian_reset(self):

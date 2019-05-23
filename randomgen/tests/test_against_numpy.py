@@ -188,8 +188,9 @@ class TestAgainstNumPy(object):
     def test_tomaxint(self):
         self._set_common_state()
         self._is_state_common()
-        compare_0_input(self.nprs.tomaxint,
-                        self.rg.tomaxint)
+        with pytest.deprecated_call():
+            compare_0_input(self.nprs.tomaxint,
+                            self.rg.tomaxint)
         self._is_state_common()
 
     def test_poisson(self):

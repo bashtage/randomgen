@@ -4,7 +4,7 @@ except ImportError:
     from dummy_threading import Lock
 
 import numpy as np
-from cpython.pycapsule cimport PyCapsule_New, PyCapsule_GetPointer
+from cpython.pycapsule cimport PyCapsule_New
 
 from randomgen.common cimport *
 from randomgen.distributions cimport bitgen_t

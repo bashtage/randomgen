@@ -331,7 +331,8 @@ class RNG(object):
         assert_((original != permuted).any())
 
     def test_tomaxint(self):
-        vals = self.rg.tomaxint(size=100000)
+        with pytest.deprecated_call():
+            vals = self.rg.tomaxint(size=100000)
         maxsize = 0
         if os.name == 'nt':
             maxsize = 2 ** 31 - 1

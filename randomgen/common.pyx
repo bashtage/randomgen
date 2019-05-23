@@ -17,7 +17,7 @@ np.import_array()
 
 interface = namedtuple('interface', ['state_address', 'state', 'next_uint64',
                                      'next_uint32', 'next_double',
-                                     'bitgen'])
+                                     'bit_generator'])
 
 
 cdef object benchmark(bitgen_t *bitgen, object lock, Py_ssize_t cnt, object method):
@@ -111,7 +111,7 @@ cdef object prepare_cffi(bitgen_t *bitgen):
         * next_uint64 - function pointer to produce 64 bit integers
         * next_uint32 - function pointer to produce 32 bit integers
         * next_double - function pointer to produce doubles
-        * bitgen - pointer to the bit generator struct
+        * bit_generator - pointer to the bit generator struct
     """
     try:
         import cffi
@@ -146,7 +146,7 @@ cdef object prepare_ctypes(bitgen_t *bitgen):
         * next_uint64 - function pointer to produce 64 bit integers
         * next_uint32 - function pointer to produce 32 bit integers
         * next_double - function pointer to produce doubles
-        * bitgen - pointer to the bit generator struct
+        * bit_generator - pointer to the bit generator struct
     """
     import ctypes
 

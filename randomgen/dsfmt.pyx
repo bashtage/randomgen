@@ -1,5 +1,5 @@
 import operator
-from cpython.pycapsule cimport PyCapsule_New, PyCapsule_GetPointer
+from cpython.pycapsule cimport PyCapsule_New
 from libc.string cimport memcpy
 
 try:
@@ -279,9 +279,9 @@ cdef class DSFMT:
     cdef jump_inplace(self, iter):
         """
         Jump state in-place
-        
+
         Not part of public API
-        
+
         Parameters
         ----------
         iter : integer, positive
