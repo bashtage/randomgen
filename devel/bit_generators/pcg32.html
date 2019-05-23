@@ -13,7 +13,7 @@
   <link rel="stylesheet" type="text/css" href="../_static/css/bootstrap-theme.min.css" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-    <title>Parallel Congruent Generator (32-bit, PCG32) &#8212; RandomGen v1.16.5+63.g8d5942f documentation</title>
+    <title>Parallel Congruent Generator (32-bit, PCG32) &#8212; RandomGen v1.16.5+67.g7aa8b32 documentation</title>
     <link rel="stylesheet" href="../_static/guzzle.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
@@ -45,7 +45,7 @@
         <li class="right" >
           <a href="generated/randomgen.xoshiro512.Xoshiro512.random_raw.html" title="randomgen.xoshiro512.Xoshiro512.random_raw"
              accesskey="P">previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../index.html">RandomGen v1.16.5+63.g8d5942f documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">RandomGen v1.16.5+67.g7aa8b32 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="index.html" accesskey="U">Bit Generators</a> &#187;</li> 
       </ul>
     </div>
@@ -56,7 +56,7 @@
       </div>
   <div id="left-column">
     <div class="sphinxsidebar"><a href="
-    ../index.html" class="text-logo">RandomGen v1.16.5 (+63)</a>
+    ../index.html" class="text-logo">RandomGen v1.16.5 (+67)</a>
 <div class="sidebar-block">
   <div class="sidebar-wrapper">
     <h2>Table Of Contents</h2>
@@ -142,6 +142,20 @@ produce multiple streams using other values of inc.</p></li>
 </ul>
 </dd>
 </dl>
+<dl class="attribute">
+<dt id="randomgen.pcg32.PCG32.lock">
+<code class="descname">lock</code><a class="headerlink" href="#randomgen.pcg32.PCG32.lock" title="Permalink to this definition">¶</a></dt>
+<dd><p>Lock instance that is shared so that the same bit git generator can
+be used in multiple Generators without corrupting the state. Code that
+generates values from a bit generator should hold the bit generator’s
+lock.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/threading.html#threading.Lock" title="(in Python v3.7)">threading.Lock</a></p>
+</dd>
+</dl>
+</dd></dl>
+
 <p class="rubric">Notes</p>
 <p>PCG-32 is a 64-bit implementation of O’Neill’s permutation congruential
 generator (<a class="footnote-reference brackets" href="#id3" id="id1">1</a>, <a class="footnote-reference brackets" href="#id4" id="id2">2</a>). PCG-32 has a period of <span class="math notranslate nohighlight">\(2^{64}\)</span> and supports
@@ -292,7 +306,7 @@ Statistically Good Algorithms for Random Number Generation”</p>
         <li class="right" >
           <a href="generated/randomgen.xoshiro512.Xoshiro512.random_raw.html" title="randomgen.xoshiro512.Xoshiro512.random_raw"
              >previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../index.html">RandomGen v1.16.5+63.g8d5942f documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">RandomGen v1.16.5+67.g7aa8b32 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="index.html" >Bit Generators</a> &#187;</li> 
       </ul>
     </div>
