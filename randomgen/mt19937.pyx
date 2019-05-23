@@ -232,7 +232,8 @@ cdef class MT19937:
             if ((obj > int(2**32 - 1)) | (obj < 0)).any():
                 raise ValueError("Seed must be between 0 and 2**32 - 1")
             obj = obj.astype(np.uint32, casting='unsafe', order='C')
-            mt19937_init_by_array(&self.rng_state, <uint32_t*> obj.data, np.PyArray_DIM(obj, 0))
+            mt19937_init_by_array(&self.rng_state, <uint32_t*> obj.data,
+                                  <int>np.PyArray_DIM(obj, 0))
 
     def jump(self, np.npy_intp iter=1):
         """

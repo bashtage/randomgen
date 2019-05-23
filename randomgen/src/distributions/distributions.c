@@ -749,7 +749,7 @@ RAND_INT_TYPE random_binomial_btpe(brng_t *brng_state, RAND_INT_TYPE n,
     r = binomial->r;
     q = binomial->q;
     fm = binomial->fm;
-    m = binomial->m;
+    m = (RAND_INT_TYPE)binomial->m;
     p1 = binomial->p1;
     xm = binomial->xm;
     xl = binomial->xl;
@@ -800,7 +800,7 @@ Step40:
   v = v * (u - p3) * lamr;
 
 Step50:
-  k = llabs(y - m);
+  k = (RAND_INT_TYPE)llabs(y - m);
   if ((k > 20) && (k < ((nrq) / 2.0 - 1)))
     goto Step52;
 
@@ -878,7 +878,7 @@ RAND_INT_TYPE random_binomial_inversion(brng_t *brng_state, RAND_INT_TYPE n,
     q = binomial->q;
     qn = binomial->r;
     np = binomial->c;
-    bound = binomial->m;
+    bound = (RAND_INT_TYPE)binomial->m;
   }
   X = 0;
   px = qn;
@@ -1468,9 +1468,11 @@ uint64_t random_bounded_uint64(brng_t *brng_state, uint64_t off, uint64_t rng,
     /* Call 32-bit generator if range in 32-bit. */
     if (use_masked) {
       return off +
-             buffered_bounded_masked_uint32(brng_state, rng, mask, NULL, NULL);
+             buffered_bounded_masked_uint32(brng_state, (uint32_t)rng,
+                                            (uint32_t)mask, NULL, NULL);
     } else {
-      return off + buffered_bounded_lemire_uint32(brng_state, rng, NULL, NULL);
+      return off + buffered_bounded_lemire_uint32(brng_state, (uint32_t)rng,
+                                                  NULL, NULL);
     }
   } else if (rng == 0xFFFFFFFFFFFFFFFFULL) {
     /* Lemire64 doesn't support inclusive rng = 0xFFFFFFFFFFFFFFFF. */
@@ -1586,13 +1588,14 @@ void random_bounded_uint64_fill(brng_t *brng_state, uint64_t off, uint64_t rng,
       uint64_t mask = gen_mask(rng);
 
       for (i = 0; i < cnt; i++) {
-        out[i] = off + buffered_bounded_masked_uint32(brng_state, rng, mask,
-                                                      &bcnt, &buf);
+        out[i] = off + buffered_bounded_masked_uint32(brng_state, (uint32_t)rng,
+                                                      (uint32_t)mask, &bcnt, &buf);
       }
     } else {
       for (i = 0; i < cnt; i++) {
         out[i] =
-            off + buffered_bounded_lemire_uint32(brng_state, rng, &bcnt, &buf);
+            off + (uint64_t)buffered_bounded_lemire_uint32(brng_state, (uint32_t)rng,
+                                                           &bcnt, &buf);
       }
     }
   } else if (rng == 0xFFFFFFFFFFFFFFFFULL) {
