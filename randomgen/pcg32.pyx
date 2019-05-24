@@ -211,9 +211,9 @@ cdef class PCG32:
         Parameters
         ----------
         seed : int, optional
-            Seed for ``PCG32``.
+            Seed for ``PCG64``. Integer between 0 and 2**64-1.
         inc : int, optional
-            Increment to use for PCG stream
+            Increment to use for PCG stream. Integer between 0 and 2**64-1.
 
         Raises
         ------
@@ -321,7 +321,7 @@ cdef class PCG32:
         """
         self.advance(iter * 2**32)
 
-    def jump(self, np.npy_intp iter=1):
+    def jump(self, iter=1):
         """
         jump(iter=1)
 
@@ -344,7 +344,7 @@ cdef class PCG32:
         self.jump_inplace(iter)
         return self
 
-    def jumped(self, np.npy_intp iter=1):
+    def jumped(self, iter=1):
         """
         jumped(iter=1)
 

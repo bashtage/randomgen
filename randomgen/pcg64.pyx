@@ -44,6 +44,7 @@ cdef uint32_t pcg64_uint32(void *st) nogil:
 cdef double pcg64_double(void* st) nogil:
     return uint64_to_double(pcg64_next64(<pcg64_state *>st))
 
+
 cdef class PCG64:
     u"""
     PCG64(seed=None, inc=0)
@@ -204,22 +205,20 @@ cdef class PCG64:
 
         Seed the generator.
 
-        This method is called when ``PCG64`` is initialized. It can be
-        called again to re-seed the generator. For details, see
-        ``PCG64``.
+        This method is called at initialization. It can be called again to
+        re-seed the generator.
 
         Parameters
         ----------
         seed : int, optional
-            Seed for ``PCG64``.
+            Seed for ``PCG64``. Integer between 0 and 2**128-1.
         inc : int, optional
-            Increment to use for PCG stream
+            Increment to use for PCG stream. Integer between 0 and 2**128-1.
 
         Raises
         ------
         ValueError
-            If seed values are out of range for the RNG.
-
+            If seed values are out of range for the PRNG.
         """
         cdef np.ndarray _seed, _inc
         ub = 2 ** 128
@@ -258,13 +257,13 @@ cdef class PCG64:
     @property
     def state(self):
         """
-        Get or set the RNG state
+        Get or set the PRNG state
 
         Returns
         -------
         state : dict
             Dictionary containing the information required to describe the
-            state of the RNG
+            state of the PRNG
         """
         cdef np.ndarray state_vec
         cdef int has_uint32
@@ -350,9 +349,9 @@ cdef class PCG64:
     cdef jump_inplace(self, iter):
         """
         Jump state in-place
-        
+
         Not part of public API
-        
+
         Parameters
         ----------
         iter : integer, positive
@@ -389,7 +388,7 @@ cdef class PCG64:
 
         return self
 
-    def jumped(self, np.npy_intp iter=1):
+    def jumped(self, iter=1):
         """
         jumped(iter=1)
 
