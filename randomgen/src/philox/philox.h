@@ -35,6 +35,14 @@ _philox4x64bumpkey(struct r123array2x64 key) {
   return key;
 }
 
+/* Prefer uint128 if available: GCC, clang, ICC */
+#if __SIZEOF_INT128__
+static INLINE uint64_t mulhilo64(uint64_t a, uint64_t b, uint64_t *hip) {
+  __uint128_t product = ((__uint128_t)a) * ((__uint128_t)b);
+  *hip = product >> 64;
+  return (uint64_t)product;
+}
+#else
 #ifdef _WIN32
 #include <intrin.h>
 #if _WIN64 && _M_AMD64
@@ -66,13 +74,6 @@ static INLINE uint64_t _umul128(uint64_t a, uint64_t b, uint64_t *high) {
 #endif
 static INLINE uint64_t mulhilo64(uint64_t a, uint64_t b, uint64_t *hip) {
   return _umul128(a, b, hip);
-}
-#else
-#if __SIZEOF_INT128__
-static INLINE uint64_t mulhilo64(uint64_t a, uint64_t b, uint64_t *hip) {
-  __uint128_t product = ((__uint128_t)a) * ((__uint128_t)b);
-  *hip = product >> 64;
-  return (uint64_t)product;
 }
 #else
 static INLINE uint64_t _umul128(uint64_t a, uint64_t b, uint64_t *high) {
