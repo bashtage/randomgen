@@ -13,8 +13,8 @@ SIZE = 25000
 PRNGS = [DSFMT, MT19937, MT64, Philox, PCG64, ThreeFry, Xoshiro256, Xoshiro512]
 
 funcs = OrderedDict()
-funcs['32-bit Unsigned Ints'] = f'integers(2**32, dtype="uint32", size={SIZE})'
-funcs['64-bit Unsigned Ints'] = f'integers(2**64, dtype="uint64", size={SIZE})'
+funcs['32-bit Unsigned Int'] = f'integers(2**32, dtype="uint32", size={SIZE})'
+funcs['64-bit Unsigned Int'] = f'integers(2**64, dtype="uint64", size={SIZE})'
 funcs['Uniform'] = f'random(size={SIZE})'
 funcs['Exponential'] = f'standard_exponential(size={SIZE})'
 funcs['Normal'] = f'standard_normal(size={SIZE})'
@@ -47,12 +47,11 @@ for prng in PRNGS:
 
 npfuncs = OrderedDict()
 npfuncs.update(funcs)
-del npfuncs['Complex Normals']
-npfuncs.update({'64-bit Unsigned Ints':
-                    f'randint(2**64, dtype="uint64", size={SIZE})',
-                '32-bit Unsigned Ints':
-                    f'randint(2**32, dtype="uint32", size={SIZE})',
-                'Uniforms': f'random_sample(size={SIZE})'})
+del npfuncs['Complex Normal']
+npfuncs['Uniform'] = f'random_sample(size={SIZE})'
+npfuncs['64-bit Unsigned Int'] = f'randint(2**64, dtype="uint64", size={SIZE})'
+npfuncs['32-bit Unsigned Int'] = f'randint(2**32, dtype="uint32", size={SIZE})'
+
 
 setup = """
 from numpy.random import RandomState
@@ -90,3 +89,10 @@ rel *= 100
 rel = np.round(rel)
 rel = rel.T
 print(rel.to_csv(float_format='%0d'))
+
+try:
+    from tabulate import tabulate
+
+    print(tabulate(rel, headers='keys', tablefmt='psql'))
+except ImportError:
+    pass
