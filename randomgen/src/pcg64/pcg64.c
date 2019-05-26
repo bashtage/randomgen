@@ -24,17 +24,17 @@
 
 #include "pcg64.h"
 
-extern inline void pcg_setseq_128_step_r(pcg_state_setseq_128 *rng);
-extern inline uint64_t pcg_output_xsl_rr_128_64(pcg128_t state);
-extern inline void pcg_setseq_128_srandom_r(pcg_state_setseq_128 *rng,
+extern INLINE void pcg_setseq_128_step_r(pcg_state_setseq_128 *rng);
+extern INLINE uint64_t pcg_output_xsl_rr_128_64(pcg128_t state);
+extern INLINE void pcg_setseq_128_srandom_r(pcg_state_setseq_128 *rng,
                                             pcg128_t initstate,
                                             pcg128_t initseq);
-extern inline uint64_t
+extern INLINE uint64_t
 pcg_setseq_128_xsl_rr_64_random_r(pcg_state_setseq_128 *rng);
-extern inline uint64_t
+extern INLINE uint64_t
 pcg_setseq_128_xsl_rr_64_boundedrand_r(pcg_state_setseq_128 *rng,
                                        uint64_t bound);
-extern inline void pcg_setseq_128_advance_r(pcg_state_setseq_128 *rng,
+extern INLINE void pcg_setseq_128_advance_r(pcg_state_setseq_128 *rng,
                                             pcg128_t delta);
 
 /* Multi-step advance functions (jump-ahead, jump-back)
@@ -89,8 +89,8 @@ pcg128_t pcg_advance_lcg_128(pcg128_t state, pcg128_t delta, pcg128_t cur_mult,
 
 #endif
 
-extern inline uint64_t pcg64_next64(pcg64_state *state);
-extern inline uint32_t pcg64_next32(pcg64_state *state);
+extern INLINE uint64_t pcg64_next64(pcg64_state *state);
+extern INLINE uint32_t pcg64_next32(pcg64_state *state);
 
 extern void pcg64_advance(pcg64_state *state, uint64_t *step) {
   pcg128_t delta;

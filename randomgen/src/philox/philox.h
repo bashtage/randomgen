@@ -1,11 +1,16 @@
 #ifndef _RANDOMDGEN__PHILOX_H_
 #define _RANDOMDGEN__PHILOX_H_
 
-#include <inttypes.h>
-
 #ifdef _WIN32
-#define INLINE __inline __forceinline
+#if _MSC_VER == 1500
+#include "../common/inttypes.h"
+#define INLINE __forceinline
 #else
+#include <inttypes.h>
+#define INLINE __inline __forceinline
+#endif
+#else
+#include <inttypes.h>
 #define INLINE inline
 #endif
 
@@ -32,8 +37,7 @@ _philox4x64bumpkey(struct r123array2x64 key) {
 
 #ifdef _WIN32
 #include <intrin.h>
-/* TODO: This isn't correct for many platforms */
-#ifdef _WIN64
+#if _WIN64 && _M_AMD64
 #pragma intrinsic(_umul128)
 #else
 #pragma intrinsic(__emulu)

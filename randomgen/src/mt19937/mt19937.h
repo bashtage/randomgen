@@ -1,17 +1,17 @@
 #pragma once
 #include <math.h>
-#ifdef _WIN32
-#if _MSC_VER == 1500
-#include "../common/stdint.h"
-#else
-#include <stdint.h>
-#endif
-#else
-#include <stdint.h>
-#endif
 
 #ifdef _WIN32
-#define inline __forceinline
+#if _MSC_VER == 1500
+#include "../common/inttypes.h"
+#define INLINE __forceinline
+#else
+#include <inttypes.h>
+#define INLINE __inline __forceinline
+#endif
+#else
+#include <inttypes.h>
+#define INLINE inline
 #endif
 
 #define RK_STATE_LEN 624
@@ -32,7 +32,7 @@ extern void mt19937_seed(mt19937_state *state, uint32_t seed);
 extern void mt19937_gen(mt19937_state *state);
 
 /* Slightly optimized reference implementation of the Mersenne Twister */
-static inline uint32_t mt19937_next(mt19937_state *state) {
+static INLINE uint32_t mt19937_next(mt19937_state *state) {
   uint32_t y;
 
   if (state->pos == RK_STATE_LEN) {
@@ -53,15 +53,15 @@ static inline uint32_t mt19937_next(mt19937_state *state) {
 extern void mt19937_init_by_array(mt19937_state *state, uint32_t *init_key,
                                   int key_length);
 
-static inline uint64_t mt19937_next64(mt19937_state *state) {
+static INLINE uint64_t mt19937_next64(mt19937_state *state) {
   return (uint64_t)mt19937_next(state) << 32 | mt19937_next(state);
 }
 
-static inline uint32_t mt19937_next32(mt19937_state *state) {
+static INLINE uint32_t mt19937_next32(mt19937_state *state) {
   return mt19937_next(state);
 }
 
-static inline double mt19937_next_double(mt19937_state *state) {
+static INLINE double mt19937_next_double(mt19937_state *state) {
   int32_t a = mt19937_next(state) >> 5, b = mt19937_next(state) >> 6;
   return (a * 67108864.0 + b) / 9007199254740992.0;
 }
