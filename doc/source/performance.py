@@ -4,20 +4,19 @@ from timeit import repeat
 import numpy as np
 import pandas as pd
 
-from randomgen import MT19937, DSFMT, ThreeFry, PCG64, Xoroshiro128, \
-    Xorshift1024, Philox, Xoshiro256, Xoshiro512
+from randomgen import MT19937, DSFMT, ThreeFry, PCG64, Philox, Xoshiro256, \
+    Xoshiro512, MT64
 
 NUMBER = 100
 REPEAT = 10
-SIZE = 10000
-PRNGS = [DSFMT, MT19937, Philox, PCG64, ThreeFry, Xoroshiro128, Xorshift1024,
-         Xoshiro256, Xoshiro512]
+SIZE = 25000
+PRNGS = [DSFMT, MT19937, MT64, Philox, PCG64, ThreeFry, Xoshiro256, Xoshiro512]
 
 funcs = {'32-bit Unsigned Ints':
-         f'integers(2**32, dtype="uint32", size={SIZE})',
+             f'integers(2**32, dtype="uint32", size={SIZE})',
          '64-bit Unsigned Ints':
-         f'_bit_generator._benchmark({SIZE}, "uint64")',
-         'Uniforms': f'_bit_generator._benchmark({SIZE}, "double")',
+             f'integers(2**64, dtype="uint64", size={SIZE})',
+         'Uniforms': f'random(size={SIZE})',
          'Complex Normals': f'complex_normal(size={SIZE})',
          'Normals': f'standard_normal(size={SIZE})',
          'Exponentials': f'standard_exponential(size={SIZE})',
@@ -26,17 +25,16 @@ funcs = {'32-bit Unsigned Ints':
          'Laplaces': f'laplace(size={SIZE})',
          'Poissons': f'poisson(3.0, size={SIZE})', }
 
-
 setup = """
-from randomgen import {prng}
-rg = {prng}().generator
+from randomgen import {prng}, Generator
+rg = Generator({prng}())
 """
 
 test = "rg.{func}"
 table = OrderedDict()
 for prng in PRNGS:
     print(prng.__name__)
-    print('-'*40)
+    print('-' * 40)
     col = OrderedDict()
     for key in funcs:
         print(key)
@@ -44,7 +42,7 @@ for prng in PRNGS:
                    setup.format(prng=prng().__class__.__name__),
                    number=NUMBER, repeat=REPEAT)
         col[key] = 1000 * min(t)
-    print('\n'*2)
+    print('\n' * 2)
     col = pd.Series(col)
     table[prng().__class__.__name__] = col
 
@@ -52,7 +50,9 @@ npfuncs = OrderedDict()
 npfuncs.update(funcs)
 del npfuncs['Complex Normals']
 npfuncs.update({'64-bit Unsigned Ints':
-                f'integers(2**64, dtype="uint64", size={SIZE})',
+                    f'randint(2**64, dtype="uint64", size={SIZE})',
+                '32-bit Unsigned Ints':
+                    f'randint(2**32, dtype="uint32", size={SIZE})',
                 'Uniforms': f'random_sample(size={SIZE})'})
 
 setup = """
