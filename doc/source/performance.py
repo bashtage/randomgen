@@ -12,18 +12,17 @@ REPEAT = 10
 SIZE = 25000
 PRNGS = [DSFMT, MT19937, MT64, Philox, PCG64, ThreeFry, Xoshiro256, Xoshiro512]
 
-funcs = {'32-bit Unsigned Ints':
-             f'integers(2**32, dtype="uint32", size={SIZE})',
-         '64-bit Unsigned Ints':
-             f'integers(2**64, dtype="uint64", size={SIZE})',
-         'Uniforms': f'random(size={SIZE})',
-         'Complex Normals': f'complex_normal(size={SIZE})',
-         'Normals': f'standard_normal(size={SIZE})',
-         'Exponentials': f'standard_exponential(size={SIZE})',
-         'Gammas': f'standard_gamma(3.0,size={SIZE})',
-         'Binomials': f'binomial(9, .1, size={SIZE})',
-         'Laplaces': f'laplace(size={SIZE})',
-         'Poissons': f'poisson(3.0, size={SIZE})', }
+funcs = OrderedDict()
+funcs['32-bit Unsigned Ints'] = f'integers(2**32, dtype="uint32", size={SIZE})'
+funcs['64-bit Unsigned Ints'] = f'integers(2**64, dtype="uint64", size={SIZE})'
+funcs['Uniform'] = f'random(size={SIZE})'
+funcs['Exponential'] = f'standard_exponential(size={SIZE})'
+funcs['Normal'] = f'standard_normal(size={SIZE})'
+funcs['Gamma'] = f'standard_gamma(3.0,size={SIZE})'
+funcs['Complex Normal'] = f'complex_normal(size={SIZE})'
+funcs['Binomial'] = f'binomial(9, .1, size={SIZE})'
+funcs['Laplace'] = f'laplace(size={SIZE})'
+funcs['Poisson'] = f'poisson(3.0, size={SIZE})'
 
 setup = """
 from randomgen import {prng}, Generator
@@ -73,10 +72,15 @@ order = np.log(table).mean().sort_values().index
 table = table.T
 table = table.reindex(order)
 table = table.T
-table.pop('Xoshiro512')
-table.pop('DSFMT')
 table = 1000000 * table / (SIZE * NUMBER)
 print(table.to_csv(float_format='%0.1f'))
+
+try:
+    from tabulate import tabulate
+
+    print(tabulate(table, headers='keys', tablefmt='psql'))
+except ImportError:
+    pass
 
 rel = table.loc[:, ['NumPy']].values @ np.ones((1, table.shape[1])) / table
 rel.pop('NumPy')

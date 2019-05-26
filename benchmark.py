@@ -27,8 +27,8 @@ if struct.calcsize('P') == 8 and os.name != 'nt':
 else:
     scale_64 = 2
 
-PRNGS = ['DSFMT', 'PCG64', 'PCG32', 'MT19937', 'Xoroshiro128', 'Xorshift1024',
-         'Xoshiro256', 'Xoshiro512', 'Philox', 'ThreeFry',
+PRNGS = ['DSFMT', 'PCG64', 'PCG32', 'MT19937', 'MT64', 'Xoroshiro128',
+         'Xorshift1024', 'Xoshiro256', 'Xoshiro512', 'Philox', 'ThreeFry',
          'ThreeFry32', 'numpy']
 
 
@@ -109,9 +109,11 @@ def timer_bounded(bits=8, max=95, use_masked=True):
     minimum = 0
 
     if use_masked:  # Use masking & rejection.
-        command = 'rg.randint({min}, {max}+1, 1000000, dtype=np.uint{bits}, use_masked=True)'
+        command = 'rg.randint({min}, {max}+1, 1000000, dtype=np.uint{bits},' \
+                  ' use_masked=True)'
     else:  # Use Lemire's algo.
-        command = 'rg.randint({min}, {max}+1, 1000000, dtype=np.uint{bits}, use_masked=False)'
+        command = 'rg.randint({min}, {max}+1, 1000000, dtype=np.uint{bits},' \
+                  ' use_masked=False)'
 
     command = command.format(min=minimum, max=max, bits=bits)
 
@@ -120,7 +122,8 @@ def timer_bounded(bits=8, max=95, use_masked=True):
 
     run_timer(command, command_numpy, SETUP,
               '{bits}-bit bounded unsigned integers (max={max}, '
-              'use_masked={use_masked})'.format(max=max, use_masked=use_masked, bits=bits))
+              'use_masked={use_masked})'.format(max=max, use_masked=use_masked,
+                                                bits=bits))
 
 
 def timer_32bit():
@@ -152,9 +155,9 @@ if __name__ == '__main__':
 
     parser = argparse.ArgumentParser()
     parser.add_argument('-f', '--full',
-                        help='Run benchmarks for a wide range of distributions.'
-                             ' If not provided, only tests the production of '
-                             'uniform values.',
+                        help='Run benchmarks for a wide range of '
+                             'distributions. If not provided, only tests the '
+                             'production of uniform values.',
                         dest='full', action='store_true')
     parser.add_argument('-bi', '--bounded-ints',
                         help='Included benchmark coverage of the bounded '
@@ -165,31 +168,39 @@ if __name__ == '__main__':
     timer_uniform()
     if args.full:
         timer_raw()
+        timer_32bit()
+        timer_64bit()
+        timer_normal_zig()
+
         if args.bounded_ints:
             timer_bounded(use_masked=True)
-            timer_bounded(max=64, use_masked=False)  # Worst case for Numpy.
-            timer_bounded(max=95, use_masked=False)  # Typ. avrg. case for Numpy.
-            timer_bounded(max=127, use_masked=False)  # Best case for Numpy.
+            # Worst case for Numpy.
+            timer_bounded(max=64, use_masked=False)
+            # Typ. avrg. case for Numpy.
+            timer_bounded(max=95, use_masked=False)
+            # Best case for Numpy.
+            timer_bounded(max=127, use_masked=False)
 
             timer_bounded(16, use_masked=True)
-            timer_bounded(16, max=1024, use_masked=False)  # Worst case for Numpy.
-            timer_bounded(16, max=1535, use_masked=False)  # Typ. avrg. case for Numpy.
-            timer_bounded(16, max=2047, use_masked=False)  # Best case for Numpy.
+            # Worst case for Numpy.
+            timer_bounded(16, max=1024, use_masked=False)
+            # Typ. avrg. case for Numpy.
+            timer_bounded(16, max=1535, use_masked=False)
+            # Best case for Numpy.
+            timer_bounded(16, max=2047, use_masked=False)
 
-        timer_32bit()
-
-        if args.bounded_ints:
             timer_bounded(32, use_masked=True)
-            timer_bounded(32, max=1024, use_masked=False)  # Worst case for Numpy.
-            timer_bounded(32, max=1535, use_masked=False)  # Typ. avrg. case for Numpy.
-            timer_bounded(32, max=2047, use_masked=False)  # Best case for Numpy.
+            # Worst case for Numpy.
+            timer_bounded(32, max=1024, use_masked=False)
+            # Typ. avrg. case for Numpy.
+            timer_bounded(32, max=1535, use_masked=False)
+            # Best case for Numpy.
+            timer_bounded(32, max=2047, use_masked=False)
 
-        timer_64bit()
-
-        if args.bounded_ints:
             timer_bounded(64, use_masked=True)
-            timer_bounded(64, max=1024, use_masked=False)  # Worst case for Numpy.
-            timer_bounded(64, max=1535, use_masked=False)  # Typ. avrg. case for Numpy.
-            timer_bounded(64, max=2047, use_masked=False)  # Best case for Numpy.
-
-        timer_normal_zig()
+            # Worst case for Numpy.
+            timer_bounded(64, max=1024, use_masked=False)
+            # Typ. avrg. case for Numpy.
+            timer_bounded(64, max=1535, use_masked=False)
+            # Best case for Numpy.
+            timer_bounded(64, max=2047, use_masked=False)

@@ -1,11 +1,16 @@
 #ifndef _RANDOMDGEN__PHILOX_H_
 #define _RANDOMDGEN__PHILOX_H_
 
-#include <inttypes.h>
-
 #ifdef _WIN32
-#define INLINE __inline __forceinline
+#if _MSC_VER == 1500
+#include "../common/inttypes.h"
+#define INLINE __forceinline
 #else
+#include <inttypes.h>
+#define INLINE __inline __forceinline
+#endif
+#else
+#include <inttypes.h>
 #define INLINE inline
 #endif
 
@@ -30,10 +35,17 @@ _philox4x64bumpkey(struct r123array2x64 key) {
   return key;
 }
 
+/* Prefer uint128 if available: GCC, clang, ICC */
+#if __SIZEOF_INT128__
+static INLINE uint64_t mulhilo64(uint64_t a, uint64_t b, uint64_t *hip) {
+  __uint128_t product = ((__uint128_t)a) * ((__uint128_t)b);
+  *hip = product >> 64;
+  return (uint64_t)product;
+}
+#else
 #ifdef _WIN32
 #include <intrin.h>
-/* TODO: This isn't correct for many platforms */
-#ifdef _WIN64
+#if _WIN64 && _M_AMD64
 #pragma intrinsic(_umul128)
 #else
 #pragma intrinsic(__emulu)
@@ -62,13 +74,6 @@ static INLINE uint64_t _umul128(uint64_t a, uint64_t b, uint64_t *high) {
 #endif
 static INLINE uint64_t mulhilo64(uint64_t a, uint64_t b, uint64_t *hip) {
   return _umul128(a, b, hip);
-}
-#else
-#if __SIZEOF_INT128__
-static INLINE uint64_t mulhilo64(uint64_t a, uint64_t b, uint64_t *hip) {
-  __uint128_t product = ((__uint128_t)a) * ((__uint128_t)b);
-  *hip = product >> 64;
-  return (uint64_t)product;
 }
 #else
 static INLINE uint64_t _umul128(uint64_t a, uint64_t b, uint64_t *high) {
