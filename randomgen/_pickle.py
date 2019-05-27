@@ -1,3 +1,4 @@
+from randomgen.aes import AESCounter
 from randomgen.dsfmt import DSFMT
 from randomgen.generator import Generator
 from randomgen.mt19937 import MT19937
@@ -16,7 +17,8 @@ from randomgen.xoshiro256 import Xoshiro256
 from randomgen.xoshiro512 import Xoshiro512
 from randomgen.rdrand import RDRAND
 
-BitGenerators = {'MT19937': MT19937,
+BitGenerators = {'AESCounter': AESCounter,
+                 'MT19937': MT19937,
                  'MT64': MT64,
                  'DSFMT': DSFMT,
                  'PCG32': PCG32,

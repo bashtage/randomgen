@@ -212,8 +212,6 @@ cdef class MT64:
                 raise ValueError("Seed array must be 1-d")
             if ((obj > int(2**64 - 1)) | (obj < 0)).any():
                 raise ValueError("Seed must be between 0 and 2**64 - 1")
-            print(obj)
-            print(type(obj))
             for val in obj:
                 if np.floor(val) != val:
                     raise ValueError("Seed must contains integers")

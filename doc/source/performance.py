@@ -5,12 +5,12 @@ import numpy as np
 import pandas as pd
 
 from randomgen import MT19937, DSFMT, ThreeFry, PCG64, Philox, Xoshiro256, \
-    Xoshiro512, MT64, SFMT
+    Xoshiro512, MT64, SFMT, AESCounter
 
 NUMBER = 100
 REPEAT = 10
 SIZE = 25000
-PRNGS = [DSFMT, MT19937, MT64, Philox, PCG64, ThreeFry, SFMT,
+PRNGS = [AESCounter, DSFMT, MT19937, MT64, Philox, PCG64, ThreeFry, SFMT,
          Xoshiro256, Xoshiro512]
 
 funcs = OrderedDict()

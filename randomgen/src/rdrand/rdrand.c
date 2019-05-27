@@ -1,7 +1,6 @@
 #include "rdrand.h"
-#include <stdio.h>
 
-#if (defined(__clang__) || defined(__GNUC__)) && defined(HAS_IMMINTRIN)
+#if (defined(__clang__) || defined(__GNUC__)) && defined(HAVE_IMMINTRIN)
 #include <cpuid.h>
 #endif
 
@@ -11,7 +10,7 @@ extern INLINE uint32_t rdrand_next32(rdrand_state* state);
 int rdrand_capable(void)
 {
     int status = 0;
-#if defined(HAS_IMMINTRIN)
+#if defined(HAVE_IMMINTRIN)
 #if defined(__clang__) || defined(__GNUC__)
     uint32_t eax, ebx, ecx, edx, num_ids;
     __cpuid(0, num_ids, ebx, ecx, edx);
@@ -36,18 +35,3 @@ int rdrand_capable(void)
 #endif
     return status;
 }
-
-#if 0
-int main(int a, char** b)
-{
-	rdrand_state state;
-    int status = rdrand_capable();
-    if (status == 1){
-        printf("Has RDRAND\n");
-        printf("%" PRIu64 "\n", rdrand_next64(&state));
-    }
-    else{
-        printf("Missing RDRAND\n");
-    }
-}
-#endif

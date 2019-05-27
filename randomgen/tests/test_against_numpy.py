@@ -425,7 +425,6 @@ class TestAgainstNumPy(object):
                           'randint', 'warnings']
         mod += known_exlcuded
         diff = set(npmod).difference(mod)
-        print(diff)
         assert_equal(len(diff), 0)
 
     # Tests using legacy generator

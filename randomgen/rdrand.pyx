@@ -46,7 +46,7 @@ cdef class RDRAND:
     Parameters
     ----------
     seed : None
-        Must be None. Raises if any otehr value is passed.
+        Must be None. Raises if any other value is passed.
 
     Attributes
     ----------
