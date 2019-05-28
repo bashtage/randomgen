@@ -1,5 +1,7 @@
 import sys
 
+import pytest
+
 import numpy as np
 from numpy.compat import long
 from numpy.testing import assert_, assert_array_equal, assert_raises
@@ -154,3 +156,8 @@ class TestRegression(object):
         perm = random.permutation(m)
         assert_array_equal(perm, np.array([2, 1, 4, 0, 3]))
         assert_array_equal(m.__array__(), np.arange(5))
+
+    def test_warns_byteorder(self):
+        other_byteord_dt = '<i4' if sys.byteorder == 'big' else '>i4'
+        with pytest.warns(FutureWarning):
+            random.randint(0, 200, size=10, dtype=other_byteord_dt)

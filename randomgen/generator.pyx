@@ -1,7 +1,6 @@
 #!python
 #cython: wraparound=False, nonecheck=False, boundscheck=False, cdivision=True, language_level=3
 import operator
-import warnings
 
 import numpy as np
 
@@ -611,9 +610,16 @@ cdef class Generator:
             high = low
             low = 0
 
-        key = np.dtype(dtype).name
+        dt = np.dtype(dtype)
+        key = dt.name
         if key not in _integers_types:
             raise TypeError('Unsupported dtype "%s" for integers' % key)
+        if dt.byteorder != '=' and dt.byteorder != '|':
+            import warnings
+            warnings.warn('Byteorder is not supported. If you require '
+                          'platform-independent byteorder, call byteswap when '
+                          'required.\n\nIn future version, specifying '
+                          'byteorder will raise a ValueError', FutureWarning)
 
         if key == 'int32':
             ret = _rand_int32(low, high, size, _use_masked, endpoint, &self._bitgen, self.lock)
@@ -1199,6 +1205,7 @@ cdef class Generator:
 
         """
         if high is None:
+            import warnings
             warnings.warn(("This function is deprecated. Please call "
                            "integers(1, {low} + 1) instead".format(low=low)),
                           DeprecationWarning)
@@ -1206,6 +1213,7 @@ cdef class Generator:
             low = 1
 
         else:
+            import warnings
             warnings.warn(("This function is deprecated. Please call "
                            "integers({low}, {high} + 1)"
                            "instead".format(low=low, high=high)),
@@ -3726,8 +3734,10 @@ cdef class Generator:
 
         Diagonal covariance means that points are oriented along x or y-axis:
 
+        >>> from randomgen import Generator
+        >>> rg = Generator()
         >>> import matplotlib.pyplot as plt
-        >>> x, y = randomgen.generator.multivariate_normal(mean, cov, 5000).T
+        >>> x, y = rg.multivariate_normal(mean, cov, 5000).T
         >>> plt.plot(x, y, 'x')
         >>> plt.axis('equal')
         >>> plt.show()
@@ -3745,9 +3755,11 @@ cdef class Generator:
 
         Examples
         --------
+        >>> from randomgen import Generator
+        >>> rg = Generator()
         >>> mean = (1, 2)
         >>> cov = [[1, 0], [0, 1]]
-        >>> x = randomgen.generator.multivariate_normal(mean, cov, (3, 3))
+        >>> x = rg.multivariate_normal(mean, cov, (3, 3))
         >>> x.shape
         (3, 3, 2)
 
@@ -3810,6 +3822,7 @@ cdef class Generator:
             psd = np.allclose(np.dot(v.T * s, v), cov, rtol=tol, atol=tol)
             if not psd:
                 if check_valid == 'warn':
+                    import warnings
                     warnings.warn("covariance is not positive-semidefinite.",
                                   RuntimeWarning)
                 else:
@@ -4237,14 +4250,16 @@ cdef class Generator:
 
         Examples
         --------
-        >>> randomgen.generator.permutation(10)
+        >>> from randomgen import Generator
+        >>> gen = Generator()
+        >>> gen.permutation(10)
         array([1, 7, 4, 3, 0, 9, 2, 5, 8, 6]) # random
 
-        >>> randomgen.generator.permutation([1, 4, 9, 12, 15])
+        >>> gen.permutation([1, 4, 9, 12, 15])
         array([15,  1,  9,  4, 12]) # random
 
         >>> arr = np.arange(9).reshape((3, 3))
-        >>> randomgen.generator.permutation(arr)
+        >>> gen.permutation(arr)
         array([[6, 7, 8], # random
                [0, 1, 2],
                [3, 4, 5]])
