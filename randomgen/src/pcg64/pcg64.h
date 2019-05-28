@@ -26,6 +26,7 @@
 #define PCG64_H_INCLUDED 1
 
 #ifdef _WIN32
+#include <stdlib.h>
 #if _MSC_VER == 1500
 #include "../common/inttypes.h"
 #define INLINE __forceinline
@@ -87,7 +88,11 @@ typedef struct {
   }
 
 static INLINE uint64_t pcg_rotr_64(uint64_t value, unsigned int rot) {
+#ifdef _WIN32
+  return _rotr64(value, rot);
+#else
   return (value >> rot) | (value << ((-rot) & 63));
+#endif
 }
 
 #ifdef PCG_EMULATED_128BIT_MATH
