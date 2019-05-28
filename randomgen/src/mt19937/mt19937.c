@@ -98,10 +98,10 @@ void mt19937_gen(mt19937_state *state) {
   state->pos = 0;
 }
 
-extern inline uint64_t mt19937_next64(mt19937_state *state);
+extern INLINE uint64_t mt19937_next64(mt19937_state *state);
 
-extern inline uint32_t mt19937_next32(mt19937_state *state);
+extern INLINE uint32_t mt19937_next32(mt19937_state *state);
 
-extern inline double mt19937_next_double(mt19937_state *state);
+extern INLINE double mt19937_next_double(mt19937_state *state);
 
 void mt19937_jump(mt19937_state *state) { mt19937_jump_state(state, poly); }
