@@ -597,10 +597,16 @@ cdef class RandomState:
         if high is None:
             high = low
             low = 0
-
-        key = np.dtype(dtype).name
+        dt = np.dtype(dtype)
+        key = dt.name
         if key not in _integers_types:
             raise TypeError('Unsupported dtype "%s" for randint' % key)
+        if dt.byteorder != '=' and dt.byteorder != '|':
+            import warnings
+            warnings.warn('Byteorder is not supported. If you require '
+                          'platform-independent byteorder, call byteswap when '
+                          'required.\n\nIn future version, specifying '
+                          'byteorder will raise a ValueError', FutureWarning)
 
         if key == 'int32':
             ret = _legacy_rand_int32(low, high, size, &self._aug_state, self.lock)

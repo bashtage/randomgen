@@ -422,7 +422,7 @@ class TestAgainstNumPy(object):
                           'division', 'get_state', 'set_state', 'seed',
                           'ranf', 'random', 'sample', 'absolute_import',
                           'print_function', 'RandomState', 'Lock',
-                          'randint']
+                          'randint', 'warnings']
         mod += known_exlcuded
         diff = set(npmod).difference(mod)
         print(diff)
