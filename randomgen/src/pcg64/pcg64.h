@@ -20,6 +20,29 @@
  * including its license and other licensing options, visit
  *
  *     http://www.pcg-random.org
+ *
+ * Relicensed MIT in May 2019
+ *
+ * The MIT License
+ *
+ * PCG Random Number Generation for C.
+ *
+ * Copyright 2014 Melissa O'Neill <oneill@pcg-random.org>
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining
+ * a copy of this software and associated documentation files (the "Software"),
+ * to deal in the Software without restriction, including without limitation
+ * the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS
+ * FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR
+ * COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER
+ * IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
+ * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
 #ifndef PCG64_H_INCLUDED
@@ -51,6 +74,9 @@
 extern "C" {
 #endif
 
+#define PCG_DEFAULT_MULTIPLIER_HIGH 2549297995355413924ULL
+#define PCG_DEFAULT_MULTIPLIER_LOW 4865540595714422341ULL
+
 #if defined(__SIZEOF_INT128__) && !defined(PCG_FORCE_EMULATED_128BIT_MATH)
 typedef __uint128_t pcg128_t;
 #define PCG_128BIT_CONSTANT(high, low) (((pcg128_t)(high) << 64) + low)
@@ -70,7 +96,9 @@ static INLINE pcg128_t PCG_128BIT_CONSTANT(uint64_t high, uint64_t low) {
 #define PCG_EMULATED_128BIT_MATH 1
 #endif
 
-typedef struct { pcg128_t state; } pcg_state_128;
+typedef struct {
+  pcg128_t state;
+} pcg_state_128;
 
 typedef struct {
   pcg128_t state;
@@ -160,6 +188,27 @@ static INLINE void pcg_setseq_128_srandom_r(pcg_state_setseq_128 *rng,
   pcg_setseq_128_step_r(rng);
 }
 
+static INLINE uint64_t
+pcg_setseq_128_xsl_rr_64_random_r(pcg_state_setseq_128 *rng) {
+#if defined _WIN32 && _MSC_VER >= 1900 && _M_AMD64
+  uint64_t h1;
+  pcg128_t product;
+
+  /* Manually inline the multiplication and addition using intrinsics */
+  h1 = rng->state.high * PCG_DEFAULT_MULTIPLIER_LOW +
+       rng->state.low * PCG_DEFAULT_MULTIPLIER_HIGH;
+  product.low =
+      _umul128(rng->state.low, PCG_DEFAULT_MULTIPLIER_LOW, &(product.high));
+  product.high += h1;
+  _addcarry_u64(_addcarry_u64(0, product.low, rng->inc.low, &(rng->state.low)),
+                product.high, rng->inc.high, &(rng->state.high));
+  return _rotr64(rng->state.high ^ rng->state.low, rng->state.high >> 58u);
+#else
+  pcg_setseq_128_step_r(rng);
+  return pcg_output_xsl_rr_128_64(rng->state);
+#endif
+}
+
 #else /* PCG_EMULATED_128BIT_MATH */
 
 static INLINE void pcg_setseq_128_step_r(pcg_state_setseq_128 *rng) {
@@ -181,17 +230,16 @@ static INLINE void pcg_setseq_128_srandom_r(pcg_state_setseq_128 *rng,
   pcg_setseq_128_step_r(rng);
 }
 
-#endif /* PCG_EMULATED_128BIT_MATH */
-
 static INLINE uint64_t
 pcg_setseq_128_xsl_rr_64_random_r(pcg_state_setseq_128 *rng) {
   pcg_setseq_128_step_r(rng);
   return pcg_output_xsl_rr_128_64(rng->state);
 }
 
-static INLINE uint64_t
-pcg_setseq_128_xsl_rr_64_boundedrand_r(pcg_state_setseq_128 *rng,
-                                       uint64_t bound) {
+#endif /* PCG_EMULATED_128BIT_MATH */
+
+static INLINE uint64_t pcg_setseq_128_xsl_rr_64_boundedrand_r(
+    pcg_state_setseq_128 *rng, uint64_t bound) {
   uint64_t threshold = -bound % bound;
   for (;;) {
     uint64_t r = pcg_setseq_128_xsl_rr_64_random_r(rng);
