@@ -5,12 +5,13 @@ import numpy as np
 import pandas as pd
 
 from randomgen import MT19937, DSFMT, ThreeFry, PCG64, Philox, Xoshiro256, \
-    Xoshiro512, MT64
+    Xoshiro512, MT64, SFMT
 
 NUMBER = 100
 REPEAT = 10
 SIZE = 25000
-PRNGS = [DSFMT, MT19937, MT64, Philox, PCG64, ThreeFry, Xoshiro256, Xoshiro512]
+PRNGS = [DSFMT, MT19937, MT64, Philox, PCG64, ThreeFry, SFMT,
+         Xoshiro256, Xoshiro512]
 
 funcs = OrderedDict()
 funcs['32-bit Unsigned Int'] = f'integers(2**32, dtype="uint32", size={SIZE})'

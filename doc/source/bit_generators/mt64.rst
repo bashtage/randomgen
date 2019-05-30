@@ -1,0 +1,33 @@
+64-bit Mersenne Twister
+-----------------------
+
+.. module:: randomgen.mt64
+
+.. currentmodule:: randomgen.mt64
+
+
+.. autoclass:: MT64
+
+Seeding and State
+=================
+
+.. autosummary::
+   :toctree: generated/
+
+   ~MT64.seed
+   ~MT64.state
+
+Extending
+=========
+.. autosummary::
+   :toctree: generated/
+
+   ~MT64.cffi
+   ~MT64.ctypes
+
+Testing
+=======
+.. autosummary::
+   :toctree: generated/
+
+   ~MT64.random_raw

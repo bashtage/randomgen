@@ -9,7 +9,7 @@ import pytest
 from numpy.testing import (assert_, assert_almost_equal, assert_array_equal,
                            assert_equal)
 
-from randomgen import (DSFMT, MT19937, PCG32, PCG64, Generator, Philox,
+from randomgen import (SFMT, DSFMT, MT19937, PCG32, PCG64, Generator, Philox,
                        ThreeFry, ThreeFry32, Xoroshiro128, Xorshift1024,
                        Xoshiro256, Xoshiro512, entropy, MT64)
 from randomgen._testing import suppress_warnings
@@ -1068,6 +1068,18 @@ class TestDSFMT(RNG):
         cls._extra_setup()
         cls.seed_vector_bits = 32
 
+
+class TestSFMT(RNG):
+
+    @classmethod
+    def setup_class(cls):
+        cls.bit_generator = SFMT
+        cls.advance = None
+        cls.seed = [12345]
+        cls.rg = Generator(cls.bit_generator(*cls.seed))
+        cls.initial_state = cls.rg.bit_generator.state
+        cls._extra_setup()
+        cls.seed_vector_bits = 32
 
 class TestThreeFry32(RNG):
     @classmethod

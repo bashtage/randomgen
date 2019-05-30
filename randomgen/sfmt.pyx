@@ -14,64 +14,61 @@ from randomgen.common cimport *
 from randomgen.distributions cimport bitgen_t
 from randomgen.entropy import random_entropy
 
-__all__ = ['DSFMT']
+__all__ = ['SFMT']
 
 np.import_array()
 
-DEF DSFMT_MEXP = 19937
-DEF DSFMT_N = 191  # ((DSFMT_MEXP - 128) / 104 + 1)
-DEF DSFMT_N_PLUS_1 = 192  # DSFMT_N + 1
-DEF DSFMT_N64 = DSFMT_N * 2
+DEF SFMT_MEXP = 19937
+DEF SFMT_N = 156  # SFMT_MEXP / 128 + 1
+DEF SFMT_N64 = SFMT_N * 2
 
-cdef extern from "src/dsfmt/dSFMT.h":
+cdef extern from "src/sfmt/sfmt.h":
 
     union W128_T:
-        uint64_t u[2]
-        uint32_t u32[4]
-        double d[2]
+        uint32_t u[4];
+        uint64_t u64[2];
 
     ctypedef W128_T w128_t
 
-    struct DSFMT_T:
-        w128_t status[DSFMT_N_PLUS_1]
+    struct SFMT_T:
+        w128_t state[SFMT_N]
         int idx
 
-    ctypedef DSFMT_T dsfmt_t
+    ctypedef SFMT_T sfmt_t
 
-    struct s_dsfmt_state:
-        dsfmt_t *state
+    struct s_sfmt_state:
+        sfmt_t *state
         int has_uint32
         uint32_t uinteger
 
-        double *buffered_uniforms
+        uint64_t *buffered_uint64
         int buffer_loc
 
-    ctypedef s_dsfmt_state dsfmt_state
+    ctypedef s_sfmt_state sfmt_state
 
-    double dsfmt_next_double(dsfmt_state *state)  nogil
-    uint64_t dsfmt_next64(dsfmt_state *state)  nogil
-    uint32_t dsfmt_next32(dsfmt_state *state)  nogil
-    uint64_t dsfmt_next_raw(dsfmt_state *state)  nogil
+    uint64_t sfmt_next64(sfmt_state *state)  nogil
+    uint32_t sfmt_next32(sfmt_state *state)  nogil
 
-    void dsfmt_init_gen_rand(dsfmt_t *dsfmt, uint32_t seed)
-    void dsfmt_init_by_array(dsfmt_t *dsfmt, uint32_t init_key[], int key_length)
-    void dsfmt_jump(dsfmt_state *state)
+    void sfmt_init_gen_rand(sfmt_t * sfmt, uint32_t seed);
+    void sfmt_init_by_array(sfmt_t * sfmt, uint32_t *init_key, int key_length);
+    void sfmt_jump(sfmt_state *state)
 
-cdef uint64_t dsfmt_uint64(void* st) nogil:
-    return dsfmt_next64(<dsfmt_state *>st)
+cdef uint64_t sfmt_uint64(void* st) nogil:
+    return sfmt_next64(<sfmt_state *>st)
 
-cdef uint32_t dsfmt_uint32(void *st) nogil:
-    return dsfmt_next32(<dsfmt_state *> st)
+cdef uint32_t sfmt_uint32(void *st) nogil:
+    return sfmt_next32(<sfmt_state *> st)
 
-cdef double dsfmt_double(void* st) nogil:
-    return dsfmt_next_double(<dsfmt_state *>st)
+cdef uint64_t sfmt_raw(void *st) nogil:
+    return sfmt_next64(<sfmt_state *>st)
 
-cdef uint64_t dsfmt_raw(void *st) nogil:
-    return dsfmt_next_raw(<dsfmt_state *>st)
+cdef double sfmt_double(void* st) nogil:
+    return uint64_to_double(sfmt_next64(<sfmt_state *>st))
 
-cdef class DSFMT:
+
+cdef class SFMT:
     u"""
-    DSFMT(seed=None)
+    SFMT(seed=None)
 
     Container for the SIMD-based Mersenne Twister pseudo RNG.
 
@@ -95,7 +92,7 @@ cdef class DSFMT:
 
     Notes
     -----
-    ``DSFMT`` provides a capsule containing function pointers that produce
+    ``SFMT`` provides a capsule containing function pointers that produce
     doubles, and unsigned 32 and 64- bit integers [1]_ . These are not
     directly consumable in Python and must be consumed by a ``Generator``
     or similar object that supports low-level access.
@@ -105,13 +102,13 @@ cdef class DSFMT:
 
     **State and Seeding**
 
-    The ``DSFMT`` state vector consists of a 384 element array of 64-bit
+    The ``SFMT`` state vector consists of a 384 element array of 64-bit
     unsigned integers plus a single integer value between 0 and 382
     indicating the current position within the main array. The implementation
     used here augments this with a 382 element array of doubles which are used
-    to efficiently access the random numbers produced by the dSFMT generator.
+    to efficiently access the random numbers produced by the SFMT generator.
 
-    ``DSFMT`` is seeded using either a single 32-bit unsigned integer or a
+    ``SFMT`` is seeded using either a single 32-bit unsigned integer or a
     vector of 32-bit unsigned integers. In either case, the input seed is used
     as an input (or inputs) for a hashing function, and the output of the
     hashing function is used as the initial state. Using a single 32-bit value
@@ -120,7 +117,7 @@ cdef class DSFMT:
 
     **Parallel Features**
 
-    ``DSFMT`` can be used in parallel applications by calling the method
+    ``SFMT`` can be used in parallel applications by calling the method
     ``jump`` which advances the state as-if :math:`2^{128}` random numbers
     have been generated [2]_. This allows the original sequence to be split
     so that distinct segments can be used in each worker process. All
@@ -128,16 +125,16 @@ cdef class DSFMT:
     the segments come from the same sequence.
 
     >>> from randomgen.entropy import random_entropy
-    >>> from randomgen import Generator, DSFMT
+    >>> from randomgen import Generator, SFMT
     >>> seed = random_entropy()
-    >>> rs = [Generator(DSFMT(seed)) for _ in range(10)]
-    # Advance each DSFMT instance by i jumps
+    >>> rs = [Generator(SFMT(seed)) for _ in range(10)]
+    # Advance each SFMT instance by i jumps
     >>> for i in range(10):
     ...     rs[i].bit_generator.jump()
 
     **Compatibility Guarantee**
 
-    ``DSFMT`` makes a guarantee that a fixed seed and will always produce
+    ``SFMT`` makes a guarantee that a fixed seed and will always produce
     the same random integer stream.
 
     References
@@ -149,7 +146,7 @@ cdef class DSFMT:
            Jump Ahead Algorithm for Linear Recurrences in a Polynomial Space",
            Sequences and Their Applications - SETA, 290--298, 2008.
     """
-    cdef dsfmt_state rng_state
+    cdef sfmt_state rng_state
     cdef bitgen_t _bitgen
     cdef public object capsule
     cdef object _cffi
@@ -157,17 +154,17 @@ cdef class DSFMT:
     cdef public object lock
 
     def __init__(self, seed=None):
-        self.rng_state.state = <dsfmt_t *>PyArray_malloc_aligned(sizeof(dsfmt_t))
-        self.rng_state.buffered_uniforms = <double *>PyArray_calloc_aligned(DSFMT_N64, sizeof(double))
-        self.rng_state.buffer_loc = DSFMT_N64
+        self.rng_state.state = <sfmt_t *>PyArray_malloc_aligned(sizeof(sfmt_t))
+        self.rng_state.buffered_uint64 = <uint64_t *>PyArray_calloc_aligned(SFMT_N64, sizeof(uint64_t))
+        self.rng_state.buffer_loc = SFMT_N64
         self.seed(seed)
         self.lock = Lock()
 
         self._bitgen.state = <void *>&self.rng_state
-        self._bitgen.next_uint64 = &dsfmt_uint64
-        self._bitgen.next_uint32 = &dsfmt_uint32
-        self._bitgen.next_double = &dsfmt_double
-        self._bitgen.next_raw = &dsfmt_raw
+        self._bitgen.next_uint64 = &sfmt_uint64
+        self._bitgen.next_uint32 = &sfmt_uint32
+        self._bitgen.next_double = &sfmt_double
+        self._bitgen.next_raw = &sfmt_raw
         cdef const char *name = "BitGenerator"
         self.capsule = PyCapsule_New(<void *>&self._bitgen, name, NULL)
 
@@ -188,11 +185,11 @@ cdef class DSFMT:
     def __dealloc__(self):
         if self.rng_state.state:
             PyArray_free_aligned(self.rng_state.state)
-        if self.rng_state.buffered_uniforms:
-            PyArray_free_aligned(self.rng_state.buffered_uniforms)
+        if self.rng_state.buffered_uint64:
+            PyArray_free_aligned(self.rng_state.buffered_uint64)
 
     cdef _reset_state_variables(self):
-        self.rng_state.buffer_loc = DSFMT_N64
+        self.rng_state.buffer_loc = SFMT_N64
 
     def random_raw(self, size=None, output=True):
         """
@@ -240,7 +237,7 @@ cdef class DSFMT:
             Random seed initializing the pseudo-random number generator.
             Can be an integer in [0, 2**32-1], array of integers in
             [0, 2**32-1] or ``None`` (the default). If `seed` is ``None``,
-            then ``DSFMT`` will try to read entropy from ``/dev/urandom``
+            then ``SFMT`` will try to read entropy from ``/dev/urandom``
             (or the Windows analog) if available to produce a 32-bit
             seed. If unavailable, a 32-bit hash of the time and process
             ID is used.
@@ -254,28 +251,27 @@ cdef class DSFMT:
         try:
             if seed is None:
                 try:
-                    seed_arr = random_entropy(2 * DSFMT_N64)
+                    seed_arr = random_entropy(2 * SFMT_N64)
                 except RuntimeError:
-                    seed_arr = random_entropy(2 * DSFMT_N64, 'fallback')
-                dsfmt_init_by_array(self.rng_state.state,
-                                    <uint32_t *>np.PyArray_DATA(seed_arr),
-                                    <int>np.PyArray_DIM(seed_arr, 0))
-
+                    seed_arr = random_entropy(2 * SFMT_N64, 'fallback')
+                sfmt_init_by_array(self.rng_state.state,
+                                   <uint32_t *>np.PyArray_DATA(seed_arr),
+                                   <int>np.PyArray_DIM(seed_arr, 0))
             else:
                 if hasattr(seed, 'squeeze'):
                     seed = seed.squeeze()
                 idx = operator.index(seed)
                 if idx > int(2**32 - 1) or idx < 0:
                     raise ValueError("Seed must be between 0 and 2**32 - 1")
-                dsfmt_init_gen_rand(self.rng_state.state, seed)
+                sfmt_init_gen_rand(self.rng_state.state, seed)
         except TypeError:
             obj = np.asarray(seed).astype(np.int64, casting='safe').ravel()
             if ((obj > int(2**32 - 1)) | (obj < 0)).any():
                 raise ValueError("Seed must be between 0 and 2**32 - 1")
             seed_arr = obj.astype(np.uint32, casting='unsafe', order='C')
-            dsfmt_init_by_array(self.rng_state.state,
-                                <uint32_t *>np.PyArray_DATA(seed_arr),
-                                <int>np.PyArray_DIM(seed_arr, 0))
+            sfmt_init_by_array(self.rng_state.state,
+                               <uint32_t *>np.PyArray_DATA(seed_arr),
+                               <int>np.PyArray_DIM(seed_arr, 0))
         # Clear the buffer
         self._reset_state_variables()
 
@@ -292,7 +288,7 @@ cdef class DSFMT:
         """
         cdef np.npy_intp i
         for i in range(iter):
-            dsfmt_jump(&self.rng_state)
+            sfmt_jump(&self.rng_state)
         # Clear the buffer
         self._reset_state_variables()
 
@@ -309,7 +305,7 @@ cdef class DSFMT:
 
         Returns
         -------
-        self : DSFMT
+        self : SFMT
             PRNG jumped iter times
         """
         import warnings
@@ -335,10 +331,10 @@ cdef class DSFMT:
 
         Returns
         -------
-        bit_generator : DSFMT
+        bit_generator : SFMT
             New instance of generator jumped iter times
         """
-        cdef DSFMT bit_generator
+        cdef SFMT bit_generator
 
         bit_generator = self.__class__()
         bit_generator.state = self.state
@@ -360,21 +356,23 @@ cdef class DSFMT:
 
         cdef Py_ssize_t i, j, loc = 0
         cdef uint64_t[::1] state
-        cdef double[::1] buffered_uniforms
+        cdef uint64_t[::1] buffered_uint64
 
-        state = np.empty(2 *DSFMT_N_PLUS_1, dtype=np.uint64)
-        for i in range(DSFMT_N_PLUS_1):
+        state = np.empty(SFMT_N64, dtype=np.uint64)
+        for i in range(SFMT_N):
             for j in range(2):
-                state[loc] = self.rng_state.state.status[i].u[j]
+                state[loc] = self.rng_state.state.state[i].u64[j]
                 loc += 1
-        buffered_uniforms = np.empty(DSFMT_N64, dtype=np.double)
-        for i in range(DSFMT_N64):
-            buffered_uniforms[i] = self.rng_state.buffered_uniforms[i]
+        buffered_uint64 = np.empty(SFMT_N64, dtype=np.uint64)
+        for i in range(SFMT_N64):
+            buffered_uint64[i] = self.rng_state.buffered_uint64[i]
         return {'bit_generator': self.__class__.__name__,
                 'state': {'state': np.asarray(state),
                           'idx': self.rng_state.state.idx},
                 'buffer_loc': self.rng_state.buffer_loc,
-                'buffered_uniforms': np.asarray(buffered_uniforms)}
+                'buffered_uint64': np.asarray(buffered_uint64),
+                'has_uint32': self.rng_state.has_uint32,
+                'uinteger': self.rng_state.uinteger}
 
     @state.setter
     def state(self, value):
@@ -386,15 +384,17 @@ cdef class DSFMT:
             raise ValueError('state must be for a {0} '
                              'PRNG'.format(self.__class__.__name__))
         state = value['state']['state']
-        for i in range(DSFMT_N_PLUS_1):
+        for i in range(SFMT_N):
             for j in range(2):
-                self.rng_state.state.status[i].u[j] = state[loc]
+                self.rng_state.state.state[i].u64[j] = state[loc]
                 loc += 1
         self.rng_state.state.idx = value['state']['idx']
-        buffered_uniforms = value['buffered_uniforms']
-        for i in range(DSFMT_N64):
-            self.rng_state.buffered_uniforms[i] = buffered_uniforms[i]
+        buffered_uint64 = value['buffered_uint64']
+        for i in range(SFMT_N64):
+            self.rng_state.buffered_uint64[i] = buffered_uint64[i]
         self.rng_state.buffer_loc = value['buffer_loc']
+        self.rng_state.has_uint32 = value['has_uint32']
+        self.rng_state.uinteger = value['uinteger']
 
     @property
     def ctypes(self):

@@ -35,6 +35,11 @@ def seed_by_array(object seed, Py_ssize_t n):
     n : int
         Number of 64-bit unsigned integers required in the seed
 
+    Returns
+    -------
+    initial_state : array
+        Array of uint64 containing the initial state
+
     Notes
     -----
     Uses SplitMix64 to transform the input to a seed

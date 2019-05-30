@@ -12,12 +12,13 @@ from randomgen.xoroshiro128 import Xoroshiro128
 from randomgen.xorshift1024 import Xorshift1024
 from randomgen.xoshiro256 import Xoshiro256
 from randomgen.xoshiro512 import Xoshiro512
+from randomgen.sfmt import SFMT
 
 from ._version import get_versions
 
 __all__ = ['Generator', 'DSFMT', 'MT19937', 'PCG64', 'PCG32', 'Philox',
            'ThreeFry', 'ThreeFry32', 'Xoroshiro128', 'Xorshift1024',
-           'Xoshiro256', 'Xoshiro512', 'RandomState']
+           'Xoshiro256', 'Xoshiro512', 'RandomState', 'SFMT']
 
 
 __version__ = get_versions()['version']
