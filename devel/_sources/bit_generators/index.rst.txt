@@ -24,11 +24,11 @@ These RNGs will be included in future releases.
 
    DSFMT <dsfmt>
    MT19937 <mt19937>
+   MT64 <mt64>
    PCG64 <pcg64>
    Philox <philox>
+   SFMT <sfmt>
    ThreeFry <threefry>
-   XoroShiro128+ <xoroshiro128>
-   Xorshift1024*φ <xorshift1024>
    Xoshiro256** <xoshiro256>
    Xoshiro512** <xoshiro512>
 
@@ -42,5 +42,7 @@ permanent.
 .. toctree::
    :maxdepth: 1
 
+   XoroShiro128+ <xoroshiro128>
+   Xorshift1024*φ <xorshift1024>
    PCG32 <pcg32>
    ThreeFry32 <threefry32>

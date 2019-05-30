@@ -1,0 +1,6 @@
+randomgen.sfmt.SFMT.ctypes
+==========================
+
+.. currentmodule:: randomgen.sfmt
+
+.. autoattribute:: SFMT.ctypes

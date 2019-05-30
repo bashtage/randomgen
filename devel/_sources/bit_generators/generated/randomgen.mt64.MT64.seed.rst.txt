@@ -1,0 +1,6 @@
+randomgen.mt64.MT64.seed
+========================
+
+.. currentmodule:: randomgen.mt64
+
+.. automethod:: MT64.seed
