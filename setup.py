@@ -88,6 +88,7 @@ if sys.maxsize < 2 ** 32 or os.name == 'nt':
     PCG64_DEFS += [('PCG_FORCE_EMULATED_128BIT_MATH', '1')]
 
 DSFMT_DEFS = DEFS[:] + [('DSFMT_MEXP', '19937')]
+SFMT_DEFS = DEFS[:] + [('SFMT_MEXP', '19937')]
 if USE_SSE2:
     if os.name == 'nt':
         EXTRA_COMPILE_ARGS += ['/wd4146', '/GL']
@@ -96,6 +97,7 @@ if USE_SSE2:
     else:
         EXTRA_COMPILE_ARGS += ['-msse2']
     DSFMT_DEFS += [('HAVE_SSE2', '1')]
+    SFMT_DEFS += [('HAVE_SSE2', '1')]
 
 files = glob.glob('./randomgen/*.in') + glob.glob('./randomgen/legacy/*.in')
 for templated_file in files:
@@ -129,6 +131,20 @@ extensions = [Extension('randomgen.entropy',
                         include_dirs=EXTRA_INCLUDE_DIRS + [np.get_include(),
                                                            join(MOD_DIR, 'src',
                                                                 'dsfmt')],
+                        libraries=EXTRA_LIBRARIES,
+                        extra_compile_args=EXTRA_COMPILE_ARGS,
+                        extra_link_args=EXTRA_LINK_ARGS,
+                        define_macros=DSFMT_DEFS,
+                        ),
+              Extension("randomgen.sfmt",
+                        ["randomgen/sfmt.pyx",
+                         join(MOD_DIR, 'src', 'sfmt', 'sfmt.c'),
+                         join(MOD_DIR, 'src', 'sfmt', 'sfmt-jump.c'),
+                         join(MOD_DIR, 'src', 'aligned_malloc',
+                              'aligned_malloc.c')],
+                        include_dirs=EXTRA_INCLUDE_DIRS + [np.get_include(),
+                                                           join(MOD_DIR, 'src',
+                                                                'sfmt')],
                         libraries=EXTRA_LIBRARIES,
                         extra_compile_args=EXTRA_COMPILE_ARGS,
                         extra_link_args=EXTRA_LINK_ARGS,

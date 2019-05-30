@@ -9,7 +9,7 @@ from numpy.testing import (assert_allclose, assert_array_equal, assert_equal,
 
 from randomgen import (DSFMT, MT19937, PCG32, PCG64, Generator, Philox,
                        RandomState, ThreeFry, ThreeFry32, Xoroshiro128,
-                       Xorshift1024, Xoshiro256, Xoshiro512, MT64)
+                       Xorshift1024, Xoshiro256, Xoshiro512, MT64, SFMT)
 from randomgen.common import interface
 
 try:
@@ -473,11 +473,14 @@ class TestPhilox(Base):
         assert_state_equal(bit_generator.state, keyed.state)
 
 
+
 class TestMT19937(Base):
+
     @classmethod
     def setup_class(cls):
         cls.bit_generator = MT19937
         cls.bits = 32
+        cls.seed_bits = 32
         cls.dtype = np.uint32
         cls.data1 = cls._read_csv(join(pwd, './data/mt19937-testset-1.csv'))
         cls.data2 = cls._read_csv(join(pwd, './data/mt19937-testset-2.csv'))
@@ -488,19 +491,21 @@ class TestMT19937(Base):
     def test_seed_out_of_range(self):
         # GH #82
         rs = Generator(self.bit_generator(*self.data1['seed']))
-        assert_raises(ValueError, rs.bit_generator.seed, 2 ** (self.bits + 1))
+        assert_raises(ValueError,
+                      rs.bit_generator.seed,
+                      2 ** (self.seed_bits + 1))
         assert_raises(ValueError, rs.bit_generator.seed, -1)
         assert_raises(ValueError,
-                      rs.bit_generator.seed, 2 ** (2 * self.bits + 1))
+                      rs.bit_generator.seed, 2 ** (2 * self.seed_bits + 1))
 
     def test_seed_out_of_range_array(self):
         # GH #82
         rs = Generator(self.bit_generator(*self.data1['seed']))
         assert_raises(ValueError, rs.bit_generator.seed,
-                      [2 ** (self.bits + 1)])
+                      [2 ** (self.seed_bits + 1)])
         assert_raises(ValueError, rs.bit_generator.seed, [-1])
         assert_raises(TypeError, rs.bit_generator.seed,
-                      [2 ** (2 * self.bits + 1)])
+                      [2 ** (2 * self.seed_bits + 1)])
 
     def test_seed_float(self):
         # GH #82
@@ -533,6 +538,27 @@ class TestMT19937(Base):
         bit_generator.state = tup
         actual = rs.integers(2 ** 16)
         assert_equal(actual, desired)
+
+
+class TestSFMT(TestMT19937):
+    @classmethod
+    def setup_class(cls):
+        cls.bit_generator = SFMT
+        cls.bits = 64
+        cls.seed_bits = 32
+        cls.dtype = np.uint64
+        cls.data1 = cls._read_csv(
+            join(pwd, './data/sfmt-testset-1.csv'))
+        cls.data2 = cls._read_csv(
+            join(pwd, './data/sfmt-testset-2.csv'))
+        cls.seed_error_type = TypeError
+        cls.invalid_seed_types = []
+        cls.invalid_seed_values = [(-1,), np.array([2 ** 33]),
+                                   (np.array([2 ** 33, 2 ** 33]),)]
+
+    @pytest.mark.skip(reason='Not applicable to SFMT')
+    def test_state_tuple(self):
+        pass
 
 
 class TestDSFMT(Base):
