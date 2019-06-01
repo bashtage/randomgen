@@ -342,5 +342,6 @@ static inline uint32_t sfmt_next32(sfmt_state *state) {
 }
 
 void sfmt_jump(sfmt_state *state);
+void sfmt_jump_n(sfmt_state *state, int count);
 
 #endif
