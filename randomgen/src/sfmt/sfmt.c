@@ -23,8 +23,8 @@ extern "C" {
 
 #include "sfmt.h"
 #include "sfmt-common.h"
-#include "sfmt-params.h"
 #include "sfmt-jump.h"
+#include "sfmt-params.h"
 #include "sfmt-poly.h"
 #include <assert.h>
 #include <string.h>
@@ -64,7 +64,7 @@ inline static void swap(w128_t *array, int size);
 #warning "Compiling with SSE2 support"
 #endif
 #if defined(_MSC_VER)
-#pragma message ( "Compiling with SSE2 support" )
+#pragma message("Compiling with SSE2 support")
 #endif
 static const w128_t sse2_param_mask = {
     {SFMT_MSK1, SFMT_MSK2, SFMT_MSK3, SFMT_MSK4}};
@@ -439,6 +439,29 @@ void sfmt_init_by_array(sfmt_t *sfmt, uint32_t *init_key, int key_length) {
 }
 
 void sfmt_jump(sfmt_state *state) { SFMT_jump(state->state, poly_128); };
+
+void sfmt_jump_n(sfmt_state *state, int count) {
+  /* poly_xxx is 2**xxx ahead */
+  int remaining = count;
+  while (remaining > 0) {
+    if (remaining >= 65536) {
+      SFMT_jump(state->state, poly_144);
+      remaining -= 65536;
+    } else if (remaining >= 4096) {
+      SFMT_jump(state->state, poly_140);
+      remaining -= 4096;
+    } else if (remaining >= 256) {
+      SFMT_jump(state->state, poly_136);
+      remaining -= 256;
+    } else if (remaining >= 16) {
+      SFMT_jump(state->state, poly_132);
+      remaining -= 16;
+    } else if (remaining >= 1) {
+      SFMT_jump(state->state, poly_128);
+      remaining -= 1;
+    }
+  }
+};
 
 #if defined(__cplusplus)
 }

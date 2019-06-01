@@ -52,6 +52,7 @@ cdef extern from "src/sfmt/sfmt.h":
     void sfmt_init_gen_rand(sfmt_t * sfmt, uint32_t seed);
     void sfmt_init_by_array(sfmt_t * sfmt, uint32_t *init_key, int key_length);
     void sfmt_jump(sfmt_state *state)
+    void sfmt_jump_n(sfmt_state *state, int count)
 
 cdef uint64_t sfmt_uint64(void* st) nogil:
     return sfmt_next64(<sfmt_state *>st)
@@ -287,8 +288,7 @@ cdef class SFMT:
             Number of times to jump the state of the rng.
         """
         cdef np.npy_intp i
-        for i in range(iter):
-            sfmt_jump(&self.rng_state)
+        sfmt_jump_n(&self.rng_state, iter)
         # Clear the buffer
         self._reset_state_variables()
 
