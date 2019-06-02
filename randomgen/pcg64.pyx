@@ -358,8 +358,13 @@ cdef class PCG64:
         ----------
         iter : integer, positive
             Number of times to jump the state of the rng.
+
+        Notes
+        -----
+        The step size is phi when divided by the period 2**64            
         """
-        step = 0x9e3779b97f4a7c150000000000000000
+        step = 0x9e3779b97f4a7c15f39cc0605cedc834
+        # step=0x9e3779b97f4a7c150000000000000000
         step *= int(iter)
         divisor = step // 2**128
         step -= 2**128 * divisor
@@ -369,7 +374,10 @@ cdef class PCG64:
         """
         jump(iter=1)
 
-        Jumps the state as-if 2**64 random numbers have been generated
+        Jump the state a fixed increment
+
+        Jumps the state as-if 210306068529402873165736369884012333108 random
+        numbers have been generated.
 
         Parameters
         ----------
@@ -385,6 +393,8 @@ cdef class PCG64:
         -----
         Jumping the rng state resets any pre-computed random numbers. This is required
         to ensure exact reproducibility.
+
+        The step size is phi when divided by the period 2**64            
         """
         import warnings
         warnings.warn('jump (in-place) has been deprecated in favor of jumped'
@@ -412,6 +422,10 @@ cdef class PCG64:
         -------
         bit_generator : PCG64
             New instance of generator jumped iter times
+
+        Notes
+        -----
+        The step size is phi when divided by the period 2**64            
         """
         cdef PCG64 bit_generator
 

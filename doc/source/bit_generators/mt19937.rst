@@ -1,4 +1,4 @@
-Mersenne Twister (MT19937) 
+Mersenne Twister (MT19937)
 --------------------------
 
 .. module:: randomgen.mt19937
