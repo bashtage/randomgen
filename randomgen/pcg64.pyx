@@ -326,6 +326,8 @@ cdef class PCG64:
         Advancing the RNG state resets any pre-computed random numbers.
         This is required to ensure exact reproducibility.
         """
+        delta = wrap_int(delta, 128)
+
         cdef np.ndarray d = np.empty(2, dtype=np.uint64)
         d[0] = delta // 2**64
         d[1] = delta % 2**64
@@ -337,7 +339,10 @@ cdef class PCG64:
         """
         jump(iter=1)
 
-        Jumps the state as-if 2**64 random numbers have been generated
+        Jump the state a fixed increment
+
+        Jumps the state as-if 210306068529402873165736369884012333108 random
+        numbers have been generated.
 
         Parameters
         ----------
@@ -354,7 +359,9 @@ cdef class PCG64:
         Jumping the rng state resets any pre-computed random numbers. This is required
         to ensure exact reproducibility.
         """
-        return self.advance(iter * 2**64)
+        step = 0x9e3779b97f4a7c15f39cc0605cedc834
+        step *= int(iter)
+        return self.advance(step)
 
     @property
     def ctypes(self):
