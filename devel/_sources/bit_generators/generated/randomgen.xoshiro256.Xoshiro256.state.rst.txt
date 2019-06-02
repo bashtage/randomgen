@@ -1,6 +1,0 @@
-randomgen.xoshiro256.Xoshiro256.state
-=====================================
-
-.. currentmodule:: randomgen.xoshiro256
-
-.. autoattribute:: Xoshiro256.state

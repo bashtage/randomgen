@@ -1,0 +1,6 @@
+randomgen.generator.RandomGenerator.uniform
+===========================================
+
+.. currentmodule:: randomgen.generator
+
+.. automethod:: RandomGenerator.uniform

@@ -1,6 +1,0 @@
-randomgen.pcg64.PCG64.jumped
-============================
-
-.. currentmodule:: randomgen.pcg64
-
-.. automethod:: PCG64.jumped

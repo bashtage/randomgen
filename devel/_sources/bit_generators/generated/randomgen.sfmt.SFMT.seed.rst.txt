@@ -1,6 +1,0 @@
-randomgen.sfmt.SFMT.seed
-========================
-
-.. currentmodule:: randomgen.sfmt
-
-.. automethod:: SFMT.seed

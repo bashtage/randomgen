@@ -1,0 +1,214 @@
+
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta charset="utf-8" />
+  
+  <!-- Licensed under the Apache 2.0 License -->
+  <link rel="stylesheet" type="text/css" href="../../_static/fonts/open-sans/stylesheet.css" />
+  <!-- Licensed under the SIL Open Font License -->
+  <link rel="stylesheet" type="text/css" href="../../_static/fonts/source-serif-pro/source-serif-pro.css" />
+  <link rel="stylesheet" type="text/css" href="../../_static/css/bootstrap.min.css" />
+  <link rel="stylesheet" type="text/css" href="../../_static/css/bootstrap-theme.min.css" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+    <title>randomgen.pcg64.PCG64.advance &#8212; RandomGen v1.16.6 documentation</title>
+    <link rel="stylesheet" href="../../_static/guzzle.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <script type="text/javascript" src="../../_static/language_data.js"></script>
+    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="randomgen.pcg64.PCG64.jump" href="randomgen.pcg64.PCG64.jump.html" />
+    <link rel="prev" title="randomgen.pcg64.PCG64.state" href="randomgen.pcg64.PCG64.state.html" />
+  
+   
+
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="randomgen.pcg64.PCG64.jump.html" title="randomgen.pcg64.PCG64.jump"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="randomgen.pcg64.PCG64.state.html" title="randomgen.pcg64.PCG64.state"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">RandomGen v1.16.6 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../index.html" >Basic Random Number Generators</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="../pcg64.html" accesskey="U">Parallel Congruent Generator (64-bit, PCG64)</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="container-wrapper">
+
+      <div id="mobile-toggle">
+        <a href="#"><span class="glyphicon glyphicon-align-justify" aria-hidden="true"></span></a>
+      </div>
+  <div id="left-column">
+    <div class="sphinxsidebar"><a href="
+    ../../index.html" class="text-logo">RandomGen v1.16.6</a>
+<div class="sidebar-block">
+  <div class="sidebar-wrapper">
+    <h2>Table Of Contents</h2>
+  </div>
+  <div class="sidebar-toc">
+    
+    
+      <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../generator.html">Random Generation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../legacy.html">Legacy Random Generation</a></li>
+</ul>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="../index.html">Basic Random Number Generators</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="../index.html#stable-rngs">Stable RNGs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../index.html#experimental-rngs">Experimental RNGs</a></li>
+</ul>
+</li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../parallel.html">Parallel Applications</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../multithreading.html">Multithreaded Generation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../new-or-different.html">What’s New or Different</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../performance.html">Comparing Performance</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../extending.html">Extending</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../entropy.html">Reading System Entropy</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../references.html">References</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../change-log.html">Change Log</a></li>
+</ul>
+
+    
+  </div>
+</div>
+<div class="sidebar-block">
+  <div class="sidebar-wrapper">
+    <div id="main-search">
+      <form class="form-inline" action="../../search.html" method="GET" role="form">
+        <div class="input-group">
+          <input name="q" type="text" class="form-control" placeholder="Search...">
+        </div>
+        <input type="hidden" name="check_keywords" value="yes" />
+        <input type="hidden" name="area" value="default" />
+      </form>
+    </div>
+  </div>
+</div>
+      
+    </div>
+  </div>
+        <div id="right-column">
+          
+          <div role="navigation" aria-label="breadcrumbs navigation">
+            <ol class="breadcrumb">
+              <li><a href="../../index.html">Docs</a></li>
+              
+                <li><a href="../index.html">Basic Random Number Generators</a></li>
+              
+                <li><a href="../pcg64.html">Parallel Congruent Generator (64-bit, PCG64)</a></li>
+              
+              <li>randomgen.pcg64.PCG64.advance</li>
+            </ol>
+          </div>
+          
+          <div class="document clearer body">
+            
+  <div class="section" id="randomgen-pcg64-pcg64-advance">
+<h1>randomgen.pcg64.PCG64.advance<a class="headerlink" href="#randomgen-pcg64-pcg64-advance" title="Permalink to this headline">¶</a></h1>
+<dl class="method">
+<dt id="randomgen.pcg64.PCG64.advance">
+<code class="sig-prename descclassname">PCG64.</code><code class="sig-name descname">advance</code><span class="sig-paren">(</span><em class="sig-param">delta</em><span class="sig-paren">)</span><a class="headerlink" href="#randomgen.pcg64.PCG64.advance" title="Permalink to this definition">¶</a></dt>
+<dd><p>Advance the underlying RNG as-if delta draws have occurred.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>delta</strong> (<em>integer</em><em>, </em><em>positive</em>) – Number of draws to advance the RNG. Must be less than the
+size state variable in the underlying RNG.</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><strong>self</strong> – RNG advanced delta steps</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference internal" href="../pcg64.html#randomgen.pcg64.PCG64" title="randomgen.pcg64.PCG64">PCG64</a></p>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<p>Advancing a RNG updates the underlying RNG state as-if a given
+number of calls to the underlying RNG have been made. In general
+there is not a one-to-one relationship between the number output
+random values from a particular distribution and the number of
+draws from the core RNG.  This occurs for two reasons:</p>
+<ul class="simple">
+<li><p>The random values are simulated using a rejection-based method
+and so, on average, more than one value from the underlying
+RNG is required to generate an single draw.</p></li>
+<li><p>The number of bits required to generate a simulated value
+differs from the number of bits generated by the underlying
+RNG.  For example, two 16-bit integer values can be simulated
+from a single draw of a 32-bit RNG.</p></li>
+</ul>
+<p>Advancing the RNG state resets any pre-computed random numbers.
+This is required to ensure exact reproducibility.</p>
+</dd></dl>
+
+</div>
+
+
+          </div>
+            
+  <div class="footer-relations">
+    
+      <div class="pull-left">
+        <a class="btn btn-default" href="randomgen.pcg64.PCG64.state.html" title="previous chapter (use the left arrow)">randomgen.pcg64.PCG64.state</a>
+      </div>
+    
+      <div class="pull-right">
+        <a class="btn btn-default" href="randomgen.pcg64.PCG64.jump.html" title="next chapter (use the right arrow)">randomgen.pcg64.PCG64.jump</a>
+      </div>
+    </div>
+    <div class="clearer"></div>
+  
+        </div>
+        <div class="clearfix"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="randomgen.pcg64.PCG64.jump.html" title="randomgen.pcg64.PCG64.jump"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="randomgen.pcg64.PCG64.state.html" title="randomgen.pcg64.PCG64.state"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">RandomGen v1.16.6 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../index.html" >Basic Random Number Generators</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="../pcg64.html" >Parallel Congruent Generator (64-bit, PCG64)</a> &#187;</li> 
+      </ul>
+    </div>
+<script type="text/javascript">
+  $("#mobile-toggle a").click(function () {
+    $("#left-column").toggle();
+  });
+</script>
+<script type="text/javascript" src="../../_static/js/bootstrap.js"></script>
+  <div class="footer">
+    &copy; Copyright 2018, Kevin Sheppard. Created using <a href="http://sphinx.pocoo.org/">Sphinx</a>.
+  </div>
+  </body>
+</html>

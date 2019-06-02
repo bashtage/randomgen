@@ -1,6 +1,0 @@
-randomgen.xoshiro256.Xoshiro256.random\_raw
-===========================================
-
-.. currentmodule:: randomgen.xoshiro256
-
-.. automethod:: Xoshiro256.random_raw

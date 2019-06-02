@@ -1,0 +1,318 @@
+
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta charset="utf-8" />
+  
+  <!-- Licensed under the Apache 2.0 License -->
+  <link rel="stylesheet" type="text/css" href="../_static/fonts/open-sans/stylesheet.css" />
+  <!-- Licensed under the SIL Open Font License -->
+  <link rel="stylesheet" type="text/css" href="../_static/fonts/source-serif-pro/source-serif-pro.css" />
+  <link rel="stylesheet" type="text/css" href="../_static/css/bootstrap.min.css" />
+  <link rel="stylesheet" type="text/css" href="../_static/css/bootstrap-theme.min.css" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+    <title>Double SIMD Mersenne Twister (dSFMT) &#8212; RandomGen v1.16.6 documentation</title>
+    <link rel="stylesheet" href="../_static/guzzle.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/language_data.js"></script>
+    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="randomgen.dsfmt.DSFMT.seed" href="generated/randomgen.dsfmt.DSFMT.seed.html" />
+    <link rel="prev" title="Basic Random Number Generators" href="index.html" />
+  
+   
+
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="generated/randomgen.dsfmt.DSFMT.seed.html" title="randomgen.dsfmt.DSFMT.seed"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="index.html" title="Basic Random Number Generators"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">RandomGen v1.16.6 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="index.html" accesskey="U">Basic Random Number Generators</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="container-wrapper">
+
+      <div id="mobile-toggle">
+        <a href="#"><span class="glyphicon glyphicon-align-justify" aria-hidden="true"></span></a>
+      </div>
+  <div id="left-column">
+    <div class="sphinxsidebar"><a href="
+    ../index.html" class="text-logo">RandomGen v1.16.6</a>
+<div class="sidebar-block">
+  <div class="sidebar-wrapper">
+    <h2>Table Of Contents</h2>
+  </div>
+  <div class="sidebar-toc">
+    
+    
+      <ul>
+<li class="toctree-l1"><a class="reference internal" href="../generator.html">Random Generation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../legacy.html">Legacy Random Generation</a></li>
+</ul>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">Basic Random Number Generators</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="index.html#stable-rngs">Stable RNGs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="index.html#experimental-rngs">Experimental RNGs</a></li>
+</ul>
+</li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../parallel.html">Parallel Applications</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../multithreading.html">Multithreaded Generation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../new-or-different.html">What’s New or Different</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../performance.html">Comparing Performance</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../extending.html">Extending</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../entropy.html">Reading System Entropy</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../references.html">References</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../change-log.html">Change Log</a></li>
+</ul>
+
+    
+  </div>
+</div>
+<div class="sidebar-block">
+  <div class="sidebar-wrapper">
+    <div id="main-search">
+      <form class="form-inline" action="../search.html" method="GET" role="form">
+        <div class="input-group">
+          <input name="q" type="text" class="form-control" placeholder="Search...">
+        </div>
+        <input type="hidden" name="check_keywords" value="yes" />
+        <input type="hidden" name="area" value="default" />
+      </form>
+    </div>
+  </div>
+</div>
+      
+    </div>
+  </div>
+        <div id="right-column">
+          
+          <div role="navigation" aria-label="breadcrumbs navigation">
+            <ol class="breadcrumb">
+              <li><a href="../index.html">Docs</a></li>
+              
+                <li><a href="index.html">Basic Random Number Generators</a></li>
+              
+              <li>Double SIMD Mersenne Twister (dSFMT)</li>
+            </ol>
+          </div>
+          
+          <div class="document clearer body">
+            
+  <div class="section" id="module-randomgen.dsfmt">
+<span id="double-simd-mersenne-twister-dsfmt"></span><h1>Double SIMD Mersenne Twister (dSFMT)<a class="headerlink" href="#module-randomgen.dsfmt" title="Permalink to this headline">¶</a></h1>
+<dl class="class">
+<dt id="randomgen.dsfmt.DSFMT">
+<em class="property">class </em><code class="sig-prename descclassname">randomgen.dsfmt.</code><code class="sig-name descname">DSFMT</code><span class="sig-paren">(</span><em class="sig-param">seed=None</em><span class="sig-paren">)</span><a class="headerlink" href="#randomgen.dsfmt.DSFMT" title="Permalink to this definition">¶</a></dt>
+<dd><p>Container for the SIMD-based Mersenne Twister pseudo RNG.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>seed</strong> (<em>{None</em><em>, </em><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a><em>, </em><em>array_like}</em><em>, </em><em>optional</em>) – Random seed used to initialize the pseudo-random number generator.  Can
+be any integer between 0 and 2**32 - 1 inclusive, an array (or other
+sequence) of unsigned 32-bit integers, or <code class="docutils literal notranslate"><span class="pre">None</span></code> (the default).  If
+<cite>seed</cite> is <code class="docutils literal notranslate"><span class="pre">None</span></code>, a 32-bit unsigned integer is read from
+<code class="docutils literal notranslate"><span class="pre">/dev/urandom</span></code> (or the Windows analog) if available. If unavailable,
+a 32-bit hash of the time and process ID is used.</p>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<p><code class="docutils literal notranslate"><span class="pre">DSFMT</span></code> provides a capsule containing function pointers that produce
+doubles, and unsigned 32 and 64- bit integers <a class="footnote-reference brackets" href="#id3" id="id1">1</a> . These are not
+directly consumable in Python and must be consumed by a <code class="docutils literal notranslate"><span class="pre">RandomGenerator</span></code>
+or similar object that supports low-level access.</p>
+<p>The Python stdlib module “random” also contains a Mersenne Twister
+pseudo-random number generator.</p>
+<p><strong>State and Seeding</strong></p>
+<p>The <code class="docutils literal notranslate"><span class="pre">DSFMT</span></code> state vector consists of a 384 element array of 64-bit
+unsigned integers plus a single integer value between 0 and 382
+indicating the current position within the main array. The implementation
+used here augments this with a 382 element array of doubles which are used
+to efficiently access the random numbers produced by the dSFMT generator.</p>
+<p><code class="docutils literal notranslate"><span class="pre">DSFMT</span></code> is seeded using either a single 32-bit unsigned integer or a
+vector of 32-bit unsigned integers. In either case, the input seed is used
+as an input (or inputs) for a hashing function, and the output of the
+hashing function is used as the initial state. Using a single 32-bit value
+for the seed can only initialize a small range of the possible initial
+state values.</p>
+<p><strong>Parallel Features</strong></p>
+<p><code class="docutils literal notranslate"><span class="pre">DSFMT</span></code> can be used in parallel applications by calling the method
+<code class="docutils literal notranslate"><span class="pre">jump</span></code> which advances the state as-if <span class="math notranslate nohighlight">\(2^{128}\)</span> random numbers
+have been generated <a class="footnote-reference brackets" href="#id4" id="id2">2</a>. This allows the original sequence to be split
+so that distinct segments can be used in each worker process. All
+generators should be initialized with the same seed to ensure that
+the segments come from the same sequence.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">randomgen.entropy</span> <span class="k">import</span> <span class="n">random_entropy</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">randomgen</span> <span class="k">import</span> <span class="n">RandomGenerator</span><span class="p">,</span> <span class="n">DSFMT</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">seed</span> <span class="o">=</span> <span class="n">random_entropy</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">rs</span> <span class="o">=</span> <span class="p">[</span><span class="n">RandomGenerator</span><span class="p">(</span><span class="n">DSFMT</span><span class="p">(</span><span class="n">seed</span><span class="p">))</span> <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">10</span><span class="p">)]</span>
+<span class="go"># Advance each DSFMT instance by i jumps</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">10</span><span class="p">):</span>
+<span class="gp">... </span>    <span class="n">rs</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">brng</span><span class="o">.</span><span class="n">jump</span><span class="p">()</span>
+</pre></div>
+</div>
+<p><strong>Compatibility Guarantee</strong></p>
+<p><code class="docutils literal notranslate"><span class="pre">DSFMT</span></code> makes a guarantee that a fixed seed and will always produce
+the same random integer stream.</p>
+<p class="rubric">References</p>
+<dl class="footnote brackets">
+<dt class="label" id="id3"><span class="brackets"><a class="fn-backref" href="#id1">1</a></span></dt>
+<dd><p>Mutsuo Saito and Makoto Matsumoto, “SIMD-oriented Fast Mersenne
+Twister: a 128-bit Pseudorandom Number Generator.” Monte Carlo
+and Quasi-Monte Carlo Methods 2006, Springer, pp. 607–622, 2008.</p>
+</dd>
+<dt class="label" id="id4"><span class="brackets"><a class="fn-backref" href="#id2">2</a></span></dt>
+<dd><p>Hiroshi Haramoto, Makoto Matsumoto, and Pierre L’Ecuyer, “A Fast
+Jump Ahead Algorithm for Linear Recurrences in a Polynomial Space”,
+Sequences and Their Applications - SETA, 290–298, 2008.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<div class="section" id="seeding-and-state">
+<h2>Seeding and State<a class="headerlink" href="#seeding-and-state" title="Permalink to this headline">¶</a></h2>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="generated/randomgen.dsfmt.DSFMT.seed.html#randomgen.dsfmt.DSFMT.seed" title="randomgen.dsfmt.DSFMT.seed"><code class="xref py py-obj docutils literal notranslate"><span class="pre">seed</span></code></a>([seed])</p></td>
+<td><p>Seed the generator.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="generated/randomgen.dsfmt.DSFMT.state.html#randomgen.dsfmt.DSFMT.state" title="randomgen.dsfmt.DSFMT.state"><code class="xref py py-obj docutils literal notranslate"><span class="pre">state</span></code></a></p></td>
+<td><p>Get or set the PRNG state</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="parallel-generation">
+<h2>Parallel generation<a class="headerlink" href="#parallel-generation" title="Permalink to this headline">¶</a></h2>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="generated/randomgen.dsfmt.DSFMT.jump.html#randomgen.dsfmt.DSFMT.jump" title="randomgen.dsfmt.DSFMT.jump"><code class="xref py py-obj docutils literal notranslate"><span class="pre">jump</span></code></a>([iter])</p></td>
+<td><p>Jumps the state as-if 2**128 random numbers have been generated.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="random-generator">
+<h2>Random Generator<a class="headerlink" href="#random-generator" title="Permalink to this headline">¶</a></h2>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="generated/randomgen.dsfmt.DSFMT.generator.html#randomgen.dsfmt.DSFMT.generator" title="randomgen.dsfmt.DSFMT.generator"><code class="xref py py-obj docutils literal notranslate"><span class="pre">generator</span></code></a></p></td>
+<td><p>Return a RandomGenerator object</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="extending">
+<h2>Extending<a class="headerlink" href="#extending" title="Permalink to this headline">¶</a></h2>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="generated/randomgen.dsfmt.DSFMT.cffi.html#randomgen.dsfmt.DSFMT.cffi" title="randomgen.dsfmt.DSFMT.cffi"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cffi</span></code></a></p></td>
+<td><p>CFFI interface</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="generated/randomgen.dsfmt.DSFMT.ctypes.html#randomgen.dsfmt.DSFMT.ctypes" title="randomgen.dsfmt.DSFMT.ctypes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ctypes</span></code></a></p></td>
+<td><p>ctypes interface</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="testing">
+<h2>Testing<a class="headerlink" href="#testing" title="Permalink to this headline">¶</a></h2>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="generated/randomgen.dsfmt.DSFMT.random_raw.html#randomgen.dsfmt.DSFMT.random_raw" title="randomgen.dsfmt.DSFMT.random_raw"><code class="xref py py-obj docutils literal notranslate"><span class="pre">random_raw</span></code></a>(self[, size])</p></td>
+<td><p>Return randoms as generated by the underlying BasicRNG</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+
+
+          </div>
+            
+  <div class="footer-relations">
+    
+      <div class="pull-left">
+        <a class="btn btn-default" href="index.html" title="previous chapter (use the left arrow)">Basic Random Number Generators</a>
+      </div>
+    
+      <div class="pull-right">
+        <a class="btn btn-default" href="generated/randomgen.dsfmt.DSFMT.seed.html" title="next chapter (use the right arrow)">randomgen.dsfmt.DSFMT.seed</a>
+      </div>
+    </div>
+    <div class="clearer"></div>
+  
+        </div>
+        <div class="clearfix"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="generated/randomgen.dsfmt.DSFMT.seed.html" title="randomgen.dsfmt.DSFMT.seed"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="index.html" title="Basic Random Number Generators"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">RandomGen v1.16.6 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="index.html" >Basic Random Number Generators</a> &#187;</li> 
+      </ul>
+    </div>
+<script type="text/javascript">
+  $("#mobile-toggle a").click(function () {
+    $("#left-column").toggle();
+  });
+</script>
+<script type="text/javascript" src="../_static/js/bootstrap.js"></script>
+  <div class="footer">
+    &copy; Copyright 2018, Kevin Sheppard. Created using <a href="http://sphinx.pocoo.org/">Sphinx</a>.
+  </div>
+  </body>
+</html>

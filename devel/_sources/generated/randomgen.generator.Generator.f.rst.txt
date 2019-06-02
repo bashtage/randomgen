@@ -1,6 +1,0 @@
-randomgen.generator.Generator.f
-===============================
-
-.. currentmodule:: randomgen.generator
-
-.. automethod:: Generator.f

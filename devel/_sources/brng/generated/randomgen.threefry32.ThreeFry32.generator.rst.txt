@@ -1,0 +1,6 @@
+randomgen.threefry32.ThreeFry32.generator
+=========================================
+
+.. currentmodule:: randomgen.threefry32
+
+.. autoattribute:: ThreeFry32.generator

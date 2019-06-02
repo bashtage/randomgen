@@ -1,6 +1,0 @@
-randomgen.xoroshiro128.Xoroshiro128.jumped
-==========================================
-
-.. currentmodule:: randomgen.xoroshiro128
-
-.. automethod:: Xoroshiro128.jumped

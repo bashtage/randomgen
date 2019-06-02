@@ -1,6 +1,0 @@
-randomgen.generator.Generator.bytes
-===================================
-
-.. currentmodule:: randomgen.generator
-
-.. automethod:: Generator.bytes

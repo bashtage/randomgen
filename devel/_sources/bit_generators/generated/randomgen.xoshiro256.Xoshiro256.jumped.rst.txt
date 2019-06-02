@@ -1,6 +1,0 @@
-randomgen.xoshiro256.Xoshiro256.jumped
-======================================
-
-.. currentmodule:: randomgen.xoshiro256
-
-.. automethod:: Xoshiro256.jumped

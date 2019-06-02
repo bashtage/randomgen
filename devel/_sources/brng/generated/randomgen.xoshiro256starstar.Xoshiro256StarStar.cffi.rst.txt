@@ -1,0 +1,6 @@
+randomgen.xoshiro256starstar.Xoshiro256StarStar.cffi
+====================================================
+
+.. currentmodule:: randomgen.xoshiro256starstar
+
+.. autoattribute:: Xoshiro256StarStar.cffi

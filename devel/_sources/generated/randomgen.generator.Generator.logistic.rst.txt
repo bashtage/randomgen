@@ -1,6 +1,0 @@
-randomgen.generator.Generator.logistic
-======================================
-
-.. currentmodule:: randomgen.generator
-
-.. automethod:: Generator.logistic

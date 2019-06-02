@@ -1,6 +1,0 @@
-randomgen.mt64.MT64.random\_raw
-===============================
-
-.. currentmodule:: randomgen.mt64
-
-.. automethod:: MT64.random_raw

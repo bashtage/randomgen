@@ -1,6 +1,0 @@
-randomgen.generator.Generator.wald
-==================================
-
-.. currentmodule:: randomgen.generator
-
-.. automethod:: Generator.wald

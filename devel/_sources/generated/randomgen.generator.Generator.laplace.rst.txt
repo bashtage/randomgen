@@ -1,6 +1,0 @@
-randomgen.generator.Generator.laplace
-=====================================
-
-.. currentmodule:: randomgen.generator
-
-.. automethod:: Generator.laplace

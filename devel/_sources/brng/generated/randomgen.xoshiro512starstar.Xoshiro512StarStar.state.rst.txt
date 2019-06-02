@@ -1,0 +1,6 @@
+randomgen.xoshiro512starstar.Xoshiro512StarStar.state
+=====================================================
+
+.. currentmodule:: randomgen.xoshiro512starstar
+
+.. autoattribute:: Xoshiro512StarStar.state

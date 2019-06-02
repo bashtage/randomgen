@@ -1,6 +1,0 @@
-randomgen.xoshiro512.Xoshiro512.cffi
-====================================
-
-.. currentmodule:: randomgen.xoshiro512
-
-.. autoattribute:: Xoshiro512.cffi

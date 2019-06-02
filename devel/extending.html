@@ -13,7 +13,7 @@
   <link rel="stylesheet" type="text/css" href="_static/css/bootstrap-theme.min.css" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-    <title>Extending &#8212; RandomGen v1.16.5+95.gb8f2a87 documentation</title>
+    <title>Extending &#8212; RandomGen v1.16.6 documentation</title>
     <link rel="stylesheet" href="_static/guzzle.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
@@ -45,7 +45,7 @@
         <li class="right" >
           <a href="performance.html" title="Performance"
              accesskey="P">previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="index.html">RandomGen v1.16.5+95.gb8f2a87 documentation</a> &#187;</li> 
+        <li class="nav-item nav-item-0"><a href="index.html">RandomGen v1.16.6 documentation</a> &#187;</li> 
       </ul>
     </div>
     <div class="container-wrapper">
@@ -55,7 +55,7 @@
       </div>
   <div id="left-column">
     <div class="sphinxsidebar"><a href="
-    index.html" class="text-logo">RandomGen v1.16.5 (+95)</a>
+    index.html" class="text-logo">RandomGen v1.16.6</a>
 <div class="sidebar-block">
   <div class="sidebar-wrapper">
     <h2>Table Of Contents</h2>
@@ -68,7 +68,7 @@
 <li class="toctree-l1"><a class="reference internal" href="legacy.html">Legacy Random Generation</a></li>
 </ul>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="bit_generators/index.html">Bit Generators</a></li>
+<li class="toctree-l1"><a class="reference internal" href="brng/index.html">Basic Random Number Generators</a></li>
 </ul>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="parallel.html">Parallel Applications</a></li>
@@ -78,7 +78,7 @@
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Extending</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#numba">Numba</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#cython">Cython</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#new-bit-generators">New Bit Generators</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#new-basic-rngs">New Basic RNGs</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="entropy.html">Reading System Entropy</a></li>
@@ -121,15 +121,15 @@
             
   <div class="section" id="extending">
 <h1>Extending<a class="headerlink" href="#extending" title="Permalink to this headline">¶</a></h1>
-<p>The bit generators have been designed to be extendable using standard tools for
+<p>The basic RNGs have been designed to be extendable using standard tools for
 high-performance Python – numba and Cython.
-The <a class="reference internal" href="generator.html#randomgen.generator.Generator" title="randomgen.generator.Generator"><code class="xref py py-class docutils literal notranslate"><span class="pre">randomgen.generator.Generator</span></code></a> object can also be used with
-user-provided bit generators as long as these export a small set of required
+The <a class="reference internal" href="generator.html#randomgen.generator.RandomGenerator" title="randomgen.generator.RandomGenerator"><code class="xref py py-class docutils literal notranslate"><span class="pre">randomgen.generator.RandomGenerator</span></code></a> object can also be used with
+user-provided basic RNGs as long as these export a small set of required
 functions.</p>
 <div class="section" id="numba">
 <h2>Numba<a class="headerlink" href="#numba" title="Permalink to this headline">¶</a></h2>
 <p>Numba can be used with either CTypes or CFFI.  The current iteration of the
-bit generators all export a small set of functions through both interfaces.</p>
+basic RNGs all export a small set of functions through both interfaces.</p>
 <p>This example shows how numba can be used to produce Box-Muller normals using
 a pure Python implementation which is then compiled.  The random numbers are
 provided by <code class="docutils literal notranslate"><span class="pre">ctypes.next_double</span></code>.</p>
@@ -177,8 +177,8 @@ examples folder.</p>
 </div>
 <div class="section" id="cython">
 <h2>Cython<a class="headerlink" href="#cython" title="Permalink to this headline">¶</a></h2>
-<p>Cython can be used to unpack the <code class="docutils literal notranslate"><span class="pre">PyCapsule</span></code> provided by a bit generator.
-This example uses <a class="reference internal" href="bit_generators/xoroshiro128.html#randomgen.xoroshiro128.Xoroshiro128" title="randomgen.xoroshiro128.Xoroshiro128"><code class="xref py py-class docutils literal notranslate"><span class="pre">Xoroshiro128</span></code></a> and
+<p>Cython can be used to unpack the <code class="docutils literal notranslate"><span class="pre">PyCapsule</span></code> provided by a basic RNG.
+This example uses <a class="reference internal" href="brng/xoroshiro128.html#randomgen.xoroshiro128.Xoroshiro128" title="randomgen.xoroshiro128.Xoroshiro128"><code class="xref py py-class docutils literal notranslate"><span class="pre">Xoroshiro128</span></code></a> and
 <code class="docutils literal notranslate"><span class="pre">random_gauss_zig</span></code>, the Ziggurat-based generator for normals, to fill an
 array.  The usual caveats for writing high-performance code using Cython –
 removing bounds checks and wrap around, providing array alignment information
@@ -196,17 +196,17 @@ removing bounds checks and wrap around, providing array alignment information
 <span class="nd">@cython</span><span class="o">.</span><span class="n">wraparound</span><span class="p">(</span><span class="bp">False</span><span class="p">)</span>
 <span class="k">def</span> <span class="nf">normals_zig</span><span class="p">(</span><span class="n">Py_ssize_t</span> <span class="n">n</span><span class="p">):</span>
     <span class="k">cdef</span> <span class="kt">Py_ssize_t</span> <span class="nf">i</span>
-    <span class="k">cdef</span> <span class="kt">bitgen_t</span> *<span class="nf">rng</span>
-    <span class="k">cdef</span> <span class="kt">const</span> <span class="kt">char</span> *<span class="nf">capsule_name</span> <span class="o">=</span> <span class="s">&quot;BitGenerator&quot;</span>
+    <span class="k">cdef</span> <span class="kt">brng_t</span> *<span class="nf">rng</span>
+    <span class="k">cdef</span> <span class="kt">const</span> <span class="kt">char</span> *<span class="nf">capsule_name</span> <span class="o">=</span> <span class="s">&quot;BasicRNG&quot;</span>
     <span class="k">cdef</span> <span class="kt">double</span>[<span class="p">::</span><span class="mf">1</span><span class="p">]</span> <span class="n">random_values</span>
 
     <span class="n">x</span> <span class="o">=</span> <span class="n">Xoroshiro128</span><span class="p">()</span>
     <span class="n">capsule</span> <span class="o">=</span> <span class="n">x</span><span class="o">.</span><span class="n">capsule</span>
-    <span class="c"># Optional check that the capsule if from a BitGenerator</span>
+    <span class="c"># Optional check that the capsule if from a Basic RNG</span>
     <span class="k">if</span> <span class="ow">not</span> <span class="n">PyCapsule_IsValid</span><span class="p">(</span><span class="n">capsule</span><span class="p">,</span> <span class="n">capsule_name</span><span class="p">):</span>
         <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s">&quot;Invalid pointer to anon_func_state&quot;</span><span class="p">)</span>
     <span class="c"># Cast the pointer</span>
-    <span class="n">rng</span> <span class="o">=</span> <span class="o">&lt;</span><span class="n">bitgen_t</span> <span class="o">*&gt;</span> <span class="n">PyCapsule_GetPointer</span><span class="p">(</span><span class="n">capsule</span><span class="p">,</span> <span class="n">capsule_name</span><span class="p">)</span>
+    <span class="n">rng</span> <span class="o">=</span> <span class="o">&lt;</span><span class="n">brng_t</span> <span class="o">*&gt;</span> <span class="n">PyCapsule_GetPointer</span><span class="p">(</span><span class="n">capsule</span><span class="p">,</span> <span class="n">capsule_name</span><span class="p">)</span>
     <span class="n">random_values</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">(</span><span class="n">n</span><span class="p">)</span>
     <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n</span><span class="p">):</span>
         <span class="c"># Call the function</span>
@@ -215,23 +215,23 @@ removing bounds checks and wrap around, providing array alignment information
     <span class="k">return</span> <span class="n">randoms</span>
 </pre></div>
 </div>
-<p>The bit generator can also be directly accessed using the members of the bit
-generator’s structure.</p>
+<p>The basic RNG can also be directly accessed using the members of the basic
+RNG structure.</p>
 <div class="highlight-cython notranslate"><div class="highlight"><pre><span></span><span class="nd">@cython</span><span class="o">.</span><span class="n">boundscheck</span><span class="p">(</span><span class="bp">False</span><span class="p">)</span>
 <span class="nd">@cython</span><span class="o">.</span><span class="n">wraparound</span><span class="p">(</span><span class="bp">False</span><span class="p">)</span>
 <span class="k">def</span> <span class="nf">uniforms</span><span class="p">(</span><span class="n">Py_ssize_t</span> <span class="n">n</span><span class="p">):</span>
     <span class="k">cdef</span> <span class="kt">Py_ssize_t</span> <span class="nf">i</span>
-    <span class="k">cdef</span> <span class="kt">bitgen_t</span> *<span class="nf">rng</span>
-    <span class="k">cdef</span> <span class="kt">const</span> <span class="kt">char</span> *<span class="nf">capsule_name</span> <span class="o">=</span> <span class="s">&quot;BitGenerator&quot;</span>
+    <span class="k">cdef</span> <span class="kt">brng_t</span> *<span class="nf">rng</span>
+    <span class="k">cdef</span> <span class="kt">const</span> <span class="kt">char</span> *<span class="nf">capsule_name</span> <span class="o">=</span> <span class="s">&quot;BasicRNG&quot;</span>
     <span class="k">cdef</span> <span class="kt">double</span>[<span class="p">::</span><span class="mf">1</span><span class="p">]</span> <span class="n">random_values</span>
 
     <span class="n">x</span> <span class="o">=</span> <span class="n">Xoroshiro128</span><span class="p">()</span>
     <span class="n">capsule</span> <span class="o">=</span> <span class="n">x</span><span class="o">.</span><span class="n">capsule</span>
-    <span class="c"># Optional check that the capsule if from a BitGenerator</span>
+    <span class="c"># Optional check that the capsule if from a Basic RNG</span>
     <span class="k">if</span> <span class="ow">not</span> <span class="n">PyCapsule_IsValid</span><span class="p">(</span><span class="n">capsule</span><span class="p">,</span> <span class="n">capsule_name</span><span class="p">):</span>
         <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s">&quot;Invalid pointer to anon_func_state&quot;</span><span class="p">)</span>
     <span class="c"># Cast the pointer</span>
-    <span class="n">rng</span> <span class="o">=</span> <span class="o">&lt;</span><span class="n">bitgen_t</span> <span class="o">*&gt;</span> <span class="n">PyCapsule_GetPointer</span><span class="p">(</span><span class="n">capsule</span><span class="p">,</span> <span class="n">capsule_name</span><span class="p">)</span>
+    <span class="n">rng</span> <span class="o">=</span> <span class="o">&lt;</span><span class="n">brng_t</span> <span class="o">*&gt;</span> <span class="n">PyCapsule_GetPointer</span><span class="p">(</span><span class="n">capsule</span><span class="p">,</span> <span class="n">capsule_name</span><span class="p">)</span>
     <span class="n">random_values</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">(</span><span class="n">n</span><span class="p">)</span>
     <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n</span><span class="p">):</span>
         <span class="c"># Call the function</span>
@@ -243,29 +243,29 @@ generator’s structure.</p>
 <p>These functions along with a minimal setup file are included in the
 examples folder.</p>
 </div>
-<div class="section" id="new-bit-generators">
-<h2>New Bit Generators<a class="headerlink" href="#new-bit-generators" title="Permalink to this headline">¶</a></h2>
-<p><a class="reference internal" href="generator.html#randomgen.generator.Generator" title="randomgen.generator.Generator"><code class="xref py py-class docutils literal notranslate"><span class="pre">Generator</span></code></a> can be used with other
-user-provided bit generators.  The simplest way to write a new bit generator is to
-examine the pyx file of one of the existing bit generators. The key structure
+<div class="section" id="new-basic-rngs">
+<h2>New Basic RNGs<a class="headerlink" href="#new-basic-rngs" title="Permalink to this headline">¶</a></h2>
+<p><a class="reference internal" href="generator.html#randomgen.generator.RandomGenerator" title="randomgen.generator.RandomGenerator"><code class="xref py py-class docutils literal notranslate"><span class="pre">RandomGenerator</span></code></a> can be used with other
+user-provided basic RNGs.  The simplest way to write a new basic RNG is to
+examine the pyx file of one of the existing basic RNGs. The key structure
 that must be provided is the <code class="docutils literal notranslate"><span class="pre">capsule</span></code> which contains a <code class="docutils literal notranslate"><span class="pre">PyCapsule</span></code> to a
-struct pointer of type <code class="docutils literal notranslate"><span class="pre">bitgen_t</span></code>,</p>
-<div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="k">typedef</span> <span class="k">struct</span> <span class="n">bitgen</span> <span class="p">{</span>
+struct pointer of type <code class="docutils literal notranslate"><span class="pre">brng_t</span></code>,</p>
+<div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="k">typedef</span> <span class="k">struct</span> <span class="n">brng</span> <span class="p">{</span>
   <span class="kt">void</span> <span class="o">*</span><span class="n">state</span><span class="p">;</span>
   <span class="kt">uint64_t</span> <span class="p">(</span><span class="o">*</span><span class="n">next_uint64</span><span class="p">)(</span><span class="kt">void</span> <span class="o">*</span><span class="n">st</span><span class="p">);</span>
   <span class="kt">uint32_t</span> <span class="p">(</span><span class="o">*</span><span class="n">next_uint32</span><span class="p">)(</span><span class="kt">void</span> <span class="o">*</span><span class="n">st</span><span class="p">);</span>
   <span class="kt">double</span> <span class="p">(</span><span class="o">*</span><span class="n">next_double</span><span class="p">)(</span><span class="kt">void</span> <span class="o">*</span><span class="n">st</span><span class="p">);</span>
   <span class="kt">uint64_t</span> <span class="p">(</span><span class="o">*</span><span class="n">next_raw</span><span class="p">)(</span><span class="kt">void</span> <span class="o">*</span><span class="n">st</span><span class="p">);</span>
-<span class="p">}</span> <span class="n">bitgen_t</span><span class="p">;</span>
+<span class="p">}</span> <span class="n">brng_t</span><span class="p">;</span>
 </pre></div>
 </div>
 <p>which provides 5 pointers. The first is an opaque pointer to the data structure
-used by the bit generator.  The next three are function pointers which return the
+used by the basic RNG.  The next three are function pointers which return the
 next 64- and 32-bit unsigned integers, the next random double and the next
 raw value.  This final function is used for testing and so can be set to
 the next 64-bit unsigned integer function if not needed. Functions inside
-<a class="reference internal" href="generator.html#randomgen.generator.Generator" title="randomgen.generator.Generator"><code class="xref py py-class docutils literal notranslate"><span class="pre">Generator</span></code></a> use this structure as in</p>
-<div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="n">bitgen_state</span><span class="o">-&gt;</span><span class="n">next_uint64</span><span class="p">(</span><span class="n">bitgen_state</span><span class="o">-&gt;</span><span class="n">state</span><span class="p">)</span>
+<a class="reference internal" href="generator.html#randomgen.generator.RandomGenerator" title="randomgen.generator.RandomGenerator"><code class="xref py py-class docutils literal notranslate"><span class="pre">RandomGenerator</span></code></a> use this structure as in</p>
+<div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="n">brng_state</span><span class="o">-&gt;</span><span class="n">next_uint64</span><span class="p">(</span><span class="n">brng_state</span><span class="o">-&gt;</span><span class="n">state</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -304,7 +304,7 @@ the next 64-bit unsigned integer function if not needed. Functions inside
         <li class="right" >
           <a href="performance.html" title="Performance"
              >previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="index.html">RandomGen v1.16.5+95.gb8f2a87 documentation</a> &#187;</li> 
+        <li class="nav-item nav-item-0"><a href="index.html">RandomGen v1.16.6 documentation</a> &#187;</li> 
       </ul>
     </div>
 <script type="text/javascript">

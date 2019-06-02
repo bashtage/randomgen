@@ -1,6 +1,0 @@
-randomgen.generator.Generator.power
-===================================
-
-.. currentmodule:: randomgen.generator
-
-.. automethod:: Generator.power

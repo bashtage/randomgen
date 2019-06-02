@@ -1,6 +1,0 @@
-randomgen.generator.Generator.noncentral\_chisquare
-===================================================
-
-.. currentmodule:: randomgen.generator
-
-.. automethod:: Generator.noncentral_chisquare

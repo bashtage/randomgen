@@ -1,6 +1,0 @@
-randomgen.mt19937.MT19937.jumped
-================================
-
-.. currentmodule:: randomgen.mt19937
-
-.. automethod:: MT19937.jumped

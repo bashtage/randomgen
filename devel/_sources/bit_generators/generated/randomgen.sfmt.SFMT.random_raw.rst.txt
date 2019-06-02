@@ -1,6 +1,0 @@
-randomgen.sfmt.SFMT.random\_raw
-===============================
-
-.. currentmodule:: randomgen.sfmt
-
-.. automethod:: SFMT.random_raw

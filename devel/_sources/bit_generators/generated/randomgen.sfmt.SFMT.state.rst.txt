@@ -1,6 +1,0 @@
-randomgen.sfmt.SFMT.state
-=========================
-
-.. currentmodule:: randomgen.sfmt
-
-.. autoattribute:: SFMT.state

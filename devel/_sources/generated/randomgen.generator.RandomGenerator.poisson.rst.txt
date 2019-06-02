@@ -1,0 +1,6 @@
+randomgen.generator.RandomGenerator.poisson
+===========================================
+
+.. currentmodule:: randomgen.generator
+
+.. automethod:: RandomGenerator.poisson

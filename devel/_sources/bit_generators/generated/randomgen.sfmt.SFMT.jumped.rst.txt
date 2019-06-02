@@ -1,6 +1,0 @@
-randomgen.sfmt.SFMT.jumped
-==========================
-
-.. currentmodule:: randomgen.sfmt
-
-.. automethod:: SFMT.jumped
