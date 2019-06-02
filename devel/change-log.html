@@ -13,7 +13,7 @@
   <link rel="stylesheet" type="text/css" href="_static/css/bootstrap-theme.min.css" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-    <title>Change Log &#8212; RandomGen v1.16.5+92.g7cc76b7 documentation</title>
+    <title>Change Log &#8212; RandomGen v1.16.5+95.gb8f2a87 documentation</title>
     <link rel="stylesheet" href="_static/guzzle.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
@@ -41,7 +41,7 @@
         <li class="right" >
           <a href="references.html" title="References"
              accesskey="P">previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="index.html">RandomGen v1.16.5+92.g7cc76b7 documentation</a> &#187;</li> 
+        <li class="nav-item nav-item-0"><a href="index.html">RandomGen v1.16.5+95.gb8f2a87 documentation</a> &#187;</li> 
       </ul>
     </div>
     <div class="container-wrapper">
@@ -51,7 +51,7 @@
       </div>
   <div id="left-column">
     <div class="sphinxsidebar"><a href="
-    index.html" class="text-logo">RandomGen v1.16.5 (+92)</a>
+    index.html" class="text-logo">RandomGen v1.16.5 (+95)</a>
 <div class="sidebar-block">
   <div class="sidebar-wrapper">
     <h2>Table Of Contents</h2>
@@ -78,6 +78,7 @@
 <ul class="current">
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Change Log</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#v1-17-0">v1.17.0</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#v1-16-6">v1.16.6</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#v1-16-5">v1.16.5</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#v1-16-4">v1.16.4</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#v1-16-3">v1.16.3</a></li>
@@ -154,6 +155,22 @@ returns a new <code class="docutils literal notranslate"><span class="pre">BitGe
 across the docs and references</p></li>
 </ul>
 </li>
+<li><p>Add the integer-based SIMD-based Fast Mersenne Twister (SFMT) generator
+<a class="reference internal" href="bit_generators/sfmt.html#randomgen.sfmt.SFMT" title="randomgen.sfmt.SFMT"><code class="xref py py-class docutils literal notranslate"><span class="pre">SFMT</span></code></a>.</p></li>
+<li><p>Add the 64-bit Mersenne Twister (MT64) generator <a class="reference internal" href="bit_generators/mt64.html#randomgen.mt64.MT64" title="randomgen.mt64.MT64"><code class="xref py py-class docutils literal notranslate"><span class="pre">MT64</span></code></a>.</p></li>
+<li><p>Renamed <cite>Xoshiro256StarStar</cite> to <a class="reference internal" href="bit_generators/xoshiro256.html#randomgen.xoshiro256.Xoshiro256" title="randomgen.xoshiro256.Xoshiro256"><code class="xref py py-class docutils literal notranslate"><span class="pre">Xoshiro256</span></code></a>
+and <cite>Xoshiro512StarStar</cite> to <a class="reference internal" href="bit_generators/xoshiro512.html#randomgen.xoshiro512.Xoshiro512" title="randomgen.xoshiro512.Xoshiro512"><code class="xref py py-class docutils literal notranslate"><span class="pre">Xoshiro512</span></code></a></p></li>
+</ul>
+</div>
+<div class="section" id="v1-16-6">
+<h2>v1.16.6<a class="headerlink" href="#v1-16-6" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li><p>Changed the default jump step size to phi times the period of the generator for
+<a class="reference internal" href="bit_generators/pcg32.html#randomgen.pcg32.PCG32" title="randomgen.pcg32.PCG32"><code class="xref py py-class docutils literal notranslate"><span class="pre">PCG32</span></code></a> and <a class="reference internal" href="bit_generators/pcg64.html#randomgen.pcg64.PCG64" title="randomgen.pcg64.PCG64"><code class="xref py py-class docutils literal notranslate"><span class="pre">PCG64</span></code></a>.</p></li>
+<li><p>Improved the performance of <a class="reference internal" href="bit_generators/pcg64.html#randomgen.pcg64.PCG64" title="randomgen.pcg64.PCG64"><code class="xref py py-class docutils literal notranslate"><span class="pre">PCG64</span></code></a> on Windows.</p></li>
+<li><p>Improved performance of <a class="reference internal" href="bit_generators/generated/randomgen.dsfmt.DSFMT.jump.html#randomgen.dsfmt.DSFMT.jump" title="randomgen.dsfmt.DSFMT.jump"><code class="xref py py-func docutils literal notranslate"><span class="pre">jump()</span></code></a> and
+<a class="reference internal" href="bit_generators/generated/randomgen.dsfmt.DSFMT.jumped.html#randomgen.dsfmt.DSFMT.jumped" title="randomgen.dsfmt.DSFMT.jumped"><code class="xref py py-func docutils literal notranslate"><span class="pre">jumped()</span></code></a>.</p></li>
+<li><p>Improves backward compatability of <a class="reference internal" href="legacy.html#randomgen.mtrand.RandomState" title="randomgen.mtrand.RandomState"><code class="xref py py-class docutils literal notranslate"><span class="pre">RandomState</span></code></a></p></li>
 </ul>
 </div>
 <div class="section" id="v1-16-5">
@@ -293,7 +310,7 @@ number generator fails.</p></li>
         <li class="right" >
           <a href="references.html" title="References"
              >previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="index.html">RandomGen v1.16.5+92.g7cc76b7 documentation</a> &#187;</li> 
+        <li class="nav-item nav-item-0"><a href="index.html">RandomGen v1.16.5+95.gb8f2a87 documentation</a> &#187;</li> 
       </ul>
     </div>
 <script type="text/javascript">

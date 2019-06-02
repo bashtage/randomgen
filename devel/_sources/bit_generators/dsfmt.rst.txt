@@ -1,4 +1,4 @@
-Double SIMD Mersenne Twister (dSFMT) 
+Double SIMD Mersenne Twister (dSFMT)
 ------------------------------------
 
 .. module:: randomgen.dsfmt
