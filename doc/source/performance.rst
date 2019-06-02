@@ -56,7 +56,7 @@ percentage. The overall performance was computed using a geometric mean.
 .. csv-table::
     :header: ,Xoroshiro128,Xoshiro256**,Xorshift1024,PCG64,MT19937,Philox,ThreeFry
     :widths: 14,14,14,14,14,14,14,14
-    
+
     64-bit Unsigned Ints,353,309,283,263,233,191,162
     Uniforms,271,283,276,288,232,188,173
     32-bit Unsigned Ints,83,76,78,70,76,64,56

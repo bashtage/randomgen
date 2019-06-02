@@ -3,6 +3,16 @@
 Change Log
 ----------
 
+v1.16.6
+=======
+- Changed the default jump step size to phi times the period of the generator for
+  :class:`~randomgen.pcg32.PCG32` and :class:`~randomgen.pcg64.PCG64`.
+- Improved the performance of :class:`~randomgen.pcg64.PCG64` on Windows.
+- Improved performance of :func:`~randomgen.dsfmt.DSFMT.jump` and
+  :func:`~randomgen.dsfmt.DSFMT.jumped`.
+- Improves backward compatability of :class:`~randomgen.mtrand.RandomState`
+
+
 v1.16.5
 =======
 - Fixed bugs in :func:`~randomgen.mtrand.RandomState.laplace`,
