@@ -428,6 +428,21 @@ class TestPCG64(Base):
                       [2 ** (2 * self.bits + 1)])
         assert_raises(self.seed_error_type, rs.brng.seed, [-1])
 
+    def test_advance_symmetry(self):
+        rs = RandomGenerator(self.brng(*self.data1['seed']))
+        state = rs.brng.state
+        step = -0x9e3779b97f4a7c150000000000000000
+        rs.brng.advance(step)
+        val_neg = rs.randint(10)
+        rs.brng.state = state
+        rs.brng.advance(2**128 + step)
+        val_pos = rs.randint(10)
+        rs.brng.state = state
+        rs.brng.advance(10 * 2**128 + step)
+        val_big = rs.randint(10)
+        assert val_neg == val_pos
+        assert val_big == val_pos
+
 
 class TestPhilox(Base):
     @classmethod
@@ -622,3 +637,7 @@ class TestPCG32(TestPCG64):
                                   (None, np.zeros(1))]
         cls.invalid_seed_values = [(-1,), (2 ** 129 + 1,), (None, -1),
                                    (None, 2 ** 129 + 1)]
+
+    @pytest.mark.skip
+    def test_advance_symmetry(self):
+        pass

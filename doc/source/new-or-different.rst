@@ -6,10 +6,10 @@ What's New or Different
 .. warning::
 
   The Box-Muller method used to produce NumPy's normals is no longer available
-  in :class:`~randomgen.generator.RandomGenerator`.  It is not possible to 
-  reproduce the random values using :class:`~randomgen.generator.RandomGenerator` 
+  in :class:`~randomgen.generator.RandomGenerator`.  It is not possible to
+  reproduce the random values using :class:`~randomgen.generator.RandomGenerator`
   for the normal distribution or any other distribution that relies on the
-  normal such as the gamma or student's t. If you require backward compatibility, a 
+  normal such as the gamma or student's t. If you require backward compatibility, a
   legacy generator, :class:`~randomgen.mtrand.RandomState`, has been created
   which can fully reproduce the sequence produced by NumPy.
 
