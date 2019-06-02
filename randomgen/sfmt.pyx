@@ -287,7 +287,8 @@ cdef class SFMT:
         iter : integer, positive
             Number of times to jump the state of the rng.
         """
-        cdef np.npy_intp i
+        if iter < 0:
+            raise ValueError('iter must be positive')
         sfmt_jump_n(&self.rng_state, iter)
         # Clear the buffer
         self._reset_state_variables()

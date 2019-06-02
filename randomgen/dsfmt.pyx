@@ -56,6 +56,7 @@ cdef extern from "src/dsfmt/dSFMT.h":
     void dsfmt_init_gen_rand(dsfmt_t *dsfmt, uint32_t seed)
     void dsfmt_init_by_array(dsfmt_t *dsfmt, uint32_t init_key[], int key_length)
     void dsfmt_jump(dsfmt_state *state)
+    void dsfmt_jump_n(dsfmt_state *state, int count)
 
 cdef uint64_t dsfmt_uint64(void* st) nogil:
     return dsfmt_next64(<dsfmt_state *>st)
@@ -290,9 +291,9 @@ cdef class DSFMT:
         iter : integer, positive
             Number of times to jump the state of the rng.
         """
-        cdef np.npy_intp i
-        for i in range(iter):
-            dsfmt_jump(&self.rng_state)
+        if iter < 0:
+            raise ValueError('iter must be positive')
+        dsfmt_jump_n(&self.rng_state, iter)
         # Clear the buffer
         self._reset_state_variables()
 

@@ -689,3 +689,4 @@ static inline uint64_t dsfmt_next_raw(dsfmt_state *state) {
 }
 
 void dsfmt_jump(dsfmt_state *state);
+void dsfmt_jump_n(dsfmt_state *state, int count);
