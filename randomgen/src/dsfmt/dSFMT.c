@@ -355,7 +355,7 @@ static void period_certification(dsfmt_t *dsfmt) {
   if (inner == 1) {
     return;
   }
-    /* check NG, and modification */
+/* check NG, and modification */
 #if (DSFMT_PCV2 & 1) == 1
   dsfmt->status[DSFMT_N].u[1] ^= 1;
 #else
@@ -624,3 +624,26 @@ extern inline uint64_t dsfmt_next64(dsfmt_state *state);
 extern inline uint32_t dsfmt_next32(dsfmt_state *state);
 
 void dsfmt_jump(dsfmt_state *state) { dSFMT_jump(state->state, poly_128); };
+
+void dsfmt_jump_n(dsfmt_state *state, int count) {
+  /* poly_xxx is 2**xxx ahead */
+  int remaining = count;
+  while (remaining > 0) {
+    if (remaining >= 65536) {
+      dSFMT_jump(state->state, poly_144);
+      remaining -= 65536;
+    } else if (remaining >= 4096) {
+      dSFMT_jump(state->state, poly_140);
+      remaining -= 4096;
+    } else if (remaining >= 256) {
+      dSFMT_jump(state->state, poly_136);
+      remaining -= 256;
+    } else if (remaining >= 16) {
+      dSFMT_jump(state->state, poly_132);
+      remaining -= 16;
+    } else if (remaining >= 1) {
+      dSFMT_jump(state->state, poly_128);
+      remaining -= 1;
+    }
+  }
+};
