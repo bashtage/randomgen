@@ -30,6 +30,20 @@ v1.17.0
     returns a new ``BitGenerator``.
   * Rename Basic RNG to bit generator, which has been consistently applied
     across the docs and references
+- Add the integer-based SIMD-based Fast Mersenne Twister (SFMT) generator
+  :class:`~randomgen.sfmt.SFMT`.
+- Add the 64-bit Mersenne Twister (MT64) generator :class:`~randomgen.mt64.MT64`.
+- Renamed `Xoshiro256StarStar` to :class:`~randomgen.xoshiro256.Xoshiro256`
+  and `Xoshiro512StarStar` to :class:`~randomgen.xoshiro512.Xoshiro512`
+
+v1.16.6
+=======
+- Changed the default jump step size to phi times the period of the generator for
+  :class:`~randomgen.pcg32.PCG32` and :class:`~randomgen.pcg64.PCG64`.
+- Improved the performance of :class:`~randomgen.pcg64.PCG64` on Windows.
+- Improved performance of :func:`~randomgen.dsfmt.DSFMT.jump` and
+  :func:`~randomgen.dsfmt.DSFMT.jumped`.
+- Improves backward compatability of :class:`~randomgen.mtrand.RandomState`
 
 
 v1.16.5
