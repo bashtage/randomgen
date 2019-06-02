@@ -305,6 +305,7 @@ cdef class PCG32:
           RNG.  For example, two 16-bit integer values can be simulated
           from a single draw of a 32-bit RNG.
         """
+        delta = wrap_int(delta, 64)
         pcg32_advance_state(&self.rng_state, <uint64_t>delta)
         return self
 
@@ -319,7 +320,7 @@ cdef class PCG32:
         iter : integer, positive
             Number of times to jump the state of the rng.
         """
-        self.advance(iter * 2**32)
+        self.advance(iter * int(0x9e3779b97f4a7800))
 
     def jump(self, iter=1):
         """

@@ -339,10 +339,7 @@ cdef class PCG64:
         Advancing the RNG state resets any pre-computed random numbers.
         This is required to ensure exact reproducibility.
         """
-        delta = int(delta)
-        if not 0 <= delta < 2**128:
-            divisor = delta // 2**128
-            delta = delta - 2**128 * divisor
+        delta = wrap_int(delta, 128)
 
         cdef np.ndarray d = np.empty(2, dtype=np.uint64)
         d[0] = delta // 2**64

@@ -340,7 +340,7 @@ cdef class ThreeFry32:
             self.rng_state.buffer[i] = <uint32_t> value['buffer'][i]
         self.rng_state.buffer_pos = value['buffer_pos']
 
-    cdef jump_inplace(self, np.npy_intp iter):
+    cdef jump_inplace(self, iter):
         """
         Jump state in-place
         
@@ -351,9 +351,9 @@ cdef class ThreeFry32:
         iter : integer, positive
             Number of times to jump the state of the rng.
         """
-        self.advance(iter * 2 ** 64)
+        self.advance(iter * int(2**64))
 
-    def jump(self, np.npy_intp iter=1):
+    def jump(self, iter=1):
         """
         jump(iter=1)
 
@@ -380,7 +380,7 @@ cdef class ThreeFry32:
         self.jump_inplace(iter)
         return self
 
-    def jumped(self, np.npy_intp iter=1):
+    def jumped(self, iter=1):
         """
         jumped(iter=1)
 
@@ -443,6 +443,8 @@ cdef class ThreeFry32:
         Advancing the RNG state resets any pre-computed random numbers.
         This is required to ensure exact reproducibility.
         """
+        delta = wrap_int(delta, 128)
+
         cdef np.ndarray delta_a
         delta_a = int_to_array(delta, 'step', 128, 32)
         threefry32_advance(<uint32_t *>np.PyArray_DATA(delta_a),
