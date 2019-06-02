@@ -339,6 +339,11 @@ cdef class PCG64:
         Advancing the RNG state resets any pre-computed random numbers.
         This is required to ensure exact reproducibility.
         """
+        delta = int(delta)
+        if not 0 <= delta < 2**128:
+            divisor = delta // 2**128
+            delta = delta - 2**128 * divisor
+
         cdef np.ndarray d = np.empty(2, dtype=np.uint64)
         d[0] = delta // 2**64
         d[1] = delta % 2**64
@@ -357,7 +362,11 @@ cdef class PCG64:
         iter : integer, positive
             Number of times to jump the state of the rng.
         """
-        self.advance(iter * 2**64)
+        step = 0x9e3779b97f4a7c150000000000000000
+        step *= int(iter)
+        divisor = step // 2**128
+        step -= 2**128 * divisor
+        self.advance(step)
 
     def jump(self, np.npy_intp iter=1):
         """
