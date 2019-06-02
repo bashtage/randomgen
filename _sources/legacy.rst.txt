@@ -1,6 +1,6 @@
 Legacy Random Generation
 ------------------------
-The :class:`~randomgen.mtrand.RandomState` provides access to 
+The :class:`~randomgen.mtrand.RandomState` provides access to
 legacy generators.  These all depend on normals produced using a
 polar transformation or inverse CDF exponentials or gammas. This
 class should only be used  if it is essential to have randoms that
@@ -8,12 +8,12 @@ are identical to what would have been produced by NumPy.
 
 :class:`~randomgen.mtrand.RandomState` add additional information
 to the state which is required when using Box-Muller normals since these
-are produced in pairs. It is important to use 
+are produced in pairs. It is important to use
 :attr:`~randomgen.mtrand.RandomState.get_state()`
-when accessing the state so that these extra values are saved. 
+when accessing the state so that these extra values are saved.
 
 .. code-block:: python
-  
+
    from randomgen import MT19937
    from randomgen.mtrand import RandomState
    from numpy.random import RandomState
@@ -31,7 +31,7 @@ when accessing the state so that these extra values are saved.
 
    rs.standard_exponential()
    lg.standard_exponential()
-   
+
 
 .. currentmodule:: randomgen.mtrand
 
@@ -46,7 +46,7 @@ Seeding and State
 
    ~RandomState.get_state
    ~RandomState.set_state
-   
+
 Simple random data
 ==================
 .. autosummary::
