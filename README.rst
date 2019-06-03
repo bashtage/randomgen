@@ -6,7 +6,8 @@ NumPy RandomState evolution.
 
 **Continuous Integration**
 
-|Travis Build Status| |Appveyor Build Status| |Build Status|
+|Travis Build Status| |Appveyor Build Status| |Build Status| |FreeBSD
+Status on Cirrus|
 
 **Coverage**
 
@@ -347,6 +348,8 @@ NumPy’s mt19937.
    :target: https://ci.appveyor.com/project/bashtage/randomgen/branch/master
 .. |Build Status| image:: https://cloud.drone.io/api/badges/bashtage/randomgen/status.svg
    :target: https://cloud.drone.io/bashtage/randomgen
+.. |FreeBSD Status on Cirrus| image:: https://api.cirrus-ci.com/github/bashtage/randomgen.svg
+   :target: https://cirrus-ci.com/github/bashtage/randomgen
 .. |Coverage Status| image:: https://coveralls.io/repos/github/bashtage/randomgen/badge.svg
    :target: https://coveralls.io/github/bashtage/randomgen
 .. |codecov| image:: https://codecov.io/gh/bashtage/randomgen/branch/master/graph/badge.svg
