@@ -1,89 +1,88 @@
 Random Generator
 ----------------
-The :class:`~randomgen.generator.RandomGenerator` provides access to
-a wide range of distributions, and served as a replacement for
-:class:`~numpy.random.RandomState`.  The main difference between
-the two is that :class:`~randomgen.generator.RandomGenerator` relies
-on an additional basic RNG to manage state and generate the random
-bits which are then transformed into random values from useful
-distributions. The default basic RNG used by
-:class:`~randomgen.generator.RandomGenerator` is
-:class:`~randomgen.xoroshiro128.Xoroshiro128`.  The basic RNG can be
-changed by passing an instantized basic RNG to
-:class:`~randomgen.generator.RandomGenerator`.
+The :class:`~randomgen.generator.Generator` provides access to
+a wide range of distributions, and served as a replacement for 
+:class:`~numpy.random.RandomState`.  The main difference between 
+the two is that :class:`~randomgen.generator.Generator` relies
+on an additional bit generator to manage state and generate the random
+bits which are then transformed into random values from useful 
+distributions. The default bit generator used by
+:class:`~randomgen.generator.Generator` is
+:class:`~randomgen.xoroshiro128.Xoroshiro128`.  The bit generator can be
+changed by passing an instantized bit generator to
+:class:`~randomgen.generator.Generator`.
 
 .. currentmodule:: randomgen.generator
 
 .. autoclass::
-   RandomGenerator
+   Generator
 
 Seed and State Manipulation
 ===========================
 .. autosummary::
    :toctree: generated/
 
-   ~RandomGenerator.seed
-   ~RandomGenerator.state
+   ~Generator.seed
+   ~Generator.state
 
 Simple random data
 ==================
 .. autosummary::
    :toctree: generated/
 
-   ~RandomGenerator.rand
-   ~RandomGenerator.randn
-   ~RandomGenerator.randint
-   ~RandomGenerator.random_integers
-   ~RandomGenerator.random_sample
-   ~RandomGenerator.choice
-   ~RandomGenerator.bytes
+   ~Generator.rand
+   ~Generator.randn
+   ~Generator.integers
+   ~Generator.random
+   ~Generator.choice
+   ~Generator.bytes
 
 Permutations
 ============
 .. autosummary::
    :toctree: generated/
 
-   ~RandomGenerator.shuffle
-   ~RandomGenerator.permutation
+   ~Generator.shuffle
+   ~Generator.permutation
 
 Distributions
 =============
 .. autosummary::
    :toctree: generated/
 
-   ~RandomGenerator.beta
-   ~RandomGenerator.binomial
-   ~RandomGenerator.chisquare
-   ~RandomGenerator.complex_normal
-   ~RandomGenerator.dirichlet
-   ~RandomGenerator.exponential
-   ~RandomGenerator.f
-   ~RandomGenerator.gamma
-   ~RandomGenerator.geometric
-   ~RandomGenerator.gumbel
-   ~RandomGenerator.hypergeometric
-   ~RandomGenerator.laplace
-   ~RandomGenerator.logistic
-   ~RandomGenerator.lognormal
-   ~RandomGenerator.logseries
-   ~RandomGenerator.multinomial
-   ~RandomGenerator.multivariate_normal
-   ~RandomGenerator.negative_binomial
-   ~RandomGenerator.noncentral_chisquare
-   ~RandomGenerator.noncentral_f
-   ~RandomGenerator.normal
-   ~RandomGenerator.pareto
-   ~RandomGenerator.poisson
-   ~RandomGenerator.power
-   ~RandomGenerator.rayleigh
-   ~RandomGenerator.standard_cauchy
-   ~RandomGenerator.standard_exponential
-   ~RandomGenerator.standard_gamma
-   ~RandomGenerator.standard_normal
-   ~RandomGenerator.standard_t
-   ~RandomGenerator.triangular
-   ~RandomGenerator.uniform
-   ~RandomGenerator.vonmises
-   ~RandomGenerator.wald
-   ~RandomGenerator.weibull
-   ~RandomGenerator.zipf
+   ~Generator.beta
+   ~Generator.binomial
+   ~Generator.chisquare
+   ~Generator.complex_normal
+   ~Generator.dirichlet
+   ~Generator.exponential
+   ~Generator.f
+   ~Generator.gamma
+   ~Generator.geometric
+   ~Generator.gumbel
+   ~Generator.hypergeometric
+   ~Generator.laplace
+   ~Generator.logistic
+   ~Generator.lognormal
+   ~Generator.logseries
+   ~Generator.multinomial
+   ~Generator.multivariate_normal
+   ~Generator.negative_binomial
+   ~Generator.noncentral_chisquare
+   ~Generator.noncentral_f
+   ~Generator.normal
+   ~Generator.pareto
+   ~Generator.poisson
+   ~Generator.power
+   ~Generator.rayleigh
+   ~Generator.standard_cauchy
+   ~Generator.standard_exponential
+   ~Generator.standard_gamma
+   ~Generator.standard_normal
+   ~Generator.standard_t
+   ~Generator.triangular
+   ~Generator.uniform
+   ~Generator.vonmises
+   ~Generator.wald
+   ~Generator.weibull
+   ~Generator.zipf

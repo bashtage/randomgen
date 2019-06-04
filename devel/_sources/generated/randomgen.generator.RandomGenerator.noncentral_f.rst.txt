@@ -1,6 +1,0 @@
-randomgen.generator.RandomGenerator.noncentral\_f
-=================================================
-
-.. currentmodule:: randomgen.generator
-
-.. automethod:: RandomGenerator.noncentral_f

@@ -1,6 +1,0 @@
-randomgen.generator.RandomGenerator.random\_integers
-====================================================
-
-.. currentmodule:: randomgen.generator
-
-.. automethod:: RandomGenerator.random_integers

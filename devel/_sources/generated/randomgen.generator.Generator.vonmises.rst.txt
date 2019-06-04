@@ -1,0 +1,6 @@
+randomgen.generator.Generator.vonmises
+======================================
+
+.. currentmodule:: randomgen.generator
+
+.. automethod:: Generator.vonmises

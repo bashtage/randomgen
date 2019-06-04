@@ -1,6 +1,0 @@
-randomgen.generator.RandomGenerator.weibull
-===========================================
-
-.. currentmodule:: randomgen.generator
-
-.. automethod:: RandomGenerator.weibull

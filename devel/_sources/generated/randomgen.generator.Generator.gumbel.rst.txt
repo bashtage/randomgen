@@ -1,0 +1,6 @@
+randomgen.generator.Generator.gumbel
+====================================
+
+.. currentmodule:: randomgen.generator
+
+.. automethod:: Generator.gumbel

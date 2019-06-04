@@ -13,7 +13,7 @@
   <link rel="stylesheet" type="text/css" href="_static/css/bootstrap-theme.min.css" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-    <title>Performance &#8212; RandomGen v1.16.6 documentation</title>
+    <title>Performance &#8212; RandomGen v1.17.0.dev0 documentation</title>
     <link rel="stylesheet" href="_static/guzzle.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
@@ -45,7 +45,7 @@
         <li class="right" >
           <a href="new-or-different.html" title="What’s New or Different"
              accesskey="P">previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="index.html">RandomGen v1.16.6 documentation</a> &#187;</li> 
+        <li class="nav-item nav-item-0"><a href="index.html">RandomGen v1.17.0.dev0 documentation</a> &#187;</li> 
       </ul>
     </div>
     <div class="container-wrapper">
@@ -55,7 +55,7 @@
       </div>
   <div id="left-column">
     <div class="sphinxsidebar"><a href="
-    index.html" class="text-logo">RandomGen v1.16.6</a>
+    index.html" class="text-logo">RandomGen v1.17.0.dev0</a>
 <div class="sidebar-block">
   <div class="sidebar-wrapper">
     <h2>Table Of Contents</h2>
@@ -68,7 +68,7 @@
 <li class="toctree-l1"><a class="reference internal" href="legacy.html">Legacy Random Generation</a></li>
 </ul>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="brng/index.html">Basic Random Number Generators</a></li>
+<li class="toctree-l1"><a class="reference internal" href="bit_generators/index.html">Bit Generators</a></li>
 </ul>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="parallel.html">Parallel Applications</a></li>
@@ -123,20 +123,20 @@
 <div class="section" id="recommendation">
 <h2>Recommendation<a class="headerlink" href="#recommendation" title="Permalink to this headline">¶</a></h2>
 <p>The recommended generator for single use is
-<a class="reference internal" href="brng/xoroshiro128.html#randomgen.xoroshiro128.Xoroshiro128" title="randomgen.xoroshiro128.Xoroshiro128"><code class="xref py py-class docutils literal notranslate"><span class="pre">Xoroshiro128</span></code></a>. The recommended generator
+<a class="reference internal" href="bit_generators/xoroshiro128.html#randomgen.xoroshiro128.Xoroshiro128" title="randomgen.xoroshiro128.Xoroshiro128"><code class="xref py py-class docutils literal notranslate"><span class="pre">Xoroshiro128</span></code></a>. The recommended generator
 for use in large-scale parallel applications is
-<a class="reference internal" href="brng/xoshiro256starstar.html#randomgen.xoshiro256starstar.Xoshiro256StarStar" title="randomgen.xoshiro256starstar.Xoshiro256StarStar"><code class="xref py py-class docutils literal notranslate"><span class="pre">Xoshiro256StarStar</span></code></a>
+<a class="reference internal" href="bit_generators/xoshiro256starstar.html#randomgen.xoshiro256starstar.Xoshiro256StarStar" title="randomgen.xoshiro256starstar.Xoshiro256StarStar"><code class="xref py py-class docutils literal notranslate"><span class="pre">Xoshiro256StarStar</span></code></a>
 where the <cite>jump</cite> method is used to advance the state. For very large scale
 applications – requiring 1,000+ independent streams,
-<a class="reference internal" href="brng/pcg64.html#randomgen.pcg64.PCG64" title="randomgen.pcg64.PCG64"><code class="xref py py-class docutils literal notranslate"><span class="pre">PCG64</span></code></a> or <code class="xref py py-class docutils literal notranslate"><span class="pre">Philox</span></code> are
+<a class="reference internal" href="bit_generators/pcg64.html#randomgen.pcg64.PCG64" title="randomgen.pcg64.PCG64"><code class="xref py py-class docutils literal notranslate"><span class="pre">PCG64</span></code></a> or <code class="xref py py-class docutils literal notranslate"><span class="pre">Philox</span></code> are
 the best choices.</p>
 </div>
 <div class="section" id="timings">
 <h2>Timings<a class="headerlink" href="#timings" title="Permalink to this headline">¶</a></h2>
 <p>The timings below are the time in ns to produce 1 random value from a
-specific distribution. <a class="reference internal" href="brng/xoroshiro128.html#randomgen.xoroshiro128.Xoroshiro128" title="randomgen.xoroshiro128.Xoroshiro128"><code class="xref py py-class docutils literal notranslate"><span class="pre">Xoroshiro128</span></code></a> is the
-fastest, followed by <a class="reference internal" href="brng/xorshift1024.html#randomgen.xorshift1024.Xorshift1024" title="randomgen.xorshift1024.Xorshift1024"><code class="xref py py-class docutils literal notranslate"><span class="pre">Xorshift1024</span></code></a> and
-<a class="reference internal" href="brng/pcg64.html#randomgen.pcg64.PCG64" title="randomgen.pcg64.PCG64"><code class="xref py py-class docutils literal notranslate"><span class="pre">PCG64</span></code></a>. The original <a class="reference internal" href="brng/mt19937.html#randomgen.mt19937.MT19937" title="randomgen.mt19937.MT19937"><code class="xref py py-class docutils literal notranslate"><span class="pre">MT19937</span></code></a>
+specific distribution. <a class="reference internal" href="bit_generators/xoroshiro128.html#randomgen.xoroshiro128.Xoroshiro128" title="randomgen.xoroshiro128.Xoroshiro128"><code class="xref py py-class docutils literal notranslate"><span class="pre">Xoroshiro128</span></code></a> is the
+fastest, followed by <a class="reference internal" href="bit_generators/xorshift1024.html#randomgen.xorshift1024.Xorshift1024" title="randomgen.xorshift1024.Xorshift1024"><code class="xref py py-class docutils literal notranslate"><span class="pre">Xorshift1024</span></code></a> and
+<a class="reference internal" href="bit_generators/pcg64.html#randomgen.pcg64.PCG64" title="randomgen.pcg64.PCG64"><code class="xref py py-class docutils literal notranslate"><span class="pre">PCG64</span></code></a>. The original <a class="reference internal" href="bit_generators/mt19937.html#randomgen.mt19937.MT19937" title="randomgen.mt19937.MT19937"><code class="xref py py-class docutils literal notranslate"><span class="pre">MT19937</span></code></a>
 generator is much slower since it requires 2 32-bit values to equal the output
 of the faster generators.</p>
 <p>Integer performance has a similar ordering although <cite>dSFMT</cite> is slower since
@@ -431,7 +431,7 @@ percentage. The overall performance was computed using a geometric mean.</p>
         <li class="right" >
           <a href="new-or-different.html" title="What’s New or Different"
              >previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="index.html">RandomGen v1.16.6 documentation</a> &#187;</li> 
+        <li class="nav-item nav-item-0"><a href="index.html">RandomGen v1.17.0.dev0 documentation</a> &#187;</li> 
       </ul>
     </div>
 <script type="text/javascript">

@@ -1,6 +1,0 @@
-randomgen.generator.RandomGenerator.multivariate\_normal
-========================================================
-
-.. currentmodule:: randomgen.generator
-
-.. automethod:: RandomGenerator.multivariate_normal

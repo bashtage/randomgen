@@ -47,16 +47,16 @@ to produce independent streams.
 Jump/Advance the PRNG state
 ---------------------------
 
-Jump
-****
+Jumped
+******
 
-``jump`` advances the state of the PRNG *as-if* a large number of random
-numbers have been drawn.  The specific number of draws varies by PRNG, and
-ranges from :math:`2^{64}` to :math:`2^{512}`.  Additionally, the *as-if*
-draws also depend on the size of the default random number produced by the
-specific PRNG.  The PRNGs that support ``jump``, along with the period of
-the PRNG, the size of the jump and the bits in the default unsigned random
-are listed below.
+``jumped`` advances the state of the PRNG *as-if* a large number of random
+numbers have been drawn, and returns a new instance with this state.  The
+specific number of draws varies by PRNG, and ranges from :math:`2^{64}` to
+:math:`2^{512}`.  Additionally, the *as-if* draws also depend on the size of
+the default random number produced by the specific PRNG.  The PRNGs that
+support ``jumped``, along with the period of the PRNG, the size of the jump
+and the bits in the default unsigned random are listed below.
 
 +-----------------+-------------------------+-------------------------+-------------------------+
 | PRNG            | Period                  |  Jump Size              | Bits                    |
@@ -76,7 +76,7 @@ are listed below.
 | Xorshift1024    | :math:`2^{1024}`        | :math:`2^{512}`         | 64                      |
 +-----------------+-------------------------+-------------------------+-------------------------+
 
-``jump`` can be used to produce long blocks which should be long enough to not
+``jumped`` can be used to produce long blocks which should be long enough to not
 overlap.
 
 .. code-block:: python
@@ -88,10 +88,10 @@ overlap.
   # 64-bit number as a seed
   seed = entropy[0] * 2**32 + entropy[1]
   blocked_rng = []
+  last_rng = rng = Xorshift1024(seed)
   for i in range(10):
-      rng = Xorshift1024(seed)
-      rng.jump(i)
-      blocked_rng.append(rng)
+      blocked_rng.append(last_rng)
+      last_rng = last_rng.jumped()
 
 
 Advance
@@ -125,17 +125,17 @@ generator 2 ** 127 steps to set a sequence of random number generators.
 .. code-block:: python
 
    from randomgen import PCG64
-   brng = PCG64()
-   brng_copy = PCG64()
-   brng_copy.state = brng.state
+   bitgen = PCG64()
+   bitgen_copy = PCG64()
+   bitgen_copy.state = bitgen.state
 
    advance = 2**127
-   brngs = [brng]
+   bitgens = [bitgen]
    for _ in range(9):
-       brng_copy.advance(advance)
-       brng = PCG64()
-       brng.state = brng_copy.state
-       brngs.append(brng)
+       bitgen_copy.advance(advance)
+       bitgen = PCG64()
+       bitgen.state = bitgen_copy.state
+       bitgens.append(bitgen)
 
 .. end block
 
