@@ -1,0 +1,329 @@
+
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta charset="utf-8" />
+  
+  <!-- Licensed under the Apache 2.0 License -->
+  <link rel="stylesheet" type="text/css" href="../_static/fonts/open-sans/stylesheet.css" />
+  <!-- Licensed under the SIL Open Font License -->
+  <link rel="stylesheet" type="text/css" href="../_static/fonts/source-serif-pro/source-serif-pro.css" />
+  <link rel="stylesheet" type="text/css" href="../_static/css/bootstrap.min.css" />
+  <link rel="stylesheet" type="text/css" href="../_static/css/bootstrap-theme.min.css" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+    <title>Xoroshiro128+ &#8212; RandomGen v1.17.0.dev0 documentation</title>
+    <link rel="stylesheet" href="../_static/guzzle.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/language_data.js"></script>
+    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="randomgen.xoroshiro128.Xoroshiro128.seed" href="generated/randomgen.xoroshiro128.Xoroshiro128.seed.html" />
+    <link rel="prev" title="randomgen.threefry.ThreeFry.random_raw" href="generated/randomgen.threefry.ThreeFry.random_raw.html" />
+  
+   
+
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="generated/randomgen.xoroshiro128.Xoroshiro128.seed.html" title="randomgen.xoroshiro128.Xoroshiro128.seed"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="generated/randomgen.threefry.ThreeFry.random_raw.html" title="randomgen.threefry.ThreeFry.random_raw"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">RandomGen v1.17.0.dev0 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="index.html" accesskey="U">Bit Generators</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="container-wrapper">
+
+      <div id="mobile-toggle">
+        <a href="#"><span class="glyphicon glyphicon-align-justify" aria-hidden="true"></span></a>
+      </div>
+  <div id="left-column">
+    <div class="sphinxsidebar"><a href="
+    ../index.html" class="text-logo">RandomGen v1.17.0.dev0</a>
+<div class="sidebar-block">
+  <div class="sidebar-wrapper">
+    <h2>Table Of Contents</h2>
+  </div>
+  <div class="sidebar-toc">
+    
+    
+      <ul>
+<li class="toctree-l1"><a class="reference internal" href="../generator.html">Random Generation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../legacy.html">Legacy Random Generation</a></li>
+</ul>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">Bit Generators</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="index.html#stable-rngs">Stable RNGs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="index.html#experimental-rngs">Experimental RNGs</a></li>
+</ul>
+</li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../parallel.html">Parallel Applications</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../multithreading.html">Multithreaded Generation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../new-or-different.html">What’s New or Different</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../performance.html">Comparing Performance</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../extending.html">Extending</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../entropy.html">Reading System Entropy</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../references.html">References</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../change-log.html">Change Log</a></li>
+</ul>
+
+    
+  </div>
+</div>
+<div class="sidebar-block">
+  <div class="sidebar-wrapper">
+    <div id="main-search">
+      <form class="form-inline" action="../search.html" method="GET" role="form">
+        <div class="input-group">
+          <input name="q" type="text" class="form-control" placeholder="Search...">
+        </div>
+        <input type="hidden" name="check_keywords" value="yes" />
+        <input type="hidden" name="area" value="default" />
+      </form>
+    </div>
+  </div>
+</div>
+      
+    </div>
+  </div>
+        <div id="right-column">
+          
+          <div role="navigation" aria-label="breadcrumbs navigation">
+            <ol class="breadcrumb">
+              <li><a href="../index.html">Docs</a></li>
+              
+                <li><a href="index.html">Bit Generators</a></li>
+              
+              <li>Xoroshiro128+</li>
+            </ol>
+          </div>
+          
+          <div class="document clearer body">
+            
+  <div class="section" id="module-randomgen.xoroshiro128">
+<span id="xoroshiro128"></span><h1>Xoroshiro128+<a class="headerlink" href="#module-randomgen.xoroshiro128" title="Permalink to this headline">¶</a></h1>
+<dl class="class">
+<dt id="randomgen.xoroshiro128.Xoroshiro128">
+<em class="property">class </em><code class="sig-prename descclassname">randomgen.xoroshiro128.</code><code class="sig-name descname">Xoroshiro128</code><span class="sig-paren">(</span><em class="sig-param">seed=None</em><span class="sig-paren">)</span><a class="headerlink" href="#randomgen.xoroshiro128.Xoroshiro128" title="Permalink to this definition">¶</a></dt>
+<dd><p>Container for the xoroshiro128+ pseudo-random number generator.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>seed</strong> (<em>{None</em><em>, </em><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a><em>, </em><em>array_like}</em><em>, </em><em>optional</em>) – Random seed initializing the pseudo-random number generator.
+Can be an integer in [0, 2**64-1], array of integers in [0, 2**64-1]
+or <code class="docutils literal notranslate"><span class="pre">None</span></code> (the default). If <cite>seed</cite> is <code class="docutils literal notranslate"><span class="pre">None</span></code>, then  data is read
+from <code class="docutils literal notranslate"><span class="pre">/dev/urandom</span></code> (or the Windows analog) if available.  If
+unavailable, a hash of the time and process ID is used.</p>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<p>xoroshiro128+ is the successor to xorshift128+ written by David Blackman
+and Sebastiano Vigna.  It is a 64-bit PRNG that uses a carefully
+handcrafted shift/rotate-based linear transformation.  This change both
+improves speed and statistical quality of the PRNG <a class="footnote-reference brackets" href="#id2" id="id1">1</a>. xoroshiro128+ has
+a period of <span class="math notranslate nohighlight">\(2^{128} - 1\)</span> and supports jumping the sequence in
+increments of <span class="math notranslate nohighlight">\(2^{64}\)</span>, which allows  multiple non-overlapping
+sequences to be generated.</p>
+<p><code class="docutils literal notranslate"><span class="pre">Xoroshiro128</span></code> provides a capsule containing function pointers that produce
+doubles, and unsigned 32 and 64- bit integers. These are not
+directly consumable in Python and must be consumed by a <code class="docutils literal notranslate"><span class="pre">Generator</span></code>
+or similar object that supports low-level access.</p>
+<p>See <code class="docutils literal notranslate"><span class="pre">Xorshift1024</span></code> for a related PRNG with a larger
+period  (<span class="math notranslate nohighlight">\(2^{1024} - 1\)</span>) and jump size (<span class="math notranslate nohighlight">\(2^{512} - 1\)</span>).</p>
+<p><strong>State and Seeding</strong></p>
+<p>The <code class="docutils literal notranslate"><span class="pre">Xoroshiro128</span></code> state vector consists of a 2-element array of 64-bit
+unsigned integers.</p>
+<p><code class="docutils literal notranslate"><span class="pre">Xoroshiro128</span></code> is seeded using either a single 64-bit unsigned integer
+or a vector of 64-bit unsigned integers.  In either case, the seed is
+used as an input for another simple random number generator,
+SplitMix64, and the output of this PRNG function is used as the initial state.
+Using a single 64-bit value for the seed can only initialize a small range of
+the possible initial state values.</p>
+<p><strong>Parallel Features</strong></p>
+<p><code class="docutils literal notranslate"><span class="pre">Xoroshiro128</span></code> can be used in parallel applications by calling the method
+<code class="docutils literal notranslate"><span class="pre">jump</span></code> which advances the state as-if <span class="math notranslate nohighlight">\(2^{64}\)</span> random numbers
+have been generated. This allows the original sequence to be split
+so that distinct segments can be used in each worker process. All
+generators should be initialized with the same seed to ensure that
+the segments come from the same sequence.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">randomgen</span> <span class="k">import</span> <span class="n">Generator</span><span class="p">,</span> <span class="n">Xoroshiro128</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">rg</span> <span class="o">=</span> <span class="p">[</span><span class="n">Generator</span><span class="p">(</span><span class="n">Xoroshiro128</span><span class="p">(</span><span class="mi">1234</span><span class="p">))</span> <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">10</span><span class="p">)]</span>
+<span class="go"># Advance each Xoroshiro128 instance by i jumps</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">10</span><span class="p">):</span>
+<span class="gp">... </span>    <span class="n">rg</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">bit_generator</span><span class="o">.</span><span class="n">jump</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
+</pre></div>
+</div>
+<p><strong>Compatibility Guarantee</strong></p>
+<p><code class="docutils literal notranslate"><span class="pre">Xoroshiro128</span></code> makes a guarantee that a fixed seed will always
+produce the same random integer stream.</p>
+<p class="rubric">Examples</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">randomgen</span> <span class="k">import</span> <span class="n">Generator</span><span class="p">,</span> <span class="n">Xoroshiro128</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">rg</span> <span class="o">=</span> <span class="n">Generator</span><span class="p">(</span><span class="n">Xoroshiro128</span><span class="p">(</span><span class="mi">1234</span><span class="p">))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">rg</span><span class="o">.</span><span class="n">standard_normal</span><span class="p">()</span>
+<span class="go">0.123  # random</span>
+</pre></div>
+</div>
+<p>Identical method using only Xoroshiro128</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">rg</span> <span class="o">=</span> <span class="n">Xoroshiro128</span><span class="p">(</span><span class="mi">1234</span><span class="p">)</span><span class="o">.</span><span class="n">generator</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">rg</span><span class="o">.</span><span class="n">standard_normal</span><span class="p">()</span>
+<span class="go">0.123  # random</span>
+</pre></div>
+</div>
+<p class="rubric">References</p>
+<dl class="footnote brackets">
+<dt class="label" id="id2"><span class="brackets"><a class="fn-backref" href="#id1">1</a></span></dt>
+<dd><p>“xoroshiro+ / xorshift* / xorshift+ generators and the PRNG shootout”,
+<a class="reference external" href="http://xorshift.di.unimi.it/">http://xorshift.di.unimi.it/</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<div class="section" id="seeding-and-state">
+<h2>Seeding and State<a class="headerlink" href="#seeding-and-state" title="Permalink to this headline">¶</a></h2>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="generated/randomgen.xoroshiro128.Xoroshiro128.seed.html#randomgen.xoroshiro128.Xoroshiro128.seed" title="randomgen.xoroshiro128.Xoroshiro128.seed"><code class="xref py py-obj docutils literal notranslate"><span class="pre">seed</span></code></a>([seed])</p></td>
+<td><p>Seed the generator.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="generated/randomgen.xoroshiro128.Xoroshiro128.state.html#randomgen.xoroshiro128.Xoroshiro128.state" title="randomgen.xoroshiro128.Xoroshiro128.state"><code class="xref py py-obj docutils literal notranslate"><span class="pre">state</span></code></a></p></td>
+<td><p>Get or set the PRNG state</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="parallel-generation">
+<h2>Parallel generation<a class="headerlink" href="#parallel-generation" title="Permalink to this headline">¶</a></h2>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="generated/randomgen.xoroshiro128.Xoroshiro128.jump.html#randomgen.xoroshiro128.Xoroshiro128.jump" title="randomgen.xoroshiro128.Xoroshiro128.jump"><code class="xref py py-obj docutils literal notranslate"><span class="pre">jump</span></code></a>([iter])</p></td>
+<td><p>Jumps the state as-if 2**64 random numbers have been generated.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="generated/randomgen.xoroshiro128.Xoroshiro128.jumped.html#randomgen.xoroshiro128.Xoroshiro128.jumped" title="randomgen.xoroshiro128.Xoroshiro128.jumped"><code class="xref py py-obj docutils literal notranslate"><span class="pre">jumped</span></code></a>([iter])</p></td>
+<td><p>Returns a new bit generator with the state jumped</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="random-generator">
+<h2>Random Generator<a class="headerlink" href="#random-generator" title="Permalink to this headline">¶</a></h2>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="generated/randomgen.xoroshiro128.Xoroshiro128.generator.html#randomgen.xoroshiro128.Xoroshiro128.generator" title="randomgen.xoroshiro128.Xoroshiro128.generator"><code class="xref py py-obj docutils literal notranslate"><span class="pre">generator</span></code></a></p></td>
+<td><p>Removed, raises NotImplementedError</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="extending">
+<h2>Extending<a class="headerlink" href="#extending" title="Permalink to this headline">¶</a></h2>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="generated/randomgen.xoroshiro128.Xoroshiro128.cffi.html#randomgen.xoroshiro128.Xoroshiro128.cffi" title="randomgen.xoroshiro128.Xoroshiro128.cffi"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cffi</span></code></a></p></td>
+<td><p>CFFI interface</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="generated/randomgen.xoroshiro128.Xoroshiro128.ctypes.html#randomgen.xoroshiro128.Xoroshiro128.ctypes" title="randomgen.xoroshiro128.Xoroshiro128.ctypes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ctypes</span></code></a></p></td>
+<td><p>ctypes interface</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="testing">
+<h2>Testing<a class="headerlink" href="#testing" title="Permalink to this headline">¶</a></h2>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="generated/randomgen.xoroshiro128.Xoroshiro128.random_raw.html#randomgen.xoroshiro128.Xoroshiro128.random_raw" title="randomgen.xoroshiro128.Xoroshiro128.random_raw"><code class="xref py py-obj docutils literal notranslate"><span class="pre">random_raw</span></code></a>(self[, size])</p></td>
+<td><p>Return randoms as generated by the underlying BitGenerator</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+
+
+          </div>
+            
+  <div class="footer-relations">
+    
+      <div class="pull-left">
+        <a class="btn btn-default" href="generated/randomgen.threefry.ThreeFry.random_raw.html" title="previous chapter (use the left arrow)">randomgen.threefry.ThreeFry.random_raw</a>
+      </div>
+    
+      <div class="pull-right">
+        <a class="btn btn-default" href="generated/randomgen.xoroshiro128.Xoroshiro128.seed.html" title="next chapter (use the right arrow)">randomgen.xoroshiro128.Xoroshiro128.seed</a>
+      </div>
+    </div>
+    <div class="clearer"></div>
+  
+        </div>
+        <div class="clearfix"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="generated/randomgen.xoroshiro128.Xoroshiro128.seed.html" title="randomgen.xoroshiro128.Xoroshiro128.seed"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="generated/randomgen.threefry.ThreeFry.random_raw.html" title="randomgen.threefry.ThreeFry.random_raw"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">RandomGen v1.17.0.dev0 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="index.html" >Bit Generators</a> &#187;</li> 
+      </ul>
+    </div>
+<script type="text/javascript">
+  $("#mobile-toggle a").click(function () {
+    $("#left-column").toggle();
+  });
+</script>
+<script type="text/javascript" src="../_static/js/bootstrap.js"></script>
+  <div class="footer">
+    &copy; Copyright 2018, Kevin Sheppard. Created using <a href="http://sphinx.pocoo.org/">Sphinx</a>.
+  </div>
+  </body>
+</html>

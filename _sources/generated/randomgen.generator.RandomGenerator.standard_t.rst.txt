@@ -1,6 +1,0 @@
-randomgen.generator.RandomGenerator.standard\_t
-===============================================
-
-.. currentmodule:: randomgen.generator
-
-.. automethod:: RandomGenerator.standard_t

@@ -1,0 +1,6 @@
+randomgen.generator.Generator.binomial
+======================================
+
+.. currentmodule:: randomgen.generator
+
+.. automethod:: Generator.binomial

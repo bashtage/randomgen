@@ -1,0 +1,6 @@
+randomgen.xorshift1024.Xorshift1024.jumped
+==========================================
+
+.. currentmodule:: randomgen.xorshift1024
+
+.. automethod:: Xorshift1024.jumped

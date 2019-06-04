@@ -1,6 +1,0 @@
-randomgen.generator.RandomGenerator.geometric
-=============================================
-
-.. currentmodule:: randomgen.generator
-
-.. automethod:: RandomGenerator.geometric

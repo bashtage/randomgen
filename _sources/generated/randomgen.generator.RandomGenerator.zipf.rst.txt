@@ -1,6 +1,0 @@
-randomgen.generator.RandomGenerator.zipf
-========================================
-
-.. currentmodule:: randomgen.generator
-
-.. automethod:: RandomGenerator.zipf

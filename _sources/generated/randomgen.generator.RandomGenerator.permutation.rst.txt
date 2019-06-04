@@ -1,6 +1,0 @@
-randomgen.generator.RandomGenerator.permutation
-===============================================
-
-.. currentmodule:: randomgen.generator
-
-.. automethod:: RandomGenerator.permutation

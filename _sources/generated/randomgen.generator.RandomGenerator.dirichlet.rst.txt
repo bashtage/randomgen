@@ -1,6 +1,0 @@
-randomgen.generator.RandomGenerator.dirichlet
-=============================================
-
-.. currentmodule:: randomgen.generator
-
-.. automethod:: RandomGenerator.dirichlet

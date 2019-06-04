@@ -1,0 +1,6 @@
+randomgen.pcg32.PCG32.jumped
+============================
+
+.. currentmodule:: randomgen.pcg32
+
+.. automethod:: PCG32.jumped

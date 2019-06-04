@@ -1,0 +1,6 @@
+randomgen.threefry.ThreeFry.jumped
+==================================
+
+.. currentmodule:: randomgen.threefry
+
+.. automethod:: ThreeFry.jumped
