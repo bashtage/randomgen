@@ -6,20 +6,20 @@ from randomgen.mtrand import RandomState
 from randomgen.pcg32 import PCG32
 from randomgen.pcg64 import PCG64
 from randomgen.philox import Philox
+from randomgen.sfmt import SFMT
 from randomgen.threefry import ThreeFry
 from randomgen.threefry32 import ThreeFry32
 from randomgen.xoroshiro128 import Xoroshiro128
 from randomgen.xorshift1024 import Xorshift1024
 from randomgen.xoshiro256 import Xoshiro256
 from randomgen.xoshiro512 import Xoshiro512
-from randomgen.sfmt import SFMT
 
+from randomgen.rdrand import RDRAND
 from ._version import get_versions
 
-__all__ = ['Generator', 'DSFMT', 'MT19937', 'PCG64', 'PCG32', 'Philox',
-           'ThreeFry', 'ThreeFry32', 'Xoroshiro128', 'Xorshift1024',
-           'Xoshiro256', 'Xoshiro512', 'RandomState', 'SFMT']
-
+__all__ = ['DSFMT', 'Generator', 'MT19937', 'MT64', 'PCG32', 'PCG64', 'Philox',
+           'RDRAND', 'RandomState', 'SFMT', 'ThreeFry', 'ThreeFry32',
+           'Xoroshiro128', 'Xorshift1024', 'Xoshiro256', 'Xoshiro512']
 
 __version__ = get_versions()['version']
 del get_versions

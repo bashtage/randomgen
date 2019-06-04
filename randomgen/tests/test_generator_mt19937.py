@@ -216,7 +216,8 @@ class TestIntegers(object):
             assert_equal(self.rfunc(tgt, tgt + is_open, size=1000,
                                     endpoint=endpoint, dtype=dt), tgt)
             assert_equal(self.rfunc([tgt], [tgt + is_open],
-                                    size=1000, endpoint=endpoint, dtype=dt), tgt)
+                                    size=1000, endpoint=endpoint, dtype=dt),
+                         tgt)
 
     def test_rng_zero_and_extremes_array(self, endpoint):
         size = 1000
