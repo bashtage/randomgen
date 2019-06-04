@@ -1081,6 +1081,7 @@ class TestSFMT(RNG):
         cls._extra_setup()
         cls.seed_vector_bits = 32
 
+
 class TestThreeFry32(RNG):
     @classmethod
     def setup_class(cls):

@@ -95,7 +95,7 @@ if USE_SSE2:
         if struct.calcsize('P') < 8:
             EXTRA_COMPILE_ARGS += ['/arch:SSE2']
     else:
-        EXTRA_COMPILE_ARGS += ['-msse2']
+        EXTRA_COMPILE_ARGS += ['-msse2', '-mrdrnd']
     DSFMT_DEFS += [('HAVE_SSE2', '1')]
     SFMT_DEFS += [('HAVE_SSE2', '1')]
 
@@ -274,6 +274,19 @@ extensions = [Extension('randomgen.entropy',
                                                            join(
                                                                MOD_DIR, 'src',
                                                                'xoshiro512')],
+                        libraries=EXTRA_LIBRARIES,
+                        extra_compile_args=EXTRA_COMPILE_ARGS,
+                        extra_link_args=EXTRA_LINK_ARGS,
+                        define_macros=DEFS
+                        ),
+              Extension("randomgen.rdrand",
+                        ["randomgen/rdrand.pyx",
+                         join(MOD_DIR, 'src', 'rdrand',
+                              'rdrand.c')],
+                        include_dirs=EXTRA_INCLUDE_DIRS + [np.get_include(),
+                                                           join(
+                                                               MOD_DIR, 'src',
+                                                               'rdrand')],
                         libraries=EXTRA_LIBRARIES,
                         extra_compile_args=EXTRA_COMPILE_ARGS,
                         extra_link_args=EXTRA_LINK_ARGS,

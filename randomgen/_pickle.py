@@ -13,6 +13,7 @@ from randomgen.sfmt import SFMT
 from randomgen.mt64 import MT64
 from randomgen.xoshiro256 import Xoshiro256
 from randomgen.xoshiro512 import Xoshiro512
+from randomgen.rdrand import RDRAND
 
 BitGenerators = {'MT19937': MT19937,
                  'MT64': MT64,
@@ -27,6 +28,7 @@ BitGenerators = {'MT19937': MT19937,
                  'Xoshiro256': Xoshiro256,
                  'Xoshiro512': Xoshiro512,
                  'SFMT': SFMT,
+                 'RDRAND': RDRAND
                  }
 
 

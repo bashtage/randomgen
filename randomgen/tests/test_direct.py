@@ -9,8 +9,16 @@ from numpy.testing import (assert_allclose, assert_array_equal, assert_equal,
 
 from randomgen import (DSFMT, MT19937, PCG32, PCG64, Generator, Philox,
                        RandomState, ThreeFry, ThreeFry32, Xoroshiro128,
-                       Xorshift1024, Xoshiro256, Xoshiro512, MT64, SFMT)
+                       Xorshift1024, Xoshiro256, Xoshiro512, MT64, SFMT,
+                       RDRAND)
 from randomgen.common import interface
+
+MISSING_RDRAND = False
+try:
+    RDRAND()
+except RuntimeError:
+    MISSING_RDRAND = True
+
 
 try:
     import cffi  # noqa: F401
@@ -488,7 +496,6 @@ class TestPhilox(Base):
         assert_state_equal(bit_generator.state, keyed.state)
 
 
-
 class TestMT19937(Base):
 
     @classmethod
@@ -721,3 +728,62 @@ class TestMT64(Base):
         assert_raises(ValueError, bit_generator.seed, np.array([0, np.pi]))
         assert_raises(ValueError, bit_generator.seed, [np.pi])
         assert_raises(ValueError, bit_generator.seed, [0, np.pi])
+
+
+@pytest.mark.skipif(MISSING_RDRAND, reason='RDRAND is not availble')
+class TestRDRAND(Base):
+    @classmethod
+    def setup_class(cls):
+        cls.bit_generator = RDRAND
+        cls.bits = 64
+        cls.dtype = np.uint64
+        cls.seed_error_type = TypeError
+        cls.data1 = {'seed': [None]}
+        cls.invalid_seed_types = [1, np.array([1])]
+        cls.invalid_seed_values = []
+
+    def test_raw(self):
+        bit_generator = self.bit_generator()
+        raw = bit_generator.random_raw(1000)
+        assert (raw.max() - raw.min()) > 0
+
+    def test_gauss_inv(self):
+        n = 25
+        rs = RandomState(self.bit_generator(*self.data1['seed']))
+        gauss = rs.standard_normal(n)
+        assert (gauss.max() - gauss.min()) > 0
+
+    def test_uniform_double(self):
+        rs = Generator(self.bit_generator(*self.data1['seed']))
+        uniforms = rs.random(1000)
+        assert_equal(uniforms.dtype, np.float64)
+
+    def test_uniform_float(self):
+        rs = Generator(self.bit_generator(*self.data1['seed']))
+        uniforms = rs.random(1000, dtype=np.float32)
+        assert_equal(uniforms.dtype, np.float32)
+
+    @pytest.mark.skip('Bit generator is missing generator attr')
+    def test_generator(self):
+        pass
+
+    def test_pickle(self):
+        import pickle
+
+        bit_generator = self.bit_generator(*self.data1['seed'])
+        bit_generator_pkl = pickle.dumps(bit_generator)
+        reloaded = pickle.loads(bit_generator_pkl)
+        assert bit_generator is not reloaded
+        assert_state_equal(reloaded.state, bit_generator.state)
+
+    @pytest.mark.skip('RDRAND seed accepts only None')
+    def test_seed_out_of_range_array(self):
+        pass
+
+    @pytest.mark.skip('RDRAND seed accepts only None')
+    def test_seed_out_of_range(self):
+        pass
+
+    @pytest.mark.skip('RDRAND seed accepts only None')
+    def test_seed_float_array(self):
+        pass
