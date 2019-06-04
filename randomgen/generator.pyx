@@ -712,7 +712,8 @@ cdef class RandomGenerator:
                 if np.issubdtype(p.dtype, np.floating):
                     atol = max(atol, np.sqrt(np.finfo(p.dtype).eps))
 
-            p = <np.ndarray>np.PyArray_FROM_OTF(p, np.NPY_DOUBLE, np.NPY_ALIGNED)
+            p = <np.ndarray>np.PyArray_FROM_OTF(p, np.NPY_DOUBLE, np.NPY_ALIGNED | np.NPY_C_CONTIGUOUS)
+            check_array_constraint(p, 'p', CONS_BOUNDED_0_1)
             pix = <double*>np.PyArray_DATA(p)
 
             if p.ndim != 1:
@@ -720,10 +721,6 @@ cdef class RandomGenerator:
             if p.size != pop_size:
                 raise ValueError("'a' and 'p' must have same size")
             p_sum = kahan_sum(pix, d)
-            if np.isnan(p_sum):
-                raise ValueError("probabilities contain NaN")
-            if np.logical_or.reduce(p < 0):
-                raise ValueError("probabilities are not non-negative")
             if abs(p_sum - 1.) > atol:
                 raise ValueError("probabilities do not sum to 1")
 
@@ -3852,9 +3849,9 @@ cdef class RandomGenerator:
 
         d = len(pvals)
         on = <np.ndarray>np.PyArray_FROM_OTF(n, np.NPY_INT64, np.NPY_ALIGNED)
-        parr = <np.ndarray>np.PyArray_FROM_OTF(pvals, np.NPY_DOUBLE, np.NPY_ALIGNED)
-        pix = <double*>np.PyArray_DATA(parr)
+        parr = <np.ndarray>np.PyArray_FROM_OTF(pvals, np.NPY_DOUBLE, np.NPY_ALIGNED | np.NPY_C_CONTIGUOUS)
         check_array_constraint(parr, 'pvals', CONS_BOUNDED_0_1)
+        pix = <double*>np.PyArray_DATA(parr)
         if kahan_sum(pix, d-1) > (1.0 + 1e-12):
             raise ValueError("sum(pvals[:-1]) > 1.0")
 
@@ -4006,7 +4003,7 @@ cdef class RandomGenerator:
         cdef double acc, invacc
 
         k = len(alpha)
-        alpha_arr = <np.ndarray>np.PyArray_FROM_OTF(alpha, np.NPY_DOUBLE, np.NPY_ALIGNED)
+        alpha_arr = <np.ndarray>np.PyArray_FROM_OTF(alpha, np.NPY_DOUBLE, np.NPY_ALIGNED | np.NPY_C_CONTIGUOUS)
         if np.any(np.less_equal(alpha_arr, 0)):
             raise ValueError('alpha <= 0')
         alpha_data = <double*>np.PyArray_DATA(alpha_arr)
