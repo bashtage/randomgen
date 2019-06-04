@@ -26,10 +26,24 @@ v1.17.0
   * Rename :meth:`~randomgen.generator.Generator.random_sample`
     to :meth:`~randomgen.generator.Generator.random`.
   * Change ``jump`` which operated in-place to
-    :meth:`~randomgen.xoshiro256starstar.Xoshiro256StarStar.jumped` which
+    :meth:`~randomgen.xoshiro256.Xoshiro256.jumped` which
     returns a new ``BitGenerator``.
   * Rename Basic RNG to bit generator, which has been consistently applied
     across the docs and references
+- Add the integer-based SIMD-based Fast Mersenne Twister (SFMT) generator
+  :class:`~randomgen.sfmt.SFMT`.
+- Add the 64-bit Mersenne Twister (MT64) generator :class:`~randomgen.mt64.MT64`.
+- Renamed `Xoshiro256StarStar` to :class:`~randomgen.xoshiro256.Xoshiro256`
+  and `Xoshiro512StarStar` to :class:`~randomgen.xoshiro512.Xoshiro512`
+
+v1.16.6
+=======
+- Changed the default jump step size to phi times the period of the generator for
+  :class:`~randomgen.pcg32.PCG32` and :class:`~randomgen.pcg64.PCG64`.
+- Improved the performance of :class:`~randomgen.pcg64.PCG64` on Windows.
+- Improved performance of :func:`~randomgen.dsfmt.DSFMT.jump` and
+  :func:`~randomgen.dsfmt.DSFMT.jumped`.
+- Improves backward compatability of :class:`~randomgen.mtrand.RandomState`
 
 
 v1.16.5
@@ -96,7 +110,7 @@ v1.16.0
   :func:`~randomgen.dsfmt.DSFMT.jump` or :func:`~randomgen.dsfmt.DSFMT.seed`
   that failed to reset the buffer.  This resulted in upto 381 values from the
   previous state being used before the buffer was refilled at the new state.
-- Fixed bugs in :class:`~randomgen.xoshiro512starstar.Xoshiro512StarStar`
+- Fixed bugs in :class:`~randomgen.xoshiro512.Xoshiro512`
   and :class:`~randomgen.xorshift1024.Xorshift1024` where the fallback
   entropy initialization used too few bytes. This bug is unlikely to be
   encountered since this path is only encountered if the system random

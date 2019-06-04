@@ -1,6 +1,0 @@
-randomgen.xoshiro512starstar.Xoshiro512StarStar.random\_raw
-===========================================================
-
-.. currentmodule:: randomgen.xoshiro512starstar
-
-.. automethod:: Xoshiro512StarStar.random_raw

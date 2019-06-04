@@ -1,6 +1,0 @@
-randomgen.xoshiro512starstar.Xoshiro512StarStar.jumped
-======================================================
-
-.. currentmodule:: randomgen.xoshiro512starstar
-
-.. automethod:: Xoshiro512StarStar.jumped

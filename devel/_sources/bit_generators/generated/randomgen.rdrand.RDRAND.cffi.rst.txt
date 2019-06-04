@@ -1,0 +1,6 @@
+randomgen.rdrand.RDRAND.cffi
+============================
+
+.. currentmodule:: randomgen.rdrand
+
+.. autoattribute:: RDRAND.cffi

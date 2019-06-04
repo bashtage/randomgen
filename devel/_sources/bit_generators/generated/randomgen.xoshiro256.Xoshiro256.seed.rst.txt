@@ -1,0 +1,6 @@
+randomgen.xoshiro256.Xoshiro256.seed
+====================================
+
+.. currentmodule:: randomgen.xoshiro256
+
+.. automethod:: Xoshiro256.seed

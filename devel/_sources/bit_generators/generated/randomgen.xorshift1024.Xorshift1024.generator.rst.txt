@@ -1,6 +1,0 @@
-randomgen.xorshift1024.Xorshift1024.generator
-=============================================
-
-.. currentmodule:: randomgen.xorshift1024
-
-.. autoattribute:: Xorshift1024.generator

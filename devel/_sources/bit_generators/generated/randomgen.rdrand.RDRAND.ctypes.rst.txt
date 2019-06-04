@@ -1,0 +1,6 @@
+randomgen.rdrand.RDRAND.ctypes
+==============================
+
+.. currentmodule:: randomgen.rdrand
+
+.. autoattribute:: RDRAND.ctypes

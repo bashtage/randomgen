@@ -1,11 +1,11 @@
 Random Generator
 ----------------
 The :class:`~randomgen.generator.Generator` provides access to
-a wide range of distributions, and served as a replacement for 
-:class:`~numpy.random.RandomState`.  The main difference between 
+a wide range of distributions, and served as a replacement for
+:class:`~numpy.random.RandomState`.  The main difference between
 the two is that :class:`~randomgen.generator.Generator` relies
 on an additional bit generator to manage state and generate the random
-bits which are then transformed into random values from useful 
+bits which are then transformed into random values from useful
 distributions. The default bit generator used by
 :class:`~randomgen.generator.Generator` is
 :class:`~randomgen.xoroshiro128.Xoroshiro128`.  The bit generator can be

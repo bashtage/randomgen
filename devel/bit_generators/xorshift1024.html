@@ -13,7 +13,7 @@
   <link rel="stylesheet" type="text/css" href="../_static/css/bootstrap-theme.min.css" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-    <title>Xorshift1024*φ &#8212; RandomGen v1.17.0.dev0 documentation</title>
+    <title>Xorshift1024*φ &#8212; RandomGen v1.17.0.dev0+70.gdb8c605 documentation</title>
     <link rel="stylesheet" href="../_static/guzzle.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
@@ -45,7 +45,7 @@
         <li class="right" >
           <a href="generated/randomgen.xoroshiro128.Xoroshiro128.random_raw.html" title="randomgen.xoroshiro128.Xoroshiro128.random_raw"
              accesskey="P">previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../index.html">RandomGen v1.17.0.dev0 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">RandomGen v1.17.0.dev0+70.gdb8c605 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="index.html" accesskey="U">Bit Generators</a> &#187;</li> 
       </ul>
     </div>
@@ -56,7 +56,7 @@
       </div>
   <div id="left-column">
     <div class="sphinxsidebar"><a href="
-    ../index.html" class="text-logo">RandomGen v1.17.0.dev0</a>
+    ../index.html" class="text-logo">RandomGen v1.17.0.dev0 (+70)</a>
 <div class="sidebar-block">
   <div class="sidebar-wrapper">
     <h2>Table Of Contents</h2>
@@ -70,8 +70,8 @@
 </ul>
 <ul class="current">
 <li class="toctree-l1 current"><a class="reference internal" href="index.html">Bit Generators</a><ul class="current">
-<li class="toctree-l2 current"><a class="reference internal" href="index.html#stable-rngs">Stable RNGs</a></li>
-<li class="toctree-l2"><a class="reference internal" href="index.html#experimental-rngs">Experimental RNGs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="index.html#stable-rngs">Stable RNGs</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="index.html#experimental-rngs">Experimental RNGs</a></li>
 </ul>
 </li>
 </ul>
@@ -136,6 +136,20 @@ from <code class="docutils literal notranslate"><span class="pre">/dev/urandom</
 unavailable, a hash of the time and process ID is used.</p>
 </dd>
 </dl>
+<dl class="attribute">
+<dt id="randomgen.xorshift1024.Xorshift1024.lock">
+<code class="sig-name descname">lock</code><a class="headerlink" href="#randomgen.xorshift1024.Xorshift1024.lock" title="Permalink to this definition">¶</a></dt>
+<dd><p>Lock instance that is shared so that the same bit git generator can
+be used in multiple Generators without corrupting the state. Code that
+generates values from a bit generator should hold the bit generator’s
+lock.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/threading.html#threading.Lock" title="(in Python v3.7)">threading.Lock</a></p>
+</dd>
+</dl>
+</dd></dl>
+
 <p class="rubric">Notes</p>
 <p>xorshift1024*φ is a 64-bit implementation of Saito and Matsumoto’s XSadd
 generator <a class="footnote-reference brackets" href="#id5" id="id1">1</a> (see also <a class="footnote-reference brackets" href="#id6" id="id2">2</a>, <a class="footnote-reference brackets" href="#id7" id="id3">3</a>, <a class="footnote-reference brackets" href="#id8" id="id4">4</a>). xorshift1024*φ has a period of
@@ -241,20 +255,6 @@ generators.” CoRR, abs/1403.0930, 2014.</p>
 </tbody>
 </table>
 </div>
-<div class="section" id="random-generator">
-<h2>Random Generator<a class="headerlink" href="#random-generator" title="Permalink to this headline">¶</a></h2>
-<table class="longtable docutils align-default">
-<colgroup>
-<col style="width: 10%" />
-<col style="width: 90%" />
-</colgroup>
-<tbody>
-<tr class="row-odd"><td><p><a class="reference internal" href="generated/randomgen.xorshift1024.Xorshift1024.generator.html#randomgen.xorshift1024.Xorshift1024.generator" title="randomgen.xorshift1024.Xorshift1024.generator"><code class="xref py py-obj docutils literal notranslate"><span class="pre">generator</span></code></a></p></td>
-<td><p>Removed, raises NotImplementedError</p></td>
-</tr>
-</tbody>
-</table>
-</div>
 <div class="section" id="extending">
 <h2>Extending<a class="headerlink" href="#extending" title="Permalink to this headline">¶</a></h2>
 <table class="longtable docutils align-default">
@@ -321,7 +321,7 @@ generators.” CoRR, abs/1403.0930, 2014.</p>
         <li class="right" >
           <a href="generated/randomgen.xoroshiro128.Xoroshiro128.random_raw.html" title="randomgen.xoroshiro128.Xoroshiro128.random_raw"
              >previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../index.html">RandomGen v1.17.0.dev0 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">RandomGen v1.17.0.dev0+70.gdb8c605 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="index.html" >Bit Generators</a> &#187;</li> 
       </ul>
     </div>

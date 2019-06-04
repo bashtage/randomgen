@@ -1,6 +1,0 @@
-randomgen.threefry.ThreeFry.generator
-=====================================
-
-.. currentmodule:: randomgen.threefry
-
-.. autoattribute:: ThreeFry.generator

@@ -1,4 +1,4 @@
-Double SIMD Mersenne Twister (dSFMT) 
+Double SIMD Mersenne Twister (dSFMT)
 ------------------------------------
 
 .. module:: randomgen.dsfmt
@@ -24,13 +24,6 @@ Parallel generation
 
    ~DSFMT.jumped
    ~DSFMT.jump
-
-Random Generator
-================
-.. autosummary::
-   :toctree: generated/
-
-   ~DSFMT.generator
 
 Extending
 =========

@@ -13,7 +13,7 @@
   <link rel="stylesheet" type="text/css" href="../_static/css/bootstrap-theme.min.css" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-    <title>Philox Counter-based RNG &#8212; RandomGen v1.17.0.dev0 documentation</title>
+    <title>Philox Counter-based RNG &#8212; RandomGen v1.17.0.dev0+70.gdb8c605 documentation</title>
     <link rel="stylesheet" href="../_static/guzzle.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
@@ -45,7 +45,7 @@
         <li class="right" >
           <a href="generated/randomgen.pcg64.PCG64.random_raw.html" title="randomgen.pcg64.PCG64.random_raw"
              accesskey="P">previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../index.html">RandomGen v1.17.0.dev0 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">RandomGen v1.17.0.dev0+70.gdb8c605 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="index.html" accesskey="U">Bit Generators</a> &#187;</li> 
       </ul>
     </div>
@@ -56,7 +56,7 @@
       </div>
   <div id="left-column">
     <div class="sphinxsidebar"><a href="
-    ../index.html" class="text-logo">RandomGen v1.17.0.dev0</a>
+    ../index.html" class="text-logo">RandomGen v1.17.0.dev0 (+70)</a>
 <div class="sidebar-block">
   <div class="sidebar-wrapper">
     <h2>Table Of Contents</h2>
@@ -146,6 +146,20 @@ key and seed cannot both be used.</p></li>
 </ul>
 </dd>
 </dl>
+<dl class="attribute">
+<dt id="randomgen.philox.Philox.lock">
+<code class="sig-name descname">lock</code><a class="headerlink" href="#randomgen.philox.Philox.lock" title="Permalink to this definition">¶</a></dt>
+<dd><p>Lock instance that is shared so that the same bit git generator can
+be used in multiple Generators without corrupting the state. Code that
+generates values from a bit generator should hold the bit generator’s
+lock.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/threading.html#threading.Lock" title="(in Python v3.7)">threading.Lock</a></p>
+</dd>
+</dl>
+</dd></dl>
+
 <p class="rubric">Notes</p>
 <p>Philox is a 64-bit PRNG that uses a counter-based design based on
 weaker (and faster) versions of cryptographic functions <a class="footnote-reference brackets" href="#id2" id="id1">1</a>. Instances
@@ -254,20 +268,6 @@ Networking, Storage and Analysis (SC11), New York, NY: ACM, 2011.</p>
 </tbody>
 </table>
 </div>
-<div class="section" id="random-generator">
-<h2>Random Generator<a class="headerlink" href="#random-generator" title="Permalink to this headline">¶</a></h2>
-<table class="longtable docutils align-default">
-<colgroup>
-<col style="width: 10%" />
-<col style="width: 90%" />
-</colgroup>
-<tbody>
-<tr class="row-odd"><td><p><a class="reference internal" href="generated/randomgen.philox.Philox.generator.html#randomgen.philox.Philox.generator" title="randomgen.philox.Philox.generator"><code class="xref py py-obj docutils literal notranslate"><span class="pre">generator</span></code></a></p></td>
-<td><p>Removed, raises NotImplementedError</p></td>
-</tr>
-</tbody>
-</table>
-</div>
 <div class="section" id="extending">
 <h2>Extending<a class="headerlink" href="#extending" title="Permalink to this headline">¶</a></h2>
 <table class="longtable docutils align-default">
@@ -334,7 +334,7 @@ Networking, Storage and Analysis (SC11), New York, NY: ACM, 2011.</p>
         <li class="right" >
           <a href="generated/randomgen.pcg64.PCG64.random_raw.html" title="randomgen.pcg64.PCG64.random_raw"
              >previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../index.html">RandomGen v1.17.0.dev0 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">RandomGen v1.17.0.dev0+70.gdb8c605 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="index.html" >Bit Generators</a> &#187;</li> 
       </ul>
     </div>

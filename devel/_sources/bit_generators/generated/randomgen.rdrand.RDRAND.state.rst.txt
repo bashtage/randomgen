@@ -1,0 +1,6 @@
+randomgen.rdrand.RDRAND.state
+=============================
+
+.. currentmodule:: randomgen.rdrand
+
+.. autoattribute:: RDRAND.state

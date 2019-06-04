@@ -13,7 +13,7 @@
   <link rel="stylesheet" type="text/css" href="../_static/css/bootstrap-theme.min.css" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-    <title>Parallel Congruent Generator (32-bit, PCG32) &#8212; RandomGen v1.17.0.dev0 documentation</title>
+    <title>Parallel Congruent Generator (32-bit, PCG32) &#8212; RandomGen v1.17.0.dev0+70.gdb8c605 documentation</title>
     <link rel="stylesheet" href="../_static/guzzle.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
@@ -25,7 +25,7 @@
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="randomgen.pcg32.PCG32.seed" href="generated/randomgen.pcg32.PCG32.seed.html" />
-    <link rel="prev" title="randomgen.xoshiro512starstar.Xoshiro512StarStar.random_raw" href="generated/randomgen.xoshiro512starstar.Xoshiro512StarStar.random_raw.html" />
+    <link rel="prev" title="randomgen.xorshift1024.Xorshift1024.random_raw" href="generated/randomgen.xorshift1024.Xorshift1024.random_raw.html" />
   
    
 
@@ -43,9 +43,9 @@
           <a href="generated/randomgen.pcg32.PCG32.seed.html" title="randomgen.pcg32.PCG32.seed"
              accesskey="N">next</a> |</li>
         <li class="right" >
-          <a href="generated/randomgen.xoshiro512starstar.Xoshiro512StarStar.random_raw.html" title="randomgen.xoshiro512starstar.Xoshiro512StarStar.random_raw"
+          <a href="generated/randomgen.xorshift1024.Xorshift1024.random_raw.html" title="randomgen.xorshift1024.Xorshift1024.random_raw"
              accesskey="P">previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../index.html">RandomGen v1.17.0.dev0 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">RandomGen v1.17.0.dev0+70.gdb8c605 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="index.html" accesskey="U">Bit Generators</a> &#187;</li> 
       </ul>
     </div>
@@ -56,7 +56,7 @@
       </div>
   <div id="left-column">
     <div class="sphinxsidebar"><a href="
-    ../index.html" class="text-logo">RandomGen v1.17.0.dev0</a>
+    ../index.html" class="text-logo">RandomGen v1.17.0.dev0 (+70)</a>
 <div class="sidebar-block">
   <div class="sidebar-wrapper">
     <h2>Table Of Contents</h2>
@@ -142,6 +142,20 @@ produce multiple streams using other values of inc.</p></li>
 </ul>
 </dd>
 </dl>
+<dl class="attribute">
+<dt id="randomgen.pcg32.PCG32.lock">
+<code class="sig-name descname">lock</code><a class="headerlink" href="#randomgen.pcg32.PCG32.lock" title="Permalink to this definition">¶</a></dt>
+<dd><p>Lock instance that is shared so that the same bit git generator can
+be used in multiple Generators without corrupting the state. Code that
+generates values from a bit generator should hold the bit generator’s
+lock.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/threading.html#threading.Lock" title="(in Python v3.7)">threading.Lock</a></p>
+</dd>
+</dl>
+</dd></dl>
+
 <p class="rubric">Notes</p>
 <p>PCG-32 is a 64-bit implementation of O’Neill’s permutation congruential
 generator (<a class="footnote-reference brackets" href="#id3" id="id1">1</a>, <a class="footnote-reference brackets" href="#id4" id="id2">2</a>). PCG-32 has a period of <span class="math notranslate nohighlight">\(2^{64}\)</span> and supports
@@ -218,24 +232,10 @@ Statistically Good Algorithms for Random Number Generation”</p>
 <td><p>Advance the underlying RNG as-if delta draws have occurred.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="generated/randomgen.pcg32.PCG32.jump.html#randomgen.pcg32.PCG32.jump" title="randomgen.pcg32.PCG32.jump"><code class="xref py py-obj docutils literal notranslate"><span class="pre">jump</span></code></a>([iter])</p></td>
-<td><p>Jumps the state as-if 2**32 random numbers have been generated</p></td>
+<td><p>Jump the state a fixed increment</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="generated/randomgen.pcg32.PCG32.jumped.html#randomgen.pcg32.PCG32.jumped" title="randomgen.pcg32.PCG32.jumped"><code class="xref py py-obj docutils literal notranslate"><span class="pre">jumped</span></code></a>([iter])</p></td>
 <td><p>Returns a new bit generator with the state jumped</p></td>
-</tr>
-</tbody>
-</table>
-</div>
-<div class="section" id="random-generator">
-<h2>Random Generator<a class="headerlink" href="#random-generator" title="Permalink to this headline">¶</a></h2>
-<table class="longtable docutils align-default">
-<colgroup>
-<col style="width: 10%" />
-<col style="width: 90%" />
-</colgroup>
-<tbody>
-<tr class="row-odd"><td><p><a class="reference internal" href="generated/randomgen.pcg32.PCG32.generator.html#randomgen.pcg32.PCG32.generator" title="randomgen.pcg32.PCG32.generator"><code class="xref py py-obj docutils literal notranslate"><span class="pre">generator</span></code></a></p></td>
-<td><p>Removed, raises NotImplementedError</p></td>
 </tr>
 </tbody>
 </table>
@@ -279,7 +279,7 @@ Statistically Good Algorithms for Random Number Generation”</p>
   <div class="footer-relations">
     
       <div class="pull-left">
-        <a class="btn btn-default" href="generated/randomgen.xoshiro512starstar.Xoshiro512StarStar.random_raw.html" title="previous chapter (use the left arrow)">randomgen.xoshiro512starstar.Xoshiro512StarStar.random_raw</a>
+        <a class="btn btn-default" href="generated/randomgen.xorshift1024.Xorshift1024.random_raw.html" title="previous chapter (use the left arrow)">randomgen.xorshift1024.Xorshift1024.random_raw</a>
       </div>
     
       <div class="pull-right">
@@ -304,9 +304,9 @@ Statistically Good Algorithms for Random Number Generation”</p>
           <a href="generated/randomgen.pcg32.PCG32.seed.html" title="randomgen.pcg32.PCG32.seed"
              >next</a> |</li>
         <li class="right" >
-          <a href="generated/randomgen.xoshiro512starstar.Xoshiro512StarStar.random_raw.html" title="randomgen.xoshiro512starstar.Xoshiro512StarStar.random_raw"
+          <a href="generated/randomgen.xorshift1024.Xorshift1024.random_raw.html" title="randomgen.xorshift1024.Xorshift1024.random_raw"
              >previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../index.html">RandomGen v1.17.0.dev0 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">RandomGen v1.17.0.dev0+70.gdb8c605 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="index.html" >Bit Generators</a> &#187;</li> 
       </ul>
     </div>

@@ -1,6 +1,0 @@
-randomgen.pcg64.PCG64.generator
-===============================
-
-.. currentmodule:: randomgen.pcg64
-
-.. autoattribute:: PCG64.generator

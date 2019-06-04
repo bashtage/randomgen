@@ -25,13 +25,6 @@ Parallel generation
    ~PCG64.jump
    ~PCG64.jumped
 
-Random Generator
-================
-.. autosummary::
-   :toctree: generated/
-
-   ~PCG64.generator
-
 Extending
 =========
 .. autosummary::

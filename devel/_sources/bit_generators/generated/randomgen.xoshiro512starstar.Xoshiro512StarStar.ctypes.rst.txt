@@ -1,6 +1,0 @@
-randomgen.xoshiro512starstar.Xoshiro512StarStar.ctypes
-======================================================
-
-.. currentmodule:: randomgen.xoshiro512starstar
-
-.. autoattribute:: Xoshiro512StarStar.ctypes
