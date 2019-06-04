@@ -103,6 +103,16 @@ class TestMultinomial(object):
         assert_raises(ValueError, random.multinomial, -1, [0.8, 0.2])
         assert_raises(ValueError, random.multinomial, [-1] * 10, [0.8, 0.2])
 
+    def test_p_noncontiguous(self):
+        p = np.arange(15.)
+        p /= np.sum(p[1::3])
+        pvals = p[1::3]
+        random.seed(1432985819)
+        non_contig = random.multinomial(100, pvals=pvals)
+        random.seed(1432985819)
+        contig = random.multinomial(100, pvals=np.ascontiguousarray(pvals))
+        assert_array_equal(non_contig, contig)
+
 
 class TestSetState(object):
     def setup(self):
@@ -739,7 +749,17 @@ class TestRandomDist(object):
     def test_choice_nan_probabilities(self):
         a = np.array([42, 1, 2])
         p = [None, None, None]
-        assert_raises(ValueError, random.choice, a, p=p)
+        with np.errstate(invalid='ignore'):
+            assert_raises(ValueError, random.choice, a, p=p)
+
+    def test_choice_nontintiguous(self):
+        p = np.ones(10) / 5
+        p[1::2] = 3.0
+        random.seed(self.seed)
+        choice1 = random.choice(5, 3, p=p[::2])
+        random.seed(self.seed)
+        choice2 = random.choice(5, 3, p=np.ascontiguousarray(p[::2]))
+        assert_array_equal(choice1, choice2)
 
     def test_choice_return_type(self):
         # gh 9867
@@ -888,6 +908,16 @@ class TestRandomDist(object):
         # gh-2089
         alpha = np.array([5.4e-01, -1.0e-16])
         assert_raises(ValueError, random.dirichlet, alpha)
+
+    def test_dirichlet_non_contiguous_alpha(self):
+        a = np.array([51.72840233779265162, -1.0, 39.74494232180943953])
+        alpha = a[::2]
+        random.bit_generator.seed(self.seed)
+        non_contig = random.dirichlet(alpha, size=(3, 2))
+        random.bit_generator.seed(self.seed)
+        contig = random.dirichlet(np.ascontiguousarray(alpha),
+                                  size=(3, 2))
+        assert_array_almost_equal(contig, non_contig)
 
     def test_exponential(self):
         random.bit_generator.seed(self.seed)
