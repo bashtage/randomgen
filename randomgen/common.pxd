@@ -33,6 +33,9 @@ cdef object prepare_cffi(bitgen_t *bitgen)
 cdef object prepare_ctypes(bitgen_t *bitgen)
 cdef int check_constraint(double val, object name, constraint_type cons) except -1
 cdef int check_array_constraint(np.ndarray val, object name, constraint_type cons) except -1
+cdef object wrap_int(object val, object bits)
+cdef object check_state_array(object arr, np.npy_intp required_len,
+                              int required_bits, object name)
 
 cdef extern from "src/aligned_malloc/aligned_malloc.h":
     cdef void *PyArray_realloc_aligned(void *p, size_t n)
@@ -72,8 +75,6 @@ cdef object double_fill(void *func, bitgen_t *state, object size, object lock, o
 cdef object float_fill(void *func, bitgen_t *state, object size, object lock, object out)
 
 cdef object float_fill_from_double(void *func, bitgen_t *state, object size, object lock, object out)
-
-cdef object wrap_int(object val, object bits)
 
 cdef np.ndarray int_to_array(object value, object name, object bits, object uint_size)
 

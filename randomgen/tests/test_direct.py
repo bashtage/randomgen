@@ -509,6 +509,7 @@ class TestMT19937(Base):
         cls.seed_error_type = ValueError
         cls.invalid_seed_types = []
         cls.invalid_seed_values = [(-1,), np.array([2 ** 33])]
+        cls.state_name = 'key'
 
     def test_seed_out_of_range(self):
         # GH #82
@@ -561,6 +562,13 @@ class TestMT19937(Base):
         actual = rs.integers(2 ** 16)
         assert_equal(actual, desired)
 
+    def test_invalid_state(self):
+        rs = Generator(self.bit_generator(*self.data1['seed']))
+        state = rs.bit_generator.state
+        state['state'][self.state_name] = state['state'][self.state_name][:10]
+        with pytest.raises(ValueError):
+            rs.bit_generator.state = state
+
 
 class TestSFMT(TestMT19937):
     @classmethod
@@ -577,6 +585,7 @@ class TestSFMT(TestMT19937):
         cls.invalid_seed_types = []
         cls.invalid_seed_values = [(-1,), np.array([2 ** 33]),
                                    (np.array([2 ** 33, 2 ** 33]),)]
+        cls.state_name = 'state'
 
     @pytest.mark.skip(reason='Not applicable to SFMT')
     def test_state_tuple(self):

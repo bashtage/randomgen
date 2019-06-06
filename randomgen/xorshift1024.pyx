@@ -339,8 +339,9 @@ cdef class Xorshift1024:
         if bitgen != self.__class__.__name__:
             raise ValueError('state must be for a {0} '
                              'PRNG'.format(self.__class__.__name__))
+        state = check_state_array(value['state']['s'], 16, 64, 's')
         for i in range(16):
-            self.rng_state.s[i] = <uint64_t>value['state']['s'][i]
+            self.rng_state.s[i] = <uint64_t>state[i]
         self.rng_state.p = value['state']['p']
         self.rng_state.has_uint32 = value['has_uint32']
         self.rng_state.uinteger = value['uinteger']

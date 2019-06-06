@@ -336,10 +336,11 @@ cdef class Xoshiro256:
         if bitgen != self.__class__.__name__:
             raise ValueError('state must be for a {0} '
                              'PRNG'.format(self.__class__.__name__))
-        self.rng_state.s[0] = <uint64_t>value['s'][0]
-        self.rng_state.s[1] = <uint64_t>value['s'][1]
-        self.rng_state.s[2] = <uint64_t>value['s'][2]
-        self.rng_state.s[3] = <uint64_t>value['s'][3]
+        state = check_state_array(value['s'], 4, 64, 's')
+        self.rng_state.s[0] = <uint64_t>state[0]
+        self.rng_state.s[1] = <uint64_t>state[1]
+        self.rng_state.s[2] = <uint64_t>state[2]
+        self.rng_state.s[3] = <uint64_t>state[3]
         self.rng_state.has_uint32 = value['has_uint32']
         self.rng_state.uinteger = value['uinteger']
 

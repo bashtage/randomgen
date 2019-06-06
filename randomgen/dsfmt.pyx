@@ -386,13 +386,15 @@ cdef class DSFMT:
         if bitgen != self.__class__.__name__:
             raise ValueError('state must be for a {0} '
                              'PRNG'.format(self.__class__.__name__))
-        state = value['state']['state']
+        state = check_state_array(value['state']['state'], 2*DSFMT_N_PLUS_1,
+                                  64, 'state')
         for i in range(DSFMT_N_PLUS_1):
             for j in range(2):
                 self.rng_state.state.status[i].u[j] = state[loc]
                 loc += 1
         self.rng_state.state.idx = value['state']['idx']
         buffered_uniforms = value['buffered_uniforms']
+        # TODO: Check buffered_uniforms
         for i in range(DSFMT_N64):
             self.rng_state.buffered_uniforms[i] = buffered_uniforms[i]
         self.rng_state.buffer_loc = value['buffer_loc']

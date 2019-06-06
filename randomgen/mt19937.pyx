@@ -341,7 +341,7 @@ cdef class MT19937:
         if bitgen != self.__class__.__name__:
             raise ValueError('state must be for a {0} '
                              'PRNG'.format(self.__class__.__name__))
-        key = value['state']['key']
+        key = check_state_array(value['state']['key'], 624, 32, 'key')
         for i in range(624):
             self.rng_state.key[i] = key[i]
         self.rng_state.pos = value['state']['pos']

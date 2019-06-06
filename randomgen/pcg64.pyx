@@ -293,10 +293,12 @@ cdef class PCG64:
             raise ValueError('state must be for a {0} '
                              'RNG'.format(self.__class__.__name__))
         state_vec = <np.ndarray>np.empty(4, dtype=np.uint64)
-        state_vec[0] = value['state']['state'] // 2 ** 64
-        state_vec[1] = value['state']['state'] % 2 ** 64
-        state_vec[2] = value['state']['inc'] // 2 ** 64
-        state_vec[3] = value['state']['inc'] % 2 ** 64
+        state = int(value['state']['state'])
+        inc = int(value['state']['inc'])
+        state_vec[0] = state // 2 ** 64
+        state_vec[1] = state % 2 ** 64
+        state_vec[2] = inc // 2 ** 64
+        state_vec[3] = inc % 2 ** 64
         has_uint32 = value['has_uint32']
         uinteger = value['uinteger']
         pcg64_set_state(&self.rng_state,
