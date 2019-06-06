@@ -237,9 +237,9 @@ cdef class Xoshiro512:
     cdef jump_inplace(self, np.npy_intp iter):
         """
         Jump state in-place
-        
+
         Not part of public API
-        
+
         Parameters
         ----------
         iter : integer, positive

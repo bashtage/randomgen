@@ -345,12 +345,12 @@ cdef class ThreeFry:
         self.rng_state.uinteger = value['uinteger']
         self.rng_state.buffer_pos = value['buffer_pos']
 
-    cdef jump_inplace(self, np.npy_intp iter):
+    cdef jump_inplace(self, iter):
         """
         Jump state in-place
-        
+
         Not part of public API
-        
+
         Parameters
         ----------
         iter : integer, positive

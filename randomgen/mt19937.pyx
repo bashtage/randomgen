@@ -247,9 +247,9 @@ cdef class MT19937:
     cdef jump_inplace(self, iter):
         """
         Jump state in-place
-        
+
         Not part of public API
-        
+
         Parameters
         ----------
         iter : integer, positive

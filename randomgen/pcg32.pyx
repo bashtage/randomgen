@@ -1,4 +1,4 @@
-from cpython.pycapsule cimport PyCapsule_New, PyCapsule_GetPointer
+from cpython.pycapsule cimport PyCapsule_New
 
 try:
     from threading import Lock
@@ -312,14 +312,14 @@ cdef class PCG32:
     cdef jump_inplace(self, iter):
         """
         Jump state in-place
-        
+
         Not part of public API
-        
+
         Parameters
         ----------
         iter : integer, positive
             Number of times to jump the state of the rng.
-        
+
         Notes
         -----
         The step size is phi when divided by the period 2**64
@@ -378,7 +378,7 @@ cdef class PCG32:
 
         Notes
         -----
-        The step size is phi when divided by the period 2**64            
+        The step size is phi when divided by the period 2**64
         """
         cdef PCG32 bit_generator
 

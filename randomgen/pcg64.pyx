@@ -363,7 +363,7 @@ cdef class PCG64:
 
         Notes
         -----
-        The step size is phi when divided by the period 2**64            
+        The step size is phi when divided by the period 2**64
         """
         step = 0x9e3779b97f4a7c15f39cc0605cedc834
         # step=0x9e3779b97f4a7c150000000000000000
@@ -396,7 +396,7 @@ cdef class PCG64:
         Jumping the rng state resets any pre-computed random numbers. This is required
         to ensure exact reproducibility.
 
-        The step size is phi when divided by the period 2**64            
+        The step size is phi when divided by 2**128
         """
         import warnings
         warnings.warn('jump (in-place) has been deprecated in favor of jumped'
@@ -427,7 +427,7 @@ cdef class PCG64:
 
         Notes
         -----
-        The step size is phi when divided by the period 2**64            
+        The step size is phi when divided by the period 2**64
         """
         cdef PCG64 bit_generator
 
