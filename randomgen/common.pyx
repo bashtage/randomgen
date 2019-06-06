@@ -185,6 +185,17 @@ cdef object wrap_int(object val, object bits):
         val = val - upper * divisor
     return val
 
+cdef object check_state_array(object arr, np.npy_intp required_len,
+                              int required_bits, object name):
+    req_dtype = np.dtype('uint' + str(required_bits))
+    if not isinstance(arr, np.ndarray):
+        arr = np.array(arr, dtype=req_dtype)
+    if arr.ndim != 1 or arr.dtype != req_dtype or arr.shape[0]!=required_len:
+        raise ValueError('State element {0} must be a 1-d array with dtype {1} '
+                         'and {2} elements'.format(name, req_dtype,
+                                                   required_len))
+    return arr
+
 
 cdef np.ndarray int_to_array(object value, object name, object bits, object uint_size):
     """Convert a large integer to an array of unsigned integers"""

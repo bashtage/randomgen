@@ -337,10 +337,13 @@ cdef class Philox:
         if bitgen != self.__class__.__name__:
             raise ValueError('state must be for a {0} '
                              'PRNG'.format(self.__class__.__name__))
+        ctr = check_state_array(value['state']['counter'], 4, 64, 'counter')
+        key = check_state_array(value['state']['key'], 2, 64, 'key')
         for i in range(4):
-            self.rng_state.ctr.v[i] = <uint64_t> value['state']['counter'][i]
+            self.rng_state.ctr.v[i] = <uint64_t>ctr[i]
             if i < 2:
-                self.rng_state.key.v[i] = <uint64_t> value['state']['key'][i]
+                self.rng_state.key.v[i] = <uint64_t>key[i]
+        buffer = check_state_array(value['buffer'], 4, 64, 'buffer')
         for i in range(PHILOX_BUFFER_SIZE):
             self.rng_state.buffer[i] = <uint64_t> value['buffer'][i]
 

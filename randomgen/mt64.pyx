@@ -250,7 +250,7 @@ cdef class MT64:
         if bitgen != self.__class__.__name__:
             raise ValueError('state must be for a {0} '
                              'PRNG'.format(self.__class__.__name__))
-        key = value['state']['key']
+        key = check_state_array(value['state']['key'], 312, 64, 'key')
         for i in range(312):
             self.rng_state.mt[i] = key[i]
         self.rng_state.mti = value['state']['pos']

@@ -384,13 +384,15 @@ cdef class SFMT:
         if bitgen != self.__class__.__name__:
             raise ValueError('state must be for a {0} '
                              'PRNG'.format(self.__class__.__name__))
-        state = value['state']['state']
+        state = check_state_array(value['state']['state'], 2 * SFMT_N, 64,
+                                  'state')
         for i in range(SFMT_N):
             for j in range(2):
                 self.rng_state.state.state[i].u64[j] = state[loc]
                 loc += 1
         self.rng_state.state.idx = value['state']['idx']
-        buffered_uint64 = value['buffered_uint64']
+        buffered_uint64 = check_state_array(value['buffered_uint64'], SFMT_N64,
+                                            64,  'buffered_uint64')
         for i in range(SFMT_N64):
             self.rng_state.buffered_uint64[i] = buffered_uint64[i]
         self.rng_state.buffer_loc = value['buffer_loc']

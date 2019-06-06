@@ -333,11 +333,15 @@ cdef class ThreeFry32:
         if bitgen != self.__class__.__name__:
             raise ValueError('state must be for a {0} '
                              'PRNG'.format(self.__class__.__name__))
+        ctr = check_state_array(value['state']['counter'], 4, 32, 'counter')
+        key = check_state_array(value['state']['key'], 4, 32, 'key')
         for i in range(4):
-            self.rng_state.ctr.v[i] = <uint32_t> value['state']['counter'][i]
-            self.rng_state.key.v[i] = <uint32_t> value['state']['key'][i]
+            self.rng_state.ctr.v[i] = <uint32_t>ctr[i]
+            self.rng_state.key.v[i] = <uint32_t>key[i]
+        buffer = check_state_array(value['buffer'], THREEFRY_BUFFER_SIZE,
+                                   32, 'buffer')
         for i in range(THREEFRY_BUFFER_SIZE):
-            self.rng_state.buffer[i] = <uint32_t> value['buffer'][i]
+            self.rng_state.buffer[i] = <uint32_t>buffer[i]
         self.rng_state.buffer_pos = value['buffer_pos']
 
     cdef jump_inplace(self, iter):
