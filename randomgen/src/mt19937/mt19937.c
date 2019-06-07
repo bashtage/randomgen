@@ -104,4 +104,28 @@ extern INLINE uint32_t mt19937_next32(mt19937_state *state);
 
 extern INLINE double mt19937_next_double(mt19937_state *state);
 
-void mt19937_jump(mt19937_state *state) { mt19937_jump_state(state, poly); }
+void mt19937_jump(mt19937_state *state) { mt19937_jump_state(state, poly_128); }
+
+void mt19937_jump_n(mt19937_state *state, int count) {
+  /* poly_xxx is 2**xxx ahead */
+  int remaining = count;
+  while (remaining > 0) {
+    if (remaining >= 65536) {
+      mt19937_jump_state(state, poly_144);
+      remaining -= 65536;
+    } else if (remaining >= 4096) {
+      mt19937_jump_state(state, poly_140);
+      remaining -= 4096;
+    } else if (remaining >= 256) {
+      mt19937_jump_state(state, poly_136);
+      remaining -= 256;
+    } else if (remaining >= 16) {
+      mt19937_jump_state(state, poly_132);
+      remaining -= 16;
+    } else if (remaining >= 1) {
+      mt19937_jump_state(state, poly_128);
+      remaining -= 1;
+    }
+  }
+};
+
