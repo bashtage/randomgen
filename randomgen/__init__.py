@@ -5,6 +5,7 @@ from randomgen.mt64 import MT64
 from randomgen.mtrand import RandomState
 from randomgen.pcg32 import PCG32
 from randomgen.pcg64 import PCG64
+from randomgen.philox4x32 import Philox4x32
 from randomgen.philox import Philox
 from randomgen.sfmt import SFMT
 from randomgen.threefry import ThreeFry
@@ -18,8 +19,9 @@ from randomgen.rdrand import RDRAND
 from ._version import get_versions
 
 __all__ = ['DSFMT', 'Generator', 'MT19937', 'MT64', 'PCG32', 'PCG64', 'Philox',
-           'RDRAND', 'RandomState', 'SFMT', 'ThreeFry', 'ThreeFry32',
-           'Xoroshiro128', 'Xorshift1024', 'Xoshiro256', 'Xoshiro512']
+           'Philox4x32', 'RDRAND', 'RandomState', 'SFMT', 'ThreeFry',
+           'ThreeFry32', 'Xoroshiro128', 'Xorshift1024', 'Xoshiro256',
+           'Xoshiro512']
 
 __version__ = get_versions()['version']
 del get_versions

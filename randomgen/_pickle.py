@@ -5,6 +5,7 @@ from randomgen.mtrand import RandomState
 from randomgen.pcg32 import PCG32
 from randomgen.pcg64 import PCG64
 from randomgen.philox import Philox
+from randomgen.philox4x32 import Philox4x32
 from randomgen.threefry import ThreeFry
 from randomgen.threefry32 import ThreeFry32
 from randomgen.xoroshiro128 import Xoroshiro128
@@ -28,7 +29,8 @@ BitGenerators = {'MT19937': MT19937,
                  'Xoshiro256': Xoshiro256,
                  'Xoshiro512': Xoshiro512,
                  'SFMT': SFMT,
-                 'RDRAND': RDRAND
+                 'RDRAND': RDRAND,
+                 'Philox4x32': Philox4x32
                  }
 
 
