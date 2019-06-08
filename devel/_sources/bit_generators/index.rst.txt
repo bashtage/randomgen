@@ -27,6 +27,7 @@ These RNGs will be included in future releases.
    MT64 <mt64>
    PCG64 <pcg64>
    Philox <philox>
+   Philox4x32 <philox4x32>
    RDRAND <rdrand>
    SFMT <sfmt>
    ThreeFry <threefry>
