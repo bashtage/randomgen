@@ -10,7 +10,7 @@ from numpy.testing import (assert_allclose, assert_array_equal, assert_equal,
 from randomgen import (DSFMT, MT19937, PCG32, PCG64, Generator, Philox,
                        RandomState, ThreeFry, ThreeFry32, Xoroshiro128,
                        Xorshift1024, Xoshiro256, Xoshiro512, MT64, SFMT,
-                       RDRAND)
+                       RDRAND, Philox4x32)
 from randomgen.common import interface
 
 MISSING_RDRAND = False
@@ -259,6 +259,8 @@ class Base(object):
 
     def test_generator(self):
         bit_generator = self.bit_generator(*self.data1['seed'])
+        if 'generator' not in dir(bit_generator):
+            pytest.skip('generator attribute has been removed')
         with pytest.raises(NotImplementedError):
             bit_generator.generator
 
@@ -494,6 +496,22 @@ class TestPhilox(Base):
         keyed = self.bit_generator(counter=state['state']['counter'],
                                    key=state['state']['key'])
         assert_state_equal(bit_generator.state, keyed.state)
+
+
+class TestPhilox4x32(TestPhilox):
+    @classmethod
+    def setup_class(cls):
+        cls.bit_generator = Philox4x32
+        cls.bits = 32
+        cls.dtype = np.uint32
+        cls.data1 = cls._read_csv(
+            join(pwd, './data/philox4x32-testset-1.csv'))
+        cls.data2 = cls._read_csv(
+            join(pwd, './data/philox4x32-testset-2.csv'))
+        cls.seed_error_type = TypeError
+        cls.invalid_seed_types = []
+        cls.invalid_seed_values = [(1, None, 1), (-1,), (2 ** 257 + 1,),
+                                   (None, None, 2 ** 257 + 1)]
 
 
 class TestMT19937(Base):

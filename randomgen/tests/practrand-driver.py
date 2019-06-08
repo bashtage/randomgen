@@ -4,7 +4,8 @@
 """
 Example usage:
 
-python practrand-driver.py --jumped -bg ThreeFry -n 8192 | ./RNG_test stdin64 -tlmax 512GB
+python practrand-driver.py --jumped -bg ThreeFry \
+       -n 8192 | ./RNG_test stdin64 -tlmax 512GB
 
 It is recommended to use the patched version that increases the buffer size,
 e.g., practrand-0.93-bigbuffer.patch
@@ -180,7 +181,7 @@ def main():
 if __name__ == '__main__':
     try:
         main()
-    except (BrokenPipeError, IOError) as exc:
+    except (BrokenPipeError, IOError):
         logging.log(logging.INFO, "Pipe broken, assuming complete")
 
     sys.stderr.close()
