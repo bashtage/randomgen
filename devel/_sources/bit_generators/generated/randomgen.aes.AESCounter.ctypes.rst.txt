@@ -1,0 +1,6 @@
+randomgen.aes.AESCounter.ctypes
+===============================
+
+.. currentmodule:: randomgen.aes
+
+.. autoattribute:: AESCounter.ctypes

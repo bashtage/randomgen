@@ -1,0 +1,6 @@
+randomgen.aes.AESCounter.cffi
+=============================
+
+.. currentmodule:: randomgen.aes
+
+.. autoattribute:: AESCounter.cffi
