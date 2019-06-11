@@ -207,8 +207,12 @@ cdef np.ndarray int_to_array(object value, object name, object bits, object uint
         dtype = np.uint64
     else:
         raise ValueError('Unknown uint_size')
+
     if value.shape == ():
+        orig = value
         value = int(value)
+        if value != orig:
+            raise TypeError('value must be an integer.')
         upper = int(2)**int(bits)
         if value < 0 or value >= upper:
             raise ValueError('{name} must be positive and '
@@ -219,7 +223,11 @@ cdef np.ndarray int_to_array(object value, object name, object bits, object uint
             out[i] = value % 2**int(uint_size)
             value >>= int(uint_size)
     else:
-        out = value.astype(dtype)
+        if (np.any(value < np.iinfo(dtype).min) or
+                np.any(value > np.iinfo(dtype).max)):
+            raise ValueError('value is out of range for dtype '
+                             '{0}'.format(str(dtype)))
+        out = value.astype(dtype, casting='safe')
         if out.shape != (len,):
             raise ValueError('{name} must have {len} elements when using '
                              'array form'.format(name=name, len=len))

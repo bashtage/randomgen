@@ -10,7 +10,7 @@ from numpy.testing import (assert_allclose, assert_array_equal, assert_equal,
 from randomgen import (DSFMT, MT19937, PCG32, PCG64, Generator, Philox,
                        RandomState, ThreeFry, ThreeFry32, Xoroshiro128,
                        Xorshift1024, Xoshiro256, Xoshiro512, MT64, SFMT,
-                       RDRAND, Philox4x32)
+                       RDRAND, Philox4x32, AESCounter)
 from randomgen.common import interface
 
 MISSING_RDRAND = False
@@ -18,6 +18,13 @@ try:
     RDRAND()
 except RuntimeError:
     MISSING_RDRAND = True
+
+MISSING_AES = False
+try:
+    AESCounter()
+except RuntimeError:
+    MISSING_AES = True
+
 
 
 try:
@@ -512,6 +519,45 @@ class TestPhilox4x32(TestPhilox):
         cls.invalid_seed_types = []
         cls.invalid_seed_values = [(1, None, 1), (-1,), (2 ** 257 + 1,),
                                    (None, None, 2 ** 257 + 1)]
+
+
+@pytest.mark.skipif(MISSING_AES, reason='AES is not availble')
+class TestAESCounter(TestPhilox):
+    @classmethod
+    def setup_class(cls):
+        cls.bit_generator = AESCounter
+        cls.bits = 64
+        cls.dtype = np.uint64
+        cls.data1 = cls._read_csv(
+            join(pwd, './data/aesctr-testset-1.csv'))
+        cls.data2 = cls._read_csv(
+            join(pwd, './data/aesctr-testset-2.csv'))
+        cls.seed_error_type = TypeError
+        cls.invalid_seed_types = []
+        cls.invalid_seed_values = [(1, None, 1), (-1,), (2 ** 257 + 1,),
+                                   (None, None, 2 ** 257 + 1)]
+
+    def test_set_key(self):
+        bit_generator = self.bit_generator(*self.data1['seed'])
+        state = bit_generator.state
+        key = state['s']['seed'][:2]
+        key = int(key[0]) + int(key[1]) * 2**64
+        counter = state['s']['counter'][0]
+        keyed = self.bit_generator(counter=counter, key=key)
+        assert_state_equal(bit_generator.state, keyed.state)
+
+    def test_seed_float_array(self):
+        # GH #82
+        rs = Generator(self.bit_generator(*self.data1['seed']))
+        assert_raises(self.seed_error_type, rs.bit_generator.seed,
+                      np.array([np.pi]))
+        assert_raises(ValueError, rs.bit_generator.seed,
+                      np.array([-np.pi]))
+        assert_raises(ValueError, rs.bit_generator.seed,
+                      np.array([np.pi, -np.pi]))
+        assert_raises(TypeError, rs.bit_generator.seed, np.array([0, np.pi]))
+        assert_raises(TypeError, rs.bit_generator.seed, [np.pi])
+        assert_raises(TypeError, rs.bit_generator.seed, [0, np.pi])
 
 
 class TestMT19937(Base):

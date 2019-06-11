@@ -1,6 +1,6 @@
+import glob
 import io
 import os
-import glob
 import platform
 import struct
 import sys
@@ -23,11 +23,13 @@ except ImportError:
 
 try:
     import pypandoc
+
     # With an input file: it will infer the input format from the filename
     with open('README.rst', 'wb') as readme:
         readme.write(pypandoc.convert_file('README.md', 'rst').encode('utf8'))
 except ImportError:
     import warnings
+
     warnings.warn(
         'Unable to import pypandoc.  Do not use this as a release build!')
 
@@ -48,9 +50,9 @@ Cython.Compiler.Options.annotate = True
 
 # Make a guess as to whether SSE2 is present for now, TODO: Improve
 USE_SSE2 = False
-for k in platform.uname():
-    for val in ('x86', 'i686', 'i386', 'amd64'):
-        USE_SSE2 = USE_SSE2 or val in k.lower()
+INTEL_LIKE = any([val in k.lower() for k in platform.uname()
+                  for val in ('x86', 'i686', 'i386', 'amd64')])
+USE_SSE2 = INTEL_LIKE
 print('Building with SSE?: {0}'.format(USE_SSE2))
 if '--no-sse2' in sys.argv:
     USE_SSE2 = False
@@ -64,8 +66,10 @@ EXTRA_INCLUDE_DIRS = []
 EXTRA_LINK_ARGS = [] if os.name == 'nt' else []
 EXTRA_LIBRARIES = ['m'] if os.name != 'nt' else []
 # Undef for manylinux
-EXTRA_COMPILE_ARGS = [] if os.name == 'nt' else [
-    '-std=c99', '-U__GNUC_GNU_INLINE__']
+EXTRA_COMPILE_ARGS = ['/Zp16'] if os.name == 'nt' else \
+    ['-std=c99', '-U__GNUC_GNU_INLINE__']
+if INTEL_LIKE and os.name != 'nt':
+    EXTRA_COMPILE_ARGS += ['-maes']
 if os.name == 'nt':
     EXTRA_LINK_ARGS = ['/LTCG', '/OPT:REF', 'Advapi32.lib', 'Kernel32.lib']
     if DEBUG:
@@ -80,7 +84,7 @@ DEFS = [('NPY_NO_DEPRECATED_API', '0')]
 
 if CYTHON_COVERAGE:
     DEFS.extend([('CYTHON_TRACE', '1'),
-                 ('CYTHON_TRACE_NOGIL','1')])
+                 ('CYTHON_TRACE_NOGIL', '1')])
 
 PCG64_DEFS = DEFS[:]
 if sys.maxsize < 2 ** 32 or os.name == 'nt':
@@ -89,6 +93,7 @@ if sys.maxsize < 2 ** 32 or os.name == 'nt':
 
 DSFMT_DEFS = DEFS[:] + [('DSFMT_MEXP', '19937')]
 SFMT_DEFS = DEFS[:] + [('SFMT_MEXP', '19937')]
+AES_DEFS = DEFS[:]
 if USE_SSE2:
     if os.name == 'nt':
         EXTRA_COMPILE_ARGS += ['/wd4146', '/GL']
@@ -98,6 +103,8 @@ if USE_SSE2:
         EXTRA_COMPILE_ARGS += ['-msse2', '-mrdrnd']
     DSFMT_DEFS += [('HAVE_SSE2', '1')]
     SFMT_DEFS += [('HAVE_SSE2', '1')]
+    if os.name != 'nt' or sys.version_info[:2] >= (3, 5):
+        AES_DEFS += [('HAVE_SSE2', '1')]
 
 files = glob.glob('./randomgen/*.in') + glob.glob('./randomgen/legacy/*.in')
 for templated_file in files:
@@ -109,7 +116,6 @@ for templated_file in files:
         template = tempita.Template(source_file.read())
     with open(output_file_name, 'w') as output_file:
         output_file.write(template.substitute())
-
 
 extensions = [Extension('randomgen.entropy',
                         sources=[join(MOD_DIR, 'entropy.pyx'),
@@ -148,7 +154,7 @@ extensions = [Extension('randomgen.entropy',
                         libraries=EXTRA_LIBRARIES,
                         extra_compile_args=EXTRA_COMPILE_ARGS,
                         extra_link_args=EXTRA_LINK_ARGS,
-                        define_macros=DSFMT_DEFS,
+                        define_macros=SFMT_DEFS,
                         ),
               Extension("randomgen.mt19937",
                         ["randomgen/mt19937.pyx",
@@ -197,7 +203,7 @@ extensions = [Extension('randomgen.entropy',
                         ),
               Extension("randomgen.pcg64",
                         ["randomgen/pcg64.pyx",
-                         join(MOD_DIR, 'src', 'pcg64',  'pcg64.c')],
+                         join(MOD_DIR, 'src', 'pcg64', 'pcg64.c')],
                         include_dirs=EXTRA_INCLUDE_DIRS + [np.get_include(),
                                                            join(MOD_DIR, 'src',
                                                                 'pcg64')],
@@ -358,8 +364,19 @@ extensions = [Extension('randomgen.entropy',
                         extra_link_args=EXTRA_LINK_ARGS,
                         define_macros=DEFS + [('RANDOMGEN_LEGACY', '1')]
                         ),
+              Extension("randomgen.aes",
+                        ["randomgen/aes.pyx",
+                         join(MOD_DIR, 'src', 'aesctr', 'aesctr.c')],
+                        include_dirs=EXTRA_INCLUDE_DIRS + [np.get_include(),
+                                                           join(MOD_DIR,
+                                                                'src',
+                                                                'aesctr')],
+                        libraries=EXTRA_LIBRARIES,
+                        extra_compile_args=EXTRA_COMPILE_ARGS,
+                        extra_link_args=EXTRA_LINK_ARGS,
+                        define_macros=AES_DEFS
+                        )
               ]
-
 
 classifiers = ['Development Status :: 5 - Production/Stable',
                'Environment :: Console',

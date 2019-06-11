@@ -22,6 +22,7 @@ These RNGs will be included in future releases.
 .. toctree::
    :maxdepth: 1
 
+   AES Counter <aesctr>
    DSFMT <dsfmt>
    MT19937 <mt19937>
    MT64 <mt64>
