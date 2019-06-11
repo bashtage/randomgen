@@ -1,6 +1,6 @@
 import operator
 
-from cpython.pycapsule cimport PyCapsule_New, PyCapsule_GetPointer
+from cpython.pycapsule cimport PyCapsule_New
 
 try:
     from threading import Lock

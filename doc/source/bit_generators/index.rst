@@ -23,6 +23,7 @@ These RNGs will be included in future releases.
    :maxdepth: 1
 
    AES Counter <aesctr>
+   ChaCha <chacha>
    DSFMT <dsfmt>
    MT19937 <mt19937>
    MT64 <mt64>

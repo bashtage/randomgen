@@ -198,7 +198,27 @@ cdef object check_state_array(object arr, np.npy_intp required_len,
 
 
 cdef np.ndarray int_to_array(object value, object name, object bits, object uint_size):
-    """Convert a large integer to an array of unsigned integers"""
+    """
+    Convert a large integer to an array of unsigned integers
+
+    Parameters
+    ----------
+    value : int
+        The value to convrt
+    name : str
+        Variable name to use in error messages
+    bits : int
+        Number of bits in value, e.g., 64, 128 or 256
+    uint_size : int
+        Number of bits of output array dtype, either 32 or 64
+
+    Returns
+    -------
+    arr : np.ndarray
+        1-d array of dtype np.uint{uint_size} containing value converted to
+        fit the array dtype, where arr[0] is the lowest bits of value where
+        arr[i] = (value >> (uint_size*i)) % 2**uint_size
+    """
     len = bits // uint_size
     value = np.asarray(value)
     if uint_size == 32:

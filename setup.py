@@ -49,7 +49,6 @@ LONG_DESCRIPTION = io.open('README.rst', encoding="utf-8").read()
 Cython.Compiler.Options.annotate = True
 
 # Make a guess as to whether SSE2 is present for now, TODO: Improve
-USE_SSE2 = False
 INTEL_LIKE = any([val in k.lower() for k in platform.uname()
                   for val in ('x86', 'i686', 'i386', 'amd64')])
 USE_SSE2 = INTEL_LIKE
@@ -94,17 +93,19 @@ if sys.maxsize < 2 ** 32 or os.name == 'nt':
 DSFMT_DEFS = DEFS[:] + [('DSFMT_MEXP', '19937')]
 SFMT_DEFS = DEFS[:] + [('SFMT_MEXP', '19937')]
 AES_DEFS = DEFS[:]
+CHACHA_DEFS = DEFS[:]
 if USE_SSE2:
     if os.name == 'nt':
         EXTRA_COMPILE_ARGS += ['/wd4146', '/GL']
         if struct.calcsize('P') < 8:
             EXTRA_COMPILE_ARGS += ['/arch:SSE2']
     else:
-        EXTRA_COMPILE_ARGS += ['-msse2', '-mrdrnd']
+        EXTRA_COMPILE_ARGS += ['-msse2', '-mssse3', '-mrdrnd']
     DSFMT_DEFS += [('HAVE_SSE2', '1')]
     SFMT_DEFS += [('HAVE_SSE2', '1')]
     if os.name != 'nt' or sys.version_info[:2] >= (3, 5):
         AES_DEFS += [('HAVE_SSE2', '1')]
+        CHACHA_DEFS += [('__SSE2__', '1'), ('__SSSE3__', '1')]
 
 files = glob.glob('./randomgen/*.in') + glob.glob('./randomgen/legacy/*.in')
 for templated_file in files:
@@ -309,6 +310,20 @@ extensions = [Extension('randomgen.entropy',
                         extra_link_args=EXTRA_LINK_ARGS,
                         define_macros=DEFS
                         ),
+              Extension("randomgen.chacha",
+                        ["randomgen/chacha.pyx",
+                         join(MOD_DIR, 'src', 'chacha',
+                              'chacha.c')],
+                        include_dirs=EXTRA_INCLUDE_DIRS + [np.get_include(),
+                                                           join(
+                                                               MOD_DIR, 'src',
+                                                               'chacha')],
+                        libraries=EXTRA_LIBRARIES,
+                        extra_compile_args=EXTRA_COMPILE_ARGS,
+                        extra_link_args=EXTRA_LINK_ARGS,
+                        define_macros=CHACHA_DEFS
+                        ),
+
               Extension("randomgen.generator",
                         ["randomgen/generator.pyx",
                          join(MOD_DIR, 'src', 'distributions',

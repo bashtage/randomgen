@@ -33,6 +33,6 @@ int main() {
   clock_t end = clock();
   double time_spent = (double)(end - begin) / CLOCKS_PER_SEC;
   printf("0x%" PRIx64 "\ncount: %" PRIu64 "\n", sum, count);
-  printf("%" PRIu64 " randoms per second\n",
-         (uint64_t)(N / time_spent) / 1000000 * 1000000);
+  printf("%" PRIu64 " randoms per second\n", (uint64_t)((double)N / time_spent));
+  printf("%0.3f ms to produce 1,000,000 draws \n", 1000*1000000.0 * (time_spent/(double)N));
 }

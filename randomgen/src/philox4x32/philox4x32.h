@@ -24,7 +24,6 @@ struct r123array4x32 {
 };
 
 static INLINE uint32_t mulhilo32(uint32_t a, uint32_t b, uint32_t *hip) {
-  /* TODO: consider _mulx_u32, requires new CPU. Also __emulu */
   uint64_t product = ((uint64_t)a) * ((uint64_t)b);
   *hip = product >> 32;
   return (uint32_t)product;

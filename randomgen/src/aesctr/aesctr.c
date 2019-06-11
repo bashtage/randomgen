@@ -85,8 +85,11 @@ void aesctr_advance(aesctr_state_t *state, uint64_t *step)
             temp[1]++;
         memcpy(&state->ctr[i].m128, &temp, sizeof(__m128i));
     }
-    /* TODO: This isn't correct if we don't cross a boundary, e.g. a jump of 1
-     */
+
+   /*
+    * Setting offset ensures that the correct values are always
+    * produced after a jump, even if small
+    */
     state->offset = 16 * AESCTR_UNROLL;
 #endif
 }
