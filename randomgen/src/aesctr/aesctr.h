@@ -48,15 +48,20 @@
 #define UNLIKELY(x) (__builtin_expect((x), 0))
 #endif
 
+union AES128_T {
 #if defined(HAVE_SSE2)
-#define AES_TYPE __m128i
-#else
-#define AES_TYPE uint32_t
+  __m128i m128;
 #endif
+  uint64_t u64[2];
+  uint32_t u32[4];
+  uint8_t u8[16];
+};
+
+typedef union AES128_T aes128_t;
 
 struct AESCTR_STATE_T {
-  AES_TYPE ctr[AESCTR_UNROLL];
-  AES_TYPE seed[AESCTR_ROUNDS + 1];
+  aes128_t ctr[AESCTR_UNROLL];
+  aes128_t seed[AESCTR_ROUNDS + 1];
   uint8_t state[16 * AESCTR_UNROLL];
   size_t offset;
   int has_uint32;
@@ -73,7 +78,7 @@ typedef struct AESCTR_STATE_T aesctr_state_t;
     k = _mm_xor_si128(k, _mm_slli_si128(k, 4));                                \
     k = _mm_xor_si128(k, _mm_slli_si128(k, 4));                                \
     k = _mm_xor_si128(k, _mm_shuffle_epi32(k2, _MM_SHUFFLE(3, 3, 3, 3)));      \
-    state->seed[index] = k;                                                    \
+    state->seed[index].m128 = k;                                               \
   } while (0)
 #endif
 
@@ -85,7 +90,7 @@ static INLINE void aesctr_seed_r(aesctr_state_t *state, uint64_t *seed) {
   };*/
 #if defined(HAVE_SSE2)
   __m128i k = _mm_set_epi64x(seed[1], seed[0]);
-  state->seed[0] = k;
+  state->seed[0].m128 = k;
   // D. Lemire manually unrolled following loop since _mm_aeskeygenassist_si128
   // requires immediates
 
@@ -110,7 +115,7 @@ static INLINE void aesctr_seed_r(aesctr_state_t *state, uint64_t *seed) {
   AES_ROUND(0x36, 10);
 
   for (int i = 0; i < AESCTR_UNROLL; ++i) {
-    state->ctr[i] = _mm_set_epi64x(0, i);
+    state->ctr[i].m128 = _mm_set_epi64x(0, i);
   }
   state->offset = 16 * AESCTR_UNROLL;
 #endif
@@ -123,20 +128,20 @@ static INLINE uint64_t aesctr_r(aesctr_state_t *state) {
   if (UNLIKELY(state->offset >= 16 * AESCTR_UNROLL)) {
     __m128i work[AESCTR_UNROLL];
     for (int i = 0; i < AESCTR_UNROLL; ++i) {
-      work[i] = _mm_xor_si128(state->ctr[i], state->seed[0]);
+      work[i] = _mm_xor_si128(state->ctr[i].m128, state->seed[0].m128);
     }
     for (int r = 1; r <= AESCTR_ROUNDS - 1; ++r) {
-      const __m128i subkey = state->seed[r];
+      const __m128i subkey = state->seed[r].m128;
       for (int i = 0; i < AESCTR_UNROLL; ++i) {
         work[i] = _mm_aesenc_si128(work[i], subkey);
       }
     }
     for (int i = 0; i < AESCTR_UNROLL; ++i) {
-      state->ctr[i] =
-          _mm_add_epi64(state->ctr[i], _mm_set_epi64x(0, AESCTR_UNROLL));
+      state->ctr[i].m128 =
+          _mm_add_epi64(state->ctr[i].m128, _mm_set_epi64x(0, AESCTR_UNROLL));
       _mm_storeu_si128(
           (__m128i *)&state->state[16 * i],
-          _mm_aesenclast_si128(work[i], state->seed[AESCTR_ROUNDS]));
+          _mm_aesenclast_si128(work[i], state->seed[AESCTR_ROUNDS].m128));
     }
     state->offset = 0;
   }
@@ -149,33 +154,33 @@ static INLINE uint64_t aesctr_r(aesctr_state_t *state) {
 #endif
 }
 
-static INLINE uint64_t aes_next64(aesctr_state_t *aesctr) {
-  return aesctr_r(aesctr);
+static INLINE uint64_t aes_next64(aesctr_state_t *state) {
+  return aesctr_r(state);
 }
 
-static INLINE uint32_t aes_next32(aesctr_state_t *aesctr) {
+static INLINE uint32_t aes_next32(aesctr_state_t *state) {
   uint64_t next;
-  if (aesctr->has_uint32) {
-    aesctr->has_uint32 = 0;
-    return aesctr->uinteger;
+  if (state->has_uint32) {
+    state->has_uint32 = 0;
+    return state->uinteger;
   }
-  next = aesctr_r(aesctr);
-  aesctr->has_uint32 = 1;
-  aesctr->uinteger = (uint32_t)(next >> 32);
+  next = aesctr_r(state);
+  state->has_uint32 = 1;
+  state->uinteger = (uint32_t)(next >> 32);
   return (uint32_t)(next & 0xffffffff);
 }
 
-static INLINE double aes_next_double(aesctr_state_t *aesctr) {
-  return (aesctr_r(aesctr) >> 11) * (1. / (UINT64_C(1) << 53));
+static INLINE double aes_next_double(aesctr_state_t *state) {
+  return (aesctr_r(state) >> 11) * (1. / (UINT64_C(1) << 53));
 }
 
-extern void aesctr_seed(aesctr_state_t *aesctr, uint64_t *seed);
-extern void aesctr_set_counter(aesctr_state_t *aesctr, uint64_t *counter);
-extern void aesctr_set_seed_counter(aesctr_state_t *aesctr, uint64_t *seed,
+extern void aesctr_seed(aesctr_state_t *state, uint64_t *seed);
+extern void aesctr_set_counter(aesctr_state_t *state, uint64_t *counter);
+extern void aesctr_set_seed_counter(aesctr_state_t *state, uint64_t *seed,
                                     uint64_t *counter);
-extern void aesctr_get_seed_counter(aesctr_state_t *aesctr, uint64_t *seed,
+extern void aesctr_get_seed_counter(aesctr_state_t *state, uint64_t *seed,
                                     uint64_t *counter);
 extern int aes_capable(void);
-extern void aesctr_advance(aesctr_state_t *aesctr, uint64_t *step);
+extern void aesctr_advance(aesctr_state_t *state, uint64_t *step);
 //#endif // __AES__
 #endif
