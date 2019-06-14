@@ -1,0 +1,6 @@
+randomgen.chacha.ChaCha.random\_raw
+===================================
+
+.. currentmodule:: randomgen.chacha
+
+.. automethod:: ChaCha.random_raw

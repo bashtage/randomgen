@@ -1,0 +1,6 @@
+randomgen.chacha.ChaCha.jumped
+==============================
+
+.. currentmodule:: randomgen.chacha
+
+.. automethod:: ChaCha.jumped
