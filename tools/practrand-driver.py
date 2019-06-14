@@ -13,23 +13,21 @@ e.g., practrand-0.93-bigbuffer.patch
 Modified from https://gist.github.com/rkern/6cf67aee7ee4d87e1d868517ba44739c/
 
 """
-
 import json
 import logging
 import sys
 
 import numpy as np
-from randomgen.entropy import random_entropy
 
-import randomgen
-from randomgen import PCG32, PCG64, ThreeFry, Xoshiro256, Philox, SFMT
+import randomgen as rg
 
-CONFIG = {PCG32: {'output': 32, 'seed': 64, 'seed_size': 64},
-          PCG64: {'output': 64, 'seed': 128, 'seed_size': 128},
-          ThreeFry: {'output': 64, 'seed': 256, 'seed_size': 64},
-          Xoshiro256: {'output': 64, 'seed': 256, 'seed_size': 64},
-          Philox: {'output': 64, 'seed': 256, 'seed_size': 64},
-          SFMT: {'output': 64, 'seed': 128, 'seed_size': 32}}
+
+CONFIG = {rg.PCG32: {'output': 32, 'seed': 64, 'seed_size': 64},
+          rg.PCG64: {'output': 64, 'seed': 128, 'seed_size': 128},
+          rg.ThreeFry: {'output': 64, 'seed': 256, 'seed_size': 64},
+          rg.Xoshiro256: {'output': 64, 'seed': 256, 'seed_size': 64},
+          rg.Philox: {'output': 64, 'seed': 256, 'seed_size': 64},
+          rg.SFMT: {'output': 64, 'seed': 128, 'seed_size': 32}}
 
 
 def gen_interleaved_bytes(bitgens, n_per_gen=1024, output=32):
@@ -44,18 +42,18 @@ def gen_interleaved_bytes(bitgens, n_per_gen=1024, output=32):
 
 
 def bitgen_from_state(state):
-    cls = getattr(randomgen, state['bit_generator'])
+    cls = getattr(rg, state['bit_generator'])
     bitgen = cls()
     bitgen.state = state
     return bitgen
 
 
 def jumped_state(bit_generator, n_streams=2, entropy=None):
-    bitgen = getattr(randomgen, bit_generator)
+    bitgen = getattr(rg, bit_generator)
     config = CONFIG[bitgen]
     seed = config['seed']
     if entropy is None:
-        entropy = random_entropy(seed // 32)
+        entropy = rg.random_entropy(seed // 32)
         if config['seed_size'] == 64:
             entropy = entropy.view(np.uint64)
             if config['seed'] == 64:

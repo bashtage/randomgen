@@ -456,7 +456,7 @@ void sfmt_jump_n(sfmt_state *state, int count) {
     } else if (remaining >= 16) {
       SFMT_jump(state->state, poly_132);
       remaining -= 16;
-    } else if (remaining >= 1) {
+    } else {
       SFMT_jump(state->state, poly_128);
       remaining -= 1;
     }

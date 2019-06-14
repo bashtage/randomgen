@@ -641,7 +641,7 @@ void dsfmt_jump_n(dsfmt_state *state, int count) {
     } else if (remaining >= 16) {
       dSFMT_jump(state->state, poly_132);
       remaining -= 16;
-    } else if (remaining >= 1) {
+    } else {
       dSFMT_jump(state->state, poly_128);
       remaining -= 1;
     }

@@ -48,12 +48,12 @@
 
 typedef double * aligned_double_ptr ;
 
-struct CHACHA_STATE_T {
+ALIGN_WINDOWS struct CHACHA_STATE_T {
     ALIGN_WINDOWS uint32_t block[16] ALIGN_GCC_CLANG;
     uint32_t keysetup[8];
     uint64_t ctr[2];
     int rounds;
-};
+} ALIGN_GCC_CLANG;
 
 typedef struct CHACHA_STATE_T chacha_state_t;
 
