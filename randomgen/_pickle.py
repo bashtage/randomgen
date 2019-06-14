@@ -15,6 +15,7 @@ from randomgen.sfmt import SFMT
 from randomgen.mt64 import MT64
 from randomgen.xoshiro256 import Xoshiro256
 from randomgen.xoshiro512 import Xoshiro512
+from randomgen.chacha import ChaCha
 from randomgen.rdrand import RDRAND
 
 BitGenerators = {'AESCounter': AESCounter,
@@ -32,7 +33,8 @@ BitGenerators = {'AESCounter': AESCounter,
                  'Xoshiro512': Xoshiro512,
                  'SFMT': SFMT,
                  'RDRAND': RDRAND,
-                 'Philox4x32': Philox4x32
+                 'Philox4x32': Philox4x32,
+                 'ChaCha': ChaCha
                  }
 
 

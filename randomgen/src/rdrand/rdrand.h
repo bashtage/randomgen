@@ -1,5 +1,5 @@
-#ifndef _RANDOMDGEN__THREEFRY_H_
-#define _RANDOMDGEN__THREEFRY_H_
+#ifndef _RANDOMDGEN__RDRAND_H_
+#define _RANDOMDGEN__RDRAND_H_
 
 #ifdef _WIN32
 #if _MSC_VER == 1500
@@ -62,4 +62,4 @@ static INLINE uint32_t rdrand_next32(rdrand_state* state){
 #endif
 }
 
-#endif
+#endif /* _RANDOMDGEN__RDRAND_H_ */

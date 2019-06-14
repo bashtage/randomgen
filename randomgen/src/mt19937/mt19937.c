@@ -122,10 +122,9 @@ void mt19937_jump_n(mt19937_state *state, int count) {
     } else if (remaining >= 16) {
       mt19937_jump_state(state, poly_132);
       remaining -= 16;
-    } else if (remaining >= 1) {
+    } else {
       mt19937_jump_state(state, poly_128);
       remaining -= 1;
     }
   }
 };
-

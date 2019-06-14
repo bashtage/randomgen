@@ -24,6 +24,8 @@
 #endif
 
 #ifdef _WIN32
+#define ALIGN_WINDOWS __declspec(align(16))
+#define ALIGN_GCC_CLANG
 #if _MSC_VER == 1500
 #include "../common/inttypes.h"
 #define INLINE __forceinline
@@ -32,9 +34,12 @@
 #define INLINE __inline __forceinline
 #endif
 #else
+#define ALIGN_WINDOWS
+#define ALIGN_GCC_CLANG __attribute__((aligned(16)))
 #include <inttypes.h>
 #define INLINE inline
 #endif
+
 
 #include <stddef.h>
 #include <string.h>
@@ -60,9 +65,9 @@ union AES128_T {
 typedef union AES128_T aes128_t;
 
 struct AESCTR_STATE_T {
-  aes128_t ctr[AESCTR_UNROLL];
-  aes128_t seed[AESCTR_ROUNDS + 1];
-  uint8_t state[16 * AESCTR_UNROLL];
+  ALIGN_WINDOWS aes128_t ctr[AESCTR_UNROLL] ALIGN_GCC_CLANG;
+  ALIGN_WINDOWS aes128_t seed[AESCTR_ROUNDS + 1] ALIGN_GCC_CLANG;
+  ALIGN_WINDOWS uint8_t state[16 * AESCTR_UNROLL] ALIGN_GCC_CLANG;
   size_t offset;
   int has_uint32;
   uint32_t uinteger;
@@ -139,9 +144,9 @@ static INLINE uint64_t aesctr_r(aesctr_state_t *state) {
     for (int i = 0; i < AESCTR_UNROLL; ++i) {
       state->ctr[i].m128 =
           _mm_add_epi64(state->ctr[i].m128, _mm_set_epi64x(0, AESCTR_UNROLL));
-      _mm_storeu_si128(
-          (__m128i *)&state->state[16 * i],
-          _mm_aesenclast_si128(work[i], state->seed[AESCTR_ROUNDS].m128));
+      _mm_storeu_si128((__m128i *)&state->state[16 * i],
+                       _mm_aesenclast_si128(work[i],
+                                            state->seed[AESCTR_ROUNDS].m128));
     }
     state->offset = 0;
   }

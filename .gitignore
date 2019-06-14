@@ -1,4 +1,6 @@
+.hypothesis/
 .idea/
+.vscode/
 build/
 *.egg-info/
 *.pyd
