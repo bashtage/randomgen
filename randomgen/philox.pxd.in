@@ -1,0 +1,66 @@
+from libc.stdint cimport uint32_t, uint64_t
+
+{{
+py:
+N = (1, 2, 4)
+W = (32, 64)
+}}
+
+cdef extern from 'src/philox/philox.h':
+
+{{for w in W}}
+{{for n in N}}
+    struct s_r123array{{n}}x{{w}}:
+        uint{{w}}_t v[{{n}}]
+    struct s_r123array{{n}}x{{w}}:
+        uint{{w}}_t v[{{n}}]
+    ctypedef s_r123array{{n}}x{{w}} r123array{{n}}x{{w}}
+{{endfor}}
+{{endfor}}
+
+
+{{for w in W}}
+{{for n in (2,4)}}
+    #######################################################
+    # {{n}}x{{w}}
+    #######################################################
+    ctypedef r123array{{n}}x{{w}} philox{{n}}x{{w}}_ctr_t
+    ctypedef r123array{{n//2}}x{{w}} philox{{n}}x{{w}}_key_t
+    struct s_philox{{n}}x{{w}}_state:
+        philox{{n}}x{{w}}_ctr_t ctr
+        philox{{n}}x{{w}}_key_t key
+
+    ctypedef s_philox{{n}}x{{w}}_state philox{{n}}x{{w}}_state
+
+{{endfor}}
+{{endfor}}
+
+    union R123_UINT_T:
+      uint64_t u64;
+      uint32_t u32;
+
+    ctypedef R123_UINT_T r123_uint_t
+
+    struct PHILOX_ALL_T:
+      philox2x32_state state2x32
+      philox4x32_state state4x32
+      philox2x64_state state2x64
+      philox4x64_state state4x64
+      int buffer_pos
+      r123_uint_t buffer[4]
+      int has_uint32
+      uint32_t uinteger
+      int width
+      int number
+
+    ctypedef PHILOX_ALL_T philox_all_t
+
+{{for w in W}}
+{{for n in (2,4)}}
+    uint64_t philox{{n}}x{{w}}_next64(philox_all_t *state) nogil
+    uint32_t philox{{n}}x{{w}}_next32(philox_all_t *state) nogil
+    double philox{{n}}x{{w}}_next_double(philox_all_t *state) nogil
+    void philox{{n}}x{{w}}_advance(philox_all_t *state, uint{{w}}_t *step)
+
+{{endfor}}
+{{endfor}}

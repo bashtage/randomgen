@@ -4,8 +4,8 @@ from timeit import repeat
 import numpy as np
 import pandas as pd
 
-from randomgen import MT19937, DSFMT, ThreeFry, PCG64, Philox, Xoshiro256, \
-    Xoshiro512, MT64, SFMT, AESCounter, ChaCha
+from randomgen import (DSFMT, MT64, MT19937, PCG64, SFMT, AESCounter, ChaCha,
+                       Philox, ThreeFry, Xoshiro256, Xoshiro512)
 
 NUMBER = 100
 REPEAT = 10

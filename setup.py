@@ -1,16 +1,18 @@
 import glob
 import io
 import os
+from os.path import exists, getmtime, join, splitext
 import platform
 import struct
 import sys
-from os.path import join, getmtime, splitext, exists
 
+from Cython.Build import cythonize
 import Cython.Compiler.Options
 import numpy as np
-from Cython.Build import cythonize
-from setuptools import setup, find_packages, Distribution
+from setuptools import Distribution, find_packages, setup
 from setuptools.extension import Extension
+
+import versioneer
 
 try:
     import Cython.Tempita as tempita
@@ -33,7 +35,6 @@ except ImportError:
     warnings.warn(
         'Unable to import pypandoc.  Do not use this as a release build!')
 
-import versioneer
 
 with open('requirements.txt') as f:
     required = f.read().splitlines()
@@ -189,18 +190,7 @@ extensions = [Extension('randomgen.entropy',
                         libraries=EXTRA_LIBRARIES,
                         extra_compile_args=EXTRA_COMPILE_ARGS,
                         extra_link_args=EXTRA_LINK_ARGS,
-                        define_macros=DEFS
-                        ),
-              Extension("randomgen.philox4x32",
-                        ["randomgen/philox4x32.pyx",
-                         join(MOD_DIR, 'src', 'philox4x32', 'philox4x32.c')],
-                        include_dirs=EXTRA_INCLUDE_DIRS + [np.get_include(),
-                                                           join(MOD_DIR, 'src',
-                                                                'philox4x32')],
-                        libraries=EXTRA_LIBRARIES,
-                        extra_compile_args=EXTRA_COMPILE_ARGS,
-                        extra_link_args=EXTRA_LINK_ARGS,
-                        define_macros=DEFS
+                        define_macros=DEFS + [('R123_USE_PHILOX_64BIT', '1')]
                         ),
               Extension("randomgen.pcg64",
                         ["randomgen/pcg64.pyx",

@@ -2,8 +2,8 @@
 from distutils.core import setup
 from os.path import join
 
-import numpy as np
 from Cython.Build import cythonize
+import numpy as np
 from setuptools.extension import Extension
 
 extending = Extension("extending",

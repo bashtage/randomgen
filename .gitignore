@@ -24,7 +24,7 @@ randomgen/mtrand.c
 randomgen/pcg32.c
 randomgen/pcg64.c
 randomgen/philox.c
-randomgen/philox4x32.c
+randomgen/philox.pxd
 randomgen/rdrand.c
 randomgen/sfmt.c
 randomgen/threefry.c

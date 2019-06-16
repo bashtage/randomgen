@@ -1,22 +1,21 @@
 from randomgen.aes import AESCounter
+from randomgen.chacha import ChaCha
 from randomgen.dsfmt import DSFMT
 from randomgen.generator import Generator
+from randomgen.mt64 import MT64
 from randomgen.mt19937 import MT19937
 from randomgen.mtrand import RandomState
 from randomgen.pcg32 import PCG32
 from randomgen.pcg64 import PCG64
 from randomgen.philox import Philox
-from randomgen.philox4x32 import Philox4x32
-from randomgen.threefry import ThreeFry
+from randomgen.rdrand import RDRAND
+from randomgen.sfmt import SFMT
 from randomgen.threefry32 import ThreeFry32
+from randomgen.threefry import ThreeFry
 from randomgen.xoroshiro128 import Xoroshiro128
 from randomgen.xorshift1024 import Xorshift1024
-from randomgen.sfmt import SFMT
-from randomgen.mt64 import MT64
 from randomgen.xoshiro256 import Xoshiro256
 from randomgen.xoshiro512 import Xoshiro512
-from randomgen.chacha import ChaCha
-from randomgen.rdrand import RDRAND
 
 BitGenerators = {'AESCounter': AESCounter,
                  'MT19937': MT19937,
@@ -33,7 +32,6 @@ BitGenerators = {'AESCounter': AESCounter,
                  'Xoshiro512': Xoshiro512,
                  'SFMT': SFMT,
                  'RDRAND': RDRAND,
-                 'Philox4x32': Philox4x32,
                  'ChaCha': ChaCha
                  }
 
