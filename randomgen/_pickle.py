@@ -2,6 +2,7 @@ from randomgen.aes import AESCounter
 from randomgen.chacha import ChaCha
 from randomgen.dsfmt import DSFMT
 from randomgen.generator import Generator
+from randomgen.jsf import JSF
 from randomgen.mt64 import MT64
 from randomgen.mt19937 import MT19937
 from randomgen.mtrand import RandomState
@@ -18,9 +19,11 @@ from randomgen.xoshiro256 import Xoshiro256
 from randomgen.xoshiro512 import Xoshiro512
 
 BitGenerators = {'AESCounter': AESCounter,
+                 'ChaCha': ChaCha,
+                 'DSFMT': DSFMT,
+                 'JSF': JSF,
                  'MT19937': MT19937,
                  'MT64': MT64,
-                 'DSFMT': DSFMT,
                  'PCG32': PCG32,
                  'PCG64': PCG64,
                  'Philox': Philox,
@@ -32,7 +35,7 @@ BitGenerators = {'AESCounter': AESCounter,
                  'Xoshiro512': Xoshiro512,
                  'SFMT': SFMT,
                  'RDRAND': RDRAND,
-                 'ChaCha': ChaCha
+
                  }
 
 

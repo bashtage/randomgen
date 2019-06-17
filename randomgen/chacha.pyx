@@ -157,7 +157,7 @@ cdef class ChaCha:
     def __init__(self, seed=None, counter=None, key=None, rounds=20):
         self.rng_state = <chacha_state_t *>PyArray_malloc_aligned(sizeof(chacha_state_t))
         if rounds % 2 != 0 or rounds <= 0:
-            raise ValueError('rounds must be even and larger than 2')
+            raise ValueError('rounds must be even and >= 2')
         self.rng_state.rounds = rounds
         self.seed(seed, counter, key)
 
