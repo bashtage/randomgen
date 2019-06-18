@@ -1,10 +1,9 @@
 import sys
 
-import pytest
-
 import numpy as np
 from numpy.compat import long
 from numpy.testing import assert_, assert_array_equal, assert_raises
+import pytest
 
 import randomgen.mtrand as random
 

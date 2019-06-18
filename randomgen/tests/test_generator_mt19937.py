@@ -2,10 +2,10 @@ import sys
 import warnings
 
 import numpy as np
-import pytest
 from numpy.testing import (assert_, assert_array_almost_equal,
                            assert_array_equal, assert_equal,
                            assert_no_warnings, assert_raises, assert_warns)
+import pytest
 
 from randomgen import MT19937, Generator
 from randomgen._testing import suppress_warnings

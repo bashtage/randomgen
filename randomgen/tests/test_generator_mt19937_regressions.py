@@ -1,9 +1,9 @@
 import sys
 
 import numpy as np
-import pytest
 from numpy.compat import long
 from numpy.testing import assert_, assert_array_equal
+import pytest
 
 from randomgen import MT19937, Generator
 

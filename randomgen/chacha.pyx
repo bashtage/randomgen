@@ -278,6 +278,7 @@ cdef class ChaCha:
         for i in range(8):
             self.rng_state.keysetup[i] = seed[i]
 
+        counter = 0 if counter is None else counter
         if counter is not None:
             _counter = int_to_array(counter, 'counter', 128, 64)
             self.rng_state.ctr[0] = _counter[0]

@@ -1,5 +1,6 @@
-from randomgen.xoshiro512 import Xoshiro512
 import warnings
+
+from randomgen.xoshiro512 import Xoshiro512
 
 
 def Xoshiro512StarStar(*args, **kwargs):

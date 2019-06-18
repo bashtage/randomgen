@@ -1,16 +1,17 @@
+from functools import partial
 import os
-import sys
 from os.path import join
+import sys
 
 import numpy as np
-import pytest
 from numpy.testing import (assert_allclose, assert_array_equal, assert_equal,
                            assert_raises)
+import pytest
 
-from randomgen import (DSFMT, MT19937, PCG32, PCG64, Generator, Philox,
-                       RandomState, ThreeFry, ThreeFry32, Xoroshiro128,
-                       Xorshift1024, Xoshiro256, Xoshiro512, MT64, SFMT,
-                       RDRAND, Philox4x32, AESCounter, ChaCha)
+from randomgen import (DSFMT, MT64, MT19937, PCG32, PCG64, RDRAND, SFMT,
+                       AESCounter, ChaCha, Generator, Philox, RandomState,
+                       ThreeFry, ThreeFry32, Xoroshiro128, Xorshift1024,
+                       Xoshiro256, Xoshiro512)
 from randomgen.common import interface
 
 MISSING_RDRAND = False
@@ -24,7 +25,6 @@ try:
     AESCounter()
 except RuntimeError:
     MISSING_AES = True
-
 
 
 try:
@@ -266,7 +266,7 @@ class Base(object):
     def test_str(self):
         rs = Generator(self.setup_bitgenerator(self.data1['seed']))
         assert 'Generator' in str(rs)
-        assert str(self.bit_generator.__name__) in str(rs)
+        assert str(type(rs.bit_generator).__name__) in str(rs)
         assert '{:#x}'.format(id(rs)).upper().replace('X', 'x') not in str(rs)
 
     def test_generator(self):
@@ -513,7 +513,7 @@ class TestPhilox(Base):
 class TestPhilox4x32(TestPhilox):
     @classmethod
     def setup_class(cls):
-        cls.bit_generator = Philox4x32
+        cls.bit_generator = partial(Philox, number=4, width=32)
         cls.bits = 32
         cls.dtype = np.uint32
         cls.data1 = cls._read_csv(
@@ -556,7 +556,7 @@ class TestAESCounter(TestPhilox):
         rs = Generator(self.setup_bitgenerator(self.data1['seed']))
         assert_raises(self.seed_error_type, rs.bit_generator.seed,
                       np.array([np.pi]))
-        assert_raises(ValueError, rs.bit_generator.seed,
+        assert_raises(TypeError, rs.bit_generator.seed,
                       np.array([-np.pi]))
         assert_raises(ValueError, rs.bit_generator.seed,
                       np.array([np.pi, -np.pi]))

@@ -4,13 +4,14 @@ import sys
 import warnings
 
 import numpy as np
-import pytest
-import randomgen.mtrand
 from numpy.testing import (assert_, assert_array_almost_equal,
                            assert_array_equal, assert_equal,
                            assert_no_warnings, assert_raises, assert_warns,
                            suppress_warnings)
+import pytest
+
 from randomgen.mt19937 import MT19937
+import randomgen.mtrand
 from randomgen.xoshiro256 import Xoshiro256
 
 random = randomgen.mtrand

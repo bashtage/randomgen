@@ -21,7 +21,6 @@ import numpy as np
 
 import randomgen as rg
 
-
 CONFIG = {rg.PCG32: {'output': 32, 'seed': 64, 'seed_size': 64},
           rg.PCG64: {'output': 64, 'seed': 128, 'seed_size': 128},
           rg.ThreeFry: {'output': 64, 'seed': 256, 'seed_size': 64},

@@ -1,5 +1,6 @@
-from randomgen.xoshiro256 import Xoshiro256
 import warnings
+
+from randomgen.xoshiro256 import Xoshiro256
 
 
 def Xoshiro256StarStar(*args, **kwargs):

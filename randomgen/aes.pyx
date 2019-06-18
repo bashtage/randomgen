@@ -275,16 +275,17 @@ cdef class AESCounter:
                     _seed = random_entropy(4, 'fallback')
                 _seed = _seed.view(np.uint64)
             else:
-                seed = int_to_array(seed, 'seed', 128, 64)
+                seed_arr = np.asarray(seed).squeeze()
+                if seed_arr.ndim==0:
+                    seed = int_to_array(seed_arr.item(), 'seed', 128, 64)
                 _seed = seed_by_array(seed, 2)
         else:
             _seed = <np.ndarray>int_to_array(key, 'key', 128, 64)
         aesctr_seed(self.rng_state, <uint64_t*>np.PyArray_DATA(_seed))
         _counter = np.empty(8, dtype=np.uint64)
-        if counter is not None:
-            for i in range(4):
-                _counter[2*i:2*i+2] = int_to_array(counter+i, 'counter', 128,
-                                                   64)
+        counter = 0 if counter is None else counter
+        for i in range(4):
+            _counter[2*i:2*i+2] = int_to_array(counter+i, 'counter', 128, 64)
             aesctr_set_counter(self.rng_state,
                                <uint64_t*>np.PyArray_DATA(_counter))
         self._reset_state_variables()
@@ -346,6 +347,8 @@ cdef class AESCounter:
         aesctr_set_seed_counter(self.rng_state,
                                 <uint64_t*>np.PyArray_DATA(seed),
                                 <uint64_t*>np.PyArray_DATA(counter))
+        self.rng_state.has_uint32 = value['has_uint32']
+        self.rng_state.uinteger = value['uinteger']
 
     @property
     def ctypes(self):

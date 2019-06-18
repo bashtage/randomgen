@@ -1,18 +1,25 @@
+from functools import partial
 import os
 import pickle
 import sys
 import time
-from functools import partial
 
 import numpy as np
-import pytest
 from numpy.testing import (assert_, assert_almost_equal, assert_array_equal,
                            assert_equal)
+import pytest
 
-from randomgen import (SFMT, DSFMT, MT19937, PCG32, PCG64, Generator, Philox,
-                       ThreeFry, ThreeFry32, Xoroshiro128, Xorshift1024,
-                       Xoshiro256, Xoshiro512, entropy, MT64)
+from randomgen import (DSFMT, MT64, MT19937, PCG32, PCG64, SFMT, AESCounter,
+                       ChaCha, Generator, Philox, ThreeFry, ThreeFry32,
+                       Xoroshiro128, Xorshift1024, Xoshiro256, Xoshiro512,
+                       entropy)
 from randomgen._testing import suppress_warnings
+
+MISSING_AES = False
+try:
+    AESCounter()
+except RuntimeError:
+    MISSING_AES = True
 
 
 @pytest.fixture(scope='module',
@@ -544,15 +551,15 @@ class RNG(object):
     def test_pickle(self):
         pick = pickle.dumps(self.rg)
         unpick = pickle.loads(pick)
-        assert_((type(self.rg) == type(unpick)))
-        assert_(comp_state(self.rg.bit_generator.state,
-                           unpick.bit_generator.state))
+        assert type(self.rg) == type(unpick)
+        assert comp_state(self.rg.bit_generator.state,
+                          unpick.bit_generator.state)
 
         pick = pickle.dumps(self.rg)
         unpick = pickle.loads(pick)
-        assert_((type(self.rg) == type(unpick)))
-        assert_(comp_state(self.rg.bit_generator.state,
-                           unpick.bit_generator.state))
+        assert type(self.rg) == type(unpick)
+        assert comp_state(self.rg.bit_generator.state,
+                          unpick.bit_generator.state)
 
     def test_seed_array(self):
         if self.seed_vector_bits is None:
@@ -912,6 +919,25 @@ class RNG(object):
         assert_almost_equal(c.real, 0.0)
         np.testing.assert_allclose(c.imag, n, atol=1e-8)
 
+    def test_bit_generator_raw(self):
+        bg = self.rg.bit_generator
+        val = bg.random_raw()
+        assert np.isscalar(val)
+        val = bg.random_raw(1)
+        assert val.shape == (1,)
+        val = bg.random_raw(1000)
+        assert val.shape == (1000,)
+        assert val.dtype == np.uint64
+
+    def test_bit_generator_benchmark(self):
+        bg = self.rg.bit_generator
+        state = bg.state
+        bg._benchmark(1000)
+        assert not comp_state(state, bg.state)
+        state = bg.state
+        bg._benchmark(1000, 'double')
+        assert not comp_state(state, bg.state)
+
 
 class TestMT19937(RNG):
     @classmethod
@@ -985,10 +1011,65 @@ class TestPCG64(RNG):
             self.rg.bit_generator.seed(seed)
 
 
-class TestPhilox(RNG):
+class TestPhilox4x64(RNG):
     @classmethod
     def setup_class(cls):
-        cls.bit_generator = Philox
+        cls.number = 4
+        cls.width = 64
+        cls.bit_generator_base = Philox
+        cls.bit_generator = partial(Philox, number=cls.number, width=cls.width)
+        cls.advance = 2 ** 63 + 2 ** 31 + 2 ** 15 + 1
+        cls.seed = [12345]
+        cls.rg = Generator(cls.bit_generator(*cls.seed))
+        cls.initial_state = cls.rg.bit_generator.state
+        cls.seed_vector_bits = 64
+        cls._extra_setup()
+
+    def test_repr(self):
+        rpr = repr(self.bit_generator())
+        assert '{0}x{1}'.format(self.number, self.width) in rpr
+
+    def test_bad_width_number(self):
+        with pytest.raises(ValueError, match='number must be either 2 or 4'):
+            self.bit_generator_base(number=self.number + 1)
+        with pytest.raises(ValueError, match='width must be either 32 or 64'):
+            self.bit_generator_base(width=self.width - 1)
+
+
+class TestPhilox2x64(TestPhilox4x64):
+    @classmethod
+    def setup_class(cls):
+        cls.number = 2
+        cls.width = 64
+        cls.bit_generator = partial(Philox, number=cls.number, width=cls.width)
+        cls.advance = 2 ** 63 + 2 ** 31 + 2 ** 15 + 1
+        cls.seed = [12345]
+        cls.rg = Generator(cls.bit_generator(*cls.seed))
+        cls.initial_state = cls.rg.bit_generator.state
+        cls.seed_vector_bits = 64
+        cls._extra_setup()
+
+
+class TestPhilox2x32(TestPhilox4x64):
+    @classmethod
+    def setup_class(cls):
+        cls.number = 2
+        cls.width = 32
+        cls.bit_generator = partial(Philox, number=cls.number, width=cls.width)
+        cls.advance = 2 ** 63 + 2 ** 31 + 2 ** 15 + 1
+        cls.seed = [12345]
+        cls.rg = Generator(cls.bit_generator(*cls.seed))
+        cls.initial_state = cls.rg.bit_generator.state
+        cls.seed_vector_bits = 64
+        cls._extra_setup()
+
+
+class TestPhilox4x32(TestPhilox4x64):
+    @classmethod
+    def setup_class(cls):
+        cls.number = 4
+        cls.width = 32
+        cls.bit_generator = partial(Philox, number=cls.number, width=cls.width)
         cls.advance = 2 ** 63 + 2 ** 31 + 2 ** 15 + 1
         cls.seed = [12345]
         cls.rg = Generator(cls.bit_generator(*cls.seed))
@@ -1125,3 +1206,30 @@ class TestPCG32(TestPCG64):
         cls.initial_state = cls.rg.bit_generator.state
         cls.seed_vector_bits = None
         cls._extra_setup()
+
+
+@pytest.mark.skipif(MISSING_AES, reason='AES is not availble')
+class TestAESCounter(RNG):
+    @classmethod
+    def setup_class(cls):
+        cls.bit_generator = AESCounter
+        cls.advance = 2 ** 63 + 2 ** 31 + 2 ** 15 + 1
+        cls.seed = [2 ** 21 + 2 ** 16 + 2 ** 5 + 1]
+        cls.rg = Generator(cls.bit_generator(*cls.seed))
+        cls.initial_state = cls.rg.bit_generator.state
+        cls.seed_vector_bits = 64
+        cls._extra_setup()
+        cls.seed_error = ValueError
+
+
+class TestChaCha(RNG):
+    @classmethod
+    def setup_class(cls):
+        cls.bit_generator = ChaCha
+        cls.advance = 2 ** 63 + 2 ** 31 + 2 ** 15 + 1
+        cls.seed = [2 ** 21 + 2 ** 16 + 2 ** 5 + 1]
+        cls.rg = Generator(cls.bit_generator(*cls.seed))
+        cls.initial_state = cls.rg.bit_generator.state
+        cls.seed_vector_bits = 64
+        cls._extra_setup()
+        cls.seed_error = ValueError

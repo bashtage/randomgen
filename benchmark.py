@@ -3,8 +3,8 @@ import struct
 import timeit
 
 import numpy as np
-import pandas as pd
 from numpy.random import RandomState
+import pandas as pd
 
 rs = RandomState()
 
