@@ -1,6 +1,0 @@
-randomgen.philox4x32.Philox4x32.cffi
-====================================
-
-.. currentmodule:: randomgen.philox4x32
-
-.. autoattribute:: Philox4x32.cffi

@@ -1,6 +1,0 @@
-randomgen.philox4x32.Philox4x32.jump
-====================================
-
-.. currentmodule:: randomgen.philox4x32
-
-.. automethod:: Philox4x32.jump
