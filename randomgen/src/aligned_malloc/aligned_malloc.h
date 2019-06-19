@@ -4,7 +4,7 @@
 #include "Python.h"
 #include "numpy/npy_common.h"
 
-#define NPY_MEMALIGN 16 /* 16 for SSE2, 32 for AVX, 64 for Xeon Phi */
+#define NPY_MEMALIGN 64 /* 16 for SSE2, 32 for AVX, 64 for Xeon Phi */
 
 static NPY_INLINE void *PyArray_realloc_aligned(void *p, size_t n)
 {

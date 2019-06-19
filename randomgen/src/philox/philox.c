@@ -27,36 +27,3 @@ _philoxNxW_next_extern_tpl(2, 32)
 _philoxNxW_next_extern_tpl(4, 32)
 _philoxNxW_next_extern_tpl(2, 64)
 _philoxNxW_next_extern_tpl(4, 64)
-
-int main(){
-    philox_all_t state;
-    state.state2x32.ctr.v[0] = 0;
-    state.state2x32.ctr.v[1] = 0;
-    state.state2x32.key.v[0] = 1;
-    state.buffer_pos = 4;
-    printf("%" PRIx64 "\n", philox2x32_next64(&state));
-
-    state.state4x32.ctr.v[0] = 0;
-    state.state4x32.ctr.v[1] = 0;
-    state.state4x32.ctr.v[2] = 0;
-    state.state4x32.ctr.v[3] = 0;
-    state.state4x32.key.v[0] = 1;
-    state.state4x32.key.v[1] = 2;
-    state.buffer_pos = 4;
-    printf("%" PRIx64 "\n", philox4x32_next64(&state));
-
-    state.state2x64.ctr.v[0] = 0;
-    state.state2x64.ctr.v[1] = 0;
-    state.state2x64.key.v[0] = 1;
-    state.buffer_pos = 4;
-    printf("%" PRIx64 "\n", philox2x64_next64(&state));
-
-    state.state4x64.ctr.v[0] = 0;
-    state.state4x64.ctr.v[1] = 0;
-    state.state4x64.ctr.v[2] = 0;
-    state.state4x64.ctr.v[3] = 0;
-    state.state4x64.key.v[0] = 1;
-    state.state4x64.key.v[1] = 2;
-    state.buffer_pos = 4;
-    printf("%" PRIx64 "\n", philox4x64_next64(&state));
-}

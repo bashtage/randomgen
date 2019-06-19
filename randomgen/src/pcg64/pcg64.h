@@ -269,13 +269,13 @@ typedef pcg_state_setseq_128 pcg64_random_t;
 #endif
 
 typedef struct s_pcg64_state {
-  pcg64_random_t *pcg_state;
+  pcg64_random_t pcg_state;
   int has_uint32;
   uint32_t uinteger;
 } pcg64_state;
 
 static INLINE uint64_t pcg64_next64(pcg64_state *state) {
-  return pcg64_random_r(state->pcg_state);
+  return pcg64_random_r(&state->pcg_state);
 }
 
 static INLINE uint32_t pcg64_next32(pcg64_state *state) {
@@ -284,7 +284,7 @@ static INLINE uint32_t pcg64_next32(pcg64_state *state) {
     state->has_uint32 = 0;
     return state->uinteger;
   }
-  next = pcg64_random_r(state->pcg_state);
+  next = pcg64_random_r(&state->pcg_state);
   state->has_uint32 = 1;
   state->uinteger = (uint32_t)(next >> 32);
   return (uint32_t)(next & 0xffffffff);

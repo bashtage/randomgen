@@ -170,6 +170,10 @@ class TestMultinomial(object):
         contig = random.multinomial(100, pvals=np.ascontiguousarray(pvals))
         assert_array_equal(non_contig, contig)
 
+    def test_large_p(self):
+        with pytest.raises(ValueError, match=r'sum\(pvals'):
+            random.multinomial(100, np.array([.7, .6, .5, 0]))
+
 
 class TestSetState(object):
     def setup(self):
@@ -1691,6 +1695,9 @@ class TestBroadcast(object):
         self.set_seed()
         actual = binom(n * 3, p)
         assert_array_equal(actual, desired)
+        self.set_seed()
+        actual = binom(n * 3, p, size=(3,))
+        assert_array_equal(actual, desired)
         assert_raises(ValueError, binom, bad_n * 3, p)
         assert_raises(ValueError, binom, n * 3, bad_p_one)
         assert_raises(ValueError, binom, n * 3, bad_p_two)
@@ -1954,3 +1961,10 @@ def test_integer_repeat(int_func):
         val = val.byteswap()
     res = hashlib.md5(val.view(np.int8)).hexdigest()
     assert_(res == md5)
+
+
+def test_aliases():
+    mtrand = randomgen.mtrand
+    assert isinstance(mtrand.random_sample(), float)
+    assert isinstance(mtrand.sample(), float)
+    assert isinstance(mtrand.ranf(), float)

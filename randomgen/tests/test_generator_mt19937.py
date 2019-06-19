@@ -113,6 +113,10 @@ class TestMultinomial(object):
         contig = random.multinomial(100, pvals=np.ascontiguousarray(pvals))
         assert_array_equal(non_contig, contig)
 
+    def test_large_p(self):
+        with pytest.raises(ValueError, match=r'sum\(pvals'):
+            random.multinomial(100, np.array([.7, .6, .5, 0]))
+
 
 class TestSetState(object):
     def setup(self):
@@ -581,6 +585,11 @@ class TestRandomDist(object):
                             [-52, 41],
                             [-48, -66]])
         assert_array_equal(actual, desired)
+        random.bit_generator.seed(self.seed)
+        with suppress_warnings() as sup:
+            w = sup.record(DeprecationWarning)
+            actual = random.random_integers(198, size=(3, 2))
+        assert_array_equal(actual, desired + 100)
 
     def test_random_integers_max_int(self):
         # Tests whether random_integers can generate the
@@ -1907,6 +1916,9 @@ class TestBroadcast(object):
         self.set_seed()
         actual = binom(n * 3, p)
         assert_array_equal(actual, desired)
+        self.set_seed()
+        actual = binom(n * 3, p, size=(3,))
+        assert_array_equal(actual, desired)
         assert_raises(ValueError, binom, bad_n * 3, p)
         assert_raises(ValueError, binom, n * 3, bad_p_one)
         assert_raises(ValueError, binom, n * 3, bad_p_two)
@@ -2215,3 +2227,10 @@ def test_seed_equivalence():
     random.seed(1)
     random.state = state
     assert_state_equal(state, random.state)
+
+
+def test_get_state():
+    state = random.state
+    get_state = random.__getstate__()
+    assert state['state']['pos'] == get_state['state']['pos']
+    assert np.all(state['state']['key'] == get_state['state']['key'])

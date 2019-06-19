@@ -939,6 +939,12 @@ class TestRDRAND(Base):
     def test_seed_float_array(self):
         pass
 
+    def test_jumped(self):
+        bg = self.setup_bitgenerator(self.data1['seed'])
+        new_bg = bg.jumped()
+        assert isinstance(new_bg, type(bg))
+        assert bg is not new_bg
+
 
 class TestChaCha(Base):
     @classmethod
