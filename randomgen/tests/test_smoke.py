@@ -9,10 +9,10 @@ from numpy.testing import (assert_, assert_almost_equal, assert_array_equal,
                            assert_equal)
 import pytest
 
-from randomgen import (DSFMT, MT64, MT19937, PCG32, PCG64, SFMT, AESCounter,
-                       ChaCha, Generator, Philox, ThreeFry, ThreeFry32,
-                       Xoroshiro128, Xorshift1024, Xoshiro256, Xoshiro512,
-                       entropy)
+from randomgen import (DSFMT, JSF, MT64, MT19937, PCG32, PCG64, SFMT,
+                       AESCounter, ChaCha, Generator, Philox, ThreeFry,
+                       ThreeFry32, Xoroshiro128, Xorshift1024, Xoshiro256,
+                       Xoshiro512, entropy)
 from randomgen._testing import suppress_warnings
 
 MISSING_AES = False
@@ -972,6 +972,30 @@ class TestMT64(RNG):
         cls.seed_vector_bits = 64
         cls._extra_setup()
         cls.seed_error = ValueError
+
+
+class TestJSF64(RNG):
+    @classmethod
+    def setup_class(cls):
+        cls.bit_generator = JSF
+        cls.advance = None
+        cls.seed = [12345]
+        cls.rg = Generator(cls.bit_generator(*cls.seed))
+        cls.initial_state = cls.rg.bit_generator.state
+        cls.seed_vector_bits = 64
+        cls._extra_setup()
+
+
+class TestJSF32(RNG):
+    @classmethod
+    def setup_class(cls):
+        cls.bit_generator = partial(JSF, size=32)
+        cls.advance = None
+        cls.seed = [12345]
+        cls.rg = Generator(cls.bit_generator(*cls.seed))
+        cls.initial_state = cls.rg.bit_generator.state
+        cls.seed_vector_bits = 64
+        cls._extra_setup()
 
 
 class TestPCG64(RNG):

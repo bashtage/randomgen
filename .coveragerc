@@ -17,6 +17,7 @@ exclude_lines =
     # Don't complain if tests don't hit defensive assertion code:
     raise NotImplementedError
     except NotImplementedError
+    except RuntimeError
     # Ignore pass
     pass
     # Ignore failure messages

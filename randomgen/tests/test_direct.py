@@ -8,7 +8,7 @@ from numpy.testing import (assert_allclose, assert_array_equal, assert_equal,
                            assert_raises)
 import pytest
 
-from randomgen import (DSFMT, MT64, MT19937, PCG32, PCG64, RDRAND, SFMT,
+from randomgen import (DSFMT, JSF, MT64, MT19937, PCG32, PCG64, RDRAND, SFMT,
                        AESCounter, ChaCha, Generator, Philox, RandomState,
                        ThreeFry, ThreeFry32, Xoroshiro128, Xorshift1024,
                        Xoshiro256, Xoshiro512)
@@ -25,7 +25,6 @@ try:
     AESCounter()
 except RuntimeError:
     MISSING_AES = True
-
 
 try:
     import cffi  # noqa: F401
@@ -191,25 +190,27 @@ class Base(object):
         gauss = rs.standard_normal(n)
         bits = getattr(self, 'bit_name', self.bits)
         assert_allclose(gauss,
-                        gauss_from_uint(self.data1['data'], n, bits))
+                        gauss_from_uint(self.data1['data'], n, bits),
+                        rtol=3e-6)
 
         rs = RandomState(self.setup_bitgenerator(self.data2['seed']))
         gauss = rs.standard_normal(25)
         assert_allclose(gauss,
-                        gauss_from_uint(self.data2['data'], n, bits))
+                        gauss_from_uint(self.data2['data'], n, bits),
+                        rtol=3e-6)
 
     def test_uniform_double(self):
         rs = Generator(self.setup_bitgenerator(self.data1['seed']))
         bits = getattr(self, 'bit_name', self.bits)
         vals = uniform_from_uint(self.data1['data'], bits)
         uniforms = rs.random(len(vals))
-        assert_allclose(uniforms, vals)
+        assert_allclose(uniforms, vals, atol=1e-8)
         assert_equal(uniforms.dtype, np.float64)
 
         rs = Generator(self.setup_bitgenerator(self.data2['seed']))
         vals = uniform_from_uint(self.data2['data'], bits)
         uniforms = rs.random(len(vals))
-        assert_allclose(uniforms, vals)
+        assert_allclose(uniforms, vals, atol=1e-8)
         assert_equal(uniforms.dtype, np.float64)
 
     def test_uniform_float(self):
@@ -341,6 +342,44 @@ class Base(object):
         state = bit_generator.state
         alt_state = bit_generator.__getstate__()
         assert_state_equal(state, alt_state)
+
+
+class TestJSF64(Base):
+    @classmethod
+    def setup_class(cls):
+        cls.bit_generator = JSF
+        cls.bits = 64
+        cls.dtype = np.uint64
+        cls.data1 = cls._read_csv(
+            join(pwd, './data/jsf64-testset-1.csv'))
+        cls.data2 = cls._read_csv(
+            join(pwd, './data/jsf64-testset-2.csv'))
+        cls.seed_error_type = TypeError
+        cls.invalid_seed_types = [('apple',), (2 + 3j,), (3.1,)]
+        cls.invalid_seed_values = [(-2,), (np.empty((2, 2), dtype=np.int64),)]
+
+    def test_bad_init(self):
+        with pytest.raises(ValueError):
+            self.bit_generator(size=self.bits - 1)
+        with pytest.raises(ValueError):
+            self.bit_generator(p=-10)
+        with pytest.raises(ValueError):
+            self.bit_generator(q=120)
+
+
+class TestJSF32(TestJSF64):
+    @classmethod
+    def setup_class(cls):
+        cls.bit_generator = partial(JSF, size=32)
+        cls.bits = 32
+        cls.dtype = np.uint32
+        cls.data1 = cls._read_csv(
+            join(pwd, './data/jsf32-testset-1.csv'))
+        cls.data2 = cls._read_csv(
+            join(pwd, './data/jsf32-testset-2.csv'))
+        cls.seed_error_type = TypeError
+        cls.invalid_seed_types = [('apple',), (2 + 3j,), (3.1,)]
+        cls.invalid_seed_values = [(-2,), (np.empty((2, 2), dtype=np.int64),)]
 
 
 class TestXoroshiro128(Base):
@@ -478,10 +517,10 @@ class TestPCG64(Base):
         rs.bit_generator.advance(step)
         val_neg = rs.integers(10)
         rs.bit_generator.state = state
-        rs.bit_generator.advance(2**128 + step)
+        rs.bit_generator.advance(2 ** 128 + step)
         val_pos = rs.integers(10)
         rs.bit_generator.state = state
-        rs.bit_generator.advance(10 * 2**128 + step)
+        rs.bit_generator.advance(10 * 2 ** 128 + step)
         val_big = rs.integers(10)
         assert val_neg == val_pos
         assert val_big == val_pos
@@ -546,7 +585,7 @@ class TestAESCounter(TestPhilox):
         bit_generator = self.setup_bitgenerator(self.data1['seed'])
         state = bit_generator.state
         key = state['s']['seed'][:2]
-        key = int(key[0]) + int(key[1]) * 2**64
+        key = int(key[0]) + int(key[1]) * 2 ** 64
         counter = state['s']['counter'][0]
         keyed = self.bit_generator(counter=counter, key=key)
         assert_state_equal(bit_generator.state, keyed.state)
@@ -563,6 +602,17 @@ class TestAESCounter(TestPhilox):
         assert_raises(TypeError, rs.bit_generator.seed, np.array([0, np.pi]))
         assert_raises(TypeError, rs.bit_generator.seed, [np.pi])
         assert_raises(TypeError, rs.bit_generator.seed, [0, np.pi])
+
+    def test_bad_state(self):
+        bg = self.bit_generator()
+        state = bg.state
+        state['s']['seed'] = np.empty((2, 11), dtype=np.uint64)
+        with pytest.raises(ValueError):
+            bg.state = state
+        state = bg.state
+        state['s']['counter'] = 4
+        with pytest.raises(ValueError):
+            bg.state = state
 
 
 class TestMT19937(Base):
@@ -638,6 +688,16 @@ class TestMT19937(Base):
         with pytest.raises(ValueError):
             rs.bit_generator.state = state
 
+    def test_negative_jump(self):
+        bg = self.setup_bitgenerator(self.data1['seed'])
+        with pytest.raises(ValueError):
+            bg.jumped(-1)
+
+    def test_bad_legacy_state(self):
+        bg = self.setup_bitgenerator(self.data1['seed'])
+        with pytest.raises(ValueError):
+            bg.state = ('UNKNOWN',)
+
 
 class TestSFMT(TestMT19937):
     @classmethod
@@ -658,6 +718,10 @@ class TestSFMT(TestMT19937):
 
     @pytest.mark.skip(reason='Not applicable to SFMT')
     def test_state_tuple(self):
+        pass
+
+    @pytest.mark.skip(reason='Not applicable to SFMT')
+    def test_bad_legacy_state(self):
         pass
 
 
@@ -741,6 +805,11 @@ class TestDSFMT(Base):
         rs.bit_generator.seed(*self.data1['seed'])
         assert rs.bit_generator.state['buffer_loc'] == 382
 
+    def test_negative_jump(self):
+        bg = self.bit_generator()
+        with pytest.raises(ValueError, match='iter must be positive'):
+            bg.jumped(-1)
+
 
 class TestThreeFry32(Base):
     @classmethod
@@ -806,6 +875,10 @@ class TestMT64(Base):
         assert_raises(ValueError, bit_generator.seed, np.array([0, np.pi]))
         assert_raises(ValueError, bit_generator.seed, [np.pi])
         assert_raises(ValueError, bit_generator.seed, [0, np.pi])
+
+    def test_empty_seed(self):
+        with pytest.raises(ValueError, match='Seed must be non-empty'):
+            self.bit_generator(np.array([], dtype=np.uint64))
 
 
 @pytest.mark.skipif(MISSING_RDRAND, reason='RDRAND is not availble')
@@ -878,11 +951,21 @@ class TestChaCha(Base):
         cls.data2 = cls._read_csv(join(pwd, './data/chacha-testset-2.csv'))
         cls.seed_error_type = TypeError
         cls.invalid_seed_types = []
-        cls.invalid_seed_values = [(-1,), np.array([2 ** 65]), [2**129]]
+        cls.invalid_seed_values = [(-1,), np.array([2 ** 65]), [2 ** 129]]
         cls.state_name = 'key'
 
     def setup_bitgenerator(self, seed):
         stream = 3735928559 * 2 ** 64 + 3735928559 * 2 ** 96
-        key = seed[0] + stream + 2**128 * stream
+        key = seed[0] + stream + 2 ** 128 * stream
         bg = self.bit_generator(key=key, counter=0)
         return bg
+
+    def test_set_key(self):
+        with pytest.raises(ValueError, match='seed and key cannot'):
+            self.bit_generator(seed=0, key=0)
+
+    def test_invalid_rounds(self):
+        with pytest.raises(ValueError, match='rounds must be even and'):
+            self.bit_generator(rounds=3)
+        with pytest.raises(ValueError, match='rounds must be even and'):
+            self.bit_generator(rounds=-4)

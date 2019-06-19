@@ -3,6 +3,7 @@ from randomgen.chacha import ChaCha
 from randomgen.dsfmt import DSFMT
 from randomgen.entropy import random_entropy
 from randomgen.generator import Generator
+from randomgen.jsf import JSF
 from randomgen.mt64 import MT64
 from randomgen.mt19937 import MT19937
 from randomgen.mtrand import RandomState
@@ -20,8 +21,8 @@ from randomgen.xoshiro512 import Xoshiro512
 
 from ._version import get_versions
 
-__all__ = ['DSFMT', 'Generator', 'MT19937', 'MT64', 'PCG32', 'PCG64', 'Philox',
-           'RDRAND', 'RandomState', 'SFMT', 'ThreeFry',
+__all__ = ['DSFMT', 'Generator', 'JSF', 'MT19937', 'MT64', 'PCG32', 'PCG64',
+           'Philox', 'RDRAND', 'RandomState', 'SFMT', 'ThreeFry',
            'ThreeFry32', 'Xoroshiro128', 'Xorshift1024', 'Xoshiro256',
            'Xoshiro512', 'AESCounter', 'ChaCha', 'random_entropy']
 
