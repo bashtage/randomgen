@@ -100,7 +100,7 @@ extern void pcg64_advance(pcg64_state *state, uint64_t *step) {
   delta.high = step[0];
   delta.low = step[1];
 #endif
-  pcg64_advance_r(state->pcg_state, delta);
+  pcg64_advance_r(&state->pcg_state, delta);
 }
 
 extern void pcg64_set_seed(pcg64_state *state, uint64_t *seed, uint64_t *inc) {
@@ -114,7 +114,7 @@ extern void pcg64_set_seed(pcg64_state *state, uint64_t *seed, uint64_t *inc) {
   i.high = inc[0];
   i.low = inc[1];
 #endif
-  pcg64_srandom_r(state->pcg_state, s, i);
+  pcg64_srandom_r(&state->pcg_state, s, i);
 }
 
 extern void pcg64_get_state(pcg64_state *state, uint64_t *state_arr,
@@ -126,15 +126,15 @@ extern void pcg64_get_state(pcg64_state *state, uint64_t *state_arr,
    *
    */
 #if __SIZEOF_INT128__ && !defined(PCG_FORCE_EMULATED_128BIT_MATH)
-  state_arr[0] = (uint64_t)(state->pcg_state->state >> 64);
-  state_arr[1] = (uint64_t)(state->pcg_state->state & 0xFFFFFFFFFFFFFFFFULL);
-  state_arr[2] = (uint64_t)(state->pcg_state->inc >> 64);
-  state_arr[3] = (uint64_t)(state->pcg_state->inc & 0xFFFFFFFFFFFFFFFFULL);
+  state_arr[0] = (uint64_t)(state->pcg_state.state >> 64);
+  state_arr[1] = (uint64_t)(state->pcg_state.state & 0xFFFFFFFFFFFFFFFFULL);
+  state_arr[2] = (uint64_t)(state->pcg_state.inc >> 64);
+  state_arr[3] = (uint64_t)(state->pcg_state.inc & 0xFFFFFFFFFFFFFFFFULL);
 #else
-  state_arr[0] = (uint64_t)state->pcg_state->state.high;
-  state_arr[1] = (uint64_t)state->pcg_state->state.low;
-  state_arr[2] = (uint64_t)state->pcg_state->inc.high;
-  state_arr[3] = (uint64_t)state->pcg_state->inc.low;
+  state_arr[0] = (uint64_t)state->pcg_state.state.high;
+  state_arr[1] = (uint64_t)state->pcg_state.state.low;
+  state_arr[2] = (uint64_t)state->pcg_state.inc.high;
+  state_arr[3] = (uint64_t)state->pcg_state.inc.low;
 #endif
   has_uint32[0] = state->has_uint32;
   uinteger[0] = state->uinteger;
@@ -149,13 +149,13 @@ extern void pcg64_set_state(pcg64_state *state, uint64_t *state_arr,
    *
    */
 #if __SIZEOF_INT128__ && !defined(PCG_FORCE_EMULATED_128BIT_MATH)
-  state->pcg_state->state = (((pcg128_t)state_arr[0]) << 64) | state_arr[1];
-  state->pcg_state->inc = (((pcg128_t)state_arr[2]) << 64) | state_arr[3];
+  state->pcg_state.state = (((pcg128_t)state_arr[0]) << 64) | state_arr[1];
+  state->pcg_state.inc = (((pcg128_t)state_arr[2]) << 64) | state_arr[3];
 #else
-  state->pcg_state->state.high = state_arr[0];
-  state->pcg_state->state.low = state_arr[1];
-  state->pcg_state->inc.high = state_arr[2];
-  state->pcg_state->inc.low = state_arr[3];
+  state->pcg_state.state.high = state_arr[0];
+  state->pcg_state.state.low = state_arr[1];
+  state->pcg_state.inc.high = state_arr[2];
+  state->pcg_state.inc.low = state_arr[3];
 #endif
   state->has_uint32 = has_uint32;
   state->uinteger = uinteger;

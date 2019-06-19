@@ -66,20 +66,20 @@ typedef struct pcg_state_setseq_64 pcg32_random_t;
 #define pcg32_srandom_r pcg_setseq_64_srandom_r
 #define pcg32_advance_r pcg_setseq_64_advance_r
 
-typedef struct s_pcg32_state { pcg32_random_t *pcg_state; } pcg32_state;
+typedef struct s_pcg32_state { pcg32_random_t pcg_state; } pcg32_state;
 
 static inline uint64_t pcg32_next64(pcg32_state *state) {
-  return (uint64_t)(pcg32_random_r(state->pcg_state)) << 32 |
-         pcg32_random_r(state->pcg_state);
+  return (uint64_t)(pcg32_random_r(&state->pcg_state)) << 32 |
+         pcg32_random_r(&state->pcg_state);
 }
 
 static inline uint32_t pcg32_next32(pcg32_state *state) {
-  return pcg32_random_r(state->pcg_state);
+  return pcg32_random_r(&state->pcg_state);
 }
 
 static inline double pcg32_next_double(pcg32_state *state) {
-  int32_t a = pcg32_random_r(state->pcg_state) >> 5,
-          b = pcg32_random_r(state->pcg_state) >> 6;
+  int32_t a = pcg32_random_r(&state->pcg_state) >> 5,
+          b = pcg32_random_r(&state->pcg_state) >> 6;
   return (a * 67108864.0 + b) / 9007199254740992.0;
 }
 

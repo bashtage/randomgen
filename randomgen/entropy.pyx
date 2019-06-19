@@ -107,9 +107,10 @@ def random_entropy(size=None, source='system'):
         Output shape.  If the given shape is, e.g., ``(m, n, k)``, then
         ``m * n * k`` samples are drawn.  Default is None, in which case a
         single value is returned.
-    source : str {'system', 'fallback'}
+    source : str {'system', 'fallback', 'auto'}
         Source of entropy.  'system' uses system cryptographic pool.
-        'fallback' uses a hash of the time and process id.
+        'fallback' uses a hash of the time and process id. 'auto' attempts
+        'system' before automatically falling back to 'fallback'
 
     Returns
     -------
@@ -135,11 +136,11 @@ def random_entropy(size=None, source='system'):
     cdef uint32_t random = 0
     cdef uint32_t [:] randoms
 
-    if source not in ('system', 'fallback'):
+    if source not in ('system', 'fallback', 'auto'):
         raise ValueError('Unknown value in source.')
 
     if size is None:
-        if source == 'system':
+        if source in ('system', 'auto'):
             success = entropy_getbytes(<void *>&random, 4)
         else:
             success = entropy_fallback_getbytes(<void *>&random, 4)
@@ -151,7 +152,14 @@ def random_entropy(size=None, source='system'):
         else:
             success = entropy_fallback_getbytes(<void *>(&randoms[0]), 4 * n)
     if not success:
-        raise RuntimeError('Unable to read from system cryptographic provider')
+        if source == 'auto':
+            import warnings
+            warnings.warn('Unable to read from system cryptographic provider',
+                          RuntimeWarning)
+            return random_entropy(size=size, source='fallback')
+        else:
+            raise RuntimeError('Unable to read from system cryptographic '
+                               'provider')
 
     if n == 0:
         return random

@@ -22,9 +22,9 @@ uint64_t pcg_advance_lcg_64(uint64_t state, uint64_t delta, uint64_t cur_mult,
 }
 
 extern void pcg32_advance_state(pcg32_state *state, uint64_t step) {
-  pcg32_advance_r(state->pcg_state, step);
+  pcg32_advance_r(&state->pcg_state, step);
 }
 
 extern void pcg32_set_seed(pcg32_state *state, uint64_t seed, uint64_t inc) {
-  pcg32_srandom_r(state->pcg_state, seed, inc);
+  pcg32_srandom_r(&state->pcg_state, seed, inc);
 }

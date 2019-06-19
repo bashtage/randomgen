@@ -1,5 +1,6 @@
 #cython: language_level=3
 
+from cpython.pycapsule cimport PyCapsule_New
 from libc.stdint cimport (uint8_t, uint16_t, uint32_t, uint64_t,
                           int8_t, int16_t, int32_t, int64_t, intptr_t,
                           uintptr_t)
@@ -26,6 +27,13 @@ cdef enum ConstraintType:
     LEGACY_CONS_POISSON
 
 ctypedef ConstraintType constraint_type
+
+cdef class BitGenerator:
+    cdef bitgen_t _bitgen
+    cdef public object capsule
+    cdef object _ctypes
+    cdef object _cffi
+    cdef public object lock
 
 cdef object benchmark(bitgen_t *bitgen, object lock, Py_ssize_t cnt, object method)
 cdef object random_raw(bitgen_t *bitgen, object lock, object size, object output)
