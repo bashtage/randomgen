@@ -25,6 +25,7 @@ These RNGs will be included in future releases.
    AES Counter <aesctr>
    ChaCha <chacha>
    DSFMT <dsfmt>
+   JSF <jsf>
    MT19937 <mt19937>
    MT64 <mt64>
    PCG64 <pcg64>
@@ -34,7 +35,6 @@ These RNGs will be included in future releases.
    ThreeFry <threefry>
    Xoshiro256** <xoshiro256>
    Xoshiro512** <xoshiro512>
-
 
 Experimental RNGs
 =================

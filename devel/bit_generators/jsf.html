@@ -1,0 +1,331 @@
+
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta charset="utf-8" />
+  
+  <!-- Licensed under the Apache 2.0 License -->
+  <link rel="stylesheet" type="text/css" href="../_static/fonts/open-sans/stylesheet.css" />
+  <!-- Licensed under the SIL Open Font License -->
+  <link rel="stylesheet" type="text/css" href="../_static/fonts/source-serif-pro/source-serif-pro.css" />
+  <link rel="stylesheet" type="text/css" href="../_static/css/bootstrap.min.css" />
+  <link rel="stylesheet" type="text/css" href="../_static/css/bootstrap-theme.min.css" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+    <title>Jenkins Small Fast Generator &#8212; RandomGen v1.17.0.dev0+92.gf370271 documentation</title>
+    <link rel="stylesheet" href="../_static/guzzle.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/language_data.js"></script>
+    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="randomgen.jsf.JSF.seed" href="generated/randomgen.jsf.JSF.seed.html" />
+    <link rel="prev" title="randomgen.dsfmt.DSFMT.random_raw" href="generated/randomgen.dsfmt.DSFMT.random_raw.html" />
+  
+   
+
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="generated/randomgen.jsf.JSF.seed.html" title="randomgen.jsf.JSF.seed"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="generated/randomgen.dsfmt.DSFMT.random_raw.html" title="randomgen.dsfmt.DSFMT.random_raw"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">RandomGen v1.17.0.dev0+92.gf370271 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="index.html" accesskey="U">Bit Generators</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="container-wrapper">
+
+      <div id="mobile-toggle">
+        <a href="#"><span class="glyphicon glyphicon-align-justify" aria-hidden="true"></span></a>
+      </div>
+  <div id="left-column">
+    <div class="sphinxsidebar"><a href="
+    ../index.html" class="text-logo">RandomGen v1.17.0.dev0 (+92)</a>
+<div class="sidebar-block">
+  <div class="sidebar-wrapper">
+    <h2>Table Of Contents</h2>
+  </div>
+  <div class="sidebar-toc">
+    
+    
+      <ul>
+<li class="toctree-l1"><a class="reference internal" href="../generator.html">Random Generation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../legacy.html">Legacy Random Generation</a></li>
+</ul>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">Bit Generators</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="index.html#stable-rngs">Stable RNGs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="index.html#experimental-rngs">Experimental RNGs</a></li>
+</ul>
+</li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../parallel.html">Parallel Applications</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../multithreading.html">Multithreaded Generation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../new-or-different.html">What’s New or Different</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../performance.html">Comparing Performance</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../extending.html">Extending</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../entropy.html">Reading System Entropy</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../references.html">References</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../change-log.html">Change Log</a></li>
+</ul>
+
+    
+  </div>
+</div>
+<div class="sidebar-block">
+  <div class="sidebar-wrapper">
+    <div id="main-search">
+      <form class="form-inline" action="../search.html" method="GET" role="form">
+        <div class="input-group">
+          <input name="q" type="text" class="form-control" placeholder="Search...">
+        </div>
+        <input type="hidden" name="check_keywords" value="yes" />
+        <input type="hidden" name="area" value="default" />
+      </form>
+    </div>
+  </div>
+</div>
+      
+    </div>
+  </div>
+        <div id="right-column">
+          
+          <div role="navigation" aria-label="breadcrumbs navigation">
+            <ol class="breadcrumb">
+              <li><a href="../index.html">Docs</a></li>
+              
+                <li><a href="index.html">Bit Generators</a></li>
+              
+              <li>Jenkins Small Fast Generator</li>
+            </ol>
+          </div>
+          
+          <div class="document clearer body">
+            
+  <div class="section" id="module-randomgen.jsf">
+<span id="jenkins-small-fast-generator"></span><h1>Jenkins Small Fast Generator<a class="headerlink" href="#module-randomgen.jsf" title="Permalink to this headline">¶</a></h1>
+<dl class="class">
+<dt id="randomgen.jsf.JSF">
+<em class="property">class </em><code class="sig-prename descclassname">randomgen.jsf.</code><code class="sig-name descname">JSF</code><span class="sig-paren">(</span><em class="sig-param">seed=None</em>, <em class="sig-param">size=64</em>, <em class="sig-param">p=None</em>, <em class="sig-param">q=None</em>, <em class="sig-param">r=None</em><span class="sig-paren">)</span><a class="headerlink" href="#randomgen.jsf.JSF" title="Permalink to this definition">¶</a></dt>
+<dd><p>Container for Jenkins’s Fast Small (JSF) pseudo-random number generator</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>seed</strong> (<em>{None</em><em>, </em><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a><em>, </em><em>array_like}</em><em>, </em><em>optional</em>) – Random seed initializing the pseudo-random number generator. Can be
+an integer in [0, 2**size-1] or <code class="docutils literal notranslate"><span class="pre">None</span></code> (the default). If <cite>seed</cite>
+is <code class="docutils literal notranslate"><span class="pre">None</span></code>, then  data is read from <code class="docutils literal notranslate"><span class="pre">/dev/urandom</span></code> (or the Windows
+analog) if available.  If unavailable, a hash of the time and process
+ID is used.</p></li>
+<li><p><strong>size</strong> (<em>{32</em><em>, </em><em>64}</em><em>, </em><em>optional</em>) – Output size of a single iteration of JSF. 32 is better suited to 32-bit
+systems.</p></li>
+<li><p><strong>p</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a><em>, </em><em>optional</em>) – One the the three parameters that defines JSF. See Notes. If not
+provided uses the default values for the selected size listed in Notes.</p></li>
+<li><p><strong>q</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a><em>, </em><em>optional</em>) – One the the three parameters that defines JSF. See Notes. If not
+provided uses the default values for the selected size listed in Notes.</p></li>
+<li><p><strong>r</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a><em>, </em><em>optional</em>) – One the the three parameters that defines JSF. See Notes. If not
+provided uses the default values for the selected size listed in Notes.</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="attribute">
+<dt id="randomgen.jsf.JSF.lock">
+<code class="sig-name descname">lock</code><a class="headerlink" href="#randomgen.jsf.JSF.lock" title="Permalink to this definition">¶</a></dt>
+<dd><p>Lock instance that is shared so that the same bit git generator can
+be used in multiple Generators without corrupting the state. Code that
+generates values from a bit generator should hold the bit generator’s
+lock.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/threading.html#threading.Lock" title="(in Python v3.7)">threading.Lock</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<p class="rubric">Notes</p>
+<p>The JSF generator uses a 4-element state of unsigned integers, either
+uint32 or uint64, a, b, c and d (<a class="footnote-reference brackets" href="#id2" id="id1">1</a>). The generator also depends on
+3 parameters p, q, and r that must be between 0 and size-1.</p>
+<p>The algorithm used satisfies:</p>
+<p>e = a - ROTL(b, p)
+a = b ^ ROTL(c, q)
+b = c + ROTL(d, r)
+c = d + e
+d = e + a</p>
+<p>where d is the value returned at the end of a single iteration and
+ROTL(x, y) left rotates x by y bits.</p>
+<p><strong>Default Parameters</strong></p>
+<p>The defaults are</p>
+<table class="docutils align-default">
+<colgroup>
+<col style="width: 33%" />
+<col style="width: 9%" />
+<col style="width: 27%" />
+<col style="width: 30%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Parameter</p></th>
+<th class="head"></th>
+<th class="head"><p>32</p></th>
+<th class="head"><p>64</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>p</p></td>
+<td></td>
+<td><p>27</p></td>
+<td><p>7</p></td>
+</tr>
+<tr class="row-odd"><td><p>q</p></td>
+<td></td>
+<td><p>17</p></td>
+<td><p>13</p></td>
+</tr>
+<tr class="row-even"><td><p>r</p></td>
+<td></td>
+<td><p>0</p></td>
+<td><p>37</p></td>
+</tr>
+</tbody>
+</table>
+<p>There are many other parameterizations. See the class attribute
+<code class="docutils literal notranslate"><span class="pre">JSF.parameters</span></code> for a list of the values provided by Jenkins. Note
+that if <code class="docutils literal notranslate"><span class="pre">r</span></code> is 0, the generator uses only 2 rotations.</p>
+<p><strong>State and Seeding</strong>
+The state consists of the 4 values a, b, c and d.  The size of these values
+depends on <code class="docutils literal notranslate"><span class="pre">size</span></code>. The seed value is an unsided integer with the same
+size as the generator (e.g., uint64 for <code class="docutils literal notranslate"><span class="pre">size==64</span></code>).</p>
+<p><strong>Compatibility Guarantee</strong></p>
+<p><code class="docutils literal notranslate"><span class="pre">JSF</span></code> makes a guarantee that a fixed seed will always produce the same
+random integer stream.</p>
+<p class="rubric">Examples</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">randomgen</span> <span class="k">import</span> <span class="n">Generator</span><span class="p">,</span> <span class="n">JSF</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">rg</span> <span class="o">=</span> <span class="n">Generator</span><span class="p">(</span><span class="n">JSF</span><span class="p">(</span><span class="mi">1234</span><span class="p">))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">rg</span><span class="o">.</span><span class="n">standard_normal</span><span class="p">()</span>
+<span class="go">0.123  # random</span>
+</pre></div>
+</div>
+<p class="rubric">References</p>
+<dl class="footnote brackets">
+<dt class="label" id="id2"><span class="brackets"><a class="fn-backref" href="#id1">1</a></span></dt>
+<dd><p>Jenkins, Bob (2009). “A small noncryptographic PRNG”</p>
+</dd>
+</dl>
+</dd></dl>
+
+<div class="section" id="seeding-and-state">
+<h2>Seeding and State<a class="headerlink" href="#seeding-and-state" title="Permalink to this headline">¶</a></h2>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="generated/randomgen.jsf.JSF.seed.html#randomgen.jsf.JSF.seed" title="randomgen.jsf.JSF.seed"><code class="xref py py-obj docutils literal notranslate"><span class="pre">seed</span></code></a>([seed])</p></td>
+<td><p>Seed the generator.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="generated/randomgen.jsf.JSF.state.html#randomgen.jsf.JSF.state" title="randomgen.jsf.JSF.state"><code class="xref py py-obj docutils literal notranslate"><span class="pre">state</span></code></a></p></td>
+<td><p>Get or set the PRNG state</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="extending">
+<h2>Extending<a class="headerlink" href="#extending" title="Permalink to this headline">¶</a></h2>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="generated/randomgen.jsf.JSF.cffi.html#randomgen.jsf.JSF.cffi" title="randomgen.jsf.JSF.cffi"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cffi</span></code></a></p></td>
+<td><p>CFFI interface</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="generated/randomgen.jsf.JSF.ctypes.html#randomgen.jsf.JSF.ctypes" title="randomgen.jsf.JSF.ctypes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ctypes</span></code></a></p></td>
+<td><p>ctypes interface</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="testing">
+<h2>Testing<a class="headerlink" href="#testing" title="Permalink to this headline">¶</a></h2>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="generated/randomgen.jsf.JSF.random_raw.html#randomgen.jsf.JSF.random_raw" title="randomgen.jsf.JSF.random_raw"><code class="xref py py-obj docutils literal notranslate"><span class="pre">random_raw</span></code></a>(self[, size])</p></td>
+<td><p>Return randoms as generated by the underlying BitGenerator</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+
+
+          </div>
+            
+  <div class="footer-relations">
+    
+      <div class="pull-left">
+        <a class="btn btn-default" href="generated/randomgen.dsfmt.DSFMT.random_raw.html" title="previous chapter (use the left arrow)">randomgen.dsfmt.DSFMT.random_raw</a>
+      </div>
+    
+      <div class="pull-right">
+        <a class="btn btn-default" href="generated/randomgen.jsf.JSF.seed.html" title="next chapter (use the right arrow)">randomgen.jsf.JSF.seed</a>
+      </div>
+    </div>
+    <div class="clearer"></div>
+  
+        </div>
+        <div class="clearfix"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="generated/randomgen.jsf.JSF.seed.html" title="randomgen.jsf.JSF.seed"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="generated/randomgen.dsfmt.DSFMT.random_raw.html" title="randomgen.dsfmt.DSFMT.random_raw"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">RandomGen v1.17.0.dev0+92.gf370271 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="index.html" >Bit Generators</a> &#187;</li> 
+      </ul>
+    </div>
+<script type="text/javascript">
+  $("#mobile-toggle a").click(function () {
+    $("#left-column").toggle();
+  });
+</script>
+<script type="text/javascript" src="../_static/js/bootstrap.js"></script>
+  <div class="footer">
+    &copy; Copyright 2018, Kevin Sheppard. Created using <a href="http://sphinx.pocoo.org/">Sphinx</a>.
+  </div>
+  </body>
+</html>

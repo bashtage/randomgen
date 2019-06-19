@@ -1,0 +1,6 @@
+randomgen.jsf.JSF.state
+=======================
+
+.. currentmodule:: randomgen.jsf
+
+.. autoattribute:: JSF.state

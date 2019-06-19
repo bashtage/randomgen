@@ -1,0 +1,6 @@
+randomgen.jsf.JSF.cffi
+======================
+
+.. currentmodule:: randomgen.jsf
+
+.. autoattribute:: JSF.cffi

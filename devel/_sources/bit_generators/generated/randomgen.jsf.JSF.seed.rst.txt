@@ -1,0 +1,6 @@
+randomgen.jsf.JSF.seed
+======================
+
+.. currentmodule:: randomgen.jsf
+
+.. automethod:: JSF.seed

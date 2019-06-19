@@ -24,6 +24,11 @@ devel/_sources/bit_generators/generated/randomgen.dsfmt.DSFMT.jumped.rst.txt
 devel/_sources/bit_generators/generated/randomgen.dsfmt.DSFMT.random_raw.rst.txt
 devel/_sources/bit_generators/generated/randomgen.dsfmt.DSFMT.seed.rst.txt
 devel/_sources/bit_generators/generated/randomgen.dsfmt.DSFMT.state.rst.txt
+devel/_sources/bit_generators/generated/randomgen.jsf.JSF.cffi.rst.txt
+devel/_sources/bit_generators/generated/randomgen.jsf.JSF.ctypes.rst.txt
+devel/_sources/bit_generators/generated/randomgen.jsf.JSF.random_raw.rst.txt
+devel/_sources/bit_generators/generated/randomgen.jsf.JSF.seed.rst.txt
+devel/_sources/bit_generators/generated/randomgen.jsf.JSF.state.rst.txt
 devel/_sources/bit_generators/generated/randomgen.mt19937.MT19937.cffi.rst.txt
 devel/_sources/bit_generators/generated/randomgen.mt19937.MT19937.ctypes.rst.txt
 devel/_sources/bit_generators/generated/randomgen.mt19937.MT19937.jump.rst.txt
@@ -118,6 +123,7 @@ devel/_sources/bit_generators/generated/randomgen.xoshiro512.Xoshiro512.random_r
 devel/_sources/bit_generators/generated/randomgen.xoshiro512.Xoshiro512.seed.rst.txt
 devel/_sources/bit_generators/generated/randomgen.xoshiro512.Xoshiro512.state.rst.txt
 devel/_sources/bit_generators/index.rst.txt
+devel/_sources/bit_generators/jsf.rst.txt
 devel/_sources/bit_generators/mt19937.rst.txt
 devel/_sources/bit_generators/mt64.rst.txt
 devel/_sources/bit_generators/pcg32.rst.txt
@@ -360,6 +366,11 @@ devel/bit_generators/generated/randomgen.dsfmt.DSFMT.jumped.html
 devel/bit_generators/generated/randomgen.dsfmt.DSFMT.random_raw.html
 devel/bit_generators/generated/randomgen.dsfmt.DSFMT.seed.html
 devel/bit_generators/generated/randomgen.dsfmt.DSFMT.state.html
+devel/bit_generators/generated/randomgen.jsf.JSF.cffi.html
+devel/bit_generators/generated/randomgen.jsf.JSF.ctypes.html
+devel/bit_generators/generated/randomgen.jsf.JSF.random_raw.html
+devel/bit_generators/generated/randomgen.jsf.JSF.seed.html
+devel/bit_generators/generated/randomgen.jsf.JSF.state.html
 devel/bit_generators/generated/randomgen.mt19937.MT19937.cffi.html
 devel/bit_generators/generated/randomgen.mt19937.MT19937.ctypes.html
 devel/bit_generators/generated/randomgen.mt19937.MT19937.jump.html
@@ -454,6 +465,7 @@ devel/bit_generators/generated/randomgen.xoshiro512.Xoshiro512.random_raw.html
 devel/bit_generators/generated/randomgen.xoshiro512.Xoshiro512.seed.html
 devel/bit_generators/generated/randomgen.xoshiro512.Xoshiro512.state.html
 devel/bit_generators/index.html
+devel/bit_generators/jsf.html
 devel/bit_generators/mt19937.html
 devel/bit_generators/mt64.html
 devel/bit_generators/pcg32.html
