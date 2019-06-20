@@ -12,7 +12,6 @@ from randomgen.pcg64 import PCG64
 from randomgen.philox import Philox
 from randomgen.rdrand import RDRAND
 from randomgen.sfmt import SFMT
-from randomgen.threefry32 import ThreeFry32
 from randomgen.threefry import ThreeFry
 from randomgen.xoroshiro128 import Xoroshiro128
 from randomgen.xorshift1024 import Xorshift1024
@@ -23,7 +22,7 @@ from ._version import get_versions
 
 __all__ = ['DSFMT', 'Generator', 'JSF', 'MT19937', 'MT64', 'PCG32', 'PCG64',
            'Philox', 'RDRAND', 'RandomState', 'SFMT', 'ThreeFry',
-           'ThreeFry32', 'Xoroshiro128', 'Xorshift1024', 'Xoshiro256',
+           'Xoroshiro128', 'Xorshift1024', 'Xoshiro256',
            'Xoshiro512', 'AESCounter', 'ChaCha', 'random_entropy']
 
 __version__ = get_versions()['version']

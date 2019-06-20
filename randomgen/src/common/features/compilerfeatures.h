@@ -262,7 +262,6 @@ added to each of the *features.h files, AND to examples/ut_features.cpp.
 #endif
 
 #ifndef R123_USE_MULHILO64_C99
-/* TODO: Enable to allow compilation on all platforms */
 /* TODO: Check perf. This is change from default */
 #define R123_USE_MULHILO64_C99 1
 #endif

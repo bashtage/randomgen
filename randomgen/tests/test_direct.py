@@ -10,7 +10,7 @@ import pytest
 
 from randomgen import (DSFMT, JSF, MT64, MT19937, PCG32, PCG64, RDRAND, SFMT,
                        AESCounter, ChaCha, Generator, Philox, RandomState,
-                       ThreeFry, ThreeFry32, Xoroshiro128, Xorshift1024,
+                       ThreeFry, Xoroshiro128, Xorshift1024,
                        Xoshiro256, Xoshiro512)
 from randomgen.common import interface
 
@@ -811,10 +811,10 @@ class TestDSFMT(Base):
             bg.jumped(-1)
 
 
-class TestThreeFry32(Base):
+class TestThreeFry4x32(Base):
     @classmethod
     def setup_class(cls):
-        cls.bit_generator = ThreeFry32
+        cls.bit_generator = partial(ThreeFry, number=4, width=32)
         cls.bits = 32
         cls.dtype = np.uint32
         cls.data1 = cls._read_csv(join(pwd, './data/threefry32-testset-1.csv'))

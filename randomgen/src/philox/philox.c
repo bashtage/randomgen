@@ -1,5 +1,4 @@
 #include "philox.h"
-#include <stdio.h>
 
 #define _philoxNxW_advance_tpl(N, W)                                     \
 void philox##N##x##W##_advance(philox_all_t *state, uint##W##_t *step) { \
