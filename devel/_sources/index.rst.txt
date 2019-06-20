@@ -184,7 +184,7 @@ generators, 'in addition' to the standard PRNG in NumPy.  The included PRNGs are
 * Xorshiro256** and Xorshiro512** - The most recently introduced XOR,
   shift, and rotate generator. Supports ``jump`` and so can be used in
   parallel applications. See the documentation for
-  :meth:`~randomgen.xoshiro256.Xoshirt256.jumped` for details. More
+  :meth:`~randomgen.xoshiro256.Xoshiro256.jumped` for details. More
   information about these PRNGs is available at the
   `xorshift, xoroshiro and xoshiro authors' page`_.
 * PCG-64 - Fast generator that support many parallel streams and
