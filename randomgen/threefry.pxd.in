@@ -39,7 +39,16 @@ cdef extern from 'src/threefry/threefry.h':
 
     ctypedef R123_UINT_T r123_uint_t
 
-    struct threefry_ALL_T:
+    union THREEFRY_STATE_T:
+      threefry2x32_state state2x32
+      threefry4x32_state state4x32
+      threefry2x64_state state2x64
+      threefry4x64_state state4x64
+
+    ctypedef THREEFRY_STATE_T threefry_state_t
+
+    struct THREEFRY_ALL_T:
+      threefry_state_t state
       threefry2x32_state state2x32
       threefry4x32_state state4x32
       threefry2x64_state state2x64
@@ -51,7 +60,7 @@ cdef extern from 'src/threefry/threefry.h':
       int width
       int number
 
-    ctypedef threefry_ALL_T threefry_all_t
+    ctypedef THREEFRY_ALL_T threefry_all_t
 
 {{for w in W}}
 {{for n in (2,4)}}
