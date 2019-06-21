@@ -1,6 +1,0 @@
-randomgen.threefry32.ThreeFry32.advance
-=======================================
-
-.. currentmodule:: randomgen.threefry32
-
-.. automethod:: ThreeFry32.advance

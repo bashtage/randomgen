@@ -86,14 +86,6 @@ devel/_sources/bit_generators/generated/randomgen.threefry.ThreeFry.jumped.rst.t
 devel/_sources/bit_generators/generated/randomgen.threefry.ThreeFry.random_raw.rst.txt
 devel/_sources/bit_generators/generated/randomgen.threefry.ThreeFry.seed.rst.txt
 devel/_sources/bit_generators/generated/randomgen.threefry.ThreeFry.state.rst.txt
-devel/_sources/bit_generators/generated/randomgen.threefry32.ThreeFry32.advance.rst.txt
-devel/_sources/bit_generators/generated/randomgen.threefry32.ThreeFry32.cffi.rst.txt
-devel/_sources/bit_generators/generated/randomgen.threefry32.ThreeFry32.ctypes.rst.txt
-devel/_sources/bit_generators/generated/randomgen.threefry32.ThreeFry32.jump.rst.txt
-devel/_sources/bit_generators/generated/randomgen.threefry32.ThreeFry32.jumped.rst.txt
-devel/_sources/bit_generators/generated/randomgen.threefry32.ThreeFry32.random_raw.rst.txt
-devel/_sources/bit_generators/generated/randomgen.threefry32.ThreeFry32.seed.rst.txt
-devel/_sources/bit_generators/generated/randomgen.threefry32.ThreeFry32.state.rst.txt
 devel/_sources/bit_generators/generated/randomgen.xoroshiro128.Xoroshiro128.cffi.rst.txt
 devel/_sources/bit_generators/generated/randomgen.xoroshiro128.Xoroshiro128.ctypes.rst.txt
 devel/_sources/bit_generators/generated/randomgen.xoroshiro128.Xoroshiro128.jump.rst.txt
@@ -132,7 +124,6 @@ devel/_sources/bit_generators/philox.rst.txt
 devel/_sources/bit_generators/rdrand.rst.txt
 devel/_sources/bit_generators/sfmt.rst.txt
 devel/_sources/bit_generators/threefry.rst.txt
-devel/_sources/bit_generators/threefry32.rst.txt
 devel/_sources/bit_generators/xoroshiro128.rst.txt
 devel/_sources/bit_generators/xorshift1024.rst.txt
 devel/_sources/bit_generators/xoshiro256.rst.txt
@@ -428,14 +419,6 @@ devel/bit_generators/generated/randomgen.threefry.ThreeFry.jumped.html
 devel/bit_generators/generated/randomgen.threefry.ThreeFry.random_raw.html
 devel/bit_generators/generated/randomgen.threefry.ThreeFry.seed.html
 devel/bit_generators/generated/randomgen.threefry.ThreeFry.state.html
-devel/bit_generators/generated/randomgen.threefry32.ThreeFry32.advance.html
-devel/bit_generators/generated/randomgen.threefry32.ThreeFry32.cffi.html
-devel/bit_generators/generated/randomgen.threefry32.ThreeFry32.ctypes.html
-devel/bit_generators/generated/randomgen.threefry32.ThreeFry32.jump.html
-devel/bit_generators/generated/randomgen.threefry32.ThreeFry32.jumped.html
-devel/bit_generators/generated/randomgen.threefry32.ThreeFry32.random_raw.html
-devel/bit_generators/generated/randomgen.threefry32.ThreeFry32.seed.html
-devel/bit_generators/generated/randomgen.threefry32.ThreeFry32.state.html
 devel/bit_generators/generated/randomgen.xoroshiro128.Xoroshiro128.cffi.html
 devel/bit_generators/generated/randomgen.xoroshiro128.Xoroshiro128.ctypes.html
 devel/bit_generators/generated/randomgen.xoroshiro128.Xoroshiro128.jump.html
@@ -474,7 +457,6 @@ devel/bit_generators/philox.html
 devel/bit_generators/rdrand.html
 devel/bit_generators/sfmt.html
 devel/bit_generators/threefry.html
-devel/bit_generators/threefry32.html
 devel/bit_generators/xoroshiro128.html
 devel/bit_generators/xorshift1024.html
 devel/bit_generators/xoshiro256.html
