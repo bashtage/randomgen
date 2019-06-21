@@ -29,7 +29,7 @@ else:
 
 PRNGS = ['DSFMT', 'PCG64', 'PCG32', 'MT19937', 'MT64', 'Xoroshiro128',
          'Xorshift1024', 'Xoshiro256', 'Xoshiro512', 'Philox', 'ThreeFry',
-         'ThreeFry32', 'numpy', 'SFMT']
+         'numpy', 'SFMT']
 
 
 def timer(code, setup):

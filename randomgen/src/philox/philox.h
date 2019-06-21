@@ -47,8 +47,8 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #define INLINE inline
 #endif
 
-#include "features/compilerfeatures.h"
-#include "array.h"
+#include "../common/features/compilerfeatures.h"
+#include "../common/array.h"
 
 
 /*
@@ -421,7 +421,7 @@ R123_STATIC_INLINE T philox##N##x##W##_next(philox_all_t *state) { \
   do { \
     state->state##N##x##W.ctr.v[i++]++; \
   } while (state->state##N##x##W.ctr.v[i-1]==0 && i < N ); \
-  ct = philox##N##x##W##_R(philox##N##x##W##_rounds, state->state##N##x##W.ctr, state->state##N##x##W.key); \
+  ct = philox##N##x##W(state->state##N##x##W.ctr, state->state##N##x##W.key); \
   /* Never store the first element */ \
   for (i = 1; i < N; i++) { \
     state->buffer[i].u##W = ct.v[i]; \

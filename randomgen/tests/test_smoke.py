@@ -11,8 +11,8 @@ import pytest
 
 from randomgen import (DSFMT, JSF, MT64, MT19937, PCG32, PCG64, SFMT,
                        AESCounter, ChaCha, Generator, Philox, ThreeFry,
-                       ThreeFry32, Xoroshiro128, Xorshift1024, Xoshiro256,
-                       Xoshiro512, entropy)
+                       Xoroshiro128, Xorshift1024, Xoshiro256, Xoshiro512,
+                       entropy)
 from randomgen._testing import suppress_warnings
 
 MISSING_AES = False
@@ -1102,6 +1102,67 @@ class TestPhilox4x32(TestPhilox4x64):
         cls._extra_setup()
 
 
+class TestThreeFry4x64(TestPhilox4x64):
+    @classmethod
+    def setup_class(cls):
+        cls.number = 4
+        cls.width = 64
+        cls.bit_generator_base = ThreeFry
+        cls.bit_generator = partial(ThreeFry, number=cls.number,
+                                    width=cls.width)
+        cls.advance = 2 ** 63 + 2 ** 31 + 2 ** 15 + 1
+        cls.seed = [12345]
+        cls.rg = Generator(cls.bit_generator(*cls.seed))
+        cls.initial_state = cls.rg.bit_generator.state
+        cls.seed_vector_bits = 64
+        cls._extra_setup()
+
+
+class TestThreeFry2x64(TestPhilox4x64):
+    @classmethod
+    def setup_class(cls):
+        cls.number = 2
+        cls.width = 64
+        cls.bit_generator = partial(ThreeFry, number=cls.number,
+                                    width=cls.width)
+        cls.advance = 2 ** 63 + 2 ** 31 + 2 ** 15 + 1
+        cls.seed = [12345]
+        cls.rg = Generator(cls.bit_generator(*cls.seed))
+        cls.initial_state = cls.rg.bit_generator.state
+        cls.seed_vector_bits = 64
+        cls._extra_setup()
+
+
+class TestThreeFry2x32(TestPhilox4x64):
+    @classmethod
+    def setup_class(cls):
+        cls.number = 2
+        cls.width = 32
+        cls.bit_generator = partial(ThreeFry, number=cls.number,
+                                    width=cls.width)
+        cls.advance = 2 ** 63 + 2 ** 31 + 2 ** 15 + 1
+        cls.seed = [12345]
+        cls.rg = Generator(cls.bit_generator(*cls.seed))
+        cls.initial_state = cls.rg.bit_generator.state
+        cls.seed_vector_bits = 64
+        cls._extra_setup()
+
+
+class TestThreeFry4x32(TestPhilox4x64):
+    @classmethod
+    def setup_class(cls):
+        cls.number = 4
+        cls.width = 32
+        cls.bit_generator = partial(ThreeFry, number=cls.number,
+                                    width=cls.width)
+        cls.advance = 2 ** 63 + 2 ** 31 + 2 ** 15 + 1
+        cls.seed = [12345]
+        cls.rg = Generator(cls.bit_generator(*cls.seed))
+        cls.initial_state = cls.rg.bit_generator.state
+        cls.seed_vector_bits = 64
+        cls._extra_setup()
+
+
 class TestThreeFry(RNG):
     @classmethod
     def setup_class(cls):
@@ -1185,19 +1246,6 @@ class TestSFMT(RNG):
         cls.initial_state = cls.rg.bit_generator.state
         cls._extra_setup()
         cls.seed_vector_bits = 32
-
-
-class TestThreeFry32(RNG):
-    @classmethod
-    def setup_class(cls):
-        cls.bit_generator = ThreeFry32
-        cls.advance = 2 ** 63 + 2 ** 31 + 2 ** 15 + 1
-        cls.seed = [2 ** 21 + 2 ** 16 + 2 ** 5 + 1]
-        cls.rg = Generator(cls.bit_generator(*cls.seed))
-        cls.initial_state = cls.rg.bit_generator.state
-        cls.seed_vector_bits = 64
-        cls._extra_setup()
-        cls.seed_error = ValueError
 
 
 class TestEntropy(object):

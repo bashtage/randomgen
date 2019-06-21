@@ -48,4 +48,3 @@ permanent.
    XoroShiro128+ <xoroshiro128>
    Xorshift1024*φ <xorshift1024>
    PCG32 <pcg32>
-   ThreeFry32 <threefry32>

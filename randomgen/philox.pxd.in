@@ -12,8 +12,6 @@ cdef extern from 'src/philox/philox.h':
 {{for n in N}}
     struct s_r123array{{n}}x{{w}}:
         uint{{w}}_t v[{{n}}]
-    struct s_r123array{{n}}x{{w}}:
-        uint{{w}}_t v[{{n}}]
     ctypedef s_r123array{{n}}x{{w}} r123array{{n}}x{{w}}
 {{endfor}}
 {{endfor}}

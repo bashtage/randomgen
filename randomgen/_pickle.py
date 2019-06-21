@@ -11,7 +11,6 @@ from randomgen.pcg64 import PCG64
 from randomgen.philox import Philox
 from randomgen.rdrand import RDRAND
 from randomgen.sfmt import SFMT
-from randomgen.threefry32 import ThreeFry32
 from randomgen.threefry import ThreeFry
 from randomgen.xoroshiro128 import Xoroshiro128
 from randomgen.xorshift1024 import Xorshift1024
@@ -28,7 +27,6 @@ BitGenerators = {'AESCounter': AESCounter,
                  'PCG64': PCG64,
                  'Philox': Philox,
                  'ThreeFry': ThreeFry,
-                 'ThreeFry32': ThreeFry32,
                  'Xorshift1024': Xorshift1024,
                  'Xoroshiro128': Xoroshiro128,
                  'Xoshiro256': Xoshiro256,

@@ -287,7 +287,6 @@ NumPy's mt19937.
     PCG64                 108.3%
     Philox                 -4.9%
     ThreeFry              -12.0%
-    ThreeFry32            -63.9%
     Xoroshiro128          159.5%
     Xorshift1024          150.4%
     Xoshiro256            145.7%
@@ -301,7 +300,6 @@ NumPy's mt19937.
     PCG64                  73.5%
     Philox                -25.5%
     ThreeFry              -30.5%
-    ThreeFry32            -67.8%
     Xoroshiro128          124.0%
     Xorshift1024          109.4%
     Xoshiro256            100.3%
@@ -315,7 +313,6 @@ NumPy's mt19937.
     PCG64                 231.6%
     Philox                131.3%
     ThreeFry              118.3%
-    ThreeFry32             21.6%
     Xoroshiro128          332.1%
     Xorshift1024          232.4%
     Xoshiro256            306.6%
