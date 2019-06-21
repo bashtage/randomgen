@@ -6,9 +6,9 @@ void philox##N##x##W##_advance(philox_all_t *state, uint##W##_t *step) { \
   uint##W##_t last, carry;                                               \
   carry = 0;                                                             \
   for (i=0; i<N; i++){                                                   \
-      last = state->state##N##x##W.ctr.v[i];                             \
-      state->state##N##x##W.ctr.v[i] += step[i] + carry;                 \
-      carry = (last < state->state##N##x##W.ctr.v[i]);                   \
+      last = state->state.state##N##x##W.ctr.v[i];                             \
+      state->state.state##N##x##W.ctr.v[i] += step[i] + carry;                 \
+      carry = (last < state->state.state##N##x##W.ctr.v[i]);                   \
   }                                                                      \
 }
 

@@ -396,12 +396,15 @@ _philoxNxW_state_tpl(4, 32, uint32_t)
 _philoxNxW_state_tpl(2, 64, uint64_t)
 _philoxNxW_state_tpl(4, 64, uint64_t)
 
-
-typedef struct PHILOX_ALL_T {
+typedef union PHILOX_STATE_T {
   philox2x32_state state2x32;
   philox4x32_state state4x32;
   philox2x64_state state2x64;
   philox4x64_state state4x64;
+} philox_state_t;
+
+typedef struct PHILOX_ALL_T {
+  philox_state_t state;
   int buffer_pos;
   r123_uint_t buffer[4];
   int has_uint32;
@@ -419,9 +422,9 @@ R123_STATIC_INLINE T philox##N##x##W##_next(philox_all_t *state) { \
     return state->buffer[state->buffer_pos++].u##W; \
   } \
   do { \
-    state->state##N##x##W.ctr.v[i++]++; \
-  } while (state->state##N##x##W.ctr.v[i-1]==0 && i < N ); \
-  ct = philox##N##x##W(state->state##N##x##W.ctr, state->state##N##x##W.key); \
+    state->state.state##N##x##W.ctr.v[i++]++; \
+  } while (state->state.state##N##x##W.ctr.v[i-1]==0 && i < N ); \
+  ct = philox##N##x##W(state->state.state##N##x##W.ctr, state->state.state##N##x##W.key); \
   /* Never store the first element */ \
   for (i = 1; i < N; i++) { \
     state->buffer[i].u##W = ct.v[i]; \

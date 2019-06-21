@@ -774,12 +774,15 @@ _threefryNxW_state_tpl(4, 32, uint32_t)
 _threefryNxW_state_tpl(2, 64, uint64_t)
 _threefryNxW_state_tpl(4, 64, uint64_t)
 
-
-typedef struct threefry_ALL_T {
+typedef union THREEFRY_STATE_T {
   threefry2x32_state state2x32;
   threefry4x32_state state4x32;
   threefry2x64_state state2x64;
   threefry4x64_state state4x64;
+} threefry_state_t;
+
+typedef struct THREEFRY_ALL_T {
+  threefry_state_t state;
   int buffer_pos;
   r123_uint_t buffer[4];
   int has_uint32;
@@ -797,9 +800,9 @@ R123_STATIC_INLINE T threefry##N##x##W##_next(threefry_all_t *state) { \
     return state->buffer[state->buffer_pos++].u##W; \
   } \
   do { \
-    state->state##N##x##W.ctr.v[i++]++; \
-  } while (state->state##N##x##W.ctr.v[i-1]==0 && i < N ); \
-  ct = threefry##N##x##W(state->state##N##x##W.ctr, state->state##N##x##W.key); \
+    state->state.state##N##x##W.ctr.v[i++]++; \
+  } while (state->state.state##N##x##W.ctr.v[i-1]==0 && i < N ); \
+  ct = threefry##N##x##W(state->state.state##N##x##W.ctr, state->state.state##N##x##W.key); \
   /* Never store the first element */ \
   for (i = 1; i < N; i++) { \
     state->buffer[i].u##W = ct.v[i]; \

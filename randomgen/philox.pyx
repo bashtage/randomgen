@@ -256,25 +256,25 @@ cdef class Philox(BitGenerator):
         _seed = _seed.view(dtype)
         for i in range(self.n // 2):
             if self.w == 32 and self.n==2:
-                self.rng_state.state2x32.key.v[i] = _seed[i]
+                self.rng_state.state.state2x32.key.v[i] = _seed[i]
             elif self.w == 32 and self.n==4:
-                self.rng_state.state4x32.key.v[i] = _seed[i]
+                self.rng_state.state.state4x32.key.v[i] = _seed[i]
             elif self.w == 64 and self.n==2:
-                self.rng_state.state2x64.key.v[i] = _seed[i]
+                self.rng_state.state.state2x64.key.v[i] = _seed[i]
             else:  # self.w == 64 and self.n==4:
-                self.rng_state.state4x64.key.v[i] = _seed[i]
+                self.rng_state.state.state4x64.key.v[i] = _seed[i]
 
         counter = 0 if counter is None else counter
         counter = int_to_array(counter, 'counter', self.n * self.w, self.w)
         for i in range(self.n):
             if self.w == 32 and self.n==2:
-                self.rng_state.state2x32.ctr.v[i] = counter[i]
+                self.rng_state.state.state2x32.ctr.v[i] = counter[i]
             elif self.w == 32 and self.n==4:
-                self.rng_state.state4x32.ctr.v[i] = counter[i]
+                self.rng_state.state.state4x32.ctr.v[i] = counter[i]
             elif self.w == 64 and self.n==2:
-                self.rng_state.state2x64.ctr.v[i] = counter[i]
+                self.rng_state.state.state2x64.ctr.v[i] = counter[i]
             else:  # self.w == 64 and self.n==4:
-                self.rng_state.state4x64.ctr.v[i] = counter[i]
+                self.rng_state.state.state4x64.ctr.v[i] = counter[i]
 
         self._reset_state_variables()
 
@@ -295,13 +295,13 @@ cdef class Philox(BitGenerator):
         buffer = np.empty(self.n, dtype=dtype)
         for i in range(self.n):
             if  self.n==2 and self.w == 32:
-                ctr[i] = self.rng_state.state2x32.ctr.v[i]
+                ctr[i] = self.rng_state.state.state2x32.ctr.v[i]
             elif self.n==4 and self.w == 32:
-                ctr[i] = self.rng_state.state4x32.ctr.v[i]
+                ctr[i] = self.rng_state.state.state4x32.ctr.v[i]
             elif self.n==2 and self.w == 64:
-                ctr[i] = self.rng_state.state2x64.ctr.v[i]
+                ctr[i] = self.rng_state.state.state2x64.ctr.v[i]
             else:  # self.n==4 and self.w == 64
-                ctr[i] = self.rng_state.state4x64.ctr.v[i]
+                ctr[i] = self.rng_state.state.state4x64.ctr.v[i]
 
             if self.w == 64:
                 buffer[i] = self.rng_state.buffer[i].u64
@@ -309,13 +309,13 @@ cdef class Philox(BitGenerator):
                 buffer[i] = self.rng_state.buffer[i].u32
         for i in range(self.n // 2):
             if  self.n==2 and self.w == 32:
-                key[i] = self.rng_state.state2x32.key.v[i]
+                key[i] = self.rng_state.state.state2x32.key.v[i]
             elif self.n==4 and self.w == 32:
-                key[i] = self.rng_state.state4x32.key.v[i]
+                key[i] = self.rng_state.state.state4x32.key.v[i]
             elif self.n==2 and self.w == 64:
-                key[i] = self.rng_state.state2x64.key.v[i]
+                key[i] = self.rng_state.state.state2x64.key.v[i]
             else:  # self.n==4 and self.w == 64
-                key[i] = self.rng_state.state4x64.key.v[i]
+                key[i] = self.rng_state.state.state4x64.key.v[i]
 
         return {'bit_generator': self.__class__.__name__,
                 'state': {'counter': ctr, 'key': key},
@@ -349,24 +349,24 @@ cdef class Philox(BitGenerator):
             if self.w == 32:
                 self.rng_state.buffer[i].u32 = buffer[i]
                 if self.n==2:
-                    self.rng_state.state2x32.ctr.v[i] = ctr[i]
+                    self.rng_state.state.state2x32.ctr.v[i] = ctr[i]
                 else:  # self.n==4 :
-                    self.rng_state.state4x32.ctr.v[i] = ctr[i]
+                    self.rng_state.state.state4x32.ctr.v[i] = ctr[i]
             else:
                 self.rng_state.buffer[i].u64 = buffer[i]
                 if self.n==2:
-                    self.rng_state.state2x64.ctr.v[i] = ctr[i]
+                    self.rng_state.state.state2x64.ctr.v[i] = ctr[i]
                 else:  # self.n==4
-                    self.rng_state.state4x64.ctr.v[i] = ctr[i]
+                    self.rng_state.state.state4x64.ctr.v[i] = ctr[i]
         for i in range(self.n // 2):
             if  self.n==2 and self.w == 32:
-                self.rng_state.state2x32.key.v[i] = key[i]
+                self.rng_state.state.state2x32.key.v[i] = key[i]
             elif self.n==4 and self.w == 32:
-                self.rng_state.state4x32.key.v[i] = key[i]
+                self.rng_state.state.state4x32.key.v[i] = key[i]
             elif self.n==2 and self.w == 64:
-                self.rng_state.state2x64.key.v[i] = key[i]
+                self.rng_state.state.state2x64.key.v[i] = key[i]
             else:  # self.n==4 and self.w == 64
-                self.rng_state.state4x64.key.v[i] = key[i]
+                self.rng_state.state.state4x64.key.v[i] = key[i]
 
         self.rng_state.has_uint32 = value['has_uint32']
         self.rng_state.uinteger = value['uinteger']
