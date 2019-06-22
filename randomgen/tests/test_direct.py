@@ -530,7 +530,7 @@ class TestXorshift1024(Base):
         cls.invalid_seed_values = [(-2,), (np.empty((2, 2), dtype=np.int64),)]
 
 
-class TestThreeFry(Base):
+class TestThreeFry(Random123):
     @classmethod
     def setup_class(cls):
         cls.bit_generator = ThreeFry
@@ -714,7 +714,11 @@ class TestAESCounter(TestPhilox):
             bg.state = state
 
     def test_advance(self):
-        pass
+        bg = self.bit_generator()
+        state = bg.state
+        # TODO: Doesn't work when rolling accros
+        bg.advance(1)
+        state1 = bg.state
 
     def test_advance_large(self):
         pass
@@ -916,7 +920,7 @@ class TestDSFMT(Base):
             bg.jumped(-1)
 
 
-class TestThreeFry4x32(Base):
+class TestThreeFry4x32(Random123):
     @classmethod
     def setup_class(cls):
         cls.bit_generator = partial(ThreeFry, number=4, width=32)

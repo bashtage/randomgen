@@ -63,7 +63,7 @@ cdef extern from 'src/threefry/threefry.h':
     uint64_t threefry{{n}}x{{w}}_next64(threefry_all_t *state) nogil
     uint32_t threefry{{n}}x{{w}}_next32(threefry_all_t *state) nogil
     double threefry{{n}}x{{w}}_next_double(threefry_all_t *state) nogil
-    void threefry{{n}}x{{w}}_advance(threefry_all_t *state, uint{{w}}_t *step)
+    void threefry{{n}}x{{w}}_advance(threefry_all_t *state, uint{{w}}_t *step, int use_carry)
 
 {{endfor}}
 {{endfor}}

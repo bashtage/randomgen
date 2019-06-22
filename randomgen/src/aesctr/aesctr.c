@@ -73,24 +73,43 @@ void aesctr_advance(aesctr_state_t *state, uint64_t *step)
 #if defined(HAVE_SSE2)
     uint64_t low;
     uint64_t temp[2];
-    int i;
-
+    uint64_t adj_step[2];
+    size_t new_offset;
+    int i, carry;
+    new_offset = (state->offset % 64) + 8 * (step[0] % 2);
+    carry = 4 * (new_offset >= 8 * 8);
+    state->offset = new_offset % 64;
+    adj_step[0] = (step[0] / 2) + ((step[1] % 2) << 63);
+    low = adj_step[0];
+    adj_step[0] += carry;
+    carry = adj_step[0] < low;
+    adj_step[1] = (step[1] / 2) + ((step[2] % 2) << 63) + carry;
     for (i = 0; i < AESCTR_UNROLL; i++)
     {
         memcpy(&temp, &state->ctr[i], sizeof(__m128i));
         low = temp[0];
-        temp[0] += step[0];
-        temp[1] += step[1];
+        temp[0] += adj_step[0];
+        temp[1] += adj_step[1];
         if (temp[0] < low)
             temp[1]++;
         memcpy(&state->ctr[i].m128, &temp, sizeof(__m128i));
     }
-
-   /*
-    * Setting offset ensures that the correct values are always
-    * produced after a jump, even if small
-    */
-    state->offset = 16 * AESCTR_UNROLL;
+    // Always regenerate using the current counter
+    // Probably not needed in all cases
+    __m128i work[AESCTR_UNROLL];
+    for (int i = 0; i < AESCTR_UNROLL; ++i) {
+      work[i] = _mm_xor_si128(state->ctr[i].m128, state->seed[0].m128);
+    }
+    for (int r = 1; r <= AESCTR_ROUNDS - 1; ++r) {
+      const __m128i subkey = state->seed[r].m128;
+      for (int i = 0; i < AESCTR_UNROLL; ++i) {
+        work[i] = _mm_aesenc_si128(work[i], subkey);
+      }
+    }
+    for (int i = 0; i < AESCTR_UNROLL; ++i) {
+      _mm_storeu_si128((__m128i *)&state->state[16 * i], 
+                       _mm_aesenclast_si128(work[i], state->seed[AESCTR_ROUNDS].m128));
+    }
 #endif
 }
 
