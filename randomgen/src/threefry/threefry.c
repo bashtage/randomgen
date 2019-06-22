@@ -9,7 +9,7 @@ void threefry##N##x##W##_advance(threefry_all_t *state, uint##W##_t *step) { \
   for (i=0; i<N; i++){                                                   \
       last = state->state.state##N##x##W.ctr.v[i];                             \
       state->state.state##N##x##W.ctr.v[i] += step[i] + carry;                 \
-      carry = (last < state->state.state##N##x##W.ctr.v[i]);                   \
+      carry = (last > state->state.state##N##x##W.ctr.v[i]);                   \
   }                                                                      \
 }
 

@@ -46,6 +46,21 @@ if (sys.version_info > (3, 0)):
 pwd = os.path.dirname(os.path.abspath(__file__))
 
 
+@pytest.fixture(scope='module', params=(True, False))
+def counter_only(request):
+    return request.param
+
+
+@pytest.fixture(scope='module', params=(0, 19813))
+def warmup(request):
+    return request.param
+
+
+@pytest.fixture(scope='module', params=(0, 1, 2, 3, 4, 7, 34159))
+def step(request):
+    return request.param
+
+
 def assert_state_equal(actual, target):
     for key in actual:
         if isinstance(actual[key], dict):
@@ -344,6 +359,67 @@ class Base(object):
         assert_state_equal(state, alt_state)
 
 
+class Random123(Base):
+    @classmethod
+    def setup_class(cls):
+        super(Random123, cls).__init__()
+        cls.bit_generator = Philox
+        cls.number = 4
+        cls.width = 64
+
+    def test_advance(self, step, counter_only, warmup):
+        bg = self.bit_generator()
+        bg.random_raw(warmup)
+        state0 = bg.state
+        n = self.number
+        adj_step = step*n if counter_only else step
+        bg.random_raw(adj_step)
+        state_direct_pre = bg.state
+        direct = bg.random_raw()
+        bg.state = state0
+        bg.advance(step, counter_only)
+        advanced = bg.random_raw()
+        if counter_only and step:
+            bg.state = state_direct_pre
+            window = bg.random_raw(self.number + 1)
+            assert bool(np.isin(advanced, window))
+            return
+
+        # standard case
+        assert direct == advanced
+
+    def test_advance_large(self):
+        dtype = np.uint64 if self.width == 64 else np.uint32
+        bg = self.bit_generator()
+        step = 2 ** self.width
+        bg.advance(step, True)
+        state = bg.state
+        assert_equal(state['state']['counter'],
+                     np.array([0, 1, 0, 0], dtype=dtype))
+
+        bg = self.bit_generator()
+        step = 2 ** self.width - 1
+        bg.advance(step, True)
+        state = bg.state
+        size_max = np.iinfo(dtype).max
+        assert_equal(state['state']['counter'],
+                     np.array([size_max, 0, 0, 0], dtype=dtype))
+
+        bg = self.bit_generator()
+        step = 2 ** (2 * self.width)
+        bg.advance(step, True)
+        state = bg.state
+        assert_equal(state['state']['counter'],
+                     np.array([0, 0, 1, 0], dtype=dtype))
+
+        bg = self.bit_generator()
+        step = 2 ** (2 * self.width) - 1
+        bg.advance(step, True)
+        state = bg.state
+        assert_equal(state['state']['counter'],
+                     np.array([size_max, size_max, 0, 0], dtype=dtype))
+
+
 class TestJSF64(Base):
     @classmethod
     def setup_class(cls):
@@ -458,6 +534,8 @@ class TestThreeFry(Base):
     @classmethod
     def setup_class(cls):
         cls.bit_generator = ThreeFry
+        cls.number = 4
+        cls.width = 64
         cls.bits = 64
         cls.dtype = np.uint64
         cls.data1 = cls._read_csv(
@@ -475,6 +553,23 @@ class TestThreeFry(Base):
         keyed = self.bit_generator(counter=state['state']['counter'],
                                    key=state['state']['key'])
         assert_state_equal(bit_generator.state, keyed.state)
+
+    def test_advance(self):
+        bg = self.bit_generator()
+        state0 = bg.state
+        bg.advance(1)
+        assert_equal(bg.state['state']['counter'],
+                     np.array([1, 0, 0, 0], dtype=np.uint64))
+        bg.advance(1)
+        assert_equal(bg.state['state']['counter'],
+                     np.array([2, 0, 0, 0], dtype=np.uint64))
+        bg.advance(2**64)
+        assert_equal(bg.state['state']['counter'],
+                     np.array([2, 1, 0, 0], dtype=np.uint64))
+        bg.state = state0
+        bg.advance(2**128)
+        assert_equal(bg.state['state']['counter'],
+                     np.array([0, 0, 1, 0], dtype=np.uint64))
 
 
 class TestPCG64(Base):
@@ -526,10 +621,12 @@ class TestPCG64(Base):
         assert val_big == val_pos
 
 
-class TestPhilox(Base):
+class TestPhilox(Random123):
     @classmethod
     def setup_class(cls):
         cls.bit_generator = Philox
+        cls.number = 4
+        cls.width = 64
         cls.bits = 64
         cls.dtype = np.uint64
         cls.data1 = cls._read_csv(
@@ -549,10 +646,12 @@ class TestPhilox(Base):
         assert_state_equal(bit_generator.state, keyed.state)
 
 
-class TestPhilox4x32(TestPhilox):
+class TestPhilox4x32(Random123):
     @classmethod
     def setup_class(cls):
         cls.bit_generator = partial(Philox, number=4, width=32)
+        cls.number = 4
+        cls.width = 32
         cls.bits = 32
         cls.dtype = np.uint32
         cls.data1 = cls._read_csv(
@@ -613,6 +712,12 @@ class TestAESCounter(TestPhilox):
         state['s']['counter'] = 4
         with pytest.raises(ValueError):
             bg.state = state
+
+    def test_advance(self):
+        pass
+
+    def test_advance_large(self):
+        pass
 
 
 class TestMT19937(Base):
@@ -815,6 +920,8 @@ class TestThreeFry4x32(Base):
     @classmethod
     def setup_class(cls):
         cls.bit_generator = partial(ThreeFry, number=4, width=32)
+        cls.number = 4
+        cls.width = 32
         cls.bits = 32
         cls.dtype = np.uint32
         cls.data1 = cls._read_csv(join(pwd, './data/threefry32-testset-1.csv'))
