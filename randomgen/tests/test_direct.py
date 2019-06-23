@@ -713,15 +713,62 @@ class TestAESCounter(TestPhilox):
         with pytest.raises(ValueError):
             bg.state = state
 
-    def test_advance(self):
+    def test_advance(self, step, warmup):
         bg = self.bit_generator()
-        state = bg.state
-        # TODO: Doesn't work when rolling accros
-        bg.advance(1)
-        state1 = bg.state
+        bg.random_raw(warmup)
+        state0 = bg.state
+        bg.random_raw(step)
+        direct = bg.random_raw()
+        bg.state = state0
+        bg.advance(step)
+        advanced = bg.random_raw()
+        assert direct == advanced
+
+    def test_advance_one_repeat(self):
+        bg = self.bit_generator()
+        state0 = bg.state
+        bg.random_raw(8)
+        direct = bg.random_raw()
+        bg.state = state0
+        for i in range(8):
+            bg.advance(1)
+        advanced = bg.random_raw()
+        assert direct == advanced
 
     def test_advance_large(self):
-        pass
+        bg = self.bit_generator()
+        step = 2 ** 65
+        bg.advance(step)
+        state = bg.state
+        assert_equal(state['s']['counter'],
+                     np.array([4, 1, 5, 1, 6, 1, 7, 1], dtype=np.uint64))
+
+        bg = self.bit_generator()
+        step = 2 ** 65 - 7
+        bg.advance(step)
+        state = bg.state
+        assert_equal(state['s']['counter'],
+                     np.array([0, 1, 1, 1, 2, 1, 3, 1], dtype=np.uint64))
+
+        bg = self.bit_generator()
+        step = 2 ** 129 - 16
+        bg.advance(step)
+        state = bg.state
+        m = np.iinfo(np.uint64).max
+        assert_equal(state['s']['counter'],
+                     np.array([m - 3, m, m - 2, m, m - 1, m, m, m],
+                              dtype=np.uint64))
+        bg.random_raw(9)
+        state = bg.state
+        assert_equal(state['s']['counter'],
+                     np.array([0, 0, 1, 0, 2, 0, 3, 0], dtype=np.uint64))
+
+        bg = self.bit_generator()
+        state0 = bg.state
+        step = 2 ** 129
+        bg.advance(step)
+        state = bg.state
+        assert_state_equal(state0, state)
 
 
 class TestMT19937(Base):

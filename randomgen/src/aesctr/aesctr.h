@@ -142,8 +142,11 @@ static INLINE uint64_t aesctr_r(aesctr_state_t *state) {
       }
     }
     for (int i = 0; i < AESCTR_UNROLL; ++i) {
-      state->ctr[i].m128 =
-          _mm_add_epi64(state->ctr[i].m128, _mm_set_epi64x(0, AESCTR_UNROLL));
+      state->ctr[i].m128 = _mm_add_epi64(state->ctr[i].m128, _mm_set_epi64x(0, AESCTR_UNROLL));
+      if (UNLIKELY(state->ctr[i].u64[0] < AESCTR_UNROLL)) {
+            /* rolled, add carry */
+            state->ctr[i].m128 = _mm_add_epi64(state->ctr[i].m128, _mm_set_epi64x(1, 0));
+      }
       _mm_storeu_si128((__m128i *)&state->state[16 * i],
                        _mm_aesenclast_si128(work[i],
                                             state->seed[AESCTR_ROUNDS].m128));
