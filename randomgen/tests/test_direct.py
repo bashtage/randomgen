@@ -362,7 +362,7 @@ class Base(object):
 class Random123(Base):
     @classmethod
     def setup_class(cls):
-        super(Random123, cls).__init__()
+        super(Random123, cls).setup_class()
         cls.bit_generator = Philox
         cls.number = 4
         cls.width = 64
@@ -418,6 +418,11 @@ class Random123(Base):
         state = bg.state
         assert_equal(state['state']['counter'],
                      np.array([size_max, size_max, 0, 0], dtype=dtype))
+
+    def test_advance_deprecated(self):
+        bg = self.bit_generator()
+        with pytest.warns(FutureWarning):
+            bg.advance(1)
 
 
 class TestJSF64(Base):
@@ -533,6 +538,7 @@ class TestXorshift1024(Base):
 class TestThreeFry(Random123):
     @classmethod
     def setup_class(cls):
+        super(TestThreeFry, cls).setup_class()
         cls.bit_generator = ThreeFry
         cls.number = 4
         cls.width = 64
@@ -624,6 +630,7 @@ class TestPCG64(Base):
 class TestPhilox(Random123):
     @classmethod
     def setup_class(cls):
+        super(TestPhilox, cls).setup_class()
         cls.bit_generator = Philox
         cls.number = 4
         cls.width = 64
@@ -649,6 +656,7 @@ class TestPhilox(Random123):
 class TestPhilox4x32(Random123):
     @classmethod
     def setup_class(cls):
+        super(TestPhilox4x32, cls).setup_class()
         cls.bit_generator = partial(Philox, number=4, width=32)
         cls.number = 4
         cls.width = 32
@@ -769,6 +777,10 @@ class TestAESCounter(TestPhilox):
         bg.advance(step)
         state = bg.state
         assert_state_equal(state0, state)
+
+    @pytest.mark.skip(reason='Not applicable to AESCounter')
+    def test_advance_deprecated(self):
+        pass
 
 
 class TestMT19937(Base):
@@ -970,6 +982,7 @@ class TestDSFMT(Base):
 class TestThreeFry4x32(Random123):
     @classmethod
     def setup_class(cls):
+        super(TestThreeFry4x32, cls).setup_class()
         cls.bit_generator = partial(ThreeFry, number=4, width=32)
         cls.number = 4
         cls.width = 32
