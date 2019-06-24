@@ -374,7 +374,7 @@ cdef class ThreeFry(BitGenerator):
             Number of times to jump the state of the rng.
         """
         step_size = (self.w * self.n) // 2
-        self.advance(iter * int(2 ** step_size))
+        self.advance(iter * int(2 ** step_size), True)
 
     def jump(self, iter=1):
         """
@@ -479,8 +479,8 @@ cdef class ThreeFry(BitGenerator):
         """
         if counter is None:
             import warnings
-            warnings.warn('counter defaults to False now, but will become '
-                          'True.  Explicitly set counter to silence this'
+            warnings.warn('counter defaults to True now, but will become '
+                          'False.  Explicitly set counter to silence this'
                           'warning. ',FutureWarning)
             counter = True
         if delta == 0:

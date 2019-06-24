@@ -139,9 +139,13 @@ class RNG(object):
         assert_(comp_state(state, new_state))
 
     def test_advance(self):
-        state = self.rg.bit_generator.state
+        bg = self.rg.bit_generator
+        state = bg.state
         if hasattr(self.rg.bit_generator, 'advance'):
-            self.rg.bit_generator.advance(self.advance)
+            kwargs = {}
+            if isinstance(bg, (Philox, ThreeFry)):
+                kwargs = {'counter': True}
+            self.rg.bit_generator.advance(self.advance, **kwargs)
             assert_(not comp_state(state, self.rg.bit_generator.state))
         else:
             bit_gen_name = self.rg.bit_generator.__class__.__name__

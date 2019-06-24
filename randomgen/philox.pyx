@@ -489,8 +489,8 @@ cdef class Philox(BitGenerator):
         """
         if counter is None:
             import warnings
-            warnings.warn('counter defaults to False now, but will become '
-                          'True.  Explicitly set counter to silence this'
+            warnings.warn('counter defaults to True now, but will become '
+                          'False.  Explicitly set counter to silence this'
                           'warning. ',FutureWarning)
             counter = True
         if delta == 0:
