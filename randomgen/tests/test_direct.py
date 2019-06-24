@@ -447,6 +447,26 @@ class TestJSF64(Base):
         with pytest.raises(ValueError):
             self.bit_generator(q=120)
 
+    def test_number_seed(self):
+        bg1 = self.bit_generator(0, seed_size=1)
+        bg2 = self.bit_generator(0, seed_size=2)
+        bg3 = self.bit_generator(0, seed_size=3)
+        state1 = bg1.state['state']
+        state2 = bg2.state['state']
+        state3 = bg3.state['state']
+        assert state1['c'] != state2['c']
+        assert state1['c'] != state3['c']
+        assert state2['c'] != state3['c']
+        assert state1['d'] != state2['d']
+        assert state1['d'] != state3['d']
+        assert state2['d'] != state3['d']
+
+    def test_invalid_seed_size(self):
+        with pytest.raises(ValueError, match='seed size must be one'):
+            self.bit_generator(seed_size=4)
+        with pytest.raises(ValueError, match='seed size must be one'):
+            self.bit_generator(seed_size=1.0)
+
 
 class TestJSF32(TestJSF64):
     @classmethod

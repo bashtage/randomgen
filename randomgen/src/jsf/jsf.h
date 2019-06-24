@@ -127,7 +127,7 @@ static INLINE double jsf32_next_double(jsf_state_t *state) {
   return (a * 67108864.0 + b) / 9007199254740992.0;
 }
 
-void jsf64_seed(jsf_state_t *state, uint64_t seed);
-void jsf32_seed(jsf_state_t *state, uint32_t seed);
+void jsf64_seed(jsf_state_t *state, uint64_t *seed, int size);
+void jsf32_seed(jsf_state_t *state, uint32_t *seed, int size);
 
 #endif /* JSF_H_INCLUDED */
