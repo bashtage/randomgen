@@ -8,8 +8,7 @@ extern INLINE uint64_t chacha_next64(chacha_state_t *state);
 
 extern INLINE double chacha_next_double(chacha_state_t *state);
 
-void chacha_seed(chacha_state_t *state, uint64_t *seedval, uint64_t *stream) {
-    state->ctr[0] = state->ctr[1] = 0;
+void chacha_seed(chacha_state_t *state, uint64_t *seedval, uint64_t *stream, uint64_t *ctr) {
     // Using a 128-bit seed.
     state->keysetup[0] = seedval[0] & 0xffffffffu;
     state->keysetup[1] = seedval[0] >> 32;
@@ -20,6 +19,13 @@ void chacha_seed(chacha_state_t *state, uint64_t *seedval, uint64_t *stream) {
     state->keysetup[5] = stream[0] >> 32;
     state->keysetup[6] = stream[1] & 0xffffffffu;
     state->keysetup[7] = stream[1] >> 32;
+
+    /* Ensure str[0] is at a node where a block would be generated */
+    state->ctr[0] = ((ctr[0] >> 4) << 4);
+    state->ctr[1] = ctr[1];
+    generate_block(state);
+    /* Store correct value of counter */
+    state->ctr[0] = ctr[0];
 }
 
 
@@ -30,5 +36,7 @@ void chacha_advance(chacha_state_t *state, uint64_t *delta) {
     state->ctr[0] += delta[0];
     carry = state->ctr[0] < orig;
     state->ctr[1] += (delta[1] + carry);
-    if ((idx + delta[0] >= 16 || delta[1]) && state->ctr[0] % 16 != 0) generate_block(state);
+    if ((idx + delta[0] >= 16 || delta[1]) && ((state->ctr[0] % 16) != 0)) {
+      generate_block(state);
+    }
 }

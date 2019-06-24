@@ -384,8 +384,11 @@ cdef class AESCounter(BitGenerator):
         """
         cdef np.ndarray step
 
-        delta = wrap_int(delta, 128)
-        step = int_to_array(delta, 'delta', 128, 64)
+        delta = wrap_int(delta, 129)
+        if delta == 0:
+            return self
+        step = int_to_array(delta, 'delta', 64*3, 64)
         aesctr_advance(self.rng_state, <uint64_t *>np.PyArray_DATA(step))
-        self._reset_state_variables()
+        self.rng_state.has_uint32 = 0
+        self.rng_state.uinteger = 0
         return self

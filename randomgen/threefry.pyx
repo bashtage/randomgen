@@ -374,7 +374,7 @@ cdef class ThreeFry(BitGenerator):
             Number of times to jump the state of the rng.
         """
         step_size = (self.w * self.n) // 2
-        self.advance(iter * int(2 ** step_size))
+        self.advance(iter * int(2 ** step_size), True)
 
     def jump(self, iter=1):
         """
@@ -430,17 +430,27 @@ cdef class ThreeFry(BitGenerator):
 
         return bit_generator
 
-    def advance(self, delta):
+    def advance(self, delta, counter=None):
         """
-        advance(delta)
+        advance(delta, counter=None)
 
         Advance the underlying RNG as-if delta draws have occurred.
 
         Parameters
         ----------
         delta : integer, positive
-            Number of draws to advance the RNG. Must be less than the
-            size state variable in the underlying RNG.
+            Number of draws to advance the RNG. Must be less than the size
+            state variable in the underlying RNG. delta can take any value and
+            can be negative. Values outside 0 and  2**(N*W+N/2) are converted
+            into this range by taking the modulo.
+        counter : bool
+            Flag indicating whether the advance the counter only or both the
+            counter and the buffer position.  The default is True, which has
+            been the pattern in in randomgen <= 1.16. This is changing to False
+            for randomgen > 1.17.  To convert between the two, use
+            delta_new = delta * number where number is the number of
+            elements in the generator, delta is the step size when
+            counter=False and delta_new is the step size for counter=True
 
         Returns
         -------
@@ -463,21 +473,38 @@ cdef class ThreeFry(BitGenerator):
           RNG.  For example, two 16-bit integer values can be simulated
           from a single draw of a 32-bit RNG.
 
-        Advancing the RNG state resets any pre-computed random numbers.
-        This is required to ensure exact reproducibility.
+        Advancing the RNG state resets any stored 32-bit values. If counter is
+        False, it also resets the buffer and buffer position for backward
+        compatibility.
         """
-        delta = wrap_int(delta, self.n * self.w)
+        if counter is None:
+            import warnings
+            warnings.warn('counter defaults to True now, but will become '
+                          'False.  Explicitly set counter to silence this'
+                          'warning. ',FutureWarning)
+            counter = True
+        if delta == 0:
+            return self
+        if counter:
+            delta *= self.n
+        delta = wrap_int(delta, self.n * self.w + self.n // 2)
 
         cdef np.ndarray delta_a
-        delta_a = int_to_array(delta, 'step', self.n * self.w, self.w)
+        delta_a = int_to_array(delta, 'step', (self.n + 1) * self.w, self.w)
+        orig_buffer_pos = self.rng_state.buffer_pos
 
         if self.n == 2 and self.w == 32:
-            threefry2x32_advance(&self.rng_state, <uint32_t *>np.PyArray_DATA(delta_a))
+            threefry2x32_advance(&self.rng_state, <uint32_t *>np.PyArray_DATA(delta_a), not counter)
         elif self.n == 4 and self.w == 32:
-            threefry4x32_advance(&self.rng_state, <uint32_t *>np.PyArray_DATA(delta_a))
+            threefry4x32_advance(&self.rng_state, <uint32_t *>np.PyArray_DATA(delta_a), not counter)
         elif self.n == 2 and self.w == 64:
-            threefry2x64_advance(&self.rng_state, <uint64_t *>np.PyArray_DATA(delta_a))
+            threefry2x64_advance(&self.rng_state, <uint64_t *>np.PyArray_DATA(delta_a), not counter)
         else:  # self.n == 4 and self.w == 64:
-            threefry4x64_advance(&self.rng_state, <uint64_t *>np.PyArray_DATA(delta_a))
-        self._reset_state_variables()
+            threefry4x64_advance(&self.rng_state, <uint64_t *>np.PyArray_DATA(delta_a), not counter)
+        # Reset uint32 so if needed is drawn from the advanced state
+        self.rng_state.uinteger = 0
+        self.rng_state.has_uint32 = 0
+        if counter:
+            self._reset_state_variables()
+
         return self

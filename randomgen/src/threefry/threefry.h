@@ -869,7 +869,7 @@ _threefryNx64_next_double_tpl(4)
 
 
 #define _threefryNxW_advance_h_tpl(N, W)                                          \
-void threefry##N##x##W##_advance(threefry_all_t *state, uint##W##_t *step); \
+void threefry##N##x##W##_advance(threefry_all_t *state, uint##W##_t *step, int use_carry); \
 
 _threefryNxW_advance_h_tpl(2, 32)
 _threefryNxW_advance_h_tpl(4, 32)

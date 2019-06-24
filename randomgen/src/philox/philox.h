@@ -491,7 +491,7 @@ _philoxNx64_next_double_tpl(4)
 
 
 #define _philoxNxW_advance_h_tpl(N, W)                                          \
-void philox##N##x##W##_advance(philox_all_t *state, uint##W##_t *step); \
+void philox##N##x##W##_advance(philox_all_t *state, uint##W##_t *step, int use_carry); \
 
 _philoxNxW_advance_h_tpl(2, 32)
 _philoxNxW_advance_h_tpl(4, 32)

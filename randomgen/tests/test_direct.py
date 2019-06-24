@@ -46,6 +46,21 @@ if (sys.version_info > (3, 0)):
 pwd = os.path.dirname(os.path.abspath(__file__))
 
 
+@pytest.fixture(scope='module', params=(True, False))
+def counter_only(request):
+    return request.param
+
+
+@pytest.fixture(scope='module', params=(0, 19813))
+def warmup(request):
+    return request.param
+
+
+@pytest.fixture(scope='module', params=(0, 1, 2, 3, 4, 7, 34159))
+def step(request):
+    return request.param
+
+
 def assert_state_equal(actual, target):
     for key in actual:
         if isinstance(actual[key], dict):
@@ -344,6 +359,72 @@ class Base(object):
         assert_state_equal(state, alt_state)
 
 
+class Random123(Base):
+    @classmethod
+    def setup_class(cls):
+        super(Random123, cls).setup_class()
+        cls.bit_generator = Philox
+        cls.number = 4
+        cls.width = 64
+
+    def test_advance(self, step, counter_only, warmup):
+        bg = self.bit_generator()
+        bg.random_raw(warmup)
+        state0 = bg.state
+        n = self.number
+        adj_step = step*n if counter_only else step
+        bg.random_raw(adj_step)
+        state_direct_pre = bg.state
+        direct = bg.random_raw()
+        bg.state = state0
+        bg.advance(step, counter_only)
+        advanced = bg.random_raw()
+        if counter_only and step:
+            bg.state = state_direct_pre
+            window = bg.random_raw(self.number + 1)
+            assert bool(np.isin(advanced, window))
+            return
+
+        # standard case
+        assert direct == advanced
+
+    def test_advance_large(self):
+        dtype = np.uint64 if self.width == 64 else np.uint32
+        bg = self.bit_generator()
+        step = 2 ** self.width
+        bg.advance(step, True)
+        state = bg.state
+        assert_equal(state['state']['counter'],
+                     np.array([0, 1, 0, 0], dtype=dtype))
+
+        bg = self.bit_generator()
+        step = 2 ** self.width - 1
+        bg.advance(step, True)
+        state = bg.state
+        size_max = np.iinfo(dtype).max
+        assert_equal(state['state']['counter'],
+                     np.array([size_max, 0, 0, 0], dtype=dtype))
+
+        bg = self.bit_generator()
+        step = 2 ** (2 * self.width)
+        bg.advance(step, True)
+        state = bg.state
+        assert_equal(state['state']['counter'],
+                     np.array([0, 0, 1, 0], dtype=dtype))
+
+        bg = self.bit_generator()
+        step = 2 ** (2 * self.width) - 1
+        bg.advance(step, True)
+        state = bg.state
+        assert_equal(state['state']['counter'],
+                     np.array([size_max, size_max, 0, 0], dtype=dtype))
+
+    def test_advance_deprecated(self):
+        bg = self.bit_generator()
+        with pytest.warns(FutureWarning):
+            bg.advance(1)
+
+
 class TestJSF64(Base):
     @classmethod
     def setup_class(cls):
@@ -454,10 +535,13 @@ class TestXorshift1024(Base):
         cls.invalid_seed_values = [(-2,), (np.empty((2, 2), dtype=np.int64),)]
 
 
-class TestThreeFry(Base):
+class TestThreeFry(Random123):
     @classmethod
     def setup_class(cls):
+        super(TestThreeFry, cls).setup_class()
         cls.bit_generator = ThreeFry
+        cls.number = 4
+        cls.width = 64
         cls.bits = 64
         cls.dtype = np.uint64
         cls.data1 = cls._read_csv(
@@ -475,6 +559,23 @@ class TestThreeFry(Base):
         keyed = self.bit_generator(counter=state['state']['counter'],
                                    key=state['state']['key'])
         assert_state_equal(bit_generator.state, keyed.state)
+
+    def test_advance(self):
+        bg = self.bit_generator()
+        state0 = bg.state
+        bg.advance(1, True)
+        assert_equal(bg.state['state']['counter'],
+                     np.array([1, 0, 0, 0], dtype=np.uint64))
+        bg.advance(1, True)
+        assert_equal(bg.state['state']['counter'],
+                     np.array([2, 0, 0, 0], dtype=np.uint64))
+        bg.advance(2**64, True)
+        assert_equal(bg.state['state']['counter'],
+                     np.array([2, 1, 0, 0], dtype=np.uint64))
+        bg.state = state0
+        bg.advance(2**128, True)
+        assert_equal(bg.state['state']['counter'],
+                     np.array([0, 0, 1, 0], dtype=np.uint64))
 
 
 class TestPCG64(Base):
@@ -526,10 +627,13 @@ class TestPCG64(Base):
         assert val_big == val_pos
 
 
-class TestPhilox(Base):
+class TestPhilox(Random123):
     @classmethod
     def setup_class(cls):
+        super(TestPhilox, cls).setup_class()
         cls.bit_generator = Philox
+        cls.number = 4
+        cls.width = 64
         cls.bits = 64
         cls.dtype = np.uint64
         cls.data1 = cls._read_csv(
@@ -549,10 +653,13 @@ class TestPhilox(Base):
         assert_state_equal(bit_generator.state, keyed.state)
 
 
-class TestPhilox4x32(TestPhilox):
+class TestPhilox4x32(Random123):
     @classmethod
     def setup_class(cls):
+        super(TestPhilox4x32, cls).setup_class()
         cls.bit_generator = partial(Philox, number=4, width=32)
+        cls.number = 4
+        cls.width = 32
         cls.bits = 32
         cls.dtype = np.uint32
         cls.data1 = cls._read_csv(
@@ -613,6 +720,67 @@ class TestAESCounter(TestPhilox):
         state['s']['counter'] = 4
         with pytest.raises(ValueError):
             bg.state = state
+
+    def test_advance(self, step, warmup):
+        bg = self.bit_generator()
+        bg.random_raw(warmup)
+        state0 = bg.state
+        bg.random_raw(step)
+        direct = bg.random_raw()
+        bg.state = state0
+        bg.advance(step)
+        advanced = bg.random_raw()
+        assert direct == advanced
+
+    def test_advance_one_repeat(self):
+        bg = self.bit_generator()
+        state0 = bg.state
+        bg.random_raw(8)
+        direct = bg.random_raw()
+        bg.state = state0
+        for i in range(8):
+            bg.advance(1)
+        advanced = bg.random_raw()
+        assert direct == advanced
+
+    def test_advance_large(self):
+        bg = self.bit_generator()
+        step = 2 ** 65
+        bg.advance(step)
+        state = bg.state
+        assert_equal(state['s']['counter'],
+                     np.array([4, 1, 5, 1, 6, 1, 7, 1], dtype=np.uint64))
+
+        bg = self.bit_generator()
+        step = 2 ** 65 - 7
+        bg.advance(step)
+        state = bg.state
+        assert_equal(state['s']['counter'],
+                     np.array([0, 1, 1, 1, 2, 1, 3, 1], dtype=np.uint64))
+
+        bg = self.bit_generator()
+        step = 2 ** 129 - 16
+        bg.advance(step)
+        state = bg.state
+        m = np.iinfo(np.uint64).max
+        assert_equal(state['s']['counter'],
+                     np.array([m - 3, m, m - 2, m, m - 1, m, m, m],
+                              dtype=np.uint64))
+        bg.random_raw(9)
+        state = bg.state
+        assert_equal(state['s']['counter'],
+                     np.array([0, 0, 1, 0, 2, 0, 3, 0], dtype=np.uint64))
+
+        bg = self.bit_generator()
+        state0 = bg.state
+        step = 2 ** 129
+        bg.advance(step)
+        state = bg.state
+        assert_state_equal(state0, state)
+
+    @pytest.mark.skip(reason='Not applicable to AESCounter')
+    def test_advance_deprecated(self):
+        pass
 
 
 class TestMT19937(Base):
@@ -811,10 +979,13 @@ class TestDSFMT(Base):
             bg.jumped(-1)
 
 
-class TestThreeFry4x32(Base):
+class TestThreeFry4x32(Random123):
     @classmethod
     def setup_class(cls):
+        super(TestThreeFry4x32, cls).setup_class()
         cls.bit_generator = partial(ThreeFry, number=4, width=32)
+        cls.number = 4
+        cls.width = 32
         cls.bits = 32
         cls.dtype = np.uint32
         cls.data1 = cls._read_csv(join(pwd, './data/threefry32-testset-1.csv'))
@@ -975,3 +1146,71 @@ class TestChaCha(Base):
             self.bit_generator(rounds=3)
         with pytest.raises(ValueError, match='rounds must be even and'):
             self.bit_generator(rounds=-4)
+
+    def test_advance(self, step, warmup):
+        bg = self.bit_generator()
+        bg.random_raw(warmup)
+        state0 = bg.state
+        bg.random_raw(step)
+        direct = bg.random_raw()
+        bg.state = state0
+        # Double step since it is a 32 bit gen, but random_raw is 64 bit
+        bg.advance(2 * step)
+        advanced = bg.random_raw()
+        assert direct == advanced
+
+    def test_advance_one_repeat(self):
+        steps = 16
+        bg = self.bit_generator()
+        state0 = bg.state
+        # Half step since 32 bit gen using 64 bit raw
+        bg.random_raw(steps // 2)
+        direct = bg.random_raw()
+        bg.state = state0
+        for i in range(steps):
+            bg.advance(1)
+        advanced = bg.random_raw()
+        assert direct == advanced
+
+    def test_advance_large(self):
+        bg = self.bit_generator()
+        step = 2 ** 64
+        bg.advance(step)
+        state = bg.state
+        assert_equal(state['state']['ctr'],
+                     np.array([0, 1], dtype=np.uint64))
+
+        bg = self.bit_generator()
+        step = 2 ** 64 - 1
+        bg.advance(step)
+        state = bg.state
+        u64_max = np.iinfo(np.uint64).max
+        assert_equal(state['state']['ctr'],
+                     np.array([u64_max, 0], dtype=np.uint64))
+
+        bg = self.bit_generator()
+        step = 2 ** 128 - 16
+        bg.advance(step)
+        state = bg.state
+        m = np.iinfo(np.uint64).max
+        assert_equal(state['state']['ctr'],
+                     np.array([u64_max - 15, u64_max], dtype=np.uint64))
+
+        bg = self.bit_generator()
+        step = 2 ** 128 - 1
+        bg.advance(step)
+        state = bg.state
+        m = np.iinfo(np.uint64).max
+        assert_equal(state['state']['ctr'],
+                     np.array([u64_max, u64_max], dtype=np.uint64))
+        bg.advance(1)
+        state = bg.state
+        assert_equal(state['state']['ctr'],
+                     np.array([0, 0], dtype=np.uint64))
+
+        bg = self.bit_generator()
+        state0 = bg.state
+        step = 2 ** 128
+        bg.advance(step)
+        state = bg.state
+        assert_state_equal(state0, state)
