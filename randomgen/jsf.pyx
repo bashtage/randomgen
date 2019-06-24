@@ -7,6 +7,7 @@ from randomgen.entropy import random_entropy, seed_by_array
 
 __all__ = ['JSF']
 
+INT_TYPES = (int, long, np.integer)
 JSF_DEFAULTS = {64:{'p': 7,'q': 13,'r': 37},
                 32:{'p':27, 'q':17, 'r': 0}}
 
@@ -78,12 +79,12 @@ cdef extern from "src/jsf/jsf.h":
     uint64_t jsf64_next64(jsf_state_t *state) nogil
     uint32_t jsf64_next32(jsf_state_t *state) nogil
     double jsf64_next_double(jsf_state_t *state) nogil
-    void jsf64_seed(jsf_state_t *state, uint64_t seed)
+    void jsf64_seed(jsf_state_t *state, uint64_t *seed, int size)
 
     uint64_t jsf32_next64(jsf_state_t *state) nogil
     uint32_t jsf32_next32(jsf_state_t *state) nogil
     double jsf32_next_double(jsf_state_t *state) nogil
-    void jsf32_seed(jsf_state_t *state, uint32_t seed)
+    void jsf32_seed(jsf_state_t *state, uint32_t *seed, int size)
 
 
 
@@ -110,7 +111,7 @@ cdef uint64_t jsf32_raw(void* st) nogil:
 
 cdef class JSF(BitGenerator):
     """
-    JSF(seed=None, size=64, p=None, q=None, r=None)
+    JSF(seed=None, seed_size=1, size=64, p=None, q=None, r=None)
 
     Container for Jenkins's Fast Small (JSF) pseudo-random number generator
 
@@ -122,6 +123,10 @@ cdef class JSF(BitGenerator):
         is ``None``, then  data is read from ``/dev/urandom`` (or the Windows
         analog) if available.  If unavailable, a hash of the time and process
         ID is used.
+    seed_size : {1, 2, 3}, optional
+        Number of distinct seed values used to initialize JSF.  The original
+        implementation uses 1 (default). Higher values increase the size of
+        the seed space which is ``2**(size*seed_size)``.
     size : {32, 64}, optional
         Output size of a single iteration of JSF. 32 is better suited to 32-bit
         systems.
@@ -203,18 +208,22 @@ cdef class JSF(BitGenerator):
     """
     cdef jsf_state_t rng_state
     cdef int size
+    cdef int seed_size
     parameters = JSF_PARAMETERS
 
-    def __init__(self, seed=None, size=64, p=None, q=None, r=None):
+    def __init__(self, seed=None, seed_size=1, size=64, p=None, q=None,
+                 r=None):
         BitGenerator.__init__(self)
-
-        if size not in (32, 64):
+        if size not in (32, 64) or not isinstance(size, INT_TYPES):
             raise ValueError('size must be either 32 or 64')
+        if seed_size not in (1, 2, 3) or not isinstance(seed_size, INT_TYPES):
+            raise ValueError('seed size must be one of 1, 2, or 3')
         for val, val_name in ((p,'p'), (q,'q'), (r,'r')):
-            if val is not None and not 0<= val <= size-1:
-                raise ValueError('{0} must be between 0 and'
+            if val is not None and not (0<= val <= size-1 and isinstance(val, INT_TYPES)):
+                raise ValueError('{0} must be an integer between 0 and'
                                  '{1}'.format(val_name, size-1))
         self.size = size
+        self.seed_size = seed_size
         self._bitgen.state = <void *>&self.rng_state
         self.setup_generator(p, q, r)
         self.seed(seed)
@@ -260,15 +269,17 @@ cdef class JSF(BitGenerator):
         """
         ub = 2 ** self.size
         if seed is None:
-            state = random_entropy(self.size // 32, 'auto')
+            state = random_entropy(3 * self.size // 32, 'auto')
         else:
-            state = seed_by_array(seed, 1)
+            state = seed_by_array(seed, 3)
         dtype = np.uint64 if self.size==64 else np.uint32
-        state = state.view(dtype).item(0)
+        state = state.view(dtype)
         if self.size == 64:
-            jsf64_seed(&self.rng_state, <uint64_t>state)
+            jsf64_seed(&self.rng_state, <uint64_t*>np.PyArray_DATA(state),
+                       self.seed_size)
         else:
-            jsf32_seed(&self.rng_state, <uint32_t>state)
+            jsf32_seed(&self.rng_state, <uint32_t*>np.PyArray_DATA(state),
+                       self.seed_size)
         self._reset_state_variables()
 
     @property
@@ -299,7 +310,8 @@ cdef class JSF(BitGenerator):
                           'r':self.rng_state.r},
                 'size': self.size,
                 'has_uint32': self.rng_state.has_uint32,
-                'uinteger': self.rng_state.uinteger}
+                'uinteger': self.rng_state.uinteger,
+                'seed_size': self.seed_size}
 
     @state.setter
     def state(self, value):
@@ -325,3 +337,4 @@ cdef class JSF(BitGenerator):
 
         self.rng_state.has_uint32 = value['has_uint32']
         self.rng_state.uinteger = value['uinteger']
+        self.seed_size = value['seed_size']
