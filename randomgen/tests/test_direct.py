@@ -557,17 +557,17 @@ class TestThreeFry(Random123):
     def test_advance(self):
         bg = self.bit_generator()
         state0 = bg.state
-        bg.advance(1)
+        bg.advance(1, True)
         assert_equal(bg.state['state']['counter'],
                      np.array([1, 0, 0, 0], dtype=np.uint64))
-        bg.advance(1)
+        bg.advance(1, True)
         assert_equal(bg.state['state']['counter'],
                      np.array([2, 0, 0, 0], dtype=np.uint64))
-        bg.advance(2**64)
+        bg.advance(2**64, True)
         assert_equal(bg.state['state']['counter'],
                      np.array([2, 1, 0, 0], dtype=np.uint64))
         bg.state = state0
-        bg.advance(2**128)
+        bg.advance(2**128, True)
         assert_equal(bg.state['state']['counter'],
                      np.array([0, 0, 1, 0], dtype=np.uint64))
 
@@ -1133,3 +1133,71 @@ class TestChaCha(Base):
             self.bit_generator(rounds=3)
         with pytest.raises(ValueError, match='rounds must be even and'):
             self.bit_generator(rounds=-4)
+
+    def test_advance(self, step, warmup):
+        bg = self.bit_generator()
+        bg.random_raw(warmup)
+        state0 = bg.state
+        bg.random_raw(step)
+        direct = bg.random_raw()
+        bg.state = state0
+        # Double step since it is a 32 bit gen, but random_raw is 64 bit
+        bg.advance(2 * step)
+        advanced = bg.random_raw()
+        assert direct == advanced
+
+    def test_advance_one_repeat(self):
+        steps = 16
+        bg = self.bit_generator()
+        state0 = bg.state
+        # Half step since 32 bit gen using 64 bit raw
+        bg.random_raw(steps // 2)
+        direct = bg.random_raw()
+        bg.state = state0
+        for i in range(steps):
+            bg.advance(1)
+        advanced = bg.random_raw()
+        assert direct == advanced
+
+    def test_advance_large(self):
+        bg = self.bit_generator()
+        step = 2 ** 64
+        bg.advance(step)
+        state = bg.state
+        assert_equal(state['state']['ctr'],
+                     np.array([0, 1], dtype=np.uint64))
+
+        bg = self.bit_generator()
+        step = 2 ** 64 - 1
+        bg.advance(step)
+        state = bg.state
+        u64_max = np.iinfo(np.uint64).max
+        assert_equal(state['state']['ctr'],
+                     np.array([u64_max, 0], dtype=np.uint64))
+
+        bg = self.bit_generator()
+        step = 2 ** 128 - 16
+        bg.advance(step)
+        state = bg.state
+        m = np.iinfo(np.uint64).max
+        assert_equal(state['state']['ctr'],
+                     np.array([u64_max - 15, u64_max], dtype=np.uint64))
+
+        bg = self.bit_generator()
+        step = 2 ** 128 - 1
+        bg.advance(step)
+        state = bg.state
+        m = np.iinfo(np.uint64).max
+        assert_equal(state['state']['ctr'],
+                     np.array([u64_max, u64_max], dtype=np.uint64))
+        bg.advance(1)
+        state = bg.state
+        assert_equal(state['state']['ctr'],
+                     np.array([0, 0], dtype=np.uint64))
+
+        bg = self.bit_generator()
+        state0 = bg.state
+        step = 2 ** 128
+        bg.advance(step)
+        state = bg.state
+        assert_state_equal(state0, state)

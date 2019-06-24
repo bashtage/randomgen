@@ -20,7 +20,9 @@ cdef extern from "src/chacha/chacha.h":
     uint64_t chacha_next64(chacha_state_t *state) nogil
     double chacha_next_double(chacha_state_t *state) nogil
 
+    void chacha_seed(chacha_state_t *state, uint64_t *seedval, uint64_t *stream, uint64_t *ctr)
     void chacha_advance(chacha_state_t *state, uint64_t *delta)
+
 
 cdef uint64_t chacha_uint64(void* st) nogil:
     return chacha_next64(<chacha_state_t *>st)
@@ -205,15 +207,15 @@ cdef class ChaCha(BitGenerator):
             seed = seed_by_array(seed, 8)
         else:
             seed = random_entropy(8, 'auto')
-        seed = seed.view(np.uint32)
-        for i in range(8):
-            self.rng_state.keysetup[i] = seed[i]
-
+        _seed = seed.view(np.uint64)
+        _stream = _seed[2:]
         counter = 0 if counter is None else counter
-        if counter is not None:
-            _counter = int_to_array(counter, 'counter', 128, 64)
-            self.rng_state.ctr[0] = _counter[0]
-            self.rng_state.ctr[1] = _counter[1]
+        _counter = int_to_array(counter, 'counter', 128, 64)
+
+        chacha_seed(self.rng_state,
+                    <uint64_t *>np.PyArray_DATA(_seed),
+                    <uint64_t *>np.PyArray_DATA(_stream),
+                    <uint64_t *>np.PyArray_DATA(_counter))
 
     @property
     def state(self):

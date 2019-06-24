@@ -221,7 +221,7 @@ static INLINE double chacha_next_double(chacha_state_t *state){
     return (chacha_next64(state) >> 11) * (1.0/9007199254740992.0);
 }
 
-void chacha_seed(chacha_state_t *state, uint64_t *seedval, uint64_t *stream);
+void chacha_seed(chacha_state_t *state, uint64_t *seedval, uint64_t *stream, uint64_t *ctr);
 void chacha_advance(chacha_state_t *state, uint64_t *delta);
 
 #endif /* _RANDOMDGEN__CHACHA_H_ */
