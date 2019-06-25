@@ -31,8 +31,7 @@ int aes_capable(void)
         __cpuidex(cpu_info, 1, 0);
         ecx = cpu_info[2];
     }
-    for (int i = 0; i < 32; i++)
-        status = (ecx >> AES_FEATURE_FLAG) & 0x1;
+    status = (ecx >> AES_FEATURE_FLAG) & 0x1;
 #endif
 #endif
     RANDOMGEN_USE_AESNI = status;
