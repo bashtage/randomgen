@@ -21,10 +21,13 @@ except RuntimeError:
     MISSING_RDRAND = True
 
 MISSING_AES = False
+HAS_AESNI = False
 try:
-    AESCounter()
+    aes = AESCounter()
+    HAS_AESNI = aes.use_aesni
 except RuntimeError:
     MISSING_AES = True
+USE_AESNI = [True, False] if HAS_AESNI else [False]
 
 try:
     import cffi  # noqa: F401
@@ -56,7 +59,7 @@ def warmup(request):
     return request.param
 
 
-@pytest.fixture(scope='module', params=(0, 1, 2, 3, 4, 7, 34159))
+@pytest.fixture(scope='module', params=(0, 1, 2, 3, 4, 5, 7, 8, 9, 34159))
 def step(request):
     return request.param
 
@@ -708,6 +711,15 @@ class TestAESCounter(TestPhilox):
         cls.invalid_seed_values = [(1, None, 1), (-1,), (2 ** 257 + 1,),
                                    (None, None, 2 ** 257 + 1)]
 
+    @pytest.fixture(autouse=True, params=USE_AESNI)
+    def set_use_aesni(self, request):
+        self.use_aesni = request.param
+
+    def setup_bitgenerator(self, seed):
+        bg = self.bit_generator(*seed)
+        bg.use_aesni = self.use_aesni
+        return bg
+
     def test_set_key(self):
         bit_generator = self.setup_bitgenerator(self.data1['seed'])
         state = bit_generator.state
@@ -801,6 +813,12 @@ class TestAESCounter(TestPhilox):
     @pytest.mark.skip(reason='Not applicable to AESCounter')
     def test_advance_deprecated(self):
         pass
+
+    @pytest.mark.skipif(HAS_AESNI, reason='Not valid when cpu has AESNI')
+    def test_no_aesni(self):
+        bg = self.bit_generator()
+        with pytest.raises(ValueError, match='CPU does not support AESNI'):
+            bg.use_aesni = True
 
 
 class TestMT19937(Base):
@@ -1212,7 +1230,6 @@ class TestChaCha(Base):
         step = 2 ** 128 - 16
         bg.advance(step)
         state = bg.state
-        m = np.iinfo(np.uint64).max
         assert_equal(state['state']['ctr'],
                      np.array([u64_max - 15, u64_max], dtype=np.uint64))
 
@@ -1220,7 +1237,6 @@ class TestChaCha(Base):
         step = 2 ** 128 - 1
         bg.advance(step)
         state = bg.state
-        m = np.iinfo(np.uint64).max
         assert_equal(state['state']['ctr'],
                      np.array([u64_max, u64_max], dtype=np.uint64))
         bg.advance(1)

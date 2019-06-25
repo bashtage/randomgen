@@ -23,6 +23,8 @@ cdef extern from "src/aesctr/aesctr.h":
     uint32_t aes_next32(aesctr_state_t *aesctr) nogil
     double aes_next_double(aesctr_state_t *aesctr) nogil
 
+    int RANDOMGEN_USE_AESNI
+    void aesctr_use_aesni(int val)
     void aesctr_seed(aesctr_state_t *aesctr, uint64_t *seed)
     void aesctr_set_seed_counter(aesctr_state_t *aesctr, uint64_t *seed, uint64_t *counter)
     void aesctr_get_seed_counter(aesctr_state_t *aesctr, uint64_t *seed, uint64_t *counter)
@@ -145,8 +147,6 @@ cdef class AESCounter(BitGenerator):
 
     def __init__(self, seed=None, counter=None, key=None):
         BitGenerator.__init__(self)
-        if not aes_capable():
-            raise RuntimeError('AESNI is required to use AESCounter.')  # pragma: no cover
         # Calloc since ctr needs to be 0
         self.rng_state = <aesctr_state_t *>PyArray_calloc_aligned(sizeof(aesctr_state_t), 1)
         self.seed(seed, counter, key)
@@ -164,6 +164,35 @@ cdef class AESCounter(BitGenerator):
     cdef _reset_state_variables(self):
         self.rng_state.has_uint32 = 0
         self.rng_state.uinteger = 0
+
+    @property
+    def use_aesni(self):
+        """
+        Toggle use of AESNI
+
+        Parameters
+        ----------
+        flag : bool
+            Flag indicating whether to use AESNI
+
+        Returns
+        -------
+        flag : bool
+            Current flag value
+
+        Raises
+        ------
+        ValueError
+            If AESNI is not supported
+        """
+        return RANDOMGEN_USE_AESNI
+
+    @use_aesni.setter
+    def use_aesni(self, value):
+        capable = aes_capable()
+        if value and not capable:
+            raise ValueError('CPU does not support AESNI')
+        aesctr_use_aesni(bool(value))
 
     def seed(self, seed=None, counter=None, key=None):
         """
@@ -196,6 +225,9 @@ cdef class AESCounter(BitGenerator):
         The two representation of the counter and key are related through
         array[i] = (value // 2**(64*i)) % 2**64.
         """
+        # TODO: This is a bad design. Should be internal and unavoidable
+        aes_capable()
+
         cdef np.ndarray _seed
 
         if seed is not None and key is not None:
