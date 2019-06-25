@@ -142,6 +142,8 @@ cdef class AESCounter(BitGenerator):
 
     References
     ----------
+    .. [1] Advanced Encryption Standard. (n.d.). In Wikipedia. Retrieved
+        June 1, 2019, from https://en.wikipedia.org/wiki/Advanced_Encryption_Standard
     """
     cdef aesctr_state_t *rng_state
 

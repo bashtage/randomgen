@@ -352,7 +352,6 @@ cdef np.ndarray int_to_array(object value, object name, object bits, object uint
         dtype = np.uint64
     else:
         raise ValueError('Unknown uint_size')
-
     if value.shape == ():
         orig = value
         value = int(value)
