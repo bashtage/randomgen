@@ -24,6 +24,11 @@ devel/_sources/bit_generators/generated/randomgen.dsfmt.DSFMT.jumped.rst.txt
 devel/_sources/bit_generators/generated/randomgen.dsfmt.DSFMT.random_raw.rst.txt
 devel/_sources/bit_generators/generated/randomgen.dsfmt.DSFMT.seed.rst.txt
 devel/_sources/bit_generators/generated/randomgen.dsfmt.DSFMT.state.rst.txt
+devel/_sources/bit_generators/generated/randomgen.hc128.HC128.cffi.rst.txt
+devel/_sources/bit_generators/generated/randomgen.hc128.HC128.ctypes.rst.txt
+devel/_sources/bit_generators/generated/randomgen.hc128.HC128.random_raw.rst.txt
+devel/_sources/bit_generators/generated/randomgen.hc128.HC128.seed.rst.txt
+devel/_sources/bit_generators/generated/randomgen.hc128.HC128.state.rst.txt
 devel/_sources/bit_generators/generated/randomgen.jsf.JSF.cffi.rst.txt
 devel/_sources/bit_generators/generated/randomgen.jsf.JSF.ctypes.rst.txt
 devel/_sources/bit_generators/generated/randomgen.jsf.JSF.random_raw.rst.txt
@@ -114,6 +119,7 @@ devel/_sources/bit_generators/generated/randomgen.xoshiro512.Xoshiro512.jumped.r
 devel/_sources/bit_generators/generated/randomgen.xoshiro512.Xoshiro512.random_raw.rst.txt
 devel/_sources/bit_generators/generated/randomgen.xoshiro512.Xoshiro512.seed.rst.txt
 devel/_sources/bit_generators/generated/randomgen.xoshiro512.Xoshiro512.state.rst.txt
+devel/_sources/bit_generators/hc128.rst.txt
 devel/_sources/bit_generators/index.rst.txt
 devel/_sources/bit_generators/jsf.rst.txt
 devel/_sources/bit_generators/mt19937.rst.txt
@@ -357,6 +363,11 @@ devel/bit_generators/generated/randomgen.dsfmt.DSFMT.jumped.html
 devel/bit_generators/generated/randomgen.dsfmt.DSFMT.random_raw.html
 devel/bit_generators/generated/randomgen.dsfmt.DSFMT.seed.html
 devel/bit_generators/generated/randomgen.dsfmt.DSFMT.state.html
+devel/bit_generators/generated/randomgen.hc128.HC128.cffi.html
+devel/bit_generators/generated/randomgen.hc128.HC128.ctypes.html
+devel/bit_generators/generated/randomgen.hc128.HC128.random_raw.html
+devel/bit_generators/generated/randomgen.hc128.HC128.seed.html
+devel/bit_generators/generated/randomgen.hc128.HC128.state.html
 devel/bit_generators/generated/randomgen.jsf.JSF.cffi.html
 devel/bit_generators/generated/randomgen.jsf.JSF.ctypes.html
 devel/bit_generators/generated/randomgen.jsf.JSF.random_raw.html
@@ -447,6 +458,7 @@ devel/bit_generators/generated/randomgen.xoshiro512.Xoshiro512.jumped.html
 devel/bit_generators/generated/randomgen.xoshiro512.Xoshiro512.random_raw.html
 devel/bit_generators/generated/randomgen.xoshiro512.Xoshiro512.seed.html
 devel/bit_generators/generated/randomgen.xoshiro512.Xoshiro512.state.html
+devel/bit_generators/hc128.html
 devel/bit_generators/index.html
 devel/bit_generators/jsf.html
 devel/bit_generators/mt19937.html
