@@ -70,9 +70,9 @@ cdef class SFMT(BitGenerator):
         Random seed used to initialize the pseudo-random number generator.  Can
         be any integer between 0 and 2**32 - 1 inclusive, an array (or other
         sequence) of unsigned 32-bit integers, or ``None`` (the default).  If
-        `seed` is ``None``, a 32-bit unsigned integer is read from
+        `seed` is ``None``, the 624 32-bit unsigned integers are read from
         ``/dev/urandom`` (or the Windows analog) if available. If unavailable,
-        a 32-bit hash of the time and process ID is used.
+        a hash of the time and process ID is used.
 
     Attributes
     ----------
@@ -190,7 +190,7 @@ cdef class SFMT(BitGenerator):
                 seed_arr = random_entropy(2 * SFMT_N64, 'auto')
                 sfmt_init_by_array(self.rng_state.state,
                                    <uint32_t *>np.PyArray_DATA(seed_arr),
-                                   <int>np.PyArray_DIM(seed_arr, 0))
+                                   2 * SFMT_N64)
             else:
                 if hasattr(seed, 'squeeze'):
                     seed = seed.squeeze()
