@@ -161,6 +161,8 @@ cdef class SFMT(BitGenerator):
 
     cdef _reset_state_variables(self):
         self.rng_state.buffer_loc = SFMT_N64
+        self.rng_state.has_uint32 = 0
+        self.rng_state.uinteger = 0
 
     def seed(self, seed=None):
         """

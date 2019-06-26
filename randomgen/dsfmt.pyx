@@ -31,9 +31,6 @@ cdef extern from "src/dsfmt/dSFMT.h":
 
     struct s_dsfmt_state:
         dsfmt_t *state
-        int has_uint32
-        uint32_t uinteger
-
         double *buffered_uniforms
         int buffer_loc
 
