@@ -10,7 +10,7 @@ conda update --all --quiet
 conda create -n randomgen-test ${PKGS} pip --quiet
 source activate randomgen-test
 
-PKGS="python=${PYTHON} matplotlib numpy"
+PKGS="python=${PYTHON} numpy"
 if [[ -n ${NUMPY} ]]; then PKGS="${PKGS}=${NUMPY}"; fi
 PKGS="${PKGS} Cython";
 if [[ -n ${CYTHON} ]]; then PKGS="${PKGS}=${CYTHON}"; fi

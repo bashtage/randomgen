@@ -33,6 +33,7 @@ These RNGs will be included in future releases.
    Philox <philox>
    RDRAND <rdrand>
    SFMT <sfmt>
+   SPECK128 <speck128>
    ThreeFry <threefry>
    Xoshiro256** <xoshiro256>
    Xoshiro512** <xoshiro512>

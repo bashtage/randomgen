@@ -11,7 +11,7 @@ import pytest
 from randomgen import (DSFMT, HC128, JSF, MT64, MT19937, PCG32, PCG64, RDRAND,
                        SFMT, AESCounter, ChaCha, Generator, Philox,
                        RandomState, ThreeFry, Xoroshiro128, Xorshift1024,
-                       Xoshiro256, Xoshiro512)
+                       Xoshiro256, Xoshiro512, SPECK128)
 from randomgen.common import interface
 
 MISSING_RDRAND = False
@@ -383,7 +383,10 @@ class Base(object):
         g = Generator(bg)
         g.integers(0,2**32, dtype=np.uint32)
         state = bg.state
-        bg.advance(1000)
+        if isinstance(bg, (Philox, ThreeFry)):
+            bg.advance(1000, False)
+        else:
+            bg.advance(1000)
         if 'has_uint32' in bg.state:
             assert bg.state['has_uint32'] == 0
             return
@@ -1328,3 +1331,45 @@ class TestHC128(Base):
             self.bit_generator(key=2**256)
         with pytest.raises(ValueError):
             self.bit_generator(seed=1, key=1)
+
+
+class TestSPECK128(Base):
+
+    @classmethod
+    def setup_class(cls):
+        cls.bit_generator = SPECK128
+        cls.bits = 64
+        cls.dtype = np.uint64
+        cls.data1 = cls._read_csv(join(pwd, './data/speck-128-testset-1.csv'))
+        cls.data2 = cls._read_csv(join(pwd, './data/speck-128-testset-2.csv'))
+        cls.seed_error_type = TypeError
+        cls.invalid_seed_types = [('apple',), (2 + 3j,), (3.1,)]
+        cls.invalid_seed_values = [(-2,), (np.empty((2, 2), dtype=np.int64),)]
+
+    def test_seed_out_of_range(self):
+        # GH #82
+        rs = Generator(self.setup_bitgenerator(self.data1['seed']))
+        assert_raises(ValueError, rs.bit_generator.seed,
+                      2 ** 257)
+        assert_raises(ValueError, rs.bit_generator.seed, -1)
+
+    def test_invalid_seed_type(self):
+        bit_generator = self.setup_bitgenerator(self.data1['seed'])
+        for st in self.invalid_seed_types:
+            with pytest.raises((TypeError, ValueError)):
+                bit_generator.seed(*st)
+
+    def test_key_init(self):
+        with pytest.raises(ValueError):
+            self.bit_generator(key=-1)
+        with pytest.raises(ValueError):
+            self.bit_generator(key=2**256)
+        with pytest.raises(ValueError):
+            self.bit_generator(seed=1, key=1)
+
+    def test_seed_out_of_range_array(self):
+        # GH #82
+        rs = Generator(self.setup_bitgenerator(self.data1['seed']))
+        assert_raises(ValueError, rs.bit_generator.seed,
+                      [2 ** (4 * self.bits + 1)])
+        assert_raises(ValueError, rs.bit_generator.seed, [-1])

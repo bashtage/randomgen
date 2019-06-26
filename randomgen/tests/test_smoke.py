@@ -11,8 +11,9 @@ import pytest
 
 from randomgen import (DSFMT, HC128, JSF, MT64, MT19937, PCG32, PCG64, SFMT,
                        AESCounter, ChaCha, Generator, Philox, ThreeFry,
-                       Xoroshiro128, Xorshift1024, Xoshiro256, Xoshiro512,
-                       entropy)
+                       SPECK128, Xoroshiro128, Xorshift1024, Xoshiro256,
+                       Xoshiro512, entropy)
+
 from randomgen._testing import suppress_warnings
 
 MISSING_AES = False
@@ -1325,6 +1326,19 @@ class TestHC128(RNG):
         cls.bit_generator = HC128
         cls.seed = [2**231 + 2 ** 21 + 2 ** 16 + 2 ** 5 + 1]
         cls.rg = Generator(cls.bit_generator(*cls.seed))
+        cls.initial_state = cls.rg.bit_generator.state
+        cls.seed_vector_bits = 64
+        cls._extra_setup()
+        cls.seed_error = ValueError
+
+
+class TestSPECK128(RNG):
+    @classmethod
+    def setup_class(cls):
+        cls.bit_generator = SPECK128
+        cls.seed = [2**231 + 2 ** 21 + 2 ** 16 + 2 ** 5 + 1]
+        cls.rg = Generator(cls.bit_generator(*cls.seed))
+        cls.advance = 2 ** 63 + 2 ** 31 + 2 ** 15 + 1
         cls.initial_state = cls.rg.bit_generator.state
         cls.seed_vector_bits = 64
         cls._extra_setup()

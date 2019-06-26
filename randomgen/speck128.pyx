@@ -4,65 +4,70 @@ from randomgen.common cimport *
 from randomgen.distributions cimport bitgen_t
 from randomgen.entropy import random_entropy, seed_by_array
 
-__all__ = ['AESCounter']
+__all__ = ['SPECK128']
 
-cdef extern from "src/aesctr/aesctr.h":
+DEF SPECK_UNROLL = 12
+DEF SPECK_ROUNDS = 34
 
-    # int are placeholders only for
-    struct AESCTR_STATE_T:
-        int ctr[4]
-        int seed[10 + 1]
-        uint8_t state[16 * 4]
-        size_t offset
-        int has_uint32
-        uint32_t uinteger
+cdef extern from "src/speck-128/speck-128.h":
 
-    ctypedef AESCTR_STATE_T aesctr_state_t
+    union SPEC_T:
+      uint64_t u64[2]
 
-    uint64_t aes_next64(aesctr_state_t *aesctr) nogil
-    uint32_t aes_next32(aesctr_state_t *aesctr) nogil
-    double aes_next_double(aesctr_state_t *aesctr) nogil
+    ctypedef SPEC_T spec_t
 
-    int RANDOMGEN_USE_AESNI
-    void aesctr_use_aesni(int val)
-    void aesctr_seed(aesctr_state_t *aesctr, uint64_t *seed)
-    void aesctr_set_seed_counter(aesctr_state_t *aesctr, uint64_t *seed, uint64_t *counter)
-    void aesctr_get_seed_counter(aesctr_state_t *aesctr, uint64_t *seed, uint64_t *counter)
-    int aes_capable()
-    void aesctr_advance(aesctr_state_t *aesctr, uint64_t *step)
-    void aesctr_set_counter(aesctr_state_t *aesctr, uint64_t *counter)
+    struct SPECK_STATE_T:
+        spec_t ctr[SPECK_UNROLL // 2];
+        uint8_t buffer[8 * SPECK_UNROLL];
+        uint64_t round_key[SPECK_ROUNDS];
+        int offset;
+        int has_uint32;
+        uint32_t uinteger;
 
-cdef uint64_t aes_uint64(void* st) nogil:
-    return aes_next64(<aesctr_state_t *>st)
+    ctypedef SPECK_STATE_T speck_state_t
 
-cdef uint32_t aes_uint32(void *st) nogil:
-    return aes_next32(<aesctr_state_t *> st)
+    uint64_t speck_next64(speck_state_t *state) nogil
+    uint32_t speck_next32(speck_state_t *state) nogil
 
-cdef double aes_double(void* st) nogil:
-    return uint64_to_double(aes_next64(<aesctr_state_t *>st))
+    void speck_seed(speck_state_t *state, uint64_t *seed)
+    void speck_set_counter(speck_state_t *state, uint64_t *ctr)
+    void speck_advance(speck_state_t *state, uint64_t *step)
+    # void speck_set_seed_counter(speck_state_t *state, uint64_t *seed, uint64_t *counter)
+    # void speck_get_seed_counter(speck_state_t *state, uint64_t *seed, uint64_t *counter)
+    # void speck_advance(speck_state_t *state, uint64_t *step)
+    # void speck_set_counter(speck_state_t *state, uint64_t *counter)
 
-cdef class AESCounter(BitGenerator):
+cdef uint64_t speck_uint64(void* st) nogil:
+    return speck_next64(<speck_state_t *>st)
+
+cdef uint32_t speck_uint32(void *st) nogil:
+    return speck_next32(<speck_state_t *> st)
+
+cdef double speck_double(void* st) nogil:
+    return uint64_to_double(speck_next64(<speck_state_t *>st))
+
+cdef class SPECK128(BitGenerator):
     """
-    AESCounter(seed=None)
+    SPECK128(seed=None)
 
-    Container for the AES Counter pseudo-random number generator.
+    Container for the SPECK (128 x 256) pseudo-random number generator.
 
     Parameters
     ----------
     seed : {None, int}, optional
         Random seed initializing the pseudo-random number generator.
-        Can be an integer in [0, 2**128-1], or ``None`` (the default).
+        Can be an integer in [0, 2**256), or ``None`` (the default).
         If `seed` is ``None``, then  data is read
         from ``/dev/urandom`` (or the Windows analog) if available.  If
         unavailable, a hash of the time and process ID is used.
     counter : {None, int, array_like}, optional
-        Counter to use in the AESCounter state. Can be either
+        Counter to use in the SPECK128 state. Can be either
         a Python int in [0, 2**128) or a 2-element uint64 array.
         If not provided, the RNG is initialized at 0.
     key : {None, int, array_like}, optional
-        Key to use in the AESCounter state.  Unlike seed, which is run through
+        Key to use in the SPECK128 state.  Unlike seed, which is run through
         another RNG before use, the value in key is directly set. Can be either
-        a Python int in [0, 2**128) or a 2-element uint64 array.
+        a Python int in [0, 2**256) or a 4-element uint64 array.
         key and seed cannot both be used.
 
 
@@ -76,32 +81,32 @@ cdef class AESCounter(BitGenerator):
 
     Notes
     -----
-    AESCounter is a 64-bit PRNG that uses a counter-based design based on
-    the AES-128 cryptographic function [1]_. Instances using different values
-    of the key produce independent sequences.  ``AESCounter`` has a period
-    of :math:`2^{128} - 1` and supports arbitrary advancing and
+    SPECK128 is a 64-bit PRNG that uses a counter-based design based on
+    the SPECK-128 cryptographic function [1]_. Instances using different values
+    of the key produce independent sequences.  ``SPECK128`` has a large period
+    :math:`2^{TBD} - 1` and supports arbitrary advancing and
     jumping the sequence in increments of :math:`2^{64}`. These features allow
     multiple non-overlapping sequences to be generated.
 
-    ``AESCounter`` provides a capsule containing function pointers that produce
+    ``SPECK128`` provides a capsule containing function pointers that produce
     doubles, and unsigned 32 and 64- bit integers. These are not
     directly consumable in Python and must be consumed by a ``Generator``
     or similar object that supports low-level access.
 
-    See ``Philox`` and ``ThreeFry`` for a related counter-based PRNG.
+    See ``AESCounter``, ``Philox`` and ``ThreeFry`` for a related
+    counter-based PRNG.
 
     **State and Seeding**
 
-    The ``AESCounter`` state vector consists of a 64-element array of uint8
-    that capture buffered draws from the distribution, a 22-element array of
-    uint64s holding the seed (11 by 128bits), and an 8-element array of
-    uint64 that holds the counters (4 by 129 bits). The first two elements of
-    the seed are the value provided by the user (or from the entropy pool).
-    The offset varies between 0 and 64 and shows the location in the buffer of
+    The ``SPECK128`` state vector consists of a 96-element array of uint8
+    that capture buffered draws from the distribution, a 34-element array of
+    uint64s holding the round key, and an 12-element array of
+    uint64 that holds the 128-bit counters (6 by 128 bits).
+    The offset varies between 0 and 96 and shows the location in the buffer of
     the next 64 bits.
 
-    ``AESCounter`` is seeded using either a single 128-bit unsigned integer
-    or a vector of 2 64-bit unsigned integers.  In either case, the seed is
+    ``SPECK128`` is seeded using either a single 256-bit unsigned integer
+    or a vector of 4 64-bit unsigned integers.  In either case, the seed is
     used as an input for a second random number generator,
     SplitMix64, and the output of this PRNG function is used as the initial
     state. Using a single 64-bit value for the seed can only initialize a small
@@ -109,55 +114,57 @@ cdef class AESCounter(BitGenerator):
 
     **Parallel Features**
 
-    ``AESCounter`` can be used in parallel applications by calling the ``jump``
+    ``SPECK128`` can be used in parallel applications by calling the ``jump``
     method  to advances the state as-if :math:`2^{64}` random numbers have
     been generated. Alternatively, ``advance`` can be used to advance the
     counter for any positive step in [0, 2**128). When using ``jump``, all
     generators should be initialized with the same seed to ensure that the
     segments come from the same sequence.
 
-    >>> from randomgen import Generator, AESCounter
-    >>> rg = [Generator(AESCounter(1234)) for _ in range(10)]
-    # Advance each AESCounter instances by i jumps
+    >>> from randomgen import Generator, SPECK128
+    >>> rg = [Generator(SPECK128(1234)) for _ in range(10)]
+    # Advance each SPECK128 instances by i jumps
     >>> for i in range(10):
     ...     rg[i].bit_generator.jump(i)
 
-    Alternatively, ``AESCounter`` can be used in parallel applications by using
+    Alternatively, ``SPECK128`` can be used in parallel applications by using
     a sequence of distinct keys where each instance uses different key.
 
     >>> key = 2**93 + 2**65 + 2**33 + 2**17 + 2**9
-    >>> rg = [Generator(AESCounter(key=key+i)) for i in range(10)]
+    >>> rg = [Generator(SPECK128(key=key+i)) for i in range(10)]
 
     **Compatibility Guarantee**
 
-    ``AESCounter`` makes a guarantee that a fixed seed and will always produce
+    ``SPECK128`` makes a guarantee that a fixed seed and will always produce
     the same random integer stream.
 
     Examples
     --------
-    >>> from randomgen import Generator, AESCounter
-    >>> rg = Generator(AESCounter(1234))
+    >>> from randomgen import Generator, SPECK128
+    >>> rg = Generator(SPECK128(1234))
     >>> rg.standard_normal()
     0.123  # random
 
     References
     ----------
-    .. [1] Advanced Encryption Standard. (n.d.). In Wikipedia. Retrieved
-        June 1, 2019, from https://en.wikipedia.org/wiki/Advanced_Encryption_Standard
+    .. [1] Ray Beaulieu, Douglas Shors, Jason Smith, Stefan Treatman-Clark,
+       Bryan Weeks, and Louis Wingers. SIMON and SPECK Implementation Guide.
+       National Security Agency. January 15, 2019. from
+       https://nsacyber.github.io/simon-speck/implementations/ImplementationGuide1.1.pdf
     """
-    cdef aesctr_state_t *rng_state
+    cdef speck_state_t *rng_state
 
     def __init__(self, seed=None, counter=None, key=None):
         BitGenerator.__init__(self)
         # Calloc since ctr needs to be 0
-        self.rng_state = <aesctr_state_t *>PyArray_calloc_aligned(sizeof(aesctr_state_t), 1)
+        self.rng_state = <speck_state_t *>PyArray_calloc_aligned(sizeof(speck_state_t), 1)
         self.seed(seed, counter, key)
 
         self._bitgen.state = <void *>self.rng_state
-        self._bitgen.next_uint64 = &aes_uint64
-        self._bitgen.next_uint32 = &aes_uint32
-        self._bitgen.next_double = &aes_double
-        self._bitgen.next_raw = &aes_uint64
+        self._bitgen.next_uint64 = &speck_uint64
+        self._bitgen.next_uint32 = &speck_uint32
+        self._bitgen.next_double = &speck_double
+        self._bitgen.next_raw = &speck_uint64
 
     def __dealloc__(self):
         if self.rng_state:
@@ -167,34 +174,6 @@ cdef class AESCounter(BitGenerator):
         self.rng_state.has_uint32 = 0
         self.rng_state.uinteger = 0
 
-    @property
-    def use_aesni(self):
-        """
-        Toggle use of AESNI
-
-        Parameters
-        ----------
-        flag : bool
-            Flag indicating whether to use AESNI
-
-        Returns
-        -------
-        flag : bool
-            Current flag value
-
-        Raises
-        ------
-        ValueError
-            If AESNI is not supported
-        """
-        return RANDOMGEN_USE_AESNI
-
-    @use_aesni.setter
-    def use_aesni(self, value):
-        capable = aes_capable()
-        if value and not capable:
-            raise ValueError('CPU does not support AESNI')
-        aesctr_use_aesni(bool(value))
 
     def seed(self, seed=None, counter=None, key=None):
         """
@@ -202,14 +181,14 @@ cdef class AESCounter(BitGenerator):
 
         Seed the generator.
 
-        This method is called when ``AESCounter`` is initialized. It can be
+        This method is called when ``SPECK128`` is initialized. It can be
         called again to re-seed the generator. For details, see
-        ``AESCounter``.
+        ``SPECK128``.
 
         Parameters
         ----------
         seed : int, optional
-            Seed for ``AESCounter``.
+            Seed for ``SPECK128``.
         counter : {int array}, optional
             Positive integer less than 2**128 containing the counter position
             or a 2 element array of uint64 containing the counter
@@ -227,30 +206,26 @@ cdef class AESCounter(BitGenerator):
         The two representation of the counter and key are related through
         array[i] = (value // 2**(64*i)) % 2**64.
         """
-        cdef np.ndarray _seed
-
         if seed is not None and key is not None:
             raise ValueError('seed and key cannot be both used')
-        ub = 2 ** 128
+        ub = 2 ** 256
         if key is None:
             if seed is None:
-                _seed = random_entropy(4, 'auto')
+                _seed = random_entropy(8, 'auto')
                 _seed = _seed.view(np.uint64)
             else:
                 seed_arr = np.asarray(seed).squeeze()
                 if seed_arr.ndim==0:
-                    seed = int_to_array(seed_arr.item(), 'seed', 128, 64)
-                _seed = seed_by_array(seed, 2)
+                    seed = int_to_array(seed_arr.item(), 'seed', 256, 64)
+                _seed = seed_by_array(seed, 4)
         else:
-            _seed = <np.ndarray>int_to_array(key, 'key', 128, 64)
-        aesctr_seed(self.rng_state, <uint64_t*>np.PyArray_DATA(_seed))
-        _counter = np.empty(8, dtype=np.uint64)
+            _seed = <np.ndarray>int_to_array(key, 'key', 256, 64)
+        speck_seed(self.rng_state, <uint64_t *>np.PyArray_DATA(_seed))
         counter = 0 if counter is None else counter
-        for i in range(4):
-            _counter[2*i:2*i+2] = int_to_array(counter+i, 'counter', 128, 64)
-            aesctr_set_counter(self.rng_state,
-                               <uint64_t*>np.PyArray_DATA(_counter))
+        _counter = int_to_array(counter,'counter', 128, 64)
+        speck_set_counter(self.rng_state, <uint64_t *>np.PyArray_DATA(_counter))
         self._reset_state_variables()
+
 
     @property
     def state(self):
@@ -263,29 +238,39 @@ cdef class AESCounter(BitGenerator):
             Dictionary containing the information required to describe the
             state of the PRNG
         """
-        cdef np.ndarray seed, counter
-        cdef np.npy_intp i
-        cdef size_t offset
+        cdef int i, j
+        cdef uint8_t *arr8
+        cdef uint64_t *arr
 
-        seed = np.empty(2 * (10 + 1), dtype=np.uint64)
-        counter = np.empty(2 * 4, dtype=np.uint64)
-        aesctr_get_seed_counter(self.rng_state,
-                                <uint64_t*>np.PyArray_DATA(seed),
-                                <uint64_t*>np.PyArray_DATA(counter))
-        state = np.empty(16 * 4, dtype = np.uint8)
-        for i in range(16 * 4):
-            state[i] = self.rng_state.state[i]
-        offset = self.rng_state.offset
+        ctr = np.empty(SPECK_UNROLL, dtype=np.uint64)
+        buffer = np.empty(8 * SPECK_UNROLL, dtype=np.uint8)
+        round_key = np.empty(SPECK_ROUNDS, dtype=np.uint64)
+
+        arr = <uint64_t*>np.PyArray_DATA(ctr)
+        for i in range(SPECK_UNROLL):
+            arr[i] = self.rng_state.ctr[i // 2].u64[i % 2]
+
+        arr8 = <uint8_t*>np.PyArray_DATA(buffer)
+        for i in range(8*SPECK_UNROLL):
+            arr8[i] = self.rng_state.buffer[i]
+
+        arr = <uint64_t*>np.PyArray_DATA(round_key)
+        for i in range(SPECK_ROUNDS):
+            arr[i] = self.rng_state.round_key[i]
+
         return {'bit_generator': self.__class__.__name__,
-                's': {'state': state, 'seed': seed, 'counter': counter,
-                      'offset': offset},
+                'state': {'ctr': ctr,
+                          'buffer': buffer,
+                          'round_key':round_key,
+                          'offset': self.rng_state.offset},
                 'has_uint32': self.rng_state.has_uint32,
                 'uinteger': self.rng_state.uinteger}
 
     @state.setter
     def state(self, value):
-        cdef np.ndarray seed, counter
-        cdef np.npy_intp i
+        cdef i
+        cdef uint8_t *arr8
+        cdef uint64_t *arr
 
         if not isinstance(value, dict):
             raise TypeError('state must be a dict')
@@ -293,31 +278,36 @@ cdef class AESCounter(BitGenerator):
         if bitgen != self.__class__.__name__:
             raise ValueError('state must be for a {0} '
                              'PRNG'.format(self.__class__.__name__))
-        state =value['s']['state']
-        for i in range(16 * 4):
-            self.rng_state.state[i] = state[i]
-        offset = self.rng_state.offset
-        self.rng_state.offset = value['s']['offset']
-        seed = np.ascontiguousarray(value['s']['seed'], dtype=np.uint64)
-        counter = np.ascontiguousarray(value['s']['counter'], dtype=np.uint64)
-        if seed.ndim != 1 or seed.shape[0] != 2 * (10 + 1):
-            raise ValueError('seed must be a 1d uint64 array with 22 elements')
-        if counter.ndim != 1 or counter.shape[0] != 2 * (4):
-            raise ValueError('counter must be a 1d uint64 array with 8 '
-                             'elements')
-        aesctr_set_seed_counter(self.rng_state,
-                                <uint64_t*>np.PyArray_DATA(seed),
-                                <uint64_t*>np.PyArray_DATA(counter))
+
+        state =value['state']
+
+        ctr = check_state_array(state['ctr'], SPECK_UNROLL, 64, 'ctr')
+        buffer = check_state_array(state['buffer'], 8 * SPECK_UNROLL, 8,
+                                   'buffer')
+        round_key = check_state_array(state['round_key'], SPECK_ROUNDS, 64,
+                                      'round_key')
+
+        arr = <uint64_t*>np.PyArray_DATA(ctr)
+        for i in range(SPECK_UNROLL):
+            self.rng_state.ctr[i//2].u64[i%2] = arr[i]
+
+        arr8 = <uint8_t*>np.PyArray_DATA(buffer)
+        for i in range(8*SPECK_UNROLL):
+            self.rng_state.buffer[i] = arr8[i]
+
+        arr = <uint64_t*>np.PyArray_DATA(round_key)
+        for i in range(SPECK_ROUNDS):
+            self.rng_state.round_key[i] = arr[i]
+
+        self.rng_state.offset = state['offset']
         self.rng_state.has_uint32 = value['has_uint32']
         self.rng_state.uinteger = value['uinteger']
 
     cdef jump_inplace(self, iter):
         """
         Jump state in-place
-
-        Not part of public API
-
-        Parameters
+            Not part of public API
+            Parameters
         ----------
         iter : integer, positive
             Number of times to jump the state of the rng.
@@ -327,8 +317,7 @@ cdef class AESCounter(BitGenerator):
     def jump(self, iter=1):
         """
         jump(iter=1)
-
-        Jumps the state as-if iter * 2**64 random numbers are generated
+            Jumps the state as-if iter * 2**64 random numbers are generated
 
         Parameters
         ----------
@@ -337,7 +326,7 @@ cdef class AESCounter(BitGenerator):
 
         Returns
         -------
-        self : AESCounter
+        self : SPECK128
             PRNG jumped iter times
 
         Notes
@@ -367,15 +356,13 @@ cdef class AESCounter(BitGenerator):
 
         Returns
         -------
-        bit_generator : AESCounter
+        bit_generator : SPECK128
             New instance of generator jumped iter times
         """
-        cdef AESCounter bit_generator
-
+        cdef SPECK128 bit_generator
         bit_generator = self.__class__()
         bit_generator.state = self.state
         bit_generator.jump_inplace(iter)
-
         return bit_generator
 
     def advance(self, delta):
@@ -391,7 +378,7 @@ cdef class AESCounter(BitGenerator):
 
         Returns
         -------
-        self : AESCounter
+        self : SPECK128
             RNG advanced delta steps
 
         Notes
@@ -418,7 +405,7 @@ cdef class AESCounter(BitGenerator):
             return self
 
         step = int_to_array(delta, 'delta', 64*3, 64)
-        aesctr_advance(self.rng_state, <uint64_t *>np.PyArray_DATA(step))
+        speck_advance(self.rng_state, <uint64_t *>np.PyArray_DATA(step))
         self.rng_state.has_uint32 = 0
         self.rng_state.uinteger = 0
         return self
