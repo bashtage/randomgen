@@ -49,9 +49,9 @@ cdef class MT64(BitGenerator):
         Random seed used to initialize the pseudo-random number generator.  Can
         be any integer between 0 and 2**64 - 1 inclusive, an array (or other
         sequence) of unsigned 64-bit integers, or ``None`` (the default).  If
-        `seed` is ``None``, a 64-bit unsigned integer is read from
+        `seed` is ``None``, then 312 64-bit unsigned integers are read from
         ``/dev/urandom`` (or the Windows analog) if available. If unavailable,
-        a 64-bit hash of the time and process ID is used.
+        a  hash of the time and process ID is used.
 
     Attributes
     ----------
@@ -126,8 +126,10 @@ cdef class MT64(BitGenerator):
         cdef np.ndarray obj
         try:
             if seed is None:
-                seed = random_entropy(2, 'auto')
-                mt64_seed(&self.rng_state, seed.astype(np.uint64)[0])
+                seed = random_entropy(624, 'auto')
+                mt64_init_by_array(&self.rng_state,
+                                   <uint64_t*>np.PyArray_DATA(seed),
+                                   624 // 2)
             else:
                 if hasattr(seed, 'squeeze'):
                     seed = seed.squeeze()

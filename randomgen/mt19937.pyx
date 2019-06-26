@@ -50,9 +50,9 @@ cdef class MT19937(BitGenerator):
         Random seed used to initialize the pseudo-random number generator.  Can
         be any integer between 0 and 2**32 - 1 inclusive, an array (or other
         sequence) of unsigned 32-bit integers, or ``None`` (the default).  If
-        `seed` is ``None``, a 32-bit unsigned integer is read from
+        `seed` is ``None``, then 624 32-bit unsigned integers are read from
         ``/dev/urandom`` (or the Windows analog) if available. If unavailable,
-        a 32-bit hash of the time and process ID is used.
+        a hash of the time and process ID is used.
 
     Attributes
     ----------
@@ -155,8 +155,10 @@ cdef class MT19937(BitGenerator):
         cdef np.ndarray obj
         try:
             if seed is None:
-                seed = random_entropy(1, 'auto')
-                mt19937_seed(&self.rng_state, seed[0])
+                seed = random_entropy(624, 'auto')
+                mt19937_init_by_array(&self.rng_state,
+                                      <uint32_t*>np.PyArray_DATA(seed),
+                                      624)
             else:
                 if hasattr(seed, 'squeeze'):
                     seed = seed.squeeze()
