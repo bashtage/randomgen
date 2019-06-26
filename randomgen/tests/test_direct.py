@@ -361,6 +361,38 @@ class Base(object):
         alt_state = bit_generator.__getstate__()
         assert_state_equal(state, alt_state)
 
+    def test_uinteger_reset_jump(self):
+        bg = self.bit_generator()
+        if not hasattr(bg, 'jumped'):
+            pytest.skip('bit generator does not support jumping')
+        g = Generator(bg)
+        g.integers(0,2**32, dtype=np.uint32)
+        jumped = Generator(bg.jumped())
+        if 'has_uint32' in jumped.bit_generator.state:
+            assert jumped.bit_generator.state['has_uint32'] == 0
+            return
+        # This next test could fail with prob 1 in 2**32
+        next_g = g.integers(0,2**32, dtype=np.uint32)
+        next_jumped = jumped.integers(0, 2 ** 32, dtype=np.uint32)
+        assert next_g != next_jumped
+
+    def test_uinteger_reset_advance(self):
+        bg = self.bit_generator()
+        if not hasattr(bg, 'advance'):
+            pytest.skip('bit generator does not support advancing')
+        g = Generator(bg)
+        g.integers(0,2**32, dtype=np.uint32)
+        state = bg.state
+        bg.advance(1000)
+        if 'has_uint32' in bg.state:
+            assert bg.state['has_uint32'] == 0
+            return
+        # This next test could fail with prob 1 in 2**32
+        next_advanced = g.integers(0,2**32, dtype=np.uint32)
+        bg.state = state
+        next_g = g.integers(0, 2 ** 32, dtype=np.uint32)
+        assert next_g != next_advanced
+
 
 class Random123(Base):
     @classmethod
@@ -1055,9 +1087,20 @@ class TestPCG32(TestPCG64):
         cls.invalid_seed_values = [(-1,), (2 ** 129 + 1,), (None, -1),
                                    (None, 2 ** 129 + 1)]
 
-    @pytest.mark.skip
     def test_advance_symmetry(self):
-        pass
+        rs = Generator(self.setup_bitgenerator(self.data1['seed']))
+        state = rs.bit_generator.state
+        step = -0x9e3779b97f4a7c16
+        rs.bit_generator.advance(step)
+        val_neg = rs.integers(10)
+        rs.bit_generator.state = state
+        rs.bit_generator.advance(2 ** 64 + step)
+        val_pos = rs.integers(10)
+        rs.bit_generator.state = state
+        rs.bit_generator.advance(10 * 2 ** 64 + step)
+        val_big = rs.integers(10)
+        assert val_neg == val_pos
+        assert val_big == val_pos
 
 
 class TestMT64(Base):

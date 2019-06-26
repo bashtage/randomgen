@@ -640,9 +640,6 @@ union random_val_t {
 
 typedef struct s_dsfmt_state {
   dsfmt_t *state;
-  int has_uint32;
-  uint32_t uinteger;
-
   double *buffered_uniforms;
   int buffer_loc;
 } dsfmt_state;
