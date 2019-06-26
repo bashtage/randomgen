@@ -1,0 +1,32 @@
+HC-128 Cipher Generator
+-----------------------
+
+.. module:: randomgen.hc128
+
+.. currentmodule:: randomgen.hc128
+
+.. autoclass:: HC128
+
+Seeding and State
+=================
+
+.. autosummary::
+   :toctree: generated/
+
+   ~HC128.seed
+   ~HC128.state
+
+Extending
+=========
+.. autosummary::
+   :toctree: generated/
+
+   ~HC128.cffi
+   ~HC128.ctypes
+
+Testing
+=======
+.. autosummary::
+   :toctree: generated/
+
+   ~HC128.random_raw

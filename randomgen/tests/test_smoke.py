@@ -9,7 +9,7 @@ from numpy.testing import (assert_, assert_almost_equal, assert_array_equal,
                            assert_equal)
 import pytest
 
-from randomgen import (DSFMT, JSF, MT64, MT19937, PCG32, PCG64, SFMT,
+from randomgen import (DSFMT, HC128, JSF, MT64, MT19937, PCG32, PCG64, SFMT,
                        AESCounter, ChaCha, Generator, Philox, ThreeFry,
                        Xoroshiro128, Xorshift1024, Xoshiro256, Xoshiro512,
                        entropy)
@@ -432,7 +432,8 @@ class RNG(object):
         with pytest.deprecated_call():
             vals = self.rg.randn(10, 10, 10)
         self.rg.bit_generator.state = state
-        assert_equal(vals, self.rg.standard_normal((10, 10, 10)))
+        vals2 = self.rg.standard_normal((10, 10, 10))
+        assert_equal(vals, vals2)
         assert_equal(vals.shape, (10, 10, 10))
 
         state = self.rg.bit_generator.state
@@ -923,6 +924,13 @@ class RNG(object):
         assert_almost_equal(c.real, 0.0)
         np.testing.assert_allclose(c.imag, n, atol=1e-8)
 
+    def test_bit_generator_raw_large(self):
+        bg = self.rg.bit_generator
+        state = bg.state
+        raw = bg.random_raw(100000)
+        bg.state = state
+        assert_equal(raw, bg.random_raw(100000))
+
     def test_bit_generator_raw(self):
         bg = self.rg.bit_generator
         val = bg.random_raw()
@@ -1304,6 +1312,18 @@ class TestChaCha(RNG):
         cls.bit_generator = ChaCha
         cls.advance = 2 ** 63 + 2 ** 31 + 2 ** 15 + 1
         cls.seed = [2 ** 21 + 2 ** 16 + 2 ** 5 + 1]
+        cls.rg = Generator(cls.bit_generator(*cls.seed))
+        cls.initial_state = cls.rg.bit_generator.state
+        cls.seed_vector_bits = 64
+        cls._extra_setup()
+        cls.seed_error = ValueError
+
+
+class TestHC128(RNG):
+    @classmethod
+    def setup_class(cls):
+        cls.bit_generator = HC128
+        cls.seed = [2**231 + 2 ** 21 + 2 ** 16 + 2 ** 5 + 1]
         cls.rg = Generator(cls.bit_generator(*cls.seed))
         cls.initial_state = cls.rg.bit_generator.state
         cls.seed_vector_bits = 64

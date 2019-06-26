@@ -88,6 +88,13 @@ cdef class MT64(BitGenerator):
 
     ``MT64`` makes a guarantee that a fixed seed and will always produce
     the same random integer stream.
+
+    References
+    ----------
+    .. [1]  Matsumoto, M.; Nishimura, T. (1998). "Mersenne twister: a
+        623-dimensionally equidistributed uniform pseudo-random number
+        generator". ACM Transactions on Modeling and Computer Simulation.
+        8 (1): 3–30.
     """
     cdef mt64_t rng_state
 
