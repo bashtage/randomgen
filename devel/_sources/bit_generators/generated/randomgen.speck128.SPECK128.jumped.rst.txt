@@ -1,0 +1,6 @@
+randomgen.speck128.SPECK128.jumped
+==================================
+
+.. currentmodule:: randomgen.speck128
+
+.. automethod:: SPECK128.jumped

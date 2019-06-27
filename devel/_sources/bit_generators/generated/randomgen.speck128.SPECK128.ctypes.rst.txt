@@ -1,0 +1,6 @@
+randomgen.speck128.SPECK128.ctypes
+==================================
+
+.. currentmodule:: randomgen.speck128
+
+.. autoattribute:: SPECK128.ctypes

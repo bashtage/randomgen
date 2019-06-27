@@ -83,6 +83,14 @@ devel/_sources/bit_generators/generated/randomgen.sfmt.SFMT.jumped.rst.txt
 devel/_sources/bit_generators/generated/randomgen.sfmt.SFMT.random_raw.rst.txt
 devel/_sources/bit_generators/generated/randomgen.sfmt.SFMT.seed.rst.txt
 devel/_sources/bit_generators/generated/randomgen.sfmt.SFMT.state.rst.txt
+devel/_sources/bit_generators/generated/randomgen.speck128.SPECK128.advance.rst.txt
+devel/_sources/bit_generators/generated/randomgen.speck128.SPECK128.cffi.rst.txt
+devel/_sources/bit_generators/generated/randomgen.speck128.SPECK128.ctypes.rst.txt
+devel/_sources/bit_generators/generated/randomgen.speck128.SPECK128.jump.rst.txt
+devel/_sources/bit_generators/generated/randomgen.speck128.SPECK128.jumped.rst.txt
+devel/_sources/bit_generators/generated/randomgen.speck128.SPECK128.random_raw.rst.txt
+devel/_sources/bit_generators/generated/randomgen.speck128.SPECK128.seed.rst.txt
+devel/_sources/bit_generators/generated/randomgen.speck128.SPECK128.state.rst.txt
 devel/_sources/bit_generators/generated/randomgen.threefry.ThreeFry.advance.rst.txt
 devel/_sources/bit_generators/generated/randomgen.threefry.ThreeFry.cffi.rst.txt
 devel/_sources/bit_generators/generated/randomgen.threefry.ThreeFry.ctypes.rst.txt
@@ -129,6 +137,7 @@ devel/_sources/bit_generators/pcg64.rst.txt
 devel/_sources/bit_generators/philox.rst.txt
 devel/_sources/bit_generators/rdrand.rst.txt
 devel/_sources/bit_generators/sfmt.rst.txt
+devel/_sources/bit_generators/speck128.rst.txt
 devel/_sources/bit_generators/threefry.rst.txt
 devel/_sources/bit_generators/xoroshiro128.rst.txt
 devel/_sources/bit_generators/xorshift1024.rst.txt
@@ -422,6 +431,14 @@ devel/bit_generators/generated/randomgen.sfmt.SFMT.jumped.html
 devel/bit_generators/generated/randomgen.sfmt.SFMT.random_raw.html
 devel/bit_generators/generated/randomgen.sfmt.SFMT.seed.html
 devel/bit_generators/generated/randomgen.sfmt.SFMT.state.html
+devel/bit_generators/generated/randomgen.speck128.SPECK128.advance.html
+devel/bit_generators/generated/randomgen.speck128.SPECK128.cffi.html
+devel/bit_generators/generated/randomgen.speck128.SPECK128.ctypes.html
+devel/bit_generators/generated/randomgen.speck128.SPECK128.jump.html
+devel/bit_generators/generated/randomgen.speck128.SPECK128.jumped.html
+devel/bit_generators/generated/randomgen.speck128.SPECK128.random_raw.html
+devel/bit_generators/generated/randomgen.speck128.SPECK128.seed.html
+devel/bit_generators/generated/randomgen.speck128.SPECK128.state.html
 devel/bit_generators/generated/randomgen.threefry.ThreeFry.advance.html
 devel/bit_generators/generated/randomgen.threefry.ThreeFry.cffi.html
 devel/bit_generators/generated/randomgen.threefry.ThreeFry.ctypes.html
@@ -468,6 +485,7 @@ devel/bit_generators/pcg64.html
 devel/bit_generators/philox.html
 devel/bit_generators/rdrand.html
 devel/bit_generators/sfmt.html
+devel/bit_generators/speck128.html
 devel/bit_generators/threefry.html
 devel/bit_generators/xoroshiro128.html
 devel/bit_generators/xorshift1024.html
