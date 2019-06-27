@@ -29,7 +29,8 @@ else:
 
 PRNGS = ['DSFMT', 'PCG64', 'PCG32', 'MT19937', 'MT64', 'Xoroshiro128',
          'Xorshift1024', 'Xoshiro256', 'Xoshiro512', 'Philox', 'ThreeFry',
-         'numpy', 'SFMT']
+         'numpy', 'SFMT', 'AESCounter', 'ChaCha', 'HC128', 'SPECK128',
+         'JSF']
 
 
 def timer(code, setup):
@@ -39,6 +40,10 @@ def timer(code, setup):
 def print_legend(legend):
     print('\n' + legend + '\n' + '*' * max(60, len(legend)))
 
+
+def add_color(val):
+    color = str(2) if val > 0 else str(1)
+    return "\33[38;5;" + color + "m" + '{0:0.1f}%'.format(val) + "\33[0m"
 
 def run_timer(command, numpy_command=None, setup='', random_type=''):
     print('-' * 80)
@@ -50,23 +55,23 @@ def run_timer(command, numpy_command=None, setup='', random_type=''):
         cmd = numpy_command if bitgen == 'numpy' else command
         res[bitgen] = timer(cmd, setup=setup.format(bitgen=bitgen))
 
-    s = pd.Series(res)
+    s = pd.Series(res).sort_index()
     t = s.apply(lambda x: '{0:0.2f} ms'.format(x))
     print_legend('Time to produce 1,000,000 ' + random_type)
-    print(t.sort_index())
+    print(t)
 
     p = 1000.0 / s
     p = p.apply(lambda x: '{0:0.2f} million'.format(x))
     print_legend(random_type + ' per second')
-    print(p.sort_index())
+    print(p)
 
     baseline = [k for k in p.index if 'numpy' in k][0]
     p = 1000.0 / s
     p = p / p[baseline] * 100 - 100
     p = p.drop(baseline, 0)
-    p = p.apply(lambda x: '{0:0.1f}%'.format(x))
+    p = p.apply(add_color)
     print_legend('Speed-up relative to NumPy')
-    print(p.sort_index())
+    print(p)
     print('-' * 80)
 
 
