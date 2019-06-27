@@ -25,6 +25,9 @@ matrix:
     - os: linux
       python: 3.6
       env: [PYPI=true, COVERAGE=false]
+    - os: linux-ppc64le
+      python: 3.6
+      env: [PYPI=true, PPC64_LE=1, COVERAGE=false]
     - os: osx
       language: generic
       env: [PYTHON=3.6]
@@ -32,7 +35,10 @@ matrix:
       env: [PYTHON=3.6, NUMPY=1.14, CYTHON=0.27]
     - os: linux
       env: [PYTHON=3.5, NUMPY=1.13, CYTHON=0.26]
-
+  allow_failures:
+    - os: linux-ppc64le
+      python: 3.6
+      env: [PYPI=true, PPC64_LE=1, COVERAGE=false]
 
 before_install:
   - git fetch --tags
@@ -70,7 +76,7 @@ script:
 
 after_success:
   - |
-    if [[ ${PYPI} == true ]]; then
+    if [[ ${PYPI} == true && -z ${PPC64_LE} ]]; then
       cd ${BUILD_DIR}
       python benchmark.py;
     fi

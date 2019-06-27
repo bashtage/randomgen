@@ -18,15 +18,6 @@
 #endif
 //#include <stddef.h>
 
-#if defined(__BYTE_ORDER__) && defined(__ORDER_BIG_ENDIAN__) &&                \
-    (__BYTE_ORDER__ == __ORDER_BIG_ENDIAN__)
-#define BIG_ENDIAN 1
-#undef LITTLE_ENDIAN
-#else
-#define LITTLE_ENDIAN 1
-#undef BIG_ENDIAN
-#endif
-
 #define HC128_UNROLL 16
 
 typedef struct HC128_STATE_T {
@@ -105,18 +96,6 @@ static INLINE void hc128_extract_unroll(hc128_state_t *state) {
   }
   state->buffer_idx = 0;
   state->hc_idx = (state->hc_idx + 16u) & 1023u;
-#if BIG_ENDIAN
-#pragma message("!!!!!!!!!BIG ENDIAN!!!!!!!!!!!!")
-  uint32_t value;
-  uint8_t *v;
-  for (int j = 0; i < 16; j++) {
-    value = state->buffer[j];
-    v = (uint8_t *)&state->buffer[j];
-    for (i = 0; i < 4; ++i) {
-      v[i] = value >> (i * 8);
-    }
-  }
-#endif
 }
 
 static INLINE uint32_t hc128_next32(hc128_state_t *state) {

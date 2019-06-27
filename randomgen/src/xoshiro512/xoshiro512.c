@@ -29,8 +29,6 @@ xoshiro512_next32(xoshiro512_state *state);
    to 2^256 calls to next(); it can be used to generate 2^256
    non-overlapping subsequences for parallel computations. */
 
-static uint64_t s_placeholder[8];
-
 void xoshiro512_jump(xoshiro512_state *state) {
 
   int i, b, w;
@@ -39,15 +37,15 @@ void xoshiro512_jump(xoshiro512_state *state) {
                                   0xb11ac47a7ba28c25, 0xf1be7667092bcc1c,
                                   0x53851efdb6df0aaf, 0x1ebbc8b23eaf25db};
 
-  uint64_t t[sizeof s_placeholder / sizeof *s_placeholder];
+  uint64_t t[sizeof(state->s) / sizeof(*state->s)];
   memset(t, 0, sizeof t);
-  for (i = 0; i < sizeof JUMP / sizeof *JUMP; i++)
+  for (i = 0; i < (int)(sizeof(JUMP) / sizeof(*JUMP)); i++)
     for (b = 0; b < 64; b++) {
       if (JUMP[i] & UINT64_C(1) << b)
-        for (w = 0; w < sizeof s_placeholder / sizeof *s_placeholder; w++)
+        for (w = 0; w < (int)(sizeof(state->s) / sizeof(*state->s)); w++)
           t[w] ^= state->s[w];
       xoshiro512_next(&state->s[0]);
     }
 
-  memcpy(state->s, t, sizeof s_placeholder);
+  memcpy(state->s, t, sizeof(state->s));
 }
