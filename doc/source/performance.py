@@ -9,6 +9,13 @@ from randomgen import (DSFMT, MT64, MT19937, PCG64, SFMT, AESCounter, ChaCha,
                        SPECK128, RDRAND)
 
 
+class ChaCha8(ChaCha):
+    def __init__(self, *args, **kwargs):
+        if 'rounds' in kwargs:
+            del kwargs['rounds']
+        super(ChaCha8, self).__init__(*args, rounds=8, **kwargs)
+
+
 class JSF32(JSF):
     def __init__(self, *args, **kwargs):
         if 'size' in kwargs:
@@ -53,7 +60,7 @@ except RuntimeError:
 NUMBER = 100
 REPEAT = 10
 SIZE = 25000
-PRNGS = [JSF32, Philox4x32, ThreeFry2x64, ThreeFry4x32, Philox2x64,
+PRNGS = [ChaCha8, JSF32, Philox4x32, ThreeFry2x64, ThreeFry4x32, Philox2x64,
          DSFMT, MT64, MT19937, PCG64, SFMT, AESCounter, ChaCha, Philox,
          ThreeFry, Xoshiro256, Xoshiro512, JSF, HC128, SPECK128]
 

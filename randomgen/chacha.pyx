@@ -35,7 +35,7 @@ cdef double chacha_double(void* st) nogil:
 
 cdef class ChaCha(BitGenerator):
     """
-    ChaCha(seed=None)
+    ChaCha(seed=None, counter=None, key=None, rounds=20)
 
     Container for the ChaCha family of Counter pseudo-random number generators
 
