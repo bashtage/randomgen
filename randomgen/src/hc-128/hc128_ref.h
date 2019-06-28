@@ -1,21 +1,21 @@
 /* This program gives the reference implementation of stream cipher HC-128
-   
-   HC-128 is a final portfolio cipher of eSTREAM, of the European Network of 
-   Excellence for Cryptology (ECRYPT, 2004-2008). 
+
+   HC-128 is a final portfolio cipher of eSTREAM, of the European Network of
+   Excellence for Cryptology (ECRYPT, 2004-2008).
    The docuement of HC-128 is available at:
-   1) Hongjun Wu. ``The Stream Cipher HC-128.'' New Stream Cipher Designs -- The eSTREAM Finalists, LNCS 4986, pp. 39-47, Springer-Verlag, 2008.  
+   1) Hongjun Wu. ``The Stream Cipher HC-128.'' New Stream Cipher Designs -- The eSTREAM Finalists, LNCS 4986, pp. 39-47, Springer-Verlag, 2008.
    2) eSTREAM website:  http://www.ecrypt.eu.org/stream/hcp3.html
 
    ------------------------------------
    Performance of this non-optimized implementation:
 
-   Microprocessor: Intel CORE 2 processor (Core 2 Duo Mobile P9400 2.53GHz) 
+   Microprocessor: Intel CORE 2 processor (Core 2 Duo Mobile P9400 2.53GHz)
    Operating System: 32-bit Debian 5.0 (Linux kernel 2.6.26-2-686)
    Speed of encrypting long message:
-   1) 6.3 cycle/byte   compiler: Intel C++ compiler 11.1   compilation option: icc -O2 
-   2) 3.8 cycles/byte  compiler: gcc 4.3.2                 compilation option: gcc -O3  
+   1) 6.3 cycle/byte   compiler: Intel C++ compiler 11.1   compilation option: icc -O2
+   2) 3.8 cycles/byte  compiler: gcc 4.3.2                 compilation option: gcc -O3
 
-   Microprocessor: Intel CORE 2 processor (Core 2 Quad Q6600 2.4GHz) 
+   Microprocessor: Intel CORE 2 processor (Core 2 Quad Q6600 2.4GHz)
    Operating System: 32-bit Windows Vista Business
    Speed of encrypting long message:
    1) 6.2 cycles/byte  compiler: Intel C++ compiler 11.1    compilation option: icl /O2
@@ -31,19 +31,19 @@
 typedef unsigned char uint8;
 typedef unsigned long long uint64;
 
-/*for LP64, "int" is 32-bit integer, while "long" is 64-bit integer*/ 
-#if defined(_LP64) 
-    typedef unsigned int uint32; 
-#else 
-    typedef unsigned long uint32; 
-#endif 
+/*for LP64, "int" is 32-bit integer, while "long" is 64-bit integer*/
+#if defined(_LP64)
+    typedef unsigned int uint32;
+#else
+    typedef unsigned long uint32;
+#endif
 
-typedef struct { 
+typedef struct {
       uint32 P[512];
       uint32 Q[512];
       uint32 counter1024;     /*counter1024 = i mod 1024 */
       uint32 keystreamword;   /*a 32-bit keystream word*/
-} HC128_State; 
+} HC128_State;
 
 #define ROTR32(x,n)   ( ((x) >> (n))  | ((x) << (32 - (n))) )
 #define ROTL32(x,n)   ( ((x) << (n))  | ((x) >> (32 - (n))) )
@@ -55,7 +55,7 @@ typedef struct {
 #define g1(x,y,z)  ((ROTR32((x),10)^ROTR32((z),23))+ROTR32((y),8))
 #define g2(x,y,z)  ((ROTL32((x),10)^ROTL32((z),23))+ROTL32((y),8))
 
-/*function h1*/ 
+/*function h1*/
 uint32 h1(HC128_State *state, uint32 u) {
       uint32 tem; 			
       uint8  a,c;			
@@ -75,11 +75,11 @@ uint32 h2(HC128_State *state, uint32 u) {
       return (tem);
 }
 
-/* one step of HC-128: 
+/* one step of HC-128:
    state is updated;
    a 32-bit keystream word is generated and stored in "state->keystreamword";
 */
-void OneStep(HC128_State *state) 
+void OneStep(HC128_State *state)
 {
       uint32 i,i3, i10, i12, i511;
 
@@ -101,10 +101,10 @@ void OneStep(HC128_State *state)
 }
 
 
-/* one step of HC-128 in the intitalization stage: 
+/* one step of HC-128 in the intitalization stage:
    a 32-bit keystream word is generated to update the state;
 */
-void InitOneStep(HC128_State *state) 
+void InitOneStep(HC128_State *state)
 {
       uint32 i,i3, i10, i12, i511;
 
@@ -127,7 +127,7 @@ void InitOneStep(HC128_State *state)
 
 
 /*this function initialize the state using 128-bit key and 128-bit IV*/
-void Initialization(HC128_State *state, uint8 *key, uint8 *iv) 
+void Initialization(HC128_State *state, uint8 *key, uint8 *iv)
 {
 
       uint32 W[1024+256],i;
@@ -137,7 +137,7 @@ void Initialization(HC128_State *state, uint8 *key, uint8 *iv)
       for (i = 0; i < 4; i++) {W[i] = ((uint32*)key)[i]; W[i+4] = ((uint32*)key)[i];}
       for (i = 0; i < 4; i++) {W[i+8] = ((uint32*)iv)[i]; W[i+12] = ((uint32*)iv)[i];}
 
-      for (i = 16; i < 1024+256; i++) W[i] = f2(W[i-2]) + W[i-7] + f1(W[i-15]) + W[i-16]+i; 
+      for (i = 16; i < 1024+256; i++) W[i] = f2(W[i-2]) + W[i-7] + f1(W[i-15]) + W[i-16]+i;
 
       for (i = 0; i < 512; i++)  state->P[i] = W[i+256];
       for (i = 0; i < 512; i++)  state->Q[i] = W[i+256+512];
@@ -154,13 +154,13 @@ void EncryptMessage(HC128_State *state, uint8 *message, uint8 *ciphertext, uint6
 {
       uint64 i;
       uint32 j;
-      
+
       /*encrypt a message, each time 4 bytes are encrypted*/
       for (i = 0; (i+4) <= msglength; i += 4, message += 4, ciphertext += 4) {
             /*generate 32-bit keystream and store it in state.keystreamword*/
-            OneStep(state);   
+            OneStep(state);
             /*encrypt 32 bits of the message*/
-            ((uint32*)ciphertext)[0] = ((uint32*)message)[0] ^ state->keystreamword;   
+            ((uint32*)ciphertext)[0] = ((uint32*)message)[0] ^ state->keystreamword;
       }
       /*encrypt the last message block if the message length is not multiple of 4 bytes*/
       if ((msglength & 3) != 0) {
@@ -168,7 +168,7 @@ void EncryptMessage(HC128_State *state, uint8 *message, uint8 *ciphertext, uint6
             for (j = 0; j < (msglength & 3); j++) {
                   *(ciphertext+j) = *(message+j) ^ ((uint8*)&state->keystreamword)[j];
             }
-      }    
+      }
 }
 
 

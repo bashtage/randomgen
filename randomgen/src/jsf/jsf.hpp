@@ -69,7 +69,7 @@ public:
         c_ = d_ + e;
         d_ = e + a_;
     }
-        
+
 
     rtype operator()()
     {
@@ -79,7 +79,7 @@ public:
 
     bool operator==(const jsf& rhs)
     {
-        return (a_ == rhs.a_) && (b_ == rhs.b_) 
+        return (a_ == rhs.a_) && (b_ == rhs.b_)
             && (c_ == rhs.c_) && (d_ == rhs.d_);
     }
 

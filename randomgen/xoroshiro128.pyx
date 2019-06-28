@@ -148,7 +148,7 @@ cdef class Xoroshiro128(BitGenerator):
         Parameters
         ----------
         seed : {int, ndarray}, optional
-            Seed for PRNG. Can be a single 64 biy unsigned integer or an array
+            Seed for PRNG. Can be a single 64 bit unsigned integer or an array
             of 64 bit unsigned integers.
 
         Raises

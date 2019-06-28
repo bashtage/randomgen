@@ -53,7 +53,7 @@ static const uint8_t sbox[256] = {
 static const uint8_t Rcon[11] = {0x8d, 0x01, 0x02, 0x04, 0x08, 0x10,
                                  0x20, 0x40, 0x80, 0x1b, 0x36};
 
-static INLINE void tinyaes_expand_key(uint8_t *RoundKey, const uint8_t *Key) {
+static void tinyaes_expand_key(uint8_t *RoundKey, const uint8_t *Key) {
   unsigned i, j, k;
   uint8_t tempa[4]; // Used for the column/row operations
 
@@ -191,7 +191,7 @@ static INLINE void AddRoundKey(uint8_t round, state_t *state,
 }
 
 // Cipher is the main function that encrypts the PlainText.
-static INLINE void tiny_encrypt(state_t *state, const uint8_t *RoundKey) {
+static void tiny_encrypt(state_t *state, const uint8_t *RoundKey) {
   uint8_t round = 0;
 
   // Add the First round key to the state before starting the rounds.

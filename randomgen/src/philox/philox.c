@@ -30,10 +30,10 @@ void philox##N##x##W##_advance(philox_all_t *state, uint##W##_t *step, int use_c
   }                                                                                       \
 }
 
-_philoxNxW_advance_tpl(2, 32)                                                
-_philoxNxW_advance_tpl(4, 32)                                                
-_philoxNxW_advance_tpl(2, 64)                                                
-_philoxNxW_advance_tpl(4, 64)                                                
+_philoxNxW_advance_tpl(2, 32)
+_philoxNxW_advance_tpl(4, 32)
+_philoxNxW_advance_tpl(2, 64)
+_philoxNxW_advance_tpl(4, 64)
 
 #define _philoxNxW_next_extern_tpl(N, W)                                 \
 extern INLINE uint64_t philox##N##x##W##_next64(philox_all_t *state);    \

@@ -1309,7 +1309,7 @@ cdef class Generator:
         Parameters
         ----------
         loc : float or array_like of floats
-            Mean ("centre") of the distribution.
+            Mean ("center") of the distribution.
         scale : float or array_like of floats
             Standard deviation (spread or "width") of the distribution. Must be
             non-negative.

@@ -225,13 +225,19 @@ cdef class Philox(BitGenerator):
         Parameters
         ----------
         seed : int, optional
-            Seed for ``Philox``.
+            Value initializing the pseudo-random number generator. Can be an
+            integer in [0, 2**(number*width//2)), a ``number*width//128``
+            element (min 1) array of uint64 values or ``None`` (the default).
+            If `seed` is ``None``, then  data is read from ``/dev/urandom``
+            (or the Windows analog) if available.  If unavailable, a hash of
+            the time and process ID is used.
         counter : {int array}, optional
-            Positive integer less than 2**256 containing the counter position
-            or a 4 element array of uint64 containing the counter
+            Positive integer less than 2**(number*width) containing the counter
+            position or a (number*width)//64-element array of uint64 containing
+            the counter
         key : {int, array}, options
-            Positive integer less than 2**128 containing the key
-            or a 2 element array of uint64 containing the key
+            Integer in [0, 2**(number*width//2)) containing the key or a
+            (number*width//2)//64-element array of uint64 containing the key.
 
         Raises
         ------
@@ -243,12 +249,17 @@ cdef class Philox(BitGenerator):
         The two representation of the counter and key are related through
         array[i] = (value // 2**(64*i)) % 2**64.
         """
+        seed = object_to_int(seed, self.n * self.w // 2 , 'seed')
+        key = object_to_int(key, self.n // 2 * self.w, 'key')
+        counter = object_to_int(counter, self.n * self.w, 'counter')
+
         if seed is not None and key is not None:
             raise ValueError('seed and key cannot be both used')
         cdef int u32_size = (self.n // 2) * (self.w // 32)
         if key is not None:
             _seed = int_to_array(key, 'key', self.n // 2 * self.w, self.w)
         elif seed is not None:
+            seed = int_to_array(seed, 'seed', None, 64)
             _seed = seed_by_array(seed, max(u32_size // 2, 1))
         else:
             _seed = random_entropy(u32_size, 'auto')

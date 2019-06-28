@@ -170,16 +170,17 @@ cdef class ChaCha(BitGenerator):
         called again to re-seed the generator. For details, see
         ``ChaCha``.
 
-        seed : {None, int}, optional
-            Random seed initializing the pseudo-random number generator.
-            Can be an integer in [0, 2**256-1], an array of 4 uint64 values
-            or ``None`` (the default). If `seed` is ``None``, then  data is read
-            from ``/dev/urandom`` (or the Windows analog) if available.  If
-            unavailable, a hash of the time and process ID is used.
+        seed : {None, int, array_like}, optional
+            Value initializing the pseudo-random number generator.
+            Can be an integer in [0, 2**256), a 4-element array of uint64
+            values or ``None`` (the default). If `seed` is ``None``, then
+            data is read from ``/dev/urandom`` (or the Windows analog) if
+            available.  If unavailable, a hash of the time and process ID is
+            used.
         counter : {None, int, array_like}, optional
-            Counter to use in the ChaCha state. Can be either
-            a Python int in [0, 2**128) or a 2-element uint64 array.
-            If not provided, the RNG is initialized at 0.
+            Counter to use in the ChaCha state. Can be either a Python int
+            in [0, 2**128) or a 2-element uint64 array. If not provided, the
+            RNG is initialized at 0.
         key : {None, int, array_like}, optional
             Key to use in the ChaCha state.  Unlike seed, which is run
             through another RNG before use, the value in key is directly set.
@@ -197,14 +198,15 @@ cdef class ChaCha(BitGenerator):
         array[i] = (value // 2**(64*i)) % 2**64.
         """
         cdef int i
-
+        seed = object_to_int(seed, 256, 'seed')
+        key = object_to_int(key, 256, 'key')
+        counter = object_to_int(counter, 128, 'counter')
         if seed is not None and key is not None:
             raise ValueError('seed and key cannot be simultaneously used')
-
         if key is not None:
             seed = int_to_array(key, 'key', 256, 32)
         elif seed is not None:
-            seed = seed_by_array(seed, 8)
+            seed = seed_by_array(int_to_array(seed, 'seed', None, 64), 4)
         else:
             seed = random_entropy(8, 'auto')
         _seed = seed.view(np.uint64)

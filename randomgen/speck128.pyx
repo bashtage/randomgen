@@ -188,13 +188,18 @@ cdef class SPECK128(BitGenerator):
         Parameters
         ----------
         seed : int, optional
-            Seed for ``SPECK128``.
+            Value initializing the pseudo-random number generator. Can be an
+            integer in [0, 2**256), a 4-element array of uint64 values or
+            ``None`` (the default). If `seed` is ``None``, then  data is
+            read from ``/dev/urandom`` (or the Windows analog) if
+            available.  If unavailable, a hash of the time and process ID is
+            used.
         counter : {int array}, optional
-            Positive integer less than 2**128 containing the counter position
-            or a 2 element array of uint64 containing the counter
+            Integer in [0,2**128) containing the counter position or a
+            2-element array of uint64 containing the counter
         key : {int, array}, options
-            Positive integer less than 2**128 containing the key
-            or a 2 element array of uint64 containing the key
+            Integer in [0,2**256) containing the key or a 4-element array of
+            uint64 containing the key
 
         Raises
         ------
@@ -206,26 +211,26 @@ cdef class SPECK128(BitGenerator):
         The two representation of the counter and key are related through
         array[i] = (value // 2**(64*i)) % 2**64.
         """
+        seed = object_to_int(seed, 256, 'seed')
+        key = object_to_int(key, 256, 'key')
+        counter = object_to_int(counter, 128, 'counter')
+
         if seed is not None and key is not None:
             raise ValueError('seed and key cannot be both used')
-        ub = 2 ** 256
         if key is None:
             if seed is None:
                 _seed = random_entropy(8, 'auto')
                 _seed = _seed.view(np.uint64)
             else:
-                seed_arr = np.asarray(seed).squeeze()
-                if seed_arr.ndim==0:
-                    seed = int_to_array(seed_arr.item(), 'seed', 256, 64)
-                _seed = seed_by_array(seed, 4)
+                _seed = seed_by_array(int_to_array(seed, 'seed', None, 64), 4)
         else:
-            _seed = <np.ndarray>int_to_array(key, 'key', 256, 64)
+            _seed = int_to_array(key, 'key', 256, 64)
         speck_seed(self.rng_state, <uint64_t *>np.PyArray_DATA(_seed))
         counter = 0 if counter is None else counter
         _counter = int_to_array(counter,'counter', 128, 64)
-        speck_set_counter(self.rng_state, <uint64_t *>np.PyArray_DATA(_counter))
+        speck_set_counter(self.rng_state,
+                          <uint64_t *>np.PyArray_DATA(_counter))
         self._reset_state_variables()
-
 
     @property
     def state(self):

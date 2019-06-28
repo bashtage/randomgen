@@ -209,7 +209,12 @@ cdef class AESCounter(BitGenerator):
         Parameters
         ----------
         seed : int, optional
-            Seed for ``AESCounter``.
+            Value initializing the pseudo-random number generator.
+            Can be an integer in [0, 2**128), a 2-element array of uint64
+            values or ``None`` (the default). If `seed` is ``None``, then
+            data is read from ``/dev/urandom`` (or the Windows analog) if
+            available.  If unavailable, a hash of the time and process ID is
+            used.
         counter : {int array}, optional
             Positive integer less than 2**128 containing the counter position
             or a 2 element array of uint64 containing the counter
@@ -228,7 +233,9 @@ cdef class AESCounter(BitGenerator):
         array[i] = (value // 2**(64*i)) % 2**64.
         """
         cdef np.ndarray _seed
-
+        seed = object_to_int(seed, 128, 'seed')
+        key = object_to_int(key, 128, 'key')
+        counter = object_to_int(counter, 128, 'counter')
         if seed is not None and key is not None:
             raise ValueError('seed and key cannot be both used')
         ub = 2 ** 128
@@ -237,19 +244,16 @@ cdef class AESCounter(BitGenerator):
                 _seed = random_entropy(4, 'auto')
                 _seed = _seed.view(np.uint64)
             else:
-                seed_arr = np.asarray(seed).squeeze()
-                if seed_arr.ndim==0:
-                    seed = int_to_array(seed_arr.item(), 'seed', 128, 64)
-                _seed = seed_by_array(seed, 2)
+                _seed = seed_by_array(int_to_array(seed, 'seed', None, 64), 2)
         else:
-            _seed = <np.ndarray>int_to_array(key, 'key', 128, 64)
+            _seed = int_to_array(key, 'key', 128, 64)
         aesctr_seed(self.rng_state, <uint64_t*>np.PyArray_DATA(_seed))
         _counter = np.empty(8, dtype=np.uint64)
         counter = 0 if counter is None else counter
         for i in range(4):
             _counter[2*i:2*i+2] = int_to_array(counter+i, 'counter', 128, 64)
-            aesctr_set_counter(self.rng_state,
-                               <uint64_t*>np.PyArray_DATA(_counter))
+        aesctr_set_counter(self.rng_state,
+                           <uint64_t*>np.PyArray_DATA(_counter))
         self._reset_state_variables()
 
     @property

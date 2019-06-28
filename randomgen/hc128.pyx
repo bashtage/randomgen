@@ -81,7 +81,7 @@ cdef class HC128(BitGenerator):
     **State and Seeding**
 
     The ``HC128`` state vector consists of a 2 512-element arrays of 32-bit
-    unsigned integers (p and q) and an integerin [0, 1024). In addition, the
+    unsigned integers (p and q) and an integer in [0, 1024). In addition, the
     state contains a 16-element array that buffers values and a buffer index.
 
     ``HC128`` is seeded using either a single 256-bit unsigned
@@ -141,27 +141,30 @@ cdef class HC128(BitGenerator):
         Parameters
         ----------
         seed : {int, ndarray}, optional
-            Seed for PRNG. Can be a single 64 bit unsigned integer or an array
-            of 64 bit unsigned integers.
+            Value initializing the pseudo-random number generator. Can be an
+            integer in [0, 2**256), a 4-element array of uint64 values or
+            ``None`` (the default). If `seed` is ``None``, then  data is read
+            from ``/dev/urandom`` (or the Windows analog) if available.  If
+            unavailable, a hash of the time and process ID is used.
         key : {int, ndarray}, optional
             Key for HC128. The key is a 256-bit integer that contains both the
             key (lower 128 bits) and initial values (upper 128-bits) for the
-            HC-128 cipher. key and seed cannot both be used.
+            HC-128 cipher. key and seed cannot both be used. Can also be a
+            4-element uint64 array.
 
         Raises
         ------
         ValueError
             If seed values are out of range for the PRNG.
         """
+        seed = object_to_int(seed, 256, 'seed')
+        key = object_to_int(key, 256, 'key')
         if seed is not None and key is not None:
             raise ValueError('seed and key cannot be simultaneously used')
         if key is not None:
             state = int_to_array(key, 'key', 256, 64)
         elif seed is not None:
-            seed = np.array(seed)
-            if seed.ndim == 0:
-                seed = int_to_array(seed, 'seed', 256, 64)
-            state = seed_by_array(seed, 4)
+            state = seed_by_array(int_to_array(seed, 'seed', None, 64), 4)
         else:
             state = random_entropy(8, 'auto')
         hc128_seed(&self.rng_state, <uint32_t *>np.PyArray_DATA(state))

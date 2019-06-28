@@ -95,7 +95,7 @@ enum r123_enum_threefry64x2 {
     // Output from skein_rot_search: (srs64_B64-X1000)
     // Random seed = 1. BlockSize = 128 bits. sampleCnt =  1024. rounds =  8, minHW_or=57
     // Start: Tue Mar  1 10:07:48 2011
-    // rMin = 0.136. #0325[*15] [CRC=455A682F. hw_OR=64. cnt=16384. blkSize= 128].format   
+    // rMin = 0.136. #0325[*15] [CRC=455A682F. hw_OR=64. cnt=16384. blkSize= 128].format
     */
     R_64x2_0_0=16,
     R_64x2_1_0=42,
@@ -767,7 +767,7 @@ typedef union R123_UINT_T {
 typedef struct s_threefry##N##x##W##_state { \
   threefry##N##x##W##_ctr_t ctr; \
   threefry##N##x##W##_key_t key; \
-} threefry##N##x##W##_state; 
+} threefry##N##x##W##_state;
 
 _threefryNxW_state_tpl(2, 32, uint32_t)
 _threefryNxW_state_tpl(4, 32, uint32_t)

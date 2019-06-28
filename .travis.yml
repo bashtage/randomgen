@@ -62,6 +62,8 @@ script:
   - pytest -r a ${COVERAGE_OPTIONS} randomgen
   - |
     if [[ ${DOCBUILD} == true ]]; then
+      sudo apt-get install -y enchant
+      pip install sphinxcontrib-spelling
       cd ${BUILD_DIR}/doc
       make html
       make html

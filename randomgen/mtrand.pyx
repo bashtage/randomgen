@@ -54,7 +54,7 @@ cdef class RandomState:
     A fixed bit generator using a fixed seed and a fixed series of calls to
     'RandomState' methods using the same parameters will always produce the
     same results up to roundoff error except when the values were incorrect.
-    `RandomState` is effectively frozen and will only recieve updates that
+    `RandomState` is effectively frozen and will only receive updates that
     are required by changes in the the internals of Numpy. More substantial
     changes, including algorithmic improvements, are reserved for
     `Generator`.
@@ -1230,7 +1230,7 @@ cdef class RandomState:
         Parameters
         ----------
         loc : float or array_like of floats
-            Mean ("centre") of the distribution.
+            Mean ("center") of the distribution.
         scale : float or array_like of floats
             Standard deviation (spread or "width") of the distribution. Must be
             non-negative.
