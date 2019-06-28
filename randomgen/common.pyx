@@ -301,6 +301,72 @@ cdef double kahan_sum(double *darr, np.npy_intp n):
         sum = t
     return sum
 
+cpdef object object_to_int(object val, object bits, object name, int default_bits=64,
+                          object allowed_sizes=(64,)):
+    """
+    Robustly convert any supported object to a non-negative Python integer
+
+    Parameters
+    ----------
+    val : object
+        Object to convert. Can be None.
+    bits : int
+        Number of bits in the returned object.  Out-of-range values raise
+        ValueError
+    name : str
+        Variable name for errors
+    default_bits : int
+        Either 32 or 64.  Default type when converting non-arrays to arrays
+    allowed_sizes : {(64,), (32,) (32, 64)}
+        Allows bit sizes for the input
+
+    Returns
+    -------
+    ival : {int, None}
+        Python integer representation of value or None if val is None
+    """
+    if val is None:
+        return None
+    elif isinstance(val, (int, long, np.integer)):
+        out = int(val)
+    elif isinstance(val, np.ndarray):
+        dtypes = []
+        if 64 in allowed_sizes:
+            dtypes.append(np.uint64)
+        if 32 in allowed_sizes:
+            dtypes.append(np.uint32)
+        print(val.dtype)
+        print(dtypes)
+        if val.dtype not in dtypes:
+            all_sz = ','.join(map(str, allowed_sizes))
+            raise TypeError('{0} arrays must be unsigned with a size in'
+                            ' {1}'.format(name, all_sz))
+    else:
+        dtype = np.uint64 if default_bits==64 else np.uint32
+        val = np.array(val)
+        if not np.issubdtype(val.dtype, np.number):
+            raise ValueError('{0} contains non-numeric values or values '
+                             'out-of-range'.format(name))
+        if not np.all((val // 1) == val):
+            raise TypeError('{0} contains floating point values'.format(name))
+        max_val = np.iinfo(dtype).max
+        if not (np.all(val<=max_val) and np.all(val>=0)):
+            raise ValueError('{0} has elements that are out-of-range for '
+                             '{1}'.format(name, str(dtype(0).dtype)))
+        val = val.astype(dtype, casting='unsafe')
+    if isinstance(val, np.ndarray):
+        val = np.atleast_1d(val)
+        if val.ndim != 1 or val.size == 0:
+            raise ValueError('{0} must be 1-d and non-empty'.format(name))
+        power = 32 if val.dtype == np.uint32 else 64
+        if val.ndim == 0:
+            return int(val.item())
+        out = sum([int(val[i]) * 2**(power * i) for i in range(len(val))])
+    if out < 0 or (bits is not None and out >= (int(2)**bits)):
+        raise ValueError('{0} is out-of-range for '
+                         '[0,2**{1})'.format(name,bits))
+
+    return out
 
 cdef object wrap_int(object val, object bits):
     """Wraparound to place an integer into the interval [0, 2**bits)"""
@@ -344,8 +410,8 @@ cdef np.ndarray int_to_array(object value, object name, object bits, object uint
         fit the array dtype, where arr[0] is the lowest bits of value where
         arr[i] = (value >> (uint_size*i)) % 2**uint_size
     """
-    len = bits // uint_size
-    value = np.asarray(value)
+    req_len = bits // uint_size if bits is not None else None
+    value = np.asarray(value, dtype=np.object)
     if uint_size == 32:
         dtype = np.uint32
     elif uint_size == 64:
@@ -357,24 +423,27 @@ cdef np.ndarray int_to_array(object value, object name, object bits, object uint
         value = int(value)
         if value != orig:
             raise TypeError('value must be an integer.')
-        upper = int(2)**int(bits)
-        if value < 0 or value >= upper:
-            raise ValueError('{name} must be positive and '
-                             'less than 2**{bits}.'.format(name=name, bits=bits))
-
-        out = np.empty(len, dtype=dtype)
-        for i in range(len):
-            out[i] = value % 2**int(uint_size)
+        if bits is not None:
+            upper = int(2)**int(bits)
+            if value < 0 or value >= upper:
+                raise ValueError('{name} must be positive and less than '
+                                 '2**{bits}.'.format(name=name, bits=bits))
+        out = []
+        while value:
+            out.append(value % 2**int(uint_size))
             value >>= int(uint_size)
+        if req_len is not None and len(out) < req_len:
+            out.extend([0] * (req_len - len(out)))
+        out = np.array(out, dtype=dtype)
     else:
-        if (np.any(value < np.iinfo(dtype).min) or
-                np.any(value > np.iinfo(dtype).max)):
+        if not (np.all(value >= np.iinfo(dtype).min) and
+                np.all(value <= np.iinfo(dtype).max)):
             raise ValueError('value is out of range for dtype '
                              '{0}'.format(str(dtype)))
         out = value.astype(dtype, casting='safe')
-        if out.shape != (len,):
-            raise ValueError('{name} must have {len} elements when using '
-                             'array form'.format(name=name, len=len))
+        if req_len is not None and out.shape != (req_len,):
+            raise ValueError('{name} must have {len} elements when using array'
+                             ' form'.format(name=name, len=len))
     return out
 
 

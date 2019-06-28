@@ -253,21 +253,24 @@ class Base(object):
     def test_seed_float_array(self):
         # GH #82
         rs = Generator(self.setup_bitgenerator(self.data1['seed']))
-        assert_raises(self.seed_error_type, rs.bit_generator.seed,
-                      np.array([np.pi]))
-        assert_raises(self.seed_error_type, rs.bit_generator.seed,
-                      np.array([-np.pi]))
-        assert_raises(ValueError, rs.bit_generator.seed,
-                      np.array([np.pi, -np.pi]))
-        assert_raises(TypeError, rs.bit_generator.seed, np.array([0, np.pi]))
-        assert_raises(TypeError, rs.bit_generator.seed, [np.pi])
-        assert_raises(TypeError, rs.bit_generator.seed, [0, np.pi])
+        with pytest.raises(self.seed_error_type):
+            rs.bit_generator.seed(np.array([np.pi]))
+        with pytest.raises((ValueError, TypeError)):
+            rs.bit_generator.seed(np.array([-np.pi]))
+        with pytest.raises((ValueError, TypeError)):
+            rs.bit_generator.seed(np.array([np.pi, -np.pi]))
+        with pytest.raises((ValueError, TypeError)):
+            rs.bit_generator.seed(np.array([0, np.pi]))
+        with pytest.raises(TypeError):
+            rs.bit_generator.seed([np.pi])
+        with pytest.raises(TypeError):
+            rs.bit_generator.seed([0, np.pi])
 
     def test_seed_out_of_range(self):
         # GH #82
         rs = Generator(self.setup_bitgenerator(self.data1['seed']))
         assert_raises(ValueError, rs.bit_generator.seed,
-                      2 ** (2 * self.bits + 1))
+                      2 ** (4 * self.bits + 1))
         assert_raises(ValueError, rs.bit_generator.seed, -1)
 
     def test_seed_out_of_range_array(self):
@@ -366,13 +369,13 @@ class Base(object):
         if not hasattr(bg, 'jumped'):
             pytest.skip('bit generator does not support jumping')
         g = Generator(bg)
-        g.integers(0,2**32, dtype=np.uint32)
+        g.integers(0, 2**32, dtype=np.uint32)
         jumped = Generator(bg.jumped())
         if 'has_uint32' in jumped.bit_generator.state:
             assert jumped.bit_generator.state['has_uint32'] == 0
             return
         # This next test could fail with prob 1 in 2**32
-        next_g = g.integers(0,2**32, dtype=np.uint32)
+        next_g = g.integers(0, 2**32, dtype=np.uint32)
         next_jumped = jumped.integers(0, 2 ** 32, dtype=np.uint32)
         assert next_g != next_jumped
 
@@ -381,7 +384,7 @@ class Base(object):
         if not hasattr(bg, 'advance'):
             pytest.skip('bit generator does not support advancing')
         g = Generator(bg)
-        g.integers(0,2**32, dtype=np.uint32)
+        g.integers(0, 2**32, dtype=np.uint32)
         state = bg.state
         if isinstance(bg, (Philox, ThreeFry)):
             bg.advance(1000, False)
@@ -391,7 +394,7 @@ class Base(object):
             assert bg.state['has_uint32'] == 0
             return
         # This next test could fail with prob 1 in 2**32
-        next_advanced = g.integers(0,2**32, dtype=np.uint32)
+        next_advanced = g.integers(0, 2**32, dtype=np.uint32)
         bg.state = state
         next_g = g.integers(0, 2 ** 32, dtype=np.uint32)
         assert next_g != next_advanced
@@ -461,6 +464,15 @@ class Random123(Base):
         bg = self.bit_generator()
         with pytest.warns(FutureWarning):
             bg.advance(1)
+
+    def test_0d_array(self):
+        bg = self.bit_generator(np.array(1,dtype=np.uint64))
+        bg2 = self.bit_generator(1)
+        assert_state_equal(bg.state, bg2.state)
+
+    def test_empty_seed(self):
+        with pytest.raises(ValueError):
+            self.bit_generator(np.array([], dtype=np.uint64))
 
 
 class TestJSF64(Base):
@@ -769,9 +781,9 @@ class TestAESCounter(TestPhilox):
         rs = Generator(self.setup_bitgenerator(self.data1['seed']))
         assert_raises(self.seed_error_type, rs.bit_generator.seed,
                       np.array([np.pi]))
-        assert_raises(TypeError, rs.bit_generator.seed,
+        assert_raises(self.seed_error_type, rs.bit_generator.seed,
                       np.array([-np.pi]))
-        assert_raises(ValueError, rs.bit_generator.seed,
+        assert_raises(self.seed_error_type, rs.bit_generator.seed,
                       np.array([np.pi, -np.pi]))
         assert_raises(TypeError, rs.bit_generator.seed, np.array([0, np.pi]))
         assert_raises(TypeError, rs.bit_generator.seed, [np.pi])
@@ -868,7 +880,7 @@ class TestMT19937(Base):
         cls.data2 = cls._read_csv(join(pwd, './data/mt19937-testset-2.csv'))
         cls.seed_error_type = ValueError
         cls.invalid_seed_types = []
-        cls.invalid_seed_values = [(-1,), np.array([2 ** 33])]
+        cls.invalid_seed_values = [(-1,), (np.array([2 ** 33]),)]
         cls.state_name = 'key'
 
     def test_seed_out_of_range(self):
@@ -953,7 +965,7 @@ class TestSFMT(TestMT19937):
             join(pwd, './data/sfmt-testset-2.csv'))
         cls.seed_error_type = TypeError
         cls.invalid_seed_types = []
-        cls.invalid_seed_values = [(-1,), np.array([2 ** 33]),
+        cls.invalid_seed_values = [(-1,), (np.array([2 ** 33]),),
                                    (np.array([2 ** 33, 2 ** 33]),)]
         cls.state_name = 'state'
 
@@ -976,7 +988,7 @@ class TestDSFMT(Base):
         cls.data2 = cls._read_csv(join(pwd, './data/dSFMT-testset-2.csv'))
         cls.seed_error_type = TypeError
         cls.invalid_seed_types = []
-        cls.invalid_seed_values = [(-1,), np.array([2 ** 33]),
+        cls.invalid_seed_values = [(-1,), (np.array([2 ** 33]),),
                                    (np.array([2 ** 33, 2 ** 33]),)]
 
     def test_uniform_double(self):
@@ -1071,8 +1083,13 @@ class TestThreeFry4x32(Random123):
     def test_set_key(self):
         bit_generator = self.setup_bitgenerator(self.data1['seed'])
         state = bit_generator.state
-        keyed = self.bit_generator(counter=state['state']['counter'],
-                                   key=state['state']['key'])
+        key = state['state']['key']
+        power = 32 if key.dtype == np.uint32 else 64
+        key = sum([int(key[i]) * 2 ** (power * i) for i in range(len(key))])
+        counter = state['state']['counter']
+        counter = sum([int(counter[i]) * 2 ** (power * i)
+                       for i in range(len(counter))])
+        keyed = self.bit_generator(counter=counter, key=key)
         assert_state_equal(bit_generator.state, keyed.state)
 
 
@@ -1117,7 +1134,7 @@ class TestMT64(Base):
         cls.seed_error_type = TypeError
         cls.seed_error_type = ValueError
         cls.invalid_seed_types = []
-        cls.invalid_seed_values = [(-1,), np.array([2 ** 65])]
+        cls.invalid_seed_values = [(-1,), (np.array([2 ** 65]),)]
 
     def test_seed_float_array(self):
         # GH #82
@@ -1211,8 +1228,8 @@ class TestChaCha(Base):
         cls.data1 = cls._read_csv(join(pwd, './data/chacha-testset-1.csv'))
         cls.data2 = cls._read_csv(join(pwd, './data/chacha-testset-2.csv'))
         cls.seed_error_type = TypeError
-        cls.invalid_seed_types = []
-        cls.invalid_seed_values = [(-1,), np.array([2 ** 65]), [2 ** 129]]
+        cls.invalid_seed_types = [(np.array([2 ** 65]),)]
+        cls.invalid_seed_values = [(-1,), [2 ** 257]]
         cls.state_name = 'key'
 
     def setup_bitgenerator(self, seed):
@@ -1299,7 +1316,6 @@ class TestChaCha(Base):
 
 
 class TestHC128(Base):
-
     @classmethod
     def setup_class(cls):
         cls.bit_generator = HC128
@@ -1308,14 +1324,26 @@ class TestHC128(Base):
         cls.data1 = cls._read_csv(join(pwd, './data/hc-128-testset-1.csv'))
         cls.data2 = cls._read_csv(join(pwd, './data/hc-128-testset-2.csv'))
         cls.seed_error_type = TypeError
-        cls.invalid_seed_types = [('apple',), (2 + 3j,), (3.1,)]
-        cls.invalid_seed_values = [(-2,), (np.empty((2, 2), dtype=np.int64),)]
+        cls.invalid_seed_types = [('apple',), (2 + 3j,), (3.1,), (-2,),
+                                  (np.empty((2, 2), dtype=np.int64),)]
+        cls.invalid_seed_values = []
+
+    def test_seed_float_array(self):
+        # GH #82
+        rs = Generator(self.setup_bitgenerator(self.data1['seed']))
+        assert_raises(self.seed_error_type, rs.bit_generator.seed,
+                      np.array([np.pi]))
+        assert_raises(self.seed_error_type, rs.bit_generator.seed,
+                      np.array([-np.pi]))
+        assert_raises(self.seed_error_type, rs.bit_generator.seed,
+                      np.array([np.pi, -np.pi]))
+        assert_raises(TypeError, rs.bit_generator.seed, np.array([0, np.pi]))
+        assert_raises(TypeError, rs.bit_generator.seed, [np.pi])
+        assert_raises(TypeError, rs.bit_generator.seed, [0, np.pi])
 
     def test_seed_out_of_range(self):
         # GH #82
         rs = Generator(self.setup_bitgenerator(self.data1['seed']))
-        assert_raises(ValueError, rs.bit_generator.seed,
-                      2 ** 257)
         assert_raises(ValueError, rs.bit_generator.seed, -1)
 
     def test_invalid_seed_type(self):
@@ -1333,8 +1361,7 @@ class TestHC128(Base):
             self.bit_generator(seed=1, key=1)
 
 
-class TestSPECK128(Base):
-
+class TestSPECK128(TestHC128):
     @classmethod
     def setup_class(cls):
         cls.bit_generator = SPECK128
@@ -1343,8 +1370,9 @@ class TestSPECK128(Base):
         cls.data1 = cls._read_csv(join(pwd, './data/speck-128-testset-1.csv'))
         cls.data2 = cls._read_csv(join(pwd, './data/speck-128-testset-2.csv'))
         cls.seed_error_type = TypeError
-        cls.invalid_seed_types = [('apple',), (2 + 3j,), (3.1,)]
-        cls.invalid_seed_values = [(-2,), (np.empty((2, 2), dtype=np.int64),)]
+        cls.invalid_seed_types = [('apple',), (2 + 3j,), (3.1,), (-2,),
+                                  (np.empty((2, 2), dtype=np.int64),)]
+        cls.invalid_seed_values = []
 
     def test_seed_out_of_range(self):
         # GH #82

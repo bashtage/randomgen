@@ -44,6 +44,8 @@ cdef int check_array_constraint(np.ndarray val, object name, constraint_type con
 cdef object wrap_int(object val, object bits)
 cdef object check_state_array(object arr, np.npy_intp required_len,
                               int required_bits, object name)
+cpdef object object_to_int(object val, object bits, object name,
+                           int default_bits=*, object allowed_sizes=*)
 
 cdef extern from "src/aligned_malloc/aligned_malloc.h":
     cdef void *PyArray_realloc_aligned(void *p, size_t n)

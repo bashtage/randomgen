@@ -26,7 +26,7 @@ NumPy RandomState evolution.
 [![BSD License](https://img.shields.io/badge/License-BSD%203--Clause-blue.svg)](https://opensource.org/licenses/BSD-3-Clause)
 [![DOI](https://zenodo.org/badge/122181085.svg)](https://zenodo.org/badge/latestdoi/122181085)
 
-This is a library and generic interface for alternative random 
+This is a library and generic interface for alternative random
 generators in Python and NumPy.
 
 
@@ -34,10 +34,10 @@ generators in Python and NumPy.
 
 ## Changes in v1.17
 
-There are many changes between v1.16.x and v1.17.x. These reflect API 
-decision taken in conjunction with NumPy in preparation of the core 
-of `randomgen` being used as the preferred random number generator in 
-NumPy. These all issue `DeprecationWarning`s except for `BasicRNG.generator` 
+There are many changes between v1.16.x and v1.17.x. These reflect API
+decision taken in conjunction with NumPy in preparation of the core
+of `randomgen` being used as the preferred random number generator in
+NumPy. These all issue `DeprecationWarning`s except for `BasicRNG.generator`
 which raises `NotImplementedError`. The C-API has also changed to reflect
 the preferred naming the underlying Pseudo-RNGs, which are now known as
 bit generators (or `BigGenerator`s).
@@ -71,7 +71,7 @@ which can fully reproduce the sequence produced by NumPy.
   ```
 
 * Default random generator is a fast generator called Xoroshiro128plus
-* Support for random number generators that support independent streams 
+* Support for random number generators that support independent streams
   and jumping ahead so that sub-streams can be generated
 * Faster random number generation, especially for normal, standard
   exponential and standard gamma using the Ziggurat method
@@ -85,18 +85,18 @@ which can fully reproduce the sequence produced by NumPy.
   y = rnd.standard_gamma(5.5, 10000)
   ```
 
-* Support for 32-bit floating randoms for core generators. 
+* Support for 32-bit floating randoms for core generators.
   Currently supported:
 
   * Uniforms (`random`)
   * Exponentials (`standard_exponential`, both Inverse CDF and Ziggurat)
   * Normals (`standard_normal`)
   * Standard Gammas (via `standard_gamma`)
-  
-  **WARNING**: The 32-bit generators are **experimental** and subject 
+
+  **WARNING**: The 32-bit generators are **experimental** and subject
   to change.
-  
-  **Note**: There are _no_ plans to extend the alternative precision 
+
+  **Note**: There are _no_ plans to extend the alternative precision
   generation to all distributions.
 
 * Support for filling existing arrays using `out` keyword argument. Currently
@@ -113,13 +113,13 @@ which can fully reproduce the sequence produced by NumPy.
 ## Included Pseudo Random Number Generators
 
 This module includes a number of alternative random
-number generators in addition to the MT19937 that is included in NumPy. 
+number generators in addition to the MT19937 that is included in NumPy.
 The RNGs include:
 
 * [MT19937](https://github.com/numpy/numpy/blob/master/numpy/random/mtrand/),
  the NumPy rng
-* [dSFMT](http://www.math.sci.hiroshima-u.ac.jp/~m-mat/MT/SFMT/) a 
-  SSE2-aware version of the MT19937 generator that is especially fast at 
+* [dSFMT](http://www.math.sci.hiroshima-u.ac.jp/~m-mat/MT/SFMT/) a
+  SSE2-aware version of the MT19937 generator that is especially fast at
   generating doubles
 * [xoroshiro128+](http://xoroshiro.di.unimi.it/),
   [xorshift1024*φ](http://xorshift.di.unimi.it/),
@@ -132,7 +132,7 @@ The RNGs include:
 
 ### New Features
 
-* `standard_normal`, `normal`, `randn` and `multivariate_normal` all 
+* `standard_normal`, `normal`, `randn` and `multivariate_normal` all
   use the much faster (100%+) Ziggurat method.
 * `standard_gamma` and `gamma` both use the much faster Ziggurat method.
 * `standard_exponential` `exponential` both support an additional
@@ -188,12 +188,12 @@ the latest commit (unreleased) is available under
 
 ## Plans
 
-This module is essentially complete.  There are a few rough edges that 
+This module is essentially complete.  There are a few rough edges that
 need to be smoothed.
-  
+
 * Creation of additional streams from where supported
   (i.e. a `next_stream()` method)
-  
+
 ## Requirements
 Building requires:
 
@@ -201,7 +201,7 @@ Building requires:
 * NumPy (1.13, 1.14, 1.15, 1.16)
 * Cython (0.26+)
 * tempita (0.5+), if not provided by Cython
- 
+
 Testing requires pytest (4.0+).
 
 **Note:** it might work with other versions but only tested with these
@@ -214,7 +214,7 @@ Travis-CI (Linux/OSX) and Appveyor (Windows). The library is occasionally
 tested on Linux 32-bit and Free BSD 11.1.
 
 Tests are in place for all RNGs. The MT19937 is tested against
-NumPy's implementation for identical results. It also passes NumPy's 
+NumPy's implementation for identical results. It also passes NumPy's
 test suite where still relevant.
 
 ## Installing
@@ -239,7 +239,7 @@ python setup.py install
 
 ### SSE2
 
-`dSFTM` makes use of SSE2 by default.  If you have a very old computer 
+`dSFTM` makes use of SSE2 by default.  If you have a very old computer
 or are building on non-x86, you can install using:
 
 ```bash
@@ -248,7 +248,7 @@ python setup.py install --no-sse2
 
 ### Windows
 
-Either use a binary installer, or if building from scratch, use 
+Either use a binary installer, or if building from scratch, use
 Python 3.6/3.7 with Visual Studio 2015/2017 Community Edition. It can also
 be build using Microsoft Visual C++ Compiler for Python 2.7 and
 Python 2.7.
@@ -276,7 +276,7 @@ Dual: BSD 3-Clause and NCSA, plus sub licenses for components.
 
 ## Performance
 
-Performance is promising, and even the mt19937 seems to be faster than 
+Performance is promising, and even the mt19937 seems to be faster than
 NumPy's mt19937.
 
     Speed-up relative to NumPy (Uniform Doubles)

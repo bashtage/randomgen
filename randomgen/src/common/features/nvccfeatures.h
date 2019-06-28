@@ -67,7 +67,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #endif
 
 #ifndef R123_THROW
-// No exceptions in CUDA, at least upto 4.0
+// No exceptions in CUDA, at least up to 4.0
 #define R123_THROW(x)    R123_ASSERT(0)
 #endif
 

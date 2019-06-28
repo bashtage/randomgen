@@ -166,7 +166,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #define R123_USE_ASM_GNU 1
 #else
 #define R123_USE_ASM_GNU 1
-#endif    
+#endif
 #endif
 
 #ifndef R123_USE_CPUID_MSVC
@@ -190,7 +190,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #endif
 
 #ifndef R123_USE_EMMINTRIN_H
-/* gcc -m64 on Solaris 10 defines __SSE2__ but doesn't have 
+/* gcc -m64 on Solaris 10 defines __SSE2__ but doesn't have
    emmintrin.h in the include search path.  This is
    so broken that I refuse to try to work around it.  If this
    affects you, figure out where your emmintrin.h lives and

@@ -31,10 +31,10 @@ void threefry##N##x##W##_advance(threefry_all_t *state, uint##W##_t *step, int u
   }                                                                                       \
 }
 
-_threefryNxW_advance_tpl(2, 32)                                                
-_threefryNxW_advance_tpl(4, 32)                                                
-_threefryNxW_advance_tpl(2, 64)                                                
-_threefryNxW_advance_tpl(4, 64)                                                
+_threefryNxW_advance_tpl(2, 32)
+_threefryNxW_advance_tpl(4, 32)
+_threefryNxW_advance_tpl(2, 64)
+_threefryNxW_advance_tpl(4, 64)
 
 #define _threefryNxW_next_extern_tpl(N, W)                                            \
 extern INLINE uint64_t threefry##N##x##W##_next64(threefry_all_t *state);    \

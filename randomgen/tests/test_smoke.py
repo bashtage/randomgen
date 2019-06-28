@@ -119,6 +119,7 @@ class RNG(object):
         cls.initial_state = cls.rg.bit_generator.state
         cls.seed_vector_bits = 64
         cls._extra_setup()
+        cls.max_vector_seed_size = 4
 
     @classmethod
     def _extra_setup(cls):
@@ -573,10 +574,7 @@ class RNG(object):
             pytest.skip('Vector seeding is not supported by '
                         '{0}'.format(bit_gen_name))
 
-        if self.seed_vector_bits == 32:
-            dtype = np.uint32
-        else:
-            dtype = np.uint64
+        dtype = np.uint32 if self.seed_vector_bits == 32 else np.uint64
         seed = np.array([1], dtype=dtype)
         self.rg.bit_generator.seed(seed)
         state1 = self.rg.bit_generator.state
@@ -584,21 +582,26 @@ class RNG(object):
         state2 = self.rg.bit_generator.state
         assert_(comp_state(state1, state2))
 
-        seed = np.arange(4, dtype=dtype)
+    def test_array_scalar_seed_diff(self):
+        if self.max_vector_seed_size == 1:
+            pytest.skip("Skipping since max_vector_seed_size is 1")
+        dtype = np.uint32 if self.seed_vector_bits == 32 else np.uint64
+        seed = np.arange(3, 3+self.max_vector_seed_size, dtype=dtype)
         self.rg.bit_generator.seed(seed)
         state1 = self.rg.bit_generator.state
         self.rg.bit_generator.seed(seed[0])
         state2 = self.rg.bit_generator.state
         assert_(not comp_state(state1, state2))
 
-        seed = np.arange(1500, dtype=dtype)
+        seed = np.arange(1, 1+self.max_vector_seed_size, dtype=dtype)
         self.rg.bit_generator.seed(seed)
         state1 = self.rg.bit_generator.state
         self.rg.bit_generator.seed(seed[0])
         state2 = self.rg.bit_generator.state
         assert_(not comp_state(state1, state2))
 
-        seed = 2 ** np.mod(np.arange(1500, dtype=dtype),
+        seed = 2 ** np.mod(np.arange(1500, 1500+self.max_vector_seed_size,
+                                     dtype=dtype),
                            self.seed_vector_bits - 1) + 1
         self.rg.bit_generator.seed(seed)
         state1 = self.rg.bit_generator.state
@@ -617,15 +620,15 @@ class RNG(object):
             self.rg.bit_generator.seed(seed)
 
         seed = np.array([-1], dtype=np.int32)
-        with pytest.raises(ValueError):
+        with pytest.raises((ValueError, TypeError)):
             self.rg.bit_generator.seed(seed)
 
         seed = np.array([1, 2, 3, -5], dtype=np.int32)
-        with pytest.raises(ValueError):
+        with pytest.raises((ValueError, TypeError)):
             self.rg.bit_generator.seed(seed)
 
         seed = np.array([1, 2, 3, out_of_bounds])
-        with pytest.raises(ValueError):
+        with pytest.raises((ValueError, TypeError)):
             self.rg.bit_generator.seed(seed)
 
     def test_uniform_float(self):
@@ -955,6 +958,7 @@ class RNG(object):
 class TestMT19937(RNG):
     @classmethod
     def setup_class(cls):
+        super(TestMT19937, cls).setup_class()
         cls.bit_generator = MT19937
         cls.advance = None
         cls.seed = [2 ** 21 + 2 ** 16 + 2 ** 5 + 1]
@@ -977,6 +981,7 @@ class TestMT19937(RNG):
 class TestMT64(RNG):
     @classmethod
     def setup_class(cls):
+        super(TestMT64, cls).setup_class()
         cls.bit_generator = MT64
         cls.advance = None
         cls.seed = [2 ** 43 + 2 ** 21 + 2 ** 16 + 2 ** 5 + 1]
@@ -990,7 +995,8 @@ class TestMT64(RNG):
 class TestJSF64(RNG):
     @classmethod
     def setup_class(cls):
-        cls.bit_generator = JSF
+        super(TestJSF64, cls).setup_class()
+        cls.bit_generator = partial(JSF, seed_size=3)
         cls.advance = None
         cls.seed = [12345]
         cls.rg = Generator(cls.bit_generator(*cls.seed))
@@ -1002,7 +1008,8 @@ class TestJSF64(RNG):
 class TestJSF32(RNG):
     @classmethod
     def setup_class(cls):
-        cls.bit_generator = partial(JSF, size=32)
+        super(TestJSF32, cls).setup_class()
+        cls.bit_generator = partial(JSF, size=32, seed_size=3)
         cls.advance = None
         cls.seed = [12345]
         cls.rg = Generator(cls.bit_generator(*cls.seed))
@@ -1014,6 +1021,7 @@ class TestJSF32(RNG):
 class TestPCG64(RNG):
     @classmethod
     def setup_class(cls):
+        super(TestPCG64, cls).setup_class()
         cls.bit_generator = PCG64
         cls.advance = 2 ** 96 + 2 ** 48 + 2 ** 21 + 2 ** 16 + 2 ** 5 + 1
         cls.seed = [2 ** 96 + 2 ** 48 + 2 ** 21 + 2 ** 16 + 2 ** 5 + 1,
@@ -1047,10 +1055,14 @@ class TestPCG64(RNG):
         with pytest.raises(error_type):
             self.rg.bit_generator.seed(seed)
 
+    def test_array_scalar_seed_diff(self):
+        pass
+
 
 class TestPhilox4x64(RNG):
     @classmethod
     def setup_class(cls):
+        super(TestPhilox4x64, cls).setup_class()
         cls.number = 4
         cls.width = 64
         cls.bit_generator_base = Philox
@@ -1060,6 +1072,7 @@ class TestPhilox4x64(RNG):
         cls.rg = Generator(cls.bit_generator(*cls.seed))
         cls.initial_state = cls.rg.bit_generator.state
         cls.seed_vector_bits = 64
+        cls.max_vector_seed_size = 1
         cls._extra_setup()
 
     def test_repr(self):
@@ -1076,6 +1089,7 @@ class TestPhilox4x64(RNG):
 class TestPhilox2x64(TestPhilox4x64):
     @classmethod
     def setup_class(cls):
+        super(TestPhilox2x64, cls).setup_class()
         cls.number = 2
         cls.width = 64
         cls.bit_generator = partial(Philox, number=cls.number, width=cls.width)
@@ -1084,12 +1098,14 @@ class TestPhilox2x64(TestPhilox4x64):
         cls.rg = Generator(cls.bit_generator(*cls.seed))
         cls.initial_state = cls.rg.bit_generator.state
         cls.seed_vector_bits = 64
+        cls.max_vector_seed_size = 1
         cls._extra_setup()
 
 
 class TestPhilox2x32(TestPhilox4x64):
     @classmethod
     def setup_class(cls):
+        super(TestPhilox2x32, cls).setup_class()
         cls.number = 2
         cls.width = 32
         cls.bit_generator = partial(Philox, number=cls.number, width=cls.width)
@@ -1104,6 +1120,7 @@ class TestPhilox2x32(TestPhilox4x64):
 class TestPhilox4x32(TestPhilox4x64):
     @classmethod
     def setup_class(cls):
+        super(TestPhilox4x32, cls).setup_class()
         cls.number = 4
         cls.width = 32
         cls.bit_generator = partial(Philox, number=cls.number, width=cls.width)
@@ -1118,6 +1135,7 @@ class TestPhilox4x32(TestPhilox4x64):
 class TestThreeFry4x64(TestPhilox4x64):
     @classmethod
     def setup_class(cls):
+        super(TestThreeFry4x64, cls).setup_class()
         cls.number = 4
         cls.width = 64
         cls.bit_generator_base = ThreeFry
@@ -1134,6 +1152,7 @@ class TestThreeFry4x64(TestPhilox4x64):
 class TestThreeFry2x64(TestPhilox4x64):
     @classmethod
     def setup_class(cls):
+        super(TestThreeFry2x64, cls).setup_class()
         cls.number = 2
         cls.width = 64
         cls.bit_generator = partial(ThreeFry, number=cls.number,
@@ -1149,6 +1168,7 @@ class TestThreeFry2x64(TestPhilox4x64):
 class TestThreeFry2x32(TestPhilox4x64):
     @classmethod
     def setup_class(cls):
+        super(TestThreeFry2x32, cls).setup_class()
         cls.number = 2
         cls.width = 32
         cls.bit_generator = partial(ThreeFry, number=cls.number,
@@ -1164,6 +1184,7 @@ class TestThreeFry2x32(TestPhilox4x64):
 class TestThreeFry4x32(TestPhilox4x64):
     @classmethod
     def setup_class(cls):
+        super(TestThreeFry4x32, cls).setup_class()
         cls.number = 4
         cls.width = 32
         cls.bit_generator = partial(ThreeFry, number=cls.number,
@@ -1176,21 +1197,10 @@ class TestThreeFry4x32(TestPhilox4x64):
         cls._extra_setup()
 
 
-class TestThreeFry(RNG):
-    @classmethod
-    def setup_class(cls):
-        cls.bit_generator = ThreeFry
-        cls.advance = 2 ** 63 + 2 ** 31 + 2 ** 15 + 1
-        cls.seed = [12345]
-        cls.rg = Generator(cls.bit_generator(*cls.seed))
-        cls.initial_state = cls.rg.bit_generator.state
-        cls.seed_vector_bits = 64
-        cls._extra_setup()
-
-
 class TestXoroshiro128(RNG):
     @classmethod
     def setup_class(cls):
+        super(TestXoroshiro128, cls).setup_class()
         cls.bit_generator = Xoroshiro128
         cls.advance = None
         cls.seed = [12345]
@@ -1203,6 +1213,7 @@ class TestXoroshiro128(RNG):
 class TestXoshiro256(RNG):
     @classmethod
     def setup_class(cls):
+        super(TestXoshiro256, cls).setup_class()
         cls.bit_generator = Xoshiro256
         cls.advance = None
         cls.seed = [12345]
@@ -1215,6 +1226,7 @@ class TestXoshiro256(RNG):
 class TestXoshiro512(RNG):
     @classmethod
     def setup_class(cls):
+        super(TestXoshiro512, cls).setup_class()
         cls.bit_generator = Xoshiro512
         cls.advance = None
         cls.seed = [12345]
@@ -1227,6 +1239,7 @@ class TestXoshiro512(RNG):
 class TestXorshift1024(RNG):
     @classmethod
     def setup_class(cls):
+        super(TestXorshift1024, cls).setup_class()
         cls.bit_generator = Xorshift1024
         cls.advance = None
         cls.seed = [12345]
@@ -1239,6 +1252,7 @@ class TestXorshift1024(RNG):
 class TestDSFMT(RNG):
     @classmethod
     def setup_class(cls):
+        super(TestDSFMT, cls).setup_class()
         cls.bit_generator = DSFMT
         cls.advance = None
         cls.seed = [12345]
@@ -1249,9 +1263,9 @@ class TestDSFMT(RNG):
 
 
 class TestSFMT(RNG):
-
     @classmethod
     def setup_class(cls):
+        super(TestSFMT, cls).setup_class()
         cls.bit_generator = SFMT
         cls.advance = None
         cls.seed = [12345]
@@ -1283,6 +1297,7 @@ class TestEntropy(object):
 class TestPCG32(TestPCG64):
     @classmethod
     def setup_class(cls):
+        super(TestPCG32, cls).setup_class()
         cls.bit_generator = PCG32
         cls.advance = 2 ** 48 + 2 ** 21 + 2 ** 16 + 2 ** 5 + 1
         cls.seed = [2 ** 48 + 2 ** 21 + 2 ** 16 + 2 ** 5 + 1,
@@ -1297,6 +1312,7 @@ class TestPCG32(TestPCG64):
 class TestAESCounter(RNG):
     @classmethod
     def setup_class(cls):
+        super(TestAESCounter, cls).setup_class()
         cls.bit_generator = AESCounter
         cls.advance = 2 ** 63 + 2 ** 31 + 2 ** 15 + 1
         cls.seed = [2 ** 21 + 2 ** 16 + 2 ** 5 + 1]
@@ -1305,11 +1321,13 @@ class TestAESCounter(RNG):
         cls.seed_vector_bits = 64
         cls._extra_setup()
         cls.seed_error = ValueError
+        cls.max_vector_seed_size = 2
 
 
 class TestChaCha(RNG):
     @classmethod
     def setup_class(cls):
+        super(TestChaCha, cls).setup_class()
         cls.bit_generator = ChaCha
         cls.advance = 2 ** 63 + 2 ** 31 + 2 ** 15 + 1
         cls.seed = [2 ** 21 + 2 ** 16 + 2 ** 5 + 1]
@@ -1323,6 +1341,7 @@ class TestChaCha(RNG):
 class TestHC128(RNG):
     @classmethod
     def setup_class(cls):
+        super(TestHC128, cls).setup_class()
         cls.bit_generator = HC128
         cls.seed = [2**231 + 2 ** 21 + 2 ** 16 + 2 ** 5 + 1]
         cls.rg = Generator(cls.bit_generator(*cls.seed))
@@ -1335,6 +1354,7 @@ class TestHC128(RNG):
 class TestSPECK128(RNG):
     @classmethod
     def setup_class(cls):
+        super(TestSPECK128, cls).setup_class()
         cls.bit_generator = SPECK128
         cls.seed = [2**231 + 2 ** 21 + 2 ** 16 + 2 ** 5 + 1]
         cls.rg = Generator(cls.bit_generator(*cls.seed))

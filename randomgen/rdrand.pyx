@@ -63,7 +63,7 @@ cdef class RDRAND(BitGenerator):
     ``RDRAND`` uses a hardware generated seed and so cannot be seeded. The
     state contains a single integer value ``status`` that takes the value 1
     if all calls have succeeded and 0 if any fail. A failure of a call to
-    RDRAND does not propogate, and so users much check this value to determine
+    RDRAND does not propagate, and so users much check this value to determine
     if results are random.
 
     **Parallel Features**

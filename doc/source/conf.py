@@ -56,6 +56,17 @@ extensions = [
     'IPython.sphinxext.ipython_directive'
 ]
 
+try:
+    import sphinxcontrib.spelling  # noqa: F401
+except ImportError as err:  # noqa: F841
+    pass
+else:
+    extensions.append('sphinxcontrib.spelling')
+
+spelling_word_list_filename = ['spelling_wordlist.txt', 'names_wordlist.txt']
+spelling_ignore_pypi_package_names = True
+
+
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ['_templates']
 

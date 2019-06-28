@@ -91,7 +91,7 @@ R123_STATIC_INLINE int haveAESNI(){
 // compilerfeatures.h files we just keep the complexity localized
 // to here...
 #if (defined(__ICC) && __ICC<1210) || (defined(_MSC_VER) && !defined(_WIN64) && _MSC_VER<1900)
-/* Is there an intrinsic to assemble an __m128i from two 64-bit words? 
+/* Is there an intrinsic to assemble an __m128i from two 64-bit words?
    If not, use the 4x32-bit intrisic instead.  N.B.  It looks like Intel
    added _mm_set_epi64x to icc version 12.1 in Jan 2012.
 */
@@ -201,24 +201,24 @@ R123_STATIC_INLINE r123m128i& operator++(r123m128i& v){
     return v;
 }
 
-R123_STATIC_INLINE r123m128i& operator+=(r123m128i& lhs, R123_ULONG_LONG n){ 
+R123_STATIC_INLINE r123m128i& operator+=(r123m128i& lhs, R123_ULONG_LONG n){
     __m128i c = lhs.m;
     __m128i incr128 = _mm_set_epi64x(0, n);
     c = _mm_add_epi64(c, incr128);
-    // return c;     // NO CARRY!  
+    // return c;     // NO CARRY!
 
     int64_t lo64 = _mm_extract_lo64(c);
     if((uint64_t)lo64 < n)
         c = _mm_add_epi64(c, _mm_set_epi64x(1,0));
     lhs.m = c;
-    return lhs; 
+    return lhs;
 }
 
 // We need this one because it's present, but never used in r123array1xm128i::incr
 R123_STATIC_INLINE bool operator<=(R123_ULONG_LONG, const r123m128i &){
     throw std::runtime_error("operator<=(unsigned long long, r123m128i) is unimplemented.");}
 
-// The comparisons aren't implemented, but if we leave them out, and 
+// The comparisons aren't implemented, but if we leave them out, and
 // somebody writes, e.g., M1 < M2, the compiler will do an implicit
 // conversion through void*.  Sigh...
 R123_STATIC_INLINE bool operator<(const r123m128i&, const r123m128i&){
@@ -230,9 +230,9 @@ R123_STATIC_INLINE bool operator>(const r123m128i&, const r123m128i&){
 R123_STATIC_INLINE bool operator>=(const r123m128i&, const r123m128i&){
     throw std::runtime_error("operator>=(r123m128i, r123m128i) is unimplemented.");}
 
-R123_STATIC_INLINE bool operator==(const r123m128i &lhs, const r123m128i &rhs){ 
+R123_STATIC_INLINE bool operator==(const r123m128i &lhs, const r123m128i &rhs){
     return 0xf==_mm_movemask_ps(_mm_castsi128_ps(_mm_cmpeq_epi32(lhs, rhs))); }
-R123_STATIC_INLINE bool operator!=(const r123m128i &lhs, const r123m128i &rhs){ 
+R123_STATIC_INLINE bool operator!=(const r123m128i &lhs, const r123m128i &rhs){
     return !(lhs==rhs);}
 R123_STATIC_INLINE bool operator==(R123_ULONG_LONG lhs, const r123m128i &rhs){
     r123m128i LHS; LHS.m=_mm_set_epi64x(0, lhs); return LHS == rhs; }

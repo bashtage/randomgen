@@ -71,7 +71,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 // obviously not guaranteed that all compilers will be that smart, so
 // other implementations might be preferable, e.g., using an intrinsic
 // or an asm block.  On the other hand, for 32-bit multiplies,
-// this *is* perfectly standard C99 - any C99 compiler should 
+// this *is* perfectly standard C99 - any C99 compiler should
 // understand it and produce correct code.  For 64-bit multiplies,
 // it's only usable if the compiler recognizes that it can do
 // arithmetic on a 128-bit type.  That happens to be true for gcc on
@@ -86,7 +86,7 @@ R123_CUDA_DEVICE R123_STATIC_INLINE Word mulhilo##W(Word a, Word b, Word* hip){ 
 
 /*
 // A template for mulhilo using gnu-style asm syntax.
-// INSN can be "mulw", "mull" or "mulq".  
+// INSN can be "mulw", "mull" or "mulq".
 // FIXME - porting to other architectures, we'll need still-more conditional
 // branching here.  Note that intrinsics are usually preferable.
 */
@@ -140,12 +140,12 @@ R123_CUDA_DEVICE R123_STATIC_INLINE Word mulhilo##W(Word a, Word b, R123_METAL_T
 // requires four multiplies and a dozen or so shifts, adds
 // and tests.  It's *SLOW*.  It can be used to
 // implement philoxNx32 on platforms that completely lack
-// 64-bit types, e.g., Metal.  
+// 64-bit types, e.g., Metal.
 // On 32-bit platforms, it could be used to
 // implement philoxNx64, but on such platforms both the philoxNx32
 // and the threefryNx64 cbrngs are going to have much better
 // performance.  It is enabled below by R123_USE_MULHILO64_C99,
-// but that is currently (Feb 2019) only set by 
+// but that is currently (Feb 2019) only set by
 // features/metalfeatures.h headers.  It can, of course, be
 // set with a compile-time -D option.
 */
@@ -184,7 +184,7 @@ R123_STATIC_INLINE Word mulhilo##W(Word a, Word b, Word *hip){               \
 /*
 // N.B.  There's an MSVC intrinsic called _emul,
 // which *might* compile into better code than
-// _mulhilo_dword_tpl 
+// _mulhilo_dword_tpl
 */
 #if R123_USE_MULHILO32_ASM
 #ifdef __powerpc__
@@ -229,7 +229,7 @@ _mulhilo_fail_tpl(64, uint64_t)
 /*
 // The multipliers and Weyl constants are "hard coded".
 // To change them, you can #define them with different
-// values before #include-ing this file. 
+// values before #include-ing this file.
 // This isn't terribly elegant, but it works for C as
 // well as C++.  A nice C++-only solution would be to
 // use template parameters in the style of <random>
@@ -353,7 +353,7 @@ R123_CUDA_DEVICE R123_STATIC_INLINE philox##N##x##W##_ctr_t philox##N##x##W##_R(
     if(R>15){ key = _philox##N##x##W##bumpkey(key); ctr = _philox##N##x##W##round(ctr, key); } \
     return ctr;                                                         \
 }
-         
+
 _philox2xWbumpkey_tpl(32)
 _philox4xWbumpkey_tpl(32)
 _philox2xWround_tpl(32, uint32_t) /* philox2x32round */
@@ -389,7 +389,7 @@ typedef union R123_UINT_T {
 typedef struct s_philox##N##x##W##_state { \
   philox##N##x##W##_ctr_t ctr; \
   philox##N##x##W##_key_t key; \
-} philox##N##x##W##_state; 
+} philox##N##x##W##_state;
 
 _philoxNxW_state_tpl(2, 32, uint32_t)
 _philoxNxW_state_tpl(4, 32, uint32_t)
