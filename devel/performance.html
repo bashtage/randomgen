@@ -13,7 +13,7 @@
   <link rel="stylesheet" type="text/css" href="_static/css/bootstrap-theme.min.css" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-    <title>Performance &#8212; RandomGen 0+untagged.108.g1598d5b documentation</title>
+    <title>Performance &#8212; RandomGen 0+untagged.108.g798fe9e documentation</title>
     <link rel="stylesheet" href="_static/guzzle.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
@@ -45,7 +45,7 @@
         <li class="right" >
           <a href="new-or-different.html" title="What’s New or Different"
              accesskey="P">previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="index.html">RandomGen 0+untagged.108.g1598d5b documentation</a> &#187;</li> 
+        <li class="nav-item nav-item-0"><a href="index.html">RandomGen 0+untagged.108.g798fe9e documentation</a> &#187;</li> 
       </ul>
     </div>
     <div class="container-wrapper">
@@ -147,15 +147,15 @@ performance of NumPy’s MT19937 is much lower than the other since it
 uses the Box-Muller transformation rather than the Ziggurat generator. The
 performance gap for Exponentials is also large due replacement of the use of the
 log function to invert the CDF with a Ziggurat-based generator.</p>
-<table class="docutils align-default">
+<table class="colwidths-given docutils align-default">
 <colgroup>
-<col style="width: 20%" />
-<col style="width: 14%" />
-<col style="width: 14%" />
-<col style="width: 15%" />
-<col style="width: 12%" />
-<col style="width: 14%" />
-<col style="width: 12%" />
+<col style="width: 33%" />
+<col style="width: 11%" />
+<col style="width: 11%" />
+<col style="width: 11%" />
+<col style="width: 11%" />
+<col style="width: 11%" />
+<col style="width: 11%" />
 </colgroup>
 <thead>
 <tr class="row-odd"><th class="head"><p>Bit Gen</p></th>
@@ -169,187 +169,195 @@ log function to invert the CDF with a Ziggurat-based generator.</p>
 </thead>
 <tbody>
 <tr class="row-even"><td><p>Xoshiro256</p></td>
-<td><p>3.5</p></td>
+<td><p>3.2</p></td>
 <td><p>4.2</p></td>
-<td><p>4</p></td>
-<td><p>4.7</p></td>
-<td><p>8.7</p></td>
-<td><p>27.3</p></td>
+<td><p>3.8</p></td>
+<td><p>4.6</p></td>
+<td><p>8.3</p></td>
+<td><p>26.2</p></td>
 </tr>
 <tr class="row-odd"><td><p>JSF</p></td>
 <td><p>3.4</p></td>
-<td><p>4.4</p></td>
+<td><p>4.6</p></td>
 <td><p>3.8</p></td>
-<td><p>5.2</p></td>
-<td><p>9</p></td>
-<td><p>28</p></td>
+<td><p>5.1</p></td>
+<td><p>8.9</p></td>
+<td><p>27.1</p></td>
 </tr>
 <tr class="row-even"><td><p>SFMT</p></td>
 <td><p>3.9</p></td>
-<td><p>4.4</p></td>
-<td><p>3.8</p></td>
-<td><p>5.1</p></td>
-<td><p>9.6</p></td>
-<td><p>27.5</p></td>
+<td><p>4.5</p></td>
+<td><p>3.9</p></td>
+<td><p>5.0</p></td>
+<td><p>9.4</p></td>
+<td><p>27.7</p></td>
 </tr>
 <tr class="row-odd"><td><p>PCG64</p></td>
-<td><p>3.9</p></td>
-<td><p>4.6</p></td>
-<td><p>4.3</p></td>
+<td><p>3.6</p></td>
+<td><p>4.7</p></td>
+<td><p>4.1</p></td>
 <td><p>5.6</p></td>
-<td><p>10.8</p></td>
-<td><p>28.2</p></td>
+<td><p>10.2</p></td>
+<td><p>28.0</p></td>
 </tr>
 <tr class="row-even"><td><p>Xoshiro512</p></td>
-<td><p>4</p></td>
-<td><p>5.4</p></td>
-<td><p>4.7</p></td>
-<td><p>6.3</p></td>
-<td><p>9.8</p></td>
-<td><p>29.4</p></td>
-</tr>
-<tr class="row-odd"><td><p>JSF32</p></td>
+<td><p>3.8</p></td>
+<td><p>5.5</p></td>
 <td><p>4.4</p></td>
 <td><p>5.6</p></td>
+<td><p>9.4</p></td>
+<td><p>28.4</p></td>
+</tr>
+<tr class="row-odd"><td><p>DSFMT</p></td>
+<td><p>4.1</p></td>
+<td><p>6.5</p></td>
+<td><p>3.7</p></td>
+<td><p>7.7</p></td>
+<td><p>12.3</p></td>
+<td><p>29.5</p></td>
+</tr>
+<tr class="row-even"><td><p>JSF32</p></td>
+<td><p>4.3</p></td>
+<td><p>5.7</p></td>
 <td><p>5.4</p></td>
 <td><p>6.7</p></td>
 <td><p>10.8</p></td>
-<td><p>31.4</p></td>
-</tr>
-<tr class="row-even"><td><p>DSFMT</p></td>
-<td><p>4.2</p></td>
-<td><p>6.6</p></td>
-<td><p>3.7</p></td>
-<td><p>8.1</p></td>
-<td><p>12.4</p></td>
-<td><p>29.9</p></td>
+<td><p>30.9</p></td>
 </tr>
 <tr class="row-odd"><td><p>MT64</p></td>
-<td><p>4.6</p></td>
+<td><p>4.5</p></td>
 <td><p>5.8</p></td>
 <td><p>5.3</p></td>
-<td><p>7.1</p></td>
+<td><p>7.0</p></td>
 <td><p>12.3</p></td>
-<td><p>32.8</p></td>
+<td><p>32.4</p></td>
 </tr>
 <tr class="row-even"><td><p>MT19937</p></td>
-<td><p>4.9</p></td>
-<td><p>7.2</p></td>
-<td><p>8</p></td>
-<td><p>9.4</p></td>
-<td><p>14.1</p></td>
-<td><p>38.8</p></td>
+<td><p>4.2</p></td>
+<td><p>7.0</p></td>
+<td><p>7.8</p></td>
+<td><p>8.5</p></td>
+<td><p>13.7</p></td>
+<td><p>36.0</p></td>
 </tr>
 <tr class="row-odd"><td><p>AESCounter</p></td>
-<td><p>5.2</p></td>
-<td><p>8.2</p></td>
-<td><p>7.7</p></td>
-<td><p>8.8</p></td>
-<td><p>14.4</p></td>
-<td><p>35.5</p></td>
+<td><p>4.9</p></td>
+<td><p>8.0</p></td>
+<td><p>7.6</p></td>
+<td><p>8.6</p></td>
+<td><p>13.8</p></td>
+<td><p>35.7</p></td>
 </tr>
 <tr class="row-even"><td><p>Philox2x64</p></td>
 <td><p>5.5</p></td>
 <td><p>7.4</p></td>
-<td><p>7.6</p></td>
-<td><p>9.7</p></td>
-<td><p>15.3</p></td>
-<td><p>37.8</p></td>
+<td><p>7.5</p></td>
+<td><p>9.4</p></td>
+<td><p>15.1</p></td>
+<td><p>37.3</p></td>
 </tr>
 <tr class="row-odd"><td><p>Philox</p></td>
-<td><p>5.8</p></td>
-<td><p>7.8</p></td>
+<td><p>5.7</p></td>
+<td><p>8.1</p></td>
+<td><p>8.5</p></td>
 <td><p>8.8</p></td>
-<td><p>9.2</p></td>
-<td><p>14.6</p></td>
-<td><p>38.3</p></td>
+<td><p>13.7</p></td>
+<td><p>35.9</p></td>
 </tr>
-<tr class="row-even"><td><p>ThreeFry2x64</p></td>
-<td><p>6.4</p></td>
+<tr class="row-even"><td><p>ChaCha8</p></td>
+<td><p>6.0</p></td>
+<td><p>10.2</p></td>
 <td><p>9.7</p></td>
+<td><p>11.6</p></td>
+<td><p>16.6</p></td>
+<td><p>41.5</p></td>
+</tr>
+<tr class="row-odd"><td><p>ThreeFry2x64</p></td>
+<td><p>6.3</p></td>
+<td><p>9.5</p></td>
 <td><p>9.8</p></td>
-<td><p>11.7</p></td>
-<td><p>16.7</p></td>
-<td><p>40.6</p></td>
+<td><p>11.5</p></td>
+<td><p>17.0</p></td>
+<td><p>41.3</p></td>
+</tr>
+<tr class="row-even"><td><p>ThreeFry</p></td>
+<td><p>6.4</p></td>
+<td><p>10.2</p></td>
+<td><p>10.1</p></td>
+<td><p>12.0</p></td>
+<td><p>15.4</p></td>
+<td><p>42.8</p></td>
 </tr>
 <tr class="row-odd"><td><p>HC128</p></td>
-<td><p>6.6</p></td>
-<td><p>10.3</p></td>
-<td><p>10.3</p></td>
-<td><p>11.7</p></td>
+<td><p>6.7</p></td>
+<td><p>10.1</p></td>
+<td><p>10.0</p></td>
+<td><p>11.6</p></td>
 <td><p>17.4</p></td>
-<td><p>42.9</p></td>
+<td><p>42.2</p></td>
 </tr>
 <tr class="row-even"><td><p>Philox4x32</p></td>
-<td><p>6</p></td>
-<td><p>11.2</p></td>
-<td><p>11.2</p></td>
-<td><p>12.5</p></td>
-<td><p>17.7</p></td>
-<td><p>44.3</p></td>
+<td><p>5.9</p></td>
+<td><p>11.0</p></td>
+<td><p>11.0</p></td>
+<td><p>12.4</p></td>
+<td><p>17.3</p></td>
+<td><p>43.1</p></td>
 </tr>
-<tr class="row-odd"><td><p>ThreeFry</p></td>
-<td><p>6.5</p></td>
-<td><p>10.3</p></td>
-<td><p>10.8</p></td>
-<td><p>13</p></td>
-<td><p>16.9</p></td>
-<td><p>48.9</p></td>
-</tr>
-<tr class="row-even"><td><p>SPECK128</p></td>
-<td><p>8.3</p></td>
+<tr class="row-odd"><td><p>SPECK128</p></td>
+<td><p>8.1</p></td>
 <td><p>13.5</p></td>
-<td><p>13.5</p></td>
-<td><p>14.2</p></td>
-<td><p>19.4</p></td>
-<td><p>47.2</p></td>
+<td><p>13.3</p></td>
+<td><p>14.1</p></td>
+<td><p>19.0</p></td>
+<td><p>46.6</p></td>
 </tr>
-<tr class="row-odd"><td><p>NumPy</p></td>
-<td><p>3.3</p></td>
-<td><p>7.7</p></td>
-<td><p>8.9</p></td>
-<td><p>43</p></td>
-<td><p>38.1</p></td>
-<td><p>62.7</p></td>
+<tr class="row-even"><td><p>NumPy</p></td>
+<td><p>3.4</p></td>
+<td><p>7.5</p></td>
+<td><p>8.7</p></td>
+<td><p>41.8</p></td>
+<td><p>36.8</p></td>
+<td><p>60.5</p></td>
 </tr>
-<tr class="row-even"><td><p>ChaCha</p></td>
-<td><p>9.6</p></td>
-<td><p>17.7</p></td>
-<td><p>17.2</p></td>
-<td><p>19.8</p></td>
-<td><p>25.1</p></td>
-<td><p>61.7</p></td>
+<tr class="row-odd"><td><p>ChaCha</p></td>
+<td><p>9.7</p></td>
+<td><p>17.5</p></td>
+<td><p>16.8</p></td>
+<td><p>19.1</p></td>
+<td><p>23.9</p></td>
+<td><p>56.5</p></td>
 </tr>
-<tr class="row-odd"><td><p>ThreeFry4x32</p></td>
+<tr class="row-even"><td><p>ThreeFry4x32</p></td>
 <td><p>10.1</p></td>
-<td><p>19.9</p></td>
-<td><p>21.6</p></td>
-<td><p>22.8</p></td>
-<td><p>25.9</p></td>
-<td><p>66.5</p></td>
+<td><p>19.8</p></td>
+<td><p>21.2</p></td>
+<td><p>22.6</p></td>
+<td><p>25.6</p></td>
+<td><p>66.6</p></td>
 </tr>
-<tr class="row-even"><td><p>RDRAND</p></td>
-<td><p>39.9</p></td>
-<td><p>39.3</p></td>
-<td><p>40.8</p></td>
-<td><p>42.9</p></td>
-<td><p>43.7</p></td>
-<td><p>109.9</p></td>
+<tr class="row-odd"><td><p>RDRAND</p></td>
+<td><p>38.5</p></td>
+<td><p>40.6</p></td>
+<td><p>40.4</p></td>
+<td><p>42.3</p></td>
+<td><p>43.8</p></td>
+<td><p>108.6</p></td>
 </tr>
 </tbody>
 </table>
 <p>The next table presents the performance relative to NumPy’s 1.16 <cite>RandomState</cite> in
 percentage. The overall performance is computed using a geometric mean.</p>
-<table class="docutils align-default">
+<table class="colwidths-given docutils align-default">
 <colgroup>
-<col style="width: 18%" />
-<col style="width: 12%" />
-<col style="width: 12%" />
-<col style="width: 13%" />
+<col style="width: 30%" />
 <col style="width: 10%" />
-<col style="width: 12%" />
 <col style="width: 10%" />
-<col style="width: 13%" />
+<col style="width: 10%" />
+<col style="width: 10%" />
+<col style="width: 10%" />
+<col style="width: 10%" />
+<col style="width: 10%" />
 </colgroup>
 <thead>
 <tr class="row-odd"><th class="head"><p>Bit Gen</p></th>
@@ -364,184 +372,193 @@ percentage. The overall performance is computed using a geometric mean.</p>
 </thead>
 <tbody>
 <tr class="row-even"><td><p>Xoshiro256</p></td>
-<td><p>94</p></td>
-<td><p>183</p></td>
-<td><p>225</p></td>
-<td><p>907</p></td>
-<td><p>440</p></td>
-<td><p>230</p></td>
-<td><p>266</p></td>
+<td><p>104</p></td>
+<td><p>181</p></td>
+<td><p>226</p></td>
+<td><p>904</p></td>
+<td><p>445</p></td>
+<td><p>231</p></td>
+<td><p>271</p></td>
 </tr>
 <tr class="row-odd"><td><p>JSF</p></td>
-<td><p>97</p></td>
-<td><p>176</p></td>
-<td><p>235</p></td>
-<td><p>820</p></td>
-<td><p>421</p></td>
-<td><p>224</p></td>
-<td><p>260</p></td>
+<td><p>99</p></td>
+<td><p>164</p></td>
+<td><p>230</p></td>
+<td><p>813</p></td>
+<td><p>412</p></td>
+<td><p>223</p></td>
+<td><p>255</p></td>
 </tr>
 <tr class="row-even"><td><p>SFMT</p></td>
-<td><p>86</p></td>
-<td><p>174</p></td>
-<td><p>233</p></td>
-<td><p>851</p></td>
-<td><p>398</p></td>
-<td><p>228</p></td>
-<td><p>254</p></td>
+<td><p>87</p></td>
+<td><p>168</p></td>
+<td><p>225</p></td>
+<td><p>831</p></td>
+<td><p>390</p></td>
+<td><p>219</p></td>
+<td><p>248</p></td>
 </tr>
 <tr class="row-odd"><td><p>PCG64</p></td>
-<td><p>85</p></td>
-<td><p>168</p></td>
-<td><p>208</p></td>
-<td><p>772</p></td>
-<td><p>354</p></td>
-<td><p>223</p></td>
+<td><p>93</p></td>
+<td><p>162</p></td>
+<td><p>210</p></td>
+<td><p>744</p></td>
+<td><p>360</p></td>
+<td><p>216</p></td>
 <td><p>238</p></td>
 </tr>
 <tr class="row-even"><td><p>Xoshiro512</p></td>
-<td><p>83</p></td>
-<td><p>144</p></td>
-<td><p>191</p></td>
-<td><p>679</p></td>
-<td><p>388</p></td>
-<td><p>213</p></td>
-<td><p>225</p></td>
-</tr>
-<tr class="row-odd"><td><p>JSF32</p></td>
-<td><p>76</p></td>
+<td><p>88</p></td>
 <td><p>137</p></td>
-<td><p>165</p></td>
-<td><p>643</p></td>
-<td><p>353</p></td>
-<td><p>200</p></td>
-<td><p>207</p></td>
+<td><p>196</p></td>
+<td><p>741</p></td>
+<td><p>390</p></td>
+<td><p>213</p></td>
+<td><p>229</p></td>
 </tr>
-<tr class="row-even"><td><p>DSFMT</p></td>
-<td><p>79</p></td>
-<td><p>117</p></td>
-<td><p>240</p></td>
-<td><p>533</p></td>
-<td><p>307</p></td>
-<td><p>210</p></td>
-<td><p>206</p></td>
+<tr class="row-odd"><td><p>DSFMT</p></td>
+<td><p>81</p></td>
+<td><p>116</p></td>
+<td><p>233</p></td>
+<td><p>542</p></td>
+<td><p>299</p></td>
+<td><p>205</p></td>
+<td><p>204</p></td>
+</tr>
+<tr class="row-even"><td><p>JSF32</p></td>
+<td><p>78</p></td>
+<td><p>132</p></td>
+<td><p>160</p></td>
+<td><p>624</p></td>
+<td><p>339</p></td>
+<td><p>195</p></td>
+<td><p>202</p></td>
 </tr>
 <tr class="row-odd"><td><p>MT64</p></td>
-<td><p>73</p></td>
-<td><p>134</p></td>
-<td><p>168</p></td>
-<td><p>604</p></td>
-<td><p>311</p></td>
-<td><p>191</p></td>
-<td><p>197</p></td>
+<td><p>75</p></td>
+<td><p>130</p></td>
+<td><p>165</p></td>
+<td><p>596</p></td>
+<td><p>299</p></td>
+<td><p>187</p></td>
+<td><p>194</p></td>
 </tr>
 <tr class="row-even"><td><p>MT19937</p></td>
-<td><p>69</p></td>
-<td><p>106</p></td>
+<td><p>80</p></td>
+<td><p>107</p></td>
 <td><p>111</p></td>
-<td><p>455</p></td>
-<td><p>271</p></td>
-<td><p>162</p></td>
-<td><p>159</p></td>
+<td><p>493</p></td>
+<td><p>269</p></td>
+<td><p>168</p></td>
+<td><p>166</p></td>
 </tr>
 <tr class="row-odd"><td><p>AESCounter</p></td>
-<td><p>64</p></td>
-<td><p>93</p></td>
-<td><p>116</p></td>
-<td><p>488</p></td>
-<td><p>265</p></td>
-<td><p>177</p></td>
-<td><p>159</p></td>
+<td><p>68</p></td>
+<td><p>94</p></td>
+<td><p>114</p></td>
+<td><p>484</p></td>
+<td><p>267</p></td>
+<td><p>169</p></td>
+<td><p>158</p></td>
 </tr>
 <tr class="row-even"><td><p>Philox2x64</p></td>
-<td><p>60</p></td>
-<td><p>104</p></td>
-<td><p>117</p></td>
-<td><p>444</p></td>
-<td><p>248</p></td>
-<td><p>166</p></td>
-<td><p>154</p></td>
+<td><p>61</p></td>
+<td><p>101</p></td>
+<td><p>116</p></td>
+<td><p>446</p></td>
+<td><p>244</p></td>
+<td><p>162</p></td>
+<td><p>153</p></td>
 </tr>
 <tr class="row-odd"><td><p>Philox</p></td>
-<td><p>58</p></td>
-<td><p>99</p></td>
-<td><p>101</p></td>
-<td><p>466</p></td>
-<td><p>260</p></td>
-<td><p>164</p></td>
-<td><p>150</p></td>
+<td><p>59</p></td>
+<td><p>93</p></td>
+<td><p>102</p></td>
+<td><p>476</p></td>
+<td><p>269</p></td>
+<td><p>168</p></td>
+<td><p>152</p></td>
 </tr>
-<tr class="row-even"><td><p>ThreeFry2x64</p></td>
-<td><p>52</p></td>
-<td><p>80</p></td>
-<td><p>91</p></td>
-<td><p>368</p></td>
-<td><p>228</p></td>
-<td><p>155</p></td>
-<td><p>130</p></td>
-</tr>
-<tr class="row-odd"><td><p>HC128</p></td>
-<td><p>51</p></td>
-<td><p>75</p></td>
-<td><p>87</p></td>
-<td><p>367</p></td>
-<td><p>219</p></td>
+<tr class="row-even"><td><p>ChaCha8</p></td>
+<td><p>56</p></td>
+<td><p>74</p></td>
+<td><p>90</p></td>
+<td><p>359</p></td>
+<td><p>221</p></td>
 <td><p>146</p></td>
+<td><p>127</p></td>
+</tr>
+<tr class="row-odd"><td><p>ThreeFry2x64</p></td>
+<td><p>53</p></td>
+<td><p>79</p></td>
+<td><p>88</p></td>
+<td><p>363</p></td>
+<td><p>217</p></td>
+<td><p>146</p></td>
+<td><p>127</p></td>
+</tr>
+<tr class="row-even"><td><p>ThreeFry</p></td>
+<td><p>52</p></td>
+<td><p>74</p></td>
+<td><p>86</p></td>
+<td><p>349</p></td>
+<td><p>239</p></td>
+<td><p>141</p></td>
 <td><p>125</p></td>
 </tr>
+<tr class="row-odd"><td><p>HC128</p></td>
+<td><p>50</p></td>
+<td><p>74</p></td>
+<td><p>87</p></td>
+<td><p>360</p></td>
+<td><p>212</p></td>
+<td><p>143</p></td>
+<td><p>123</p></td>
+</tr>
 <tr class="row-even"><td><p>Philox4x32</p></td>
-<td><p>55</p></td>
+<td><p>57</p></td>
 <td><p>69</p></td>
 <td><p>79</p></td>
-<td><p>343</p></td>
-<td><p>216</p></td>
-<td><p>142</p></td>
+<td><p>336</p></td>
+<td><p>212</p></td>
+<td><p>140</p></td>
 <td><p>121</p></td>
 </tr>
-<tr class="row-odd"><td><p>ThreeFry</p></td>
-<td><p>51</p></td>
-<td><p>75</p></td>
-<td><p>83</p></td>
-<td><p>330</p></td>
-<td><p>225</p></td>
-<td><p>128</p></td>
-<td><p>120</p></td>
-</tr>
-<tr class="row-even"><td><p>SPECK128</p></td>
-<td><p>40</p></td>
-<td><p>57</p></td>
+<tr class="row-odd"><td><p>SPECK128</p></td>
+<td><p>42</p></td>
+<td><p>56</p></td>
 <td><p>66</p></td>
-<td><p>302</p></td>
-<td><p>197</p></td>
-<td><p>133</p></td>
-<td><p>103</p></td>
-</tr>
-<tr class="row-odd"><td><p>ChaCha</p></td>
-<td><p>35</p></td>
-<td><p>44</p></td>
-<td><p>52</p></td>
-<td><p>217</p></td>
-<td><p>151</p></td>
+<td><p>296</p></td>
+<td><p>193</p></td>
+<td><p>130</p></td>
 <td><p>102</p></td>
-<td><p>80</p></td>
 </tr>
-<tr class="row-even"><td><p>ThreeFry4x32</p></td>
-<td><p>33</p></td>
-<td><p>39</p></td>
-<td><p>41</p></td>
-<td><p>188</p></td>
-<td><p>147</p></td>
-<td><p>94</p></td>
-<td><p>72</p></td>
-</tr>
-<tr class="row-odd"><td><p>RDRAND</p></td>
-<td><p>8</p></td>
-<td><p>20</p></td>
-<td><p>22</p></td>
-<td><p>100</p></td>
-<td><p>87</p></td>
-<td><p>57</p></td>
+<tr class="row-even"><td><p>ChaCha</p></td>
 <td><p>35</p></td>
+<td><p>43</p></td>
+<td><p>52</p></td>
+<td><p>219</p></td>
+<td><p>154</p></td>
+<td><p>107</p></td>
+<td><p>81</p></td>
+</tr>
+<tr class="row-odd"><td><p>ThreeFry4x32</p></td>
+<td><p>33</p></td>
+<td><p>38</p></td>
+<td><p>41</p></td>
+<td><p>185</p></td>
+<td><p>144</p></td>
+<td><p>91</p></td>
+<td><p>71</p></td>
+</tr>
+<tr class="row-even"><td><p>RDRAND</p></td>
+<td><p>9</p></td>
+<td><p>19</p></td>
+<td><p>21</p></td>
+<td><p>99</p></td>
+<td><p>84</p></td>
+<td><p>56</p></td>
+<td><p>34</p></td>
 </tr>
 </tbody>
 </table>
@@ -585,7 +602,7 @@ percentage. The overall performance is computed using a geometric mean.</p>
         <li class="right" >
           <a href="new-or-different.html" title="What’s New or Different"
              >previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="index.html">RandomGen 0+untagged.108.g1598d5b documentation</a> &#187;</li> 
+        <li class="nav-item nav-item-0"><a href="index.html">RandomGen 0+untagged.108.g798fe9e documentation</a> &#187;</li> 
       </ul>
     </div>
 <script type="text/javascript">
