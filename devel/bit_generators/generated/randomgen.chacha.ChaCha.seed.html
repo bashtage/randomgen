@@ -13,7 +13,7 @@
   <link rel="stylesheet" type="text/css" href="../../_static/css/bootstrap-theme.min.css" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-    <title>randomgen.chacha.ChaCha.seed &#8212; RandomGen 0+untagged.109.gd5f1cbf documentation</title>
+    <title>randomgen.chacha.ChaCha.seed &#8212; RandomGen 0+untagged.108.g1598d5b documentation</title>
     <link rel="stylesheet" href="../../_static/guzzle.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
     <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
@@ -45,7 +45,7 @@
         <li class="right" >
           <a href="../chacha.html" title="ChaCha Cipher-based RNG"
              accesskey="P">previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../../index.html">RandomGen 0+untagged.109.gd5f1cbf documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">RandomGen 0+untagged.108.g1598d5b documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="../index.html" >Bit Generators</a> &#187;</li>
           <li class="nav-item nav-item-2"><a href="../chacha.html" accesskey="U">ChaCha Cipher-based RNG</a> &#187;</li> 
       </ul>
@@ -134,15 +134,16 @@
 called again to re-seed the generator. For details, see
 <code class="docutils literal notranslate"><span class="pre">ChaCha</span></code>.</p>
 <dl class="simple">
-<dt>seed<span class="classifier">{None, int}, optional</span></dt><dd><p>Random seed initializing the pseudo-random number generator.
-Can be an integer in [0, 2**256-1], an array of 4 uint64 values
-or <code class="docutils literal notranslate"><span class="pre">None</span></code> (the default). If <cite>seed</cite> is <code class="docutils literal notranslate"><span class="pre">None</span></code>, then  data is read
-from <code class="docutils literal notranslate"><span class="pre">/dev/urandom</span></code> (or the Windows analog) if available.  If
-unavailable, a hash of the time and process ID is used.</p>
+<dt>seed<span class="classifier">{None, int, array_like}, optional</span></dt><dd><p>Value initializing the pseudo-random number generator.
+Can be an integer in [0, 2**256), a 4-element array of uint64
+values or <code class="docutils literal notranslate"><span class="pre">None</span></code> (the default). If <cite>seed</cite> is <code class="docutils literal notranslate"><span class="pre">None</span></code>, then
+data is read from <code class="docutils literal notranslate"><span class="pre">/dev/urandom</span></code> (or the Windows analog) if
+available.  If unavailable, a hash of the time and process ID is
+used.</p>
 </dd>
-<dt>counter<span class="classifier">{None, int, array_like}, optional</span></dt><dd><p>Counter to use in the ChaCha state. Can be either
-a Python int in [0, 2**128) or a 2-element uint64 array.
-If not provided, the RNG is initialized at 0.</p>
+<dt>counter<span class="classifier">{None, int, array_like}, optional</span></dt><dd><p>Counter to use in the ChaCha state. Can be either a Python int
+in [0, 2**128) or a 2-element uint64 array. If not provided, the
+RNG is initialized at 0.</p>
 </dd>
 <dt>key<span class="classifier">{None, int, array_like}, optional</span></dt><dd><p>Key to use in the ChaCha state.  Unlike seed, which is run
 through another RNG before use, the value in key is directly set.
@@ -195,7 +196,7 @@ array[i] = (value // 2**(64*i)) % 2**64.</p>
         <li class="right" >
           <a href="../chacha.html" title="ChaCha Cipher-based RNG"
              >previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../../index.html">RandomGen 0+untagged.109.gd5f1cbf documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">RandomGen 0+untagged.108.g1598d5b documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="../index.html" >Bit Generators</a> &#187;</li>
           <li class="nav-item nav-item-2"><a href="../chacha.html" >ChaCha Cipher-based RNG</a> &#187;</li> 
       </ul>

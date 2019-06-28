@@ -13,7 +13,7 @@
   <link rel="stylesheet" type="text/css" href="../../_static/css/bootstrap-theme.min.css" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-    <title>randomgen.speck128.SPECK128.seed &#8212; RandomGen 0+untagged.109.gd5f1cbf documentation</title>
+    <title>randomgen.speck128.SPECK128.seed &#8212; RandomGen 0+untagged.108.g1598d5b documentation</title>
     <link rel="stylesheet" href="../../_static/guzzle.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
     <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
@@ -45,7 +45,7 @@
         <li class="right" >
           <a href="../speck128.html" title="SPECK Counter-based RNG"
              accesskey="P">previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../../index.html">RandomGen 0+untagged.109.gd5f1cbf documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">RandomGen 0+untagged.108.g1598d5b documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="../index.html" >Bit Generators</a> &#187;</li>
           <li class="nav-item nav-item-2"><a href="../speck128.html" accesskey="U">SPECK Counter-based RNG</a> &#187;</li> 
       </ul>
@@ -136,11 +136,16 @@ called again to re-seed the generator. For details, see
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>seed</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a><em>, </em><em>optional</em>) – Seed for <code class="docutils literal notranslate"><span class="pre">SPECK128</span></code>.</p></li>
-<li><p><strong>counter</strong> (<em>{int array}</em><em>, </em><em>optional</em>) – Positive integer less than 2**128 containing the counter position
-or a 2 element array of uint64 containing the counter</p></li>
-<li><p><strong>key</strong> (<em>{int</em><em>, </em><em>array}</em><em>, </em><em>options</em>) – Positive integer less than 2**128 containing the key
-or a 2 element array of uint64 containing the key</p></li>
+<li><p><strong>seed</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a><em>, </em><em>optional</em>) – Value initializing the pseudo-random number generator. Can be an
+integer in [0, 2**256), a 4-element array of uint64 values or
+<code class="docutils literal notranslate"><span class="pre">None</span></code> (the default). If <cite>seed</cite> is <code class="docutils literal notranslate"><span class="pre">None</span></code>, then  data is
+read from <code class="docutils literal notranslate"><span class="pre">/dev/urandom</span></code> (or the Windows analog) if
+available.  If unavailable, a hash of the time and process ID is
+used.</p></li>
+<li><p><strong>counter</strong> (<em>{int array}</em><em>, </em><em>optional</em>) – Integer in [0,2**128) containing the counter position or a
+2-element array of uint64 containing the counter</p></li>
+<li><p><strong>key</strong> (<em>{int</em><em>, </em><em>array}</em><em>, </em><em>options</em>) – Integer in [0,2**256) containing the key or a 4-element array of
+uint64 containing the key</p></li>
 </ul>
 </dd>
 <dt class="field-even">Raises</dt>
@@ -187,7 +192,7 @@ array[i] = (value // 2**(64*i)) % 2**64.</p>
         <li class="right" >
           <a href="../speck128.html" title="SPECK Counter-based RNG"
              >previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../../index.html">RandomGen 0+untagged.109.gd5f1cbf documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">RandomGen 0+untagged.108.g1598d5b documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="../index.html" >Bit Generators</a> &#187;</li>
           <li class="nav-item nav-item-2"><a href="../speck128.html" >SPECK Counter-based RNG</a> &#187;</li> 
       </ul>

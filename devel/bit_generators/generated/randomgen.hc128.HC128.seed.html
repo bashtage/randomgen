@@ -13,7 +13,7 @@
   <link rel="stylesheet" type="text/css" href="../../_static/css/bootstrap-theme.min.css" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-    <title>randomgen.hc128.HC128.seed &#8212; RandomGen 0+untagged.109.gd5f1cbf documentation</title>
+    <title>randomgen.hc128.HC128.seed &#8212; RandomGen 0+untagged.108.g1598d5b documentation</title>
     <link rel="stylesheet" href="../../_static/guzzle.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
     <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
@@ -45,7 +45,7 @@
         <li class="right" >
           <a href="../hc128.html" title="HC-128 Cipher Generator"
              accesskey="P">previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../../index.html">RandomGen 0+untagged.109.gd5f1cbf documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">RandomGen 0+untagged.108.g1598d5b documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="../index.html" >Bit Generators</a> &#187;</li>
           <li class="nav-item nav-item-2"><a href="../hc128.html" accesskey="U">HC-128 Cipher Generator</a> &#187;</li> 
       </ul>
@@ -135,11 +135,15 @@ re-seed the generator.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>seed</strong> (<em>{int</em><em>, </em><em>ndarray}</em><em>, </em><em>optional</em>) – Seed for PRNG. Can be a single 64 bit unsigned integer or an array
-of 64 bit unsigned integers.</p></li>
+<li><p><strong>seed</strong> (<em>{int</em><em>, </em><em>ndarray}</em><em>, </em><em>optional</em>) – Value initializing the pseudo-random number generator. Can be an
+integer in [0, 2**256), a 4-element array of uint64 values or
+<code class="docutils literal notranslate"><span class="pre">None</span></code> (the default). If <cite>seed</cite> is <code class="docutils literal notranslate"><span class="pre">None</span></code>, then  data is read
+from <code class="docutils literal notranslate"><span class="pre">/dev/urandom</span></code> (or the Windows analog) if available.  If
+unavailable, a hash of the time and process ID is used.</p></li>
 <li><p><strong>key</strong> (<em>{int</em><em>, </em><em>ndarray}</em><em>, </em><em>optional</em>) – Key for HC128. The key is a 256-bit integer that contains both the
 key (lower 128 bits) and initial values (upper 128-bits) for the
-HC-128 cipher. key and seed cannot both be used.</p></li>
+HC-128 cipher. key and seed cannot both be used. Can also be a
+4-element uint64 array.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Raises</dt>
@@ -183,7 +187,7 @@ HC-128 cipher. key and seed cannot both be used.</p></li>
         <li class="right" >
           <a href="../hc128.html" title="HC-128 Cipher Generator"
              >previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../../index.html">RandomGen 0+untagged.109.gd5f1cbf documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">RandomGen 0+untagged.108.g1598d5b documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="../index.html" >Bit Generators</a> &#187;</li>
           <li class="nav-item nav-item-2"><a href="../hc128.html" >HC-128 Cipher Generator</a> &#187;</li> 
       </ul>
