@@ -10,6 +10,6 @@
 #define QQ 7
 #define LL 128 /* LL = 2^(QQ) */
 
-void mt19937_jump_state(mt19937_state *state, const char *jump_str);
+void mt19937_jump_state(mt19937_state_t *state, const char *jump_str);
 
 void set_coef(unsigned long *pf, unsigned int deg, unsigned long v);

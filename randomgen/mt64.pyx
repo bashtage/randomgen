@@ -4,38 +4,21 @@ import numpy as np
 cimport numpy as np
 
 from randomgen.common cimport *
-from randomgen.distributions cimport bitgen_t
 from randomgen.entropy import random_entropy
 
 __all__ = ['MT64']
 
-cdef extern from "src/mt64/mt64.h":
-
-    struct MT64_T:
-        uint64_t mt[312]
-        int mti
-        int has_uint32
-        uint32_t uinteger
-
-    ctypedef MT64_T mt64_t
-
-    uint64_t mt64_next64(mt64_t *state)  nogil
-    uint32_t mt64_next32(mt64_t *state)  nogil
-    double mt64_next_double(mt64_t *state)  nogil
-    void mt64_init_by_array(mt64_t *state, uint64_t *init_key, int key_length)
-    void mt64_seed(mt64_t *state, uint64_t seed)
-
 cdef uint64_t mt64_uint64(void *st) nogil:
-    return mt64_next64(<mt64_t *> st)
+    return mt64_next64(<mt64_state_t *> st)
 
 cdef uint32_t mt64_uint32(void *st) nogil:
-    return mt64_next32(<mt64_t *> st)
+    return mt64_next32(<mt64_state_t *> st)
 
 cdef double mt64_double(void *st) nogil:
-    return uint64_to_double(mt64_next64(<mt64_t *> st))
+    return uint64_to_double(mt64_next64(<mt64_state_t *> st))
 
 cdef uint64_t mt64_raw(void *st) nogil:
-    return mt64_next64(<mt64_t *> st)
+    return mt64_next64(<mt64_state_t *> st)
 
 cdef class MT64(BitGenerator):
     """
@@ -96,8 +79,6 @@ cdef class MT64(BitGenerator):
         generator". ACM Transactions on Modeling and Computer Simulation.
         8 (1): 3–30.
     """
-    cdef mt64_t rng_state
-
     def __init__(self, seed=None):
         BitGenerator.__init__(self)
         self.seed(seed)

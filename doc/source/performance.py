@@ -68,7 +68,6 @@ if HAS_RDRND:
     PRNGS.append(RDRAND)
 
 
-
 funcs = OrderedDict()
 funcs['Uint32'] = f'integers(2**32, dtype="uint32", size={SIZE})'
 funcs['Uint64'] = f'integers(2**64, dtype="uint64", size={SIZE})'

@@ -14,8 +14,6 @@ settings.json
 randomgen/bounded_integers.pyx
 randomgen/bounded_integers.pxd
 randomgen/*.c
-randomgen/philox.pxd
-randomgen/threefry.pxd
 randomgen/legacy/bounded_integers.c
 randomgen/legacy/bounded_integers.pyx
 randomgen/legacy/bounded_integers.pxd

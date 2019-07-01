@@ -1,41 +1,12 @@
 import numpy as np
 
 from randomgen.common cimport *
-from randomgen.distributions cimport bitgen_t
 from randomgen.entropy import random_entropy, seed_by_array
 
 __all__ = ['SPECK128']
 
 DEF SPECK_UNROLL = 12
 DEF SPECK_ROUNDS = 34
-
-cdef extern from "src/speck-128/speck-128.h":
-
-    union SPEC_T:
-      uint64_t u64[2]
-
-    ctypedef SPEC_T spec_t
-
-    struct SPECK_STATE_T:
-        spec_t ctr[SPECK_UNROLL // 2];
-        uint8_t buffer[8 * SPECK_UNROLL];
-        uint64_t round_key[SPECK_ROUNDS];
-        int offset;
-        int has_uint32;
-        uint32_t uinteger;
-
-    ctypedef SPECK_STATE_T speck_state_t
-
-    uint64_t speck_next64(speck_state_t *state) nogil
-    uint32_t speck_next32(speck_state_t *state) nogil
-
-    void speck_seed(speck_state_t *state, uint64_t *seed)
-    void speck_set_counter(speck_state_t *state, uint64_t *ctr)
-    void speck_advance(speck_state_t *state, uint64_t *step)
-    # void speck_set_seed_counter(speck_state_t *state, uint64_t *seed, uint64_t *counter)
-    # void speck_get_seed_counter(speck_state_t *state, uint64_t *seed, uint64_t *counter)
-    # void speck_advance(speck_state_t *state, uint64_t *step)
-    # void speck_set_counter(speck_state_t *state, uint64_t *counter)
 
 cdef uint64_t speck_uint64(void* st) nogil:
     return speck_next64(<speck_state_t *>st)
@@ -152,8 +123,6 @@ cdef class SPECK128(BitGenerator):
        National Security Agency. January 15, 2019. from
        https://nsacyber.github.io/simon-speck/implementations/ImplementationGuide1.1.pdf
     """
-    cdef speck_state_t *rng_state
-
     def __init__(self, seed=None, counter=None, key=None):
         BitGenerator.__init__(self)
         # Calloc since ctr needs to be 0
@@ -308,7 +277,7 @@ cdef class SPECK128(BitGenerator):
         self.rng_state.has_uint32 = value['has_uint32']
         self.rng_state.uinteger = value['uinteger']
 
-    cdef jump_inplace(self, iter):
+    cdef jump_inplace(self, object iter):
         """
         Jump state in-place
             Not part of public API

@@ -2,7 +2,6 @@ import numpy as np
 cimport numpy as np
 
 from randomgen.common cimport *
-from randomgen.distributions cimport bitgen_t
 from randomgen.entropy import random_entropy, seed_by_array
 
 __all__ = ['JSF']
@@ -55,38 +54,6 @@ for p,q,r in JSF32_ALT_PARAMETERS:
     JSF_PARAMETERS[32].append({'p': p, 'q': q, 'r': r})
 for p,q,r in JSF64_ALT_PARAMETERS:
     JSF_PARAMETERS[64].append({'p': p, 'q': q, 'r': r})
-
-cdef extern from "src/jsf/jsf.h":
-
-    union JSF_UINT_T:
-        uint64_t u64
-        uint32_t u32
-    ctypedef JSF_UINT_T jsf_uint_t
-
-    struct JSF_STATE_T:
-        jsf_uint_t a
-        jsf_uint_t b
-        jsf_uint_t c
-        jsf_uint_t d
-        int p
-        int q
-        int r
-        int has_uint32
-        uint32_t uinteger
-
-    ctypedef JSF_STATE_T jsf_state_t
-
-    uint64_t jsf64_next64(jsf_state_t *state) nogil
-    uint32_t jsf64_next32(jsf_state_t *state) nogil
-    double jsf64_next_double(jsf_state_t *state) nogil
-    void jsf64_seed(jsf_state_t *state, uint64_t *seed, int size)
-
-    uint64_t jsf32_next64(jsf_state_t *state) nogil
-    uint32_t jsf32_next32(jsf_state_t *state) nogil
-    double jsf32_next_double(jsf_state_t *state) nogil
-    void jsf32_seed(jsf_state_t *state, uint32_t *seed, int size)
-
-
 
 cdef uint64_t jsf64_uint64(void* st) nogil:
     return jsf64_next64(<jsf_state_t *>st)
@@ -206,9 +173,6 @@ cdef class JSF(BitGenerator):
     .. [1] Jenkins, Bob (2009). "A small noncryptographic PRNG".
         https://burtleburtle.net/bob/rand/smallprng.html
     """
-    cdef jsf_state_t rng_state
-    cdef int size
-    cdef int seed_size
     parameters = JSF_PARAMETERS
 
     def __init__(self, seed=None, seed_size=1, size=64, p=None, q=None,
@@ -228,7 +192,7 @@ cdef class JSF(BitGenerator):
         self.setup_generator(p, q, r)
         self.seed(seed)
 
-    cdef setup_generator(self, p, q, r):
+    cdef setup_generator(self, object p, object q, object r):
         if self.size == 64:
             self._bitgen.next_uint64 = &jsf64_uint64
             self._bitgen.next_uint32 = &jsf64_uint32

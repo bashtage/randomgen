@@ -438,9 +438,9 @@ void sfmt_init_by_array(sfmt_t *sfmt, uint32_t *init_key, int key_length) {
   period_certification(sfmt);
 }
 
-void sfmt_jump(sfmt_state *state) { SFMT_jump(state->state, poly_128); };
+void sfmt_jump(sfmt_state_t *state) { SFMT_jump(state->state, poly_128); };
 
-void sfmt_jump_n(sfmt_state *state, int count) {
+void sfmt_jump_n(sfmt_state_t *state, int count) {
   /* poly_xxx is 2**xxx ahead */
   int remaining = count;
   while (remaining > 0) {

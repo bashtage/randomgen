@@ -2,42 +2,21 @@ import numpy as np
 cimport numpy as np
 
 from randomgen.common cimport *
-from randomgen.distributions cimport bitgen_t
 from randomgen.entropy import random_entropy
 
 __all__ = ['PCG32']
 
-cdef extern from "src/pcg32/pcg32.h":
-
-    cdef struct pcg_state_setseq_64:
-        uint64_t state
-        uint64_t inc
-
-    ctypedef pcg_state_setseq_64 pcg32_random_t
-
-    struct s_pcg32_state:
-        pcg32_random_t pcg_state
-
-    ctypedef s_pcg32_state pcg32_state
-
-    uint64_t pcg32_next64(pcg32_state *state)  nogil
-    uint32_t pcg32_next32(pcg32_state *state)  nogil
-    double pcg32_next_double(pcg32_state *state)  nogil
-    void pcg32_jump(pcg32_state *state)
-    void pcg32_advance_state(pcg32_state *state, uint64_t step)
-    void pcg32_set_seed(pcg32_state *state, uint64_t seed, uint64_t inc)
-
 cdef uint64_t pcg32_uint64(void* st) nogil:
-    return pcg32_next64(<pcg32_state *>st)
+    return pcg32_next64(<pcg32_state_t *>st)
 
 cdef uint32_t pcg32_uint32(void *st) nogil:
-    return pcg32_next32(<pcg32_state *> st)
+    return pcg32_next32(<pcg32_state_t *> st)
 
 cdef double pcg32_double(void* st) nogil:
-    return pcg32_next_double(<pcg32_state *>st)
+    return pcg32_next_double(<pcg32_state_t *>st)
 
 cdef uint64_t pcg32_raw(void* st) nogil:
-    return <uint64_t>pcg32_next32(<pcg32_state *> st)
+    return <uint64_t>pcg32_next32(<pcg32_state_t *> st)
 
 
 cdef class PCG32(BitGenerator):
@@ -119,8 +98,6 @@ cdef class PCG32(BitGenerator):
     .. [2] O'Neill, Melissa E. "PCG: A Family of Simple Fast Space-Efficient
            Statistically Good Algorithms for Random Number Generation"
     """
-    cdef pcg32_state rng_state
-
     def __init__(self, seed=None, inc=0):
         BitGenerator.__init__(self)
         self.seed(seed, inc)
@@ -238,7 +215,7 @@ cdef class PCG32(BitGenerator):
         pcg32_advance_state(&self.rng_state, <uint64_t>delta)
         return self
 
-    cdef jump_inplace(self, iter):
+    cdef jump_inplace(self, object iter):
         """
         Jump state in-place
 

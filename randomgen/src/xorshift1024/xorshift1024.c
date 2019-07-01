@@ -4,11 +4,11 @@
    to 2^512 calls to next(); it can be used to generate 2^512
    non-overlapping subsequences for parallel computations. */
 
-extern INLINE uint64_t xorshift1024_next(xorshift1024_state *state);
-extern INLINE uint64_t xorshift1024_next64(xorshift1024_state *state);
-extern INLINE uint32_t xorshift1024_next32(xorshift1024_state *state);
+extern INLINE uint64_t xorshift1024_next(xorshift1024_state_t *state);
+extern INLINE uint64_t xorshift1024_next64(xorshift1024_state_t *state);
+extern INLINE uint32_t xorshift1024_next32(xorshift1024_state_t *state);
 
-void xorshift1024_jump(xorshift1024_state *state) {
+void xorshift1024_jump(xorshift1024_state_t *state) {
   int i, j, b;
   static const uint64_t JUMP[] = {
       0x84242f96eca9c41d, 0xa3c65b8776f96855, 0x5b34a39f070b5837,

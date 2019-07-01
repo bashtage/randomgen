@@ -4,7 +4,6 @@ import numpy as np
 cimport numpy as np
 
 from randomgen.common cimport *
-from randomgen.distributions cimport bitgen_t
 from randomgen.entropy import random_entropy
 
 __all__ = ['SFMT']
@@ -13,49 +12,17 @@ DEF SFMT_MEXP = 19937
 DEF SFMT_N = 156  # SFMT_MEXP / 128 + 1
 DEF SFMT_N64 = SFMT_N * 2
 
-cdef extern from "src/sfmt/sfmt.h":
-
-    union W128_T:
-        uint32_t u[4];
-        uint64_t u64[2];
-
-    ctypedef W128_T w128_t
-
-    struct SFMT_T:
-        w128_t state[SFMT_N]
-        int idx
-
-    ctypedef SFMT_T sfmt_t
-
-    struct s_sfmt_state:
-        sfmt_t *state
-        int has_uint32
-        uint32_t uinteger
-
-        uint64_t *buffered_uint64
-        int buffer_loc
-
-    ctypedef s_sfmt_state sfmt_state
-
-    uint64_t sfmt_next64(sfmt_state *state)  nogil
-    uint32_t sfmt_next32(sfmt_state *state)  nogil
-
-    void sfmt_init_gen_rand(sfmt_t * sfmt, uint32_t seed);
-    void sfmt_init_by_array(sfmt_t * sfmt, uint32_t *init_key, int key_length);
-    void sfmt_jump(sfmt_state *state)
-    void sfmt_jump_n(sfmt_state *state, int count)
-
 cdef uint64_t sfmt_uint64(void* st) nogil:
-    return sfmt_next64(<sfmt_state *>st)
+    return sfmt_next64(<sfmt_state_t *>st)
 
 cdef uint32_t sfmt_uint32(void *st) nogil:
-    return sfmt_next32(<sfmt_state *> st)
+    return sfmt_next32(<sfmt_state_t *> st)
 
 cdef uint64_t sfmt_raw(void *st) nogil:
-    return sfmt_next64(<sfmt_state *>st)
+    return sfmt_next64(<sfmt_state_t *>st)
 
 cdef double sfmt_double(void* st) nogil:
-    return uint64_to_double(sfmt_next64(<sfmt_state *>st))
+    return uint64_to_double(sfmt_next64(<sfmt_state_t *>st))
 
 
 cdef class SFMT(BitGenerator):
@@ -138,8 +105,6 @@ cdef class SFMT(BitGenerator):
            Jump Ahead Algorithm for Linear Recurrences in a Polynomial Space",
            Sequences and Their Applications - SETA, 290--298, 2008.
     """
-    cdef sfmt_state rng_state
-
     def __init__(self, seed=None):
         BitGenerator.__init__(self)
         self.rng_state.state = <sfmt_t *>PyArray_malloc_aligned(sizeof(sfmt_t))
@@ -211,7 +176,7 @@ cdef class SFMT(BitGenerator):
         # Clear the buffer
         self._reset_state_variables()
 
-    cdef jump_inplace(self, iter):
+    cdef jump_inplace(self, object iter):
         """
         Jump state in-place
 

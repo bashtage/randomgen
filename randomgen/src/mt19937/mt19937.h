@@ -22,17 +22,17 @@
 #define UPPER_MASK 0x80000000UL
 #define LOWER_MASK 0x7fffffffUL
 
-typedef struct s_mt19937_state {
+typedef struct MT19937_STATE_T {
   uint32_t key[RK_STATE_LEN];
   int pos;
-} mt19937_state;
+} mt19937_state_t;
 
-extern void mt19937_seed(mt19937_state *state, uint32_t seed);
+extern void mt19937_seed(mt19937_state_t *state, uint32_t seed);
 
-extern void mt19937_gen(mt19937_state *state);
+extern void mt19937_gen(mt19937_state_t *state);
 
 /* Slightly optimized reference implementation of the Mersenne Twister */
-static INLINE uint32_t mt19937_next(mt19937_state *state) {
+static INLINE uint32_t mt19937_next(mt19937_state_t *state) {
   uint32_t y;
 
   if (state->pos == RK_STATE_LEN) {
@@ -50,21 +50,21 @@ static INLINE uint32_t mt19937_next(mt19937_state *state) {
   return y;
 }
 
-extern void mt19937_init_by_array(mt19937_state *state, uint32_t *init_key,
+extern void mt19937_init_by_array(mt19937_state_t *state, uint32_t *init_key,
                                   int key_length);
 
-static INLINE uint64_t mt19937_next64(mt19937_state *state) {
+static INLINE uint64_t mt19937_next64(mt19937_state_t *state) {
   return (uint64_t)mt19937_next(state) << 32 | mt19937_next(state);
 }
 
-static INLINE uint32_t mt19937_next32(mt19937_state *state) {
+static INLINE uint32_t mt19937_next32(mt19937_state_t *state) {
   return mt19937_next(state);
 }
 
-static INLINE double mt19937_next_double(mt19937_state *state) {
+static INLINE double mt19937_next_double(mt19937_state_t *state) {
   int32_t a = mt19937_next(state) >> 5, b = mt19937_next(state) >> 6;
   return (a * 67108864.0 + b) / 9007199254740992.0;
 }
 
-void mt19937_jump(mt19937_state *state);
-void mt19937_jump_n(mt19937_state *state, int count);
+void mt19937_jump(mt19937_state_t *state);
+void mt19937_jump_n(mt19937_state_t *state, int count);

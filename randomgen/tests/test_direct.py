@@ -466,7 +466,7 @@ class Random123(Base):
             bg.advance(1)
 
     def test_0d_array(self):
-        bg = self.bit_generator(np.array(1,dtype=np.uint64))
+        bg = self.bit_generator(np.array(1, dtype=np.uint64))
         bg2 = self.bit_generator(1)
         assert_state_equal(bg.state, bg2.state)
 

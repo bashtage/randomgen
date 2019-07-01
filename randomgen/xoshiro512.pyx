@@ -2,32 +2,18 @@ import numpy as np
 cimport numpy as np
 
 from randomgen.common cimport *
-from randomgen.distributions cimport bitgen_t
 from randomgen.entropy import random_entropy, seed_by_array
 
 __all__ = ['Xoshiro512']
 
-cdef extern from "src/xoshiro512/xoshiro512.h":
-
-    struct s_xoshiro512_state:
-        uint64_t s[8]
-        int has_uint32
-        uint32_t uinteger
-
-    ctypedef s_xoshiro512_state xoshiro512_state
-
-    uint64_t xoshiro512_next64(xoshiro512_state *state)  nogil
-    uint32_t xoshiro512_next32(xoshiro512_state *state)  nogil
-    void xoshiro512_jump(xoshiro512_state *state)
-
 cdef uint64_t xoshiro512_uint64(void* st) nogil:
-    return xoshiro512_next64(<xoshiro512_state *>st)
+    return xoshiro512_next64(<xoshiro512_state_t *>st)
 
 cdef uint32_t xoshiro512_uint32(void *st) nogil:
-    return xoshiro512_next32(<xoshiro512_state *> st)
+    return xoshiro512_next32(<xoshiro512_state_t *> st)
 
 cdef double xoshiro512_double(void* st) nogil:
-    return uint64_to_double(xoshiro512_next64(<xoshiro512_state *>st))
+    return uint64_to_double(xoshiro512_next64(<xoshiro512_state_t *>st))
 
 cdef class Xoshiro512(BitGenerator):
     """
@@ -119,8 +105,6 @@ cdef class Xoshiro512(BitGenerator):
     .. [1] "xoroshiro+ / xorshift* / xorshift+ generators and the PRNG shootout",
            http://xorshift.di.unimi.it/
     """
-    cdef xoshiro512_state rng_state
-
     def __init__(self, seed=None):
         BitGenerator.__init__(self)
         self.seed(seed)

@@ -20,16 +20,16 @@ See <http://creativecommons.org/publicdomain/zero/1.0/>. */
    output to fill s. */
 
 extern INLINE uint64_t
-xoshiro512_next64(xoshiro512_state *state);
+xoshiro512_next64(xoshiro512_state_t *state);
 
 extern INLINE uint32_t
-xoshiro512_next32(xoshiro512_state *state);
+xoshiro512_next32(xoshiro512_state_t *state);
 
 /* This is the jump function for the generator. It is equivalent
    to 2^256 calls to next(); it can be used to generate 2^256
    non-overlapping subsequences for parallel computations. */
 
-void xoshiro512_jump(xoshiro512_state *state) {
+void xoshiro512_jump(xoshiro512_state_t *state) {
 
   int i, b, w;
   static const uint64_t JUMP[] = {0x33ed89b6e7a353f9, 0x760083d7955323be,
