@@ -53,7 +53,7 @@ static const uint8_t sbox[256] = {
 static const uint8_t Rcon[11] = {0x8d, 0x01, 0x02, 0x04, 0x08, 0x10,
                                  0x20, 0x40, 0x80, 0x1b, 0x36};
 
-static void tinyaes_expand_key(uint8_t *RoundKey, const uint8_t *Key) {
+static inline void tinyaes_expand_key(uint8_t *RoundKey, const uint8_t *Key) {
   unsigned i, j, k;
   uint8_t tempa[4]; // Used for the column/row operations
 

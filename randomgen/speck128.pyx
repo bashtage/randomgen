@@ -202,6 +202,35 @@ cdef class SPECK128(BitGenerator):
         self._reset_state_variables()
 
     @property
+    def use_sse41(self):
+        """
+        Toggle use of SSE 4.1
+
+        Parameters
+        ----------
+        flag : bool
+            Flag indicating whether to use SSE 4.1
+
+        Returns
+        -------
+        flag : bool
+            Current flag value
+
+        Raises
+        ------
+        ValueError
+            If SSE 4.1 is not supported
+        """
+        return RANDOMGEN_USE_SSE41
+
+    @use_sse41.setter
+    def use_sse41(self, value):
+        capable = speck_sse41_capable()
+        if value and not capable:
+            raise ValueError('CPU does not support SSE41')
+        speck_use_sse41(value)
+
+    @property
     def state(self):
         """
         Get or set the PRNG state
@@ -218,7 +247,7 @@ cdef class SPECK128(BitGenerator):
 
         ctr = np.empty(SPECK_UNROLL, dtype=np.uint64)
         buffer = np.empty(8 * SPECK_UNROLL, dtype=np.uint8)
-        round_key = np.empty(SPECK_ROUNDS, dtype=np.uint64)
+        round_key = np.empty(2 * SPECK_ROUNDS, dtype=np.uint64)
 
         arr = <uint64_t*>np.PyArray_DATA(ctr)
         for i in range(SPECK_UNROLL):
@@ -230,7 +259,8 @@ cdef class SPECK128(BitGenerator):
 
         arr = <uint64_t*>np.PyArray_DATA(round_key)
         for i in range(SPECK_ROUNDS):
-            arr[i] = self.rng_state.round_key[i]
+            arr[2*i] = self.rng_state.round_key[i].u64[0]
+            arr[2*i+1] = self.rng_state.round_key[i].u64[1]
 
         return {'bit_generator': self.__class__.__name__,
                 'state': {'ctr': ctr,
@@ -258,7 +288,7 @@ cdef class SPECK128(BitGenerator):
         ctr = check_state_array(state['ctr'], SPECK_UNROLL, 64, 'ctr')
         buffer = check_state_array(state['buffer'], 8 * SPECK_UNROLL, 8,
                                    'buffer')
-        round_key = check_state_array(state['round_key'], SPECK_ROUNDS, 64,
+        round_key = check_state_array(state['round_key'], 2*SPECK_ROUNDS, 64,
                                       'round_key')
 
         arr = <uint64_t*>np.PyArray_DATA(ctr)
@@ -271,7 +301,8 @@ cdef class SPECK128(BitGenerator):
 
         arr = <uint64_t*>np.PyArray_DATA(round_key)
         for i in range(SPECK_ROUNDS):
-            self.rng_state.round_key[i] = arr[i]
+            self.rng_state.round_key[i].u64[0] = arr[2 * i]
+            self.rng_state.round_key[i].u64[1] = arr[2 * i + 1]
 
         self.rng_state.offset = state['offset']
         self.rng_state.has_uint32 = value['has_uint32']

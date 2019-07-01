@@ -95,6 +95,7 @@ DSFMT_DEFS = DEFS[:] + [('DSFMT_MEXP', '19937')]
 SFMT_DEFS = DEFS[:] + [('SFMT_MEXP', '19937')]
 AES_DEFS = DEFS[:]
 CHACHA_DEFS = DEFS[:]
+SPECK128_DEFS = DEFS[:]
 if USE_SSE2:
     if os.name == 'nt':
         EXTRA_COMPILE_ARGS += ['/wd4146', '/GL']
@@ -105,6 +106,7 @@ if USE_SSE2:
     DSFMT_DEFS += [('HAVE_SSE2', '1')]
     SFMT_DEFS += [('HAVE_SSE2', '1')]
     if os.name != 'nt' or sys.version_info[:2] >= (3, 5):
+        SPECK128_DEFS += [('HAVE_SSE2', '1')]
         AES_DEFS += [('HAVE_SSE2', '1')]
         CHACHA_DEFS += [('__SSE2__', '1'), ('__SSSE3__', '1')]
 
@@ -331,8 +333,9 @@ extensions = [Extension('randomgen.entropy',
                         ),
               Extension("randomgen.speck128",
                         ["randomgen/speck128.pyx",
-                         join(MOD_DIR, 'src', 'speck-128',
-                              'speck-128.c')],
+                         join(MOD_DIR, 'src', 'speck-128', 'speck-128.c'),
+                         join(MOD_DIR, 'src', 'common', 'cpu_features.c')
+                         ],
                         include_dirs=EXTRA_INCLUDE_DIRS + [np.get_include(),
                                                            join(MOD_DIR,
                                                                 'src',
@@ -340,7 +343,7 @@ extensions = [Extension('randomgen.entropy',
                         libraries=EXTRA_LIBRARIES,
                         extra_compile_args=EXTRA_COMPILE_ARGS,
                         extra_link_args=EXTRA_LINK_ARGS,
-                        define_macros=DEFS
+                        define_macros=SPECK128_DEFS
                         ),
               Extension("randomgen.generator",
                         ["randomgen/generator.pyx",

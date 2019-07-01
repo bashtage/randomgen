@@ -19,7 +19,7 @@ void xorshift1024_jump(xorshift1024_state_t *state) {
       0x284600e3f30e38c3};
 
   uint64_t t[16] = {0};
-  for (i = 0; i < sizeof JUMP / sizeof *JUMP; i++)
+  for (i = 0; i < (int)(sizeof(JUMP) / sizeof(*JUMP)); i++)
     for (b = 0; b < 64; b++) {
       if (JUMP[i] & UINT64_C(1) << b)
         for (j = 0; j < 16; j++)
