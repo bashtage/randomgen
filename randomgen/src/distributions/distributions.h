@@ -2,9 +2,8 @@
 #define _RANDOMDGEN__DISTRIBUTIONS_H_
 
 
-#include "../common/randomgen_config.h"
-
 #include "../common/randomgen_config_numpy.h"
+#include "../common/randomgen_config.h"
 
 /*
  * RAND_INT_TYPE is used to share integer generators with RandomState which

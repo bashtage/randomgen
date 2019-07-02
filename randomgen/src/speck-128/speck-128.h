@@ -2,9 +2,10 @@
 #define _RANDOMDGEN__SPECK128_H_
 
 #include "../common/randomgen_config.h"
+#include "../common/randomgen_immintrin.h"
 
 #include "speck-128-common.h"
-#if (defined(HAVE_SSE2) && HAVE_SSE2)
+#if defined(HAVE_IMMINTRIN)
 #include "speck-128-sse.h"
 #endif
 
@@ -110,13 +111,13 @@ static INLINE uint64_t speck_next64(speck_state_t *state) {
   uint64_t output;
   if
     UNLIKELY((state->offset == SPECK_BUFFER_SZ)) {
-#if (defined(HAVE_SSE2) && HAVE_SSE2)
+#if defined(HAVE_IMMINTRIN)
       if (RANDOMGEN_USE_SSE41 == 1) {
         generate_block_sse(state);
       } else {
 #endif
         generate_block_fast(state);
-#if (defined(HAVE_SSE2) && HAVE_SSE2)
+#if defined(HAVE_IMMINTRIN)
       }
 #endif
     }

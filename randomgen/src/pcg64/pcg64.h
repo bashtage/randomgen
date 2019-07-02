@@ -52,6 +52,11 @@
 
 #include "../common/randomgen_config.h"
 
+#if defined(_MSC_VER) && (_MSC_VER >= 1900) && defined(_M_AMD64) && _M_AMD64
+#include <intrin.h>
+#pragma intrinsic(_umul128)
+#endif
+
 #if __GNUC_GNU_INLINE__ && !defined(__cplusplus)
 #error Nonstandard GNU inlining semantics. Compile with -std=c99 or better.
 #endif

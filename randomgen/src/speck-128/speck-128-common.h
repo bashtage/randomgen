@@ -1,32 +1,17 @@
 #ifndef _RANDOMGEN_SPECK_COMMON_H
 #define _RANDOMGEN_SPECK_COMMON_H 1
 
-#include <string.h>
+#include "../common/randomgen_config.h"
+#include "../common/randomgen_immintrin.h"
 
-#ifdef _WIN32
-#if _MSC_VER == 1500
-#include "../common/inttypes.h"
-#define INLINE __forceinline
-#else
-#include <inttypes.h>
-#define INLINE __inline __forceinline
-#endif
-#else
-#include <inttypes.h>
-#define INLINE inline
-#endif
 
 #define SPECK_UNROLL 12
 #define SPECK_BUFFER_SZ 8 * SPECK_UNROLL
 #define SPECK_ROUNDS 34 /* Only correct for 128x256 */
 #define SPECK_CTR_SZ SPECK_UNROLL / 2
 
-#if (defined(HAVE_SSE2) && HAVE_SSE2)
-#include <immintrin.h>
-#endif
-
 union SPECK_T {
-#if (defined(HAVE_SSE2) && HAVE_SSE2)
+#if defined(HAVE_IMMINTRIN)
   __m128i m128;
 #endif
   uint64_t u64[2];

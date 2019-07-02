@@ -2,6 +2,7 @@
 #define _RANDOMDGEN__RDRAND_H_
 
 #include "../common/randomgen_config.h"
+#include "../common/randomgen_immintrin.h"
 
 typedef struct s_rdrand_state {
   int status;

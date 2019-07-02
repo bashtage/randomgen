@@ -36,6 +36,11 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #include "../common/randomgen_config.h"
 
+#if defined(_MSC_VER) && (_MSC_VER >= 1900) && defined(_M_AMD64) && _M_AMD64
+#include <intrin.h>
+#pragma intrinsic(_umul128)
+#endif
+
 #include "../common/features/compilerfeatures.h"
 #include "../common/array.h"
 
