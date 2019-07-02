@@ -1,7 +1,10 @@
 #ifndef _RANDOMDGEN__DISTRIBUTIONS_H_
 #define _RANDOMDGEN__DISTRIBUTIONS_H_
 
-#pragma once
+#include "Python.h"
+#include "numpy/npy_common.h"
+#include "numpy/npy_math.h"
+
 #include <stddef.h>
 #ifdef _WIN32
 #if _MSC_VER == 1500
@@ -18,9 +21,6 @@ typedef int bool;
 #include <stdint.h>
 #endif
 
-#include "Python.h"
-#include "numpy/npy_common.h"
-#include "numpy/npy_math.h"
 
 /*
  * RAND_INT_TYPE is used to share integer generators with RandomState which

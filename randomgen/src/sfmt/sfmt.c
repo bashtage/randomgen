@@ -61,10 +61,10 @@ inline static void swap(w128_t *array, int size);
  * parameters used by sse2.
  */
 #if defined(__GNUC__) && !defined(__ICC)
-#warning "Compiling with SSE2 support"
+/* #warning "Compiling with SSE2 support" */
 #endif
 #if defined(_MSC_VER)
-#pragma message("Compiling with SSE2 support")
+/* #pragma message("Compiling with SSE2 support") */
 #endif
 static const w128_t sse2_param_mask = {
     {SFMT_MSK1, SFMT_MSK2, SFMT_MSK3, SFMT_MSK4}};

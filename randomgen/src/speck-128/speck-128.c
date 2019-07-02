@@ -1,8 +1,22 @@
 #include "speck-128.h"
+#include "../common/cpu_features.h"
+
+#define SSE41_FEATURE_FLAG 19
+
+int RANDOMGEN_USE_SSE41;
+
+int speck_sse41_capable(void)
+{
+    int flags[32];
+    feature_flags(flags);
+    RANDOMGEN_USE_SSE41 = flags[SSE41_FEATURE_FLAG];
+    return RANDOMGEN_USE_SSE41;
+}
 
 void speck_seed(speck_state_t *state, uint64_t seed[4])
 {
     int i;
+    speck_sse41_capable();
     speck_expandkey_128x256(seed, state->round_key);
     state->offset = SPECK_BUFFER_SZ;
     for (i = 0; i < SPECK_CTR_SZ; i++)
@@ -11,6 +25,8 @@ void speck_seed(speck_state_t *state, uint64_t seed[4])
         state->ctr[i].u64[1] = 0;
     }
 }
+
+void speck_use_sse41(int val) { RANDOMGEN_USE_SSE41 = val; }
 
 void speck_set_counter(speck_state_t *state, uint64_t *ctr)
 {
@@ -63,3 +79,13 @@ void speck_advance(speck_state_t *state, uint64_t *step)
     /* Reset the offset */
     state->offset = new_offset;
 }
+
+/*
+#include <stdio.h>
+int main() {
+    speck_state_t state;
+    uint64_t seed[4] = {0,1,2,3};
+    speck_seed(&state, seed);
+    for (int i=0;i<20;i++)  printf("%"PRIx64 "\n", speck_next64(&state));
+}
+*/

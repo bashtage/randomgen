@@ -5,19 +5,21 @@ os: Visual Studio 2015
 
 environment:
   matrix:
+    - PY_MAJOR_VER: 3
+      PYTHON_ARCH: "x86"
     - PY_MAJOR_VER: 2
       PYTHON_ARCH: "x86"
     - PY_MAJOR_VER: 2
       PYTHON_ARCH: "x86_64"
     - PY_MAJOR_VER: 3
       PYTHON_ARCH: "x86_64"
-    - PY_MAJOR_VER: 3
-      PYTHON_ARCH: "x86"
+
 
 platform:
     - x64
 
 build_script:
+  # - ps: choco install microsoft-build-tools --version 14.0.25420.1
   - ps: Start-FileDownload "https://repo.continuum.io/miniconda/Miniconda$env:PY_MAJOR_VER-latest-Windows-$env:PYTHON_ARCH.exe" C:\Miniconda.exe; echo "Finished downloading miniconda"
   - cmd: C:\Miniconda.exe /S /D=C:\Py
   - SET PATH=C:\Py;C:\Py\Scripts;C:\Py\Library\bin;%PATH%

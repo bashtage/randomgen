@@ -11,9 +11,10 @@ cdef extern from "src/speck-128/speck-128.h":
     ctypedef SPEC_T spec_t
 
     struct SPECK_STATE_T:
+        spec_t round_key[SPECK_ROUNDS];
         spec_t ctr[SPECK_UNROLL // 2];
         uint8_t buffer[8 * SPECK_UNROLL];
-        uint64_t round_key[SPECK_ROUNDS];
+
         int offset;
         int has_uint32;
         uint32_t uinteger;
@@ -23,6 +24,9 @@ cdef extern from "src/speck-128/speck-128.h":
     uint64_t speck_next64(speck_state_t *state) nogil
     uint32_t speck_next32(speck_state_t *state) nogil
 
+    int RANDOMGEN_USE_SSE41
+    int speck_sse41_capable();
+    void speck_use_sse41(int val)
     void speck_seed(speck_state_t *state, uint64_t *seed)
     void speck_set_counter(speck_state_t *state, uint64_t *ctr)
     void speck_advance(speck_state_t *state, uint64_t *step)

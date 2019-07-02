@@ -35,7 +35,7 @@ void xoshiro256_jump(xoshiro256_state_t *state)
 	uint64_t s1 = 0;
 	uint64_t s2 = 0;
 	uint64_t s3 = 0;
-	for (i = 0; i < sizeof JUMP / sizeof *JUMP; i++)
+	for (i = 0; i < (int)(sizeof(JUMP) / sizeof(*JUMP)); i++)
 		for (b = 0; b < 64; b++)
 		{
 			if (JUMP[i] & UINT64_C(1) << b)
