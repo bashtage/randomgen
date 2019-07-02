@@ -4,7 +4,6 @@ import numpy as np
 cimport numpy as np
 
 from randomgen.common cimport *
-from randomgen.distributions cimport bitgen_t
 from randomgen.entropy import random_entropy
 
 __all__ = ['DSFMT']
@@ -14,49 +13,17 @@ DEF DSFMT_N = 191  # ((DSFMT_MEXP - 128) / 104 + 1)
 DEF DSFMT_N_PLUS_1 = 192  # DSFMT_N + 1
 DEF DSFMT_N64 = DSFMT_N * 2
 
-cdef extern from "src/dsfmt/dSFMT.h":
-
-    union W128_T:
-        uint64_t u[2]
-        uint32_t u32[4]
-        double d[2]
-
-    ctypedef W128_T w128_t
-
-    struct DSFMT_T:
-        w128_t status[DSFMT_N_PLUS_1]
-        int idx
-
-    ctypedef DSFMT_T dsfmt_t
-
-    struct s_dsfmt_state:
-        dsfmt_t *state
-        double *buffered_uniforms
-        int buffer_loc
-
-    ctypedef s_dsfmt_state dsfmt_state
-
-    double dsfmt_next_double(dsfmt_state *state)  nogil
-    uint64_t dsfmt_next64(dsfmt_state *state)  nogil
-    uint32_t dsfmt_next32(dsfmt_state *state)  nogil
-    uint64_t dsfmt_next_raw(dsfmt_state *state)  nogil
-
-    void dsfmt_init_gen_rand(dsfmt_t *dsfmt, uint32_t seed)
-    void dsfmt_init_by_array(dsfmt_t *dsfmt, uint32_t init_key[], int key_length)
-    void dsfmt_jump(dsfmt_state *state)
-    void dsfmt_jump_n(dsfmt_state *state, int count)
-
 cdef uint64_t dsfmt_uint64(void* st) nogil:
-    return dsfmt_next64(<dsfmt_state *>st)
+    return dsfmt_next64(<dsfmt_state_t *>st)
 
 cdef uint32_t dsfmt_uint32(void *st) nogil:
-    return dsfmt_next32(<dsfmt_state *> st)
+    return dsfmt_next32(<dsfmt_state_t *> st)
 
 cdef double dsfmt_double(void* st) nogil:
-    return dsfmt_next_double(<dsfmt_state *>st)
+    return dsfmt_next_double(<dsfmt_state_t *>st)
 
 cdef uint64_t dsfmt_raw(void *st) nogil:
-    return dsfmt_next_raw(<dsfmt_state *>st)
+    return dsfmt_next_raw(<dsfmt_state_t *>st)
 
 cdef class DSFMT(BitGenerator):
     u"""
@@ -138,7 +105,6 @@ cdef class DSFMT(BitGenerator):
            Jump Ahead Algorithm for Linear Recurrences in a Polynomial Space",
            Sequences and Their Applications - SETA, 290--298, 2008.
     """
-    cdef dsfmt_state rng_state
 
     def __init__(self, seed=None):
         BitGenerator.__init__(self)
@@ -210,7 +176,7 @@ cdef class DSFMT(BitGenerator):
         # Clear the buffer
         self._reset_state_variables()
 
-    cdef jump_inplace(self, iter):
+    cdef jump_inplace(self, object iter):
         """
         Jump state in-place
 

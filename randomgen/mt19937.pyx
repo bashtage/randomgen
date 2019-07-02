@@ -5,38 +5,21 @@ import numpy as np
 cimport numpy as np
 
 from randomgen.common cimport *
-from randomgen.distributions cimport bitgen_t
 from randomgen.entropy import random_entropy
 
 __all__ = ['MT19937']
 
-cdef extern from "src/mt19937/mt19937.h":
-
-    struct s_mt19937_state:
-        uint32_t key[624]
-        int pos
-
-    ctypedef s_mt19937_state mt19937_state
-
-    uint64_t mt19937_next64(mt19937_state *state)  nogil
-    uint32_t mt19937_next32(mt19937_state *state)  nogil
-    double mt19937_next_double(mt19937_state *state)  nogil
-    void mt19937_init_by_array(mt19937_state *state, uint32_t *init_key, int key_length)
-    void mt19937_seed(mt19937_state *state, uint32_t seed)
-    void mt19937_jump(mt19937_state *state)
-    void mt19937_jump_n(mt19937_state *state, int count)
-
 cdef uint64_t mt19937_uint64(void *st) nogil:
-    return mt19937_next64(<mt19937_state *> st)
+    return mt19937_next64(<mt19937_state_t *> st)
 
 cdef uint32_t mt19937_uint32(void *st) nogil:
-    return mt19937_next32(<mt19937_state *> st)
+    return mt19937_next32(<mt19937_state_t *> st)
 
 cdef double mt19937_double(void *st) nogil:
-    return mt19937_next_double(<mt19937_state *> st)
+    return mt19937_next_double(<mt19937_state_t *> st)
 
 cdef uint64_t mt19937_raw(void *st) nogil:
-    return <uint64_t>mt19937_next32(<mt19937_state *> st)
+    return <uint64_t>mt19937_next32(<mt19937_state_t *> st)
 
 cdef class MT19937(BitGenerator):
     u"""
@@ -118,8 +101,6 @@ cdef class MT19937(BitGenerator):
         No. 3, Summer 2008, pp. 385-390.
 
     """
-    cdef mt19937_state rng_state
-
     def __init__(self, seed=None):
         BitGenerator.__init__(self)
         self.seed(seed)
@@ -193,7 +174,7 @@ cdef class MT19937(BitGenerator):
         """
         if jumps < 0:
             raise ValueError('jumps must be positive')
-        mt19937_jump_n(&self.rng_state, jumps);
+        mt19937_jump_n(&self.rng_state, jumps)
 
     def jump(self, int jumps=1):
         """

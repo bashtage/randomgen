@@ -32,7 +32,7 @@ void gray_code(unsigned long *h) {
   }
 }
 
-void copy_state(mt19937_state *target_state, mt19937_state *state) {
+void copy_state(mt19937_state_t *target_state, mt19937_state_t *state) {
   int i;
 
   for (i = 0; i < N; i++)
@@ -42,7 +42,7 @@ void copy_state(mt19937_state *target_state, mt19937_state *state) {
 }
 
 /* next state generating function */
-void gen_next(mt19937_state *state) {
+void gen_next(mt19937_state_t *state) {
   int num;
   unsigned long y;
   static unsigned long mag02[2] = {0x0ul, MATRIX_A};
@@ -63,7 +63,7 @@ void gen_next(mt19937_state *state) {
   }
 }
 
-void add_state(mt19937_state *state1, mt19937_state *state2) {
+void add_state(mt19937_state_t *state1, mt19937_state_t *state2) {
   int i, pt1 = state1->pos, pt2 = state2->pos;
 
   if (pt2 - pt1 >= 0) {
@@ -84,11 +84,11 @@ void add_state(mt19937_state *state1, mt19937_state *state2) {
 }
 
 /*
-void gen_vec_h(mt19937_state *state, mt19937_state *vec_h,
+void gen_vec_h(mt19937_state_t *state, mt19937_state_t *vec_h,
                unsigned long *h) {
   int i;
   unsigned long k, g;
-  mt19937_state v;
+  mt19937_state_t v;
 
   gray_code(h);
 
@@ -110,12 +110,12 @@ void gen_vec_h(mt19937_state *state, mt19937_state *vec_h,
 
 /* compute pf(ss) using Sliding window algorithm */
 /*
-void calc_state(unsigned long *pf, mt19937_state *state,
-                mt19937_state *vec_h) {
-  mt19937_state *temp1;
+void calc_state(unsigned long *pf, mt19937_state_t *state,
+                mt19937_state_t *vec_h) {
+  mt19937_state_t *temp1;
   int i = MEXP - 1, j, digit, skip = 0;
 
-  temp1 = (mt19937_state *)calloc(1, sizeof(mt19937_state));
+  temp1 = (mt19937_state_t *)calloc(1, sizeof(mt19937_state_t));
 
   while (get_coef(pf, i) == 0)
     i--;
@@ -147,11 +147,11 @@ void calc_state(unsigned long *pf, mt19937_state *state,
 */
 
 /* compute pf(ss) using standard Horner method */
-void horner1(unsigned long *pf, mt19937_state *state) {
+void horner1(unsigned long *pf, mt19937_state_t *state) {
   int i = MEXP - 1;
-  mt19937_state *temp;
+  mt19937_state_t *temp;
 
-  temp = (mt19937_state *)calloc(1, sizeof(mt19937_state));
+  temp = (mt19937_state_t *)calloc(1, sizeof(mt19937_state_t));
 
   while (get_coef(pf, i) == 0)
     i--;
@@ -180,7 +180,7 @@ void horner1(unsigned long *pf, mt19937_state *state) {
   free(temp);
 }
 
-void mt19937_jump_state(mt19937_state *state, const char *jump_str) {
+void mt19937_jump_state(mt19937_state_t *state, const char *jump_str) {
   unsigned long *pf;
   int i;
 
@@ -199,10 +199,10 @@ void mt19937_jump_state(mt19937_state *state, const char *jump_str) {
   free(pf);
 }
 /*
-void mt19937_jump(mt19937_state *state, const char *jump_str)
+void mt19937_jump(mt19937_state_t *state, const char *jump_str)
 {
     unsigned long h[LL];
-    mt19937_state vec_h[LL];
+    mt19937_state_t vec_h[LL];
     unsigned long *pf;
     int i;
 

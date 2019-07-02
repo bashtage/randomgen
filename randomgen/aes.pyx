@@ -1,36 +1,9 @@
 import numpy as np
 
 from randomgen.common cimport *
-from randomgen.distributions cimport bitgen_t
 from randomgen.entropy import random_entropy, seed_by_array
 
 __all__ = ['AESCounter']
-
-cdef extern from "src/aesctr/aesctr.h":
-
-    # int are placeholders only for
-    struct AESCTR_STATE_T:
-        int ctr[4]
-        int seed[10 + 1]
-        uint8_t state[16 * 4]
-        size_t offset
-        int has_uint32
-        uint32_t uinteger
-
-    ctypedef AESCTR_STATE_T aesctr_state_t
-
-    uint64_t aes_next64(aesctr_state_t *aesctr) nogil
-    uint32_t aes_next32(aesctr_state_t *aesctr) nogil
-    double aes_next_double(aesctr_state_t *aesctr) nogil
-
-    int RANDOMGEN_USE_AESNI
-    void aesctr_use_aesni(int val)
-    void aesctr_seed(aesctr_state_t *aesctr, uint64_t *seed)
-    void aesctr_set_seed_counter(aesctr_state_t *aesctr, uint64_t *seed, uint64_t *counter)
-    void aesctr_get_seed_counter(aesctr_state_t *aesctr, uint64_t *seed, uint64_t *counter)
-    int aes_capable()
-    void aesctr_advance(aesctr_state_t *aesctr, uint64_t *step)
-    void aesctr_set_counter(aesctr_state_t *aesctr, uint64_t *counter)
 
 cdef uint64_t aes_uint64(void* st) nogil:
     return aes_next64(<aesctr_state_t *>st)
@@ -145,8 +118,6 @@ cdef class AESCounter(BitGenerator):
     .. [1] Advanced Encryption Standard. (n.d.). In Wikipedia. Retrieved
         June 1, 2019, from https://en.wikipedia.org/wiki/Advanced_Encryption_Standard
     """
-    cdef aesctr_state_t *rng_state
-
     def __init__(self, seed=None, counter=None, key=None):
         BitGenerator.__init__(self)
         # Calloc since ctr needs to be 0
@@ -315,7 +286,7 @@ cdef class AESCounter(BitGenerator):
         self.rng_state.has_uint32 = value['has_uint32']
         self.rng_state.uinteger = value['uinteger']
 
-    cdef jump_inplace(self, iter):
+    cdef jump_inplace(self, object iter):
         """
         Jump state in-place
 

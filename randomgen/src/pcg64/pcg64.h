@@ -268,17 +268,17 @@ typedef pcg_state_setseq_128 pcg64_random_t;
 }
 #endif
 
-typedef struct s_pcg64_state {
+typedef struct PCG64_STATE_T {
   pcg64_random_t pcg_state;
   int has_uint32;
   uint32_t uinteger;
-} pcg64_state;
+} pcg64_state_t;
 
-static INLINE uint64_t pcg64_next64(pcg64_state *state) {
+static INLINE uint64_t pcg64_next64(pcg64_state_t *state) {
   return pcg64_random_r(&state->pcg_state);
 }
 
-static INLINE uint32_t pcg64_next32(pcg64_state *state) {
+static INLINE uint32_t pcg64_next32(pcg64_state_t *state) {
   uint64_t next;
   if (state->has_uint32) {
     state->has_uint32 = 0;
@@ -290,14 +290,14 @@ static INLINE uint32_t pcg64_next32(pcg64_state *state) {
   return (uint32_t)(next & 0xffffffff);
 }
 
-void pcg64_advance(pcg64_state *state, uint64_t *step);
+void pcg64_advance(pcg64_state_t *state, uint64_t *step);
 
-void pcg64_set_seed(pcg64_state *state, uint64_t *seed, uint64_t *inc);
+void pcg64_set_seed(pcg64_state_t *state, uint64_t *seed, uint64_t *inc);
 
-void pcg64_get_state(pcg64_state *state, uint64_t *state_arr, int *has_uint32,
+void pcg64_get_state(pcg64_state_t *state, uint64_t *state_arr, int *has_uint32,
                      uint32_t *uinteger);
 
-void pcg64_set_state(pcg64_state *state, uint64_t *state_arr, int has_uint32,
+void pcg64_set_state(pcg64_state_t *state, uint64_t *state_arr, int has_uint32,
                      uint32_t uinteger);
 
 #endif /* PCG64_H_INCLUDED */

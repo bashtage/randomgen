@@ -89,10 +89,10 @@ pcg128_t pcg_advance_lcg_128(pcg128_t state, pcg128_t delta, pcg128_t cur_mult,
 
 #endif
 
-extern INLINE uint64_t pcg64_next64(pcg64_state *state);
-extern INLINE uint32_t pcg64_next32(pcg64_state *state);
+extern INLINE uint64_t pcg64_next64(pcg64_state_t *state);
+extern INLINE uint32_t pcg64_next32(pcg64_state_t *state);
 
-extern void pcg64_advance(pcg64_state *state, uint64_t *step) {
+extern void pcg64_advance(pcg64_state_t *state, uint64_t *step) {
   pcg128_t delta;
 #if __SIZEOF_INT128__ && !defined(PCG_FORCE_EMULATED_128BIT_MATH)
   delta = (((pcg128_t)step[0]) << 64) | step[1];
@@ -103,7 +103,7 @@ extern void pcg64_advance(pcg64_state *state, uint64_t *step) {
   pcg64_advance_r(&state->pcg_state, delta);
 }
 
-extern void pcg64_set_seed(pcg64_state *state, uint64_t *seed, uint64_t *inc) {
+extern void pcg64_set_seed(pcg64_state_t *state, uint64_t *seed, uint64_t *inc) {
   pcg128_t s, i;
 #if __SIZEOF_INT128__ && !defined(PCG_FORCE_EMULATED_128BIT_MATH)
   s = (((pcg128_t)seed[0]) << 64) | seed[1];
@@ -117,7 +117,7 @@ extern void pcg64_set_seed(pcg64_state *state, uint64_t *seed, uint64_t *inc) {
   pcg64_srandom_r(&state->pcg_state, s, i);
 }
 
-extern void pcg64_get_state(pcg64_state *state, uint64_t *state_arr,
+extern void pcg64_get_state(pcg64_state_t *state, uint64_t *state_arr,
                             int *has_uint32, uint32_t *uinteger) {
   /*
    * state_arr contains state.high, state.low, inc.high, inc.low
@@ -140,7 +140,7 @@ extern void pcg64_get_state(pcg64_state *state, uint64_t *state_arr,
   uinteger[0] = state->uinteger;
 }
 
-extern void pcg64_set_state(pcg64_state *state, uint64_t *state_arr,
+extern void pcg64_set_state(pcg64_state_t *state, uint64_t *state_arr,
                             int has_uint32, uint32_t uinteger) {
   /*
    * state_arr contains state.high, state.low, inc.high, inc.low

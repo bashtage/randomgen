@@ -1,0 +1,44 @@
+from randomgen.common cimport *
+
+DEF DSFMT_MEXP = 19937
+DEF DSFMT_N = 191  # ((DSFMT_MEXP - 128) / 104 + 1)
+DEF DSFMT_N_PLUS_1 = 192  # DSFMT_N + 1
+DEF DSFMT_N64 = DSFMT_N * 2
+
+cdef extern from "src/dsfmt/dSFMT.h":
+
+    union W128_T:
+        uint64_t u[2]
+        uint32_t u32[4]
+        double d[2]
+
+    ctypedef W128_T w128_t
+
+    struct DSFMT_T:
+        w128_t status[DSFMT_N_PLUS_1]
+        int idx
+
+    ctypedef DSFMT_T dsfmt_t
+
+    struct DSFMT_STATE_T:
+        dsfmt_t *state
+        double *buffered_uniforms
+        int buffer_loc
+
+    ctypedef DSFMT_STATE_T dsfmt_state_t
+
+    double dsfmt_next_double(dsfmt_state_t *state)  nogil
+    uint64_t dsfmt_next64(dsfmt_state_t *state)  nogil
+    uint32_t dsfmt_next32(dsfmt_state_t *state)  nogil
+    uint64_t dsfmt_next_raw(dsfmt_state_t *state)  nogil
+
+    void dsfmt_init_gen_rand(dsfmt_t *dsfmt, uint32_t seed)
+    void dsfmt_init_by_array(dsfmt_t *dsfmt, uint32_t init_key[], int key_length)
+    void dsfmt_jump(dsfmt_state_t *state)
+    void dsfmt_jump_n(dsfmt_state_t *state, int count)
+
+cdef class DSFMT(BitGenerator):
+
+    cdef dsfmt_state_t rng_state
+    cdef jump_inplace(self, object iter)
+    cdef _reset_state_variables(self)

@@ -1,8 +1,8 @@
 #include "pcg32.h"
 
-extern inline uint64_t pcg32_next64(pcg32_state *state);
-extern inline uint32_t pcg32_next32(pcg32_state *state);
-extern inline double pcg32_next_double(pcg32_state *state);
+extern inline uint64_t pcg32_next64(pcg32_state_t *state);
+extern inline uint32_t pcg32_next32(pcg32_state_t *state);
+extern inline double pcg32_next_double(pcg32_state_t *state);
 
 uint64_t pcg_advance_lcg_64(uint64_t state, uint64_t delta, uint64_t cur_mult,
                             uint64_t cur_plus) {
@@ -21,10 +21,10 @@ uint64_t pcg_advance_lcg_64(uint64_t state, uint64_t delta, uint64_t cur_mult,
   return acc_mult * state + acc_plus;
 }
 
-extern void pcg32_advance_state(pcg32_state *state, uint64_t step) {
+extern void pcg32_advance_state(pcg32_state_t *state, uint64_t step) {
   pcg32_advance_r(&state->pcg_state, step);
 }
 
-extern void pcg32_set_seed(pcg32_state *state, uint64_t seed, uint64_t inc) {
+extern void pcg32_set_seed(pcg32_state_t *state, uint64_t seed, uint64_t inc) {
   pcg32_srandom_r(&state->pcg_state, seed, inc);
 }

@@ -75,29 +75,29 @@
 #define UM UINT64_C(0xFFFFFFFF80000000) /* Most significant 33 bits */
 #define LM UINT64_C(0x7FFFFFFF)         /* Least significant 31 bits */
 
-struct MT64_T {
+struct MT64_STATE_T {
   uint64_t mt[NN];
   int mti;
   int has_uint32;
   uint32_t uinteger;
 };
-typedef struct MT64_T mt64_t;
+typedef struct MT64_STATE_T mt64_state_t;
 
 /* initializes mt[NN] with a seed */
-extern void mt64_seed(mt64_t *mt64, uint64_t seed);
+extern void mt64_seed(mt64_state_t *mt64, uint64_t seed);
 
 /* initialize by an array with array-length */
 /* init_key is the array for initializing keys */
 /* key_length is its length */
-extern void mt64_init_by_array(mt64_t *mt64, uint64_t init_key[],
+extern void mt64_init_by_array(mt64_state_t *mt64, uint64_t init_key[],
                                uint64_t key_length);
 
 /* generates a random number on [0, 2^64-1]-interval */
-uint64_t genrand64_int64(mt64_t *mt64);
+uint64_t genrand64_int64(mt64_state_t *mt64);
 
-extern void mt64_gen(mt64_t *mt64);
+extern void mt64_gen(mt64_state_t *mt64);
 
-static INLINE uint64_t mt64_next(mt64_t *mt64) {
+static INLINE uint64_t mt64_next(mt64_state_t *mt64) {
   uint64_t x;
   if (mt64->mti >= NN) { /* generate NN words at one time */
     /* Move to function to help inlining */
@@ -113,9 +113,9 @@ static INLINE uint64_t mt64_next(mt64_t *mt64) {
   return x;
 }
 
-static INLINE uint64_t mt64_next64(mt64_t *mt64) { return mt64_next(mt64); }
+static INLINE uint64_t mt64_next64(mt64_state_t *mt64) { return mt64_next(mt64); }
 
-static INLINE uint32_t mt64_next32(mt64_t *mt64) {
+static INLINE uint32_t mt64_next32(mt64_state_t *mt64) {
   uint64_t next;
   if (mt64->has_uint32) {
     mt64->has_uint32 = 0;
@@ -127,7 +127,7 @@ static INLINE uint32_t mt64_next32(mt64_t *mt64) {
   return (uint32_t)(next & 0xffffffff);
 }
 
-static INLINE double mt64_next_double(mt64_t *mt64) {
+static INLINE double mt64_next_double(mt64_state_t *mt64) {
   return (mt64_next(mt64) >> 11) * (1. / (UINT64_C(1) << 53));
 }
 

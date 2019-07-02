@@ -2,32 +2,18 @@ import numpy as np
 cimport numpy as np
 
 from randomgen.common cimport *
-from randomgen.distributions cimport bitgen_t
 from randomgen.entropy import random_entropy, seed_by_array
 
 __all__ = ['Xoshiro256']
 
-cdef extern from "src/xoshiro256/xoshiro256.h":
-
-    struct s_xoshiro256_state:
-        uint64_t s[4]
-        int has_uint32
-        uint32_t uinteger
-
-    ctypedef s_xoshiro256_state xoshiro256_state
-
-    uint64_t xoshiro256_next64(xoshiro256_state *state)  nogil
-    uint32_t xoshiro256_next32(xoshiro256_state *state)  nogil
-    void xoshiro256_jump(xoshiro256_state *state)
-
 cdef uint64_t xoshiro256_uint64(void* st) nogil:
-    return xoshiro256_next64(<xoshiro256_state *>st)
+    return xoshiro256_next64(<xoshiro256_state_t *>st)
 
 cdef uint32_t xoshiro256_uint32(void *st) nogil:
-    return xoshiro256_next32(<xoshiro256_state *> st)
+    return xoshiro256_next32(<xoshiro256_state_t *> st)
 
 cdef double xoshiro256_double(void* st) nogil:
-    return uint64_to_double(xoshiro256_next64(<xoshiro256_state *>st))
+    return uint64_to_double(xoshiro256_next64(<xoshiro256_state_t *>st))
 
 cdef class Xoshiro256(BitGenerator):
     """
@@ -119,8 +105,6 @@ cdef class Xoshiro256(BitGenerator):
     .. [1] "xoroshiro+ / xorshift* / xorshift+ generators and the PRNG shootout",
            http://xorshift.di.unimi.it/
     """
-    cdef xoshiro256_state rng_state
-
     def __init__(self, seed=None):
         BitGenerator.__init__(self)
         self.seed(seed)

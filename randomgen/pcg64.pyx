@@ -2,38 +2,18 @@ import numpy as np
 cimport numpy as np
 
 from randomgen.common cimport *
-from randomgen.distributions cimport bitgen_t
 from randomgen.entropy import random_entropy
 
 __all__ = ['PCG64']
 
-cdef extern from "src/pcg64/pcg64.h":
-    # Use int as generic type, actual type read from pcg64.h and is platform dependent
-    ctypedef int pcg64_random_t
-
-    struct s_pcg64_state:
-        pcg64_random_t *pcg_state
-        int has_uint32
-        uint32_t uinteger
-
-    ctypedef s_pcg64_state pcg64_state
-
-    uint64_t pcg64_next64(pcg64_state *state)  nogil
-    uint32_t pcg64_next32(pcg64_state *state)  nogil
-    void pcg64_jump(pcg64_state *state)
-    void pcg64_advance(pcg64_state *state, uint64_t *step)
-    void pcg64_set_seed(pcg64_state *state, uint64_t *seed, uint64_t *inc)
-    void pcg64_get_state(pcg64_state *state, uint64_t *state_arr, int *has_uint32, uint32_t *uinteger)
-    void pcg64_set_state(pcg64_state *state, uint64_t *state_arr, int has_uint32, uint32_t uinteger)
-
 cdef uint64_t pcg64_uint64(void* st) nogil:
-    return pcg64_next64(<pcg64_state *>st)
+    return pcg64_next64(<pcg64_state_t *>st)
 
 cdef uint32_t pcg64_uint32(void *st) nogil:
-    return pcg64_next32(<pcg64_state *> st)
+    return pcg64_next32(<pcg64_state_t *> st)
 
 cdef double pcg64_double(void* st) nogil:
-    return uint64_to_double(pcg64_next64(<pcg64_state *>st))
+    return uint64_to_double(pcg64_next64(<pcg64_state_t *>st))
 
 
 cdef class PCG64(BitGenerator):
@@ -116,8 +96,6 @@ cdef class PCG64(BitGenerator):
     .. [2] O'Neill, Melissa E. "PCG: A Family of Simple Fast Space-Efficient
            Statistically Good Algorithms for Random Number Generation"
     """
-    cdef pcg64_state rng_state
-
     def __init__(self, seed=None, inc=0):
         BitGenerator.__init__(self)
         self.seed(seed, inc)
@@ -281,7 +259,7 @@ cdef class PCG64(BitGenerator):
         self._reset_state_variables()
         return self
 
-    cdef jump_inplace(self, iter):
+    cdef jump_inplace(self, object iter):
         """
         Jump state in-place
 
@@ -297,7 +275,6 @@ cdef class PCG64(BitGenerator):
         The step size is phi when divided by the period 2**64
         """
         step = 0x9e3779b97f4a7c15f39cc0605cedc834
-        # step=0x9e3779b97f4a7c150000000000000000
         step *= int(iter)
         divisor = step // 2**128
         step -= 2**128 * divisor

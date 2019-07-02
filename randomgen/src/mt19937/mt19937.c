@@ -2,7 +2,7 @@
 #include "mt19937-jump.h"
 #include "mt19937-poly.h"
 
-void mt19937_seed(mt19937_state *state, uint32_t seed) {
+void mt19937_seed(mt19937_state_t *state, uint32_t seed) {
   int pos;
   seed &= 0xffffffffUL;
 
@@ -15,7 +15,7 @@ void mt19937_seed(mt19937_state *state, uint32_t seed) {
 }
 
 /* initializes mt[RK_STATE_LEN] with a seed */
-static void init_genrand(mt19937_state *state, uint32_t s) {
+static void init_genrand(mt19937_state_t *state, uint32_t s) {
   int mti;
   uint32_t *mt = state->key;
 
@@ -40,7 +40,7 @@ static void init_genrand(mt19937_state *state, uint32_t s) {
  * init_key is the array for initializing keys
  * key_length is its length
  */
-void mt19937_init_by_array(mt19937_state *state, uint32_t *init_key,
+void mt19937_init_by_array(mt19937_state_t *state, uint32_t *init_key,
                            int key_length) {
   /* was signed in the original code. RDH 12/16/2002 */
   int i = 1;
@@ -80,7 +80,7 @@ void mt19937_init_by_array(mt19937_state *state, uint32_t *init_key,
   mt[0] = 0x80000000UL; /* MSB is 1; assuring non-zero initial array */
 }
 
-void mt19937_gen(mt19937_state *state) {
+void mt19937_gen(mt19937_state_t *state) {
   uint32_t y;
   int i;
 
@@ -98,15 +98,15 @@ void mt19937_gen(mt19937_state *state) {
   state->pos = 0;
 }
 
-extern INLINE uint64_t mt19937_next64(mt19937_state *state);
+extern INLINE uint64_t mt19937_next64(mt19937_state_t *state);
 
-extern INLINE uint32_t mt19937_next32(mt19937_state *state);
+extern INLINE uint32_t mt19937_next32(mt19937_state_t *state);
 
-extern INLINE double mt19937_next_double(mt19937_state *state);
+extern INLINE double mt19937_next_double(mt19937_state_t *state);
 
-void mt19937_jump(mt19937_state *state) { mt19937_jump_state(state, poly_128); }
+void mt19937_jump(mt19937_state_t *state) { mt19937_jump_state(state, poly_128); }
 
-void mt19937_jump_n(mt19937_state *state, int count) {
+void mt19937_jump_n(mt19937_state_t *state, int count) {
   /* poly_xxx is 2**xxx ahead */
   int remaining = count;
   while (remaining > 0) {

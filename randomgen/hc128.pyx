@@ -3,26 +3,9 @@ import numpy as np
 cimport numpy as np
 
 from randomgen.common cimport *
-from randomgen.distributions cimport bitgen_t
 from randomgen.entropy import random_entropy, seed_by_array
 
 __all__ = ['HC128']
-
-cdef extern from "src/hc-128/hc-128.h":
-
-    struct HC128_STATE_T:
-        uint32_t p[512];
-        uint32_t q[512];
-        uint32_t buffer[16];
-        int hc_idx;
-        int buffer_idx;
-
-    ctypedef HC128_STATE_T hc128_state_t
-
-    uint32_t hc128_next32(hc128_state_t *state) nogil
-    uint64_t hc128_next64(hc128_state_t *state) nogil
-    double hc128_next_double(hc128_state_t *state) nogil
-    void hc128_seed(hc128_state_t *state, uint32_t *seed)
 
 cdef uint64_t hc128_uint64(void* st) nogil:
     return hc128_next64(<hc128_state_t *>st)
@@ -117,8 +100,6 @@ cdef class HC128(BitGenerator):
     .. [2] Wu, Hongjun, "Stream Ciphers HC-128 and HC-256".
         https://www.ntu.edu.sg/home/wuhj/research/hc/index.html)
     """
-    cdef hc128_state_t rng_state
-
     def __init__(self, seed=None, key=None):
         BitGenerator.__init__(self)
         self.seed(seed, key)

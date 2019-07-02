@@ -335,8 +335,6 @@ cpdef object object_to_int(object val, object bits, object name, int default_bit
             dtypes.append(np.uint64)
         if 32 in allowed_sizes:
             dtypes.append(np.uint32)
-        print(val.dtype)
-        print(dtypes)
         if val.dtype not in dtypes:
             all_sz = ','.join(map(str, allowed_sizes))
             raise TypeError('{0} arrays must be unsigned with a size in'

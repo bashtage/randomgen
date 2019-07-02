@@ -303,16 +303,16 @@ inline static double sfmt_genrand_res53_mix(sfmt_t * sfmt)
 }
 #endif
 
-typedef struct s_sfmt_state {
+typedef struct SFMT_STATE_T {
   sfmt_t *state;
   int has_uint32;
   uint32_t uinteger;
 
   uint64_t *buffered_uint64;
   int buffer_loc;
-} sfmt_state;
+} sfmt_state_t;
 
-static inline uint64_t sfmt_next_buffer(sfmt_state *state) {
+static inline uint64_t sfmt_next_buffer(sfmt_state_t *state) {
   if (state->buffer_loc < SFMT_N64) {
     uint64_t out = state->buffered_uint64[state->buffer_loc];
     state->buffer_loc++;
@@ -323,11 +323,11 @@ static inline uint64_t sfmt_next_buffer(sfmt_state *state) {
   return state->buffered_uint64[0];
 }
 
-static inline uint64_t sfmt_next64(sfmt_state *state) {
+static inline uint64_t sfmt_next64(sfmt_state_t *state) {
   return sfmt_next_buffer(state);
 }
 
-static inline uint32_t sfmt_next32(sfmt_state *state) {
+static inline uint32_t sfmt_next32(sfmt_state_t *state) {
   /* Discard bottom 16 bits */
   uint64_t next;
   if (state->has_uint32) {
@@ -341,7 +341,7 @@ static inline uint32_t sfmt_next32(sfmt_state *state) {
   return (uint32_t)(next & 0xffffffff);
 }
 
-void sfmt_jump(sfmt_state *state);
-void sfmt_jump_n(sfmt_state *state, int count);
+void sfmt_jump(sfmt_state_t *state);
+void sfmt_jump_n(sfmt_state_t *state, int count);
 
 #endif

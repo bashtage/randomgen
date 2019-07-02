@@ -3,33 +3,18 @@ import numpy as np
 cimport numpy as np
 
 from randomgen.common cimport *
-from randomgen.distributions cimport bitgen_t
 from randomgen.entropy import random_entropy, seed_by_array
 
 __all__ = ['Xoroshiro1024']
 
-cdef extern from "src/xorshift1024/xorshift1024.h":
-
-    struct s_xorshift1024_state:
-        uint64_t s[16]
-        int p
-        int has_uint32
-        uint32_t uinteger
-
-    ctypedef s_xorshift1024_state xorshift1024_state
-
-    uint64_t xorshift1024_next64(xorshift1024_state *state)  nogil
-    uint32_t xorshift1024_next32(xorshift1024_state *state)  nogil
-    void xorshift1024_jump(xorshift1024_state *state)
-
 cdef uint64_t xorshift1024_uint64(void* st) nogil:
-    return xorshift1024_next64(<xorshift1024_state *>st)
+    return xorshift1024_next64(<xorshift1024_state_t *>st)
 
 cdef uint32_t xorshift1024_uint32(void *st) nogil:
-    return xorshift1024_next32(<xorshift1024_state *> st)
+    return xorshift1024_next32(<xorshift1024_state_t *> st)
 
 cdef double xorshift1024_double(void* st) nogil:
-    return uint64_to_double(xorshift1024_next64(<xorshift1024_state *>st))
+    return uint64_to_double(xorshift1024_next64(<xorshift1024_state_t *>st))
 
 cdef class Xorshift1024(BitGenerator):
     u"""
@@ -125,9 +110,6 @@ cdef class Xorshift1024(BitGenerator):
     .. [4] Sebastiano Vigna. "Further scramblings of Marsaglia's xorshift
            generators." CoRR, abs/1403.0930, 2014.
     """
-
-    cdef xorshift1024_state rng_state
-
     def __init__(self, seed=None):
         BitGenerator.__init__(self)
         self.seed(seed)

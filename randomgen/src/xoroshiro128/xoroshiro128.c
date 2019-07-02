@@ -31,11 +31,11 @@ See <http://creativecommons.org/publicdomain/zero/1.0/>. */
 
 #include "xoroshiro128.h"
 
-extern INLINE uint64_t xoroshiro128_next64(xoroshiro128_state *state);
+extern INLINE uint64_t xoroshiro128_next64(xoroshiro128_state_t *state);
 
-extern INLINE uint32_t xoroshiro128_next32(xoroshiro128_state *state);
+extern INLINE uint32_t xoroshiro128_next32(xoroshiro128_state_t *state);
 
-void xoroshiro128_jump(xoroshiro128_state *state)
+void xoroshiro128_jump(xoroshiro128_state_t *state)
 {
   int i, b;
   uint64_t s0;

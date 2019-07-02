@@ -45,6 +45,7 @@ def add_color(val):
     color = str(2) if val > 0 else str(1)
     return "\33[38;5;" + color + "m" + '{0:0.1f}%'.format(val) + "\33[0m"
 
+
 def run_timer(command, numpy_command=None, setup='', random_type=''):
     print('-' * 80)
     if numpy_command is None:

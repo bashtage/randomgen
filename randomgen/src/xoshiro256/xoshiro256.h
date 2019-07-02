@@ -14,11 +14,11 @@
 #define INLINE inline
 #endif
 
-typedef struct s_xoshiro256_state {
+typedef struct XOSHIRO256_STATE_T {
   uint64_t s[4];
   int has_uint32;
   uint32_t uinteger;
-} xoshiro256_state;
+} xoshiro256_state_t;
 
 static INLINE uint64_t rotl(const uint64_t x, int k) {
   return (x << k) | (x >> (64 - k));
@@ -41,12 +41,12 @@ static INLINE uint64_t xoshiro256_next(uint64_t *s) {
 }
 
 static INLINE uint64_t
-xoshiro256_next64(xoshiro256_state *state) {
+xoshiro256_next64(xoshiro256_state_t *state) {
   return xoshiro256_next(&state->s[0]);
 }
 
 static INLINE uint32_t
-xoshiro256_next32(xoshiro256_state *state) {
+xoshiro256_next32(xoshiro256_state_t *state) {
   uint64_t next;
   if (state->has_uint32) {
     state->has_uint32 = 0;
@@ -58,6 +58,6 @@ xoshiro256_next32(xoshiro256_state *state) {
   return (uint32_t)(next & 0xffffffff);
 }
 
-void xoshiro256_jump(xoshiro256_state *state);
+void xoshiro256_jump(xoshiro256_state_t *state);
 
 #endif

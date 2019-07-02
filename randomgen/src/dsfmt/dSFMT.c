@@ -617,15 +617,15 @@ void dsfmt_chk_init_by_array(dsfmt_t *dsfmt, uint32_t init_key[],
 }
 #endif
 
-extern inline double dsfmt_next_double(dsfmt_state *state);
+extern inline double dsfmt_next_double(dsfmt_state_t *state);
 
-extern inline uint64_t dsfmt_next64(dsfmt_state *state);
+extern inline uint64_t dsfmt_next64(dsfmt_state_t *state);
 
-extern inline uint32_t dsfmt_next32(dsfmt_state *state);
+extern inline uint32_t dsfmt_next32(dsfmt_state_t *state);
 
-void dsfmt_jump(dsfmt_state *state) { dSFMT_jump(state->state, poly_128); };
+void dsfmt_jump(dsfmt_state_t *state) { dSFMT_jump(state->state, poly_128); };
 
-void dsfmt_jump_n(dsfmt_state *state, int count) {
+void dsfmt_jump_n(dsfmt_state_t *state, int count) {
   /* poly_xxx is 2**xxx ahead */
   int remaining = count;
   while (remaining > 0) {

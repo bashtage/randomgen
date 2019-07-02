@@ -13,7 +13,7 @@ See <http://creativecommons.org/publicdomain/zero/1.0/>. */
 #define N 1000000000
 int main()
 {
-    xoshiro256_state state;
+    xoshiro256_state_t state;
     state.s[0] = 12349123LL;
     state.s[1] = 9812839737LL;
     state.s[2] = 1289983092813174LL;

@@ -57,7 +57,7 @@
 #include <stdio.h>
 
 /* initializes mt[NN] with a seed */
-void mt64_seed(mt64_t *mt64, uint64_t seed) {
+void mt64_seed(mt64_state_t *mt64, uint64_t seed) {
   mt64->mt[0] = seed;
   for (mt64->mti = 1; mt64->mti < NN; mt64->mti++)
     mt64->mt[mt64->mti] =
@@ -69,7 +69,7 @@ void mt64_seed(mt64_t *mt64, uint64_t seed) {
 /* initialize by an array with array-length */
 /* init_key is the array for initializing keys */
 /* key_length is its length */
-void mt64_init_by_array(mt64_t *mt64, uint64_t init_key[],
+void mt64_init_by_array(mt64_state_t *mt64, uint64_t init_key[],
                         uint64_t key_length) {
   unsigned int i, j;
   uint64_t k;
@@ -105,7 +105,7 @@ void mt64_init_by_array(mt64_t *mt64, uint64_t init_key[],
 }
 
 /* generates a random number on [0, 2^64-1]-interval */
-void mt64_gen(mt64_t *mt64) {
+void mt64_gen(mt64_state_t *mt64) {
   int i;
   uint64_t x;
   static uint64_t mag01[2] = {UINT64_C(0), MATRIX_A};
@@ -131,8 +131,8 @@ void mt64_gen(mt64_t *mt64) {
   mt64->mti = 0;
 }
 
-extern INLINE uint64_t mt64_next64(mt64_t *mt64);
+extern INLINE uint64_t mt64_next64(mt64_state_t *mt64);
 
-extern INLINE uint32_t mt64_next32(mt64_t *mt64);
+extern INLINE uint32_t mt64_next32(mt64_state_t *mt64);
 
-extern INLINE double mt64_next_double(mt64_t *mt64);
+extern INLINE double mt64_next_double(mt64_state_t *mt64);

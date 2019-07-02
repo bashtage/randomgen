@@ -1,28 +1,9 @@
 import numpy as np
 
 from randomgen.common cimport *
-from randomgen.distributions cimport bitgen_t
 from randomgen.entropy import random_entropy, seed_by_array
 
 __all__ = ['ChaCha']
-
-cdef extern from "src/chacha/chacha.h":
-
-    struct CHACHA_STATE_T:
-        uint32_t block[16]
-        uint32_t keysetup[8]
-        uint64_t ctr[2]
-        int rounds;
-
-    ctypedef CHACHA_STATE_T chacha_state_t
-
-    uint32_t chacha_next32(chacha_state_t *state) nogil
-    uint64_t chacha_next64(chacha_state_t *state) nogil
-    double chacha_next_double(chacha_state_t *state) nogil
-
-    void chacha_seed(chacha_state_t *state, uint64_t *seedval, uint64_t *stream, uint64_t *ctr)
-    void chacha_advance(chacha_state_t *state, uint64_t *delta)
-
 
 cdef uint64_t chacha_uint64(void* st) nogil:
     return chacha_next64(<chacha_state_t *>st)
@@ -140,8 +121,6 @@ cdef class ChaCha(BitGenerator):
     .. [1] Bernstein, D. J.. ChaCha, a variant of Salsa20.
          http://cr.yp.to/papers.html#chacha. 2008.01.28.
     """
-    cdef chacha_state_t *rng_state
-
     def __init__(self, seed=None, counter=None, key=None, rounds=20):
         BitGenerator.__init__(self)
         self.rng_state = <chacha_state_t *>PyArray_malloc_aligned(sizeof(chacha_state_t))
@@ -266,7 +245,7 @@ cdef class ChaCha(BitGenerator):
             self.rng_state.ctr[i] = ctr[i]
         self.rng_state.rounds = state['rounds']
 
-    cdef jump_inplace(self, iter):
+    cdef jump_inplace(self, object iter):
         """
         Jump state in-place
 

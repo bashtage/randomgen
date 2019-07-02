@@ -14,8 +14,11 @@ distributions = Extension("extending_distributions",
                                    join('..', '..', '..', 'randomgen', 'src',
                                         'distributions', 'distributions.c')],
                           include_dirs=[np.get_include()])
+low_level = Extension("low_level",
+                      sources=['low_level.pyx'],
+                      include_dirs=[np.get_include()])
 
-extensions = [extending, distributions]
+extensions = [extending, distributions, low_level]
 
 setup(
     ext_modules=cythonize(extensions)
