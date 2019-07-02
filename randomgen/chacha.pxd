@@ -6,7 +6,7 @@ cdef extern from "src/chacha/chacha.h":
         uint32_t block[16]
         uint32_t keysetup[8]
         uint64_t ctr[2]
-        int rounds;
+        int rounds
 
     ctypedef CHACHA_STATE_T chacha_state_t
 
@@ -20,4 +20,3 @@ cdef extern from "src/chacha/chacha.h":
 cdef class ChaCha(BitGenerator):
     cdef chacha_state_t *rng_state
     cdef jump_inplace(self, object iter)
-

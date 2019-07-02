@@ -17,7 +17,6 @@ cdef extern from "src/xoroshiro128/xoroshiro128.h":
 
 cdef class Xoroshiro128(BitGenerator):
 
-
     cdef xoroshiro128_state_t rng_state
     cdef _reset_state_variables(self)
     cdef jump_inplace(self, np.npy_intp iter)

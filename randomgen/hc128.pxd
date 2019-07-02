@@ -4,11 +4,11 @@ from randomgen.common cimport *
 cdef extern from "src/hc-128/hc-128.h":
 
     struct HC128_STATE_T:
-        uint32_t p[512];
-        uint32_t q[512];
-        uint32_t buffer[16];
-        int hc_idx;
-        int buffer_idx;
+        uint32_t p[512]
+        uint32_t q[512]
+        uint32_t buffer[16]
+        int hc_idx
+        int buffer_idx
 
     ctypedef HC128_STATE_T hc128_state_t
 

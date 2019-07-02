@@ -16,6 +16,7 @@ Seeding and State
 
    ~SFMT.seed
    ~SFMT.state
+   ~SFMT.from_seed_seq
 
 Parallel generation
 ===================

@@ -106,10 +106,41 @@ cdef class PCG64(BitGenerator):
         self._bitgen.next_double = &pcg64_double
         self._bitgen.next_raw = &pcg64_uint64
 
-
     cdef _reset_state_variables(self):
         self.rng_state.has_uint32 = 0
         self.rng_state.uinteger = 0
+
+    @classmethod
+    def from_seed_seq(cls, entropy=None):
+        """
+        from_seed_seq(entropy=None)
+
+        Create a instance using a SeedSequence
+
+        Parameters
+        ----------
+        entropy : {None, int, sequence[int], SeedSequence}
+            Entropy to pass to SeedSequence, or a SeedSequence instance. Using
+            a SeedSequence instance allows all parameters to be set.
+
+        Returns
+        -------
+        bit_gen : PCG64
+            SeedSequence initialized bit generator with SeedSequence instance
+            attached to ``bit_gen.seed_seq``
+
+        See Also
+        --------
+        randomgen.seed_sequence.SeedSequence
+        """
+        return super(PCG64, cls).from_seed_seq(entropy)
+
+    def _seed_from_seq(self, seed_seq):
+        self.seed_seq = seed_seq
+        state = self.seed_seq.generate_state(4, np.uint64)
+        pcg64_set_seed(&self.rng_state,
+                       <uint64_t *>np.PyArray_DATA(state[:2]),
+                       <uint64_t *>np.PyArray_DATA(state[2:]))
 
     def seed(self, seed=None, inc=0):
         """

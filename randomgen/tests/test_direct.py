@@ -11,7 +11,7 @@ import pytest
 from randomgen import (DSFMT, HC128, JSF, MT64, MT19937, PCG32, PCG64, RDRAND,
                        SFMT, AESCounter, ChaCha, Generator, Philox,
                        RandomState, ThreeFry, Xoroshiro128, Xorshift1024,
-                       Xoshiro256, Xoshiro512, SPECK128)
+                       Xoshiro256, Xoshiro512, SPECK128, SeedSequence)
 from randomgen.common import interface
 
 MISSING_RDRAND = False
@@ -399,6 +399,19 @@ class Base(object):
         next_g = g.integers(0, 2 ** 32, dtype=np.uint32)
         assert next_g != next_advanced
 
+    def test_seed_sequence(self):
+        bg = self.bit_generator.from_seed_seq()
+        assert isinstance(bg, self.bit_generator)
+        assert isinstance(bg.seed_seq, SeedSequence)
+
+        bg = self.bit_generator.from_seed_seq(0)
+        assert bg.seed_seq.entropy == 0
+
+        ss = SeedSequence(0)
+        bg = self.bit_generator.from_seed_seq(ss)
+        assert bg.seed_seq.entropy == 0
+        assert bg.seed_seq is not ss
+
 
 class Random123(Base):
     @classmethod
@@ -521,7 +534,9 @@ class TestJSF64(Base):
 class TestJSF32(TestJSF64):
     @classmethod
     def setup_class(cls):
+        cls.bit_generator_base = JSF
         cls.bit_generator = partial(JSF, size=32)
+        cls.size = 32
         cls.bits = 32
         cls.dtype = np.uint32
         cls.data1 = cls._read_csv(
@@ -531,6 +546,23 @@ class TestJSF32(TestJSF64):
         cls.seed_error_type = TypeError
         cls.invalid_seed_types = [('apple',), (2 + 3j,), (3.1,)]
         cls.invalid_seed_values = [(-2,), (np.empty((2, 2), dtype=np.int64),)]
+
+    def test_seed_sequence(self):
+        bg = self.bit_generator_base.from_seed_seq(size=self.size)
+        assert isinstance(bg, self.bit_generator_base)
+        assert isinstance(bg.seed_seq, SeedSequence)
+
+        bg = self.bit_generator_base.from_seed_seq(0, size=self.size)
+        assert bg.seed_seq.entropy == 0
+
+        ss = SeedSequence(0)
+        bg = self.bit_generator_base.from_seed_seq(ss)
+        assert bg.seed_seq.entropy == 0
+        assert bg.seed_seq is not ss
+
+        bg = self.bit_generator_base.from_seed_seq(size=self.size,
+                                                   entropy=1)
+        assert bg.seed_seq.entropy == 1
 
 
 class TestXoroshiro128(Base):
@@ -727,6 +759,7 @@ class TestPhilox4x32(Random123):
     @classmethod
     def setup_class(cls):
         super(TestPhilox4x32, cls).setup_class()
+        cls.bit_generator_base = Philox
         cls.bit_generator = partial(Philox, number=4, width=32)
         cls.number = 4
         cls.width = 32
@@ -740,6 +773,26 @@ class TestPhilox4x32(Random123):
         cls.invalid_seed_types = []
         cls.invalid_seed_values = [(1, None, 1), (-1,), (2 ** 257 + 1,),
                                    (None, None, 2 ** 257 + 1)]
+
+    def test_seed_sequence(self):
+        bg = self.bit_generator_base.from_seed_seq(number=self.number,
+                                                   width=self.width)
+        assert isinstance(bg, self.bit_generator_base)
+        assert isinstance(bg.seed_seq, SeedSequence)
+
+        bg = self.bit_generator_base.from_seed_seq(0, number=self.number,
+                                                   width=self.width)
+        assert bg.seed_seq.entropy == 0
+
+        ss = SeedSequence(0)
+        bg = self.bit_generator_base.from_seed_seq(ss)
+        assert bg.seed_seq.entropy == 0
+        assert bg.seed_seq is not ss
+
+        bg = self.bit_generator_base.from_seed_seq(number=self.number,
+                                                   width=self.width,
+                                                   entropy=1)
+        assert bg.seed_seq.entropy == 1
 
 
 @pytest.mark.skipif(MISSING_AES, reason='AES is not availble')
@@ -1068,6 +1121,7 @@ class TestThreeFry4x32(Random123):
     @classmethod
     def setup_class(cls):
         super(TestThreeFry4x32, cls).setup_class()
+        cls.bit_generator_base = ThreeFry
         cls.bit_generator = partial(ThreeFry, number=4, width=32)
         cls.number = 4
         cls.width = 32
@@ -1079,6 +1133,26 @@ class TestThreeFry4x32(Random123):
         cls.invalid_seed_types = []
         cls.invalid_seed_values = [(1, None, 1), (-1,), (2 ** 257 + 1,),
                                    (None, None, 2 ** 129 + 1)]
+
+    def test_seed_sequence(self):
+        bg = self.bit_generator_base.from_seed_seq(number=self.number,
+                                                   width=self.width)
+        assert isinstance(bg, self.bit_generator_base)
+        assert isinstance(bg.seed_seq, SeedSequence)
+
+        bg = self.bit_generator_base.from_seed_seq(0, number=self.number,
+                                                   width=self.width)
+        assert bg.seed_seq.entropy == 0
+
+        ss = SeedSequence(0)
+        bg = self.bit_generator_base.from_seed_seq(ss)
+        assert bg.seed_seq.entropy == 0
+        assert bg.seed_seq is not ss
+
+        bg = self.bit_generator_base.from_seed_seq(number=self.number,
+                                                   width=self.width,
+                                                   entropy=1)
+        assert bg.seed_seq.entropy == 1
 
     def test_set_key(self):
         bit_generator = self.setup_bitgenerator(self.data1['seed'])
@@ -1462,3 +1536,13 @@ class TestSPECK128(TestHC128):
         bg.advance(step)
         state = bg.state
         assert_state_equal(state0, state)
+
+    def test_use_sse41(self):
+        bg = self.bit_generator(0)
+        if not bg.use_sse41:
+            with pytest.raises(ValueError):
+                bg.use_sse41 = True
+            return
+        bg2 = self.bit_generator(0)
+        bg2.use_sse41 = not bg.use_sse41
+        assert_equal(bg.random_raw(100), bg2.random_raw(100))

@@ -167,6 +167,41 @@ cdef class AESCounter(BitGenerator):
             raise ValueError('CPU does not support AESNI')
         aesctr_use_aesni(bool(value))
 
+    @classmethod
+    def from_seed_seq(cls, entropy=None, counter=None):
+        """
+        from_seed_seq(entropy=None, counter=None)
+
+        Create a instance using a SeedSequence
+
+        Parameters
+        ----------
+        entropy : {None, int, sequence[int], SeedSequence}
+            Entropy to pass to SeedSequence, or a SeedSequence instance. Using
+            a SeedSequence instance allows all parameters to be set.
+        counter : {None, int, array_like}
+            Positive integer less than 2**128 containing the counter position
+            or a 2 element array of uint64 containing the counter
+
+        Returns
+        -------
+        bit_gen : AESCounter
+            SeedSequence initialized bit generator with SeedSequence instance
+            attached to ``bit_gen.seed_seq``
+
+        See Also
+        --------
+        randomgen.seed_sequence.SeedSequence
+        """
+        seed_kwargs = {'counter': counter}
+        return super(AESCounter, cls).from_seed_seq(entropy,
+                                                    seed_kwargs=seed_kwargs)
+
+    def _seed_from_seq(self, seed_seq, counter=None):
+        self.seed_seq = seed_seq
+        state = self.seed_seq.generate_state(2, np.uint64)
+        self.seed(key=state, counter=counter)
+
     def seed(self, seed=None, counter=None, key=None):
         """
         seed(seed=None, counter=None, key=None)
@@ -186,10 +221,10 @@ cdef class AESCounter(BitGenerator):
             data is read from ``/dev/urandom`` (or the Windows analog) if
             available.  If unavailable, a hash of the time and process ID is
             used.
-        counter : {int array}, optional
+        counter : {None, int, array_like}
             Positive integer less than 2**128 containing the counter position
             or a 2 element array of uint64 containing the counter
-        key : {int, array}, options
+        key : {int, array}, optional
             Positive integer less than 2**128 containing the key
             or a 2 element array of uint64 containing the key
 
@@ -247,7 +282,7 @@ cdef class AESCounter(BitGenerator):
         aesctr_get_seed_counter(self.rng_state,
                                 <uint64_t*>np.PyArray_DATA(seed),
                                 <uint64_t*>np.PyArray_DATA(counter))
-        state = np.empty(16 * 4, dtype = np.uint8)
+        state = np.empty(16 * 4, dtype=np.uint8)
         for i in range(16 * 4):
             state[i] = self.rng_state.state[i]
         offset = self.rng_state.offset

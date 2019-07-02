@@ -96,8 +96,8 @@ cdef extern from "src/distributions/distributions.h":
     int64_t random_geometric_inversion(bitgen_t *bitgen_state, double p) nogil
     int64_t random_geometric(bitgen_t *bitgen_state, double p) nogil
     int64_t random_zipf(bitgen_t *bitgen_state, double a) nogil
-    int64_t random_hypergeometric(bitgen_t *bitgen_state, int64_t good, int64_t bad,
-                                    int64_t sample) nogil
+    int64_t random_hypergeometric(bitgen_t *bitgen_state, int64_t good,
+                                  int64_t bad, int64_t sample) nogil
 
     uint64_t random_interval(bitgen_t *bitgen_state, uint64_t max) nogil
 

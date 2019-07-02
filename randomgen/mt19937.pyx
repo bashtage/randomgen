@@ -110,6 +110,37 @@ cdef class MT19937(BitGenerator):
         self._bitgen.next_double = &mt19937_double
         self._bitgen.next_raw = &mt19937_raw
 
+    @classmethod
+    def from_seed_seq(cls, entropy=None):
+        """
+        from_seed_seq(entropy=None)
+
+        Create a instance using a SeedSequence
+
+        Parameters
+        ----------
+        entropy : {None, int, sequence[int], SeedSequence}
+            Entropy to pass to SeedSequence, or a SeedSequence instance. Using
+            a SeedSequence instance allows all parameters to be set.
+
+        Returns
+        -------
+        bit_gen : MT19937
+            SeedSequence initialized bit generator with SeedSequence instance
+            attached to ``bit_gen.seed_seq``
+
+        See Also
+        --------
+        randomgen.seed_sequence.SeedSequence
+        """
+        return super(MT19937, cls).from_seed_seq(entropy)
+
+    def _seed_from_seq(self, seed_seq):
+        self.seed_seq = seed_seq
+        state = self.seed_seq.generate_state(624, np.uint32)
+        mt19937_init_by_array(&self.rng_state,
+                              <uint32_t*>np.PyArray_DATA(state),
+                              624)
 
     def seed(self, seed=None):
         """

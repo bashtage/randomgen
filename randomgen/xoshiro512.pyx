@@ -119,6 +119,41 @@ cdef class Xoshiro512(BitGenerator):
         self.rng_state.has_uint32 = 0
         self.rng_state.uinteger = 0
 
+    @classmethod
+    def from_seed_seq(cls, entropy=None):
+        """
+        from_seed_seq(entropy=None)
+
+        Create a instance using a SeedSequence
+
+        Parameters
+        ----------
+        entropy : {None, int, sequence[int], SeedSequence}
+            Entropy to pass to SeedSequence, or a SeedSequence instance. Using
+            a SeedSequence instance allows all parameters to be set.
+
+        Returns
+        -------
+        bit_gen : Xoshiro512
+            SeedSequence initialized bit generator with SeedSequence instance
+            attached to ``bit_gen.seed_seq``
+
+        See Also
+        --------
+        randomgen.seed_sequence.SeedSequence
+        """
+        return super(Xoshiro512, cls).from_seed_seq(entropy)
+
+    def _seed_from_seq(self, seed_seq):
+        cdef int i
+        cdef uint64_t *state_arr
+
+        self.seed_seq = seed_seq
+        state = self.seed_seq.generate_state(8, np.uint64)
+        state_arr = <np.uint64_t *>np.PyArray_DATA(state)
+        for i in range(8):
+            self.rng_state.s[i] = state[i]
+
     def seed(self, seed=None):
         """
         seed(seed=None)

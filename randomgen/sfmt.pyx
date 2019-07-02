@@ -129,6 +129,39 @@ cdef class SFMT(BitGenerator):
         self.rng_state.has_uint32 = 0
         self.rng_state.uinteger = 0
 
+    @classmethod
+    def from_seed_seq(cls, entropy=None):
+        """
+        from_seed_seq(entropy=None)
+
+        Create a instance using a SeedSequence
+
+        Parameters
+        ----------
+        entropy : {None, int, sequence[int], SeedSequence}
+            Entropy to pass to SeedSequence, or a SeedSequence instance. Using
+            a SeedSequence instance allows all parameters to be set.
+
+        Returns
+        -------
+        bit_gen : SFMT
+            SeedSequence initialized bit generator with SeedSequence instance
+            attached to ``bit_gen.seed_seq``
+
+        See Also
+        --------
+        randomgen.seed_sequence.SeedSequence
+        """
+        return super(SFMT, cls).from_seed_seq(entropy)
+
+    def _seed_from_seq(self, seed_seq):
+        self.seed_seq = seed_seq
+        state = self.seed_seq.generate_state(2 * SFMT_N64, np.uint32)
+
+        sfmt_init_by_array(self.rng_state.state,
+                           <uint32_t *>np.PyArray_DATA(state),
+                           2 * SFMT_N64)
+
     def seed(self, seed=None):
         """
         seed(seed=None)

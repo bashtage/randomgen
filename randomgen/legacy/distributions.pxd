@@ -8,6 +8,7 @@ cimport numpy as np
 
 from randomgen.distributions cimport bitgen_t, binomial_t
 
+
 cdef extern from "../src/legacy/legacy-distributions.h":
 
     struct aug_bitgen:
@@ -30,9 +31,9 @@ cdef extern from "../src/legacy/legacy-distributions.h":
     double legacy_power(aug_bitgen_t *aug_state, double a) nogil
     double legacy_chisquare(aug_bitgen_t *aug_state, double df) nogil
     double legacy_noncentral_chisquare(aug_bitgen_t *aug_state, double df,
-                                    double nonc) nogil
-    double legacy_noncentral_f(aug_bitgen_t *aug_state, double dfnum, double dfden,
-                            double nonc) nogil
+                                       double nonc) nogil
+    double legacy_noncentral_f(aug_bitgen_t *aug_state, double dfnum,
+                               double dfden, double nonc) nogil
     double legacy_wald(aug_bitgen_t *aug_state, double mean, double scale) nogil
     double legacy_lognormal(aug_bitgen_t *aug_state, double mean, double sigma) nogil
     int64_t legacy_negative_binomial(aug_bitgen_t *aug_state, double n, double p) nogil

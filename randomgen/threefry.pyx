@@ -177,22 +177,22 @@ cdef class ThreeFry(BitGenerator):
 
     def _setup_generator(self):
         """Set the functions that will generate the values"""
-        if self.n==4 and self.w == 64:
+        if self.n == 4 and self.w == 64:
             self._bitgen.next_uint64 = &threefry4x64_uint64
             self._bitgen.next_uint32 = &threefry4x64_uint32
             self._bitgen.next_double = &threefry4x64_double
             self._bitgen.next_raw = &threefry4x64_uint64
-        elif self.n==2 and self.w == 64:
+        elif self.n == 2 and self.w == 64:
             self._bitgen.next_uint64 = &threefry2x64_uint64
             self._bitgen.next_uint32 = &threefry2x64_uint32
             self._bitgen.next_double = &threefry2x64_double
             self._bitgen.next_raw = &threefry2x64_uint64
-        elif self.n==4 and self.w == 32:
+        elif self.n == 4 and self.w == 32:
             self._bitgen.next_uint64 = &threefry4x32_uint64
             self._bitgen.next_uint32 = &threefry4x32_uint32
             self._bitgen.next_double = &threefry4x32_double
             self._bitgen.next_raw = &threefry4x32_raw
-        elif self.n==2 and self.w == 32:
+        elif self.n == 2 and self.w == 32:
             self._bitgen.next_uint64 = &threefry2x32_uint64
             self._bitgen.next_uint32 = &threefry2x32_uint32
             self._bitgen.next_double = &threefry2x32_double
@@ -210,6 +210,50 @@ cdef class ThreeFry(BitGenerator):
         self.rng_state.buffer_pos = THREEFRY_BUFFER_SIZE
         for i in range(THREEFRY_BUFFER_SIZE):
             self.rng_state.buffer[i].u64 = 0
+
+    @classmethod
+    def from_seed_seq(cls, entropy=None, counter=None, number=4, width=64):
+        """
+        from_seed_seq(entropy=None, counter=None, number=4, width=64)
+
+        Create a instance using a SeedSequence
+
+        Parameters
+        ----------
+        entropy : {None, int, sequence[int], SeedSequence}
+            Entropy to pass to SeedSequence, or a SeedSequence instance. Using
+            a SeedSequence instance allows all parameters to be set.
+        counter : {None, int, array_like}, optional
+            Counter to use in the ThreeFry state. Can be either
+            a Python int (long in 2.x) in [0, 2**256) or a 4-element uint64
+            array. If not provided, the RNG is initialized at 0.
+        number : {2, 4}, optional
+            Number of values to produce in a single call. Maps to N in the
+            ThreeFry variant naming scheme ThreeFryNxW.
+        width : {32, 64}, optional
+            Bit width the values produced. Maps to W in the ThreeFry variant
+            naming scheme ThreeFryNxW.
+
+        Returns
+        -------
+        bit_gen : ThreeFry
+            SeedSequence initialized bit generator with SeedSequence instance
+            attached to ``bit_gen.seed_seq``
+
+        See Also
+        --------
+        randomgen.seed_sequence.SeedSequence
+        """
+        seed_kwargs = dict(counter=counter)
+        cls_kwargs = dict(number=number, width=width)
+        return super(ThreeFry, cls).from_seed_seq(entropy,
+                                                  cls_kwargs=cls_kwargs,
+                                                  seed_kwargs=seed_kwargs)
+
+    def _seed_from_seq(self, seed_seq, counter=None):
+        self.seed_seq = seed_seq
+        state = self.seed_seq.generate_state(self.n * self.w // 64, np.uint64)
+        self.seed(key=state, counter=counter)
 
     def seed(self, seed=None, counter=None, key=None):
         """
@@ -267,25 +311,25 @@ cdef class ThreeFry(BitGenerator):
         dtype = np.uint64 if self.w==64 else np.uint32
         _seed = _seed.view(dtype)
         for i in range(self.n):
-            if self.w == 32 and self.n==2:
+            if self.w == 32 and self.n == 2:
                 self.rng_state.state.state2x32.key.v[i] = _seed[i]
-            elif self.w == 32 and self.n==4:
+            elif self.w == 32 and self.n == 4:
                 self.rng_state.state.state4x32.key.v[i] = _seed[i]
-            elif self.w == 64 and self.n==2:
+            elif self.w == 64 and self.n == 2:
                 self.rng_state.state.state2x64.key.v[i] = _seed[i]
-            else:  # self.w == 64 and self.n==4:
+            else:  # self.w == 64 and self.n == 4:
                 self.rng_state.state.state4x64.key.v[i] = _seed[i]
 
         counter = 0 if counter is None else counter
         counter = int_to_array(counter, 'counter', nxw, self.w)
         for i in range(self.n):
-            if self.w == 32 and self.n==2:
+            if self.w == 32 and self.n == 2:
                 self.rng_state.state.state2x32.ctr.v[i] = counter[i]
-            elif self.w == 32 and self.n==4:
+            elif self.w == 32 and self.n == 4:
                 self.rng_state.state.state4x32.ctr.v[i] = counter[i]
-            elif self.w == 64 and self.n==2:
+            elif self.w == 64 and self.n == 2:
                 self.rng_state.state.state2x64.ctr.v[i] = counter[i]
-            else:  # self.w == 64 and self.n==4:
+            else:  # self.w == 64 and self.n == 4:
                 self.rng_state.state.state4x64.ctr.v[i] = counter[i]
 
         self._reset_state_variables()
@@ -306,16 +350,16 @@ cdef class ThreeFry(BitGenerator):
         key = np.empty(self.n, dtype=dtype)
         buffer = np.empty(self.n, dtype=dtype)
         for i in range(self.n):
-            if  self.n==2 and self.w == 32:
+            if self.n == 2 and self.w==32:
                 ctr[i] = self.rng_state.state.state2x32.ctr.v[i]
                 key[i] = self.rng_state.state.state2x32.key.v[i]
-            elif self.n==4 and self.w == 32:
+            elif self.n == 4 and self.w == 32:
                 ctr[i] = self.rng_state.state.state4x32.ctr.v[i]
                 key[i] = self.rng_state.state.state4x32.key.v[i]
-            elif self.n==2 and self.w == 64:
+            elif self.n == 2 and self.w == 64:
                 ctr[i] = self.rng_state.state.state2x64.ctr.v[i]
                 key[i] = self.rng_state.state.state2x64.key.v[i]
-            else:  # self.n==4 and self.w == 64
+            else:  # self.n == 4 and self.w == 64
                 ctr[i] = self.rng_state.state.state4x64.ctr.v[i]
                 key[i] = self.rng_state.state.state4x64.key.v[i]
             if self.w == 64:
@@ -354,18 +398,18 @@ cdef class ThreeFry(BitGenerator):
         for i in range(self.n):
             if self.w == 32:
                 self.rng_state.buffer[i].u32 = buffer[i]
-                if self.n==2:
+                if self.n == 2:
                     self.rng_state.state.state2x32.ctr.v[i] = ctr[i]
                     self.rng_state.state.state2x32.key.v[i] = key[i]
-                else:  # self.n==4 :
+                else:  # self.n == 4 :
                     self.rng_state.state.state4x32.ctr.v[i] = ctr[i]
                     self.rng_state.state.state4x32.key.v[i] = key[i]
             else:
                 self.rng_state.buffer[i].u64 = buffer[i]
-                if self.n==2:
+                if self.n == 2:
                     self.rng_state.state.state2x64.ctr.v[i] = ctr[i]
                     self.rng_state.state.state2x64.key.v[i] = key[i]
-                else:  # self.n==4
+                else:  # self.n == 4
                     self.rng_state.state.state4x64.ctr.v[i] = ctr[i]
                     self.rng_state.state.state4x64.key.v[i] = key[i]
 
@@ -492,7 +536,7 @@ cdef class ThreeFry(BitGenerator):
             import warnings
             warnings.warn('counter defaults to True now, but will become '
                           'False.  Explicitly set counter to silence this'
-                          'warning. ',FutureWarning)
+                          'warning. ', FutureWarning)
             counter = True
         if delta == 0:
             return self

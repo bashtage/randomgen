@@ -223,6 +223,7 @@ Bit Generators
    :maxdepth: 3
 
    Bit Generators <bit_generators/index>
+   Seed Sequences <seed_sequence>
 
 New Features
 ------------

@@ -96,7 +96,7 @@ static INLINE void generate_block_fast(speck_state_t *state) {
     ER64(buffer[7], buffer[6], state->round_key[i].u64[0]);
     ER64(buffer[9], buffer[8], state->round_key[i].u64[0]);
     ER64(buffer[11], buffer[10], state->round_key[i].u64[0]);
-#if SPECK_UNROLL==16    
+#if SPECK_UNROLL==16
     ER64(buffer[13], buffer[12], state->round_key[i].u64[0]);
     ER64(buffer[15], buffer[14], state->round_key[i].u64[0]);
 #endif

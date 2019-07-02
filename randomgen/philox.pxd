@@ -1,7 +1,5 @@
 from libc.stdint cimport uint32_t, uint64_t
 
-
-
 cdef extern from 'src/philox/philox.h':
     struct s_r123array1x32:
         uint32_t v[1]
@@ -63,27 +61,27 @@ cdef extern from 'src/philox/philox.h':
     ctypedef s_philox4x64_state philox4x64_state
 
     union R123_UINT_T:
-      uint64_t u64;
-      uint32_t u32;
+        uint64_t u64
+        uint32_t u32
 
     ctypedef R123_UINT_T r123_uint_t
 
     union PHILOX_STATE_T:
-      philox2x32_state state2x32
-      philox4x32_state state4x32
-      philox2x64_state state2x64
-      philox4x64_state state4x64
+        philox2x32_state state2x32
+        philox4x32_state state4x32
+        philox2x64_state state2x64
+        philox4x64_state state4x64
 
     ctypedef PHILOX_STATE_T philox_state_t
 
     struct PHILOX_ALL_T:
-      philox_state_t state
-      int buffer_pos
-      r123_uint_t buffer[4]
-      int has_uint32
-      uint32_t uinteger
-      int width
-      int number
+        philox_state_t state
+        int buffer_pos
+        r123_uint_t buffer[4]
+        int has_uint32
+        uint32_t uinteger
+        int width
+        int number
 
     ctypedef PHILOX_ALL_T philox_all_t
     uint64_t philox2x32_next64(philox_all_t *state) nogil

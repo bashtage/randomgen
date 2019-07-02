@@ -13,14 +13,14 @@ __all__ = []
 np.import_array()
 
 _integers_types = {'bool': (0, 2),
-                 'int8': (-2**7, 2**7),
-                 'int16': (-2**15, 2**15),
-                 'int32': (-2**31, 2**31),
-                 'int64': (-2**63, 2**63),
-                 'uint8': (0, 2**8),
-                 'uint16': (0, 2**16),
-                 'uint32': (0, 2**32),
-                 'uint64': (0, 2**64)}
+                   'int8': (-2 ** 7, 2 ** 7),
+                   'int16': (-2 ** 15, 2 ** 15),
+                   'int32': (-2 ** 31, 2 ** 31),
+                   'int64': (-2 ** 63, 2 ** 63),
+                   'uint8': (0, 2 ** 8),
+                   'uint16': (0, 2 ** 16),
+                   'uint32': (0, 2 ** 32),
+                   'uint64': (0, 2 ** 64)}
 {{
 py:
 type_info = (('uint32', 'uint32', 'uint64', 'NPY_UINT64', 0, 0, 0, '0X100000000ULL'),
@@ -34,8 +34,8 @@ type_info = (('uint32', 'uint32', 'uint64', 'NPY_UINT64', 0, 0, 0, '0X100000000U
 {{for  nptype, utype, nptype_up, npctype, remaining, bitshift, lb, ub in type_info}}
 {{ py: otype = nptype + '_' if nptype == 'bool' else nptype }}
 cdef object _rand_{{nptype}}_broadcast(np.ndarray low, np.ndarray high, object size,
-                                       bint use_masked, bint closed,
-                                       bitgen_t *state, object lock):
+                                  bint use_masked, bint closed,
+                                  bitgen_t *state, object lock):
     """
     Array path for smaller integer types
 
@@ -110,8 +110,8 @@ big_type_info = (('uint64', 'uint64', 'NPY_UINT64', '0x0ULL', '0xFFFFFFFFFFFFFFF
 {{for  nptype, utype, npctype, lb, ub in big_type_info}}
 {{ py: otype = nptype}}
 cdef object _rand_{{nptype}}_broadcast(object low, object high, object size,
-                                       bint use_masked, bint closed,
-                                       bitgen_t *state, object lock):
+                                  bint use_masked, bint closed,
+                                  bitgen_t *state, object lock):
     """
     Array path for 64-bit integer types
 
@@ -213,8 +213,8 @@ type_info = (('uint64', 'uint64', '0x0ULL', '0xFFFFFFFFFFFFFFFFULL'),
 {{for  nptype, utype, lb, ub in type_info}}
 {{ py: otype = nptype + '_' if nptype == 'bool' else nptype }}
 cdef object _rand_{{nptype}}(object low, object high, object size,
-                             bint use_masked, bint closed,
-                             bitgen_t *state, object lock):
+                         bint use_masked, bint closed,
+                         bitgen_t *state, object lock):
     """
     _rand_{{nptype}}(low, high, size, use_masked, *state, lock)
 
