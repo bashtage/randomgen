@@ -20,6 +20,31 @@
  * including its license and other licensing options, visit
  *
  *     http://www.pcg-random.org
+ *
+ * Relicensed MIT in May 2019
+ *
+ * The MIT License
+ *
+ * PCG Random Number Generation for C.
+ *
+ * Copyright 2014 Melissa O'Neill <oneill@pcg-random.org>
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining
+ * a copy of this software and associated documentation files (the "Software"),
+ * to deal in the Software without restriction, including without limitation
+ * the rights to use, copy, modify, merge, publish, distribute, sublicense,
+ * and/or sell copies of the Software, and to permit persons to whom the
+ * Software is furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS
+ * FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR
+ * COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER
+ * IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
+ * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
 #include "pcg64.h"
@@ -74,17 +99,17 @@ pcg128_t pcg_advance_lcg_128(pcg128_t state, pcg128_t delta, pcg128_t cur_mult,
   pcg128_t acc_plus = PCG_128BIT_CONSTANT(0u, 0u);
   while ((delta.high > 0) || (delta.low > 0)) {
     if (delta.low & 1) {
-      acc_mult = _pcg128_mult(acc_mult, cur_mult);
-      acc_plus = _pcg128_add(_pcg128_mult(acc_plus, cur_mult), cur_plus);
+      acc_mult = pcg128_mult(acc_mult, cur_mult);
+      acc_plus = pcg128_add(pcg128_mult(acc_plus, cur_mult), cur_plus);
     }
-    cur_plus = _pcg128_mult(_pcg128_add(cur_mult, PCG_128BIT_CONSTANT(0u, 1u)),
-                            cur_plus);
-    cur_mult = _pcg128_mult(cur_mult, cur_mult);
+    cur_plus = pcg128_mult(pcg128_add(cur_mult, PCG_128BIT_CONSTANT(0u, 1u)),
+                           cur_plus);
+    cur_mult = pcg128_mult(cur_mult, cur_mult);
     delta.low >>= 1;
     delta.low += delta.high & 1;
     delta.high >>= 1;
   }
-  return _pcg128_add(_pcg128_mult(acc_mult, state), acc_plus);
+  return pcg128_add(pcg128_mult(acc_mult, state), acc_plus);
 }
 
 #endif
@@ -94,7 +119,7 @@ extern INLINE uint32_t pcg64_next32(pcg64_state_t *state);
 
 extern void pcg64_advance(pcg64_state_t *state, uint64_t *step) {
   pcg128_t delta;
-#if __SIZEOF_INT128__ && !defined(PCG_FORCE_EMULATED_128BIT_MATH)
+#ifndef PCG_EMULATED_128BIT_MATH
   delta = (((pcg128_t)step[0]) << 64) | step[1];
 #else
   delta.high = step[0];
@@ -105,7 +130,7 @@ extern void pcg64_advance(pcg64_state_t *state, uint64_t *step) {
 
 extern void pcg64_set_seed(pcg64_state_t *state, uint64_t *seed, uint64_t *inc) {
   pcg128_t s, i;
-#if __SIZEOF_INT128__ && !defined(PCG_FORCE_EMULATED_128BIT_MATH)
+#ifndef PCG_EMULATED_128BIT_MATH
   s = (((pcg128_t)seed[0]) << 64) | seed[1];
   i = (((pcg128_t)inc[0]) << 64) | inc[1];
 #else
