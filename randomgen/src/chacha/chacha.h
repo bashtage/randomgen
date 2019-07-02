@@ -25,6 +25,12 @@
 
 #define USE_128BIT_COUNTER 1
 
+#if defined(_WIN32) && defined(_MSC_VER)
+#define M128I_CAST
+#else
+#define M128I_CAST (__m128i)
+#endif
+
 typedef double * aligned_double_ptr ;
 
 ALIGN_WINDOWS struct CHACHA_STATE_T {

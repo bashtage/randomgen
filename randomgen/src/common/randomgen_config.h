@@ -55,8 +55,6 @@
 
     #endif
 
-    #define M128I_CAST
-
     #define ALIGN_WINDOWS __declspec(align(16))
     #define ALIGN_GCC_CLANG
 
@@ -72,8 +70,6 @@
     #include <stdbool.h>
 
     #define INLINE inline
-
-    #define M128I_CAST (__m128i)
 
     #define ALIGN_WINDOWS
     #define ALIGN_GCC_CLANG __attribute__((aligned(16)))
