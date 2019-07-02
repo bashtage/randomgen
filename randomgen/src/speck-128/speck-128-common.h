@@ -1,6 +1,8 @@
 #ifndef _RANDOMGEN_SPECK_COMMON_H
 #define _RANDOMGEN_SPECK_COMMON_H 1
 
+#include <string.h>
+
 #ifdef _WIN32
 #if _MSC_VER == 1500
 #include "../common/inttypes.h"
@@ -13,9 +15,6 @@
 #include <inttypes.h>
 #define INLINE inline
 #endif
-
-#include <string.h>
-
 
 #define SPECK_UNROLL 12
 #define SPECK_BUFFER_SZ 8 * SPECK_UNROLL
@@ -47,7 +46,7 @@ struct SPECK_STATE_T {
 
 typedef struct SPECK_STATE_T speck_state_t;
 
-static inline void advance_counter(speck_state_t *state) {
+static INLINE void advance_counter(speck_state_t *state) {
   uint64_t low;
   int i;
   for (i = 0; i < SPECK_CTR_SZ; i++) {

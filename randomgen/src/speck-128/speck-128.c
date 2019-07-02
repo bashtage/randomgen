@@ -1,14 +1,16 @@
 #include "speck-128.h"
 #include "../common/cpu_features.h"
 
+#define SSE41_FEATURE_FLAG 19
+
 int RANDOMGEN_USE_SSE41;
 
 int speck_sse41_capable(void)
 {
     int flags[32];
     feature_flags(flags);
-    RANDOMGEN_USE_SSE41 = flags[19];
-    return flags[19];
+    RANDOMGEN_USE_SSE41 = flags[SSE41_FEATURE_FLAG];
+    return RANDOMGEN_USE_SSE41;
 }
 
 void speck_seed(speck_state_t *state, uint64_t seed[4])
@@ -77,3 +79,13 @@ void speck_advance(speck_state_t *state, uint64_t *step)
     /* Reset the offset */
     state->offset = new_offset;
 }
+
+/*
+#include <stdio.h>
+int main() {
+    speck_state_t state;
+    uint64_t seed[4] = {0,1,2,3};
+    speck_seed(&state, seed);
+    for (int i=0;i<20;i++)  printf("%"PRIx64 "\n", speck_next64(&state));
+}
+*/

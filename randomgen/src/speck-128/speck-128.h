@@ -33,7 +33,7 @@ static INLINE void TF83(uint64_t *x, uint64_t *y, const uint64_t k) {
 #endif
 
 static INLINE void speck_encrypt(uint64_t c[2], const uint64_t p[2],
-                                 const speck_t k[SPECK_ROUNDS]) {
+                                 const speck_t *k) {
   int i;
   c[0] = p[0];
   c[1] = p[1];
@@ -44,8 +44,7 @@ static INLINE void speck_encrypt(uint64_t c[2], const uint64_t p[2],
   }
 }
 
-static INLINE void speck_expandkey_128x256(uint64_t key[4],
-                                           speck_t round_key[SPECK_ROUNDS]) {
+static INLINE void speck_expandkey_128x256(uint64_t key[4], speck_t *round_key) {
   uint64_t i, D, C, B, A;
   D = key[3];
   C = key[2];
@@ -76,8 +75,10 @@ static INLINE void generate_block(speck_state_t *state) {
   speck_encrypt(buffer + 6, ctr + 6, state->round_key);
   speck_encrypt(buffer + 8, ctr + 8, state->round_key);
   speck_encrypt(buffer + 10, ctr + 10, state->round_key);
+#if SPECK_UNROLL==16
   speck_encrypt(buffer + 12, ctr + 12, state->round_key);
   speck_encrypt(buffer + 14, ctr + 14, state->round_key);
+#endif
   advance_counter(state);
   state->offset = 0;
 }
@@ -95,8 +96,10 @@ static INLINE void generate_block_fast(speck_state_t *state) {
     ER64(buffer[7], buffer[6], state->round_key[i].u64[0]);
     ER64(buffer[9], buffer[8], state->round_key[i].u64[0]);
     ER64(buffer[11], buffer[10], state->round_key[i].u64[0]);
+#if SPECK_UNROLL==16    
     ER64(buffer[13], buffer[12], state->round_key[i].u64[0]);
     ER64(buffer[15], buffer[14], state->round_key[i].u64[0]);
+#endif
   }
   advance_counter(state);
   state->offset = 0;
@@ -106,11 +109,15 @@ static INLINE uint64_t speck_next64(speck_state_t *state) {
   uint64_t output;
   if
     UNLIKELY((state->offset == SPECK_BUFFER_SZ)) {
+#if (defined(HAVE_SSE2) && HAVE_SSE2)
       if (RANDOMGEN_USE_SSE41 == 1) {
         generate_block_sse(state);
       } else {
+#endif
         generate_block_fast(state);
+#if (defined(HAVE_SSE2) && HAVE_SSE2)
       }
+#endif
     }
   memcpy(&output, &state->buffer[state->offset], sizeof(output));
   state->offset += sizeof(output);

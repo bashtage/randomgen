@@ -1,3 +1,6 @@
+#ifndef _RANDOMGEN_CPU_FEATURES_H_
+#define _RANDOMGEN_CPU_FEATURES_H_
+
 #if defined(_WIN32) && defined(_MSC_VER) && _MSC_VER == 1500
 #include "../common/inttypes.h"
 #else
@@ -18,3 +21,5 @@
 #endif
 
 void feature_flags(int flags[]);
+
+#endif /* _RANDOMGEN_CPU_FEATURES_H */
