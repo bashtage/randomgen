@@ -1,14 +1,7 @@
 #ifndef _RANDOMDGEN__PCG32_H_
 #define _RANDOMDGEN__PCG32_H_
 
-#ifdef _WIN32
-#ifndef _INTTYPES
-#include "../common/stdint.h"
-#endif
-#define inline __inline __forceinline
-#else
-#include <inttypes.h>
-#endif
+#include "../common/randomgen_config.h"
 
 #define PCG_DEFAULT_MULTIPLIER_64 6364136223846793005ULL
 

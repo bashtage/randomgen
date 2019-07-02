@@ -1,26 +1,9 @@
 #ifndef _RANDOMDGEN__SPECK128_H_
 #define _RANDOMDGEN__SPECK128_H_
 
-#ifdef _WIN32
-#if _MSC_VER == 1500
-#include "../common/inttypes.h"
-#define INLINE __forceinline
-#else
-#include <inttypes.h>
-#define INLINE __inline __forceinline
-#endif
-#else
-#include <inttypes.h>
-#define INLINE inline
-#endif
+#include "../common/randomgen_config.h"
 
 #include <string.h>
-
-#ifdef _WIN32
-#define UNLIKELY(x) ((x))
-#else
-#define UNLIKELY(x) (__builtin_expect((x), 0))
-#endif
 
 #define SPECK_UNROLL 12
 #define SPECK_BUFFER_SZ 8 * SPECK_UNROLL

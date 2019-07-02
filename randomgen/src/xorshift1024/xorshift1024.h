@@ -1,18 +1,7 @@
 #ifndef _RANDOMDGEN__XORSHIFT1024_H_
 #define _RANDOMDGEN__XORSHIFT1024_H_
 
-#ifdef _WIN32
-#if _MSC_VER == 1500
-#include "../common/inttypes.h"
-#define INLINE __forceinline
-#else
-#include <inttypes.h>
-#define INLINE __inline __forceinline
-#endif
-#else
-#include <inttypes.h>
-#define INLINE inline
-#endif
+#include "../common/randomgen_config.h"
 
 typedef struct XORSHIFT1024_STATE_T {
   uint64_t s[16];

@@ -48,23 +48,7 @@
 #ifndef PCG64_H_INCLUDED
 #define PCG64_H_INCLUDED 1
 
-#ifdef _WIN32
-#include <stdlib.h>
-#if _MSC_VER == 1500
-#include "../common/inttypes.h"
-#define INLINE __forceinline
-#else
-#include <inttypes.h>
-#define INLINE __inline __forceinline
-#endif
-#if _MSC_VER >= 1900 && _M_AMD64
-#include <intrin.h>
-#pragma intrinsic(_umul128)
-#endif
-#else
-#define INLINE inline
-#include <inttypes.h>
-#endif
+#include "../common/randomgen_config.h"
 
 #if __GNUC_GNU_INLINE__ && !defined(__cplusplus)
 #error Nonstandard GNU inlining semantics. Compile with -std=c99 or better.

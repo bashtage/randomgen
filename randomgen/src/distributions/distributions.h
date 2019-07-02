@@ -2,25 +2,9 @@
 #define _RANDOMDGEN__DISTRIBUTIONS_H_
 
 #pragma once
-#include <stddef.h>
-#ifdef _WIN32
-#if _MSC_VER == 1500
-#include "../common/stdint.h"
-typedef int bool;
-#define false 0
-#define true 1
-#else
-#include <stdbool.h>
-#include <stdint.h>
-#endif
-#else
-#include <stdbool.h>
-#include <stdint.h>
-#endif
+#include "../common/randomgen_config.h"
 
-#include "Python.h"
-#include "numpy/npy_common.h"
-#include "numpy/npy_math.h"
+#include "../common/randomgen_config_numpy.h"
 
 /*
  * RAND_INT_TYPE is used to share integer generators with RandomState which

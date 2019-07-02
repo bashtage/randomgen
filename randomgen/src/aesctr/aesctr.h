@@ -14,36 +14,7 @@
 #define HAVE_SSE2 0
 #endif
 
-#undef HAVE_IMMINTRIN
-#if defined(__x86_64__) || defined(_M_X64) || defined(__i386__) ||             \
-    defined(_M_IX86)
-#if defined(_MSC_VER) && defined(_WIN32)
-#if _MSC_VER >= 1900
-#include <immintrin.h>
-#define HAVE_IMMINTRIN 1
-#endif
-#else
-#include <immintrin.h>
-#define HAVE_IMMINTRIN 1
-#endif
-#endif
-
-#ifdef _WIN32
-#define ALIGN_WINDOWS __declspec(align(16))
-#define ALIGN_GCC_CLANG
-#if _MSC_VER == 1500
-#include "../common/inttypes.h"
-#define INLINE __forceinline
-#else
-#include <inttypes.h>
-#define INLINE __inline __forceinline
-#endif
-#else
-#define ALIGN_WINDOWS
-#define ALIGN_GCC_CLANG __attribute__((aligned(16)))
-#include <inttypes.h>
-#define INLINE inline
-#endif
+#include "../common/randomgen_config.h"
 
 #include "softaes.h"
 #include <stddef.h>
@@ -52,12 +23,6 @@
 
 #define AESCTR_UNROLL 4
 #define AESCTR_ROUNDS 10
-
-#ifdef _WIN32
-#define UNLIKELY(x) ((x))
-#else
-#define UNLIKELY(x) (__builtin_expect((x), 0))
-#endif
 
 extern int RANDOMGEN_USE_AESNI;
 
