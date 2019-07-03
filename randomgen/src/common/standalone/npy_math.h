@@ -1,9 +1,9 @@
 #ifndef __NPY_MATH_C99_H_
 #define __NPY_MATH_C99_H_
 
-#include <math.h>
-
 #include "npy_common.h"
+
+#include <math.h>
 
 #if defined(_MSC_VER) && (_MSC_VER < 1900)
     #define npy_isnan(x) _isnan((x))

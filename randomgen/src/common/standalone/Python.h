@@ -1,9 +1,11 @@
 #ifndef Py_PYTHON_H
 #define Py_PYTHON_H
 
-#include <inttypes.h>
+#include "../randomgen_config.h"
 
-typedef uintptr_t       Py_uintptr_t;
-typedef intptr_t        Py_intptr_t;
+#include <stdint.h>
+
+typedef uintptr_t Py_uintptr_t;
+typedef intptr_t  Py_intptr_t;
 
 #endif
