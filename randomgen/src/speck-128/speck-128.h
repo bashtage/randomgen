@@ -1,18 +1,20 @@
 #ifndef _RANDOMDGEN__SPECK128_H_
 #define _RANDOMDGEN__SPECK128_H_
 
+#include "../common/randomgen_config.h"
+#include "../common/randomgen_immintrin.h"
+
 #include "speck-128-common.h"
-#if (defined(HAVE_SSE2) && HAVE_SSE2)
+#if defined(HAVE_IMMINTRIN)
 #include "speck-128-sse.h"
 #endif
 
-#ifdef _WIN32
-#define UNLIKELY(x) ((x))
-#else
-#define UNLIKELY(x) (__builtin_expect((x), 0))
-#endif
-
 extern int RANDOMGEN_USE_SSE41;
+
+#define SPECK_UNROLL 12
+#define SPECK_BUFFER_SZ 8 * SPECK_UNROLL
+#define SPECK_ROUNDS 34 /* Only correct for 128x256 */
+#define SPECK_CTR_SZ SPECK_UNROLL / 2
 
 static INLINE void TF83(uint64_t *x, uint64_t *y, const uint64_t k) {
   x[0] = ((x[0] >> 8) | (x[0] << (64 - 8)));
@@ -109,13 +111,13 @@ static INLINE uint64_t speck_next64(speck_state_t *state) {
   uint64_t output;
   if
     UNLIKELY((state->offset == SPECK_BUFFER_SZ)) {
-#if (defined(HAVE_SSE2) && HAVE_SSE2)
+#if defined(HAVE_IMMINTRIN)
       if (RANDOMGEN_USE_SSE41 == 1) {
         generate_block_sse(state);
       } else {
 #endif
         generate_block_fast(state);
-#if (defined(HAVE_SSE2) && HAVE_SSE2)
+#if defined(HAVE_IMMINTRIN)
       }
 #endif
     }

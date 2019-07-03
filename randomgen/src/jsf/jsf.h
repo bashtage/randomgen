@@ -29,18 +29,7 @@
 
 /* Based on code published by Bob Jenkins in 2007, adapted for C from C++ */
 
-#ifdef _WIN32
-#if _MSC_VER == 1500
-#include "../common/inttypes.h"
-#define INLINE __forceinline
-#else
-#include <inttypes.h>
-#define INLINE __inline __forceinline
-#endif
-#else
-#include <inttypes.h>
-#define INLINE inline
-#endif
+#include "../common/randomgen_config.h"
 
 typedef union JSF_UINT_T {
   uint64_t u64;

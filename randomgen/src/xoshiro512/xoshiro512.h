@@ -1,19 +1,7 @@
 #ifndef _RANDOMDGEN__XOSHIRO512_H_
 #define _RANDOMDGEN__XOSHIRO512_H_
 
-#ifdef _WIN32
-#if _MSC_VER == 1500
-#include "../common/inttypes.h"
-#define INLINE __forceinline
-#else
-#include <inttypes.h>
-#define INLINE __inline __forceinline
-#endif
-#else
-#include <inttypes.h>
-#define INLINE inline
-#endif
-#include <string.h>
+#include "../common/randomgen_config.h"
 
 typedef struct XOSHIRO512_STATE_T
 {

@@ -1,11 +1,7 @@
 #ifndef _RANDOMGEN_CPU_FEATURES_H_
 #define _RANDOMGEN_CPU_FEATURES_H_
 
-#if defined(_WIN32) && defined(_MSC_VER) && _MSC_VER == 1500
-#include "../common/inttypes.h"
-#else
-#include <inttypes.h>
-#endif
+#include "randomgen_config.h"
 
 #undef HAVE_CPUID
 #if defined(__x86_64__) || defined(_M_X64) || defined(__i386__) ||             \

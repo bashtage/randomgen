@@ -32,18 +32,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #ifndef _threefry_dot_h_
 #define _threefry_dot_h_
 
-#ifdef _WIN32
-#if _MSC_VER == 1500
-#include "../common/inttypes.h"
-#define INLINE __forceinline
-#else
-#include <inttypes.h>
-#define INLINE __inline __forceinline
-#endif
-#else
-#include <inttypes.h>
-#define INLINE inline
-#endif
+#include "../common/randomgen_config.h"
 
 #include "../common/features/compilerfeatures.h"
 #include "../common/array.h"

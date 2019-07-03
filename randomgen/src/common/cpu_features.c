@@ -15,7 +15,7 @@ void feature_flags(int flags[])
 #elif defined(_MSC_VER) && defined(_WIN32)
     int cpu_info[4];
     int num_ids, ecx = 0;
-    __cpuid(&cpu_info, 0);
+    __cpuid(cpu_info, 0);
     num_ids = (int)cpu_info[0];
     if (num_ids >= 1)
     {

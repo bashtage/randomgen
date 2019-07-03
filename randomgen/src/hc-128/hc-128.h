@@ -3,20 +3,7 @@
 
 #pragma once
 
-#ifdef _WIN32
-#if _MSC_VER == 1500
-#include "../common/inttypes.h"
-#define INLINE __forceinline
-#else
-#include <inttypes.h>
-#define INLINE __inline __forceinline
-#endif
-#include <stdlib.h>
-#else
-#include <inttypes.h>
-#define INLINE inline
-#endif
-//#include <stddef.h>
+#include "../common/randomgen_config.h"
 
 #define HC128_UNROLL 16
 

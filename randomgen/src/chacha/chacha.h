@@ -21,30 +21,15 @@
 #define _RANDOMDGEN__CHACHA_H_
 
 
-#ifdef _WIN32
-#if _MSC_VER == 1500
-#include "../common/inttypes.h"
-#define INLINE __forceinline
-#else
-#include <inttypes.h>
-#define INLINE __inline __forceinline
-#endif
-#else
-#include <inttypes.h>
-#define INLINE inline
-#endif
-
-#ifdef _MSC_VER
-#define M128I_CAST
-#define ALIGN_WINDOWS __declspec(align(16))
-#define ALIGN_GCC_CLANG
-#else
-#define ALIGN_WINDOWS
-#define ALIGN_GCC_CLANG __attribute__((aligned(16)))
-#define M128I_CAST (__m128i)
-#endif
+#include "../common/randomgen_config.h"
 
 #define USE_128BIT_COUNTER 1
+
+#if defined(_WIN32) && defined(_MSC_VER)
+#define M128I_CAST
+#else
+#define M128I_CAST (__m128i)
+#endif
 
 typedef double * aligned_double_ptr ;
 

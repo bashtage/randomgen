@@ -34,17 +34,11 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 /** \cond HIDDEN_FROM_DOXYGEN */
 
-#ifdef _WIN32
-#if _MSC_VER == 1500
-#include "../common/inttypes.h"
-#define INLINE __forceinline
-#else
-#include <inttypes.h>
-#define INLINE __inline __forceinline
-#endif
-#else
-#include <inttypes.h>
-#define INLINE inline
+#include "../common/randomgen_config.h"
+
+#if defined(_MSC_VER) && (_MSC_VER >= 1900) && defined(_M_AMD64) && _M_AMD64
+#include <intrin.h>
+#pragma intrinsic(_umul128)
 #endif
 
 #include "../common/features/compilerfeatures.h"

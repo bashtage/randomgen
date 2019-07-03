@@ -13,7 +13,7 @@ int aes_capable(void)
     return RANDOMGEN_USE_AESNI;
 }
 
-#if (defined(HAVE_SSE2) && HAVE_SSE2)
+#if defined(HAVE_IMMINTRIN) && !defined(RANDOMGEN_FORCE_SOFTAES)
 #define AES_ROUND(rcon, index)                                                 \
     do                                                                         \
     {                                                                          \
@@ -38,7 +38,7 @@ void aesctr_seed_r(aesctr_state_t *state, uint64_t *seed)
     };*/
     if (RANDOMGEN_USE_AESNI)
     {
-#if (defined(HAVE_SSE2) && HAVE_SSE2)
+#if defined(HAVE_IMMINTRIN) && !defined(RANDOMGEN_FORCE_SOFTAES)
         __m128i k = _mm_set_epi64x(seed[1], seed[0]);
         state->seed[0].m128 = k;
         // D. Lemire manually unrolled following loop since

@@ -1,31 +1,8 @@
 #ifndef _RANDOMDGEN__RDRAND_H_
 #define _RANDOMDGEN__RDRAND_H_
 
-#ifdef _WIN32
-#if _MSC_VER == 1500
-#include "../common/inttypes.h"
-#define INLINE __forceinline
-#else
-#include <inttypes.h>
-#define INLINE __inline __forceinline
-#endif
-#else
-#include <inttypes.h>
-#define INLINE inline
-#endif
-
-#undef HAVE_IMMINTRIN
-#if defined(__x86_64__) || defined(_M_X64) || defined(__i386__) || defined(_M_IX86)
-#if defined(_MSC_VER) && defined(_WIN32)
-#if _MSC_VER >= 1900
-#include <immintrin.h>
-#define HAVE_IMMINTRIN 1
-#endif
-#else
-#include <immintrin.h>
-#define HAVE_IMMINTRIN 1
-#endif
-#endif
+#include "../common/randomgen_config.h"
+#include "../common/randomgen_immintrin.h"
 
 typedef struct s_rdrand_state {
   int status;

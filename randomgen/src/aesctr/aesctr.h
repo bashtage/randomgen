@@ -10,59 +10,18 @@
 // #ifdef __AES__
 // contributed by Samuel Neves
 
-#if defined(RANDOMGEN_FORCE_SOFTAES)
-#define HAVE_SSE2 0
-#endif
-
-#undef HAVE_IMMINTRIN
-#if defined(__x86_64__) || defined(_M_X64) || defined(__i386__) ||             \
-    defined(_M_IX86)
-#if defined(_MSC_VER) && defined(_WIN32)
-#if _MSC_VER >= 1900
-#include <immintrin.h>
-#define HAVE_IMMINTRIN 1
-#endif
-#else
-#include <immintrin.h>
-#define HAVE_IMMINTRIN 1
-#endif
-#endif
-
-#ifdef _WIN32
-#define ALIGN_WINDOWS __declspec(align(16))
-#define ALIGN_GCC_CLANG
-#if _MSC_VER == 1500
-#include "../common/inttypes.h"
-#define INLINE __forceinline
-#else
-#include <inttypes.h>
-#define INLINE __inline __forceinline
-#endif
-#else
-#define ALIGN_WINDOWS
-#define ALIGN_GCC_CLANG __attribute__((aligned(16)))
-#include <inttypes.h>
-#define INLINE inline
-#endif
+#include "../common/randomgen_config.h"
+#include "../common/randomgen_immintrin.h"
 
 #include "softaes.h"
-#include <stddef.h>
-#include <stdio.h>
-#include <string.h>
 
 #define AESCTR_UNROLL 4
 #define AESCTR_ROUNDS 10
 
-#ifdef _WIN32
-#define UNLIKELY(x) ((x))
-#else
-#define UNLIKELY(x) (__builtin_expect((x), 0))
-#endif
-
 extern int RANDOMGEN_USE_AESNI;
 
 union AES128_T {
-#if (defined(HAVE_SSE2) && HAVE_SSE2)
+#if defined(HAVE_IMMINTRIN) && !defined(RANDOMGEN_FORCE_SOFTAES)
   __m128i m128;
 #endif
   uint64_t u64[2];
@@ -87,7 +46,7 @@ static INLINE uint64_t aesctr_r(aesctr_state_t *state) {
   uint64_t output;
   if (UNLIKELY(state->offset >= 16 * AESCTR_UNROLL)) {
     if (RANDOMGEN_USE_AESNI) {
-#if (defined(HAVE_SSE2) && HAVE_SSE2)
+#if defined(HAVE_IMMINTRIN) && !defined(RANDOMGEN_FORCE_SOFTAES)
       __m128i work[AESCTR_UNROLL];
       for (int i = 0; i < AESCTR_UNROLL; ++i) {
         work[i] = _mm_xor_si128(state->ctr[i].m128, state->seed[0].m128);
