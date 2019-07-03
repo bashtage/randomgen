@@ -1,0 +1,6 @@
+randomgen.hc128.HC128.from\_seed\_seq
+=====================================
+
+.. currentmodule:: randomgen.hc128
+
+.. automethod:: HC128.from_seed_seq

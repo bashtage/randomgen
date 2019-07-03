@@ -1,0 +1,6 @@
+randomgen.seed\_sequence.SeedSequence.spawn
+===========================================
+
+.. currentmodule:: randomgen.seed_sequence
+
+.. automethod:: SeedSequence.spawn

@@ -15,6 +15,7 @@ Seeding and State
 
    ~Xoroshiro128.seed
    ~Xoroshiro128.state
+   ~Xoroshiro128.from_seed_seq
 
 Parallel generation
 ===================

@@ -15,6 +15,7 @@ Seeding and State
 
    ~PCG64.seed
    ~PCG64.state
+   ~PCG64.from_seed_seq
 
 Parallel generation
 ===================

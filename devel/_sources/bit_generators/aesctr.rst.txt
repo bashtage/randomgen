@@ -15,6 +15,7 @@ Seeding and State
 
    ~AESCounter.seed
    ~AESCounter.state
+   ~AESCounter.from_seed_seq
 
 Parallel generation
 ===================
