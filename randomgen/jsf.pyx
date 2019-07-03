@@ -7,22 +7,22 @@ from randomgen.entropy import random_entropy, seed_by_array
 __all__ = ['JSF']
 
 INT_TYPES = (int, long, np.integer)
-JSF_DEFAULTS = {64:{'p': 7,'q': 13,'r': 37},
-                32:{'p':27, 'q':17, 'r': 0}}
+JSF_DEFAULTS = {64: {'p': 7, 'q': 13, 'r': 37},
+                32: {'p': 27, 'q': 17, 'r': 0}}
 
-JSF32_ALT_PARAMETERS = ((27,17,0),
-                        (9,16, 0),
-                        (9,24, 0),
-                        (10,16, 0),
-                        (10,24, 0),
-                        (11,16, 0),
-                        (11,24, 0),
-                        (25,8, 0),
-                        (25,16, 0),
-                        (26,8, 0),
-                        (26,16, 0),
-                        (26,17, 0),
-                        (27,16, 0),
+JSF32_ALT_PARAMETERS = ((27, 17, 0),
+                        (9, 16, 0),
+                        (9, 24, 0),
+                        (10, 16, 0),
+                        (10, 24, 0),
+                        (11, 16, 0),
+                        (11, 24, 0),
+                        (25, 8, 0),
+                        (25, 16, 0),
+                        (26, 8, 0),
+                        (26, 16, 0),
+                        (26, 17, 0),
+                        (27, 16, 0),
                         (3, 14, 24),
                         (3, 25, 15),
                         (4, 15, 24),
@@ -49,10 +49,10 @@ JSF32_ALT_PARAMETERS = ((27,17,0),
 JSF64_ALT_PARAMETERS = ((7, 13, 37),
                         (39, 11, 0))
 
-JSF_PARAMETERS = {32:[], 64: []}
-for p,q,r in JSF32_ALT_PARAMETERS:
+JSF_PARAMETERS = {32: [], 64: []}
+for p, q, r in JSF32_ALT_PARAMETERS:
     JSF_PARAMETERS[32].append({'p': p, 'q': q, 'r': r})
-for p,q,r in JSF64_ALT_PARAMETERS:
+for p, q, r in JSF64_ALT_PARAMETERS:
     JSF_PARAMETERS[64].append({'p': p, 'q': q, 'r': r})
 
 cdef uint64_t jsf64_uint64(void* st) nogil:
@@ -182,7 +182,7 @@ cdef class JSF(BitGenerator):
             raise ValueError('size must be either 32 or 64')
         if seed_size not in (1, 2, 3) or not isinstance(seed_size, INT_TYPES):
             raise ValueError('seed size must be one of 1, 2, or 3')
-        for val, val_name in ((p,'p'), (q,'q'), (r,'r')):
+        for val, val_name in ((p, 'p'), (q, 'q'), (r, 'r')):
             if val is not None and not (0<= val <= size-1 and isinstance(val, INT_TYPES)):
                 raise ValueError('{0} must be an integer between 0 and'
                                  '{1}'.format(val_name, size-1))
@@ -210,6 +210,63 @@ cdef class JSF(BitGenerator):
     cdef _reset_state_variables(self):
         self.rng_state.has_uint32 = 0
         self.rng_state.uinteger = 0
+
+    @classmethod
+    def from_seed_seq(cls, entropy=None, seed_size=1, size=64, p=None, q=None,
+                      r=None):
+        """
+        from_seed_seq(entropy=None, seed_size=1, size=64, p=None, q=None, r=None)
+
+        Create a instance using a SeedSequence
+
+        Parameters
+        ----------
+        entropy : {None, int, sequence[int], SeedSequence}
+            Entropy to pass to SeedSequence, or a SeedSequence instance. Using
+            a SeedSequence instance allows all parameters to be set.
+        seed_size : {1, 2, 3}, optional
+            Number of distinct seed values used to initialize JSF.  The
+            original implementation uses 1 (default). Higher values increase
+            the size of the seed space which is ``2**(size*seed_size)``.
+        size : {32, 64}, optional
+            Output size of a single iteration of JSF. 32 is better suited to
+            32-bit systems.
+        p : int, optional
+            One the the three parameters that defines JSF. See Notes for
+            ``JSF``.
+            Notes.
+        q : int, optional
+            One the the three parameters that defines JSF. See Notes for
+            ``JSF``.
+        r : int, optional
+            One the the three parameters that defines JSF. See Notes for
+            ``JSF``.
+
+        Returns
+        -------
+        bit_gen : JSF
+            SeedSequence initialized bit generator with SeedSequence instance
+            attached to ``bit_gen.seed_seq``
+
+        See Also
+        --------
+        randomgen.seed_sequence.SeedSequence
+        """
+        cls_kwargs = dict(seed_size=seed_size, size=size, p=p, q=q, r=r)
+        return super(JSF, cls).from_seed_seq(entropy, cls_kwargs=cls_kwargs)
+
+    def _seed_from_seq(self, seed_seq):
+        self.seed_seq = seed_seq
+        dtype = np.uint64 if self.size == 64 else np.uint32
+        state = self.seed_seq.generate_state(self.seed_size, dtype)
+        if self.size == 64:
+            jsf64_seed(&self.rng_state,
+                       <uint64_t*>np.PyArray_DATA(state),
+                       self.seed_size)
+        else:
+            jsf32_seed(&self.rng_state,
+                       <uint32_t*>np.PyArray_DATA(state),
+                       self.seed_size)
 
     def seed(self, seed=None):
         """
@@ -268,10 +325,10 @@ cdef class JSF(BitGenerator):
             c = self.rng_state.c.u32
             d = self.rng_state.d.u32
         return {'bit_generator': self.__class__.__name__,
-                'state': {'a':a,'b':b,'c':c,'d':d,
-                          'p':self.rng_state.p,
-                          'q':self.rng_state.q,
-                          'r':self.rng_state.r},
+                'state': {'a': a, 'b': b, 'c': c, 'd': d,
+                          'p': self.rng_state.p,
+                          'q': self.rng_state.q,
+                          'r': self.rng_state.r},
                 'size': self.size,
                 'has_uint32': self.rng_state.has_uint32,
                 'uinteger': self.rng_state.uinteger,
@@ -287,7 +344,7 @@ cdef class JSF(BitGenerator):
                              'PRNG'.format(self.__class__.__name__))
         self.size = value['size']
         state = value['state']
-        self.setup_generator(state['p'],state['q'],state['r'])
+        self.setup_generator(state['p'], state['q'], state['r'])
         if self.size == 64:
             self.rng_state.a.u64 = state['a']
             self.rng_state.b.u64 = state['b']

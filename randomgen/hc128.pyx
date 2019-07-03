@@ -110,6 +110,36 @@ cdef class HC128(BitGenerator):
         self._bitgen.next_double = &hc128_double
         self._bitgen.next_raw = &hc128_uint64
 
+    @classmethod
+    def from_seed_seq(cls, entropy=None):
+        """
+        from_seed_seq(entropy=None)
+
+        Create a instance using a SeedSequence
+
+        Parameters
+        ----------
+        entropy : {None, int, sequence[int], SeedSequence}
+            Entropy to pass to SeedSequence, or a SeedSequence instance. Using
+            a SeedSequence instance allows all parameters to be set.
+
+        Returns
+        -------
+        bit_gen : HC128
+            SeedSequence initialized bit generator with SeedSequence instance
+            attached to ``bit_gen.seed_seq``
+
+        See Also
+        --------
+        randomgen.seed_sequence.SeedSequence
+        """
+        return super(HC128, cls).from_seed_seq(entropy)
+
+    def _seed_from_seq(self, seed_seq):
+        self.seed_seq = seed_seq
+        state = self.seed_seq.generate_state(4, np.uint64)
+        self.seed(key=state)
+
     def seed(self, seed=None, key=None):
         """
         seed(seed=None)
@@ -178,8 +208,8 @@ cdef class HC128(BitGenerator):
         for i in range(16):
             buf_arr[i] = self.rng_state.buffer[i]
         return {'bit_generator': self.__class__.__name__,
-                'state': {'p':p,
-                          'q':q,
+                'state': {'p': p,
+                          'q': q,
                           'hc_idx': self.rng_state.hc_idx,
                           'buffer': buffer,
                           'buffer_idx': self.rng_state.buffer_idx},

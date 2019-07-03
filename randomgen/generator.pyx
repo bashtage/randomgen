@@ -34,6 +34,7 @@ __all__ = ['Generator', 'beta', 'binomial', 'bytes', 'chisquare', 'choice',
 
 np.import_array()
 
+
 # TODO: Remove after deprecation
 def _rand_dep_message(old, new, args, dtype):
     msg = '{old} is deprecated. Use {new}({call}) instead'
@@ -42,11 +43,11 @@ def _rand_dep_message(old, new, args, dtype):
         if len(args) == 1:
             size = str(args[0])
         else:
-            size = '(' + ', '.join(map(str,args)) + ')'
+            size = '(' + ', '.join(map(str, args)) + ')'
         call = '{size}, dtype=\'{dtype}\''.format(size=size,
-                                                dtype=str(dtype))
+                                                  dtype=str(dtype))
     else:
-        call = 'dtype=\'{dtype}\''.format(dtype = str(dtype))
+        call = 'dtype=\'{dtype}\''.format(dtype=str(dtype))
     return msg.format(old=old, new=new, call=call)
 
 
@@ -846,7 +847,7 @@ cdef class Generator:
                     idx = np.arange(pop_size, dtype=np.int64)
                     idx_ptr = np.PyArray_BYTES(<np.ndarray>idx)
                     buf_ptr = <char*>&buf
-                    self._shuffle_raw(pop_size_i, max(pop_size_i - size_i,1),
+                    self._shuffle_raw(pop_size_i, max(pop_size_i - size_i, 1),
                                       8, 8, idx_ptr, buf_ptr)
                     # Copy to allow potentially large array backing idx to be gc
                     idx = idx[(pop_size - size):].copy()
@@ -3035,9 +3036,9 @@ cdef class Generator:
             raise ValueError("left == right")
 
         return cont_broadcast_3(&random_triangular, &self._bitgen, size, self.lock,
-                            oleft, '', CONS_NONE,
-                            omode, '', CONS_NONE,
-                            oright, '', CONS_NONE)
+                                oleft, '', CONS_NONE,
+                                omode, '', CONS_NONE,
+                                oright, '', CONS_NONE)
 
     # Complicated, discrete distributions:
     def binomial(self, n, p, size=None):
@@ -3656,9 +3657,9 @@ cdef class Generator:
 
         """
         return disc(&random_logseries, &self._bitgen, size, self.lock, 1, 0,
-                 p, 'p', CONS_BOUNDED_0_1,
-                 0.0, '', CONS_NONE,
-                 0.0, '', CONS_NONE)
+                    p, 'p', CONS_BOUNDED_0_1,
+                    0.0, '', CONS_NONE,
+                    0.0, '', CONS_NONE)
 
     # Multivariate distributions:
     def multivariate_normal(self, mean, cov, size=None, check_valid='warn',
@@ -3934,7 +3935,7 @@ cdef class Generator:
         if kahan_sum(pix, d-1) > (1.0 + 1e-12):
             raise ValueError("sum(pvals[:-1]) > 1.0")
 
-        if np.PyArray_NDIM(on) != 0: # vector
+        if np.PyArray_NDIM(on) != 0:  # vector
             check_array_constraint(on, 'n', CONS_NON_NEGATIVE)
             if size is None:
                 it = np.PyArray_MultiIterNew1(on)
@@ -3961,7 +3962,7 @@ cdef class Generator:
         else:
             try:
                 shape = (operator.index(size), d)
-            except:
+            except TypeError:
                 shape = tuple(size) + (d,)
 
         multin = np.zeros(shape, dtype=np.int64)
@@ -4092,7 +4093,7 @@ cdef class Generator:
         else:
             try:
                 shape = (operator.index(size), k)
-            except:
+            except TypeError:
                 shape = tuple(size) + (k,)
 
         diric = np.zeros(shape, np.float64)

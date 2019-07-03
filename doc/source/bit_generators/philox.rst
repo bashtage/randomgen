@@ -15,6 +15,7 @@ Seeding and State
 
    ~Philox.seed
    ~Philox.state
+   ~Philox.from_seed_seq
 
 Parallel generation
 ===================

@@ -2939,9 +2939,9 @@ cdef class RandomState:
             raise ValueError("left == right")
 
         return cont_broadcast_3(&random_triangular, &self._bitgen, size, self.lock,
-                            oleft, '', CONS_NONE,
-                            omode, '', CONS_NONE,
-                            oright, '', CONS_NONE)
+                                oleft, '', CONS_NONE,
+                                omode, '', CONS_NONE,
+                                oright, '', CONS_NONE)
 
     # Complicated, discrete distributions:
     def binomial(self, n, p, size=None):
@@ -3319,7 +3319,6 @@ cdef class RandomState:
         # Match historical output type
         return int64_to_long(out)
 
-
     def geometric(self, p, size=None):
         """
         geometric(p, size=None)
@@ -3367,9 +3366,9 @@ cdef class RandomState:
 
         """
         out = disc(&legacy_random_geometric, &self._bitgen, size, self.lock, 1, 0,
-                    p, 'p', CONS_BOUNDED_GT_0_1,
-                    0.0, '', CONS_NONE,
-                    0.0, '', CONS_NONE)
+                   p, 'p', CONS_BOUNDED_GT_0_1,
+                   0.0, '', CONS_NONE,
+                   0.0, '', CONS_NONE)
         # Match historical output type
         return int64_to_long(out)
 
@@ -3493,7 +3492,7 @@ cdef class RandomState:
         ongood = ongood.astype(np.int64)
         onbad = onbad.astype(np.int64)
         onsample = onsample.astype(np.int64)
-        out = discrete_broadcast_iii(&legacy_random_hypergeometric,&self._bitgen, size, self.lock,
+        out = discrete_broadcast_iii(&legacy_random_hypergeometric, &self._bitgen, size, self.lock,
                                      ongood, 'ngood', CONS_NON_NEGATIVE,
                                      onbad, 'nbad', CONS_NON_NEGATIVE,
                                      onsample, 'nsample', CONS_GTE_1)
@@ -3739,7 +3738,7 @@ cdef class RandomState:
             if not psd:
                 if check_valid == 'warn':
                     warnings.warn("covariance is not positive-semidefinite.",
-                        RuntimeWarning)
+                                  RuntimeWarning)
                 else:
                     raise ValueError(
                         "covariance is not positive-semidefinite.")
@@ -3843,7 +3842,7 @@ cdef class RandomState:
         else:
             try:
                 shape = (operator.index(size), d)
-            except:
+            except TypeError:
                 shape = tuple(size) + (d,)
 
         multin = np.zeros(shape, int)
@@ -3974,7 +3973,7 @@ cdef class RandomState:
         else:
             try:
                 shape = (operator.index(size), k)
-            except:
+            except TypeError:
                 shape = tuple(size) + (k,)
 
         diric = np.zeros(shape, np.float64)
@@ -4193,6 +4192,7 @@ wald = _rand.wald
 weibull = _rand.weibull
 zipf = _rand.zipf
 
+
 # Old aliases that should not be removed
 def sample(*args, **kwargs):
     """
@@ -4201,12 +4201,14 @@ def sample(*args, **kwargs):
     """
     return _rand.random_sample(*args, **kwargs)
 
+
 def ranf(*args, **kwargs):
     """
     This is an alias of `random_sample`. See `random_sample`  for the complete
     documentation.
     """
     return _rand.random_sample(*args, **kwargs)
+
 
 __all__ = [
     'beta',

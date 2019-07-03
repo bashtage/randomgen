@@ -393,6 +393,14 @@ extensions = [Extension('randomgen.entropy',
                         extra_compile_args=EXTRA_COMPILE_ARGS,
                         extra_link_args=EXTRA_LINK_ARGS,
                         define_macros=AES_DEFS
+                        ),
+              Extension("randomgen.seed_sequence",
+                        ["randomgen/seed_sequence.pyx"],
+                        include_dirs=EXTRA_INCLUDE_DIRS,
+                        libraries=EXTRA_LIBRARIES,
+                        extra_compile_args=EXTRA_COMPILE_ARGS,
+                        extra_link_args=EXTRA_LINK_ARGS,
+                        define_macros=DEFS
                         )
               ]
 

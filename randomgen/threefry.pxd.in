@@ -1,11 +1,9 @@
 from libc.stdint cimport uint32_t, uint64_t
-
 {{
 py:
 N = (1, 2, 4)
 W = (32, 64)
 }}
-
 cdef extern from 'src/threefry/threefry.h':
 
 {{for w in W}}
@@ -34,27 +32,27 @@ cdef extern from 'src/threefry/threefry.h':
 {{endfor}}
 
     union R123_UINT_T:
-      uint64_t u64;
-      uint32_t u32;
+        uint64_t u64
+        uint32_t u32
 
     ctypedef R123_UINT_T r123_uint_t
 
     union THREEFRY_STATE_T:
-      threefry2x32_state state2x32
-      threefry4x32_state state4x32
-      threefry2x64_state state2x64
-      threefry4x64_state state4x64
+        threefry2x32_state state2x32
+        threefry4x32_state state4x32
+        threefry2x64_state state2x64
+        threefry4x64_state state4x64
 
     ctypedef THREEFRY_STATE_T threefry_state_t
 
     struct THREEFRY_ALL_T:
-      threefry_state_t state
-      int buffer_pos
-      r123_uint_t buffer[4]
-      int has_uint32
-      uint32_t uinteger
-      int width
-      int number
+        threefry_state_t state
+        int buffer_pos
+        r123_uint_t buffer[4]
+        int has_uint32
+        uint32_t uinteger
+        int width
+        int number
 
     ctypedef THREEFRY_ALL_T threefry_all_t
 

@@ -107,6 +107,38 @@ cdef class PCG32(BitGenerator):
         self._bitgen.next_double = &pcg32_double
         self._bitgen.next_raw = &pcg32_raw
 
+    @classmethod
+    def from_seed_seq(cls, entropy=None):
+        """
+        from_seed_seq(entropy=None)
+
+        Create a instance using a SeedSequence
+
+        Parameters
+        ----------
+        entropy : {None, int, sequence[int], SeedSequence}
+            Entropy to pass to SeedSequence, or a SeedSequence instance. Using
+            a SeedSequence instance allows all parameters to be set.
+
+        Returns
+        -------
+        bit_gen : PCG32
+            SeedSequence initialized bit generator with SeedSequence instance
+            attached to ``bit_gen.seed_seq``
+
+        See Also
+        --------
+        randomgen.seed_sequence.SeedSequence
+        """
+        return super(PCG32, cls).from_seed_seq(entropy)
+
+    def _seed_from_seq(self, seed_seq):
+        self.seed_seq = seed_seq
+        state = self.seed_seq.generate_state(2, np.uint64)
+        pcg32_set_seed(&self.rng_state,
+                       <uint64_t>state[0],
+                       <uint64_t>state[1])
+
     def seed(self, seed=None, inc=0):
         """
         seed(seed=None, inc=0)

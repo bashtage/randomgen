@@ -15,6 +15,7 @@ Seeding and State
 
    ~Xorshift1024.seed
    ~Xorshift1024.state
+   ~Xorshift1024.from_seed_seq
 
 Parallel generation
 ===================

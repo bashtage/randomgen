@@ -37,11 +37,11 @@ cdef class ChaCha(BitGenerator):
         another RNG before use, the value in key is directly set. Can be either
         a Python int in [0, 2**256) or a 4-element uint64 array.
         key and seed cannot both be used.
-    rounds : {None, int}, optional
+    rounds : {int}, optional
         Number of rounds to run the ChaCha mixer. Must be an even integer.
-          The standard number of rounds in 20.  Smaller values, usually 8 or
-          more, can be used to reduce security properties of the random stream
-          while improving performance.
+        The standard number of rounds in 20.  Smaller values, usually 8 or
+        more, can be used to reduce security properties of the random stream
+        while improving performance.
 
     Attributes
     ----------
@@ -139,6 +139,48 @@ cdef class ChaCha(BitGenerator):
         if self.rng_state:
             PyArray_free_aligned(self.rng_state)
 
+    @classmethod
+    def from_seed_seq(cls, entropy=None, counter=None, rounds=20):
+        """
+        from_seed_seq(entropy=None, counter=None, rounds=20):
+
+        Create a instance using a SeedSequence
+
+        Parameters
+        ----------
+        entropy : {None, int, sequence[int], SeedSequence}
+            Entropy to pass to SeedSequence, or a SeedSequence instance. Using
+            a SeedSequence instance allows all parameters to be set.
+        counter : {None, int, array_like}
+            Positive integer less than 2**128 containing the counter position
+            or a 2 element array of uint64 containing the counter
+        rounds : {int}, optional
+            Number of rounds to run the ChaCha mixer. Must be an even integer.
+            The standard number of rounds in 20.  Smaller values, usually 8 or
+            more, can be used to reduce security properties of the random
+            stream while improving performance.
+
+        Returns
+        -------
+        bit_gen : ChaCha
+            SeedSequence initialized bit generator with SeedSequence instance
+            attached to ``bit_gen.seed_seq``
+
+        See Also
+        --------
+        randomgen.seed_sequence.SeedSequence
+        """
+        cls_kwargs = dict(rounds=rounds)
+        seed_kwargs = dict(counter=counter)
+        return super(ChaCha, cls).from_seed_seq(entropy,
+                                                cls_kwargs=cls_kwargs,
+                                                seed_kwargs=seed_kwargs)
+
+    def _seed_from_seq(self, seed_seq, counter=None):
+        self.seed_seq = seed_seq
+        state = self.seed_seq.generate_state(4, np.uint64)
+        self.seed(key=state, counter=counter)
+
     def seed(self, seed=None, counter=None, key=None):
         """
         seed(seed=None, counter=None, key=None)
@@ -163,7 +205,7 @@ cdef class ChaCha(BitGenerator):
         key : {None, int, array_like}, optional
             Key to use in the ChaCha state.  Unlike seed, which is run
             through another RNG before use, the value in key is directly set.
-            Can be either a Python int in [0, 2**256) or a 2-element uint64
+            Can be either a Python int in [0, 2**256) or a 4-element uint64
             array. key and seed cannot both be used.
 
         Raises
@@ -221,7 +263,7 @@ cdef class ChaCha(BitGenerator):
             ctr[i] = self.rng_state.ctr[i]
 
         return {'bit_generator': self.__class__.__name__,
-                'state': {'block': block, 'keysetup':keysetup, 'ctr': ctr,
+                'state': {'block': block, 'keysetup': keysetup, 'ctr': ctr,
                           'rounds': self.rng_state.rounds}}
 
     @state.setter

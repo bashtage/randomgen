@@ -1,3 +1,4 @@
+# coding=utf-8
 import operator
 
 import numpy as np
@@ -88,6 +89,38 @@ cdef class MT64(BitGenerator):
         self._bitgen.next_uint32 = &mt64_uint32
         self._bitgen.next_double = &mt64_double
         self._bitgen.next_raw = &mt64_raw
+
+    @classmethod
+    def from_seed_seq(cls, entropy=None):
+        """
+        from_seed_seq(entropy=None)
+
+        Create a instance using a SeedSequence
+
+        Parameters
+        ----------
+        entropy : {None, int, sequence[int], SeedSequence}
+            Entropy to pass to SeedSequence, or a SeedSequence instance. Using
+            a SeedSequence instance allows all parameters to be set.
+
+        Returns
+        -------
+        bit_gen : MT64
+            SeedSequence initialized bit generator with SeedSequence instance
+            attached to ``bit_gen.seed_seq``
+
+        See Also
+        --------
+        randomgen.seed_sequence.SeedSequence
+        """
+        return super(MT64, cls).from_seed_seq(entropy)
+
+    def _seed_from_seq(self, seed_seq):
+        self.seed_seq = seed_seq
+        state = self.seed_seq.generate_state(312, np.uint64)
+        mt64_init_by_array(&self.rng_state,
+                           <uint64_t*>np.PyArray_DATA(state),
+                           312)
 
     def seed(self, seed=None):
         """

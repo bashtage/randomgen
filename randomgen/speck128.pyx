@@ -143,6 +143,40 @@ cdef class SPECK128(BitGenerator):
         self.rng_state.has_uint32 = 0
         self.rng_state.uinteger = 0
 
+    @classmethod
+    def from_seed_seq(cls, entropy=None, counter=None):
+        """
+        from_seed_seq(entropy=None, counter=None)
+        Create a instance using a SeedSequence
+
+        Parameters
+        ----------
+        entropy : {None, int, sequence[int], SeedSequence}
+            Entropy to pass to SeedSequence, or a SeedSequence instance. Using
+            a SeedSequence instance allows all parameters to be set.
+        counter : {None, int, array_like}, optional
+            Counter to use in the SPECK128 state. Can be either a Python int
+            in [0, 2**128) or a 2-element uint64 array. If not provided, the
+            RNG is initialized at 0.
+
+        Returns
+        -------
+        bit_gen : SPECK128
+            SeedSequence initialized bit generator with SeedSequence instance
+            attached to ``bit_gen.seed_seq``
+
+        See Also
+        --------
+        randomgen.seed_sequence.SeedSequence
+        """
+        seed_kwargs = dict(counter=counter)
+        return super(SPECK128, cls).from_seed_seq(entropy=entropy,
+                                                  seed_kwargs=seed_kwargs)
+
+    def _seed_from_seq(self, seed_seq, counter=None):
+        self.seed_seq = seed_seq
+        state = self.seed_seq.generate_state(4, np.uint64)
+        self.seed(key=state, counter=counter)
 
     def seed(self, seed=None, counter=None, key=None):
         """
@@ -196,7 +230,7 @@ cdef class SPECK128(BitGenerator):
             _seed = int_to_array(key, 'key', 256, 64)
         speck_seed(self.rng_state, <uint64_t *>np.PyArray_DATA(_seed))
         counter = 0 if counter is None else counter
-        _counter = int_to_array(counter,'counter', 128, 64)
+        _counter = int_to_array(counter, 'counter', 128, 64)
         speck_set_counter(self.rng_state,
                           <uint64_t *>np.PyArray_DATA(_counter))
         self._reset_state_variables()
@@ -265,7 +299,7 @@ cdef class SPECK128(BitGenerator):
         return {'bit_generator': self.__class__.__name__,
                 'state': {'ctr': ctr,
                           'buffer': buffer,
-                          'round_key':round_key,
+                          'round_key': round_key,
                           'offset': self.rng_state.offset},
                 'has_uint32': self.rng_state.has_uint32,
                 'uinteger': self.rng_state.uinteger}
@@ -293,7 +327,7 @@ cdef class SPECK128(BitGenerator):
 
         arr = <uint64_t*>np.PyArray_DATA(ctr)
         for i in range(SPECK_UNROLL):
-            self.rng_state.ctr[i//2].u64[i%2] = arr[i]
+            self.rng_state.ctr[i//2].u64[i % 2] = arr[i]
 
         arr8 = <uint8_t*>np.PyArray_DATA(buffer)
         for i in range(8*SPECK_UNROLL):

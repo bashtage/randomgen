@@ -15,6 +15,7 @@ Seeding and State
 
    ~Xoshiro256.seed
    ~Xoshiro256.state
+   ~Xoshiro256.from_seed_seq
 
 Parallel generation
 ===================

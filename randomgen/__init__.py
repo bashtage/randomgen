@@ -19,13 +19,15 @@ from randomgen.xoroshiro128 import Xoroshiro128
 from randomgen.xorshift1024 import Xorshift1024
 from randomgen.xoshiro256 import Xoshiro256
 from randomgen.xoshiro512 import Xoshiro512
+from randomgen.seed_sequence import SeedSequence, SeedlessSeedSequence
 
 from ._version import get_versions
 
 __all__ = ['DSFMT', 'Generator', 'HC128', 'JSF', 'MT19937', 'MT64', 'PCG32',
            'PCG64', 'Philox', 'RDRAND', 'RandomState', 'SFMT', 'SPECK128',
            'ThreeFry', 'Xoroshiro128', 'Xorshift1024', 'Xoshiro256',
-           'Xoshiro512', 'AESCounter', 'ChaCha', 'random_entropy']
+           'Xoshiro512', 'AESCounter', 'ChaCha', 'random_entropy',
+           'SeedSequence', 'SeedlessSeedSequence']
 
 __version__ = get_versions()['version']
 del get_versions

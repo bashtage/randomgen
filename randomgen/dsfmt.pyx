@@ -128,6 +128,39 @@ cdef class DSFMT(BitGenerator):
     cdef _reset_state_variables(self):
         self.rng_state.buffer_loc = DSFMT_N64
 
+    @classmethod
+    def from_seed_seq(cls, entropy=None):
+        """
+        from_seed_seq(entropy=None)
+
+        Create a instance using a SeedSequence
+
+        Parameters
+        ----------
+        entropy : {None, int, sequence[int], SeedSequence}
+            Entropy to pass to SeedSequence, or a SeedSequence instance. Using
+            a SeedSequence instance allows all parameters to be set.
+
+        Returns
+        -------
+        bit_gen : DSFMT
+            SeedSequence initialized bit generator with SeedSequence instance
+            attached to ``bit_gen.seed_seq``
+
+        See Also
+        --------
+        randomgen.seed_sequence.SeedSequence
+        """
+        return super(DSFMT, cls).from_seed_seq(entropy)
+
+    def _seed_from_seq(self, seed_seq):
+        self.seed_seq = seed_seq
+        state = self.seed_seq.generate_state(2 * DSFMT_N64, np.uint32)
+
+        dsfmt_init_by_array(self.rng_state.state,
+                            <uint32_t *>np.PyArray_DATA(state),
+                            2 * DSFMT_N64)
+
     def seed(self, seed=None):
         """
         seed(seed=None)

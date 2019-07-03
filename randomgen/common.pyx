@@ -14,6 +14,7 @@ cimport numpy as np
 
 from randomgen.common cimport *
 from randomgen cimport api
+from randomgen.seed_sequence import SeedSequence
 
 __all__ = ['interface']
 
@@ -28,7 +29,6 @@ cdef class BitGenerator:
     """
     Abstract class for all BitGenerators
     """
-
     def __init__(self):
         self.lock = Lock()
         self._ctypes = None
@@ -38,6 +38,7 @@ cdef class BitGenerator:
         self.capsule = PyCapsule_New(<void *>&self._bitgen, name, NULL)
         if type(self) is BitGenerator:
             raise NotImplementedError('BitGenerator cannot be instantized')
+        self.seed_seq = None
 
     # Pickling support:
     def __getstate__(self):
@@ -53,6 +54,24 @@ cdef class BitGenerator:
     @property
     def state(self):
         raise NotImplemented('subclasses must implement')
+
+    @classmethod
+    def from_seed_seq(cls, entropy=None, cls_kwargs=None, seed_kwargs=None):
+        if isinstance(entropy, SeedSequence):
+            n_child = entropy.n_children_spawned
+            seed_seq = SeedSequence(entropy=entropy.entropy,
+                                    spawn_key=entropy.spawn_key,
+                                    pool_size=entropy.pool_size,
+                                    n_children_spawned=n_child)
+        else:
+            seed_seq = SeedSequence(entropy=entropy)
+        cls_kwargs = {} if cls_kwargs is None else cls_kwargs
+        bit_generator = cls(**cls_kwargs)
+
+        seed_kwargs = {} if seed_kwargs is None else seed_kwargs
+        bit_generator._seed_from_seq(seed_seq, **seed_kwargs)
+
+        return bit_generator
 
     @state.setter
     def state(self, value):
@@ -302,7 +321,7 @@ cdef double kahan_sum(double *darr, np.npy_intp n):
     return sum
 
 cpdef object object_to_int(object val, object bits, object name, int default_bits=64,
-                          object allowed_sizes=(64,)):
+                           object allowed_sizes=(64,)):
     """
     Robustly convert any supported object to a non-negative Python integer
 
@@ -362,7 +381,7 @@ cpdef object object_to_int(object val, object bits, object name, int default_bit
         out = sum([int(val[i]) * 2**(power * i) for i in range(len(val))])
     if out < 0 or (bits is not None and out >= (int(2)**bits)):
         raise ValueError('{0} is out-of-range for '
-                         '[0,2**{1})'.format(name,bits))
+                         '[0,2**{1})'.format(name, bits))
 
     return out
 
@@ -646,8 +665,8 @@ cdef object cont_broadcast_1(void *func, void *state, object size, object lock,
     return randoms
 
 cdef object cont_broadcast_2(void *func, void *state, object size, object lock,
-                 np.ndarray a_arr, object a_name, constraint_type a_constraint,
-                 np.ndarray b_arr, object b_name, constraint_type b_constraint):
+                             np.ndarray a_arr, object a_name, constraint_type a_constraint,
+                             np.ndarray b_arr, object b_name, constraint_type b_constraint):
     cdef np.ndarray randoms
     cdef double a_val, b_val
     cdef double *randoms_data

@@ -15,6 +15,7 @@ Seeding and State
 
    ~HC128.seed
    ~HC128.state
+   ~HC128.from_seed_seq
 
 Extending
 =========

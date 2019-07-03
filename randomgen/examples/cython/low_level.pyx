@@ -33,6 +33,7 @@ def uniform_using_bitgen(Py_ssize_t n):
         sum += rng.next_double(rng.state)
     return sum / n
 
+
 def uniform_using_lowlevel(Py_ssize_t n):
     """
     Example showing how to use the low-level interface provided by the pxd file

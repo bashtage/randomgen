@@ -30,10 +30,11 @@ ctypedef ConstraintType constraint_type
 
 cdef class BitGenerator:
     cdef bitgen_t _bitgen
-    cdef public object capsule
+    cdef readonly object capsule
     cdef object _ctypes
     cdef object _cffi
-    cdef public object lock
+    cdef readonly object lock
+    cdef public object seed_seq
 
 cdef object benchmark(bitgen_t *bitgen, object lock, Py_ssize_t cnt, object method)
 cdef object random_raw(bitgen_t *bitgen, object lock, object size, object output)
@@ -110,9 +111,9 @@ cdef object cont_broadcast_3(void *func, void *state, object size, object lock,
                              np.ndarray c_arr, object c_name, constraint_type c_constraint)
 
 cdef object discrete_broadcast_iii(void *func, void *state, object size, object lock,
-                                  np.ndarray a_arr, object a_name, constraint_type a_constraint,
-                                  np.ndarray b_arr, object b_name, constraint_type b_constraint,
-                                  np.ndarray c_arr, object c_name, constraint_type c_constraint)
+                                   np.ndarray a_arr, object a_name, constraint_type a_constraint,
+                                   np.ndarray b_arr, object b_name, constraint_type b_constraint,
+                                   np.ndarray c_arr, object c_name, constraint_type c_constraint)
 
 cdef inline void compute_complex(double *rv_r, double *rv_i, double loc_r,
                                  double loc_i, double var_r, double var_i, double rho) nogil:
