@@ -22,8 +22,7 @@
 
 
 #include "../common/randomgen_config.h"
-
-#define USE_128BIT_COUNTER 1
+#include "../common/randomgen_immintrin.h"
 
 #if defined(_WIN32) && defined(_MSC_VER)
 #define M128I_CAST
@@ -44,12 +43,10 @@ typedef struct CHACHA_STATE_T chacha_state_t;
 
 
 #ifdef __SSE2__
-#include "emmintrin.h"
 
 // Get an efficient _mm_roti_epi32 based on enabled features.
 #if !defined(__XOP__)
     #if defined(__SSSE3__)
-        #include <tmmintrin.h>
         #define _mm_roti_epi32(r, c) (                              \
             ((c) == 8) ?                                            \
                 _mm_shuffle_epi8((r), _mm_set_epi8(14, 13, 12, 15,  \
@@ -81,6 +78,8 @@ typedef struct CHACHA_STATE_T chacha_state_t;
 
 static INLINE void chacha_core(chacha_state_t *state) {
     // ROTVn rotates the elements in the given vector n places to the left.
+    int i;
+
     #define CHACHA_ROTV1(x) _mm_shuffle_epi32(M128I_CAST x, 0x39)
     #define CHACHA_ROTV2(x) _mm_shuffle_epi32(M128I_CAST x, 0x4e)
     #define CHACHA_ROTV3(x) _mm_shuffle_epi32(M128I_CAST x, 0x93)
@@ -90,7 +89,7 @@ static INLINE void chacha_core(chacha_state_t *state) {
     __m128i c = _mm_load_si128((__m128i*) (&state->block[8]));
     __m128i d = _mm_load_si128((__m128i*) (&state->block[12]));
 
-    for (int i = 0; i < state->rounds; i += 2) {
+    for (i = 0; i < state->rounds; i += 2) {
         a = _mm_add_epi32(a, b);
         d = _mm_xor_si128(d, a);
         d = _mm_roti_epi32(d, 16);
@@ -170,18 +169,12 @@ static INLINE void generate_block(chacha_state_t *state) {
     uint32_t input[16];
     for (i = 0; i < 4; ++i) input[i] = constants[i];
     for (i = 0; i < 8; ++i) input[4 + i] = state->keysetup[i];
-#if USE_128BIT_COUNTER
     // Using a 128-bit counter.
     input[12] = (state->ctr[0] / 16) & 0xffffffffu;
     // Carry from the top part of ctr
     input[13] = (((uint32_t)(state->ctr[1]) % 16) << 28) | ((state->ctr[0] / 16) >> 32);
     input[14] = (state->ctr[1] / 16) & 0xffffffffu;
     input[15] = (state->ctr[1] / 16) >> 32;
-#else
-    input[12] = (state->ctr[0] / 16) & 0xffffffffu;
-    input[13] = (state->ctr[0] / 16) >> 32;
-    input[14] = input[15] = 0xdeadbeef; // Could use 128-bit counter.
-#endif
 
     for (i = 0; i < 16; ++i) state->block[i] = input[i];
     chacha_core(state);

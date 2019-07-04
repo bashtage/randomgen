@@ -88,6 +88,8 @@ static inline void LOAD(uint8_t pt[], u128 *X, u128 *Y) {
   S = LD(pt + 112);
   X[3] = HIGH(R, S);
   Y[3] = LOW(R, S);
+#elif SPECK_UNROLL != 12
+#error "SSE Path does not exist"
 #endif
 }
 
@@ -110,6 +112,8 @@ static inline void STORE(uint8_t ct[], u128 *X, u128 *Y) {
   ST(ct + 96, R);
   S = HIGH(Y[3], X[3]);
   ST(ct + 112, S);
+#elif SPECK_UNROLL != 12
+#error "SSE Path does not exist"
 #endif
 }
 
@@ -130,7 +134,7 @@ static inline void speck_128x256_encrypt_sse(uint8_t buffer[],
   STORE(buffer, X, Y);
 }
 
-static inline void generate_block_sse(speck_state_t *state) {
+static inline void generate_block_ssse3(speck_state_t *state) {
   uint8_t *buffer;
   memcpy(&state->buffer, &state->ctr, sizeof(state->buffer));
   buffer = (uint8_t *)state->buffer;

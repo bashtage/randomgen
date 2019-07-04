@@ -7,13 +7,16 @@ int RANDOMGEN_USE_AESNI;
 
 int aes_capable(void)
 {
+#if defined(__AES__) && __AES__
     int flags[32];
     feature_flags(flags);
     RANDOMGEN_USE_AESNI = flags[AES_FEATURE_FLAG];
     return RANDOMGEN_USE_AESNI;
+#else
+    return 0;
+#endif
 }
 
-#if defined(HAVE_IMMINTRIN) && !defined(RANDOMGEN_FORCE_SOFTAES)
 #define AES_ROUND(rcon, index)                                                 \
     do                                                                         \
     {                                                                          \
@@ -24,7 +27,6 @@ int aes_capable(void)
         k = _mm_xor_si128(k, _mm_shuffle_epi32(k2, _MM_SHUFFLE(3, 3, 3, 3)));  \
         state->seed[index].m128 = k;                                           \
     } while (0)
-#endif
 
 void aesctr_seed_r(aesctr_state_t *state, uint64_t *seed)
 {
@@ -38,7 +40,7 @@ void aesctr_seed_r(aesctr_state_t *state, uint64_t *seed)
     };*/
     if (RANDOMGEN_USE_AESNI)
     {
-#if defined(HAVE_IMMINTRIN) && !defined(RANDOMGEN_FORCE_SOFTAES)
+#if defined(__AES__) && __AES__
         __m128i k = _mm_set_epi64x(seed[1], seed[0]);
         state->seed[0].m128 = k;
         // D. Lemire manually unrolled following loop since

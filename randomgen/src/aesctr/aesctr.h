@@ -7,11 +7,15 @@
 
 #ifndef AESCTR_H
 #define AESCTR_H
-// #ifdef __AES__
 // contributed by Samuel Neves
 
 #include "../common/randomgen_config.h"
 #include "../common/randomgen_immintrin.h"
+
+#if defined(RANDOMGEN_FORCE_SOFTAES) && RANDOMGEN_FORCE_SOFTAES
+#undef __AES__
+#endif
+
 
 #include "softaes.h"
 
@@ -21,7 +25,7 @@
 extern int RANDOMGEN_USE_AESNI;
 
 union AES128_T {
-#if defined(HAVE_IMMINTRIN) && !defined(RANDOMGEN_FORCE_SOFTAES)
+#if defined(__AES__) && __AES__
   __m128i m128;
 #endif
   uint64_t u64[2];
@@ -46,7 +50,7 @@ static INLINE uint64_t aesctr_r(aesctr_state_t *state) {
   uint64_t output;
   if (UNLIKELY(state->offset >= 16 * AESCTR_UNROLL)) {
     if (RANDOMGEN_USE_AESNI) {
-#if defined(HAVE_IMMINTRIN) && !defined(RANDOMGEN_FORCE_SOFTAES)
+#if defined(__AES__) && __AES__
       __m128i work[AESCTR_UNROLL];
       for (int i = 0; i < AESCTR_UNROLL; ++i) {
         work[i] = _mm_xor_si128(state->ctr[i].m128, state->seed[0].m128);

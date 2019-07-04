@@ -13,7 +13,7 @@ int rdrand_capable(void);
 
 
 static INLINE uint64_t rdrand_next64(rdrand_state* state){
-#if defined(HAVE_IMMINTRIN)
+#if defined(__RDRND__) && __RDRND__
     uint64_t val;
 #if defined(__x86_64__) || defined(_M_X64)
     state->status &= _rdrand64_step((long long unsigned int *)&val);
@@ -30,7 +30,7 @@ static INLINE uint64_t rdrand_next64(rdrand_state* state){
 }
 
 static INLINE uint32_t rdrand_next32(rdrand_state* state){
-#if defined(HAVE_IMMINTRIN)
+#if defined(__RDRND__) && __RDRND__
     uint32_t val;
     state->status &= _rdrand32_step(&val);
     return val;
