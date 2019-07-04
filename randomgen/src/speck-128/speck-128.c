@@ -9,10 +9,11 @@ int speck_sse41_capable(void)
 {
 #if defined(__SSSE3__) && __SSSE3__
     int flags[32];
-    feature_flags(flags);
+    feature_flags(flags, RANDOMGEN_ECX);
     RANDOMGEN_USE_SSE41 = flags[SSE41_FEATURE_FLAG];
     return RANDOMGEN_USE_SSE41;
 #else
+    RANDOMGEN_USE_SSE41 = 0;
     return 0;
 #endif
 }
@@ -47,7 +48,7 @@ void speck_advance(speck_state_t *state, uint64_t *step)
 {
     uint64_t low;
     uint64_t adj_step[2];
-    size_t new_offset;
+    int new_offset;
     int i;
     if (state->offset == SPECK_BUFFER_SZ)
     {

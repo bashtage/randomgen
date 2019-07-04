@@ -76,8 +76,10 @@
 
 #ifdef _WIN32
 #define UNLIKELY(x) ((x))
+#define LIKELY(x) ((x))
 #else
 #define UNLIKELY(x) (__builtin_expect((x), 0))
+#define LIKELY(x) (__builtin_expect((x), 1))
 #endif
 
 #endif

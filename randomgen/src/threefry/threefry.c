@@ -1,5 +1,4 @@
 #include "threefry.h"
-#include <stdio.h>
 
 /* use_carry exists only for the old advance that resets buffer_pos after a call */
 /* TODO: removed once the old method is deprecated */

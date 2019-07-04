@@ -5,7 +5,7 @@
 #ifndef _RANDOMGEN_TINY_AES_H_
 #define _RANDOMGEN_TINY_AES_H_
 
-#include <inttypes.h>
+#include "../common/randomgen_config.h"
 
 #if !defined(INLINE)
 #define INLINE inline

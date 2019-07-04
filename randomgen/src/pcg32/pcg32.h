@@ -24,7 +24,7 @@ static inline void pcg_setseq_64_step_r(struct pcg_state_setseq_64 *rng) {
 }
 
 static inline uint32_t pcg_output_xsh_rr_64_32(uint64_t state) {
-  return pcg_rotr_32(((state >> 18u) ^ state) >> 27u, state >> 59u);
+  return pcg_rotr_32((uint32_t)(((state >> 18u) ^ state) >> 27u), (uint32_t)(state >> 59u));
 }
 
 static inline uint32_t

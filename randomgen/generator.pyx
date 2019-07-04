@@ -3970,7 +3970,7 @@ cdef class Generator:
         mnix = <int64_t*>np.PyArray_DATA(mnarr)
         sz = np.PyArray_SIZE(mnarr)
         ni = n
-        check_constraint(ni, 'n', CONS_NON_NEGATIVE)
+        check_constraint(<double>ni, 'n', CONS_NON_NEGATIVE)
         offset = 0
         with self.lock, nogil:
             for i in range(sz // d):
