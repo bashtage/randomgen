@@ -206,49 +206,64 @@ extensions = [Extension('randomgen.entropy',
               ]
 
 
+def bit_generator(name, c_name=None, aligned=False, cpu_features=False,
+                  defs=None, compile_args=None, extra_source=None):
+    c_name = name if c_name is None else c_name
+    defs = DEFS if defs is None else defs
+
+    sources = ['randomgen/{0}.pyx'.format(name),
+               src_join(c_name, c_name + '.c')]
+    if cpu_features:
+        sources += CPU_FEATURES
+    if aligned:
+        sources += ALIGNED_MALLOC
+    if extra_source is not None:
+        sources += [extra_source]
+    compile_args = EXTRA_COMPILE_ARGS if compile_args is None else compile_args
+
+    ext = Extension('randomgen.{0}'.format(name), sources,
+                    include_dirs=EXTRA_INCLUDE_DIRS + [src_join(c_name)],
+                    libraries=EXTRA_LIBRARIES,
+                    extra_compile_args=compile_args,
+                    extra_link_args=EXTRA_LINK_ARGS,
+                    define_macros=defs, undef_macros=UNDEF_MACROS)
+    return ext
+
+
 CPU_FEATURES = [src_join('common', 'cpu_features.c')]
 ALIGNED_MALLOC = [src_join('aligned_malloc', 'aligned_malloc.c')]
 BIT_GENERATORS = ('aes', 'dsfmt', 'jsf', 'mt19937', 'mt64', 'philox', 'pcg64',
                   'pcg32', 'threefry', 'xoroshiro128', 'xorshift1024',
                   'xoshiro256', 'xoshiro512', 'rdrand', 'chacha', 'hc128',
                   'sfmt', 'speck128')
-BIT_GENERATOR_C_NAMES = {'aes': 'aesctr',
-                         'hc128': 'hc-128',
-                         'speck128': 'speck-128',
-                         'dsfmt': 'dSFMT'}
-BIT_GENERATORS_CPU_FEATURES = ('aes', 'rdrand', 'speck128')
-BIT_GENERATORS_ALIGNED_MALLOC = ('aes', 'dsfmt', 'chacha', 'speck128', 'sfmt')
-BIT_GENERATOR_DEFS = {'dsfmt': DSFMT_DEFS,
-                      'sfmt': SFMT_DEFS,
-                      'philox': PHILOX_DEFS}
-BIT_GENERATOR_COMPILE_ARGS = {'chacha': SSSE3_COMPILE_ARGS,
-                              'aes': AES_COMPILE_ARGS,
-                              'rdrand': RDRAND_COMPILE_ARGS,
-                              'speck128': SSSE3_COMPILE_ARGS}
-BIT_GENERATOR_EXTRA_SOURCE = {'dsfmt': src_join('dsfmt', 'dSFMT-jump.c'),
-                              'sfmt': src_join('sfmt', 'sfmt-jump.c'),
-                              'mt19937': src_join('mt19937', 'mt19937-jump.c')}
-
-for bit_gen in BIT_GENERATORS:
-    c_name = BIT_GENERATOR_C_NAMES.get(bit_gen, bit_gen)
-    bit_gen_defs = BIT_GENERATOR_DEFS.get(bit_gen, DEFS)
-    sources = ['randomgen/{0}.pyx'.format(bit_gen),
-               src_join(c_name, c_name + '.c')]
-    if bit_gen in BIT_GENERATORS_CPU_FEATURES:
-        sources += CPU_FEATURES
-    if bit_gen in BIT_GENERATORS_ALIGNED_MALLOC:
-        sources += ALIGNED_MALLOC
-    if bit_gen in BIT_GENERATOR_EXTRA_SOURCE:
-        sources += [BIT_GENERATOR_EXTRA_SOURCE[bit_gen]]
-    compile_args = BIT_GENERATOR_COMPILE_ARGS.get(bit_gen, EXTRA_COMPILE_ARGS)
-    ext = Extension('randomgen.{0}'.format(bit_gen), sources,
-                    include_dirs=EXTRA_INCLUDE_DIRS + [src_join(c_name)],
-                    libraries=EXTRA_LIBRARIES,
-                    extra_compile_args=compile_args,
-                    extra_link_args=EXTRA_LINK_ARGS,
-                    define_macros=bit_gen_defs, undef_macros=UNDEF_MACROS
-                    )
-    extensions.append(ext)
+bit_gens = [
+    bit_generator('aes', c_name='aesctr', cpu_features=True,
+                  aligned=True, compile_args=AES_COMPILE_ARGS),
+    bit_generator('dsfmt', aligned=True, defs=DSFMT_DEFS,
+                  extra_source=src_join('dsfmt', 'dSFMT-jump.c')),
+    bit_generator('jsf'),
+    bit_generator('mt19937',
+                  extra_source=src_join('mt19937', 'mt19937-jump.c')),
+    bit_generator('mt64'),
+    bit_generator('philox', defs=PHILOX_DEFS),
+    bit_generator('pcg64'),
+    bit_generator('pcg32'),
+    bit_generator('threefry'),
+    bit_generator('xoroshiro128'),
+    bit_generator('xorshift1024'),
+    bit_generator('xoshiro256'),
+    bit_generator('xoshiro512'),
+    bit_generator('rdrand', cpu_features=True,
+                  compile_args=RDRAND_COMPILE_ARGS),
+    bit_generator('chacha', cpu_features=True, aligned=True,
+                  compile_args=SSSE3_COMPILE_ARGS),
+    bit_generator('hc128',c_name='hc-128'),
+    bit_generator('sfmt', aligned=True, defs=SFMT_DEFS,
+                  extra_source=src_join('sfmt', 'sfmt-jump.c')),
+    bit_generator('speck128', c_name='speck-128', cpu_features=True,
+                  aligned=True, compile_args=SSSE3_COMPILE_ARGS)
+]
+extensions.extend(bit_gens)
 
 classifiers = ['Development Status :: 5 - Production/Stable',
                'Environment :: Console',
