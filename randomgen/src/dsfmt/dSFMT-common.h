@@ -21,7 +21,7 @@
 #ifndef DSFMT_COMMON_H
 #define DSFMT_COMMON_H
 
-#include "dSFMT.h"
+#include "dsfmt.h"
 
 #if defined(HAVE_SSE2)
 #  include <emmintrin.h>

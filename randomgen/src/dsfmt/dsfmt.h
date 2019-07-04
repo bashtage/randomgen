@@ -1,6 +1,6 @@
 #pragma once
 /**
- * @file dSFMT.h
+ * @file dsfmt.h
  *
  * @brief double precision SIMD oriented Fast Mersenne Twister(dSFMT)
  * pseudorandom number generator based on IEEE 754 format.

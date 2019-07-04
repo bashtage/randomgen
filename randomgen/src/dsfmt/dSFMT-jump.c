@@ -19,7 +19,7 @@
 #include <ctype.h>
 #include <string.h>
 #include "dSFMT-params.h"
-#include "dSFMT.h"
+#include "dsfmt.h"
 #include "dSFMT-jump.h"
 #include "dSFMT-common.h"
 

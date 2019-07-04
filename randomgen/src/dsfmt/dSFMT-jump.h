@@ -20,7 +20,7 @@
 extern "C" {
 #endif
 
-#include "dSFMT.h"
+#include "dsfmt.h"
 void dSFMT_jump(dsfmt_t *dsfmt, const char *jump_str);
 
 #if defined(__cplusplus)
