@@ -1,5 +1,4 @@
-group: edge
-dist: trusty
+dist: xenial
 sudo: required
 language: python
 
@@ -25,6 +24,9 @@ matrix:
     - os: linux
       python: 3.6
       env: [PYPI=true, COVERAGE=false]
+    - os: linux
+      python: 3.7
+      env: [PYPI=true, COVERAGE=false, RANDOMGEN_DEBUG=true]
     - os: linux-ppc64le
       python: 3.6
       env: [PYPI=true, PPC64_LE=1, COVERAGE=false]
@@ -78,7 +80,7 @@ script:
 
 after_success:
   - |
-    if [[ ${PYPI} == true && -z ${PPC64_LE} ]]; then
+    if [[ ${PYPI} == true && -z ${PPC64_LE} && -z ${RANDOMGEN_DEBUG} ]]; then
       cd ${BUILD_DIR}
       python benchmark.py;
     fi

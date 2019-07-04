@@ -62,7 +62,7 @@ np.import_array()
 
 DECIMAL_RE = re.compile(r'[0-9]+')
 
-cdef uint32_t DEFAULT_POOL_SIZE = 4  # Appears also in docstring for pool_size
+cdef int DEFAULT_POOL_SIZE = 4  # Appears also in docstring for pool_size
 cdef uint32_t INIT_A = 0x43b0d7e5
 cdef uint32_t MULT_A = 0x931e8875
 cdef uint32_t INIT_B = 0x8b51f9dd

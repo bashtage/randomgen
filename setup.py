@@ -35,7 +35,6 @@ except ImportError:
     warnings.warn(
         'Unable to import pypandoc.  Do not use this as a release build!')
 
-
 with open('requirements.txt') as f:
     required = f.read().splitlines()
 
@@ -46,7 +45,7 @@ if CYTHON_COVERAGE:
           'RANDOMGEN_CYTHON_COVERAGE=' +
           os.environ['RANDOMGEN_CYTHON_COVERAGE'])
 
-LONG_DESCRIPTION = io.open('README.rst', encoding="utf-8").read()
+LONG_DESCRIPTION = io.open('README.rst', encoding='utf-8').read()
 Cython.Compiler.Options.annotate = True
 
 # Make a guess as to whether SSE2 is present for now, TODO: Improve
@@ -60,7 +59,10 @@ if '--no-sse2' in sys.argv:
 
 MOD_DIR = './randomgen'
 
-DEBUG = False
+DEBUG = os.environ.get('RANDOMGEN_DEBUG', False) in (1, '1', 'True', 'true')
+if DEBUG:
+    print('Debug build, RANDOMGEN_DEBUG=' +
+          os.environ['RANDOMGEN_DEBUG'])
 
 EXTRA_INCLUDE_DIRS = [np.get_include()]
 EXTRA_LINK_ARGS = [] if os.name == 'nt' else []
@@ -68,13 +70,19 @@ EXTRA_LIBRARIES = ['m'] if os.name != 'nt' else []
 # Undef for manylinux
 EXTRA_COMPILE_ARGS = ['/Zp16'] if os.name == 'nt' else \
     ['-std=c99', '-U__GNUC_GNU_INLINE__']
+UNDEF_MACROS = []
 if os.name == 'nt':
     EXTRA_LINK_ARGS = ['/LTCG', '/OPT:REF', 'Advapi32.lib', 'Kernel32.lib']
     if DEBUG:
         EXTRA_LINK_ARGS += ['-debug']
-        EXTRA_COMPILE_ARGS += ["-Zi", "/Od"]
+        EXTRA_COMPILE_ARGS += ['-Zi', '/Od']
+        UNDEF_MACROS += ['NDEBUG']
     if sys.version_info < (3, 0):
         EXTRA_INCLUDE_DIRS += [join(MOD_DIR, 'src', 'common')]
+elif DEBUG:
+    EXTRA_COMPILE_ARGS += ['-g', '-O0']
+    EXTRA_LINK_ARGS += ['-g']
+    UNDEF_MACROS += ['NDEBUG']
 
 DEFS = [('NPY_NO_DEPRECATED_API', '0')]
 # TODO: Enable once Cython >= 0.29
@@ -109,7 +117,6 @@ if USE_SSE2:
     DSFMT_DEFS += [('HAVE_SSE2', '1')]
     SFMT_DEFS += [('HAVE_SSE2', '1')]
 
-
 files = glob.glob('./randomgen/*.in') + glob.glob('./randomgen/legacy/*.in')
 for templated_file in files:
     output_file_name = splitext(templated_file)[0]
@@ -129,10 +136,10 @@ extensions = [Extension('randomgen.entropy',
                         libraries=EXTRA_LIBRARIES,
                         extra_compile_args=EXTRA_COMPILE_ARGS,
                         extra_link_args=EXTRA_LINK_ARGS,
-                        define_macros=DEFS
+                        define_macros=DEFS, undef_macros=UNDEF_MACROS
                         ),
-              Extension("randomgen.dsfmt",
-                        ["randomgen/dsfmt.pyx",
+              Extension('randomgen.dsfmt',
+                        ['randomgen/dsfmt.pyx',
                          join(MOD_DIR, 'src', 'dsfmt', 'dSFMT.c'),
                          join(MOD_DIR, 'src', 'dsfmt', 'dSFMT-jump.c'),
                          join(MOD_DIR, 'src', 'aligned_malloc',
@@ -142,20 +149,20 @@ extensions = [Extension('randomgen.entropy',
                         libraries=EXTRA_LIBRARIES,
                         extra_compile_args=EXTRA_COMPILE_ARGS,
                         extra_link_args=EXTRA_LINK_ARGS,
-                        define_macros=DSFMT_DEFS,
+                        define_macros=DSFMT_DEFS, undef_macros=UNDEF_MACROS
                         ),
-              Extension("randomgen.jsf",
-                        ["randomgen/jsf.pyx",
+              Extension('randomgen.jsf',
+                        ['randomgen/jsf.pyx',
                          join(MOD_DIR, 'src', 'jsf', 'jsf.c')],
                         include_dirs=EXTRA_INCLUDE_DIRS + [join(MOD_DIR, 'src',
                                                                 'jsf')],
                         libraries=EXTRA_LIBRARIES,
                         extra_compile_args=EXTRA_COMPILE_ARGS,
                         extra_link_args=EXTRA_LINK_ARGS,
-                        define_macros=DEFS
+                        define_macros=DEFS, undef_macros=UNDEF_MACROS
                         ),
-              Extension("randomgen.sfmt",
-                        ["randomgen/sfmt.pyx",
+              Extension('randomgen.sfmt',
+                        ['randomgen/sfmt.pyx',
                          join(MOD_DIR, 'src', 'sfmt', 'sfmt.c'),
                          join(MOD_DIR, 'src', 'sfmt', 'sfmt-jump.c'),
                          join(MOD_DIR, 'src', 'aligned_malloc',
@@ -165,10 +172,10 @@ extensions = [Extension('randomgen.entropy',
                         libraries=EXTRA_LIBRARIES,
                         extra_compile_args=EXTRA_COMPILE_ARGS,
                         extra_link_args=EXTRA_LINK_ARGS,
-                        define_macros=SFMT_DEFS,
+                        define_macros=SFMT_DEFS, undef_macros=UNDEF_MACROS
                         ),
-              Extension("randomgen.mt19937",
-                        ["randomgen/mt19937.pyx",
+              Extension('randomgen.mt19937',
+                        ['randomgen/mt19937.pyx',
                          join(MOD_DIR, 'src', 'mt19937', 'mt19937.c'),
                          join(MOD_DIR, 'src', 'mt19937', 'mt19937-jump.c')],
                         include_dirs=EXTRA_INCLUDE_DIRS + [join(MOD_DIR, 'src',
@@ -176,60 +183,61 @@ extensions = [Extension('randomgen.entropy',
                         libraries=EXTRA_LIBRARIES,
                         extra_compile_args=EXTRA_COMPILE_ARGS,
                         extra_link_args=EXTRA_LINK_ARGS,
-                        define_macros=DEFS
+                        define_macros=DEFS, undef_macros=UNDEF_MACROS
                         ),
-              Extension("randomgen.mt64",
-                        ["randomgen/mt64.pyx",
+              Extension('randomgen.mt64',
+                        ['randomgen/mt64.pyx',
                          join(MOD_DIR, 'src', 'mt64', 'mt64.c')],
                         include_dirs=EXTRA_INCLUDE_DIRS + [join(MOD_DIR, 'src',
                                                                 'mt64')],
                         libraries=EXTRA_LIBRARIES,
                         extra_compile_args=EXTRA_COMPILE_ARGS,
                         extra_link_args=EXTRA_LINK_ARGS,
-                        define_macros=DEFS
+                        define_macros=DEFS, undef_macros=UNDEF_MACROS
                         ),
-              Extension("randomgen.philox",
-                        ["randomgen/philox.pyx",
+              Extension('randomgen.philox',
+                        ['randomgen/philox.pyx',
                          join(MOD_DIR, 'src', 'philox', 'philox.c')],
                         include_dirs=EXTRA_INCLUDE_DIRS + [join(MOD_DIR, 'src',
                                                                 'philox')],
                         libraries=EXTRA_LIBRARIES,
                         extra_compile_args=EXTRA_COMPILE_ARGS,
                         extra_link_args=EXTRA_LINK_ARGS,
-                        define_macros=DEFS + [('R123_USE_PHILOX_64BIT', '1')]
+                        define_macros=DEFS + [('R123_USE_PHILOX_64BIT', '1')],
+                        undef_macros=UNDEF_MACROS
                         ),
-              Extension("randomgen.pcg64",
-                        ["randomgen/pcg64.pyx",
+              Extension('randomgen.pcg64',
+                        ['randomgen/pcg64.pyx',
                          join(MOD_DIR, 'src', 'pcg64', 'pcg64.c')],
                         include_dirs=EXTRA_INCLUDE_DIRS + [join(MOD_DIR, 'src',
                                                                 'pcg64')],
                         libraries=EXTRA_LIBRARIES,
                         extra_compile_args=EXTRA_COMPILE_ARGS,
-                        define_macros=PCG64_DEFS,
+                        define_macros=PCG64_DEFS, undef_macros=UNDEF_MACROS,
                         extra_link_args=EXTRA_LINK_ARGS
                         ),
-              Extension("randomgen.pcg32",
-                        ["randomgen/pcg32.pyx",
+              Extension('randomgen.pcg32',
+                        ['randomgen/pcg32.pyx',
                          join(MOD_DIR, 'src', 'pcg32', 'pcg32.c')],
                         include_dirs=EXTRA_INCLUDE_DIRS + [join(MOD_DIR, 'src',
                                                                 'pcg32')],
                         libraries=EXTRA_LIBRARIES,
                         extra_compile_args=EXTRA_COMPILE_ARGS,
                         extra_link_args=EXTRA_LINK_ARGS,
-                        define_macros=DEFS
+                        define_macros=DEFS, undef_macros=UNDEF_MACROS
                         ),
-              Extension("randomgen.threefry",
-                        ["randomgen/threefry.pyx",
+              Extension('randomgen.threefry',
+                        ['randomgen/threefry.pyx',
                          join(MOD_DIR, 'src', 'threefry', 'threefry.c')],
                         include_dirs=EXTRA_INCLUDE_DIRS + [join(MOD_DIR, 'src',
                                                                 'threefry')],
                         libraries=EXTRA_LIBRARIES,
                         extra_compile_args=EXTRA_COMPILE_ARGS,
                         extra_link_args=EXTRA_LINK_ARGS,
-                        define_macros=DEFS
+                        define_macros=DEFS, undef_macros=UNDEF_MACROS
                         ),
-              Extension("randomgen.xoroshiro128",
-                        ["randomgen/xoroshiro128.pyx",
+              Extension('randomgen.xoroshiro128',
+                        ['randomgen/xoroshiro128.pyx',
                          join(MOD_DIR, 'src', 'xoroshiro128',
                               'xoroshiro128.c')],
                         include_dirs=EXTRA_INCLUDE_DIRS + [join(MOD_DIR,
@@ -239,10 +247,10 @@ extensions = [Extension('randomgen.entropy',
                         libraries=EXTRA_LIBRARIES,
                         extra_compile_args=EXTRA_COMPILE_ARGS,
                         extra_link_args=EXTRA_LINK_ARGS,
-                        define_macros=DEFS
+                        define_macros=DEFS, undef_macros=UNDEF_MACROS
                         ),
-              Extension("randomgen.xorshift1024",
-                        ["randomgen/xorshift1024.pyx",
+              Extension('randomgen.xorshift1024',
+                        ['randomgen/xorshift1024.pyx',
                          join(MOD_DIR, 'src', 'xorshift1024',
                               'xorshift1024.c')],
                         include_dirs=EXTRA_INCLUDE_DIRS + [join(MOD_DIR,
@@ -252,46 +260,46 @@ extensions = [Extension('randomgen.entropy',
                         libraries=EXTRA_LIBRARIES,
                         extra_compile_args=EXTRA_COMPILE_ARGS,
                         extra_link_args=EXTRA_LINK_ARGS,
-                        define_macros=DEFS
+                        define_macros=DEFS, undef_macros=UNDEF_MACROS
                         ),
-              Extension("randomgen.xoshiro256",
-                        ["randomgen/xoshiro256.pyx",
+              Extension('randomgen.xoshiro256',
+                        ['randomgen/xoshiro256.pyx',
                          join(MOD_DIR, 'src', 'xoshiro256',
                               'xoshiro256.c')],
                         include_dirs=EXTRA_INCLUDE_DIRS + [join(
-                                                               MOD_DIR, 'src',
-                                                               'xoshiro256')],
+                            MOD_DIR, 'src',
+                            'xoshiro256')],
                         libraries=EXTRA_LIBRARIES,
                         extra_compile_args=EXTRA_COMPILE_ARGS,
                         extra_link_args=EXTRA_LINK_ARGS,
-                        define_macros=DEFS
+                        define_macros=DEFS, undef_macros=UNDEF_MACROS
                         ),
-              Extension("randomgen.xoshiro512",
-                        ["randomgen/xoshiro512.pyx",
+              Extension('randomgen.xoshiro512',
+                        ['randomgen/xoshiro512.pyx',
                          join(MOD_DIR, 'src', 'xoshiro512',
                               'xoshiro512.c')],
                         include_dirs=EXTRA_INCLUDE_DIRS + [join(
-                                                               MOD_DIR, 'src',
-                                                               'xoshiro512')],
+                            MOD_DIR, 'src',
+                            'xoshiro512')],
                         libraries=EXTRA_LIBRARIES,
                         extra_compile_args=EXTRA_COMPILE_ARGS,
                         extra_link_args=EXTRA_LINK_ARGS,
-                        define_macros=DEFS
+                        define_macros=DEFS, undef_macros=UNDEF_MACROS
                         ),
-              Extension("randomgen.rdrand",
-                        ["randomgen/rdrand.pyx",
+              Extension('randomgen.rdrand',
+                        ['randomgen/rdrand.pyx',
                          join(MOD_DIR, 'src', 'rdrand', 'rdrand.c'),
                          join(MOD_DIR, 'src', 'common', 'cpu_features.c')],
                         include_dirs=EXTRA_INCLUDE_DIRS + [join(
-                                                               MOD_DIR, 'src',
-                                                               'rdrand')],
+                            MOD_DIR, 'src',
+                            'rdrand')],
                         libraries=EXTRA_LIBRARIES,
                         extra_compile_args=RDRAND_COMPILE_ARGS,
                         extra_link_args=EXTRA_LINK_ARGS,
-                        define_macros=DEFS
+                        define_macros=DEFS, undef_macros=UNDEF_MACROS
                         ),
-              Extension("randomgen.chacha",
-                        ["randomgen/chacha.pyx",
+              Extension('randomgen.chacha',
+                        ['randomgen/chacha.pyx',
                          join(MOD_DIR, 'src', 'chacha',
                               'chacha.c')],
                         include_dirs=EXTRA_INCLUDE_DIRS + [join(MOD_DIR,
@@ -300,10 +308,10 @@ extensions = [Extension('randomgen.entropy',
                         libraries=EXTRA_LIBRARIES,
                         extra_compile_args=SSSE3_COMPILE_ARGS,
                         extra_link_args=EXTRA_LINK_ARGS,
-                        define_macros=DEFS
+                        define_macros=DEFS, undef_macros=UNDEF_MACROS
                         ),
-              Extension("randomgen.hc128",
-                        ["randomgen/hc128.pyx",
+              Extension('randomgen.hc128',
+                        ['randomgen/hc128.pyx',
                          join(MOD_DIR, 'src', 'hc-128',
                               'hc-128.c')],
                         include_dirs=EXTRA_INCLUDE_DIRS + [join(MOD_DIR,
@@ -312,10 +320,10 @@ extensions = [Extension('randomgen.entropy',
                         libraries=EXTRA_LIBRARIES,
                         extra_compile_args=EXTRA_COMPILE_ARGS,
                         extra_link_args=EXTRA_LINK_ARGS,
-                        define_macros=DEFS
+                        define_macros=DEFS, undef_macros=UNDEF_MACROS
                         ),
-              Extension("randomgen.speck128",
-                        ["randomgen/speck128.pyx",
+              Extension('randomgen.speck128',
+                        ['randomgen/speck128.pyx',
                          join(MOD_DIR, 'src', 'speck-128', 'speck-128.c'),
                          join(MOD_DIR, 'src', 'common', 'cpu_features.c')
                          ],
@@ -325,38 +333,38 @@ extensions = [Extension('randomgen.entropy',
                         libraries=EXTRA_LIBRARIES,
                         extra_compile_args=SSSE3_COMPILE_ARGS,
                         extra_link_args=EXTRA_LINK_ARGS,
-                        define_macros=DEFS
+                        define_macros=DEFS, undef_macros=UNDEF_MACROS
                         ),
-              Extension("randomgen.generator",
-                        ["randomgen/generator.pyx",
+              Extension('randomgen.generator',
+                        ['randomgen/generator.pyx',
                          join(MOD_DIR, 'src', 'distributions',
                               'distributions.c')],
                         libraries=EXTRA_LIBRARIES,
                         include_dirs=EXTRA_INCLUDE_DIRS,
                         extra_compile_args=EXTRA_COMPILE_ARGS,
                         extra_link_args=EXTRA_LINK_ARGS,
-                        define_macros=DEFS
+                        define_macros=DEFS, undef_macros=UNDEF_MACROS
                         ),
-              Extension("randomgen.common",
-                        ["randomgen/common.pyx"],
+              Extension('randomgen.common',
+                        ['randomgen/common.pyx'],
                         libraries=EXTRA_LIBRARIES,
                         include_dirs=EXTRA_INCLUDE_DIRS,
                         extra_compile_args=EXTRA_COMPILE_ARGS,
                         extra_link_args=EXTRA_LINK_ARGS,
-                        define_macros=DEFS
+                        define_macros=DEFS, undef_macros=UNDEF_MACROS
                         ),
-              Extension("randomgen.bounded_integers",
-                        ["randomgen/bounded_integers.pyx",
+              Extension('randomgen.bounded_integers',
+                        ['randomgen/bounded_integers.pyx',
                          join(MOD_DIR, 'src', 'distributions',
                               'distributions.c')],
                         libraries=EXTRA_LIBRARIES,
                         include_dirs=EXTRA_INCLUDE_DIRS,
                         extra_compile_args=EXTRA_COMPILE_ARGS,
                         extra_link_args=EXTRA_LINK_ARGS,
-                        define_macros=DEFS
+                        define_macros=DEFS, undef_macros=UNDEF_MACROS
                         ),
-              Extension("randomgen.legacy.bounded_integers",
-                        ["randomgen/legacy/bounded_integers.pyx",
+              Extension('randomgen.legacy.bounded_integers',
+                        ['randomgen/legacy/bounded_integers.pyx',
                          join(MOD_DIR, 'src', 'legacy',
                               'legacy-distributions.c'),
                          join(MOD_DIR, 'src', 'distributions',
@@ -366,11 +374,12 @@ extensions = [Extension('randomgen.entropy',
                                                                 'legacy')],
                         extra_compile_args=EXTRA_COMPILE_ARGS,
                         extra_link_args=EXTRA_LINK_ARGS,
-                        define_macros=DEFS + [('RANDOMGEN_LEGACY', '1')]
+                        define_macros=DEFS + [('RANDOMGEN_LEGACY', '1')],
+                        undef_macros=UNDEF_MACROS
                         ),
 
-              Extension("randomgen.mtrand",
-                        ["randomgen/mtrand.pyx",
+              Extension('randomgen.mtrand',
+                        ['randomgen/mtrand.pyx',
                          join(MOD_DIR, 'src', 'legacy',
                               'legacy-distributions.c'),
                          join(MOD_DIR, 'src', 'distributions',
@@ -380,10 +389,11 @@ extensions = [Extension('randomgen.entropy',
                                                                 'legacy')],
                         extra_compile_args=EXTRA_COMPILE_ARGS,
                         extra_link_args=EXTRA_LINK_ARGS,
-                        define_macros=DEFS + [('RANDOMGEN_LEGACY', '1')]
+                        define_macros=DEFS + [('RANDOMGEN_LEGACY', '1')],
+                        undef_macros=UNDEF_MACROS
                         ),
-              Extension("randomgen.aes",
-                        ["randomgen/aes.pyx",
+              Extension('randomgen.aes',
+                        ['randomgen/aes.pyx',
                          join(MOD_DIR, 'src', 'aesctr', 'aesctr.c'),
                          join(MOD_DIR, 'src', 'common', 'cpu_features.c')],
                         include_dirs=EXTRA_INCLUDE_DIRS + [join(MOD_DIR,
@@ -392,15 +402,15 @@ extensions = [Extension('randomgen.entropy',
                         libraries=EXTRA_LIBRARIES,
                         extra_compile_args=AES_COMPILE_ARGS,
                         extra_link_args=EXTRA_LINK_ARGS,
-                        define_macros=DEFS
+                        define_macros=DEFS, undef_macros=UNDEF_MACROS
                         ),
-              Extension("randomgen.seed_sequence",
-                        ["randomgen/seed_sequence.pyx"],
+              Extension('randomgen.seed_sequence',
+                        ['randomgen/seed_sequence.pyx'],
                         include_dirs=EXTRA_INCLUDE_DIRS,
                         libraries=EXTRA_LIBRARIES,
                         extra_compile_args=RDRAND_COMPILE_ARGS,
                         extra_link_args=EXTRA_LINK_ARGS,
-                        define_macros=DEFS
+                        define_macros=DEFS, undef_macros=UNDEF_MACROS
                         )
               ]
 
@@ -441,7 +451,8 @@ setup(
     ext_modules=cythonize(extensions,
                           compiler_directives={'language_level': '3',
                                                'linetrace': CYTHON_COVERAGE},
-                          force=CYTHON_COVERAGE),
+                          force=CYTHON_COVERAGE or DEBUG,
+                          gdb_debug=DEBUG),
     packages=find_packages(),
     package_dir={'randomgen': './randomgen'},
     package_data={'': ['*.h', '*.pxi', '*.pyx', '*.pxd', '*.in'],
