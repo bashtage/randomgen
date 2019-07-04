@@ -68,8 +68,6 @@ EXTRA_LIBRARIES = ['m'] if os.name != 'nt' else []
 # Undef for manylinux
 EXTRA_COMPILE_ARGS = ['/Zp16'] if os.name == 'nt' else \
     ['-std=c99', '-U__GNUC_GNU_INLINE__']
-if INTEL_LIKE and os.name != 'nt':
-    EXTRA_COMPILE_ARGS += ['-maes']
 if os.name == 'nt':
     EXTRA_LINK_ARGS = ['/LTCG', '/OPT:REF', 'Advapi32.lib', 'Kernel32.lib']
     if DEBUG:
@@ -93,22 +91,24 @@ if sys.maxsize < 2 ** 32 or os.name == 'nt':
 
 DSFMT_DEFS = DEFS[:] + [('DSFMT_MEXP', '19937')]
 SFMT_DEFS = DEFS[:] + [('SFMT_MEXP', '19937')]
-AES_DEFS = DEFS[:]
-CHACHA_DEFS = DEFS[:]
-SPECK128_DEFS = DEFS[:]
+RDRAND_COMPILE_ARGS = EXTRA_COMPILE_ARGS[:]
+SSSE3_COMPILE_ARGS = EXTRA_COMPILE_ARGS[:]
+AES_COMPILE_ARGS = EXTRA_COMPILE_ARGS[:]
+
 if USE_SSE2:
     if os.name == 'nt':
         EXTRA_COMPILE_ARGS += ['/wd4146', '/GL']
         if struct.calcsize('P') < 8:
             EXTRA_COMPILE_ARGS += ['/arch:SSE2']
+            SSSE3_COMPILE_ARGS = EXTRA_COMPILE_ARGS[:]
     else:
-        EXTRA_COMPILE_ARGS += ['-msse2', '-mssse3', '-mrdrnd']
+        EXTRA_COMPILE_ARGS += ['-msse2']
+        RDRAND_COMPILE_ARGS = EXTRA_COMPILE_ARGS[:] + ['-mrdrnd']
+        SSSE3_COMPILE_ARGS = EXTRA_COMPILE_ARGS[:] + ['-mssse3']
+        AES_COMPILE_ARGS = EXTRA_COMPILE_ARGS[:] + ['-maes']
     DSFMT_DEFS += [('HAVE_SSE2', '1')]
     SFMT_DEFS += [('HAVE_SSE2', '1')]
-    if os.name != 'nt' or sys.version_info[:2] >= (3, 5):
-        SPECK128_DEFS += [('HAVE_SSE2', '1')]
-        AES_DEFS += [('HAVE_SSE2', '1')]
-        CHACHA_DEFS += [('__SSE2__', '1'), ('__SSSE3__', '1')]
+
 
 files = glob.glob('./randomgen/*.in') + glob.glob('./randomgen/legacy/*.in')
 for templated_file in files:
@@ -286,7 +286,7 @@ extensions = [Extension('randomgen.entropy',
                                                                MOD_DIR, 'src',
                                                                'rdrand')],
                         libraries=EXTRA_LIBRARIES,
-                        extra_compile_args=EXTRA_COMPILE_ARGS,
+                        extra_compile_args=RDRAND_COMPILE_ARGS,
                         extra_link_args=EXTRA_LINK_ARGS,
                         define_macros=DEFS
                         ),
@@ -298,9 +298,9 @@ extensions = [Extension('randomgen.entropy',
                                                                 'src',
                                                                 'chacha')],
                         libraries=EXTRA_LIBRARIES,
-                        extra_compile_args=EXTRA_COMPILE_ARGS,
+                        extra_compile_args=SSSE3_COMPILE_ARGS,
                         extra_link_args=EXTRA_LINK_ARGS,
-                        define_macros=CHACHA_DEFS
+                        define_macros=DEFS
                         ),
               Extension("randomgen.hc128",
                         ["randomgen/hc128.pyx",
@@ -323,9 +323,9 @@ extensions = [Extension('randomgen.entropy',
                                                                 'src',
                                                                 'speck-128')],
                         libraries=EXTRA_LIBRARIES,
-                        extra_compile_args=EXTRA_COMPILE_ARGS,
+                        extra_compile_args=SSSE3_COMPILE_ARGS,
                         extra_link_args=EXTRA_LINK_ARGS,
-                        define_macros=SPECK128_DEFS
+                        define_macros=DEFS
                         ),
               Extension("randomgen.generator",
                         ["randomgen/generator.pyx",
@@ -390,15 +390,15 @@ extensions = [Extension('randomgen.entropy',
                                                                 'src',
                                                                 'aesctr')],
                         libraries=EXTRA_LIBRARIES,
-                        extra_compile_args=EXTRA_COMPILE_ARGS,
+                        extra_compile_args=AES_COMPILE_ARGS,
                         extra_link_args=EXTRA_LINK_ARGS,
-                        define_macros=AES_DEFS
+                        define_macros=DEFS
                         ),
               Extension("randomgen.seed_sequence",
                         ["randomgen/seed_sequence.pyx"],
                         include_dirs=EXTRA_INCLUDE_DIRS,
                         libraries=EXTRA_LIBRARIES,
-                        extra_compile_args=EXTRA_COMPILE_ARGS,
+                        extra_compile_args=RDRAND_COMPILE_ARGS,
                         extra_link_args=EXTRA_LINK_ARGS,
                         define_macros=DEFS
                         )

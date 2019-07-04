@@ -11,7 +11,7 @@
 #define SPECK_CTR_SZ SPECK_UNROLL / 2
 
 union SPECK_T {
-#if defined(HAVE_IMMINTRIN)
+#if defined(__SSSE3__) && __SSSE3__
   __m128i m128;
 #endif
   uint64_t u64[2];
