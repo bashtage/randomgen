@@ -19,3 +19,4 @@ cdef extern from "src/mt64/mt64.h":
 cdef class MT64(BitGenerator):
 
     cdef mt64_state_t rng_state
+    cdef _reset_state_variables(self)

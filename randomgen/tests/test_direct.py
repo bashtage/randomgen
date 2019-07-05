@@ -364,6 +364,17 @@ class Base(object):
         alt_state = bit_generator.__getstate__()
         assert_state_equal(state, alt_state)
 
+    def test_uinteger_reset_seed(self):
+        bg = self.bit_generator()
+        g = Generator(bg)
+        g.integers(0, 2 ** 32, dtype=np.uint32)
+        if 'has_uint32' not in bg.state or bg.state['has_uint32'] == 0:
+            name = bg.__class__.__name__
+            pytest.skip('bit generator does not cache 32-bit value '
+                        '({0})'.format(name))
+        bg.seed()
+        assert bg.state['has_uint32'] == 0
+
     def test_uinteger_reset_jump(self):
         bg = self.bit_generator()
         if not hasattr(bg, 'jumped'):
