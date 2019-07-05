@@ -79,6 +79,8 @@ cdef class MT64(BitGenerator):
         623-dimensionally equidistributed uniform pseudo-random number
         generator". ACM Transactions on Modeling and Computer Simulation.
         8 (1): 3–30.
+    .. [2] Nishimura, T. "Tables of 64-bit Mersenne Twisters" ACM Transactions
+        on Modeling and Computer Simulation 10. (2000) 348-357.
     """
     def __init__(self, seed=None):
         BitGenerator.__init__(self)
@@ -89,6 +91,10 @@ cdef class MT64(BitGenerator):
         self._bitgen.next_uint32 = &mt64_uint32
         self._bitgen.next_double = &mt64_double
         self._bitgen.next_raw = &mt64_raw
+
+    cdef _reset_state_variables(self):
+        self.rng_state.has_uint32 = 0
+        self.rng_state.uinteger = 0
 
     @classmethod
     def from_seed_seq(cls, entropy=None):
@@ -174,6 +180,8 @@ cdef class MT64(BitGenerator):
             mt64_init_by_array(&self.rng_state,
                                <uint64_t*>np.PyArray_DATA(obj),
                                np.PyArray_DIM(obj, 0))
+
+        self._reset_state_variables()
 
     @property
     def state(self):
