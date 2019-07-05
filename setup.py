@@ -134,76 +134,38 @@ for templated_file in files:
     with open(output_file_name, 'w') as output_file:
         output_file.write(template.substitute())
 
-extensions = [Extension('randomgen.entropy',
-                        sources=[join(MOD_DIR, 'entropy.pyx'),
-                                 src_join('entropy', 'entropy.c')],
-                        include_dirs=EXTRA_INCLUDE_DIRS +
-                                     [src_join('entropy')],
-                        libraries=EXTRA_LIBRARIES,
-                        extra_compile_args=EXTRA_COMPILE_ARGS,
-                        extra_link_args=EXTRA_LINK_ARGS,
-                        define_macros=DEFS, undef_macros=UNDEF_MACROS
-                        ),
-              Extension('randomgen.generator',
-                        ['randomgen/generator.pyx',
-                         src_join('distributions', 'distributions.c')],
-                        libraries=EXTRA_LIBRARIES,
-                        include_dirs=EXTRA_INCLUDE_DIRS,
-                        extra_compile_args=EXTRA_COMPILE_ARGS,
-                        extra_link_args=EXTRA_LINK_ARGS,
-                        define_macros=DEFS, undef_macros=UNDEF_MACROS
-                        ),
-              Extension('randomgen.common',
-                        ['randomgen/common.pyx'],
-                        libraries=EXTRA_LIBRARIES,
-                        include_dirs=EXTRA_INCLUDE_DIRS,
-                        extra_compile_args=EXTRA_COMPILE_ARGS,
-                        extra_link_args=EXTRA_LINK_ARGS,
-                        define_macros=DEFS, undef_macros=UNDEF_MACROS
-                        ),
-              Extension('randomgen.bounded_integers',
-                        ['randomgen/bounded_integers.pyx',
-                         src_join('distributions', 'distributions.c')],
-                        libraries=EXTRA_LIBRARIES,
-                        include_dirs=EXTRA_INCLUDE_DIRS,
-                        extra_compile_args=EXTRA_COMPILE_ARGS,
-                        extra_link_args=EXTRA_LINK_ARGS,
-                        define_macros=DEFS, undef_macros=UNDEF_MACROS
-                        ),
-              Extension('randomgen.legacy.bounded_integers',
-                        ['randomgen/legacy/bounded_integers.pyx',
-                         src_join('legacy', 'legacy-distributions.c'),
-                         src_join('distributions', 'distributions.c')],
-                        libraries=EXTRA_LIBRARIES,
-                        include_dirs=EXTRA_INCLUDE_DIRS + [join(MOD_DIR,
-                                                                'legacy')],
-                        extra_compile_args=EXTRA_COMPILE_ARGS,
-                        extra_link_args=EXTRA_LINK_ARGS,
-                        define_macros=DEFS + [('RANDOMGEN_LEGACY', '1')],
-                        undef_macros=UNDEF_MACROS
-                        ),
+extensions = []
+for name in ('bounded_integers', 'common', 'entropy', 'generator',
+             'legacy.bounded_integers', 'mtrand', 'seed_sequence'):
+    extra_source = []
+    extra_macros = []
+    extra_incl = []
 
-              Extension('randomgen.mtrand',
-                        ['randomgen/mtrand.pyx',
-                         src_join('legacy', 'legacy-distributions.c'),
-                         src_join('distributions', 'distributions.c')],
-                        libraries=EXTRA_LIBRARIES,
-                        include_dirs=EXTRA_INCLUDE_DIRS + [join(MOD_DIR,
-                                                                'legacy')],
-                        extra_compile_args=EXTRA_COMPILE_ARGS,
-                        extra_link_args=EXTRA_LINK_ARGS,
-                        define_macros=DEFS + [('RANDOMGEN_LEGACY', '1')],
-                        undef_macros=UNDEF_MACROS
-                        ),
-              Extension('randomgen.seed_sequence',
-                        ['randomgen/seed_sequence.pyx'],
-                        include_dirs=EXTRA_INCLUDE_DIRS,
-                        libraries=EXTRA_LIBRARIES,
-                        extra_compile_args=RDRAND_COMPILE_ARGS,
-                        extra_link_args=EXTRA_LINK_ARGS,
-                        define_macros=DEFS, undef_macros=UNDEF_MACROS
-                        )
-              ]
+    source = ['randomgen/{0}.pyx'.format(name.replace('.', '/'))]
+
+    legacy = name in ('legacy.bounded_integers', 'mtrand')
+    if name in ('bounded_integers', 'generator') or legacy:
+        extra_source = [src_join('distributions', 'distributions.c')]
+        if legacy:
+            extra_source += [src_join('legacy', 'legacy-distributions.c')]
+            extra_macros = [('RANDOMGEN_LEGACY', '1')]
+    elif name == 'entropy':
+        extra_source = [src_join('entropy', 'entropy.c')]
+        extra_incl = [src_join('entropy')]
+
+    ext = Extension('randomgen.{0}'.format(name),
+                    source + extra_source,
+                    libraries=EXTRA_LIBRARIES,
+                    include_dirs=EXTRA_INCLUDE_DIRS + extra_incl,
+                    extra_compile_args=EXTRA_COMPILE_ARGS,
+                    extra_link_args=EXTRA_LINK_ARGS,
+                    define_macros=DEFS + extra_macros,
+                    undef_macros=UNDEF_MACROS
+                    )
+    extensions.append(ext)
+
+CPU_FEATURES = [src_join('common', 'cpu_features.c')]
+ALIGNED_MALLOC = [src_join('aligned_malloc', 'aligned_malloc.c')]
 
 
 def bit_generator(name, c_name=None, aligned=False, cpu_features=False,
@@ -227,43 +189,33 @@ def bit_generator(name, c_name=None, aligned=False, cpu_features=False,
                     extra_compile_args=compile_args,
                     extra_link_args=EXTRA_LINK_ARGS,
                     define_macros=defs, undef_macros=UNDEF_MACROS)
-    return ext
+    extensions.append(ext)
 
 
-CPU_FEATURES = [src_join('common', 'cpu_features.c')]
-ALIGNED_MALLOC = [src_join('aligned_malloc', 'aligned_malloc.c')]
-BIT_GENERATORS = ('aes', 'dsfmt', 'jsf', 'mt19937', 'mt64', 'philox', 'pcg64',
-                  'pcg32', 'threefry', 'xoroshiro128', 'xorshift1024',
-                  'xoshiro256', 'xoshiro512', 'rdrand', 'chacha', 'hc128',
-                  'sfmt', 'speck128')
-bit_gens = [
-    bit_generator('aes', c_name='aesctr', cpu_features=True,
-                  aligned=True, compile_args=AES_COMPILE_ARGS),
-    bit_generator('dsfmt', aligned=True, defs=DSFMT_DEFS,
-                  extra_source=src_join('dsfmt', 'dSFMT-jump.c')),
-    bit_generator('jsf'),
-    bit_generator('mt19937',
-                  extra_source=src_join('mt19937', 'mt19937-jump.c')),
-    bit_generator('mt64'),
-    bit_generator('philox', defs=PHILOX_DEFS),
-    bit_generator('pcg64'),
-    bit_generator('pcg32'),
-    bit_generator('threefry'),
-    bit_generator('xoroshiro128'),
-    bit_generator('xorshift1024'),
-    bit_generator('xoshiro256'),
-    bit_generator('xoshiro512'),
-    bit_generator('rdrand', cpu_features=True,
-                  compile_args=RDRAND_COMPILE_ARGS),
-    bit_generator('chacha', cpu_features=True, aligned=True,
-                  compile_args=SSSE3_COMPILE_ARGS),
-    bit_generator('hc128',c_name='hc-128'),
-    bit_generator('sfmt', aligned=True, defs=SFMT_DEFS,
-                  extra_source=src_join('sfmt', 'sfmt-jump.c')),
-    bit_generator('speck128', c_name='speck-128', cpu_features=True,
-                  aligned=True, compile_args=SSSE3_COMPILE_ARGS)
-]
-extensions.extend(bit_gens)
+bit_generator('aes', c_name='aesctr', cpu_features=True, aligned=True,
+              compile_args=AES_COMPILE_ARGS)
+bit_generator('chacha', cpu_features=True, aligned=True,
+              compile_args=SSSE3_COMPILE_ARGS)
+bit_generator('dsfmt', aligned=True, defs=DSFMT_DEFS,
+              extra_source=src_join('dsfmt', 'dSFMT-jump.c'))
+bit_generator('hc128', c_name='hc-128')
+bit_generator('jsf')
+bit_generator('mt19937', extra_source=src_join('mt19937', 'mt19937-jump.c'))
+bit_generator('mt64')
+bit_generator('pcg32')
+bit_generator('pcg64')
+bit_generator('philox', defs=PHILOX_DEFS)
+bit_generator('rdrand', cpu_features=True,
+              compile_args=RDRAND_COMPILE_ARGS)
+bit_generator('sfmt', aligned=True, defs=SFMT_DEFS,
+              extra_source=src_join('sfmt', 'sfmt-jump.c'))
+bit_generator('speck128', c_name='speck-128', cpu_features=True, aligned=True,
+              compile_args=SSSE3_COMPILE_ARGS)
+bit_generator('threefry')
+bit_generator('xoroshiro128')
+bit_generator('xorshift1024')
+bit_generator('xoshiro256')
+bit_generator('xoshiro512')
 
 classifiers = ['Development Status :: 5 - Production/Stable',
                'Environment :: Console',

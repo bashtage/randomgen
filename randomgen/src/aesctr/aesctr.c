@@ -9,10 +9,11 @@ int aes_capable(void)
 {
 #if defined(__AES__) && __AES__
     int flags[32];
-    feature_flags(flags);
+    feature_flags(flags, RANDOMGEN_ECX);
     RANDOMGEN_USE_AESNI = flags[AES_FEATURE_FLAG];
     return RANDOMGEN_USE_AESNI;
 #else
+    RANDOMGEN_USE_AESNI = 0;
     return 0;
 #endif
 }

@@ -1388,6 +1388,16 @@ class TestChaCha(Base):
         state = bg.state
         assert_state_equal(state0, state)
 
+    def test_use_simd(self):
+        bg = self.bit_generator(0)
+        if not bg.use_simd:
+            with pytest.raises(ValueError):
+                bg.use_simd = True
+            return
+        bg2 = self.bit_generator(0)
+        bg2.use_simd = not bg.use_simd
+        assert_equal(bg.random_raw(100), bg2.random_raw(100))
+
 
 class TestHC128(Base):
     @classmethod

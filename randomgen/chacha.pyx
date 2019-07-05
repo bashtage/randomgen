@@ -181,6 +181,37 @@ cdef class ChaCha(BitGenerator):
         state = self.seed_seq.generate_state(4, np.uint64)
         self.seed(key=state, counter=counter)
 
+    @property
+    def use_simd(self):
+        """
+        Toggle use of SIMD
+
+        Parameters
+        ----------
+        flag : bool
+            Flag indicating whether to use SIMD
+
+        Returns
+        -------
+        flag : bool
+            Current flag value
+
+        Raises
+        ------
+        ValueError
+            If SIMD is not supported
+        """
+        return RANDOMGEN_USE_SIMD
+
+    @use_simd.setter
+    def use_simd(self, value):
+        capable = chacha_simd_capable()
+        if value and not capable:
+            raise ValueError('CPU does not support SIMD implementation')
+        chacha_use_simd(bool(value))
+
+
+
     def seed(self, seed=None, counter=None, key=None):
         """
         seed(seed=None, counter=None, key=None)

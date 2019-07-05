@@ -30,6 +30,9 @@
 #define M128I_CAST (__m128i)
 #endif
 
+extern int RANDOMGEN_USE_SIMD;
+
+
 typedef double * aligned_double_ptr ;
 
 ALIGN_WINDOWS struct CHACHA_STATE_T {
@@ -42,11 +45,10 @@ ALIGN_WINDOWS struct CHACHA_STATE_T {
 typedef struct CHACHA_STATE_T chacha_state_t;
 
 
-#ifdef __SSE2__
-
+#if defined(__SSE2__) && __SSE2__
 // Get an efficient _mm_roti_epi32 based on enabled features.
 #if !defined(__XOP__)
-    #if defined(__SSSE3__)
+    #if defined(__SSSE3__) && __SSSE3__
         #define _mm_roti_epi32(r, c) (                              \
             ((c) == 8) ?                                            \
                 _mm_shuffle_epi8((r), _mm_set_epi8(14, 13, 12, 15,  \
@@ -75,8 +77,7 @@ typedef struct CHACHA_STATE_T chacha_state_t;
     #include <xopintrin.h>
 #endif
 
-
-static INLINE void chacha_core(chacha_state_t *state) {
+static INLINE void chacha_core_ssse3(chacha_state_t *state) {
     // ROTVn rotates the elements in the given vector n places to the left.
     int i;
 
@@ -134,7 +135,7 @@ static INLINE void chacha_core(chacha_state_t *state) {
     #undef CHACHA_ROTV2
     #undef CHACHA_ROTV1
 }
-#else
+#endif
 
 static INLINE void chacha_core(chacha_state_t *state) {
     int i;
@@ -160,7 +161,6 @@ static INLINE void chacha_core(chacha_state_t *state) {
     #undef CHACHA_QUARTERROUND
     #undef CHACHA_ROTL32
 }
-#endif
 
 static INLINE void generate_block(chacha_state_t *state) {
     int i;
@@ -177,13 +177,21 @@ static INLINE void generate_block(chacha_state_t *state) {
     input[15] = (state->ctr[1] / 16) >> 32;
 
     for (i = 0; i < 16; ++i) state->block[i] = input[i];
-    chacha_core(state);
+#if defined(__SSE2__) && __SSE2__
+    if LIKELY(RANDOMGEN_USE_SIMD > 0) {
+        chacha_core_ssse3(state);
+    } else {
+#endif
+        chacha_core(state);
+#if defined(__SSE2__) && __SSE2__
+    }
+#endif
     for (i = 0; i < 16; ++i) state->block[i] += input[i];
 }
 
 static INLINE uint32_t chacha_next32(chacha_state_t *state){
     int idx = state->ctr[0] % 16;
-    if (idx == 0) generate_block(state);
+    if UNLIKELY(idx == 0) generate_block(state);
     ++state->ctr[0];
     if (state->ctr[0] == 0) ++state->ctr[1];
 
@@ -199,6 +207,8 @@ static INLINE double chacha_next_double(chacha_state_t *state){
     return (chacha_next64(state) >> 11) * (1.0/9007199254740992.0);
 }
 
+void chacha_use_simd(int flag);
+int chacha_simd_capable(void);
 void chacha_seed(chacha_state_t *state, uint64_t *seedval, uint64_t *stream, uint64_t *ctr);
 void chacha_advance(chacha_state_t *state, uint64_t *delta);
 

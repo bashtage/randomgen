@@ -1,7 +1,4 @@
 #include "jsf.h"
-#include <inttypes.h>
-#include <stdio.h>
-#include <time.h>
 
 extern INLINE uint64_t jsf64_next64(jsf_state_t *state);
 extern INLINE uint32_t jsf64_next32(jsf_state_t *state);

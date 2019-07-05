@@ -7,9 +7,6 @@
 #include <intrin.h>
 #endif
 
-#include <immintrin.h>
-#include <inttypes.h>
-
 #define u128 __m128i
 #define SET _mm_set_epi64x
 #define LOW _mm_unpacklo_epi64
