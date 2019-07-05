@@ -5,13 +5,15 @@
 
 #include "Python.h"
 
+#include <stdint.h>
+
 #define NPY_INLINE INLINE
 
 #define NPY_SIZEOF_LONG SIZEOF_LONG
 
 typedef double npy_double;
 
-typedef unsigned long npy_uint32;
+typedef uint32_t npy_uint32;
 
 typedef unsigned char npy_bool;
 #define NPY_FALSE 0
