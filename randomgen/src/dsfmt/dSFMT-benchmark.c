@@ -8,7 +8,7 @@
 #include <inttypes.h>
 #include <time.h>
 
-#include "dSFMT.h"
+#include "dsfmt.h"
 
 
 #define N 1000000000

@@ -5,7 +5,7 @@ DEF DSFMT_N = 191  # ((DSFMT_MEXP - 128) / 104 + 1)
 DEF DSFMT_N_PLUS_1 = 192  # DSFMT_N + 1
 DEF DSFMT_N64 = DSFMT_N * 2
 
-cdef extern from "src/dsfmt/dSFMT.h":
+cdef extern from "src/dsfmt/dsfmt.h":
 
     union W128_T:
         uint64_t u[2]

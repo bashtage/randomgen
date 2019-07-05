@@ -7,7 +7,7 @@
 #include <inttypes.h>
 #include <stdio.h>
 
-#include "dSFMT.h"
+#include "dsfmt.h"
 
 
 int main(void) {
