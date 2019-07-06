@@ -20,7 +20,7 @@ matrix:
     - os: linux
       env: [PYTHON=2.7]
     - os: linux
-      env: [PYTHON=3.7, DOCBUILD=true]
+      env: [PYTHON=3.7, DOCBUILD=true, CC=clang]
     - os: linux
       python: 3.6
       env: [PYPI=true, COVERAGE=false]
@@ -44,6 +44,7 @@ matrix:
 
 before_install:
   - git fetch --tags
+  - if [[ $PYPI = true ]]; then source ci/install-gcc-8.sh; fi
   - if [[ $PYPI = true ]]; then source ci/pypi-install.sh; else source ci/conda-install.sh; fi
   - if [[ $PIP_CYTHON = true ]]; then pip install cython --upgrade; fi
   - pip install tempita coverage coveralls pytest-cov codecov coveralls -q
