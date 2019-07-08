@@ -49,6 +49,7 @@ typedef struct CHACHA_STATE_T chacha_state_t;
 // Get an efficient _mm_roti_epi32 based on enabled features.
 #if !defined(__XOP__)
     #if defined(__SSSE3__) && __SSSE3__
+        #undef _mm_roti_epi32 /* Silence warnings on some compiler */
         #define _mm_roti_epi32(r, c) (                              \
             ((c) == 8) ?                                            \
                 _mm_shuffle_epi8((r), _mm_set_epi8(14, 13, 12, 15,  \
@@ -70,6 +71,7 @@ typedef struct CHACHA_STATE_T chacha_state_t;
                               _mm_srli_epi32((r), 32-(c)))          \
         )
     #else
+        #undef _mm_roti_epi32 /* Silence warnings on some compiler */
         #define _mm_roti_epi32(r, c) _mm_xor_si128(_mm_slli_epi32((r), (c)), \
                                                    _mm_srli_epi32((r), 32-(c)))
     #endif
