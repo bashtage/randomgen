@@ -6,7 +6,7 @@ from randomgen.entropy import random_entropy, seed_by_array
 __all__ = ['SPECK128']
 
 DEF SPECK_UNROLL = 12
-DEF SPECK_ROUNDS = 34
+DEF SPECK_MAX_ROUNDS = 34
 
 cdef uint64_t speck_uint64(void* st) nogil:
     return speck_next64(<speck_state_t *>st)
@@ -19,7 +19,7 @@ cdef double speck_double(void* st) nogil:
 
 cdef class SPECK128(BitGenerator):
     """
-    SPECK128(seed=None)
+    SPECK128(seed=None, counter=None, key=None, rounds=34)
 
     Container for the SPECK (128 x 256) pseudo-random number generator.
 
@@ -40,6 +40,10 @@ cdef class SPECK128(BitGenerator):
         another RNG before use, the value in key is directly set. Can be either
         a Python int in [0, 2**256) or a 4-element uint64 array.
         key and seed cannot both be used.
+    rounds : {int}, optional
+        Number of rounds of the SPECK algorithm to run.  The default value 34
+        is the official value used in encryption.  Reduced-round variant
+        *might* (untested) perform well statistically with improved performance.
 
 
     Attributes
@@ -55,7 +59,7 @@ cdef class SPECK128(BitGenerator):
     SPECK128 is a 64-bit PRNG that uses a counter-based design based on
     the SPECK-128 cryptographic function [1]_. Instances using different values
     of the key produce independent sequences.  ``SPECK128`` has a large period
-    :math:`2^{TBD} - 1` and supports arbitrary advancing and
+    :math:`2^{129} - 1` and supports arbitrary advancing and
     jumping the sequence in increments of :math:`2^{64}`. These features allow
     multiple non-overlapping sequences to be generated.
 
@@ -123,10 +127,13 @@ cdef class SPECK128(BitGenerator):
        National Security Agency. January 15, 2019. from
        https://nsacyber.github.io/simon-speck/implementations/ImplementationGuide1.1.pdf
     """
-    def __init__(self, seed=None, counter=None, key=None):
+    def __init__(self, seed=None, counter=None, key=None, rounds=SPECK_MAX_ROUNDS):
         BitGenerator.__init__(self)
         # Calloc since ctr needs to be 0
         self.rng_state = <speck_state_t *>PyArray_calloc_aligned(sizeof(speck_state_t), 1)
+        if (rounds <= 0) or rounds > SPECK_MAX_ROUNDS or int(rounds) != rounds:
+            raise ValueError('rounds must be an integer in [1, 34]')
+        self.rng_state.rounds = int(rounds)
         self.seed(seed, counter, key)
 
         self._bitgen.state = <void *>self.rng_state
@@ -281,7 +288,7 @@ cdef class SPECK128(BitGenerator):
 
         ctr = np.empty(SPECK_UNROLL, dtype=np.uint64)
         buffer = np.empty(8 * SPECK_UNROLL, dtype=np.uint8)
-        round_key = np.empty(2 * SPECK_ROUNDS, dtype=np.uint64)
+        round_key = np.empty(2 * SPECK_MAX_ROUNDS, dtype=np.uint64)
 
         arr = <uint64_t*>np.PyArray_DATA(ctr)
         for i in range(SPECK_UNROLL):
@@ -292,7 +299,7 @@ cdef class SPECK128(BitGenerator):
             arr8[i] = self.rng_state.buffer[i]
 
         arr = <uint64_t*>np.PyArray_DATA(round_key)
-        for i in range(SPECK_ROUNDS):
+        for i in range(SPECK_MAX_ROUNDS):
             arr[2*i] = self.rng_state.round_key[i].u64[0]
             arr[2*i+1] = self.rng_state.round_key[i].u64[1]
 
@@ -300,7 +307,8 @@ cdef class SPECK128(BitGenerator):
                 'state': {'ctr': ctr,
                           'buffer': buffer,
                           'round_key': round_key,
-                          'offset': self.rng_state.offset},
+                          'offset': self.rng_state.offset,
+                          'rounds': self.rng_state.rounds},
                 'has_uint32': self.rng_state.has_uint32,
                 'uinteger': self.rng_state.uinteger}
 
@@ -322,7 +330,7 @@ cdef class SPECK128(BitGenerator):
         ctr = check_state_array(state['ctr'], SPECK_UNROLL, 64, 'ctr')
         buffer = check_state_array(state['buffer'], 8 * SPECK_UNROLL, 8,
                                    'buffer')
-        round_key = check_state_array(state['round_key'], 2*SPECK_ROUNDS, 64,
+        round_key = check_state_array(state['round_key'], 2*SPECK_MAX_ROUNDS, 64,
                                       'round_key')
 
         arr = <uint64_t*>np.PyArray_DATA(ctr)
@@ -334,10 +342,11 @@ cdef class SPECK128(BitGenerator):
             self.rng_state.buffer[i] = arr8[i]
 
         arr = <uint64_t*>np.PyArray_DATA(round_key)
-        for i in range(SPECK_ROUNDS):
+        for i in range(SPECK_MAX_ROUNDS):
             self.rng_state.round_key[i].u64[0] = arr[2 * i]
             self.rng_state.round_key[i].u64[1] = arr[2 * i + 1]
 
+        self.rng_state.rounds = state['rounds']
         self.rng_state.offset = state['offset']
         self.rng_state.has_uint32 = value['has_uint32']
         self.rng_state.uinteger = value['uinteger']

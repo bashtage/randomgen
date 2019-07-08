@@ -294,7 +294,6 @@ cdef class AESCounter(BitGenerator):
 
     @state.setter
     def state(self, value):
-        cdef np.ndarray seed, counter
         cdef np.npy_intp i
 
         if not isinstance(value, dict):

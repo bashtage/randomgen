@@ -1,3 +1,4 @@
+from distutils.version import LooseVersion
 import glob
 import io
 import os
@@ -89,13 +90,13 @@ elif DEBUG:
     EXTRA_LINK_ARGS += ['-g']
     UNDEF_MACROS += ['NDEBUG']
 
-DEFS = [('NPY_NO_DEPRECATED_API', '0')]
-# TODO: Enable once Cython >= 0.29
-#  [('NPY_NO_DEPRECATED_API', 'NPY_1_7_API_VERSION')]
+if Cython.__version__ >= LooseVersion('0.29'):
+    DEFS = [('NPY_NO_DEPRECATED_API', 'NPY_1_7_API_VERSION')]
+else:
+    DEFS = [('NPY_NO_DEPRECATED_API', '0')]
 
 if CYTHON_COVERAGE:
-    DEFS.extend([('CYTHON_TRACE', '1'),
-                 ('CYTHON_TRACE_NOGIL', '1')])
+    DEFS += [('CYTHON_TRACE', '1'), ('CYTHON_TRACE_NOGIL', '1')]
 
 PCG64_DEFS = DEFS[:]
 if sys.maxsize < 2 ** 32 or os.name == 'nt':
