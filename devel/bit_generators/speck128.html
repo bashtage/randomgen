@@ -13,7 +13,7 @@
   <link rel="stylesheet" type="text/css" href="../_static/css/bootstrap-theme.min.css" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-    <title>SPECK Counter-based RNG &#8212; RandomGen 0+untagged.116.g0c7ac55 documentation</title>
+    <title>SPECK Counter-based RNG &#8212; RandomGen 0+untagged.116.g151ebd5 documentation</title>
     <link rel="stylesheet" href="../_static/guzzle.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
@@ -45,7 +45,7 @@
         <li class="right" >
           <a href="generated/randomgen.sfmt.SFMT.random_raw.html" title="randomgen.sfmt.SFMT.random_raw"
              accesskey="P">previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../index.html">RandomGen 0+untagged.116.g0c7ac55 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">RandomGen 0+untagged.116.g151ebd5 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="index.html" accesskey="U">Bit Generators</a> &#187;</li> 
       </ul>
     </div>
@@ -126,7 +126,7 @@
 <span id="speck-counter-based-rng"></span><h1>SPECK Counter-based RNG<a class="headerlink" href="#module-randomgen.speck128" title="Permalink to this headline">¶</a></h1>
 <dl class="class">
 <dt id="randomgen.speck128.SPECK128">
-<em class="property">class </em><code class="sig-prename descclassname">randomgen.speck128.</code><code class="sig-name descname">SPECK128</code><span class="sig-paren">(</span><em class="sig-param">seed=None</em><span class="sig-paren">)</span><a class="headerlink" href="#randomgen.speck128.SPECK128" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">randomgen.speck128.</code><code class="sig-name descname">SPECK128</code><span class="sig-paren">(</span><em class="sig-param">seed=None</em>, <em class="sig-param">counter=None</em>, <em class="sig-param">key=None</em>, <em class="sig-param">rounds=34</em><span class="sig-paren">)</span><a class="headerlink" href="#randomgen.speck128.SPECK128" title="Permalink to this definition">¶</a></dt>
 <dd><p>Container for the SPECK (128 x 256) pseudo-random number generator.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -143,6 +143,9 @@ If not provided, the RNG is initialized at 0.</p></li>
 another RNG before use, the value in key is directly set. Can be either
 a Python int in [0, 2**256) or a 4-element uint64 array.
 key and seed cannot both be used.</p></li>
+<li><p><strong>rounds</strong> (<em>{int}</em><em>, </em><em>optional</em>) – Number of rounds of the SPECK algorithm to run.  The default value 34
+is the official value used in encryption.  Reduced-round variant
+<em>might</em> (untested) perform well statistically with improved performance.</p></li>
 </ul>
 </dd>
 </dl>
@@ -164,7 +167,7 @@ lock.</p>
 <p>SPECK128 is a 64-bit PRNG that uses a counter-based design based on
 the SPECK-128 cryptographic function <a class="footnote-reference brackets" href="#id2" id="id1">1</a>. Instances using different values
 of the key produce independent sequences.  <code class="docutils literal notranslate"><span class="pre">SPECK128</span></code> has a large period
-<span class="math notranslate nohighlight">\(2^{TBD} - 1\)</span> and supports arbitrary advancing and
+<span class="math notranslate nohighlight">\(2^{129} - 1\)</span> and supports arbitrary advancing and
 jumping the sequence in increments of <span class="math notranslate nohighlight">\(2^{64}\)</span>. These features allow
 multiple non-overlapping sequences to be generated.</p>
 <p><code class="docutils literal notranslate"><span class="pre">SPECK128</span></code> provides a capsule containing function pointers that produce
@@ -333,7 +336,7 @@ National Security Agency. January 15, 2019. from
         <li class="right" >
           <a href="generated/randomgen.sfmt.SFMT.random_raw.html" title="randomgen.sfmt.SFMT.random_raw"
              >previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../index.html">RandomGen 0+untagged.116.g0c7ac55 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">RandomGen 0+untagged.116.g151ebd5 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="index.html" >Bit Generators</a> &#187;</li> 
       </ul>
     </div>
