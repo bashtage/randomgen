@@ -14,6 +14,7 @@ cdef extern from "src/speck-128/speck-128.h":
         spec_t round_key[SPECK_ROUNDS]
         spec_t ctr[SPECK_UNROLL // 2]
         uint8_t buffer[8 * SPECK_UNROLL]
+        int rounds
 
         int offset
         int has_uint32
