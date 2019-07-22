@@ -13,7 +13,7 @@
   <link rel="stylesheet" type="text/css" href="_static/css/bootstrap-theme.min.css" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-    <title>What’s New or Different &#8212; RandomGen 0+untagged.116.g151ebd5 documentation</title>
+    <title>What’s New or Different &#8212; RandomGen 0+untagged.116.ga9eef1a documentation</title>
     <link rel="stylesheet" href="_static/guzzle.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
@@ -45,7 +45,7 @@
         <li class="right" >
           <a href="multithreading.html" title="Multithreaded Generation"
              accesskey="P">previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="index.html">RandomGen 0+untagged.116.g151ebd5 documentation</a> &#187;</li> 
+        <li class="nav-item nav-item-0"><a href="index.html">RandomGen 0+untagged.116.ga9eef1a documentation</a> &#187;</li> 
       </ul>
     </div>
     <div class="container-wrapper">
@@ -148,22 +148,22 @@ methods which are 2-10 times faster than NumPy’s default implementation in
 <span class="gp">In [4]: </span><span class="o">%</span><span class="k">timeit</span> rg.standard_normal(100000)
 <span class="gp">   ...: </span><span class="o">%</span><span class="k">timeit</span> numpy.random.standard_normal(100000)
 <span class="gp">   ...: </span>
-<span class="go">12.8 ms +- 80.7 us per loop (mean +- std. dev. of 7 runs, 100 loops each)</span>
-<span class="go">4.48 ms +- 24.3 us per loop (mean +- std. dev. of 7 runs, 100 loops each)</span>
+<span class="go">12.8 ms +- 64.5 us per loop (mean +- std. dev. of 7 runs, 100 loops each)</span>
+<span class="go">4.46 ms +- 22.6 us per loop (mean +- std. dev. of 7 runs, 100 loops each)</span>
 </pre></div>
 </div>
 <div class="highlight-ipython notranslate"><div class="highlight"><pre><span></span><span class="gp">In [5]: </span><span class="o">%</span><span class="k">timeit</span> rg.standard_exponential(100000)
 <span class="gp">   ...: </span><span class="o">%</span><span class="k">timeit</span> numpy.random.standard_exponential(100000)
 <span class="gp">   ...: </span>
-<span class="go">12.9 ms +- 84.3 us per loop (mean +- std. dev. of 7 runs, 100 loops each)</span>
-<span class="go">5.2 ms +- 15.3 us per loop (mean +- std. dev. of 7 runs, 100 loops each)</span>
+<span class="go">13.1 ms +- 97.6 us per loop (mean +- std. dev. of 7 runs, 100 loops each)</span>
+<span class="go">5.21 ms +- 32 us per loop (mean +- std. dev. of 7 runs, 100 loops each)</span>
 </pre></div>
 </div>
 <div class="highlight-ipython notranslate"><div class="highlight"><pre><span></span><span class="gp">In [6]: </span><span class="o">%</span><span class="k">timeit</span> rg.standard_gamma(3.0, 100000)
 <span class="gp">   ...: </span><span class="o">%</span><span class="k">timeit</span> numpy.random.standard_gamma(3.0, 100000)
 <span class="gp">   ...: </span>
-<span class="go">38.6 ms +- 269 us per loop (mean +- std. dev. of 7 runs, 10 loops each)</span>
-<span class="go">7.66 ms +- 10.9 us per loop (mean +- std. dev. of 7 runs, 100 loops each)</span>
+<span class="go">37.4 ms +- 285 us per loop (mean +- std. dev. of 7 runs, 10 loops each)</span>
+<span class="go">7.66 ms +- 29 us per loop (mean +- std. dev. of 7 runs, 100 loops each)</span>
 </pre></div>
 </div>
 <ul class="simple">
@@ -186,19 +186,17 @@ select core distributions</p>
 </ul>
 </li>
 </ul>
-<div class="highlight-ipython notranslate"><div class="highlight"><pre><span></span><span class="gp">In [7]: </span><span class="n">rg</span><span class="o">.</span><span class="n">seed</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
-<span class="gh">Out[7]: </span><span class="go">Generator(Xoroshiro128) at 0x7F389B4AA7C8</span>
+<pre class="literal-block">In [7]: rg.seed(0)
+Out[7]: Generator(Xoroshiro128) at 0x7F1F245DE138
 
-<span class="gp">In [8]: </span><span class="n">rg</span><span class="o">.</span><span class="n">random</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="s1">&#39;d&#39;</span><span class="p">)</span>
-<span class="go">                                                  Out[8]: array([0.31483881, 0.84384135, 0.85491961])</span>
+In [8]: rg.random(3, dtype='d')
+Out[8]: array([0.31483881, 0.84384135, 0.85491961])
 
-<span class="gp">In [9]: </span><span class="n">rg</span><span class="o">.</span><span class="n">seed</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
-<span class="go">                                                                                                      Out[9]: Generator(Xoroshiro128) at 0x7F389B4AA7C8</span>
+In [9]: rg.seed(0)
+Out[9]: Generator(Xoroshiro128) at 0x7F1F245DE138
 
-<span class="gp">In [10]: </span><span class="n">rg</span><span class="o">.</span><span class="n">random</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="s1">&#39;f&#39;</span><span class="p">)</span>
-<span class="go">                                                                                                                                                        Out[10]: array([0.11265862, 0.31483877, 0.4068042 ], dtype=float32)</span>
-</pre></div>
-</div>
+In [10]: rg.random(3, dtype='f')
+Out[10]: array([0.11265862, 0.31483877, 0.4068042 ], dtype=float32)</pre>
 <ul>
 <li><p>Optional <code class="docutils literal notranslate"><span class="pre">out</span></code> argument that allows existing arrays to be filled for
 select core distributions</p>
@@ -212,15 +210,13 @@ select core distributions</p>
 PRNGs in parallel.</p>
 </li>
 </ul>
-<div class="highlight-ipython notranslate"><div class="highlight"><pre><span></span><span class="gp">In [11]: </span><span class="n">existing</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="mi">4</span><span class="p">)</span>
+<pre class="literal-block">In [11]: existing = np.zeros(4)
 
-<span class="gp">In [12]: </span><span class="n">rg</span><span class="o">.</span><span class="n">random</span><span class="p">(</span><span class="n">out</span><span class="o">=</span><span class="n">existing</span><span class="p">[:</span><span class="mi">2</span><span class="p">])</span>
-<span class="gh">Out[12]: </span><span class="go">array([0.85491961, 0.38351904])</span>
+In [12]: rg.random(out=existing[:2])
+Out[12]: array([0.85491961, 0.38351904])
 
-<span class="gp">In [13]: </span><span class="k">print</span><span class="p">(</span><span class="n">existing</span><span class="p">)</span>
-<span class="go">                                         [0.85491961 0.38351904 0.         0.        ]</span>
-</pre></div>
-</div>
+In [13]: print(existing)
+[0.85491961 0.38351904 0.         0.        ]</pre>
 <ul class="simple">
 <li><p><a class="reference internal" href="generated/randomgen.generator.Generator.integers.html#randomgen.generator.Generator.integers" title="randomgen.generator.Generator.integers"><code class="xref py py-meth docutils literal notranslate"><span class="pre">integers()</span></code></a> supports broadcasting inputs.</p></li>
 <li><p><a class="reference internal" href="generated/randomgen.generator.Generator.integers.html#randomgen.generator.Generator.integers" title="randomgen.generator.Generator.integers"><code class="xref py py-meth docutils literal notranslate"><span class="pre">integers()</span></code></a> supports
@@ -229,52 +225,48 @@ drawing from open (default, <code class="docutils literal notranslate"><span cla
 <code class="docutils literal notranslate"><span class="pre">endpoint</span></code>. Closed intervals are simpler to use when the
 distribution may include the maximum value of a given integer type.</p></li>
 </ul>
-<div class="highlight-ipython notranslate"><div class="highlight"><pre><span></span><span class="gp">In [14]: </span><span class="n">rg</span><span class="o">.</span><span class="n">seed</span><span class="p">(</span><span class="mi">1234</span><span class="p">)</span>
-<span class="gh">Out[14]: </span><span class="go">Generator(Xoroshiro128) at 0x7F389B4AA7C8</span>
+<pre class="literal-block">In [14]: rg.seed(1234)
+Out[14]: Generator(Xoroshiro128) at 0x7F1F245DE138
 
-<span class="gp">In [15]: </span><span class="n">rg</span><span class="o">.</span><span class="n">integers</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">iinfo</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">int64</span><span class="p">)</span><span class="o">.</span><span class="n">max</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span>
-<span class="go">                                                   Out[15]: 5968561782418604543</span>
+In [15]: rg.integers(0, np.iinfo(np.int64).max+1)
+Out[15]: 5968561782418604543
 
-<span class="gp">In [16]: </span><span class="n">rg</span><span class="o">.</span><span class="n">seed</span><span class="p">(</span><span class="mi">1234</span><span class="p">)</span>
-<span class="go">                                                                                Out[16]: Generator(Xoroshiro128) at 0x7F389B4AA7C8</span>
+In [16]: rg.seed(1234)
+Out[16]: Generator(Xoroshiro128) at 0x7F1F245DE138
 
-<span class="gp">In [17]: </span><span class="n">rg</span><span class="o">.</span><span class="n">integers</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">iinfo</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">int64</span><span class="p">)</span><span class="o">.</span><span class="n">max</span><span class="p">,</span> <span class="n">endpoint</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
-<span class="go">                                                                                                                                   Out[17]: 5968561782418604543</span>
-</pre></div>
-</div>
+In [17]: rg.integers(0, np.iinfo(np.int64).max, endpoint=True)
+Out[17]: 5968561782418604543</pre>
 <ul class="simple">
 <li><p>The closed interval is particularly helpful when using arrays since
 it avoids object-dtype arrays when sampling from the full range.</p></li>
 </ul>
-<div class="highlight-ipython notranslate"><div class="highlight"><pre><span></span><span class="gp">In [18]: </span><span class="n">rg</span><span class="o">.</span><span class="n">seed</span><span class="p">(</span><span class="mi">1234</span><span class="p">)</span>
-<span class="gh">Out[18]: </span><span class="go">Generator(Xoroshiro128) at 0x7F389B4AA7C8</span>
+<pre class="literal-block">In [18]: rg.seed(1234)
+Out[18]: Generator(Xoroshiro128) at 0x7F1F245DE138
 
-<span class="gp">In [19]: </span><span class="n">lower</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">uint64</span><span class="p">)</span>
+In [19]: lower = np.zeros((2, 1), dtype=np.uint64)
 
-<span class="gp">In [20]: </span><span class="n">upper</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">10</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">iinfo</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">uint64</span><span class="p">)</span><span class="o">.</span><span class="n">max</span><span class="o">+</span><span class="mi">1</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">object</span><span class="p">)</span>
+In [20]: upper = np.array([10, np.iinfo(np.uint64).max+1], dtype=np.object)
 
-<span class="gp">In [21]: </span><span class="n">upper</span>
-<span class="gh">Out[21]: </span><span class="go">array([10, 18446744073709551616], dtype=object)</span>
+In [21]: upper
+Out[21]: array([10, 18446744073709551616], dtype=object)
 
-<span class="gp">In [22]: </span><span class="n">rg</span><span class="o">.</span><span class="n">integers</span><span class="p">(</span><span class="n">lower</span><span class="p">,</span> <span class="n">upper</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">uint64</span><span class="p">)</span>
-<span class="go">                                                         Out[22]: </span>
-<span class="go">array([[                   1, 13679804536755542709],</span>
-<span class="go">       [                   3, 14565847542971664883]], dtype=uint64)</span>
+In [22]: rg.integers(lower, upper, dtype=np.uint64)
+Out[22]: 
+array([[                   1, 13679804536755542709],
+       [                   3, 14565847542971664883]], dtype=uint64)
 
-<span class="gp">In [23]: </span><span class="n">rg</span><span class="o">.</span><span class="n">seed</span><span class="p">(</span><span class="mi">1234</span><span class="p">)</span>
-<span class="go">                                                                                                                                                                                            Out[23]: Generator(Xoroshiro128) at 0x7F389B4AA7C8</span>
+In [23]: rg.seed(1234)
+Out[23]: Generator(Xoroshiro128) at 0x7F1F245DE138
 
-<span class="gp">In [24]: </span><span class="n">upper</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">10</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">iinfo</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">uint64</span><span class="p">)</span><span class="o">.</span><span class="n">max</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">uint64</span><span class="p">)</span>
+In [24]: upper = np.array([10, np.iinfo(np.uint64).max], dtype=np.uint64)
 
-<span class="gp">In [25]: </span><span class="n">upper</span>
-<span class="gh">Out[25]: </span><span class="go">array([                  10, 18446744073709551615], dtype=uint64)</span>
+In [25]: upper
+Out[25]: array([                  10, 18446744073709551615], dtype=uint64)
 
-<span class="gp">In [26]: </span><span class="n">rg</span><span class="o">.</span><span class="n">integers</span><span class="p">(</span><span class="n">lower</span><span class="p">,</span> <span class="n">upper</span><span class="p">,</span> <span class="n">endpoint</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">uint64</span><span class="p">)</span>
-<span class="go">                                                                           Out[26]: </span>
-<span class="go">array([[                   1, 13679804536755542709],</span>
-<span class="go">       [                   3, 14565847542971664883]], dtype=uint64)</span>
-</pre></div>
-</div>
+In [26]: rg.integers(lower, upper, endpoint=True, dtype=np.uint64)
+Out[26]: 
+array([[                   1, 13679804536755542709],
+       [                   3, 14565847542971664883]], dtype=uint64)</pre>
 <ul class="simple">
 <li><p>Support for Lemire’s method of generating uniform integers on an
 arbitrary interval by setting <code class="docutils literal notranslate"><span class="pre">use_masked=True</span></code> in
@@ -283,8 +275,8 @@ arbitrary interval by setting <code class="docutils literal notranslate"><span c
 <div class="highlight-ipython notranslate"><div class="highlight"><pre><span></span><span class="gp">In [27]: </span><span class="o">%</span><span class="k">timeit</span> rg.integers(0, 1535, size=100000, use_masked=False)
 <span class="gp">   ....: </span><span class="o">%</span><span class="k">timeit</span> numpy.random.randint(0, 1535, size=100000)
 <span class="gp">   ....: </span>
-<span class="go">12.2 ms +- 37.9 us per loop (mean +- std. dev. of 7 runs, 100 loops each)</span>
-<span class="go">1.03 ms +- 2.18 us per loop (mean +- std. dev. of 7 runs, 1000 loops each)</span>
+<span class="go">12 ms +- 134 us per loop (mean +- std. dev. of 7 runs, 100 loops each)</span>
+<span class="go">1.04 ms +- 1.07 us per loop (mean +- std. dev. of 7 runs, 1000 loops each)</span>
 </pre></div>
 </div>
 <ul class="simple">
@@ -304,7 +296,7 @@ is much faster when sampling small amounts from large arrays</p></li>
 <div class="highlight-ipython notranslate"><div class="highlight"><pre><span></span><span class="gp">In [29]: </span><span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">1000000</span><span class="p">)</span>
 
 <span class="gp">In [30]: </span><span class="o">%</span><span class="k">timeit</span> rg.choice(x, 10)
-<span class="go">23 us +- 176 ns per loop (mean +- std. dev. of 7 runs, 10000 loops each)</span>
+<span class="go">22.7 us +- 108 ns per loop (mean +- std. dev. of 7 runs, 10000 loops each)</span>
 </pre></div>
 </div>
 <ul class="simple">
@@ -357,7 +349,7 @@ supports the <code class="docutils literal notranslate"><span class="pre">axis</
         <li class="right" >
           <a href="multithreading.html" title="Multithreaded Generation"
              >previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="index.html">RandomGen 0+untagged.116.g151ebd5 documentation</a> &#187;</li> 
+        <li class="nav-item nav-item-0"><a href="index.html">RandomGen 0+untagged.116.ga9eef1a documentation</a> &#187;</li> 
       </ul>
     </div>
 <script type="text/javascript">
