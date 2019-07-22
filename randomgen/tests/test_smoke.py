@@ -14,6 +14,11 @@ from randomgen import (DSFMT, MT19937, PCG32, PCG64, Philox, RandomGenerator,
                        Xoshiro256StarStar, Xoshiro512StarStar, entropy)
 from randomgen._testing import suppress_warnings
 
+PY3 = sys.version_info >= (3,)
+
+if PY3:
+    long = int
+
 
 @pytest.fixture(scope='module',
                 params=(np.bool, np.int8, np.int16, np.int32, np.int64,
@@ -853,6 +858,40 @@ class RNG(object):
         n = self.rg.standard_normal()
         assert_almost_equal(c.real, 0.0)
         np.testing.assert_allclose(c.imag, n, atol=1e-8)
+
+    def test_random_uintegers(self):
+        assert len(self.rg.random_uintegers(10)) == 10
+        assert len(self.rg.random_uintegers(10, bits=32)) == 10
+        assert isinstance(self.rg.random_uintegers(), (int, long))
+        assert isinstance(self.rg.random_uintegers(bits=32), (int, long))
+        with pytest.raises(ValueError):
+            self.rg.random_uintegers(bits=128)
+
+    def test_bit_generator_raw_large(self):
+        bg = self.rg.brng
+        state = bg.state
+        raw = bg.random_raw(100000)
+        bg.state = state
+        assert_equal(raw, bg.random_raw(100000))
+
+    def test_bit_generator_raw(self):
+        bg = self.rg.brng
+        val = bg.random_raw()
+        assert np.isscalar(val)
+        val = bg.random_raw(1)
+        assert val.shape == (1,)
+        val = bg.random_raw(1000)
+        assert val.shape == (1000,)
+        assert val.dtype == np.uint64
+
+    def test_bit_generator_benchmark(self):
+        bg = self.rg.brng
+        state = bg.state
+        bg._benchmark(1000)
+        assert not comp_state(state, bg.state)
+        state = bg.state
+        bg._benchmark(1000, 'double')
+        assert not comp_state(state, bg.state)
 
 
 class TestMT19937(RNG):
