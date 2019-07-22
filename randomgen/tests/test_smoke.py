@@ -16,6 +16,11 @@ from randomgen import (DSFMT, HC128, JSF, MT64, MT19937, PCG32, PCG64, SFMT,
 
 from randomgen._testing import suppress_warnings
 
+PY3 = sys.version_info >= (3,)
+
+if PY3:
+    long = int
+
 MISSING_AES = False
 try:
     AESCounter()
@@ -927,6 +932,14 @@ class RNG(object):
         n = self.rg.standard_normal()
         assert_almost_equal(c.real, 0.0)
         np.testing.assert_allclose(c.imag, n, atol=1e-8)
+
+    def test_random_uintegers(self):
+        assert len(self.rg.random_uintegers(10)) == 10
+        assert len(self.rg.random_uintegers(10, bits=32)) == 10
+        assert isinstance(self.rg.random_uintegers(), (int, long))
+        assert isinstance(self.rg.random_uintegers(bits=32), (int, long))
+        with pytest.raises(ValueError):
+            self.rg.random_uintegers(bits=128)
 
     def test_bit_generator_raw_large(self):
         bg = self.rg.bit_generator

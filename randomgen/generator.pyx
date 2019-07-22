@@ -228,6 +228,60 @@ cdef class Generator:
     def state(self, value):
         self._bit_generator.state = value
 
+    def random_uintegers(self, size=None, int bits=64):
+        """
+        random_uintegers(size=None, bits=64)
+        Return random unsigned integers
+        Parameters
+        ----------
+        size : int or tuple of ints, optional
+            Output shape.  If the given shape is, e.g., ``(m, n, k)``, then
+            ``m * n * k`` samples are drawn.  Default is None, in which case a
+            single value is returned.
+        bits : int {32, 64}
+            Size of the unsigned integer to return, either 32 bit or 64 bit.
+        Returns
+        -------
+        out : uint or ndarray
+            Drawn samples.
+        Notes
+        -----
+        This method effectively exposes access to the raw underlying
+        pseudo-random number generator since these all produce unsigned
+        integers. In practice these are most useful for generating other
+        random numbers.
+        These should not be used to produce bounded random numbers by
+        simple truncation.
+        """
+        cdef np.npy_intp i, n
+        cdef np.ndarray array
+        cdef uint32_t* data32
+        cdef uint64_t* data64
+        if bits == 64:
+            if size is None:
+                with self.lock:
+                    return self._bitgen.next_uint64(self._bitgen.state)
+            array = <np.ndarray>np.empty(size, np.uint64)
+            n = np.PyArray_SIZE(array)
+            data64 = <uint64_t *>np.PyArray_DATA(array)
+            with self.lock, nogil:
+                for i in range(n):
+                    data64[i] = self._bitgen.next_uint64(self._bitgen.state)
+        elif bits == 32:
+            if size is None:
+                with self.lock:
+                    return self._bitgen.next_uint32(self._bitgen.state)
+            array = <np.ndarray>np.empty(size, np.uint32)
+            n = np.PyArray_SIZE(array)
+            data32 = <uint32_t *>np.PyArray_DATA(array)
+            with self.lock, nogil:
+                for i in range(n):
+                    data32[i] = self._bitgen.next_uint32(self._bitgen.state)
+        else:
+            raise ValueError('Unknown value of bits.  Must be either 32 or 64.')
+
+        return array
+
     def random_sample(self, *args, **kwargs):
         import warnings
         warnings.warn('random_sample is deprecated in favor of random',
