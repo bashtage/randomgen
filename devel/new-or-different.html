@@ -148,22 +148,22 @@ methods which are 2-10 times faster than NumPy’s default implementation in
 <span class="gp">In [4]: </span><span class="o">%</span><span class="k">timeit</span> rg.standard_normal(100000)
 <span class="gp">   ...: </span><span class="o">%</span><span class="k">timeit</span> numpy.random.standard_normal(100000)
 <span class="gp">   ...: </span>
-<span class="go">12.8 ms +- 64.5 us per loop (mean +- std. dev. of 7 runs, 100 loops each)</span>
-<span class="go">4.46 ms +- 22.6 us per loop (mean +- std. dev. of 7 runs, 100 loops each)</span>
+<span class="go">12.8 ms +- 49.8 us per loop (mean +- std. dev. of 7 runs, 100 loops each)</span>
+<span class="go">4.63 ms +- 36.8 us per loop (mean +- std. dev. of 7 runs, 100 loops each)</span>
 </pre></div>
 </div>
 <div class="highlight-ipython notranslate"><div class="highlight"><pre><span></span><span class="gp">In [5]: </span><span class="o">%</span><span class="k">timeit</span> rg.standard_exponential(100000)
 <span class="gp">   ...: </span><span class="o">%</span><span class="k">timeit</span> numpy.random.standard_exponential(100000)
 <span class="gp">   ...: </span>
-<span class="go">13.1 ms +- 97.6 us per loop (mean +- std. dev. of 7 runs, 100 loops each)</span>
-<span class="go">5.21 ms +- 32 us per loop (mean +- std. dev. of 7 runs, 100 loops each)</span>
+<span class="go">13.1 ms +- 108 us per loop (mean +- std. dev. of 7 runs, 100 loops each)</span>
+<span class="go">5.22 ms +- 49.2 us per loop (mean +- std. dev. of 7 runs, 100 loops each)</span>
 </pre></div>
 </div>
 <div class="highlight-ipython notranslate"><div class="highlight"><pre><span></span><span class="gp">In [6]: </span><span class="o">%</span><span class="k">timeit</span> rg.standard_gamma(3.0, 100000)
 <span class="gp">   ...: </span><span class="o">%</span><span class="k">timeit</span> numpy.random.standard_gamma(3.0, 100000)
 <span class="gp">   ...: </span>
-<span class="go">37.4 ms +- 285 us per loop (mean +- std. dev. of 7 runs, 10 loops each)</span>
-<span class="go">7.66 ms +- 29 us per loop (mean +- std. dev. of 7 runs, 100 loops each)</span>
+<span class="go">37.7 ms +- 664 us per loop (mean +- std. dev. of 7 runs, 10 loops each)</span>
+<span class="go">7.81 ms +- 34.6 us per loop (mean +- std. dev. of 7 runs, 100 loops each)</span>
 </pre></div>
 </div>
 <ul class="simple">
@@ -187,13 +187,13 @@ select core distributions</p>
 </li>
 </ul>
 <pre class="literal-block">In [7]: rg.seed(0)
-Out[7]: Generator(Xoroshiro128) at 0x7F1F245DE138
+Out[7]: Generator(Xoroshiro128) at 0x7FA98A2D9350
 
 In [8]: rg.random(3, dtype='d')
 Out[8]: array([0.31483881, 0.84384135, 0.85491961])
 
 In [9]: rg.seed(0)
-Out[9]: Generator(Xoroshiro128) at 0x7F1F245DE138
+Out[9]: Generator(Xoroshiro128) at 0x7FA98A2D9350
 
 In [10]: rg.random(3, dtype='f')
 Out[10]: array([0.11265862, 0.31483877, 0.4068042 ], dtype=float32)</pre>
@@ -226,13 +226,13 @@ drawing from open (default, <code class="docutils literal notranslate"><span cla
 distribution may include the maximum value of a given integer type.</p></li>
 </ul>
 <pre class="literal-block">In [14]: rg.seed(1234)
-Out[14]: Generator(Xoroshiro128) at 0x7F1F245DE138
+Out[14]: Generator(Xoroshiro128) at 0x7FA98A2D9350
 
 In [15]: rg.integers(0, np.iinfo(np.int64).max+1)
 Out[15]: 5968561782418604543
 
 In [16]: rg.seed(1234)
-Out[16]: Generator(Xoroshiro128) at 0x7F1F245DE138
+Out[16]: Generator(Xoroshiro128) at 0x7FA98A2D9350
 
 In [17]: rg.integers(0, np.iinfo(np.int64).max, endpoint=True)
 Out[17]: 5968561782418604543</pre>
@@ -241,7 +241,7 @@ Out[17]: 5968561782418604543</pre>
 it avoids object-dtype arrays when sampling from the full range.</p></li>
 </ul>
 <pre class="literal-block">In [18]: rg.seed(1234)
-Out[18]: Generator(Xoroshiro128) at 0x7F1F245DE138
+Out[18]: Generator(Xoroshiro128) at 0x7FA98A2D9350
 
 In [19]: lower = np.zeros((2, 1), dtype=np.uint64)
 
@@ -256,7 +256,7 @@ array([[                   1, 13679804536755542709],
        [                   3, 14565847542971664883]], dtype=uint64)
 
 In [23]: rg.seed(1234)
-Out[23]: Generator(Xoroshiro128) at 0x7F1F245DE138
+Out[23]: Generator(Xoroshiro128) at 0x7FA98A2D9350
 
 In [24]: upper = np.array([10, np.iinfo(np.uint64).max], dtype=np.uint64)
 
@@ -275,8 +275,8 @@ arbitrary interval by setting <code class="docutils literal notranslate"><span c
 <div class="highlight-ipython notranslate"><div class="highlight"><pre><span></span><span class="gp">In [27]: </span><span class="o">%</span><span class="k">timeit</span> rg.integers(0, 1535, size=100000, use_masked=False)
 <span class="gp">   ....: </span><span class="o">%</span><span class="k">timeit</span> numpy.random.randint(0, 1535, size=100000)
 <span class="gp">   ....: </span>
-<span class="go">12 ms +- 134 us per loop (mean +- std. dev. of 7 runs, 100 loops each)</span>
-<span class="go">1.04 ms +- 1.07 us per loop (mean +- std. dev. of 7 runs, 1000 loops each)</span>
+<span class="go">12.8 ms +- 203 us per loop (mean +- std. dev. of 7 runs, 100 loops each)</span>
+<span class="go">1.05 ms +- 4.66 us per loop (mean +- std. dev. of 7 runs, 1000 loops each)</span>
 </pre></div>
 </div>
 <ul class="simple">
@@ -296,7 +296,7 @@ is much faster when sampling small amounts from large arrays</p></li>
 <div class="highlight-ipython notranslate"><div class="highlight"><pre><span></span><span class="gp">In [29]: </span><span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">1000000</span><span class="p">)</span>
 
 <span class="gp">In [30]: </span><span class="o">%</span><span class="k">timeit</span> rg.choice(x, 10)
-<span class="go">22.7 us +- 108 ns per loop (mean +- std. dev. of 7 runs, 10000 loops each)</span>
+<span class="go">24.6 us +- 401 ns per loop (mean +- std. dev. of 7 runs, 10000 loops each)</span>
 </pre></div>
 </div>
 <ul class="simple">
