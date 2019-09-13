@@ -1461,7 +1461,7 @@ uint64_t random_bounded_uint64(bitgen_t *bitgen_state, uint64_t off,
                                uint64_t rng, uint64_t mask, bool use_masked) {
   if (rng == 0) {
     return off;
-  } else if (rng < 0xFFFFFFFFUL) {
+  } else if (rng <= 0xFFFFFFFFUL) {
     /* Call 32-bit generator if range in 32-bit. */
     if (use_masked) {
       return off + buffered_bounded_masked_uint32(bitgen_state, (uint32_t)rng,

@@ -7,6 +7,7 @@ import pytest
 
 import randomgen.mtrand as random
 
+HAS_32BIT_CLONG = np.iinfo('l').max < 2**32
 
 class TestRegression(object):
 
@@ -160,3 +161,13 @@ class TestRegression(object):
         other_byteord_dt = '<i4' if sys.byteorder == 'big' else '>i4'
         with pytest.warns(FutureWarning):
             random.randint(0, 200, size=10, dtype=other_byteord_dt)
+
+    @pytest.mark.skipif(HAS_32BIT_CLONG,
+                        reason='Cannot test with 32-bit C long')
+    def test_randint_117(self):
+        random.seed(0)
+        expected = np.array([2357136044, 2546248239, 3071714933, 3626093760,
+                             2588848963, 3684848379, 2340255427, 3638918503,
+                             1819583497, 2678185683], dtype='int64')
+        actual = random.randint(2**32, size=10)
+        assert_array_equal(actual, expected)
