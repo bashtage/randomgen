@@ -3,8 +3,18 @@
 Change Log
 ----------
 
+
 v1.17.0
 =======
+- Fixed a bug that affected both :class:`~randomgen.generator.Generator.randint`
+  in :class:`~randomgen.generator.Generator` and :meth:`~randomgen.mtrand.RandomState.randint`
+  in  :class:`~randomgen.mtrand.RandomState` when ``high=2**32``.  This value is inbounds for
+  a 32-bit unsigned closed interval generator, and so  should have been redirected to
+  a 32-bit generator. It  was erroneously sent to the 64-bit path. The random values produced
+  are fully random but inefficient. This fix breaks the stream in :class:`~randomgen.generator.Generator
+  is the value for ``high`` is used. The fix restores :class:`~randomgen.mtrand.RandomState` to
+  NumPy 1.16 compatibility.
+  only affects the output if ``dtype`` is ``'int64'``
 - This release brings many breaking changes.  Most of these have been
   implemented using ``DeprecationWarnings``. This has been done to
   bring ``randomgen`` in-line with the API changes of the version

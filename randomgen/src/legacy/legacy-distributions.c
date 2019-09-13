@@ -220,12 +220,11 @@ void legacy_random_bounded_uint64_fill(aug_bitgen_t *aug_state, uint64_t off,
                                        uint64_t rng, npy_intp cnt,
                                        uint64_t *out) {
   npy_intp i;
-
   if (rng == 0) {
     for (i = 0; i < cnt; i++) {
       out[i] = off;
     }
-  } else if (rng < 0xFFFFFFFFUL) {
+  } else if (rng <= 0xFFFFFFFFUL) {
     uint32_t buf = 0;
     int bcnt = 0;
 
@@ -244,7 +243,6 @@ void legacy_random_bounded_uint64_fill(aug_bitgen_t *aug_state, uint64_t off,
       out[i] = off + next_uint64(aug_state->bit_generator);
     }
   } else {
-
     /* Smallest bit mask >= max */
     uint64_t mask = gen_mask(rng);
 
