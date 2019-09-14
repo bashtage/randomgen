@@ -50,7 +50,7 @@ before_install:
   - pip install tempita coverage coveralls pytest-cov codecov coveralls -q
   - pip list
   - export BUILD_DIR=${PWD}
-  - if [[ ${DOCBUILD} == true ]]; then pip install sphinx sphinx_rtd_theme guzzle_sphinx_theme ipython doctr -q; fi
+  - if [[ ${DOCBUILD} == true ]]; then pip install sphinx sphinx_rtd_theme sphinx-material ipython doctr -q; fi
   - gcc --version || true
   - clang --version || true
   - export SRCDIR="$PWD"

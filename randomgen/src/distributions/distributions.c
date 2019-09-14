@@ -1575,7 +1575,7 @@ void random_bounded_uint64_fill(bitgen_t *bitgen_state, uint64_t off,
     for (i = 0; i < cnt; i++) {
       out[i] = off;
     }
-  } else if (rng < 0xFFFFFFFFUL) {
+  } else if (rng <= 0xFFFFFFFFUL) {
     uint32_t buf = 0;
     int bcnt = 0;
 
