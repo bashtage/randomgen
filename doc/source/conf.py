@@ -15,7 +15,7 @@
 # import os
 # import sys
 # sys.path.insert(0, os.path.abspath('.'))
-import guzzle_sphinx_theme
+import sphinx_material
 import randomgen
 
 # -- Project information -----------------------------------------------------
@@ -53,7 +53,8 @@ extensions = [
     'sphinx.ext.mathjax',
     'sphinx.ext.githubpages',
     'IPython.sphinxext.ipython_console_highlighting',
-    'IPython.sphinxext.ipython_directive'
+    'IPython.sphinxext.ipython_directive',
+    'sphinx_material'
 ]
 
 try:
@@ -92,7 +93,7 @@ language = None
 exclude_patterns = []
 
 # The name of the Pygments (syntax highlighting) style to use.
-pygments_style = 'sphinx'
+pygments_style = 'vs'
 
 
 # -- Options for HTML output -------------------------------------------------
@@ -109,24 +110,36 @@ pygments_style = 'sphinx'
 #
 # html_theme_options = {}
 
-html_translator_class = 'guzzle_sphinx_theme.HTMLTranslator'
-html_theme_path = guzzle_sphinx_theme.html_theme_path()
-html_theme = 'guzzle_sphinx_theme'
+html_theme_path = sphinx_material.html_theme_path()
+html_context = sphinx_material.get_html_context()
+html_theme = 'sphinx_material'
 
-# Register the theme as an extension to generate a sitemap.xml
-extensions.append("guzzle_sphinx_theme")
-
-# Guzzle theme options (see theme.conf for more information)
+# sphinx_material theme options (see theme.conf for more information)
 html_theme_options = {
+    'base_url': 'http://bashtage.github.io/randomgen/',
+    'repo_url': 'https://github.com/bashtage/randomgen/',
+    'repo_name': 'randomgen',
     # Set the name of the project to appear in the sidebar
-    "project_nav_name": project + u" " + version,
+    "nav_title": project + u" " + version,
+    'globaltoc_depth': 2,
+    'globaltoc_collapse': True,
+    'globaltoc_includehidden': True,
+    'theme_color': '#2196f3',
+    'color_primary': 'red',
+    'color_accent': 'amber',
+    'html_minify': True,
+    'css_minify': True,
+    'master_doc': False,
+    'heroes': {'index':
+                   'Additional bit generators and distribution for NumPy '
+                   '1.17\'s Generator'},
+    'logo_icon': 'casino'
 }
-
 # Add any paths that contain custom static files (such as style sheets) here,
 # relative to this directory. They are copied after the builtin static files,
 # so a file named "default.css" will overwrite the builtin "default.css".
 html_static_path = ['_static']
-
+html_favicon = 'images/favicon.ico'
 # Custom sidebar templates, must be a dictionary that maps document names
 # to template names.
 #
@@ -136,8 +149,10 @@ html_static_path = ['_static']
 # 'searchbox.html']``.
 #
 # html_sidebars = {}
+html_show_sourcelink = True
 html_sidebars = {
-    '**': ['logo-text.html', 'globaltoc.html', 'searchbox.html']
+    "**": ["logo-text.html", "globaltoc.html", "localtoc.html",
+           "searchbox.html"]
 }
 
 # If false, no module index is generated.
