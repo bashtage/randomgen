@@ -1370,7 +1370,7 @@ static NPY_INLINE uint32_t buffered_bounded_lemire_uint32(
 
   if (leftover < rng_excl) {
     /* `rng_excl` is a simple upper bound for `threshold`. */
-    const uint32_t threshold = -rng_excl % rng_excl;
+    const uint32_t threshold = ((uint32_t)(-rng_excl)) % rng_excl;
     /* Same as: threshold=((uint64_t)(0x100000000ULL - rng_excl)) % rng_excl; */
 
     while (leftover < threshold) {
@@ -1405,7 +1405,7 @@ static NPY_INLINE uint16_t buffered_bounded_lemire_uint16(
 
   if (leftover < rng_excl) {
     /* `rng_excl` is a simple upper bound for `threshold`. */
-    const uint16_t threshold = -rng_excl % rng_excl;
+    const uint16_t threshold = ((uint16_t)(-rng_excl)) % rng_excl;
     /* Same as: threshold=((uint32_t)(0x10000ULL - rng_excl)) % rng_excl; */
 
     while (leftover < threshold) {
@@ -1441,7 +1441,7 @@ static NPY_INLINE uint8_t buffered_bounded_lemire_uint8(bitgen_t *bitgen_state,
 
   if (leftover < rng_excl) {
     /* `rng_excl` is a simple upper bound for `threshold`. */
-    const uint8_t threshold = -rng_excl % rng_excl;
+    const uint8_t threshold = ((uint8_t)(-rng_excl)) % rng_excl;
     /* Same as: threshold=((uint16_t)(0x100ULL - rng_excl)) % rng_excl; */
 
     while (leftover < threshold) {
