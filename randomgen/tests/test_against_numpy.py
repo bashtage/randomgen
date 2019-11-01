@@ -422,7 +422,10 @@ class TestAgainstNumPy(object):
                           'division', 'get_state', 'set_state', 'seed',
                           'ranf', 'random', 'sample', 'absolute_import',
                           'print_function', 'RandomState', 'Lock',
-                          'randint', 'warnings']
+                          'randint', 'warnings', 'MT19937', 'PCG64', 'Philox',
+                          'SFC64', 'SeedSequence', '_pickle', 'bit_generator',
+                          'bounded_integers', 'common', 'default_rng',
+                          'generator', 'mt19937', 'pcg64', 'philox', 'sfc64']
         mod += known_exlcuded
         diff = set(npmod).difference(mod)
         assert_equal(len(diff), 0)
