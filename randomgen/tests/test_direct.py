@@ -881,7 +881,7 @@ class TestAESCounter(TestPhilox):
         bg.random_raw(8)
         direct = bg.random_raw()
         bg.state = state0
-        for i in range(8):
+        for _ in range(8):
             bg.advance(1)
         advanced = bg.random_raw()
         assert direct == advanced
@@ -1353,7 +1353,7 @@ class TestChaCha(Base):
         bg.random_raw(steps // 2)
         direct = bg.random_raw()
         bg.state = state0
-        for i in range(steps):
+        for _ in range(steps):
             bg.advance(1)
         advanced = bg.random_raw()
         assert direct == advanced
@@ -1514,7 +1514,7 @@ class TestSPECK128(TestHC128):
         bg.random_raw(8)
         direct = bg.random_raw()
         bg.state = state0
-        for i in range(8):
+        for _ in range(8):
             bg.advance(1)
         advanced = bg.random_raw()
         assert direct == advanced

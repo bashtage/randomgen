@@ -248,11 +248,11 @@ def test_integers(args):
     expected = np_gen.integers(*args)
 
     gen.bit_generator.state = initial_state
-    result = gen.integers(*args, use_masked=False)
+    with pytest.deprecated_call():
+        result = gen.integers(*args, use_masked=False)
     assert_array_equal(result, expected)
 
 
-@pytest.mark.xfail(reason="Hypergeometric has not been updated")
 @pytest.mark.parametrize("args", hypergeometric())
 def test_hypergeometric(args):
     np_gen.bit_generator.state = initial_state

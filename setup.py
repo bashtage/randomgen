@@ -147,6 +147,9 @@ for name in ('bounded_integers', 'common', 'entropy', 'generator',
     legacy = name in ('legacy.bounded_integers', 'mtrand')
     if name in ('bounded_integers', 'generator') or legacy:
         extra_source = [src_join('distributions', 'distributions.c')]
+        if name == 'generator':
+            extra_source += [src_join('distributions', 'logfactorial.c'),
+                             src_join('distributions', 'hypergeometric.c')]
         if legacy:
             extra_source += [src_join('legacy', 'legacy-distributions.c')]
             extra_macros = [('RANDOMGEN_LEGACY', '1')]

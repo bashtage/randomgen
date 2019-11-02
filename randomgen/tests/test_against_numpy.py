@@ -304,6 +304,7 @@ class TestAgainstNumPy(object):
                         self.rg.triangular)
         self._is_state_common()
 
+    @pytest.mark.xfail(reason='Changes to hypergeometic break stream')
     def test_hypergeometric(self):
         self._set_common_state()
         self._is_state_common()
@@ -425,9 +426,11 @@ class TestAgainstNumPy(object):
                           'randint', 'warnings', 'MT19937', 'PCG64', 'Philox',
                           'SFC64', 'SeedSequence', '_pickle', 'bit_generator',
                           'bounded_integers', 'common', 'default_rng',
-                          'generator', 'mt19937', 'pcg64', 'philox', 'sfc64']
+                          'generator', 'mt19937', 'pcg64', 'philox', 'sfc64',
+                          'entropy']
         mod += known_exlcuded
         diff = set(npmod).difference(mod)
+        print(diff)
         assert_equal(len(diff), 0)
 
     # Tests using legacy generator

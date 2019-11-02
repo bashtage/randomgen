@@ -660,8 +660,8 @@ class TestRandomDist(object):
                                 .view(np.recarray)),
                      # gh-4270
                      lambda x: np.asarray([(i, i) for i in x],
-                                          [("a", object, 1),
-                                           ("b", np.int32, 1)])]:
+                                          [("a", (object, (1,))),
+                                           ("b", (np.int32, (1,)))])]:
             random.seed(self.seed)
             alist = conv([1, 2, 3, 4, 5, 6, 7, 8, 9, 0])
             random.shuffle(alist)
@@ -675,7 +675,7 @@ class TestRandomDist(object):
         b = np.ma.masked_values(np.arange(20) % 3 - 1, -1)
         a_orig = a.copy()
         b_orig = b.copy()
-        for i in range(50):
+        for _ in range(50):
             random.shuffle(a)
             assert_equal(
                 sorted(a.data[~a.mask]), sorted(a_orig.data[~a_orig.mask]))
