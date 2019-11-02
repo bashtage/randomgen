@@ -3607,6 +3607,7 @@ cdef class Generator:
         #   answer = 0.003 ... pretty unlikely!
 
         """
+        DEF HYPERGEOM_MAX = 10**9
         cdef bint is_scalar = True
         cdef np.ndarray ongood, onbad, onsample
         cdef int64_t lngood, lnbad, lnsample
@@ -3621,6 +3622,9 @@ cdef class Generator:
             lnbad = <int64_t>nbad
             lnsample = <int64_t>nsample
 
+            if lngood >= HYPERGEOM_MAX or lnbad >= HYPERGEOM_MAX:
+                raise ValueError("both ngood and nbad must be less than "
+                                 "{:d}".format(HYPERGEOM_MAX))
             if lngood + lnbad < lnsample:
                 raise ValueError("ngood + nbad < nsample")
             return disc(&random_hypergeometric, &self._bitgen, size, self.lock, 0, 3,
@@ -3628,6 +3632,9 @@ cdef class Generator:
                         lnbad, 'nbad', CONS_NON_NEGATIVE,
                         lnsample, 'nsample', CONS_NON_NEGATIVE)
 
+        if np.any(ongood >= HYPERGEOM_MAX) or np.any(onbad >= HYPERGEOM_MAX):
+            raise ValueError("both ngood and nbad must be less than "
+                             "{:d}".format(HYPERGEOM_MAX))
         if np.any(np.less(np.add(ongood, onbad), onsample)):
             raise ValueError("ngood + nbad < nsample")
         return discrete_broadcast_iii(&random_hypergeometric, &self._bitgen, size, self.lock,

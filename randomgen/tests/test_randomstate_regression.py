@@ -9,6 +9,7 @@ import randomgen.mtrand as random
 
 HAS_32BIT_CLONG = np.iinfo('l').max < 2**32
 
+
 class TestRegression(object):
 
     def test_VonMises_range(self):

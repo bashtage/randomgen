@@ -1,4 +1,5 @@
 #include "distributions.h"
+#include "loggam.h"
 #include "ziggurat.h"
 #include "ziggurat_constants.h"
 
@@ -464,51 +465,6 @@ uint64_t random_uint(bitgen_t *bitgen_state) {
   return next_uint64(bitgen_state);
 #endif
 }
-
-/*
- * log-gamma function to support some of these distributions. The
- * algorithm comes from SPECFUN by Shanjie Zhang and Jianming Jin and their
- * book "Computation of Special Functions", 1996, John Wiley & Sons, Inc.
- */
-static double loggam(double x) {
-  double x0, x2, xp, gl, gl0;
-  RAND_INT_TYPE k, n;
-
-  static double a[10] = {8.333333333333333e-02, -2.777777777777778e-03,
-                         7.936507936507937e-04, -5.952380952380952e-04,
-                         8.417508417508418e-04, -1.917526917526918e-03,
-                         6.410256410256410e-03, -2.955065359477124e-02,
-                         1.796443723688307e-01, -1.39243221690590e+00};
-  x0 = x;
-  n = 0;
-  if ((x == 1.0) || (x == 2.0)) {
-    return 0.0;
-  } else if (x <= 7.0) {
-    n = (RAND_INT_TYPE)(7 - x);
-    x0 = x + n;
-  }
-  x2 = 1.0 / (x0 * x0);
-  xp = 2 * M_PI;
-  gl0 = a[9];
-  for (k = 8; k >= 0; k--) {
-    gl0 *= x2;
-    gl0 += a[k];
-  }
-  gl = gl0 / x0 + 0.5 * log(xp) + (x0 - 0.5) * log(x0) - x0;
-  if (x <= 7.0) {
-    for (k = 1; k <= n; k++) {
-      gl -= log(x0 - 1.0);
-      x0 -= 1.0;
-    }
-  }
-  return gl;
-}
-
-/*
-double random_normal(bitgen_t *bitgen_state, double loc, double scale) {
-  return loc + scale * random_gauss(bitgen_state);
-}
-*/
 
 double random_normal_zig(bitgen_t *bitgen_state, double loc, double scale) {
   return loc + scale * random_gauss_zig(bitgen_state);
@@ -1128,105 +1084,6 @@ double random_triangular(bitgen_t *bitgen_state, double left, double mode,
   }
 }
 
-RAND_INT_TYPE random_hypergeometric_hyp(bitgen_t *bitgen_state,
-                                        RAND_INT_TYPE good, RAND_INT_TYPE bad,
-                                        RAND_INT_TYPE sample) {
-  RAND_INT_TYPE d1, k, z;
-  double d2, u, y;
-
-  d1 = bad + good - sample;
-  d2 = (double)MIN(bad, good);
-
-  y = d2;
-  k = sample;
-  while (y > 0.0) {
-    u = next_double(bitgen_state);
-    y -= (RAND_INT_TYPE)floor(u + y / (d1 + k));
-    k--;
-    if (k == 0)
-      break;
-  }
-  z = (RAND_INT_TYPE)(d2 - y);
-  if (good > bad)
-    z = sample - z;
-  return z;
-}
-
-/* D1 = 2*sqrt(2/e) */
-/* D2 = 3 - 2*sqrt(3/e) */
-#define D1 1.7155277699214135
-#define D2 0.8989161620588988
-RAND_INT_TYPE random_hypergeometric_hrua(bitgen_t *bitgen_state,
-                                         RAND_INT_TYPE good, RAND_INT_TYPE bad,
-                                         RAND_INT_TYPE sample) {
-  RAND_INT_TYPE mingoodbad, maxgoodbad, popsize, m, d9;
-  double d4, d5, d6, d7, d8, d10, d11;
-  RAND_INT_TYPE Z;
-  double T, W, X, Y;
-
-  mingoodbad = MIN(good, bad);
-  popsize = good + bad;
-  maxgoodbad = MAX(good, bad);
-  m = MIN(sample, popsize - sample);
-  d4 = ((double)mingoodbad) / popsize;
-  d5 = 1.0 - d4;
-  d6 = m * d4 + 0.5;
-  d7 = sqrt((double)(popsize - m) * sample * d4 * d5 / (popsize - 1) + 0.5);
-  d8 = D1 * d7 + D2;
-  d9 = (RAND_INT_TYPE)floor((double)(m + 1) * (mingoodbad + 1) / (popsize + 2));
-  d10 = (loggam(d9 + 1) + loggam(mingoodbad - d9 + 1) + loggam(m - d9 + 1) +
-         loggam(maxgoodbad - m + d9 + 1));
-  d11 = MIN(MIN(m, mingoodbad) + 1.0, floor(d6 + 16 * d7));
-  /* 16 for 16-decimal-digit precision in D1 and D2 */
-
-  while (1) {
-    X = next_double(bitgen_state);
-    Y = next_double(bitgen_state);
-    W = d6 + d8 * (Y - 0.5) / X;
-
-    /* fast rejection: */
-    if ((W < 0.0) || (W >= d11))
-      continue;
-
-    Z = (RAND_INT_TYPE)floor(W);
-    T = d10 - (loggam(Z + 1) + loggam(mingoodbad - Z + 1) + loggam(m - Z + 1) +
-               loggam(maxgoodbad - m + Z + 1));
-
-    /* fast acceptance: */
-    if ((X * (4.0 - X) - 3.0) <= T)
-      break;
-
-    /* fast rejection: */
-    if (X * (X - T) >= 1)
-      continue;
-    /* log(0.0) is ok here, since always accept */
-    if (2.0 * log(X) <= T)
-      break; /* acceptance */
-  }
-
-  /* this is a correction to HRUA* by Ivan Frohne in rv.py */
-  if (good > bad)
-    Z = m - Z;
-
-  /* another fix from rv.py to allow sample to exceed popsize/2 */
-  if (m < sample)
-    Z = good - Z;
-
-  return Z;
-}
-#undef D1
-#undef D2
-
-RAND_INT_TYPE random_hypergeometric(bitgen_t *bitgen_state, RAND_INT_TYPE good,
-                                    RAND_INT_TYPE bad, RAND_INT_TYPE sample) {
-  if (sample > 10) {
-    return random_hypergeometric_hrua(bitgen_state, good, bad, sample);
-  } else if (sample > 0) {
-    return random_hypergeometric_hyp(bitgen_state, good, bad, sample);
-  } else {
-    return 0;
-  }
-}
 
 uint64_t random_interval(bitgen_t *bitgen_state, uint64_t max) {
   uint64_t mask, value;
