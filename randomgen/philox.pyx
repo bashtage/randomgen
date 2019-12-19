@@ -160,8 +160,9 @@ cdef class Philox(BitGenerator):
     cdef int n
     cdef int w
 
-    def __init__(self, seed=None, counter=None, key=None, number=4, width=64):
-        BitGenerator.__init__(self)
+    def __init__(self, seed=None, *, counter=None, key=None, number=4,
+                 width=64, mode=None):
+        BitGenerator.__init__(self, seed, mode)
         if number not in (2, 4):
             raise ValueError('number must be either 2 or 4')
         if width not in (32, 64):
@@ -211,50 +212,14 @@ cdef class Philox(BitGenerator):
         for i in range(PHILOX_BUFFER_SIZE):
             self.rng_state.buffer[i].u64 = 0
 
-    @classmethod
-    def from_seed_seq(cls, entropy=None, counter=None, number=4, width=64):
-        """
-        from_seed_seq(entropy=None, counter=None, number=4, width=64)
-
-        Create a instance using a SeedSequence
-
-        Parameters
-        ----------
-        entropy : {None, int, sequence[int], SeedSequence}
-            Entropy to pass to SeedSequence, or a SeedSequence instance. Using
-            a SeedSequence instance allows all parameters to be set.
-        counter : {None, int, array_like}, optional
-            Counter to use in the Philox state. Can be either
-            a Python int (long in 2.x) in [0, 2**256) or a 4-element uint64
-            array. If not provided, the RNG is initialized at 0.
-        number : {2, 4}, optional
-            Number of values to produce in a single call. Maps to N in the
-            Philox variant naming scheme PhiloxNxW.
-        width : {32, 64}, optional
-            Bit width the values produced. Maps to W in the Philox variant
-            naming scheme PhiloxNxW.
-
-        Returns
-        -------
-        bit_gen : Philox
-            SeedSequence initialized bit generator with SeedSequence instance
-            attached to ``bit_gen.seed_seq``
-
-        See Also
-        --------
-        randomgen.seed_sequence.SeedSequence
-        """
-        seed_kwargs = dict(counter=counter)
-        cls_kwargs = dict(number=number, width=width)
-        return super(Philox, cls).from_seed_seq(entropy=entropy,
-                                                cls_kwargs=cls_kwargs,
-                                                seed_kwargs=seed_kwargs)
-
-    def _seed_from_seq(self, seed_seq, counter=None):
-        self.seed_seq = seed_seq
+    def _seed_from_seq(self, counter=None):
         seed_seq_size = max(self.n * self.w // 128, 1)
         state = self.seed_seq.generate_state(seed_seq_size, np.uint64)
+        # Special case 2x32 which needs max 32 bits
+        if self.n == 2 and self.w == 32:
+            state %= np.uint64(2**32)
         self.seed(key=state, counter=counter)
+        self._reset_state_variables()
 
     def seed(self, seed=None, counter=None, key=None):
         """
@@ -293,6 +258,13 @@ cdef class Philox(BitGenerator):
         The two representation of the counter and key are related through
         array[i] = (value // 2**(64*i)) % 2**64.
         """
+        if seed is not None and key is not None:
+            raise ValueError('seed and key cannot be both used')
+        if key is None:
+            BitGenerator._seed_with_seed_sequence(self, seed, counter=counter)
+            if self.seed_seq is not None:
+                return
+
         seed = object_to_int(seed, self.n * self.w // 2, 'seed')
         key = object_to_int(key, self.n // 2 * self.w, 'key')
         counter = object_to_int(counter, self.n * self.w, 'counter')
@@ -489,7 +461,7 @@ cdef class Philox(BitGenerator):
         """
         cdef Philox bit_generator
 
-        bit_generator = self.__class__()
+        bit_generator = self.__class__(mode=self.mode)
         bit_generator.state = self.state
         bit_generator.jump_inplace(iter)
 

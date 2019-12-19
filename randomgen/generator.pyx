@@ -114,7 +114,7 @@ cdef class Generator:
 
     def __init__(self, bit_generator=None):
         if bit_generator is None:
-            bit_generator = Xoroshiro128()
+            bit_generator = Xoroshiro128(mode="sequence")
         self._bit_generator = bit_generator
 
         capsule = bit_generator.capsule

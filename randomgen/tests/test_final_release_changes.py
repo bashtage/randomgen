@@ -46,7 +46,7 @@ def test_brng_deprecated():
 
 
 def test_generator_raises(bit_generator):
-    bg = bit_generator()
+    bg = bit_generator(mode="sequence")
     with pytest.raises(NotImplementedError):
         bg.generator
 

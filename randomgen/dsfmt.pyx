@@ -106,8 +106,8 @@ cdef class DSFMT(BitGenerator):
            Sequences and Their Applications - SETA, 290--298, 2008.
     """
 
-    def __init__(self, seed=None):
-        BitGenerator.__init__(self)
+    def __init__(self, seed=None, *, mode=None):
+        BitGenerator.__init__(self, seed, mode)
         self.rng_state.state = <dsfmt_t *>PyArray_malloc_aligned(sizeof(dsfmt_t))
         self.rng_state.buffered_uniforms = <double *>PyArray_calloc_aligned(DSFMT_N64, sizeof(double))
         self.rng_state.buffer_loc = DSFMT_N64
@@ -128,38 +128,13 @@ cdef class DSFMT(BitGenerator):
     cdef _reset_state_variables(self):
         self.rng_state.buffer_loc = DSFMT_N64
 
-    @classmethod
-    def from_seed_seq(cls, entropy=None):
-        """
-        from_seed_seq(entropy=None)
-
-        Create a instance using a SeedSequence
-
-        Parameters
-        ----------
-        entropy : {None, int, sequence[int], SeedSequence}
-            Entropy to pass to SeedSequence, or a SeedSequence instance. Using
-            a SeedSequence instance allows all parameters to be set.
-
-        Returns
-        -------
-        bit_gen : DSFMT
-            SeedSequence initialized bit generator with SeedSequence instance
-            attached to ``bit_gen.seed_seq``
-
-        See Also
-        --------
-        randomgen.seed_sequence.SeedSequence
-        """
-        return super(DSFMT, cls).from_seed_seq(entropy)
-
-    def _seed_from_seq(self, seed_seq):
-        self.seed_seq = seed_seq
+    def _seed_from_seq(self):
         state = self.seed_seq.generate_state(2 * DSFMT_N64, np.uint32)
 
         dsfmt_init_by_array(self.rng_state.state,
                             <uint32_t *>np.PyArray_DATA(state),
                             2 * DSFMT_N64)
+        self._reset_state_variables()
 
     def seed(self, seed=None):
         """
@@ -184,6 +159,10 @@ cdef class DSFMT(BitGenerator):
             If seed values are out of range for the PRNG.
         """
         cdef np.ndarray obj, seed_arr
+
+        BitGenerator._seed_with_seed_sequence(self, seed)
+        if self.seed_seq is not None:
+            return
         try:
             if seed is None:
                 seed_arr = random_entropy(2 * DSFMT_N64, 'auto')
@@ -270,7 +249,7 @@ cdef class DSFMT(BitGenerator):
         """
         cdef DSFMT bit_generator
 
-        bit_generator = self.__class__()
+        bit_generator = self.__class__(mode=self.mode)
         bit_generator.state = self.state
         bit_generator.jump_inplace(iter)
 

@@ -101,8 +101,8 @@ cdef class MT19937(BitGenerator):
         No. 3, Summer 2008, pp. 385-390.
 
     """
-    def __init__(self, seed=None):
-        BitGenerator.__init__(self)
+    def __init__(self, seed=None, *, mode=None):
+        BitGenerator.__init__(self, seed, mode)
         self.seed(seed)
         self._bitgen.state = &self.rng_state
         self._bitgen.next_uint64 = &mt19937_uint64
@@ -110,33 +110,7 @@ cdef class MT19937(BitGenerator):
         self._bitgen.next_double = &mt19937_double
         self._bitgen.next_raw = &mt19937_raw
 
-    @classmethod
-    def from_seed_seq(cls, entropy=None):
-        """
-        from_seed_seq(entropy=None)
-
-        Create a instance using a SeedSequence
-
-        Parameters
-        ----------
-        entropy : {None, int, sequence[int], SeedSequence}
-            Entropy to pass to SeedSequence, or a SeedSequence instance. Using
-            a SeedSequence instance allows all parameters to be set.
-
-        Returns
-        -------
-        bit_gen : MT19937
-            SeedSequence initialized bit generator with SeedSequence instance
-            attached to ``bit_gen.seed_seq``
-
-        See Also
-        --------
-        randomgen.seed_sequence.SeedSequence
-        """
-        return super(MT19937, cls).from_seed_seq(entropy)
-
-    def _seed_from_seq(self, seed_seq):
-        self.seed_seq = seed_seq
+    def _seed_from_seq(self):
         state = self.seed_seq.generate_state(624, np.uint32)
         mt19937_init_by_array(&self.rng_state,
                               <uint32_t*>np.PyArray_DATA(state),
@@ -165,6 +139,11 @@ cdef class MT19937(BitGenerator):
             If seed values are out of range for the PRNG.
         """
         cdef np.ndarray obj
+
+        BitGenerator._seed_with_seed_sequence(self, seed)
+        if self.seed_seq is not None:
+            return
+
         try:
             if seed is None:
                 seed = random_entropy(624, 'auto')
@@ -251,7 +230,7 @@ cdef class MT19937(BitGenerator):
         """
         cdef MT19937 bit_generator
 
-        bit_generator = self.__class__()
+        bit_generator = self.__class__(mode=self.mode)
         bit_generator.state = self.state
         bit_generator.jump_inplace(jumps)
 

@@ -11,7 +11,7 @@ from randomgen import MT19937, Generator
 from randomgen._testing import suppress_warnings
 from randomgen.tests.test_direct import assert_state_equal
 
-random = Generator(MT19937())
+random = Generator(MT19937(mode="legacy"))
 
 
 @pytest.fixture(scope='module', params=[True, False])
@@ -21,33 +21,33 @@ def endpoint(request):
 
 class TestSeed(object):
     def test_scalar(self):
-        s = Generator(MT19937(0))
+        s = Generator(MT19937(0, mode="legacy"))
         assert_equal(s.integers(1000), 684)
-        s = Generator(MT19937(4294967295))
+        s = Generator(MT19937(4294967295, mode="legacy"))
         assert_equal(s.integers(1000), 419)
 
     def test_array(self):
-        s = Generator(MT19937(range(10)))
+        s = Generator(MT19937(range(10), mode="legacy"))
         assert_equal(s.integers(1000), 468)
-        s = Generator(MT19937(np.arange(10)))
+        s = Generator(MT19937(np.arange(10), mode="legacy"))
         assert_equal(s.integers(1000), 468)
-        s = Generator(MT19937([0]))
+        s = Generator(MT19937([0], mode="legacy"))
         assert_equal(s.integers(1000), 973)
-        s = Generator(MT19937([4294967295]))
+        s = Generator(MT19937([4294967295], mode="legacy"))
         assert_equal(s.integers(1000), 265)
 
     def test_invalid_scalar(self):
         # seed must be an unsigned 32 bit integer
-        assert_raises(TypeError, MT19937, -0.5)
-        assert_raises(ValueError, MT19937, -1)
+        assert_raises(TypeError, MT19937, -0.5, mode="legacy")
+        assert_raises(ValueError, MT19937, -1, mode="legacy")
 
     def test_invalid_array(self):
         # seed must be an unsigned 32 bit integer
-        assert_raises(TypeError, MT19937, [-0.5])
-        assert_raises(ValueError, MT19937, [-1])
-        assert_raises(ValueError, MT19937, [4294967296])
-        assert_raises(ValueError, MT19937, [1, 2, 4294967296])
-        assert_raises(ValueError, MT19937, [1, -2, 4294967296])
+        assert_raises(TypeError, MT19937, [-0.5], mode="legacy")
+        assert_raises(ValueError, MT19937, [-1], mode="legacy")
+        assert_raises(ValueError, MT19937, [4294967296], mode="legacy")
+        assert_raises(ValueError, MT19937, [1, 2, 4294967296], mode="legacy")
+        assert_raises(ValueError, MT19937, [1, -2, 4294967296], mode="legacy")
 
     def test_noninstantized_bitgen(self):
         assert_raises(ValueError, Generator, MT19937)
@@ -121,7 +121,7 @@ class TestMultinomial(object):
 class TestSetState(object):
     def setup(self):
         self.seed = 1234567890
-        self.rg = Generator(MT19937(self.seed))
+        self.rg = Generator(MT19937(self.seed, mode="legacy"))
         self.bit_generator = self.rg.bit_generator
         self.state = self.bit_generator.state
         self.legacy_state = (self.state['bit_generator'],
@@ -2005,7 +2005,7 @@ class TestBroadcast(object):
         bad_nsample_two = [4]
         desired = np.array([0, 0, 1])
 
-        random = Generator(MT19937(self.seed))
+        random = Generator(MT19937(self.seed, mode="legacy"))
         actual = random.hypergeometric(ngood * 3, nbad, nsample)
         assert_array_equal(actual, desired)
         assert_raises(ValueError, random.hypergeometric, bad_ngood * 3, nbad,
@@ -2017,7 +2017,7 @@ class TestBroadcast(object):
         assert_raises(ValueError, random.hypergeometric, ngood * 3, nbad,
                       bad_nsample_two)
 
-        random = Generator(MT19937(self.seed))
+        random = Generator(MT19937(self.seed, mode="legacy"))
         actual = random.hypergeometric(ngood, nbad * 3, nsample)
         assert_array_equal(actual, desired)
         assert_raises(ValueError, random.hypergeometric, bad_ngood, nbad * 3,
@@ -2029,7 +2029,7 @@ class TestBroadcast(object):
         assert_raises(ValueError, random.hypergeometric, ngood, nbad * 3,
                       bad_nsample_two)
 
-        random = Generator(MT19937(self.seed))
+        random = Generator(MT19937(self.seed, mode="legacy"))
         hypergeom = random.hypergeometric
         actual = hypergeom(ngood, nbad, nsample * 3)
         assert_array_equal(actual, desired)
@@ -2110,14 +2110,14 @@ class TestThread(object):
         out2 = np.empty((len(self.seeds),) + sz)
 
         # threaded generation
-        t = [Thread(target=function, args=(Generator(MT19937(s)), o))
+        t = [Thread(target=function, args=(Generator(MT19937(s, mode="legacy")), o))
              for s, o in zip(self.seeds, out1)]
         [x.start() for x in t]
         [x.join() for x in t]
 
         # the same serial
         for s, o in zip(self.seeds, out2):
-            function(Generator(MT19937(s)), o)
+            function(Generator(MT19937(s, mode="legacy")), o)
 
         # these platforms change x87 fpu precision mode in threads
         if np.intp().dtype.itemsize == 4 and sys.platform == "win32":

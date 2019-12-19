@@ -118,8 +118,8 @@ cdef class AESCounter(BitGenerator):
     .. [1] Advanced Encryption Standard. (n.d.). In Wikipedia. Retrieved
         June 1, 2019, from https://en.wikipedia.org/wiki/Advanced_Encryption_Standard
     """
-    def __init__(self, seed=None, counter=None, key=None):
-        BitGenerator.__init__(self)
+    def __init__(self, seed=None, *, counter=None, key=None, mode=None):
+        BitGenerator.__init__(self, seed, mode)
         # Calloc since ctr needs to be 0
         self.rng_state = <aesctr_state_t *>PyArray_calloc_aligned(sizeof(aesctr_state_t), 1)
         self.seed(seed, counter, key)
@@ -167,40 +167,10 @@ cdef class AESCounter(BitGenerator):
             raise ValueError('CPU does not support AESNI')
         aesctr_use_aesni(bool(value))
 
-    @classmethod
-    def from_seed_seq(cls, entropy=None, counter=None):
-        """
-        from_seed_seq(entropy=None, counter=None)
-
-        Create a instance using a SeedSequence
-
-        Parameters
-        ----------
-        entropy : {None, int, sequence[int], SeedSequence}
-            Entropy to pass to SeedSequence, or a SeedSequence instance. Using
-            a SeedSequence instance allows all parameters to be set.
-        counter : {None, int, array_like}
-            Positive integer less than 2**128 containing the counter position
-            or a 2 element array of uint64 containing the counter
-
-        Returns
-        -------
-        bit_gen : AESCounter
-            SeedSequence initialized bit generator with SeedSequence instance
-            attached to ``bit_gen.seed_seq``
-
-        See Also
-        --------
-        randomgen.seed_sequence.SeedSequence
-        """
-        seed_kwargs = {'counter': counter}
-        return super(AESCounter, cls).from_seed_seq(entropy,
-                                                    seed_kwargs=seed_kwargs)
-
-    def _seed_from_seq(self, seed_seq, counter=None):
-        self.seed_seq = seed_seq
+    def _seed_from_seq(self, counter=None):
         state = self.seed_seq.generate_state(2, np.uint64)
         self.seed(key=state, counter=counter)
+        self._reset_state_variables()
 
     def seed(self, seed=None, counter=None, key=None):
         """
@@ -239,6 +209,14 @@ cdef class AESCounter(BitGenerator):
         array[i] = (value // 2**(64*i)) % 2**64.
         """
         cdef np.ndarray _seed
+
+        if seed is not None and key is not None:
+            raise ValueError('seed and key cannot be both used')
+        if key is None:
+            BitGenerator._seed_with_seed_sequence(self, seed, counter=counter)
+            if self.seed_seq is not None:
+                return
+
         seed = object_to_int(seed, 128, 'seed')
         key = object_to_int(key, 128, 'key')
         counter = object_to_int(counter, 128, 'counter')
@@ -381,7 +359,7 @@ cdef class AESCounter(BitGenerator):
         """
         cdef AESCounter bit_generator
 
-        bit_generator = self.__class__()
+        bit_generator = self.__class__(mode=self.mode)
         bit_generator.state = self.state
         bit_generator.jump_inplace(iter)
 

@@ -101,8 +101,8 @@ class TestAgainstNumPy(object):
         cls.np = numpy.random
         cls.bit_generator = MT19937
         cls.seed = [2 ** 21 + 2 ** 16 + 2 ** 5 + 1]
-        cls.rg = Generator(cls.bit_generator(*cls.seed))
-        cls.rs = RandomState(cls.bit_generator(*cls.seed))
+        cls.rg = Generator(cls.bit_generator(*cls.seed, mode="legacy"))
+        cls.rs = RandomState(cls.bit_generator(*cls.seed, mode="legacy"))
         cls.nprs = cls.np.RandomState(*cls.seed)
         cls.initial_state = cls.rg.bit_generator.state
         cls._set_common_state()
@@ -384,13 +384,13 @@ class TestAgainstNumPy(object):
         self._is_state_common()
 
     def test_scalar(self):
-        s = Generator(MT19937(0))
+        s = Generator(MT19937(0, mode="legacy"))
         assert_equal(s.integers(1000), 684)
         s1 = np.random.RandomState(0)
         assert_equal(s1.randint(1000), 684)
         assert_equal(s1.randint(1000), s.integers(1000))
 
-        s = Generator(MT19937(4294967295))
+        s = Generator(MT19937(4294967295, mode="legacy"))
         assert_equal(s.integers(1000), 419)
         s1 = np.random.RandomState(4294967295)
         assert_equal(s1.randint(1000), 419)
@@ -401,16 +401,16 @@ class TestAgainstNumPy(object):
         self._is_state_common()
 
     def test_array(self):
-        s = Generator(MT19937(range(10)))
+        s = Generator(MT19937(range(10), mode="legacy"))
         assert_equal(s.integers(1000), 468)
         s = np.random.RandomState(range(10))
         assert_equal(s.randint(1000), 468)
 
-        s = Generator(MT19937(np.arange(10)))
+        s = Generator(MT19937(np.arange(10), mode="legacy"))
         assert_equal(s.integers(1000), 468)
-        s = Generator(MT19937([0]))
+        s = Generator(MT19937([0], mode="legacy"))
         assert_equal(s.integers(1000), 973)
-        s = Generator(MT19937([4294967295]))
+        s = Generator(MT19937([4294967295], mode="legacy"))
         assert_equal(s.integers(1000), 265)
 
     @pytest.mark.skipif(not NP_118, reason='Only value for NumPy 1.18')

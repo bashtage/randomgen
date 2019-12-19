@@ -139,14 +139,14 @@ def _coerce_to_uint32_array(x):
     """
     if isinstance(x, np.ndarray) and x.dtype == np.dtype(np.uint32):
         return x.copy()
-    elif isinstance(x, (str, basestring)):
+    elif isinstance(x, str):
         if x.startswith('0x'):
             x = int(x, base=16)
         elif DECIMAL_RE.match(x):
             x = int(x)
         else:
-            raise ValueError('unrecognized seed string')
-    if isinstance(x, (int, long, np.integer)):
+            raise ValueError("unrecognized seed string")
+    if isinstance(x, (int, np.integer)):
         return _int_to_uint32_array(x)
     elif isinstance(x, (float, np.inexact)):
         raise TypeError('seed must be integer')
@@ -257,7 +257,7 @@ ISpawnableSeedSequence.register(SeedlessSeedSequence)
 
 cdef class SeedSequence(object):
     """
-    SeedSequence(entropy=None, spawn_key=(), pool_size=4)
+    SeedSequence(entropy=None, *, spawn_key=(), pool_size=4)
 
     SeedSequence mixes sources of entropy in a reproducible way to set the
     initial state for independent and very probably non-overlapping
@@ -299,7 +299,7 @@ cdef class SeedSequence(object):
     True
     """
 
-    def __init__(self, entropy=None, spawn_key=(),
+    def __init__(self, entropy=None, *, spawn_key=(),
                  pool_size=DEFAULT_POOL_SIZE, n_children_spawned=0):
         if pool_size < DEFAULT_POOL_SIZE:
             raise ValueError('The size of the entropy pool should be at least '
@@ -307,14 +307,14 @@ cdef class SeedSequence(object):
         if entropy is None:
             entropy = randbits(pool_size * 32)
         elif not isinstance(entropy, (int, np.integer, list, tuple, range,
-                                      np.ndarray, str, basestring)):
+                                      np.ndarray, str)):
             raise TypeError('SeedSequence expects int or sequence of ints for '
                             'entropy not {}'.format(entropy))
         self.entropy = entropy
         self.spawn_key = tuple(spawn_key)
         self.pool_size = pool_size
         self.n_children_spawned = n_children_spawned
-        np.zeros(1)  # Fixes a standard Python 2.7 error
+
         self.pool = np.zeros(pool_size, dtype=np.uint32)
         self.mix_entropy(self.pool, self.get_assembled_entropy())
 
@@ -398,11 +398,12 @@ cdef class SeedSequence(object):
         entropy_array = np.concatenate([run_entropy, spawn_entropy])
         return entropy_array
 
+    @np.errstate(over='ignore')
     def generate_state(self, n_words, dtype=np.uint32):
         """
         generate_state(n_words, dtype=np.uint32)
 
-        Return the requested number of words for PRNG seeding
+        Return the requested number of words for PRNG seeding.
 
         A BitGenerator should call this method in its constructor with
         an appropriate `n_words` parameter to properly seed itself.
@@ -419,41 +420,39 @@ cdef class SeedSequence(object):
 
         Returns
         -------
-        state : array
-            uint32 or uint64 array with shape (n_words,) containing values
-            appropriate for seeding a random number generator
+        state : {array_like[uint32], array_like[uint64]}, shape=(n_words,)
         """
         cdef uint32_t hash_const = INIT_B
         cdef uint32_t data_val
-        with np.errstate(over='ignore'):
-            out_dtype = np.dtype(dtype)
-            if out_dtype == np.dtype(np.uint32):
-                pass
-            elif out_dtype == np.dtype(np.uint64):
-                n_words *= 2
-            else:
-                raise ValueError('only support uint32 or uint64')
-            state = np.zeros(n_words, dtype=np.uint32)
-            src_cycle = cycle(self.pool)
-            for i_dst in range(n_words):
-                data_val = next(src_cycle)
-                data_val ^= hash_const
-                hash_const *= MULT_B
-                data_val *= hash_const
-                data_val ^= data_val >> XSHIFT
-                state[i_dst] = data_val
-            if out_dtype == np.dtype(np.uint64):
-                # For consistency across different endiannesses, view first as
-                # little-endian then convert the values to the native
-                # endianness.
-                state = state.astype('<u4').view('<u8').astype(np.uint64)
+
+        out_dtype = np.dtype(dtype)
+        if out_dtype == np.dtype(np.uint32):
+            pass
+        elif out_dtype == np.dtype(np.uint64):
+            n_words *= 2
+        else:
+            raise ValueError("only support uint32 or uint64")
+        state = np.zeros(n_words, dtype=np.uint32)
+        src_cycle = cycle(self.pool)
+        for i_dst in range(n_words):
+            data_val = next(src_cycle)
+            data_val ^= hash_const
+            hash_const *= MULT_B
+            data_val *= hash_const
+            data_val ^= data_val >> XSHIFT
+            state[i_dst] = data_val
+        if out_dtype == np.dtype(np.uint64):
+            # For consistency across different endiannesses, view first as
+            # little-endian then convert the values to the native endianness.
+            state = state.astype('<u4').view('<u8').astype(np.uint64)
         return state
 
     def spawn(self, n_children):
         """
         spawn(n_children)
 
-        Spawn a number of child `SeedSequence` s by extending the `spawn_key`
+        Spawn a number of child `SeedSequence` instances by extending the
+        `spawn_key`.
 
         Parameters
         ----------
@@ -465,6 +464,8 @@ cdef class SeedSequence(object):
         seqs : List[SeedSequence]
             Child SeedSequences with incremented  ``spawn_key``
         """
+        cdef int i
+
         seqs = []
         for i in range(self.n_children_spawned,
                        self.n_children_spawned + n_children):

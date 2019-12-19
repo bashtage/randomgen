@@ -91,8 +91,8 @@ cdef class RDRAND(BitGenerator):
     """
     cdef rdrand_state rng_state
 
-    def __init__(self, seed=None):
-        BitGenerator.__init__(self)
+    def __init__(self, seed=None, mode="sequence"):
+        BitGenerator.__init__(self, seed, mode=mode)
         if not rdrand_capable():
             raise RuntimeError('The RDRAND instruction is not available')   # pragma: no cover
         self.rng_state.status = 1
@@ -104,33 +104,8 @@ cdef class RDRAND(BitGenerator):
         self._bitgen.next_double = &rdrand_double
         self._bitgen.next_raw = &rdrand_uint64
 
-    @classmethod
-    def from_seed_seq(cls, entropy=None):
-        """
-        from_seed_seq(entropy=None)
-
-        Create a instance using a SeedSequence
-
-        Parameters
-        ----------
-        entropy : {None, int, sequence[int], SeedSequence}
-            Entropy to pass to SeedSequence, or a SeedSequence instance. Using
-            a SeedSequence instance allows all parameters to be set.
-
-        Returns
-        -------
-        bit_gen : RDRAND
-            SeedSequence initialized bit generator with SeedSequence instance
-            attached to ``bit_gen.seed_seq``
-
-        See Also
-        --------
-        randomgen.seed_sequence.SeedSequence
-        """
-        return super(RDRAND, cls).from_seed_seq(entropy)
-
-    def _seed_from_seq(self, seed_seq):
-        self.seed_seq = seed_seq
+    def _seed_from_seq(self):
+        pass
 
     def seed(self, seed=None):
         """
@@ -173,7 +148,7 @@ cdef class RDRAND(BitGenerator):
         Provided for API compatibility
         """
         cdef RDRAND bit_generator
-        bit_generator = self.__class__()
+        bit_generator = self.__class__(mode=self.mode)
 
         return bit_generator
 

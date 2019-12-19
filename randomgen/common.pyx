@@ -14,7 +14,14 @@ cimport numpy as np
 
 from randomgen.common cimport *
 from randomgen cimport api
-from randomgen.seed_sequence import SeedSequence
+from randomgen.seed_sequence import ISeedSequence
+
+ISEED_SEQUENCES = (ISeedSequence,)
+try:
+   ISEED_SEQUENCES += (np.random._bit_generator.ISeedSequence,)
+except AttributeError:
+    pass
+
 
 __all__ = ['interface']
 
@@ -29,7 +36,21 @@ cdef class BitGenerator:
     """
     Abstract class for all BitGenerators
     """
-    def __init__(self):
+    def __init__(self, seed, mode=None):
+        if mode is not None and (not isinstance(mode, str) or mode.lower() not in ("legacy", "sequence")):
+            raise ValueError("mode must be one of None, \"legacy\" or \"sequence\".")
+        if isinstance(seed, ISEED_SEQUENCES):
+            mode = "sequence"
+        elif mode is None:
+            import warnings
+            warnings.warn("mode is None which currently defaults to "
+                          "\"legacy\". After 1.19 this will change to "
+                          "\"sequence\". To silence this warning, set mode to "
+                          "\"legacy\" to use legacy seeding or \"sequence\" "
+                          "to defer seeding to NumPy's SeedSequence.",
+                          FutureWarning)
+            mode="legacy"
+        self.mode = mode
         self.lock = Lock()
         self._ctypes = None
         self._cffi = None
@@ -51,27 +72,31 @@ cdef class BitGenerator:
         from randomgen._pickle import __bit_generator_ctor
         return __bit_generator_ctor, (self.state['bit_generator'],), self.state
 
+    def _seed_from_seq(self):
+        raise NotImplementedError("Subclass must override")
+
+    def _seed_with_seed_sequence(self, seed, **kwargs):
+        from randomgen.seed_sequence import SeedSequence
+        DefaultSeedSequence = SeedSequence
+        try:
+            from numpy.random import SeedSequence as DefaultSeedSequence
+        except ImportError:
+            pass
+        if isinstance(seed, ISEED_SEQUENCES):
+            self.seed_seq = seed
+        elif self.mode == "sequence":
+            self.seed_seq = DefaultSeedSequence(seed)
+        elif seed is None:
+            self.seed_seq = DefaultSeedSequence()
+        else:
+            self.seed_seq = None
+        if self.seed_seq is not None:
+            self._seed_from_seq(**kwargs)
+        return
+
     @property
     def state(self):
         raise NotImplemented('subclasses must implement')
-
-    @classmethod
-    def from_seed_seq(cls, entropy=None, cls_kwargs=None, seed_kwargs=None):
-        if isinstance(entropy, SeedSequence):
-            n_child = entropy.n_children_spawned
-            seed_seq = SeedSequence(entropy=entropy.entropy,
-                                    spawn_key=entropy.spawn_key,
-                                    pool_size=entropy.pool_size,
-                                    n_children_spawned=n_child)
-        else:
-            seed_seq = SeedSequence(entropy=entropy)
-        cls_kwargs = {} if cls_kwargs is None else cls_kwargs
-        bit_generator = cls(**cls_kwargs)
-
-        seed_kwargs = {} if seed_kwargs is None else seed_kwargs
-        bit_generator._seed_from_seq(seed_seq, **seed_kwargs)
-
-        return bit_generator
 
     @state.setter
     def state(self, value):

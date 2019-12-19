@@ -100,8 +100,8 @@ cdef class HC128(BitGenerator):
     .. [2] Wu, Hongjun, "Stream Ciphers HC-128 and HC-256".
         https://www.ntu.edu.sg/home/wuhj/research/hc/index.html)
     """
-    def __init__(self, seed=None, key=None):
-        BitGenerator.__init__(self)
+    def __init__(self, seed=None, *, key=None, mode=None):
+        BitGenerator.__init__(self, seed, mode)
         self.seed(seed, key)
 
         self._bitgen.state = <void *>&self.rng_state
@@ -110,33 +110,7 @@ cdef class HC128(BitGenerator):
         self._bitgen.next_double = &hc128_double
         self._bitgen.next_raw = &hc128_uint64
 
-    @classmethod
-    def from_seed_seq(cls, entropy=None):
-        """
-        from_seed_seq(entropy=None)
-
-        Create a instance using a SeedSequence
-
-        Parameters
-        ----------
-        entropy : {None, int, sequence[int], SeedSequence}
-            Entropy to pass to SeedSequence, or a SeedSequence instance. Using
-            a SeedSequence instance allows all parameters to be set.
-
-        Returns
-        -------
-        bit_gen : HC128
-            SeedSequence initialized bit generator with SeedSequence instance
-            attached to ``bit_gen.seed_seq``
-
-        See Also
-        --------
-        randomgen.seed_sequence.SeedSequence
-        """
-        return super(HC128, cls).from_seed_seq(entropy)
-
-    def _seed_from_seq(self, seed_seq):
-        self.seed_seq = seed_seq
+    def _seed_from_seq(self):
         state = self.seed_seq.generate_state(4, np.uint64)
         self.seed(key=state)
 
@@ -168,10 +142,15 @@ cdef class HC128(BitGenerator):
         ValueError
             If seed values are out of range for the PRNG.
         """
-        seed = object_to_int(seed, 256, 'seed')
-        key = object_to_int(key, 256, 'key')
         if seed is not None and key is not None:
             raise ValueError('seed and key cannot be simultaneously used')
+        if key is None:
+            BitGenerator._seed_with_seed_sequence(self, seed)
+            if self.seed_seq is not None:
+                return
+
+        seed = object_to_int(seed, 256, 'seed')
+        key = object_to_int(key, 256, 'key')
         if key is not None:
             state = int_to_array(key, 'key', 256, 64)
         elif seed is not None:

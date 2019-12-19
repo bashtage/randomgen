@@ -121,8 +121,8 @@ cdef class ChaCha(BitGenerator):
     .. [1] Bernstein, D. J.. ChaCha, a variant of Salsa20.
          http://cr.yp.to/papers.html#chacha. 2008.01.28.
     """
-    def __init__(self, seed=None, counter=None, key=None, rounds=20):
-        BitGenerator.__init__(self)
+    def __init__(self, seed=None, *, counter=None, key=None, rounds=20, mode=None):
+        BitGenerator.__init__(self, seed, mode)
         self.rng_state = <chacha_state_t *>PyArray_malloc_aligned(sizeof(chacha_state_t))
         if rounds % 2 != 0 or rounds <= 0:
             raise ValueError('rounds must be even and >= 2')
@@ -139,45 +139,7 @@ cdef class ChaCha(BitGenerator):
         if self.rng_state:
             PyArray_free_aligned(self.rng_state)
 
-    @classmethod
-    def from_seed_seq(cls, entropy=None, counter=None, rounds=20):
-        """
-        from_seed_seq(entropy=None, counter=None, rounds=20):
-
-        Create a instance using a SeedSequence
-
-        Parameters
-        ----------
-        entropy : {None, int, sequence[int], SeedSequence}
-            Entropy to pass to SeedSequence, or a SeedSequence instance. Using
-            a SeedSequence instance allows all parameters to be set.
-        counter : {None, int, array_like}
-            Positive integer less than 2**128 containing the counter position
-            or a 2 element array of uint64 containing the counter
-        rounds : {int}, optional
-            Number of rounds to run the ChaCha mixer. Must be an even integer.
-            The standard number of rounds in 20.  Smaller values, usually 8 or
-            more, can be used to reduce security properties of the random
-            stream while improving performance.
-
-        Returns
-        -------
-        bit_gen : ChaCha
-            SeedSequence initialized bit generator with SeedSequence instance
-            attached to ``bit_gen.seed_seq``
-
-        See Also
-        --------
-        randomgen.seed_sequence.SeedSequence
-        """
-        cls_kwargs = dict(rounds=rounds)
-        seed_kwargs = dict(counter=counter)
-        return super(ChaCha, cls).from_seed_seq(entropy,
-                                                cls_kwargs=cls_kwargs,
-                                                seed_kwargs=seed_kwargs)
-
-    def _seed_from_seq(self, seed_seq, counter=None):
-        self.seed_seq = seed_seq
+    def _seed_from_seq(self, counter=None):
         state = self.seed_seq.generate_state(4, np.uint64)
         self.seed(key=state, counter=counter)
 
@@ -250,6 +212,14 @@ cdef class ChaCha(BitGenerator):
         array[i] = (value // 2**(64*i)) % 2**64.
         """
         cdef int i
+
+        if seed is not None and key is not None:
+            raise ValueError('seed and key cannot be both used')
+        if key is None:
+            BitGenerator._seed_with_seed_sequence(self, seed, counter=counter)
+            if self.seed_seq is not None:
+                return
+
         seed = object_to_int(seed, 256, 'seed')
         key = object_to_int(key, 256, 'key')
         counter = object_to_int(counter, 128, 'counter')
@@ -379,7 +349,7 @@ cdef class ChaCha(BitGenerator):
         """
         cdef ChaCha bit_generator
 
-        bit_generator = self.__class__()
+        bit_generator = self.__class__(mode=self.mode)
         bit_generator.state = self.state
         bit_generator.jump_inplace(iter)
 

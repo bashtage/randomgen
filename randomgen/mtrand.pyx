@@ -94,9 +94,9 @@ cdef class RandomState:
 
     def __init__(self, bit_generator=None):
         if bit_generator is None:
-            bit_generator = _MT19937()
+            bit_generator = _MT19937(mode="legacy")
         elif not hasattr(bit_generator, 'capsule'):
-            bit_generator = _MT19937(bit_generator)
+            bit_generator = _MT19937(bit_generator, mode="legacy")
 
         self._bit_generator = bit_generator
         capsule = bit_generator.capsule
@@ -4141,7 +4141,7 @@ cdef class RandomState:
         self.shuffle(idx)
         return arr[idx]
 
-_rand = RandomState()
+_rand = RandomState(_MT19937(mode="legacy"))
 
 beta = _rand.beta
 binomial = _rand.binomial

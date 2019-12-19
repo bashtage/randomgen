@@ -1,3 +1,5 @@
+import warnings
+
 from randomgen.aes import AESCounter
 from randomgen.chacha import ChaCha
 from randomgen.dsfmt import DSFMT
@@ -91,8 +93,10 @@ def __bit_generator_ctor(bit_generator_name='MT19937'):
     else:
         raise ValueError(
             str(bit_generator_name) + ' is not a known BitGenerator module.')
-
-    return bit_generator()
+    with warnings.catch_warnings():
+        warnings.filterwarnings("ignore", category=FutureWarning)
+        bit_gen = bit_generator()
+    return bit_gen
 
 
 def __randomstate_ctor(bit_generator_name='mt19937'):

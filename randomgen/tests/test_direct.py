@@ -11,8 +11,13 @@ import pytest
 from randomgen import (DSFMT, HC128, JSF, MT64, MT19937, PCG32, PCG64, RDRAND,
                        SFMT, AESCounter, ChaCha, Generator, Philox,
                        RandomState, ThreeFry, Xoroshiro128, Xorshift1024,
-                       Xoshiro256, Xoshiro512, SPECK128, SeedSequence)
+                       Xoshiro256, Xoshiro512, SPECK128)
 from randomgen.common import interface
+
+try:
+    from numpy.random import SeedSequence
+except ImportError:
+    from randomgen import SeedSequence
 
 MISSING_RDRAND = False
 try:
@@ -23,7 +28,7 @@ except RuntimeError:
 MISSING_AES = False
 HAS_AESNI = False
 try:
-    aes = AESCounter()
+    aes = AESCounter(mode="sequence")
     HAS_AESNI = aes.use_aesni
 except RuntimeError:
     MISSING_AES = True
@@ -180,7 +185,7 @@ class Base(object):
             return {'seed': seed, 'data': np.array(data, dtype=cls.dtype)}
 
     def setup_bitgenerator(self, seed):
-        return self.bit_generator(*seed)
+        return self.bit_generator(*seed, mode="legacy")
 
     def test_raw(self):
         bit_generator = self.setup_bitgenerator(self.data1['seed'])
@@ -365,7 +370,7 @@ class Base(object):
         assert_state_equal(state, alt_state)
 
     def test_uinteger_reset_seed(self):
-        bg = self.bit_generator()
+        bg = self.bit_generator(mode="sequence")
         g = Generator(bg)
         g.integers(0, 2 ** 32, dtype=np.uint32)
         if 'has_uint32' not in bg.state or bg.state['has_uint32'] == 0:
@@ -376,7 +381,7 @@ class Base(object):
         assert bg.state['has_uint32'] == 0
 
     def test_uinteger_reset_jump(self):
-        bg = self.bit_generator()
+        bg = self.bit_generator(mode="sequence")
         if not hasattr(bg, 'jumped'):
             pytest.skip('bit generator does not support jumping')
         g = Generator(bg)
@@ -391,7 +396,7 @@ class Base(object):
         assert next_g != next_jumped
 
     def test_uinteger_reset_advance(self):
-        bg = self.bit_generator()
+        bg = self.bit_generator(mode="sequence")
         if not hasattr(bg, 'advance'):
             pytest.skip('bit generator does not support advancing')
         g = Generator(bg)
@@ -411,17 +416,16 @@ class Base(object):
         assert next_g != next_advanced
 
     def test_seed_sequence(self):
-        bg = self.bit_generator.from_seed_seq()
+        bg = self.bit_generator(mode="sequence")
         assert isinstance(bg, self.bit_generator)
         assert isinstance(bg.seed_seq, SeedSequence)
 
-        bg = self.bit_generator.from_seed_seq(0)
+        bg = self.bit_generator(0, mode="sequence")
         assert bg.seed_seq.entropy == 0
 
         ss = SeedSequence(0)
-        bg = self.bit_generator.from_seed_seq(ss)
+        bg = self.bit_generator(ss)
         assert bg.seed_seq.entropy == 0
-        assert bg.seed_seq is not ss
 
 
 class Random123(Base):
@@ -433,7 +437,7 @@ class Random123(Base):
         cls.width = 64
 
     def test_advance(self, step, counter_only, warmup):
-        bg = self.bit_generator()
+        bg = self.bit_generator(mode="sequence")
         bg.random_raw(warmup)
         state0 = bg.state
         n = self.number
@@ -455,14 +459,14 @@ class Random123(Base):
 
     def test_advance_large(self):
         dtype = np.uint64 if self.width == 64 else np.uint32
-        bg = self.bit_generator()
+        bg = self.bit_generator(mode="legacy")
         step = 2 ** self.width
         bg.advance(step, True)
         state = bg.state
         assert_equal(state['state']['counter'],
                      np.array([0, 1, 0, 0], dtype=dtype))
 
-        bg = self.bit_generator()
+        bg = self.bit_generator(mode="sequence")
         step = 2 ** self.width - 1
         bg.advance(step, True)
         state = bg.state
@@ -470,14 +474,14 @@ class Random123(Base):
         assert_equal(state['state']['counter'],
                      np.array([size_max, 0, 0, 0], dtype=dtype))
 
-        bg = self.bit_generator()
+        bg = self.bit_generator(mode="sequence")
         step = 2 ** (2 * self.width)
         bg.advance(step, True)
         state = bg.state
         assert_equal(state['state']['counter'],
                      np.array([0, 0, 1, 0], dtype=dtype))
 
-        bg = self.bit_generator()
+        bg = self.bit_generator(mode="sequence")
         step = 2 ** (2 * self.width) - 1
         bg.advance(step, True)
         state = bg.state
@@ -485,18 +489,18 @@ class Random123(Base):
                      np.array([size_max, size_max, 0, 0], dtype=dtype))
 
     def test_advance_deprecated(self):
-        bg = self.bit_generator()
+        bg = self.bit_generator(mode="sequence")
         with pytest.warns(FutureWarning):
             bg.advance(1)
 
     def test_0d_array(self):
-        bg = self.bit_generator(np.array(1, dtype=np.uint64))
-        bg2 = self.bit_generator(1)
+        bg = self.bit_generator(np.array(1, dtype=np.uint64), mode="legacy")
+        bg2 = self.bit_generator(1, mode="legacy")
         assert_state_equal(bg.state, bg2.state)
 
     def test_empty_seed(self):
         with pytest.raises(ValueError):
-            self.bit_generator(np.array([], dtype=np.uint64))
+            self.bit_generator(np.array([], dtype=np.uint64), mode="legacy")
 
 
 class TestJSF64(Base):
@@ -515,16 +519,16 @@ class TestJSF64(Base):
 
     def test_bad_init(self):
         with pytest.raises(ValueError):
-            self.bit_generator(size=self.bits - 1)
+            self.bit_generator(size=self.bits - 1, mode="legacy")
         with pytest.raises(ValueError):
-            self.bit_generator(p=-10)
+            self.bit_generator(p=-10, mode="legacy")
         with pytest.raises(ValueError):
-            self.bit_generator(q=120)
+            self.bit_generator(q=120, mode="legacy")
 
     def test_number_seed(self):
-        bg1 = self.bit_generator(0, seed_size=1)
-        bg2 = self.bit_generator(0, seed_size=2)
-        bg3 = self.bit_generator(0, seed_size=3)
+        bg1 = self.bit_generator(0, seed_size=1, mode="legacy")
+        bg2 = self.bit_generator(0, seed_size=2, mode="legacy")
+        bg3 = self.bit_generator(0, seed_size=3, mode="legacy")
         state1 = bg1.state['state']
         state2 = bg2.state['state']
         state3 = bg3.state['state']
@@ -537,9 +541,9 @@ class TestJSF64(Base):
 
     def test_invalid_seed_size(self):
         with pytest.raises(ValueError, match='seed size must be one'):
-            self.bit_generator(seed_size=4)
+            self.bit_generator(seed_size=4, mode="legacy")
         with pytest.raises(ValueError, match='seed size must be one'):
-            self.bit_generator(seed_size=1.0)
+            self.bit_generator(seed_size=1.0, mode="legacy")
 
 
 class TestJSF32(TestJSF64):
@@ -559,20 +563,19 @@ class TestJSF32(TestJSF64):
         cls.invalid_seed_values = [(-2,), (np.empty((2, 2), dtype=np.int64),)]
 
     def test_seed_sequence(self):
-        bg = self.bit_generator_base.from_seed_seq(size=self.size)
+        bg = self.bit_generator_base(size=self.size, mode="sequence")
         assert isinstance(bg, self.bit_generator_base)
         assert isinstance(bg.seed_seq, SeedSequence)
 
-        bg = self.bit_generator_base.from_seed_seq(0, size=self.size)
+        bg = self.bit_generator_base(0, size=self.size, mode="sequence")
         assert bg.seed_seq.entropy == 0
 
         ss = SeedSequence(0)
-        bg = self.bit_generator_base.from_seed_seq(ss)
+        bg = self.bit_generator_base(ss)
         assert bg.seed_seq.entropy == 0
-        assert bg.seed_seq is not ss
 
-        bg = self.bit_generator_base.from_seed_seq(size=self.size,
-                                                   entropy=1)
+        ss = SeedSequence(1)
+        bg = self.bit_generator_base(ss, size=self.size)
         assert bg.seed_seq.entropy == 1
 
 
@@ -670,11 +673,11 @@ class TestThreeFry(Random123):
         bit_generator = self.setup_bitgenerator(self.data1['seed'])
         state = bit_generator.state
         keyed = self.bit_generator(counter=state['state']['counter'],
-                                   key=state['state']['key'])
+                                   key=state['state']['key'], mode="legacy")
         assert_state_equal(bit_generator.state, keyed.state)
 
     def test_advance(self):
-        bg = self.bit_generator()
+        bg = self.bit_generator(mode="sequence")
         state0 = bg.state
         bg.advance(1, True)
         assert_equal(bg.state['state']['counter'],
@@ -762,7 +765,8 @@ class TestPhilox(Random123):
         bit_generator = self.setup_bitgenerator(self.data1['seed'])
         state = bit_generator.state
         keyed = self.bit_generator(counter=state['state']['counter'],
-                                   key=state['state']['key'])
+                                   key=state['state']['key'],
+                                   mode="legacy")
         assert_state_equal(bit_generator.state, keyed.state)
 
 
@@ -786,23 +790,21 @@ class TestPhilox4x32(Random123):
                                    (None, None, 2 ** 257 + 1)]
 
     def test_seed_sequence(self):
-        bg = self.bit_generator_base.from_seed_seq(number=self.number,
-                                                   width=self.width)
+        bg = self.bit_generator_base(number=self.number, width=self.width,
+                                     mode="sequence")
         assert isinstance(bg, self.bit_generator_base)
         assert isinstance(bg.seed_seq, SeedSequence)
 
-        bg = self.bit_generator_base.from_seed_seq(0, number=self.number,
-                                                   width=self.width)
+        bg = self.bit_generator_base(0, number=self.number, width=self.width,
+                                     mode="sequence")
         assert bg.seed_seq.entropy == 0
 
         ss = SeedSequence(0)
-        bg = self.bit_generator_base.from_seed_seq(ss)
+        bg = self.bit_generator_base(ss)
         assert bg.seed_seq.entropy == 0
-        assert bg.seed_seq is not ss
 
-        bg = self.bit_generator_base.from_seed_seq(number=self.number,
-                                                   width=self.width,
-                                                   entropy=1)
+        ss = SeedSequence(1)
+        bg = self.bit_generator_base(ss, number=self.number, width=self.width)
         assert bg.seed_seq.entropy == 1
 
 
@@ -827,7 +829,7 @@ class TestAESCounter(TestPhilox):
         self.use_aesni = request.param
 
     def setup_bitgenerator(self, seed):
-        bg = self.bit_generator(*seed)
+        bg = self.bit_generator(*seed, mode="legacy")
         bg.use_aesni = self.use_aesni
         return bg
 
@@ -837,7 +839,7 @@ class TestAESCounter(TestPhilox):
         key = state['s']['seed'][:2]
         key = int(key[0]) + int(key[1]) * 2 ** 64
         counter = state['s']['counter'][0]
-        keyed = self.bit_generator(counter=counter, key=key)
+        keyed = self.bit_generator(counter=counter, key=key, mode="legacy")
         assert_state_equal(bit_generator.state, keyed.state)
 
     def test_seed_float_array(self):
@@ -854,7 +856,7 @@ class TestAESCounter(TestPhilox):
         assert_raises(TypeError, rs.bit_generator.seed, [0, np.pi])
 
     def test_bad_state(self):
-        bg = self.bit_generator()
+        bg = self.bit_generator(mode="sequence")
         state = bg.state
         state['s']['seed'] = np.empty((2, 11), dtype=np.uint64)
         with pytest.raises(ValueError):
@@ -865,7 +867,7 @@ class TestAESCounter(TestPhilox):
             bg.state = state
 
     def test_advance(self, step, warmup):
-        bg = self.bit_generator()
+        bg = self.bit_generator(mode="sequence")
         bg.random_raw(warmup)
         state0 = bg.state
         bg.random_raw(step)
@@ -876,7 +878,7 @@ class TestAESCounter(TestPhilox):
         assert direct == advanced
 
     def test_advance_one_repeat(self):
-        bg = self.bit_generator()
+        bg = self.bit_generator(mode="sequence")
         state0 = bg.state
         bg.random_raw(8)
         direct = bg.random_raw()
@@ -887,21 +889,21 @@ class TestAESCounter(TestPhilox):
         assert direct == advanced
 
     def test_advance_large(self):
-        bg = self.bit_generator()
+        bg = self.bit_generator(mode="legacy")
         step = 2 ** 65
         bg.advance(step)
         state = bg.state
         assert_equal(state['s']['counter'],
                      np.array([4, 1, 5, 1, 6, 1, 7, 1], dtype=np.uint64))
 
-        bg = self.bit_generator()
+        bg = self.bit_generator(mode="sequence")
         step = 2 ** 65 - 7
         bg.advance(step)
         state = bg.state
         assert_equal(state['s']['counter'],
                      np.array([0, 1, 1, 1, 2, 1, 3, 1], dtype=np.uint64))
 
-        bg = self.bit_generator()
+        bg = self.bit_generator(mode="sequence")
         step = 2 ** 129 - 16
         bg.advance(step)
         state = bg.state
@@ -914,7 +916,7 @@ class TestAESCounter(TestPhilox):
         assert_equal(state['s']['counter'],
                      np.array([0, 0, 1, 0, 2, 0, 3, 0], dtype=np.uint64))
 
-        bg = self.bit_generator()
+        bg = self.bit_generator(mode="sequence")
         state0 = bg.state
         step = 2 ** 129
         bg.advance(step)
@@ -927,7 +929,7 @@ class TestAESCounter(TestPhilox):
 
     @pytest.mark.skipif(HAS_AESNI, reason='Not valid when cpu has AESNI')
     def test_no_aesni(self):
-        bg = self.bit_generator()
+        bg = self.bit_generator(mode="sequence")
         with pytest.raises(ValueError, match='CPU does not support AESNI'):
             bg.use_aesni = True
 
@@ -1123,7 +1125,7 @@ class TestDSFMT(Base):
         assert rs.bit_generator.state['buffer_loc'] == 382
 
     def test_negative_jump(self):
-        bg = self.bit_generator()
+        bg = self.bit_generator(mode="sequence")
         with pytest.raises(ValueError, match='iter must be positive'):
             bg.jumped(-1)
 
@@ -1146,23 +1148,21 @@ class TestThreeFry4x32(Random123):
                                    (None, None, 2 ** 129 + 1)]
 
     def test_seed_sequence(self):
-        bg = self.bit_generator_base.from_seed_seq(number=self.number,
-                                                   width=self.width)
+        bg = self.bit_generator_base(number=self.number, width=self.width,
+                                     mode="sequence")
         assert isinstance(bg, self.bit_generator_base)
         assert isinstance(bg.seed_seq, SeedSequence)
 
-        bg = self.bit_generator_base.from_seed_seq(0, number=self.number,
-                                                   width=self.width)
+        bg = self.bit_generator_base(0, number=self.number, width=self.width,
+                                     mode="sequence")
         assert bg.seed_seq.entropy == 0
 
         ss = SeedSequence(0)
-        bg = self.bit_generator_base.from_seed_seq(ss)
+        bg = self.bit_generator_base(ss)
         assert bg.seed_seq.entropy == 0
-        assert bg.seed_seq is not ss
 
-        bg = self.bit_generator_base.from_seed_seq(number=self.number,
-                                                   width=self.width,
-                                                   entropy=1)
+        ss = SeedSequence(1)
+        bg = self.bit_generator_base(ss, number=self.number, width=self.width)
         assert bg.seed_seq.entropy == 1
 
     def test_set_key(self):
@@ -1174,7 +1174,7 @@ class TestThreeFry4x32(Random123):
         counter = state['state']['counter']
         counter = sum([int(counter[i]) * 2 ** (power * i)
                        for i in range(len(counter))])
-        keyed = self.bit_generator(counter=counter, key=key)
+        keyed = self.bit_generator(counter=counter, key=key, mode="legacy")
         assert_state_equal(bit_generator.state, keyed.state)
 
 
@@ -1235,7 +1235,7 @@ class TestMT64(Base):
 
     def test_empty_seed(self):
         with pytest.raises(ValueError, match='Seed must be non-empty'):
-            self.bit_generator(np.array([], dtype=np.uint64))
+            self.bit_generator(np.array([], dtype=np.uint64), mode="legacy")
 
 
 @pytest.mark.skipif(MISSING_RDRAND, reason='RDRAND is not availble')
@@ -1251,7 +1251,7 @@ class TestRDRAND(Base):
         cls.invalid_seed_values = []
 
     def test_raw(self):
-        bit_generator = self.bit_generator()
+        bit_generator = self.bit_generator(mode="sequence")
         raw = bit_generator.random_raw(1000)
         assert (raw.max() - raw.min()) > 0
 
@@ -1302,6 +1302,19 @@ class TestRDRAND(Base):
         assert isinstance(new_bg, type(bg))
         assert bg is not new_bg
 
+    def test_seed_sequence(self):
+        bg = self.bit_generator(mode="sequence")
+        assert isinstance(bg, self.bit_generator)
+        assert bg.seed_seq is None
+
+        with pytest.raises(TypeError):
+            self.bit_generator(0, mode="sequence")
+
+        ss = SeedSequence(0)
+        with pytest.raises(TypeError):
+            self.bit_generator(ss)
+
+
 
 class TestChaCha(Base):
     @classmethod
@@ -1320,21 +1333,21 @@ class TestChaCha(Base):
     def setup_bitgenerator(self, seed):
         stream = 3735928559 * 2 ** 64 + 3735928559 * 2 ** 96
         key = seed[0] + stream + 2 ** 128 * stream
-        bg = self.bit_generator(key=key, counter=0)
+        bg = self.bit_generator(key=key, counter=0, mode="legacy")
         return bg
 
     def test_set_key(self):
         with pytest.raises(ValueError, match='seed and key cannot'):
-            self.bit_generator(seed=0, key=0)
+            self.bit_generator(seed=0, key=0, mode="legacy")
 
     def test_invalid_rounds(self):
         with pytest.raises(ValueError, match='rounds must be even and'):
-            self.bit_generator(rounds=3)
+            self.bit_generator(rounds=3, mode="legacy")
         with pytest.raises(ValueError, match='rounds must be even and'):
-            self.bit_generator(rounds=-4)
+            self.bit_generator(rounds=-4, mode="legacy")
 
     def test_advance(self, step, warmup):
-        bg = self.bit_generator()
+        bg = self.bit_generator(mode="sequence")
         bg.random_raw(warmup)
         state0 = bg.state
         bg.random_raw(step)
@@ -1347,7 +1360,7 @@ class TestChaCha(Base):
 
     def test_advance_one_repeat(self):
         steps = 16
-        bg = self.bit_generator()
+        bg = self.bit_generator(mode="sequence")
         state0 = bg.state
         # Half step since 32 bit gen using 64 bit raw
         bg.random_raw(steps // 2)
@@ -1359,14 +1372,14 @@ class TestChaCha(Base):
         assert direct == advanced
 
     def test_advance_large(self):
-        bg = self.bit_generator()
+        bg = self.bit_generator(mode="legacy")
         step = 2 ** 64
         bg.advance(step)
         state = bg.state
         assert_equal(state['state']['ctr'],
                      np.array([0, 1], dtype=np.uint64))
 
-        bg = self.bit_generator()
+        bg = self.bit_generator(mode="sequence")
         step = 2 ** 64 - 1
         bg.advance(step)
         state = bg.state
@@ -1374,14 +1387,14 @@ class TestChaCha(Base):
         assert_equal(state['state']['ctr'],
                      np.array([u64_max, 0], dtype=np.uint64))
 
-        bg = self.bit_generator()
+        bg = self.bit_generator(mode="sequence")
         step = 2 ** 128 - 16
         bg.advance(step)
         state = bg.state
         assert_equal(state['state']['ctr'],
                      np.array([u64_max - 15, u64_max], dtype=np.uint64))
 
-        bg = self.bit_generator()
+        bg = self.bit_generator(mode="sequence")
         step = 2 ** 128 - 1
         bg.advance(step)
         state = bg.state
@@ -1392,7 +1405,7 @@ class TestChaCha(Base):
         assert_equal(state['state']['ctr'],
                      np.array([0, 0], dtype=np.uint64))
 
-        bg = self.bit_generator()
+        bg = self.bit_generator(mode="sequence")
         state0 = bg.state
         step = 2 ** 128
         bg.advance(step)
@@ -1400,12 +1413,12 @@ class TestChaCha(Base):
         assert_state_equal(state0, state)
 
     def test_use_simd(self):
-        bg = self.bit_generator(0)
+        bg = self.bit_generator(0, mode="legacy")
         if not bg.use_simd:
             with pytest.raises(ValueError):
                 bg.use_simd = True
             return
-        bg2 = self.bit_generator(0)
+        bg2 = self.bit_generator(0, mode="legacy")
         bg2.use_simd = not bg.use_simd
         assert_equal(bg.random_raw(100), bg2.random_raw(100))
 
@@ -1449,11 +1462,11 @@ class TestHC128(Base):
 
     def test_key_init(self):
         with pytest.raises(ValueError):
-            self.bit_generator(key=-1)
+            self.bit_generator(key=-1, mode="legacy")
         with pytest.raises(ValueError):
-            self.bit_generator(key=2**256)
+            self.bit_generator(key=2**256, mode="legacy")
         with pytest.raises(ValueError):
-            self.bit_generator(seed=1, key=1)
+            self.bit_generator(seed=1, key=1, mode="legacy")
 
 
 class TestSPECK128(TestHC128):
@@ -1484,11 +1497,11 @@ class TestSPECK128(TestHC128):
 
     def test_key_init(self):
         with pytest.raises(ValueError):
-            self.bit_generator(key=-1)
+            self.bit_generator(key=-1, mode="legacy")
         with pytest.raises(ValueError):
-            self.bit_generator(key=2**256)
+            self.bit_generator(key=2**256, mode="legacy")
         with pytest.raises(ValueError):
-            self.bit_generator(seed=1, key=1)
+            self.bit_generator(seed=1, key=1, mode="legacy")
 
     def test_seed_out_of_range_array(self):
         # GH #82
@@ -1498,7 +1511,7 @@ class TestSPECK128(TestHC128):
         assert_raises(ValueError, rs.bit_generator.seed, [-1])
 
     def test_advance(self, step, warmup):
-        bg = self.bit_generator()
+        bg = self.bit_generator(mode="sequence")
         bg.random_raw(warmup)
         state0 = bg.state
         bg.random_raw(step)
@@ -1509,7 +1522,7 @@ class TestSPECK128(TestHC128):
         assert direct == advanced
 
     def test_advance_one_repeat(self):
-        bg = self.bit_generator()
+        bg = self.bit_generator(mode="sequence")
         state0 = bg.state
         bg.random_raw(8)
         direct = bg.random_raw()
@@ -1520,7 +1533,7 @@ class TestSPECK128(TestHC128):
         assert direct == advanced
 
     def test_advance_large(self):
-        bg = self.bit_generator()
+        bg = self.bit_generator(mode="legacy")
         step = 2 ** 65
         bg.advance(step)
         state = bg.state
@@ -1528,7 +1541,7 @@ class TestSPECK128(TestHC128):
                      np.array([6, 1, 7, 1, 8, 1, 9, 1, 10, 1, 11, 1],
                               dtype=np.uint64))
 
-        bg = self.bit_generator()
+        bg = self.bit_generator(mode="sequence")
         step = 2 ** 65 - 11
         bg.advance(step)
         state = bg.state
@@ -1536,7 +1549,7 @@ class TestSPECK128(TestHC128):
                      np.array([0, 1, 1, 1, 2, 1, 3, 1, 4, 1, 5, 1],
                               dtype=np.uint64))
 
-        bg = self.bit_generator()
+        bg = self.bit_generator(mode="sequence")
         step = 2 ** 129 - 24
         bg.advance(step)
         state = bg.state
@@ -1551,7 +1564,7 @@ class TestSPECK128(TestHC128):
                      np.array([0, 0, 1, 0, 2, 0, 3, 0, 4, 0, 5, 0],
                               dtype=np.uint64))
 
-        bg = self.bit_generator()
+        bg = self.bit_generator(mode="sequence")
         state0 = bg.state
         step = 2 ** 129
         bg.advance(step)
@@ -1559,19 +1572,19 @@ class TestSPECK128(TestHC128):
         assert_state_equal(state0, state)
 
     def test_use_sse41(self):
-        bg = self.bit_generator(0)
+        bg = self.bit_generator(0, mode="legacy")
         if not bg.use_sse41:
             with pytest.raises(ValueError):
                 bg.use_sse41 = True
             return
-        bg2 = self.bit_generator(0)
+        bg2 = self.bit_generator(0, mode="legacy")
         bg2.use_sse41 = not bg.use_sse41
         assert_equal(bg.random_raw(100), bg2.random_raw(100))
 
     def test_invalid_rounds(self):
         with pytest.raises(ValueError):
-            self.bit_generator(rounds=-1)
+            self.bit_generator(rounds=-1, mode="legacy")
         with pytest.raises(ValueError):
-            self.bit_generator(rounds=35)
+            self.bit_generator(rounds=35, mode="legacy")
         with pytest.raises(ValueError):
-            self.bit_generator(rounds=27.5)
+            self.bit_generator(rounds=27.5, mode="legacy")

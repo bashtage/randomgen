@@ -120,7 +120,7 @@ class RNG(object):
         cls.bit_generator = Xoshiro256
         cls.advance = None
         cls.seed = [12345]
-        cls.rg = Generator(cls.bit_generator(*cls.seed))
+        cls.rg = Generator(cls.bit_generator(*cls.seed, mode="legacy"))
         cls.initial_state = cls.rg.bit_generator.state
         cls.seed_vector_bits = 64
         cls._extra_setup()
@@ -137,7 +137,7 @@ class RNG(object):
         self.rg.bit_generator.state = self.initial_state
 
     def test_init(self):
-        rg = Generator(self.bit_generator())
+        rg = Generator(self.bit_generator(mode="sequence"))
         state = rg.bit_generator.state
         rg.standard_normal(1)
         rg.standard_normal(1)
@@ -296,44 +296,44 @@ class RNG(object):
         assert_(int_1 == int_2)
 
     def test_entropy_init(self):
-        rg = Generator(self.bit_generator())
-        rg2 = Generator(self.bit_generator())
+        rg = Generator(self.bit_generator(mode="sequence"))
+        rg2 = Generator(self.bit_generator(mode="sequence"))
         assert_(not comp_state(rg.bit_generator.state,
                                rg2.bit_generator.state))
 
     def test_seed(self):
-        rg = Generator(self.bit_generator(*self.seed))
-        rg2 = Generator(self.bit_generator(*self.seed))
+        rg = Generator(self.bit_generator(*self.seed, mode="legacy"))
+        rg2 = Generator(self.bit_generator(*self.seed, mode="legacy"))
         rg.random()
         rg2.random()
         assert_(comp_state(rg.bit_generator.state, rg2.bit_generator.state))
 
     def test_reset_state_gauss(self):
-        rg = Generator(self.bit_generator(*self.seed))
+        rg = Generator(self.bit_generator(*self.seed, mode="legacy"))
         rg.standard_normal()
         state = rg.bit_generator.state
         n1 = rg.standard_normal(size=10)
-        rg2 = Generator(self.bit_generator())
+        rg2 = Generator(self.bit_generator(mode="sequence"))
         rg2.bit_generator.state = state
         n2 = rg2.standard_normal(size=10)
         assert_array_equal(n1, n2)
 
     def test_reset_state_uint32(self):
-        rg = Generator(self.bit_generator(*self.seed))
+        rg = Generator(self.bit_generator(*self.seed, mode="legacy"))
         rg.integers(0, 2 ** 24, 120, dtype=np.uint32)
         state = rg.bit_generator.state
         n1 = rg.integers(0, 2 ** 24, 10, dtype=np.uint32)
-        rg2 = Generator(self.bit_generator())
+        rg2 = Generator(self.bit_generator(mode="sequence"))
         rg2.bit_generator.state = state
         n2 = rg2.integers(0, 2 ** 24, 10, dtype=np.uint32)
         assert_array_equal(n1, n2)
 
     def test_reset_state_float(self):
-        rg = Generator(self.bit_generator(*self.seed))
+        rg = Generator(self.bit_generator(*self.seed, mode="legacy"))
         rg.random(dtype='float32')
         state = rg.bit_generator.state
         n1 = rg.random(size=10, dtype='float32')
-        rg2 = Generator(self.bit_generator())
+        rg2 = Generator(self.bit_generator(mode="sequence"))
         rg2.bit_generator.state = state
         n2 = rg2.random(size=10, dtype='float32')
         assert_((n1 == n2).all())
@@ -637,11 +637,11 @@ class RNG(object):
             self.rg.bit_generator.seed(seed)
 
     def test_uniform_float(self):
-        rg = Generator(self.bit_generator(12345))
+        rg = Generator(self.bit_generator(12345, mode="legacy"))
         warmup(rg)
         state = rg.bit_generator.state
         r1 = rg.random(11, dtype=np.float32)
-        rg2 = Generator(self.bit_generator())
+        rg2 = Generator(self.bit_generator(mode="sequence"))
         warmup(rg2)
         rg2.bit_generator.state = state
         r2 = rg2.random(11, dtype=np.float32)
@@ -650,11 +650,11 @@ class RNG(object):
         assert_(comp_state(rg.bit_generator.state, rg2.bit_generator.state))
 
     def test_gamma_floats(self):
-        rg = Generator(self.bit_generator())
+        rg = Generator(self.bit_generator(mode="sequence"))
         warmup(rg)
         state = rg.bit_generator.state
         r1 = rg.standard_gamma(4.0, 11, dtype=np.float32)
-        rg2 = Generator(self.bit_generator())
+        rg2 = Generator(self.bit_generator(mode="legacy"))
         warmup(rg2)
         rg2.bit_generator.state = state
         r2 = rg2.standard_gamma(4.0, 11, dtype=np.float32)
@@ -663,11 +663,11 @@ class RNG(object):
         assert_(comp_state(rg.bit_generator.state, rg2.bit_generator.state))
 
     def test_normal_floats(self):
-        rg = Generator(self.bit_generator())
+        rg = Generator(self.bit_generator(mode="legacy"))
         warmup(rg)
         state = rg.bit_generator.state
         r1 = rg.standard_normal(11, dtype=np.float32)
-        rg2 = Generator(self.bit_generator())
+        rg2 = Generator(self.bit_generator(mode="sequence"))
         warmup(rg2)
         rg2.bit_generator.state = state
         r2 = rg2.standard_normal(11, dtype=np.float32)
@@ -676,11 +676,11 @@ class RNG(object):
         assert_(comp_state(rg.bit_generator.state, rg2.bit_generator.state))
 
     def test_normal_zig_floats(self):
-        rg = Generator(self.bit_generator())
+        rg = Generator(self.bit_generator(mode="sequence"))
         warmup(rg)
         state = rg.bit_generator.state
         r1 = rg.standard_normal(11, dtype=np.float32)
-        rg2 = Generator(self.bit_generator())
+        rg2 = Generator(self.bit_generator(mode="legacy"))
         warmup(rg2)
         rg2.bit_generator.state = state
         r2 = rg2.standard_normal(11, dtype=np.float32)
@@ -975,7 +975,7 @@ class TestMT19937(RNG):
         cls.bit_generator = MT19937
         cls.advance = None
         cls.seed = [2 ** 21 + 2 ** 16 + 2 ** 5 + 1]
-        cls.rg = Generator(cls.bit_generator(*cls.seed))
+        cls.rg = Generator(cls.bit_generator(*cls.seed, mode="legacy"))
         cls.initial_state = cls.rg.bit_generator.state
         cls.seed_vector_bits = 32
         cls._extra_setup()
@@ -998,7 +998,7 @@ class TestMT64(RNG):
         cls.bit_generator = MT64
         cls.advance = None
         cls.seed = [2 ** 43 + 2 ** 21 + 2 ** 16 + 2 ** 5 + 1]
-        cls.rg = Generator(cls.bit_generator(*cls.seed))
+        cls.rg = Generator(cls.bit_generator(*cls.seed, mode="legacy"))
         cls.initial_state = cls.rg.bit_generator.state
         cls.seed_vector_bits = 64
         cls._extra_setup()
@@ -1012,7 +1012,7 @@ class TestJSF64(RNG):
         cls.bit_generator = partial(JSF, seed_size=3)
         cls.advance = None
         cls.seed = [12345]
-        cls.rg = Generator(cls.bit_generator(*cls.seed))
+        cls.rg = Generator(cls.bit_generator(*cls.seed, mode="legacy"))
         cls.initial_state = cls.rg.bit_generator.state
         cls.seed_vector_bits = 64
         cls._extra_setup()
@@ -1025,7 +1025,7 @@ class TestJSF32(RNG):
         cls.bit_generator = partial(JSF, size=32, seed_size=3)
         cls.advance = None
         cls.seed = [12345]
-        cls.rg = Generator(cls.bit_generator(*cls.seed))
+        cls.rg = Generator(cls.bit_generator(*cls.seed, mode="legacy"))
         cls.initial_state = cls.rg.bit_generator.state
         cls.seed_vector_bits = 64
         cls._extra_setup()
@@ -1039,7 +1039,7 @@ class TestPCG64(RNG):
         cls.advance = 2 ** 96 + 2 ** 48 + 2 ** 21 + 2 ** 16 + 2 ** 5 + 1
         cls.seed = [2 ** 96 + 2 ** 48 + 2 ** 21 + 2 ** 16 + 2 ** 5 + 1,
                     2 ** 21 + 2 ** 16 + 2 ** 5 + 1]
-        cls.rg = Generator(cls.bit_generator(*cls.seed))
+        cls.rg = Generator(cls.bit_generator(*cls.seed, mode="legacy"))
         cls.initial_state = cls.rg.bit_generator.state
         cls.seed_vector_bits = None
         cls._extra_setup()
@@ -1082,21 +1082,21 @@ class TestPhilox4x64(RNG):
         cls.bit_generator = partial(Philox, number=cls.number, width=cls.width)
         cls.advance = 2 ** 63 + 2 ** 31 + 2 ** 15 + 1
         cls.seed = [12345]
-        cls.rg = Generator(cls.bit_generator(*cls.seed))
+        cls.rg = Generator(cls.bit_generator(*cls.seed, mode="legacy"))
         cls.initial_state = cls.rg.bit_generator.state
         cls.seed_vector_bits = 64
         cls.max_vector_seed_size = 1
         cls._extra_setup()
 
     def test_repr(self):
-        rpr = repr(self.bit_generator())
+        rpr = repr(self.bit_generator(mode="sequence"))
         assert '{0}x{1}'.format(self.number, self.width) in rpr
 
     def test_bad_width_number(self):
         with pytest.raises(ValueError, match='number must be either 2 or 4'):
-            self.bit_generator_base(number=self.number + 1)
+            self.bit_generator_base(number=self.number + 1, mode="legacy")
         with pytest.raises(ValueError, match='width must be either 32 or 64'):
-            self.bit_generator_base(width=self.width - 1)
+            self.bit_generator_base(width=self.width - 1, mode="legacy")
 
 
 class TestPhilox2x64(TestPhilox4x64):
@@ -1108,7 +1108,7 @@ class TestPhilox2x64(TestPhilox4x64):
         cls.bit_generator = partial(Philox, number=cls.number, width=cls.width)
         cls.advance = 2 ** 63 + 2 ** 31 + 2 ** 15 + 1
         cls.seed = [12345]
-        cls.rg = Generator(cls.bit_generator(*cls.seed))
+        cls.rg = Generator(cls.bit_generator(*cls.seed, mode="legacy"))
         cls.initial_state = cls.rg.bit_generator.state
         cls.seed_vector_bits = 64
         cls.max_vector_seed_size = 1
@@ -1124,7 +1124,7 @@ class TestPhilox2x32(TestPhilox4x64):
         cls.bit_generator = partial(Philox, number=cls.number, width=cls.width)
         cls.advance = 2 ** 63 + 2 ** 31 + 2 ** 15 + 1
         cls.seed = [12345]
-        cls.rg = Generator(cls.bit_generator(*cls.seed))
+        cls.rg = Generator(cls.bit_generator(*cls.seed, mode="legacy"))
         cls.initial_state = cls.rg.bit_generator.state
         cls.seed_vector_bits = 64
         cls._extra_setup()
@@ -1139,7 +1139,7 @@ class TestPhilox4x32(TestPhilox4x64):
         cls.bit_generator = partial(Philox, number=cls.number, width=cls.width)
         cls.advance = 2 ** 63 + 2 ** 31 + 2 ** 15 + 1
         cls.seed = [12345]
-        cls.rg = Generator(cls.bit_generator(*cls.seed))
+        cls.rg = Generator(cls.bit_generator(*cls.seed, mode="legacy"))
         cls.initial_state = cls.rg.bit_generator.state
         cls.seed_vector_bits = 64
         cls._extra_setup()
@@ -1156,7 +1156,7 @@ class TestThreeFry4x64(TestPhilox4x64):
                                     width=cls.width)
         cls.advance = 2 ** 63 + 2 ** 31 + 2 ** 15 + 1
         cls.seed = [12345]
-        cls.rg = Generator(cls.bit_generator(*cls.seed))
+        cls.rg = Generator(cls.bit_generator(*cls.seed, mode="legacy"))
         cls.initial_state = cls.rg.bit_generator.state
         cls.seed_vector_bits = 64
         cls._extra_setup()
@@ -1172,7 +1172,7 @@ class TestThreeFry2x64(TestPhilox4x64):
                                     width=cls.width)
         cls.advance = 2 ** 63 + 2 ** 31 + 2 ** 15 + 1
         cls.seed = [12345]
-        cls.rg = Generator(cls.bit_generator(*cls.seed))
+        cls.rg = Generator(cls.bit_generator(*cls.seed, mode="legacy"))
         cls.initial_state = cls.rg.bit_generator.state
         cls.seed_vector_bits = 64
         cls._extra_setup()
@@ -1188,7 +1188,7 @@ class TestThreeFry2x32(TestPhilox4x64):
                                     width=cls.width)
         cls.advance = 2 ** 63 + 2 ** 31 + 2 ** 15 + 1
         cls.seed = [12345]
-        cls.rg = Generator(cls.bit_generator(*cls.seed))
+        cls.rg = Generator(cls.bit_generator(*cls.seed, mode="legacy"))
         cls.initial_state = cls.rg.bit_generator.state
         cls.seed_vector_bits = 64
         cls._extra_setup()
@@ -1204,7 +1204,7 @@ class TestThreeFry4x32(TestPhilox4x64):
                                     width=cls.width)
         cls.advance = 2 ** 63 + 2 ** 31 + 2 ** 15 + 1
         cls.seed = [12345]
-        cls.rg = Generator(cls.bit_generator(*cls.seed))
+        cls.rg = Generator(cls.bit_generator(*cls.seed, mode="legacy"))
         cls.initial_state = cls.rg.bit_generator.state
         cls.seed_vector_bits = 64
         cls._extra_setup()
@@ -1217,7 +1217,7 @@ class TestXoroshiro128(RNG):
         cls.bit_generator = Xoroshiro128
         cls.advance = None
         cls.seed = [12345]
-        cls.rg = Generator(cls.bit_generator(*cls.seed))
+        cls.rg = Generator(cls.bit_generator(*cls.seed, mode="legacy"))
         cls.initial_state = cls.rg.bit_generator.state
         cls.seed_vector_bits = 64
         cls._extra_setup()
@@ -1230,7 +1230,7 @@ class TestXoshiro256(RNG):
         cls.bit_generator = Xoshiro256
         cls.advance = None
         cls.seed = [12345]
-        cls.rg = Generator(cls.bit_generator(*cls.seed))
+        cls.rg = Generator(cls.bit_generator(*cls.seed, mode="legacy"))
         cls.initial_state = cls.rg.bit_generator.state
         cls.seed_vector_bits = 64
         cls._extra_setup()
@@ -1243,7 +1243,7 @@ class TestXoshiro512(RNG):
         cls.bit_generator = Xoshiro512
         cls.advance = None
         cls.seed = [12345]
-        cls.rg = Generator(cls.bit_generator(*cls.seed))
+        cls.rg = Generator(cls.bit_generator(*cls.seed, mode="legacy"))
         cls.initial_state = cls.rg.bit_generator.state
         cls.seed_vector_bits = 64
         cls._extra_setup()
@@ -1256,7 +1256,7 @@ class TestXorshift1024(RNG):
         cls.bit_generator = Xorshift1024
         cls.advance = None
         cls.seed = [12345]
-        cls.rg = Generator(cls.bit_generator(*cls.seed))
+        cls.rg = Generator(cls.bit_generator(*cls.seed, mode="legacy"))
         cls.initial_state = cls.rg.bit_generator.state
         cls.seed_vector_bits = 64
         cls._extra_setup()
@@ -1269,7 +1269,7 @@ class TestDSFMT(RNG):
         cls.bit_generator = DSFMT
         cls.advance = None
         cls.seed = [12345]
-        cls.rg = Generator(cls.bit_generator(*cls.seed))
+        cls.rg = Generator(cls.bit_generator(*cls.seed, mode="legacy"))
         cls.initial_state = cls.rg.bit_generator.state
         cls._extra_setup()
         cls.seed_vector_bits = 32
@@ -1282,7 +1282,7 @@ class TestSFMT(RNG):
         cls.bit_generator = SFMT
         cls.advance = None
         cls.seed = [12345]
-        cls.rg = Generator(cls.bit_generator(*cls.seed))
+        cls.rg = Generator(cls.bit_generator(*cls.seed, mode="legacy"))
         cls.initial_state = cls.rg.bit_generator.state
         cls._extra_setup()
         cls.seed_vector_bits = 32
@@ -1315,7 +1315,7 @@ class TestPCG32(TestPCG64):
         cls.advance = 2 ** 48 + 2 ** 21 + 2 ** 16 + 2 ** 5 + 1
         cls.seed = [2 ** 48 + 2 ** 21 + 2 ** 16 + 2 ** 5 + 1,
                     2 ** 21 + 2 ** 16 + 2 ** 5 + 1]
-        cls.rg = Generator(cls.bit_generator(*cls.seed))
+        cls.rg = Generator(cls.bit_generator(*cls.seed, mode="legacy"))
         cls.initial_state = cls.rg.bit_generator.state
         cls.seed_vector_bits = None
         cls._extra_setup()
@@ -1329,7 +1329,7 @@ class TestAESCounter(RNG):
         cls.bit_generator = AESCounter
         cls.advance = 2 ** 63 + 2 ** 31 + 2 ** 15 + 1
         cls.seed = [2 ** 21 + 2 ** 16 + 2 ** 5 + 1]
-        cls.rg = Generator(cls.bit_generator(*cls.seed))
+        cls.rg = Generator(cls.bit_generator(*cls.seed, mode="legacy"))
         cls.initial_state = cls.rg.bit_generator.state
         cls.seed_vector_bits = 64
         cls._extra_setup()
@@ -1344,7 +1344,7 @@ class TestChaCha(RNG):
         cls.bit_generator = ChaCha
         cls.advance = 2 ** 63 + 2 ** 31 + 2 ** 15 + 1
         cls.seed = [2 ** 21 + 2 ** 16 + 2 ** 5 + 1]
-        cls.rg = Generator(cls.bit_generator(*cls.seed))
+        cls.rg = Generator(cls.bit_generator(*cls.seed, mode="legacy"))
         cls.initial_state = cls.rg.bit_generator.state
         cls.seed_vector_bits = 64
         cls._extra_setup()
@@ -1357,7 +1357,7 @@ class TestHC128(RNG):
         super(TestHC128, cls).setup_class()
         cls.bit_generator = HC128
         cls.seed = [2**231 + 2 ** 21 + 2 ** 16 + 2 ** 5 + 1]
-        cls.rg = Generator(cls.bit_generator(*cls.seed))
+        cls.rg = Generator(cls.bit_generator(*cls.seed, mode="legacy"))
         cls.initial_state = cls.rg.bit_generator.state
         cls.seed_vector_bits = 64
         cls._extra_setup()
@@ -1370,7 +1370,7 @@ class TestSPECK128(RNG):
         super(TestSPECK128, cls).setup_class()
         cls.bit_generator = SPECK128
         cls.seed = [2**231 + 2 ** 21 + 2 ** 16 + 2 ** 5 + 1]
-        cls.rg = Generator(cls.bit_generator(*cls.seed))
+        cls.rg = Generator(cls.bit_generator(*cls.seed, mode="legacy"))
         cls.advance = 2 ** 63 + 2 ** 31 + 2 ** 15 + 1
         cls.initial_state = cls.rg.bit_generator.state
         cls.seed_vector_bits = 64

@@ -103,7 +103,7 @@ class TestSeed(object):
 
     def test_seed_equivalency(self):
         rs = random.RandomState(0)
-        rs2 = random.RandomState(MT19937(0))
+        rs2 = random.RandomState(MT19937(0, mode="legacy"))
         assert_mt19937_state_equal(rs.get_state(legacy=False),
                                    rs2.get_state(legacy=False))
 
@@ -223,7 +223,7 @@ class TestSetState(object):
         self.random_state.negative_binomial(0.5, 0.5)
 
     def test_get_state_warning(self):
-        rs = random.RandomState(Xoshiro256())
+        rs = random.RandomState(Xoshiro256(mode="legacy"))
         with suppress_warnings() as sup:
             w = sup.record(RuntimeWarning)
             state = rs.get_state()

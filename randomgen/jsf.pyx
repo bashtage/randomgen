@@ -175,9 +175,9 @@ cdef class JSF(BitGenerator):
     """
     parameters = JSF_PARAMETERS
 
-    def __init__(self, seed=None, seed_size=1, size=64, p=None, q=None,
-                 r=None):
-        BitGenerator.__init__(self)
+    def __init__(self, seed=None, *, seed_size=1, size=64, p=None, q=None,
+                 r=None, mode=None):
+        BitGenerator.__init__(self, seed, mode)
         if size not in (32, 64) or not isinstance(size, INT_TYPES):
             raise ValueError('size must be either 32 or 64')
         if seed_size not in (1, 2, 3) or not isinstance(seed_size, INT_TYPES):
@@ -211,52 +211,7 @@ cdef class JSF(BitGenerator):
         self.rng_state.has_uint32 = 0
         self.rng_state.uinteger = 0
 
-    @classmethod
-    def from_seed_seq(cls, entropy=None, seed_size=1, size=64, p=None, q=None,
-                      r=None):
-        """
-        from_seed_seq(entropy=None, seed_size=1, size=64, p=None, q=None, r=None)
-
-        Create a instance using a SeedSequence
-
-        Parameters
-        ----------
-        entropy : {None, int, sequence[int], SeedSequence}
-            Entropy to pass to SeedSequence, or a SeedSequence instance. Using
-            a SeedSequence instance allows all parameters to be set.
-        seed_size : {1, 2, 3}, optional
-            Number of distinct seed values used to initialize JSF.  The
-            original implementation uses 1 (default). Higher values increase
-            the size of the seed space which is ``2**(size*seed_size)``.
-        size : {32, 64}, optional
-            Output size of a single iteration of JSF. 32 is better suited to
-            32-bit systems.
-        p : int, optional
-            One the the three parameters that defines JSF. See Notes for
-            ``JSF``.
-            Notes.
-        q : int, optional
-            One the the three parameters that defines JSF. See Notes for
-            ``JSF``.
-        r : int, optional
-            One the the three parameters that defines JSF. See Notes for
-            ``JSF``.
-
-        Returns
-        -------
-        bit_gen : JSF
-            SeedSequence initialized bit generator with SeedSequence instance
-            attached to ``bit_gen.seed_seq``
-
-        See Also
-        --------
-        randomgen.seed_sequence.SeedSequence
-        """
-        cls_kwargs = dict(seed_size=seed_size, size=size, p=p, q=q, r=r)
-        return super(JSF, cls).from_seed_seq(entropy, cls_kwargs=cls_kwargs)
-
-    def _seed_from_seq(self, seed_seq):
-        self.seed_seq = seed_seq
+    def _seed_from_seq(self):
         dtype = np.uint64 if self.size == 64 else np.uint32
         state = self.seed_seq.generate_state(self.seed_size, dtype)
         if self.size == 64:
@@ -267,6 +222,7 @@ cdef class JSF(BitGenerator):
             jsf32_seed(&self.rng_state,
                        <uint32_t*>np.PyArray_DATA(state),
                        self.seed_size)
+        self._reset_state_variables()
 
     def seed(self, seed=None):
         """
@@ -288,6 +244,10 @@ cdef class JSF(BitGenerator):
         ValueError
             If seed values are out of range for the PRNG.
         """
+        BitGenerator._seed_with_seed_sequence(self, seed)
+        if self.seed_seq is not None:
+            return
+
         ub = 2 ** self.size
         if seed is None:
             state = random_entropy(3 * self.size // 32, 'auto')

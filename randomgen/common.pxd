@@ -33,6 +33,7 @@ cdef class BitGenerator:
     cdef readonly object capsule
     cdef object _ctypes
     cdef object _cffi
+    cdef object mode
     cdef readonly object lock
     cdef public object seed_seq
 

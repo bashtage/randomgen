@@ -110,8 +110,8 @@ cdef class Xorshift1024(BitGenerator):
     .. [4] Sebastiano Vigna. "Further scramblings of Marsaglia's xorshift
            generators." CoRR, abs/1403.0930, 2014.
     """
-    def __init__(self, seed=None):
-        BitGenerator.__init__(self)
+    def __init__(self, seed=None, *, mode=None):
+        BitGenerator.__init__(self, seed, mode)
         self.seed(seed)
 
         self._bitgen.state = <void *>&self.rng_state
@@ -124,41 +124,15 @@ cdef class Xorshift1024(BitGenerator):
         self.rng_state.has_uint32 = 0
         self.rng_state.uinteger = 0
 
-    @classmethod
-    def from_seed_seq(cls, entropy=None):
-        """
-        from_seed_seq(entropy=None)
-
-        Create a instance using a SeedSequence
-
-        Parameters
-        ----------
-        entropy : {None, int, sequence[int], SeedSequence}
-            Entropy to pass to SeedSequence, or a SeedSequence instance. Using
-            a SeedSequence instance allows all parameters to be set.
-
-        Returns
-        -------
-        bit_gen : Xorshift1024
-            SeedSequence initialized bit generator with SeedSequence instance
-            attached to ``bit_gen.seed_seq``
-
-        See Also
-        --------
-        randomgen.seed_sequence.SeedSequence
-        """
-
-        return super(Xorshift1024, cls).from_seed_seq(entropy)
-
-    def _seed_from_seq(self, seed_seq):
+    def _seed_from_seq(self):
         cdef int i
         cdef uint64_t *state_arr
 
-        self.seed_seq = seed_seq
         state = self.seed_seq.generate_state(16, np.uint64)
         state_arr = <np.uint64_t *>np.PyArray_DATA(state)
         for i in range(16):
             self.rng_state.s[i] = state[i]
+        self._reset_state_variables()
 
     def seed(self, seed=None):
         """
@@ -172,15 +146,20 @@ cdef class Xorshift1024(BitGenerator):
 
         Parameters
         ----------
-        seed : int, optional
-            Seed for ``Xorshift1024``.
+        seed : {None, int, array_like[uint64], SeedSequence}
+            Seed for PRNG. Can be a single 64 bit unsigned integer, an array
+            of 64 bit unsigned integers or a SeedSequence instance. If None,
+            system provided entropy is used.
 
         Raises
         ------
         ValueError
             If seed values are out of range for the PRNG.
-
         """
+        BitGenerator._seed_with_seed_sequence(self, seed)
+        if self.seed_seq is not None:
+            return
+        # Legacy seeding
         ub = 2 ** 64
         if seed is None:
             state = random_entropy(32, 'auto')
@@ -256,7 +235,7 @@ cdef class Xorshift1024(BitGenerator):
         """
         cdef Xorshift1024 bit_generator
 
-        bit_generator = self.__class__()
+        bit_generator = self.__class__(mode=self.mode)
         bit_generator.state = self.state
         bit_generator.jump_inplace(iter)
 

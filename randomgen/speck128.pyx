@@ -127,8 +127,8 @@ cdef class SPECK128(BitGenerator):
        National Security Agency. January 15, 2019. from
        https://nsacyber.github.io/simon-speck/implementations/ImplementationGuide1.1.pdf
     """
-    def __init__(self, seed=None, counter=None, key=None, rounds=SPECK_MAX_ROUNDS):
-        BitGenerator.__init__(self)
+    def __init__(self, seed=None, *, counter=None, key=None, rounds=SPECK_MAX_ROUNDS, mode=None):
+        BitGenerator.__init__(self, seed, mode)
         # Calloc since ctr needs to be 0
         self.rng_state = <speck_state_t *>PyArray_calloc_aligned(sizeof(speck_state_t), 1)
         if (rounds <= 0) or rounds > SPECK_MAX_ROUNDS or int(rounds) != rounds:
@@ -150,40 +150,10 @@ cdef class SPECK128(BitGenerator):
         self.rng_state.has_uint32 = 0
         self.rng_state.uinteger = 0
 
-    @classmethod
-    def from_seed_seq(cls, entropy=None, counter=None):
-        """
-        from_seed_seq(entropy=None, counter=None)
-        Create a instance using a SeedSequence
-
-        Parameters
-        ----------
-        entropy : {None, int, sequence[int], SeedSequence}
-            Entropy to pass to SeedSequence, or a SeedSequence instance. Using
-            a SeedSequence instance allows all parameters to be set.
-        counter : {None, int, array_like}, optional
-            Counter to use in the SPECK128 state. Can be either a Python int
-            in [0, 2**128) or a 2-element uint64 array. If not provided, the
-            RNG is initialized at 0.
-
-        Returns
-        -------
-        bit_gen : SPECK128
-            SeedSequence initialized bit generator with SeedSequence instance
-            attached to ``bit_gen.seed_seq``
-
-        See Also
-        --------
-        randomgen.seed_sequence.SeedSequence
-        """
-        seed_kwargs = dict(counter=counter)
-        return super(SPECK128, cls).from_seed_seq(entropy=entropy,
-                                                  seed_kwargs=seed_kwargs)
-
-    def _seed_from_seq(self, seed_seq, counter=None):
-        self.seed_seq = seed_seq
+    def _seed_from_seq(self, counter=None):
         state = self.seed_seq.generate_state(4, np.uint64)
         self.seed(key=state, counter=counter)
+        self._reset_state_variables()
 
     def seed(self, seed=None, counter=None, key=None):
         """
@@ -197,36 +167,42 @@ cdef class SPECK128(BitGenerator):
 
         Parameters
         ----------
-        seed : int, optional
+        seed : {None, int, SeedSequence}
             Value initializing the pseudo-random number generator. Can be an
-            integer in [0, 2**256), a 4-element array of uint64 values or
-            ``None`` (the default). If `seed` is ``None``, then  data is
-            read from ``/dev/urandom`` (or the Windows analog) if
-            available.  If unavailable, a hash of the time and process ID is
-            used.
-        counter : {int array}, optional
+            integer in [0, 2**(number*width)), a ``number*width//64``-element
+            array of uint64 values or ``None`` (the default). If `seed` is
+            ``None``, then  data is read from ``/dev/urandom``
+            (or the Windows analog) if available.  If unavailable, a hash of
+            the time and process ID is used.
+        counter : {None, int, array_like[uint64]}
             Integer in [0,2**128) containing the counter position or a
             2-element array of uint64 containing the counter
-        key : {int, array}, options
+        key : {None, int, array_like[uint64]}
             Integer in [0,2**256) containing the key or a 4-element array of
             uint64 containing the key
 
         Raises
         ------
         ValueError
-            If values are out of range for the PRNG.
+            If values are out of range for the PRNG or If seed and key are
+            both set.
 
         Notes
         -----
         The two representation of the counter and key are related through
         array[i] = (value // 2**(64*i)) % 2**64.
         """
+        if seed is not None and key is not None:
+            raise ValueError('seed and key cannot be both used')
+        if key is None:
+            BitGenerator._seed_with_seed_sequence(self, seed, counter=counter)
+            if self.seed_seq is not None:
+                return
+
         seed = object_to_int(seed, 256, 'seed')
         key = object_to_int(key, 256, 'key')
         counter = object_to_int(counter, 128, 'counter')
 
-        if seed is not None and key is not None:
-            raise ValueError('seed and key cannot be both used')
         if key is None:
             if seed is None:
                 _seed = random_entropy(8, 'auto')
@@ -408,7 +384,7 @@ cdef class SPECK128(BitGenerator):
             New instance of generator jumped iter times
         """
         cdef SPECK128 bit_generator
-        bit_generator = self.__class__()
+        bit_generator = self.__class__(mode=self.mode)
         bit_generator.state = self.state
         bit_generator.jump_inplace(iter)
         return bit_generator

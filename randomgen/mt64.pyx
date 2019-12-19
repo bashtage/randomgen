@@ -82,8 +82,8 @@ cdef class MT64(BitGenerator):
     .. [2] Nishimura, T. "Tables of 64-bit Mersenne Twisters" ACM Transactions
         on Modeling and Computer Simulation 10. (2000) 348-357.
     """
-    def __init__(self, seed=None):
-        BitGenerator.__init__(self)
+    def __init__(self, seed=None, *, mode=None):
+        BitGenerator.__init__(self, seed, mode)
         self.seed(seed)
 
         self._bitgen.state = &self.rng_state
@@ -96,37 +96,12 @@ cdef class MT64(BitGenerator):
         self.rng_state.has_uint32 = 0
         self.rng_state.uinteger = 0
 
-    @classmethod
-    def from_seed_seq(cls, entropy=None):
-        """
-        from_seed_seq(entropy=None)
-
-        Create a instance using a SeedSequence
-
-        Parameters
-        ----------
-        entropy : {None, int, sequence[int], SeedSequence}
-            Entropy to pass to SeedSequence, or a SeedSequence instance. Using
-            a SeedSequence instance allows all parameters to be set.
-
-        Returns
-        -------
-        bit_gen : MT64
-            SeedSequence initialized bit generator with SeedSequence instance
-            attached to ``bit_gen.seed_seq``
-
-        See Also
-        --------
-        randomgen.seed_sequence.SeedSequence
-        """
-        return super(MT64, cls).from_seed_seq(entropy)
-
-    def _seed_from_seq(self, seed_seq):
-        self.seed_seq = seed_seq
+    def _seed_from_seq(self):
         state = self.seed_seq.generate_state(312, np.uint64)
         mt64_init_by_array(&self.rng_state,
                            <uint64_t*>np.PyArray_DATA(state),
                            312)
+        self._reset_state_variables()
 
     def seed(self, seed=None):
         """
@@ -151,6 +126,11 @@ cdef class MT64(BitGenerator):
             If seed values are out of range for the PRNG.
         """
         cdef np.ndarray obj
+
+        BitGenerator._seed_with_seed_sequence(self, seed)
+        if self.seed_seq is not None:
+            return
+
         try:
             if seed is None:
                 seed = random_entropy(624, 'auto')

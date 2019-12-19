@@ -23,12 +23,12 @@ cdef class Xoroshiro128(BitGenerator):
 
     Parameters
     ----------
-    seed : {None, int, array_like}, optional
+    seed : {None, int, array_like, SeedSequence}, optional
         Random seed initializing the pseudo-random number generator.
-        Can be an integer in [0, 2**64-1], array of integers in [0, 2**64-1]
-        or ``None`` (the default). If `seed` is ``None``, then  data is read
-        from ``/dev/urandom`` (or the Windows analog) if available.  If
-        unavailable, a hash of the time and process ID is used.
+        Can be an integer in [0, 2**64-1], array of integers in [0, 2**64-1],
+        a NumPy SeedSequence, or ``None`` (the default). If `seed` is
+        ``None``, then  data is read from ``/dev/urandom`` (or the Windows
+        analog) if available.  If unavailable, a hash of the time and process ID is used.
 
     Attributes
     ----------
@@ -106,8 +106,8 @@ cdef class Xoroshiro128(BitGenerator):
     .. [1] "xoroshiro+ / xorshift* / xorshift+ generators and the PRNG shootout",
            http://xorshift.di.unimi.it/
     """
-    def __init__(self, seed=None):
-        BitGenerator.__init__(self)
+    def __init__(self, seed=None, *, mode=None):
+        BitGenerator.__init__(self, seed, mode)
         self.seed(seed)
 
         self._bitgen.state = <void *>&self.rng_state
@@ -120,40 +120,15 @@ cdef class Xoroshiro128(BitGenerator):
         self.rng_state.has_uint32 = 0
         self.rng_state.uinteger = 0
 
-    @classmethod
-    def from_seed_seq(cls, entropy=None):
-        """
-        from_seed_seq(entropy=None)
-
-        Create a instance using a SeedSequence
-
-        Parameters
-        ----------
-        entropy : {None, int, sequence[int], SeedSequence}
-            Entropy to pass to SeedSequence, or a SeedSequence instance. Using
-            a SeedSequence instance allows all parameters to be set.
-
-        Returns
-        -------
-        bit_gen : Xoroshiro128
-            SeedSequence initialized bit generator with SeedSequence instance
-            attached to ``bit_gen.seed_seq``
-
-        See Also
-        --------
-        randomgen.seed_sequence.SeedSequence
-        """
-        return super(Xoroshiro128, cls).from_seed_seq(entropy)
-
-    def _seed_from_seq(self, seed_seq):
+    def _seed_from_seq(self):
         cdef int i
         cdef uint64_t *state_arr
 
-        self.seed_seq = seed_seq
         state = self.seed_seq.generate_state(2, np.uint64)
         state_arr = <np.uint64_t *>np.PyArray_DATA(state)
         for i in range(2):
             self.rng_state.s[i] = state[i]
+        self._reset_state_variables()
 
     def seed(self, seed=None):
         """
@@ -166,15 +141,20 @@ cdef class Xoroshiro128(BitGenerator):
 
         Parameters
         ----------
-        seed : {int, ndarray}, optional
-            Seed for PRNG. Can be a single 64 bit unsigned integer or an array
-            of 64 bit unsigned integers.
+        seed : {None, int, array_like[uint64], SeedSequence}
+            Seed for PRNG. Can be a single 64 bit unsigned integer, an array
+            of 64 bit unsigned integers or a SeedSequence instance. If None,
+            system provided entropy is used.
 
         Raises
         ------
         ValueError
             If seed values are out of range for the PRNG.
         """
+        BitGenerator._seed_with_seed_sequence(self, seed)
+        if self.seed_seq is not None:
+            return
+        # Legacy seeding
         ub = 2 ** 64
         if seed is None:
             state = random_entropy(4, 'auto')
@@ -249,7 +229,7 @@ cdef class Xoroshiro128(BitGenerator):
         """
         cdef Xoroshiro128 bit_generator
 
-        bit_generator = self.__class__()
+        bit_generator = self.__class__(mode=self.mode)
         bit_generator.state = self.state
         bit_generator.jump_inplace(iter)
 
