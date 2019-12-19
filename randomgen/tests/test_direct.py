@@ -1315,7 +1315,6 @@ class TestRDRAND(Base):
             self.bit_generator(ss)
 
 
-
 class TestChaCha(Base):
     @classmethod
     def setup_class(cls):

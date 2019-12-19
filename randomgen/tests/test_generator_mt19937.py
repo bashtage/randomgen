@@ -2110,7 +2110,8 @@ class TestThread(object):
         out2 = np.empty((len(self.seeds),) + sz)
 
         # threaded generation
-        t = [Thread(target=function, args=(Generator(MT19937(s, mode="legacy")), o))
+        t = [Thread(target=function,
+                    args=(Generator(MT19937(s, mode="legacy")), o))
              for s, o in zip(self.seeds, out1)]
         [x.start() for x in t]
         [x.join() for x in t]
