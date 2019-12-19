@@ -15,7 +15,6 @@ Seeding and State
 
    ~Xoshiro512.seed
    ~Xoshiro512.state
-   ~Xoshiro512.from_seed_seq
 
 Parallel generation
 ===================

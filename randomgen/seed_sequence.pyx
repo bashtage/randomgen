@@ -398,7 +398,6 @@ cdef class SeedSequence(object):
         entropy_array = np.concatenate([run_entropy, spawn_entropy])
         return entropy_array
 
-    @np.errstate(over='ignore')
     def generate_state(self, n_words, dtype=np.uint32):
         """
         generate_state(n_words, dtype=np.uint32)
@@ -424,27 +423,27 @@ cdef class SeedSequence(object):
         """
         cdef uint32_t hash_const = INIT_B
         cdef uint32_t data_val
-
-        out_dtype = np.dtype(dtype)
-        if out_dtype == np.dtype(np.uint32):
-            pass
-        elif out_dtype == np.dtype(np.uint64):
-            n_words *= 2
-        else:
-            raise ValueError("only support uint32 or uint64")
-        state = np.zeros(n_words, dtype=np.uint32)
-        src_cycle = cycle(self.pool)
-        for i_dst in range(n_words):
-            data_val = next(src_cycle)
-            data_val ^= hash_const
-            hash_const *= MULT_B
-            data_val *= hash_const
-            data_val ^= data_val >> XSHIFT
-            state[i_dst] = data_val
-        if out_dtype == np.dtype(np.uint64):
-            # For consistency across different endiannesses, view first as
-            # little-endian then convert the values to the native endianness.
-            state = state.astype('<u4').view('<u8').astype(np.uint64)
+        with np.errstate(over='ignore'):
+            out_dtype = np.dtype(dtype)
+            if out_dtype == np.dtype(np.uint32):
+                pass
+            elif out_dtype == np.dtype(np.uint64):
+                n_words *= 2
+            else:
+                raise ValueError("only support uint32 or uint64")
+            state = np.zeros(n_words, dtype=np.uint32)
+            src_cycle = cycle(self.pool)
+            for i_dst in range(n_words):
+                data_val = next(src_cycle)
+                data_val ^= hash_const
+                hash_const *= MULT_B
+                data_val *= hash_const
+                data_val ^= data_val >> XSHIFT
+                state[i_dst] = data_val
+            if out_dtype == np.dtype(np.uint64):
+                # For consistency across different endiannesses, view first as
+                # little-endian then convert the values to the native endianness.
+                state = state.astype('<u4').view('<u8').astype(np.uint64)
         return state
 
     def spawn(self, n_children):

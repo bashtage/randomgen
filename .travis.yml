@@ -18,15 +18,17 @@ matrix:
   fast_finish: true
   include:
     - os: linux
-      env: [PYTHON=2.7]
-    - os: linux
-      env: [PYTHON=3.7, DOCBUILD=true, CC=clang, NUMPY=1.16]
-    - os: linux
-      python: 3.6
-      env: [PYPI=true, COVERAGE=false]
+      python: 3.7
+      env: [PYTHON=3.7, DOCBUILD=true, CC=clang, NUMPY=1.17]
     - os: linux
       python: 3.7
-      env: [PYPI=true, COVERAGE=false, RANDOMGEN_DEBUG=true]
+      env: [PYPI=true, COVERAGE=true, NUMPY=1.16]
+    - os: linux
+      python: 3.8
+      env: [PYPI=true, COVERAGE=true]
+    - os: linux
+      python: 3.6
+      env: [PYPI=true, COVERAGE=false, RANDOMGEN_DEBUG=true, NUMPY=1.17]
     - os: linux-ppc64le
       python: 3.6
       env: [PYPI=true, PPC64_LE=1, COVERAGE=false]
@@ -34,9 +36,9 @@ matrix:
       language: generic
       env: [PYTHON=3.6, NUMPY=1.16]
     - os: linux
-      env: [PYTHON=3.6, NUMPY=1.14, CYTHON=0.27]
+      env: [PYTHON=3.6, NUMPY=1.15, CYTHON=0.27]
     - os: linux
-      env: [PYTHON=3.5, NUMPY=1.13, CYTHON=0.26]
+      env: [PYTHON=3.5, NUMPY=1.14, CYTHON=0.26]
   allow_failures:
     - os: linux-ppc64le
       python: 3.6
@@ -47,7 +49,7 @@ before_install:
   - if [[ $PYPI = true ]]; then source ci/install-gcc-8.sh; fi
   - if [[ $PYPI = true ]]; then source ci/pypi-install.sh; else source ci/conda-install.sh; fi
   - if [[ $PIP_CYTHON = true ]]; then pip install cython --upgrade; fi
-  - pip install tempita coverage coveralls pytest-cov codecov coveralls -q
+  - pip install tempita "coverage<5" coveralls pytest-cov codecov coveralls -q
   - pip list
   - export BUILD_DIR=${PWD}
   - if [[ ${DOCBUILD} == true ]]; then pip install sphinx sphinx_rtd_theme sphinx-material ipython doctr -q; fi

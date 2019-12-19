@@ -29,7 +29,7 @@ What's New or Different
 
   from randomgen import Generator, Xoroshiro128
   import numpy.random
-  rg = Generator(Xoroshiro128())
+  rg = Generator(Xoroshiro128(mode="sequence"))
   %timeit rg.standard_normal(100000)
   %timeit numpy.random.standard_normal(100000)
 

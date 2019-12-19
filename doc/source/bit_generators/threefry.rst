@@ -15,7 +15,6 @@ Seeding and State
 
    ~ThreeFry.seed
    ~ThreeFry.state
-   ~ThreeFry.from_seed_seq
 
 Parallel generation
 ===================

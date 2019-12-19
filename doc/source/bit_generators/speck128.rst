@@ -15,7 +15,6 @@ Seeding and State
 
    ~SPECK128.seed
    ~SPECK128.state
-   ~SPECK128.from_seed_seq
 
 Parallel generation
 ===================

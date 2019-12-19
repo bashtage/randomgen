@@ -17,6 +17,12 @@ from randomgen cimport api
 from randomgen.seed_sequence import ISeedSequence
 
 ISEED_SEQUENCES = (ISeedSequence,)
+# NumPy 1.17
+try:
+   ISEED_SEQUENCES += (np.random.bit_generator.ISeedSequence,)
+except AttributeError:
+    pass
+# NumPy 1.18
 try:
    ISEED_SEQUENCES += (np.random._bit_generator.ISeedSequence,)
 except AttributeError:
@@ -371,7 +377,7 @@ cpdef object object_to_int(object val, object bits, object name, int default_bit
     """
     if val is None:
         return None
-    elif isinstance(val, (int, long, np.integer)):
+    elif isinstance(val, (int, np.integer)):
         out = int(val)
     elif isinstance(val, np.ndarray):
         dtypes = []

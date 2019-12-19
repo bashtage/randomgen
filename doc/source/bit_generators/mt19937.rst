@@ -15,7 +15,6 @@ Seeding and State
 
    ~MT19937.seed
    ~MT19937.state
-   ~MT19937.from_seed_seq
 
 Parallel generation
 ===================

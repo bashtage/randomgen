@@ -15,7 +15,6 @@ Seeding and State
 
    ~PCG32.seed
    ~PCG32.state
-   ~PCG32.from_seed_seq
 
 Parallel generation
 ===================
