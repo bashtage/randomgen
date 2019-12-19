@@ -1,10 +1,10 @@
 import sys
 
 import numpy as np
-import pytest
 from numpy.testing import assert_array_equal
+import pytest
 
-from randomgen.seed_sequence import SeedSequence, SeedlessSeedSequence
+from randomgen.seed_sequence import SeedlessSeedSequence, SeedSequence
 
 PY3 = sys.version_info >= (3,)
 

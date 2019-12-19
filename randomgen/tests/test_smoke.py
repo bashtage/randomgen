@@ -10,10 +10,9 @@ from numpy.testing import (assert_, assert_almost_equal, assert_array_equal,
 import pytest
 
 from randomgen import (DSFMT, HC128, JSF, MT64, MT19937, PCG32, PCG64, SFMT,
-                       AESCounter, ChaCha, Generator, Philox, ThreeFry,
-                       SPECK128, Xoroshiro128, Xorshift1024, Xoshiro256,
+                       SPECK128, AESCounter, ChaCha, Generator, Philox,
+                       ThreeFry, Xoroshiro128, Xorshift1024, Xoshiro256,
                        Xoshiro512, entropy)
-
 from randomgen._testing import suppress_warnings
 
 PY3 = sys.version_info >= (3,)

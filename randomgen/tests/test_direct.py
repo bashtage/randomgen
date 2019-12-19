@@ -9,9 +9,9 @@ from numpy.testing import (assert_allclose, assert_array_equal, assert_equal,
 import pytest
 
 from randomgen import (DSFMT, HC128, JSF, MT64, MT19937, PCG32, PCG64, RDRAND,
-                       SFMT, AESCounter, ChaCha, Generator, Philox,
+                       SFMT, SPECK128, AESCounter, ChaCha, Generator, Philox,
                        RandomState, ThreeFry, Xoroshiro128, Xorshift1024,
-                       Xoshiro256, Xoshiro512, SPECK128)
+                       Xoshiro256, Xoshiro512)
 from randomgen.common import interface
 
 try:

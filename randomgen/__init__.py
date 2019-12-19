@@ -12,6 +12,7 @@ from randomgen.pcg32 import PCG32
 from randomgen.pcg64 import PCG64
 from randomgen.philox import Philox
 from randomgen.rdrand import RDRAND
+from randomgen.seed_sequence import SeedSequence, SeedlessSeedSequence
 from randomgen.sfmt import SFMT
 from randomgen.speck128 import SPECK128
 from randomgen.threefry import ThreeFry
@@ -19,7 +20,6 @@ from randomgen.xoroshiro128 import Xoroshiro128
 from randomgen.xorshift1024 import Xorshift1024
 from randomgen.xoshiro256 import Xoshiro256
 from randomgen.xoshiro512 import Xoshiro512
-from randomgen.seed_sequence import SeedSequence, SeedlessSeedSequence
 
 from ._version import get_versions
 
