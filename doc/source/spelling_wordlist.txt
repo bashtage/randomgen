@@ -123,6 +123,7 @@ ddof
 zipf
 Ziggurat
 congruential
+Congruential
 ctype
 CTypes
 dfden

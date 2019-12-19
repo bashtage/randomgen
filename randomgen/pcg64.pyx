@@ -46,7 +46,7 @@ cdef class PCG64(BitGenerator):
 
     Notes
     -----
-    PCG-64 is a 128-bit implementation of O'Neill's permutation congruential
+    PCG-64 is a 128-bit implementation of O'Neill's permuted congruential
     generator ([1]_, [2]_). PCG-64 has a period of :math:`2^{128}` and supports
     advancing an arbitrary number of steps as well as :math:`2^{127}` streams.
 

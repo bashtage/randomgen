@@ -1,5 +1,5 @@
-Parallel Congruent Generator (32-bit, PCG32)
---------------------------------------------
+Permuted Congruential Generator (32-bit, PCG32)
+-----------------------------------------------
 
 .. module:: randomgen.pcg32
 
