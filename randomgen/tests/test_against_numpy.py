@@ -1,3 +1,5 @@
+from distutils.version import LooseVersion
+
 import numpy as np
 import numpy.random
 from numpy.testing import assert_allclose, assert_array_equal, assert_equal
@@ -8,6 +10,9 @@ from randomgen import MT19937, Generator
 from randomgen._testing import suppress_warnings
 import randomgen.generator
 from randomgen.mtrand import RandomState
+
+NP_VERSION = LooseVersion(np.__version__)
+NP_118 = LooseVersion("1.18") <= NP_VERSION < LooseVersion("1.19")
 
 
 def compare_0_input(f1, f2):
@@ -408,6 +413,7 @@ class TestAgainstNumPy(object):
         s = Generator(MT19937([4294967295]))
         assert_equal(s.integers(1000), 265)
 
+    @pytest.mark.skipif(not NP_118, reason='Only value for NumPy 1.18')
     def test_dir(self):
         nprs_d = set(dir(self.nprs))
         rs_d = dir(self.rg)
@@ -417,17 +423,15 @@ class TestAgainstNumPy(object):
 
         npmod = dir(numpy.random)
         mod = dir(randomgen.generator)
-        known_exlcuded = ['__all__', '__cached__', '__path__', 'Tester',
-                          'info', 'bench', '__RandomState_ctor', 'mtrand',
-                          'test', '__warningregistry__', '_numpy_tester',
-                          'division', 'get_state', 'set_state', 'seed',
-                          'ranf', 'random', 'sample', 'absolute_import',
-                          'print_function', 'RandomState', 'Lock',
-                          'randint', 'warnings', 'MT19937', 'PCG64', 'Philox',
-                          'SFC64', 'SeedSequence', '_pickle', 'bit_generator',
-                          'bounded_integers', 'common', 'default_rng',
-                          'generator', 'mt19937', 'pcg64', 'philox', 'sfc64',
-                          'entropy']
+        known_exlcuded = ['BitGenerator', 'MT19937', 'PCG64', 'Philox',
+                          'RandomState', 'SFC64', 'SeedSequence',
+                          '__RandomState_ctor', '__cached__', '__path__',
+                          '_bit_generator', '_bounded_integers', '_common',
+                          '_generator', '_mt19937', '_pcg64', '_philox',
+                          '_pickle', '_sfc64', 'absolute_import',
+                          'default_rng', 'division', 'get_state', 'mtrand',
+                          'print_function', 'ranf', 'sample', 'seed',
+                          'set_state', 'test']
         mod += known_exlcuded
         diff = set(npmod).difference(mod)
         print(diff)
