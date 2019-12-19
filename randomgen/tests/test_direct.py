@@ -370,7 +370,7 @@ class Base(object):
         assert_state_equal(state, alt_state)
 
     def test_uinteger_reset_seed(self):
-        bg = self.bit_generator(mode="sequence")
+        bg = self.setup_bitgenerator([None])
         g = Generator(bg)
         g.integers(0, 2 ** 32, dtype=np.uint32)
         if 'has_uint32' not in bg.state or bg.state['has_uint32'] == 0:
@@ -381,7 +381,7 @@ class Base(object):
         assert bg.state['has_uint32'] == 0
 
     def test_uinteger_reset_jump(self):
-        bg = self.bit_generator(mode="sequence")
+        bg = self.setup_bitgenerator([None])
         if not hasattr(bg, 'jumped'):
             pytest.skip('bit generator does not support jumping')
         g = Generator(bg)
@@ -396,7 +396,7 @@ class Base(object):
         assert next_g != next_jumped
 
     def test_uinteger_reset_advance(self):
-        bg = self.bit_generator(mode="sequence")
+        bg = self.setup_bitgenerator([None])
         if not hasattr(bg, 'advance'):
             pytest.skip('bit generator does not support advancing')
         g = Generator(bg)
@@ -1250,8 +1250,11 @@ class TestRDRAND(Base):
         cls.invalid_seed_types = [1, np.array([1])]
         cls.invalid_seed_values = []
 
+    def setup_bitgenerator(self, seed):
+        return self.bit_generator(*seed)
+
     def test_raw(self):
-        bit_generator = self.bit_generator(mode="sequence")
+        bit_generator = self.bit_generator()
         raw = bit_generator.random_raw(1000)
         assert (raw.max() - raw.min()) > 0
 
@@ -1303,12 +1306,12 @@ class TestRDRAND(Base):
         assert bg is not new_bg
 
     def test_seed_sequence(self):
-        bg = self.bit_generator(mode="sequence")
+        bg = self.bit_generator()
         assert isinstance(bg, self.bit_generator)
         assert bg.seed_seq is None
 
         with pytest.raises(TypeError):
-            self.bit_generator(0, mode="sequence")
+            self.bit_generator(0)
 
         ss = SeedSequence(0)
         with pytest.raises(TypeError):
@@ -1331,6 +1334,7 @@ class TestChaCha(Base):
 
     def setup_bitgenerator(self, seed):
         stream = 3735928559 * 2 ** 64 + 3735928559 * 2 ** 96
+        seed = [0] if None in seed else seed
         key = seed[0] + stream + 2 ** 128 * stream
         bg = self.bit_generator(key=key, counter=0, mode="legacy")
         return bg

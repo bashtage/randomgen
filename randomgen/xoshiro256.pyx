@@ -23,20 +23,30 @@ cdef class Xoshiro256(BitGenerator):
 
     Parameters
     ----------
-    seed : {None, int, array_like}, optional
-        Random seed initializing the pseudo-random number generator.
-        Can be an integer in [0, 2**64-1], array of integers in [0, 2**64-1]
-        or ``None`` (the default). If `seed` is ``None``, then  data is read
-        from ``/dev/urandom`` (or the Windows analog) if available.  If
-        unavailable, a hash of the time and process ID is used.
+    seed : {None, int, array_like[uint64], SeedSequence}, optional
+        Entropy initializing the pseudo-random number generator.
+        Can be an integer in [0, 2**64-1], array of integers in [0, 2**64-1],
+        a SeedSequence instance or ``None`` (the default). If `seed` is
+        ``None``, then  data is read from ``/dev/urandom`` (or the Windows
+        analog) if available. If unavailable, a hash of the time and
+        process ID is used.
+    mode : {None, "sequence", "legacy"}
+        The seeding mode to use. "legacy" uses the legacy
+        SplitMix64-based initialization. "sequence" uses a SeedSequence
+        to transforms the seed into an initial state. None defaults to "legacy"
+        and warns that the default after 1.19 will change to "sequence".
 
     Attributes
     ----------
-    lock: threading.Lock
+    lock : threading.Lock
         Lock instance that is shared so that the same bit git generator can
         be used in multiple Generators without corrupting the state. Code that
         generates values from a bit generator should hold the bit generator's
         lock.
+    seed_seq : {None, SeedSequence}
+        The SeedSequence instance used to initialize the generator if mode is
+        "sequence" or is seed is a SeedSequence. None if mode is "legacy".
+
 
     Notes
     -----
@@ -61,7 +71,7 @@ cdef class Xoshiro256(BitGenerator):
     of 64-bit unsigned integers.
 
     ``Xoshiro256`` is seeded using either a single 64-bit unsigned
-    integer or a vector of 64-bit unsigned integers.  In either case, the seed
+    integer or a vector of 64-bit unsigned integers. In either case, the seed
     is used as an input for another simple random number generator, SplitMix64,
     and the output of this PRNG function is used as the initial state. Using
     a single 64-bit value for the seed can only initialize a small range of
@@ -143,10 +153,13 @@ cdef class Xoshiro256(BitGenerator):
 
         Parameters
         ----------
-        seed : {None, int, array_like[uint64], SeedSequence}
-            Seed for PRNG. Can be a single 64 bit unsigned integer, an array
-            of 64 bit unsigned integers or a SeedSequence instance. If None,
-            system provided entropy is used.
+        seed : {None, int, array_like[uint64], SeedSequence}, optional
+            Entropy initializing the pseudo-random number generator.
+            Can be an integer in [0, 2**64-1], array of integers in
+            [0, 2**64-1], a SeedSequence instance or ``None`` (the default).
+            If `seed` is ``None``, then  data is read from ``/dev/urandom``
+            (or the Windows analog) if available. If unavailable, a hash
+            of the time and process ID is used.
 
         Raises
         ------

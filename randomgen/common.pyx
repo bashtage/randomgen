@@ -45,7 +45,7 @@ cdef class BitGenerator:
     def __init__(self, seed, mode=None):
         if mode is not None and (not isinstance(mode, str) or mode.lower() not in ("legacy", "sequence")):
             raise ValueError("mode must be one of None, \"legacy\" or \"sequence\".")
-        if isinstance(seed, ISEED_SEQUENCES):
+        if isinstance(seed, ISEED_SEQUENCES) and mode != "legacy":
             mode = "sequence"
         elif mode is None:
             import warnings
@@ -89,6 +89,11 @@ cdef class BitGenerator:
         except ImportError:
             pass
         if isinstance(seed, ISEED_SEQUENCES):
+            if self.mode == "legacy":
+                bg = self.__class__.__name__
+                raise RuntimeError("{bg} was created using mode=\"legacy\". "
+                                   "This is immutable and SeedSequences cannot"
+                                   " be used".format(bg=bg))
             self.seed_seq = seed
         elif self.mode == "sequence":
             self.seed_seq = DefaultSeedSequence(seed)
@@ -117,11 +122,11 @@ cdef class BitGenerator:
         Parameters
         ----------
         size : int or tuple of ints, optional
-            Output shape.  If the given shape is, e.g., ``(m, n, k)``, then
-            ``m * n * k`` samples are drawn.  Default is None, in which case a
+            Output shape. If the given shape is, e.g., ``(m, n, k)``, then
+            ``m * n * k`` samples are drawn. Default is None, in which case a
             single value is returned.
         output : bool, optional
-            Output values.  Used for performance testing since the generated
+            Output values. Used for performance testing since the generated
             values are not returned.
 
         Returns
@@ -219,11 +224,11 @@ cdef object random_raw(bitgen_t *bitgen, object lock, object size, object output
     Parameters
     ----------
     size : int or tuple of ints, optional
-        Output shape.  If the given shape is, e.g., ``(m, n, k)``, then
-        ``m * n * k`` samples are drawn.  Default is None, in which case a
+        Output shape. If the given shape is, e.g., ``(m, n, k)``, then
+        ``m * n * k`` samples are drawn. Default is None, in which case a
         single value is returned.
     output : bool, optional
-        Output values.  Used for performance testing since the generated
+        Output values. Used for performance testing since the generated
         values are not returned.
 
     Returns
@@ -361,12 +366,12 @@ cpdef object object_to_int(object val, object bits, object name, int default_bit
     val : object
         Object to convert. Can be None.
     bits : int
-        Number of bits in the returned object.  Out-of-range values raise
+        Number of bits in the returned object. Out-of-range values raise
         ValueError
     name : str
         Variable name for errors
     default_bits : int
-        Either 32 or 64.  Default type when converting non-arrays to arrays
+        Either 32 or 64. Default type when converting non-arrays to arrays
     allowed_sizes : {(64,), (32,) (32, 64)}
         Allows bit sizes for the input
 

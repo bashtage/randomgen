@@ -23,27 +23,36 @@ cdef uint64_t mt64_raw(void *st) nogil:
 
 cdef class MT64(BitGenerator):
     """
-    MT64(seed=None)
+    MT64(seed=None, *, mode=None)
 
     Container for the 64-bit Mersenne Twister pseudo-random number generator
 
     Parameters
     ----------
-    seed : {None, int, array_like}, optional
-        Random seed used to initialize the pseudo-random number generator.  Can
+    seed : {None, int, array_like[uint64], SeedSequence}, optional
+        Random seed used to initialize the pseudo-random number generator. Can
         be any integer between 0 and 2**64 - 1 inclusive, an array (or other
-        sequence) of unsigned 64-bit integers, or ``None`` (the default).  If
-        `seed` is ``None``, then 312 64-bit unsigned integers are read from
-        ``/dev/urandom`` (or the Windows analog) if available. If unavailable,
-        a  hash of the time and process ID is used.
+        sequence) of unsigned 64-bit integers, a SeedSequence instance or
+        ``None`` (the default). If `seed` is ``None``, then 312 64-bit
+        unsigned integers are read from ``/dev/urandom`` (or the Windows
+        analog) if available. If unavailable, a hash of the time and process
+        ID is used.
+    mode : {None, "sequence", "legacy"}, optional
+        The seeding mode to use. "legacy" uses the legacy
+        SplitMix64-based initialization. "sequence" uses a SeedSequence
+        to transforms the seed into an initial state. None defaults to "legacy"
+        and warns that the default after 1.19 will change to "sequence".
 
     Attributes
     ----------
-    lock: threading.Lock
+    lock : threading.Lock
         Lock instance that is shared so that the same bit git generator can
         be used in multiple Generators without corrupting the state. Code that
         generates values from a bit generator should hold the bit generator's
         lock.
+    seed_seq : {None, SeedSequence}
+        The SeedSequence instance used to initialize the generator if mode is
+        "sequence" or is seed is a SeedSequence. None if mode is "legacy".
 
     Notes
     -----
@@ -62,7 +71,7 @@ cdef class MT64(BitGenerator):
     that indexes the current position within the main array.
 
     ``MT64`` is seeded using either a single 64-bit unsigned integer
-    or a vector of 64-bit unsigned integers.  In either case, the input seed is
+    or a vector of 64-bit unsigned integers. In either case, the input seed is
     used as an input (or inputs) for a hashing function, and the output of the
     hashing function is used as the initial state. Using a single 64-bit value
     for the seed can only initialize a small range of the possible initial
@@ -111,13 +120,13 @@ cdef class MT64(BitGenerator):
 
         Parameters
         ----------
-        seed : {None, int, array_like}, optional
-            Random seed initializing the pseudo-random number generator.
-            Can be an integer in [0, 2**64-1], array of integers in
-            [0, 2**64-1] or ``None`` (the default). If `seed` is ``None``,
-            then ``MT64`` will try to read entropy from ``/dev/urandom``
-            (or the Windows analog) if available to produce a 64-bit
-            seed. If unavailable, a 64-bit hash of the time and process
+        seed : {None, int, array_like[uint64], SeedSequence}, optional
+            Random seed used to initialize the pseudo-random number generator. Can
+            be any integer between 0 and 2**64 - 1 inclusive, an array (or other
+            sequence) of unsigned 64-bit integers, a SeedSequence instance or
+            ``None`` (the default). If `seed` is ``None``, then 312 64-bit
+            unsigned integers are read from ``/dev/urandom`` (or the Windows
+            analog) if available. If unavailable, a hash of the time and process
             ID is used.
 
         Raises

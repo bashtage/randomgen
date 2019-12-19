@@ -16,40 +16,49 @@ cdef double chacha_double(void* st) nogil:
 
 cdef class ChaCha(BitGenerator):
     """
-    ChaCha(seed=None, counter=None, key=None, rounds=20)
+    ChaCha(seed=None, *, counter=None, key=None, rounds=20, mode=None)
 
     Container for the ChaCha family of Counter pseudo-random number generators
 
     Parameters
     ----------
-    seed : {None, int}, optional
+    seed : {None, int, array_like[uint64], SeedSequence}, optional
         Random seed initializing the pseudo-random number generator.
-        Can be an integer in [0, 2**256-1], an array of 4 uint64 values
-        or ``None`` (the default). If `seed` is ``None``, then  data is read
-        from ``/dev/urandom`` (or the Windows analog) if available.  If
-        unavailable, a hash of the time and process ID is used.
-    counter : {None, int, array_like}, optional
+        Can be an integer in [0, 2**256-1], an array of 4 uint64 values,
+        a SeedSequence instance or ``None`` (the default). If `seed` is
+        ``None``, then  data is read from ``/dev/urandom`` (or the Windows
+        analog) if available. If unavailable, a hash of the time and
+        process ID is used.
+    counter : {None, int, array_like[uint64]}, optional
         Counter to use in the ChaCha state. Can be either
         a Python int in [0, 2**128) or a 2-element uint64 array.
-        If not provided, the RNG is initialized at 0.
-    key : {None, int, array_like}, optional
-        Key to use in the ChaCha state.  Unlike seed, which is run through
+        If not provided, the counter is initialized at 0.
+    key : {None, int, array_like[uint64]}, optional
+        Key to use in the ChaCha state. Unlike seed, which is run through
         another RNG before use, the value in key is directly set. Can be either
         a Python int in [0, 2**256) or a 4-element uint64 array.
         key and seed cannot both be used.
-    rounds : {int}, optional
+    rounds : int, optional
         Number of rounds to run the ChaCha mixer. Must be an even integer.
-        The standard number of rounds in 20.  Smaller values, usually 8 or
+        The standard number of rounds in 20. Smaller values, usually 8 or
         more, can be used to reduce security properties of the random stream
         while improving performance.
+    mode : {None, "sequence", "legacy"}, optional
+        The seeding mode to use. "legacy" uses the legacy
+        SplitMix64-based initialization. "sequence" uses a SeedSequence
+        to transforms the seed into an initial state. None defaults to "legacy"
+        and warns that the default after 1.19 will change to "sequence".
 
     Attributes
     ----------
-    lock: threading.Lock
+    lock : threading.Lock
         Lock instance that is shared so that the same bit git generator can
         be used in multiple Generators without corrupting the state. Code that
         generates values from a bit generator should hold the bit generator's
         lock.
+    seed_seq : {None, SeedSequence}
+        The SeedSequence instance used to initialize the generator if mode is
+        "sequence" or is seed is a SeedSequence. None if mode is "legacy".
 
     Notes
     -----
@@ -77,7 +86,7 @@ cdef class ChaCha(BitGenerator):
     number of rounds used. Typical values are  8, 12, or 20 (for high security).
 
     ``ChaCha`` is seeded using either a single 256-bit unsigned integer
-    or a vector of 4 64-bit unsigned integers.  In either case, the seed is
+    or a vector of 4 64-bit unsigned integers. In either case, the seed is
     used as an input for a second random number generator,
     SplitMix64, and the output of this PRNG function is used as the initial
     state. Using a single 64-bit value for the seed can only initialize a small
@@ -184,19 +193,19 @@ cdef class ChaCha(BitGenerator):
         called again to re-seed the generator. For details, see
         ``ChaCha``.
 
-        seed : {None, int, array_like}, optional
-            Value initializing the pseudo-random number generator.
-            Can be an integer in [0, 2**256), a 4-element array of uint64
-            values or ``None`` (the default). If `seed` is ``None``, then
-            data is read from ``/dev/urandom`` (or the Windows analog) if
-            available.  If unavailable, a hash of the time and process ID is
-            used.
-        counter : {None, int, array_like}, optional
-            Counter to use in the ChaCha state. Can be either a Python int
-            in [0, 2**128) or a 2-element uint64 array. If not provided, the
-            RNG is initialized at 0.
-        key : {None, int, array_like}, optional
-            Key to use in the ChaCha state.  Unlike seed, which is run
+        seed : {None, int, array_like[uint64], SeedSequence}, optional
+            Random seed initializing the pseudo-random number generator.
+            Can be an integer in [0, 2**256-1], an array of 4 uint64 values,
+            a SeedSequence instance or ``None`` (the default). If `seed` is
+            ``None``, then  data is read from ``/dev/urandom`` (or the Windows
+            analog) if available. If unavailable, a hash of the time and
+            process ID is used.
+        counter : {None, int, array_like[uint64]}, optional
+            Counter to use in the ChaCha state. Can be either
+            a Python int in [0, 2**128) or a 2-element uint64 array.
+            If not provided, the counter is initialized at 0.
+        key : {None, int, array_like[uint64]}, optional
+            Key to use in the ChaCha state. Unlike seed, which is run
             through another RNG before use, the value in key is directly set.
             Can be either a Python int in [0, 2**256) or a 4-element uint64
             array. key and seed cannot both be used.
@@ -377,14 +386,14 @@ cdef class ChaCha(BitGenerator):
         number of calls to the underlying RNG have been made. In general
         there is not a one-to-one relationship between the number output
         random values from a particular distribution and the number of
-        draws from the core RNG.  This occurs for two reasons:
+        draws from the core RNG. This occurs for two reasons:
 
         * The random values are simulated using a rejection-based method
           and so, on average, more than one value from the underlying
           RNG is required to generate an single draw.
         * The number of bits required to generate a simulated value
           differs from the number of bits generated by the underlying
-          RNG.  For example, two 16-bit integer values can be simulated
+          RNG. For example, two 16-bit integer values can be simulated
           from a single draw of a 32-bit RNG.
 
         Advancing the RNG state resets any pre-computed random numbers.

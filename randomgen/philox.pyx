@@ -42,27 +42,27 @@ cdef uint64_t philox2x32_raw(void *st) nogil:
 
 cdef class Philox(BitGenerator):
     """
-    Philox(seed=None, counter=None, key=None, number=4, width=64)
+    Philox(seed=None, *, counter=None, key=None, number=4, width=64, mode=None)
 
     Container for the Philox (4x64) pseudo-random number generator.
 
     Parameters
     ----------
-    seed : {None, int, array_like}, optional
+    seed : {None, int, array_like[uint64], SeedSequence}, optional
         Random seed initializing the pseudo-random number generator.
         Can be an integer in [0, 2**64-1], array of integers in
-        [0, 2**64-1] or ``None`` (the default). If `seed` is ``None``,
-        data will be read from ``/dev/urandom`` (or the Windows analog)
-        if available.  If unavailable, a hash of the time and process ID is
-        used.
-    counter : {None, int, array_like}, optional
-        Counter to use in the Philox state. Can be either
-        a Python int (long in 2.x) in [0, 2**256) or a 4-element uint64 array.
-        If not provided, the RNG is initialized at 0.
-    key : {None, int, array_like}, optional
-        Key to use in the Philox state.  Unlike seed, which is run through
+        [0, 2**64-1], a SeedSequence instance or ``None`` (the default).
+        If `seed` is ``None``, data will be read from ``/dev/urandom`` (or
+        the Windows analog) if available. If unavailable, a hash of the time
+        and process ID is used.
+    counter : {None, int, array_like[uint64]}, optional
+        Counter to use in the Philox state. Can be either a Python int in
+        [0, 2**256) or a 4-element uint64 array. If not provided, the counter
+        is initialized at 0.
+    key : {None, int, array_like[uint64]}, optional
+        Key to use in the Philox state. Unlike seed, which is run through
         another RNG before use, the value in key is directly set. Can be either
-        a Python int (long in 2.x) in [0, 2**128) or a 2-element uint64 array.
+        a Python int in [0, 2**128) or a 2-element uint64 array.
         key and seed cannot both be used.
     number : {2, 4}, optional
         Number of values to produce in a single call. Maps to N in the Philox
@@ -70,10 +70,15 @@ cdef class Philox(BitGenerator):
     width : {32, 64}, optional
         Bit width the values produced. Maps to W in the Philox variant naming
         scheme PhiloxNxW.
+    mode : {None, "sequence", "legacy"}, optional
+        The seeding mode to use. "legacy" uses the legacy
+        SplitMix64-based initialization. "sequence" uses a SeedSequence
+        to transforms the seed into an initial state. None defaults to "legacy"
+        and warns that the default after 1.19 will change to "sequence".
 
     Attributes
     ----------
-    lock: threading.Lock
+    lock : threading.Lock
         Lock instance that is shared so that the same bit git generator can
         be used in multiple Generators without corrupting the state. Code that
         generates values from a bit generator should hold the bit generator's
@@ -83,7 +88,7 @@ cdef class Philox(BitGenerator):
     -----
     Philox is a 64-bit PRNG that uses a counter-based design based on
     weaker (and faster) versions of cryptographic functions [1]_. Instances
-    using different values of the key produce independent sequences.  ``Philox``
+    using different values of the key produce independent sequences. ``Philox``
     has a period of :math:`2^{256} - 1` and supports arbitrary advancing and
     jumping the sequence in increments of :math:`2^{128}`. These features allow
     multiple non-overlapping sequences to be generated.
@@ -99,12 +104,12 @@ cdef class Philox(BitGenerator):
 
     The ``Philox`` state vector consists of a 2 256-bit values encoded as
     4-element uint64 arrays. One is a counter which is incremented by 1 for
-    every 4 64-bit randoms produced.  The second is a key which determined
-    the sequence produced.  Using different keys produces independent
+    every 4 64-bit randoms produced. The second is a key which determined
+    the sequence produced. Using different keys produces independent
     sequences.
 
     ``Philox`` is seeded using either a single 64-bit unsigned integer
-    or a vector of 64-bit unsigned integers.  In either case, the seed is
+    or a vector of 64-bit unsigned integers. In either case, the seed is
     used as an input for a second random number generator,
     SplitMix64, and the output of this PRNG function is used as the initial state.
     Using a single 64-bit value for the seed can only initialize a small range of
@@ -233,20 +238,22 @@ cdef class Philox(BitGenerator):
 
         Parameters
         ----------
-        seed : int, optional
-            Value initializing the pseudo-random number generator. Can be an
-            integer in [0, 2**(number*width//2)), a ``number*width//128``
-            element (min 1) array of uint64 values or ``None`` (the default).
-            If `seed` is ``None``, then  data is read from ``/dev/urandom``
-            (or the Windows analog) if available.  If unavailable, a hash of
-            the time and process ID is used.
-        counter : {int array}, optional
-            Positive integer less than 2**(number*width) containing the counter
-            position or a (number*width)//64-element array of uint64 containing
-            the counter
-        key : {int, array}, options
-            Integer in [0, 2**(number*width//2)) containing the key or a
-            (number*width//2)//64-element array of uint64 containing the key.
+        seed : {None, int, array_like[uint64], SeedSequence}, optional
+            Random seed initializing the pseudo-random number generator.
+            Can be an integer in [0, 2**64-1], array of integers in
+            [0, 2**64-1], a SeedSequence instance or ``None`` (the default).
+            If `seed` is ``None``, data will be read from ``/dev/urandom`` (or
+            the Windows analog) if available. If unavailable, a hash of the
+            time and process ID is used.
+        counter : {None, int, array_like[uint64]}, optional
+            Counter to use in the Philox state. Can be either a Python int
+            in [0, 2**256) or a 4-element uint64 array. If not provided,
+            the counter is initialized at 0.
+        key : {None, int, array_like[uint64]}, optional
+            Key to use in the Philox state. Unlike seed, which is run through
+            another RNG before use, the value in key is directly set. Can be
+            either a Python int in [0, 2**128) or a 2-element uint64 array.
+            key and seed cannot both be used.
 
         Raises
         ------
@@ -482,9 +489,9 @@ cdef class Philox(BitGenerator):
             into this range by taking the modulo.
         counter : bool
             Flag indicating whether the advance the counter only or both the
-            counter and the buffer position.  The default is True, which has
+            counter and the buffer position. The default is True, which has
             been the pattern in in randomgen <= 1.16. This is changing to False
-            for randomgen > 1.17.  To convert between the two, use
+            for randomgen > 1.17. To convert between the two, use
             delta_new = delta * number where number is the number of
             elements in the generator, delta is the step size when
             counter=False and delta_new is the step size for counter=True
@@ -500,14 +507,14 @@ cdef class Philox(BitGenerator):
         number of calls to the underlying RNG have been made. In general
         there is not a one-to-one relationship between the number output
         random values from a particular distribution and the number of
-        draws from the core RNG.  This occurs for two reasons:
+        draws from the core RNG. This occurs for two reasons:
 
         * The random values are simulated using a rejection-based method
           and so, on average, more than one value from the underlying
           RNG is required to generate an single draw.
         * The number of bits required to generate a simulated value
           differs from the number of bits generated by the underlying
-          RNG.  For example, two 16-bit integer values can be simulated
+          RNG. For example, two 16-bit integer values can be simulated
           from a single draw of a 32-bit RNG.
 
         Advancing the RNG state resets any stored 32-bit values. If counter is
@@ -517,7 +524,7 @@ cdef class Philox(BitGenerator):
         if counter is None:
             import warnings
             warnings.warn('counter defaults to True now, but will become '
-                          'False.  Explicitly set counter to silence this'
+                          'False. Explicitly set counter to silence this'
                           'warning. ', FutureWarning)
             counter = True
         if delta == 0:

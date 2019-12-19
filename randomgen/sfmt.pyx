@@ -27,27 +27,36 @@ cdef double sfmt_double(void* st) nogil:
 
 cdef class SFMT(BitGenerator):
     u"""
-    SFMT(seed=None)
+    SFMT(seed=None, *, mode=None)
 
     Container for the SIMD-based Mersenne Twister pseudo RNG.
 
     Parameters
     ----------
-    seed : {None, int, array_like}, optional
-        Random seed used to initialize the pseudo-random number generator.  Can
+    seed : {None, int, array_like[uint32], SeedSequence}, optional
+        Entropy used to initialize the pseudo-random number generator. Can
         be any integer between 0 and 2**32 - 1 inclusive, an array (or other
-        sequence) of unsigned 32-bit integers, or ``None`` (the default).  If
-        `seed` is ``None``, the 624 32-bit unsigned integers are read from
-        ``/dev/urandom`` (or the Windows analog) if available. If unavailable,
-        a hash of the time and process ID is used.
+        sequence) of unsigned 32-bit integers, , a SeedSequence instance or
+        ``None`` (the default). If `seed` is ``None``, the 624 32-bit
+        unsigned integers are read from ``/dev/urandom`` (or the Windows
+        analog) if available. If unavailable, a hash of the time and process
+        ID is used.
+    mode : {None, "sequence", "legacy"}, optional
+        The seeding mode to use. "legacy" uses the legacy
+        SplitMix64-based initialization. "sequence" uses a SeedSequence
+        to transforms the seed into an initial state. None defaults to "legacy"
+        and warns that the default after 1.19 will change to "sequence".
 
     Attributes
     ----------
-    lock: threading.Lock
+    lock : threading.Lock
         Lock instance that is shared so that the same bit git generator can
         be used in multiple Generators without corrupting the state. Code that
         generates values from a bit generator should hold the bit generator's
         lock.
+    seed_seq : {None, SeedSequence}
+        The SeedSequence instance used to initialize the generator if mode is
+        "sequence" or is seed is a SeedSequence. None if mode is "legacy".
 
     Notes
     -----
@@ -145,14 +154,14 @@ cdef class SFMT(BitGenerator):
 
         Parameters
         ----------
-        seed : {None, int, array_like}, optional
-            Random seed initializing the pseudo-random number generator.
-            Can be an integer in [0, 2**32-1], array of integers in
-            [0, 2**32-1] or ``None`` (the default). If `seed` is ``None``,
-            then ``SFMT`` will try to read entropy from ``/dev/urandom``
-            (or the Windows analog) if available to produce a 32-bit
-            seed. If unavailable, a 32-bit hash of the time and process
-            ID is used.
+        seed : {None, int, array_like[uint32], SeedSequence}, optional
+            Entropy used to initialize the pseudo-random number generator. Can
+            be any integer between 0 and 2**32 - 1 inclusive, an array (or
+            other sequence) of unsigned 32-bit integers, , a SeedSequence
+            instance or ``None`` (the default). If `seed` is ``None``, the
+            624 32-bit unsigned integers are read from ``/dev/urandom`` (or
+            the Windows analog) if available. If unavailable, a hash of the
+            time and process ID is used.
 
         Raises
         ------

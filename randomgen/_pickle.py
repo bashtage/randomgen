@@ -66,8 +66,10 @@ def __generator_ctor(bit_generator_name='mt19937'):
     else:
         raise ValueError(
             str(bit_generator_name) + ' is not a known BitGenerator module.')
-
-    return Generator(bit_generator())
+    with warnings.catch_warnings():
+        warnings.filterwarnings("ignore", category=FutureWarning)
+        bit_gen = bit_generator()
+    return Generator(bit_gen)
 
 
 def __bit_generator_ctor(bit_generator_name='MT19937'):
@@ -122,5 +124,7 @@ def __randomstate_ctor(bit_generator_name='mt19937'):
     else:
         raise ValueError(
             str(bit_generator_name) + ' is not a known BitGenerator module.')
-
-    return RandomState(bit_generator())
+    with warnings.catch_warnings():
+        warnings.filterwarnings("ignore", category=FutureWarning)
+        bit_gen = bit_generator()
+    return RandomState(bit_gen)

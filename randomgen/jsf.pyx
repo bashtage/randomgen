@@ -6,7 +6,7 @@ from randomgen.entropy import random_entropy, seed_by_array
 
 __all__ = ['JSF']
 
-INT_TYPES = (int, long, np.integer)
+INT_TYPES = (int, np.integer)
 JSF_DEFAULTS = {64: {'p': 7, 'q': 13, 'r': 37},
                 32: {'p': 27, 'q': 17, 'r': 0}}
 
@@ -78,20 +78,21 @@ cdef uint64_t jsf32_raw(void* st) nogil:
 
 cdef class JSF(BitGenerator):
     """
-    JSF(seed=None, seed_size=1, size=64, p=None, q=None, r=None)
+    JSF(seed=None, *, seed_size=1, size=64, p=None, q=None, r=None, mode=None)
 
     Container for Jenkins's Fast Small (JSF) pseudo-random number generator
 
     Parameters
     ----------
-    seed : {None, int, array_like}, optional
+    seed : {None, int, array_like[uint], SeedSequence}, optional
         Random seed initializing the pseudo-random number generator. Can be
-        an integer in [0, 2**size-1] or ``None`` (the default). If `seed`
-        is ``None``, then  data is read from ``/dev/urandom`` (or the Windows
-        analog) if available.  If unavailable, a hash of the time and process
-        ID is used.
+        an integer in [0, 2**size-1], an array of integers in
+        [0, 2**size-1], a SeedSequence or ``None`` (the default). If
+        `seed` is ``None``, then  data is read from ``/dev/urandom``
+        (or the Windows analog) if available. If unavailable, a hash of
+        the time and process ID is used.
     seed_size : {1, 2, 3}, optional
-        Number of distinct seed values used to initialize JSF.  The original
+        Number of distinct seed values used to initialize JSF. The original
         implementation uses 1 (default). Higher values increase the size of
         the seed space which is ``2**(size*seed_size)``.
     size : {32, 64}, optional
@@ -106,14 +107,22 @@ cdef class JSF(BitGenerator):
     r : int, optional
         One the the three parameters that defines JSF. See Notes. If not
         provided uses the default values for the selected size listed in Notes.
+    mode : {None, "sequence", "legacy"}, optional
+        The seeding mode to use. "legacy" uses the legacy
+        SplitMix64-based initialization. "sequence" uses a SeedSequence
+        to transforms the seed into an initial state. None defaults to "legacy"
+        and warns that the default after 1.19 will change to "sequence".
 
     Attributes
     ----------
-    lock: threading.Lock
+    lock : threading.Lock
         Lock instance that is shared so that the same bit git generator can
         be used in multiple Generators without corrupting the state. Code that
         generates values from a bit generator should hold the bit generator's
         lock.
+    seed_seq : {None, SeedSequence}
+        The SeedSequence instance used to initialize the generator if mode is
+        "sequence" or is seed is a SeedSequence. None if mode is "legacy".
 
     Notes
     -----
@@ -152,7 +161,7 @@ cdef class JSF(BitGenerator):
 
     **State and Seeding**
 
-    The state consists of the 4 values a, b, c and d.  The size of these values
+    The state consists of the 4 values a, b, c and d. The size of these values
     depends on ``size``. The seed value is an unsided integer with the same
     size as the generator (e.g., uint64 for ``size==64``).
 
@@ -235,9 +244,13 @@ cdef class JSF(BitGenerator):
 
         Parameters
         ----------
-        seed : {int, ndarray}, optional
-            Seed for PRNG. Can be a single 64 bit unsigned integer or an array
-            of 64 bit unsigned integers.
+        seed : {None, int, array_like[uint], SeedSequence}, optional
+            Random seed initializing the pseudo-random number generator. Can be
+            an integer in [0, 2**size-1], an array of integers in
+            [0, 2**size-1], a SeedSequence or ``None`` (the default). If
+            `seed` is ``None``, then  data is read from ``/dev/urandom``
+            (or the Windows analog) if available. If unavailable, a hash of
+            the time and process ID is used.
 
         Raises
         ------

@@ -39,11 +39,13 @@ cdef class RDRAND(BitGenerator):
 
     Attributes
     ----------
-    lock: threading.Lock
+    lock : threading.Lock
         Lock instance that is shared so that the same bit git generator can
         be used in multiple Generators without corrupting the state. Code that
         generates values from a bit generator should hold the bit generator's
         lock.
+    seed_seq : None
+        Always None since RDRAND cannot be seeded.
 
     Notes
     -----
@@ -91,8 +93,8 @@ cdef class RDRAND(BitGenerator):
     """
     cdef rdrand_state rng_state
 
-    def __init__(self, seed=None, mode="sequence"):
-        BitGenerator.__init__(self, seed, mode=mode)
+    def __init__(self, seed=None):
+        BitGenerator.__init__(self, seed, mode="sequence")
         if not rdrand_capable():
             raise RuntimeError('The RDRAND instruction is not available')   # pragma: no cover
         self.rng_state.status = 1
@@ -148,7 +150,7 @@ cdef class RDRAND(BitGenerator):
         Provided for API compatibility
         """
         cdef RDRAND bit_generator
-        bit_generator = self.__class__(mode=self.mode)
+        bit_generator = self.__class__()
 
         return bit_generator
 

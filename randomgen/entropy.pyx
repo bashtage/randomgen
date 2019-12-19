@@ -31,7 +31,7 @@ def seed_by_array(object seed, Py_ssize_t n):
     Parameters
     ----------
     seed: int, array or uint64
-        Array to use.  If seed is a scalar, it is promoted to an array.
+        Array to use. If seed is a scalar, it is promoted to an array.
     n : int
         Number of 64-bit unsigned integers required in the seed
 
@@ -104,11 +104,11 @@ def random_entropy(size=None, source='system'):
     Parameters
     ----------
     size : int or tuple of ints, optional
-        Output shape.  If the given shape is, e.g., ``(m, n, k)``, then
-        ``m * n * k`` samples are drawn.  Default is None, in which case a
+        Output shape. If the given shape is, e.g., ``(m, n, k)``, then
+        ``m * n * k`` samples are drawn. Default is None, in which case a
         single value is returned.
     source : str {'system', 'fallback', 'auto'}
-        Source of entropy.  'system' uses system cryptographic pool.
+        Source of entropy. 'system' uses system cryptographic pool.
         'fallback' uses a hash of the time and process id. 'auto' attempts
         'system' before automatically falling back to 'fallback'
 
@@ -125,7 +125,7 @@ def random_entropy(size=None, source='system'):
     provider.
 
     This function reads from the system entropy pool and so samples are
-    not reproducible.  In particular, it does *NOT* make use of a
+    not reproducible. In particular, it does *NOT* make use of a
     bit generator, and so ``seed`` and setting ``state`` have no
     effect.
 

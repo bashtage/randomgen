@@ -19,30 +19,39 @@ cdef double hc128_double(void* st) nogil:
 
 cdef class HC128(BitGenerator):
     u"""
-    HC128(seed=None)
+    HC128(seed=None, *, mode=None)
 
     Container for the HC-128 cipher-based pseudo-random number generator
 
     Parameters
     ----------
-    seed : {None, int, array_like}, optional
+    seed : {None, int, array_like[uint64], SeedSequence}, optional
         Random seed initializing the pseudo-random number generator.
-        Can be an integer in [0, 2**64-1], array of integers in [0, 2**64-1]
-        or ``None`` (the default). If `seed` is ``None``, then  data is read
-        from ``/dev/urandom`` (or the Windows analog) if available.  If
-        unavailable, a hash of the time and process ID is used.
-    key : {int, ndarray}, optional
+        Can be an integer in [0, 2**64-1], array of integers in [0, 2**64-1],
+        a SeedSequence instance or ``None`` (the default). If `seed` is
+        ``None``, then  data is read from ``/dev/urandom`` (or the Windows
+        analog) if available. If unavailable, a hash of the time and process
+        ID is used.
+    key : {int, array_like[uint64]}, optional
         Key for HC128. The key is a 256-bit integer that contains both the
         key (lower 128 bits) and initial values (upper 128-bits) for the
         HC-128 cipher. key and seed cannot both be used.
+    mode : {None, "sequence", "legacy"}, optional
+        The seeding mode to use. "legacy" uses the legacy
+        SplitMix64-based initialization. "sequence" uses a SeedSequence
+        to transforms the seed into an initial state. None defaults to "legacy"
+        and warns that the default after 1.19 will change to "sequence".
 
     Attributes
     ----------
-    lock: threading.Lock
+    lock : threading.Lock
         Lock instance that is shared so that the same bit git generator can
         be used in multiple Generators without corrupting the state. Code that
         generates values from a bit generator should hold the bit generator's
         lock.
+    seed_seq : {None, SeedSequence}
+        The SeedSequence instance used to initialize the generator if mode is
+        "sequence" or is seed is a SeedSequence. None if mode is "legacy".
 
     Notes
     -----
@@ -68,7 +77,7 @@ cdef class HC128(BitGenerator):
     state contains a 16-element array that buffers values and a buffer index.
 
     ``HC128`` is seeded using either a single 256-bit unsigned
-    integer or a vector of 64-bit unsigned integers.  In either case, the seed
+    integer or a vector of 64-bit unsigned integers. In either case, the seed
     is used as an input for another simple random number generator, SplitMix64,
     and the output of this PRNG function is used as the initial state.
     Alternatively, the key can be set directly using a 256-bit integer.
@@ -125,17 +134,17 @@ cdef class HC128(BitGenerator):
 
         Parameters
         ----------
-        seed : {int, ndarray}, optional
-            Value initializing the pseudo-random number generator. Can be an
-            integer in [0, 2**256), a 4-element array of uint64 values or
-            ``None`` (the default). If `seed` is ``None``, then  data is read
-            from ``/dev/urandom`` (or the Windows analog) if available.  If
-            unavailable, a hash of the time and process ID is used.
-        key : {int, ndarray}, optional
+        seed : {None, int, array_like[uint64], SeedSequence}, optional
+            Random seed initializing the pseudo-random number generator.
+            Can be an integer in [0, 2**64-1], array of integers in
+            [0, 2**64-1], a SeedSequence instance or ``None`` (the default).
+            If `seed` is ``None``, then  data is read from ``/dev/urandom``
+            (or the Windows analog) if available. If unavailable, a hash of
+            the time and process ID is used.
+        key : {int, array_like[uint64]}, optional
             Key for HC128. The key is a 256-bit integer that contains both the
             key (lower 128 bits) and initial values (upper 128-bits) for the
-            HC-128 cipher. key and seed cannot both be used. Can also be a
-            4-element uint64 array.
+            HC-128 cipher. key and seed cannot both be used.
 
         Raises
         ------

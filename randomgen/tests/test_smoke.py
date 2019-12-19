@@ -22,7 +22,7 @@ if PY3:
 
 MISSING_AES = False
 try:
-    AESCounter()
+    AESCounter(mode="sequence")
 except RuntimeError:
     MISSING_AES = True
 
