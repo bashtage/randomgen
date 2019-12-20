@@ -6,6 +6,8 @@ Change Log
 
 v1.18.0
 =======
+- :meth:`~randomgen.generator.Generator.choice` pulled in upstream performance improvement that
+  use a hash set when choosing without replacement and without user-provided probabilities.
 - Added support for :class:`~randomgen.seed_sequence.SeedSequence` (and NumPy's ``SeedSequence``).
 - Fixed a bug that affected both :class:`~randomgen.generator.Generator.randint`
   in :class:`~randomgen.generator.Generator` and :meth:`~randomgen.mtrand.RandomState.randint`
