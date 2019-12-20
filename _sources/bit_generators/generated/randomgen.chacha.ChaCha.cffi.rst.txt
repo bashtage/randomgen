@@ -1,0 +1,6 @@
+randomgen.chacha.ChaCha.cffi
+============================
+
+.. currentmodule:: randomgen.chacha
+
+.. autoattribute:: ChaCha.cffi

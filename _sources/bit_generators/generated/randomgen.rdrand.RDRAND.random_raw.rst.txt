@@ -1,0 +1,6 @@
+randomgen.rdrand.RDRAND.random\_raw
+===================================
+
+.. currentmodule:: randomgen.rdrand
+
+.. automethod:: RDRAND.random_raw

@@ -1,0 +1,6 @@
+randomgen.aes.AESCounter.state
+==============================
+
+.. currentmodule:: randomgen.aes
+
+.. autoattribute:: AESCounter.state

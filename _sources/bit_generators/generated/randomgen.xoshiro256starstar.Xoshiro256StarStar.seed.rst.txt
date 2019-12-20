@@ -1,6 +1,0 @@
-randomgen.xoshiro256starstar.Xoshiro256StarStar.seed
-====================================================
-
-.. currentmodule:: randomgen.xoshiro256starstar
-
-.. automethod:: Xoshiro256StarStar.seed

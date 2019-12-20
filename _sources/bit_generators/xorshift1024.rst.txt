@@ -24,13 +24,6 @@ Parallel generation
    ~Xorshift1024.jump
    ~Xorshift1024.jumped
 
-Random Generator
-================
-.. autosummary::
-   :toctree: generated/
-
-   ~Xorshift1024.generator
-
 Extending
 =========
 .. autosummary::

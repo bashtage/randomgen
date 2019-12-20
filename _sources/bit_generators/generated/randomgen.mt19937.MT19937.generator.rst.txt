@@ -1,6 +1,0 @@
-randomgen.mt19937.MT19937.generator
-===================================
-
-.. currentmodule:: randomgen.mt19937
-
-.. autoattribute:: MT19937.generator

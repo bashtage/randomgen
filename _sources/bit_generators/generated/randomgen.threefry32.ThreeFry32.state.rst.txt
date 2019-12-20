@@ -1,6 +1,0 @@
-randomgen.threefry32.ThreeFry32.state
-=====================================
-
-.. currentmodule:: randomgen.threefry32
-
-.. autoattribute:: ThreeFry32.state

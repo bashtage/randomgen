@@ -1,0 +1,6 @@
+randomgen.hc128.HC128.state
+===========================
+
+.. currentmodule:: randomgen.hc128
+
+.. autoattribute:: HC128.state

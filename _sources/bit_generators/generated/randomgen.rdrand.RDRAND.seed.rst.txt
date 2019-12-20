@@ -1,0 +1,6 @@
+randomgen.rdrand.RDRAND.seed
+============================
+
+.. currentmodule:: randomgen.rdrand
+
+.. automethod:: RDRAND.seed

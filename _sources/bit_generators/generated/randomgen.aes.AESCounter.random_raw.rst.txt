@@ -1,0 +1,6 @@
+randomgen.aes.AESCounter.random\_raw
+====================================
+
+.. currentmodule:: randomgen.aes
+
+.. automethod:: AESCounter.random_raw

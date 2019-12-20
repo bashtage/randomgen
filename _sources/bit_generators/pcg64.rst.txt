@@ -1,5 +1,5 @@
-Parallel Congruent Generator (64-bit, PCG64)
---------------------------------------------
+Permuted Congruential Generator (64-bit, PCG64)
+-----------------------------------------------
 
 .. module:: randomgen.pcg64
 
@@ -24,13 +24,6 @@ Parallel generation
    ~PCG64.advance
    ~PCG64.jump
    ~PCG64.jumped
-
-Random Generator
-================
-.. autosummary::
-   :toctree: generated/
-
-   ~PCG64.generator
 
 Extending
 =========

@@ -1,5 +1,5 @@
-Parallel Congruent Generator (32-bit, PCG32)
---------------------------------------------
+Permuted Congruential Generator (32-bit, PCG32)
+-----------------------------------------------
 
 .. module:: randomgen.pcg32
 
@@ -24,13 +24,6 @@ Parallel generation
    ~PCG32.advance
    ~PCG32.jump
    ~PCG32.jumped
-
-Random Generator
-================
-.. autosummary::
-   :toctree: generated/
-
-   ~PCG32.generator
 
 Extending
 =========

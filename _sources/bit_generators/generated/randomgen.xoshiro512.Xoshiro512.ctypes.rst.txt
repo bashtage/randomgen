@@ -1,0 +1,6 @@
+randomgen.xoshiro512.Xoshiro512.ctypes
+======================================
+
+.. currentmodule:: randomgen.xoshiro512
+
+.. autoattribute:: Xoshiro512.ctypes

@@ -1,6 +1,0 @@
-randomgen.xoroshiro128.Xoroshiro128.generator
-=============================================
-
-.. currentmodule:: randomgen.xoroshiro128
-
-.. autoattribute:: Xoroshiro128.generator
