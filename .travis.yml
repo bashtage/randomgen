@@ -87,4 +87,4 @@ after_success:
       cd ${BUILD_DIR}
       python benchmark.py;
     fi
-  - if [[ "$COVERAGE" = true ]]; then codecov; coveralls --rcfile="$SRCDIR"/.coveragerc; fi
+  - if [[ "$COVERAGE" = true ]]; then codecov; coveralls --rcfile="$SRCDIR"/.coveragerc || true; fi

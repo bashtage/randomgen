@@ -1,3 +1,4 @@
+from distutils.version import LooseVersion
 from itertools import product
 
 import numpy as np
@@ -17,6 +18,15 @@ try:
 except ImportError:
     pytestmark = pytest.mark.skip
     from randomgen import PCG64
+
+
+v1174 = LooseVersion("1.17.4")
+v118 = LooseVersion("1.18")
+NP_LT_1174 = LooseVersion(np.__version__) < v1174
+NP_LT_1174_OR_GT_118 = NP_LT_1174 or LooseVersion(np.__version__) > v118
+
+pytestmark = pytest.mark.skipif(NP_LT_1174_OR_GT_118,
+                                reason="Only test 1.17.4 to 1.18.x")
 
 
 def positive_param():
@@ -221,7 +231,18 @@ def test_permutation():
     assert_array_equal(result, expected)
 
 
-@pytest.mark.xfail(reason="Choice has not been updated")
+@pytest.mark.parametrize("replace", [True, False])
+def test_choice_with_p(replace):
+    x = np.arange(100)
+    np_gen.bit_generator.state = initial_state
+    p = (x + 1) / (x + 1).sum()
+    expected = np_gen.choice(x, size=10, replace=replace, p=p)
+
+    gen.bit_generator.state = initial_state
+    result = gen.choice(x, size=10, replace=replace, p=p)
+    assert_array_equal(result, expected)
+
+
 @pytest.mark.parametrize("replace", [True, False])
 def test_choice(replace):
     np_gen.bit_generator.state = initial_state
@@ -232,24 +253,15 @@ def test_choice(replace):
     result = gen.choice(x, size=10, replace=replace)
     assert_array_equal(result, expected)
 
-    np_gen.bit_generator.state = initial_state
-    p = (x + 1) / (x + 1).sum()
-    expected = np_gen.choice(x, size=10, replace=replace, p=p)
 
-    gen.bit_generator.state = initial_state
-    result = gen.choice(x, size=10, replace=replace, p=p)
-    assert_array_equal(result, expected)
-
-
-@pytest.mark.xfail(reason="Changes to lemire generators")
+@pytest.mark.skipif(NP_LT_1174, reason="Changes to lemire generators")
 @pytest.mark.parametrize("args", integers())
 def test_integers(args):
     np_gen.bit_generator.state = initial_state
     expected = np_gen.integers(*args)
 
     gen.bit_generator.state = initial_state
-    with pytest.deprecated_call():
-        result = gen.integers(*args, use_masked=False)
+    result = gen.integers(*args, use_masked=False)
     assert_array_equal(result, expected)
 
 

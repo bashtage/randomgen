@@ -556,9 +556,8 @@ class TestRandomDist(object):
     def test_integers_lemire_32(self):
         # Test lemire algorithm to generate array of uint32 in an interval.
         random.bit_generator.seed(self.seed)
-        with pytest.deprecated_call():
-            actual = random.integers(0, 99, size=(3, 2), dtype=np.uint32,
-                                     use_masked=False)
+        actual = random.integers(0, 99, size=(3, 2), dtype=np.uint32,
+                                 use_masked=False)
         desired = np.array([[61, 33],
                             [58, 14],
                             [87, 23]], dtype=np.uint32)
@@ -567,9 +566,8 @@ class TestRandomDist(object):
     def test_integers_lemire_64(self):
         # Test lemire algorithm to generate array of uint64 in an interval.
         random.bit_generator.seed(self.seed)
-        with pytest.deprecated_call():
-            actual = random.integers(0, 99 + 0xFFFFFFFFF, size=(3, 2),
-                                     dtype=np.uint64, use_masked=False)
+        actual = random.integers(0, 99 + 0xFFFFFFFFF, size=(3, 2),
+                                 dtype=np.uint64, use_masked=False)
         desired = np.array([[42523252834, 40656066204],
                             [61069871386, 61274051182],
                             [31443797706, 53476677934]], dtype=np.uint64)
@@ -652,7 +650,7 @@ class TestRandomDist(object):
     def test_choice_uniform_replace(self):
         random.bit_generator.seed(self.seed)
         actual = random.choice(4, 4)
-        desired = np.array([2, 3, 2, 3], dtype=np.int64)
+        desired = np.array([2, 1, 2, 0], dtype=np.int64)
         assert_array_equal(actual, desired)
 
     def test_choice_nonuniform_replace(self):
@@ -664,7 +662,7 @@ class TestRandomDist(object):
     def test_choice_uniform_noreplace(self):
         random.bit_generator.seed(self.seed)
         actual = random.choice(4, 3, replace=False)
-        desired = np.array([0, 2, 3], dtype=np.int64)
+        desired = np.array([3, 2, 1], dtype=np.int64)
         assert_array_equal(actual, desired)
 
     def test_choice_nonuniform_noreplace(self):
@@ -676,19 +674,19 @@ class TestRandomDist(object):
     def test_choice_noninteger(self):
         random.bit_generator.seed(self.seed)
         actual = random.choice(["a", "b", "c", "d"], 4)
-        desired = np.array(["c", "d", "c", "d"])
+        desired = np.array(['c', 'b', 'c', 'a'])
         assert_array_equal(actual, desired)
 
     def test_choice_multidimensional_default_axis(self):
         random.bit_generator.seed(self.seed)
         actual = random.choice([[0, 1], [2, 3], [4, 5], [6, 7]], 3)
-        desired = np.array([[4, 5], [6, 7], [4, 5]])
+        desired = np.array([[4, 5], [2, 3], [4, 5]])
         assert_array_equal(actual, desired)
 
     def test_choice_multidimensional_custom_axis(self):
         random.bit_generator.seed(self.seed)
         actual = random.choice([[0, 1], [2, 3], [4, 5], [6, 7]], 1, axis=1)
-        desired = np.array([[0], [2], [4], [6]])
+        desired = np.array([[1], [3], [5], [7]])
         assert_array_equal(actual, desired)
 
     def test_choice_exceptions(self):
@@ -785,7 +783,7 @@ class TestRandomDist(object):
     def test_choice_large_sample(self):
         import hashlib
 
-        choice_hash = "6395868be877d27518c832213c17977c"
+        choice_hash = "7d65d45dea0cacb950de86582f37ff74"
         random.bit_generator.seed(self.seed)
         actual = random.choice(10000, 5000, replace=False)
         if sys.byteorder != "little":
