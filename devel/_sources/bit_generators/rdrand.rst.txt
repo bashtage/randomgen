@@ -15,7 +15,6 @@ Seeding and State
 
    ~RDRAND.seed
    ~RDRAND.state
-   ~RDRAND.from_seed_seq
 
 Parallel generation
 ===================

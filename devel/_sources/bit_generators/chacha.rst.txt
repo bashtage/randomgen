@@ -15,7 +15,6 @@ Seeding and State
 
    ~ChaCha.seed
    ~ChaCha.state
-   ~ChaCha.from_seed_seq
 
 Parallel generation
 ===================

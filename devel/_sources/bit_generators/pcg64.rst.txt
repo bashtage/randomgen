@@ -1,5 +1,5 @@
-Parallel Congruent Generator (64-bit, PCG64)
---------------------------------------------
+Permuted Congruential Generator (64-bit, PCG64)
+-----------------------------------------------
 
 .. module:: randomgen.pcg64
 
@@ -15,7 +15,6 @@ Seeding and State
 
    ~PCG64.seed
    ~PCG64.state
-   ~PCG64.from_seed_seq
 
 Parallel generation
 ===================

@@ -1,6 +1,0 @@
-randomgen.dsfmt.DSFMT.from\_seed\_seq
-=====================================
-
-.. currentmodule:: randomgen.dsfmt
-
-.. automethod:: DSFMT.from_seed_seq

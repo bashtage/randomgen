@@ -1,6 +1,0 @@
-randomgen.philox.Philox.from\_seed\_seq
-=======================================
-
-.. currentmodule:: randomgen.philox
-
-.. automethod:: Philox.from_seed_seq

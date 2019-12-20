@@ -1,6 +1,0 @@
-randomgen.xoshiro256.Xoshiro256.from\_seed\_seq
-===============================================
-
-.. currentmodule:: randomgen.xoshiro256
-
-.. automethod:: Xoshiro256.from_seed_seq

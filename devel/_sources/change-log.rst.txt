@@ -4,8 +4,9 @@ Change Log
 ----------
 
 
-v1.17.0
+v1.18.0
 =======
+- Added support for :class:`~randomgen.seed_sequence.SeedSequence` (and NumPy's ``SeedSequence``).
 - Fixed a bug that affected both :class:`~randomgen.generator.Generator.randint`
   in :class:`~randomgen.generator.Generator` and :meth:`~randomgen.mtrand.RandomState.randint`
   in  :class:`~randomgen.mtrand.RandomState` when ``high=2**32``.  This value is inbounds for
@@ -45,6 +46,10 @@ v1.17.0
 - Add the 64-bit Mersenne Twister (MT64) generator :class:`~randomgen.mt64.MT64`.
 - Renamed `Xoshiro256StarStar` to :class:`~randomgen.xoshiro256.Xoshiro256`
   and `Xoshiro512StarStar` to :class:`~randomgen.xoshiro512.Xoshiro512`
+
+v1.17.0
+=======
+- This release was skipped
 
 v1.16.6
 =======

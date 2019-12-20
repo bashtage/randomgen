@@ -16,7 +16,6 @@ Seeding and State
 
    ~DSFMT.seed
    ~DSFMT.state
-   ~DSFMT.from_seed_seq
 
 Parallel generation
 ===================

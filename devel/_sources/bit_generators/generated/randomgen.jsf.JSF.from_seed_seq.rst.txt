@@ -1,6 +1,0 @@
-randomgen.jsf.JSF.from\_seed\_seq
-=================================
-
-.. currentmodule:: randomgen.jsf
-
-.. automethod:: JSF.from_seed_seq

@@ -1,6 +1,0 @@
-randomgen.seed\_sequence.SeedSequence.generate\_state
-=====================================================
-
-.. currentmodule:: randomgen.seed_sequence
-
-.. automethod:: SeedSequence.generate_state

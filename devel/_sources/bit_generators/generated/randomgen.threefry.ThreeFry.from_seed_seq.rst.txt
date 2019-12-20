@@ -1,6 +1,0 @@
-randomgen.threefry.ThreeFry.from\_seed\_seq
-===========================================
-
-.. currentmodule:: randomgen.threefry
-
-.. automethod:: ThreeFry.from_seed_seq

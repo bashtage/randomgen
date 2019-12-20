@@ -1,6 +1,0 @@
-randomgen.speck128.SPECK128.from\_seed\_seq
-===========================================
-
-.. currentmodule:: randomgen.speck128
-
-.. automethod:: SPECK128.from_seed_seq

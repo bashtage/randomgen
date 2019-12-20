@@ -1,6 +1,0 @@
-randomgen.seed\_sequence.SeedSequence.state
-===========================================
-
-.. currentmodule:: randomgen.seed_sequence
-
-.. autoattribute:: SeedSequence.state

@@ -1,6 +1,0 @@
-randomgen.sfmt.SFMT.from\_seed\_seq
-===================================
-
-.. currentmodule:: randomgen.sfmt
-
-.. automethod:: SFMT.from_seed_seq

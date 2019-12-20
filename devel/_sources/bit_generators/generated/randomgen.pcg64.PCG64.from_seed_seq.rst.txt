@@ -1,6 +1,0 @@
-randomgen.pcg64.PCG64.from\_seed\_seq
-=====================================
-
-.. currentmodule:: randomgen.pcg64
-
-.. automethod:: PCG64.from_seed_seq
