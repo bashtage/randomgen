@@ -159,6 +159,7 @@ cdef class PCG32(BitGenerator):
         if self.seed_seq is not None:
             return
 
+        inc = 0 if inc is None else inc
         if seed is None:
             seed = <np.ndarray>random_entropy(2, 'auto')
             seed = seed.view(np.uint64).squeeze()
@@ -171,11 +172,6 @@ cdef class PCG32(BitGenerator):
                 raise TypeError(err_msg)
             if seed < 0 or seed > ub:
                 raise ValueError(err_msg)
-
-        if not np.isscalar(inc):
-            raise TypeError('inc must be a scalar integer between 0 '
-                            'and {ub}'.format(ub=ub))
-
 
         pcg32_set_seed(&self.rng_state, <uint64_t>seed, <uint64_t>inc)
 

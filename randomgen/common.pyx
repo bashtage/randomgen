@@ -45,7 +45,11 @@ cdef class BitGenerator:
     def __init__(self, seed, mode=None):
         if mode is not None and (not isinstance(mode, str) or mode.lower() not in ("legacy", "sequence")):
             raise ValueError("mode must be one of None, \"legacy\" or \"sequence\".")
-        if isinstance(seed, ISEED_SEQUENCES) and mode != "legacy":
+        if isinstance(seed, ISEED_SEQUENCES):
+            if mode == "legacy":
+                raise ValueError("seed is a SeedSequence instance but mode is "
+                                 "\"legacy\". Using a SeedSequence implies "
+                                 "mode=\"sequence\".")
             mode = "sequence"
         elif mode is None:
             import warnings

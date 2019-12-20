@@ -71,7 +71,7 @@ class TestRegression(object):
             assert_array_equal(m.choice(10, size=10, p=np.ones(10)/10.), res)
 
     def test_multivariate_normal_size_types(self):
-        # Test for multivariate_normal issue with 'size' argument.
+        # Test for multivariate_normal issue with "size" argument.
         # Check that the multivariate_normal size argument can be a
         # numpy integer.
         mt19937.multivariate_normal([0], [[0]], size=1)
@@ -83,7 +83,7 @@ class TestRegression(object):
         # NaNs due to roundoff errors causing 0 / 0, gh-5851
         mt19937.bit_generator.seed(1234567890)
         x = mt19937.beta(0.0001, 0.0001, size=100)
-        assert_(not np.any(np.isnan(x)), 'Nans in mt19937.beta')
+        assert_(not np.any(np.isnan(x)), "Nans in mt19937.beta")
 
     def test_choice_sum_of_probs_tolerance(self):
         # The sum of probs should be 1.0 with some tolerance.
@@ -105,7 +105,7 @@ class TestRegression(object):
         # Tests gh-7710
         mt19937.bit_generator.seed(1234)
 
-        a = np.array(['a', 'a' * 1000])
+        a = np.array(["a", "a" * 1000])
 
         for _ in range(100):
             mt19937.shuffle(a)
@@ -154,6 +154,6 @@ class TestRegression(object):
         assert mt19937.standard_gamma(0.0) == 0.0
         assert_array_equal(mt19937.standard_gamma([0.0]), 0.0)
 
-        actual = mt19937.standard_gamma([0.0], dtype='float')
+        actual = mt19937.standard_gamma([0.0], dtype="float")
         expected = np.array([0.], dtype=np.float32)
         assert_array_equal(actual, expected)

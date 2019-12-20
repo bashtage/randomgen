@@ -17,9 +17,9 @@ NP_118 = LooseVersion("1.18") <= NP_VERSION < LooseVersion("1.19")
 
 def compare_0_input(f1, f2):
     inputs = [(tuple([]), {}),
-              (tuple([]), {'size': 10}),
-              (tuple([]), {'size': (20, 31)}),
-              (tuple([]), {'size': (20, 31, 5)})]
+              (tuple([]), {"size": 10}),
+              (tuple([]), {"size": (20, 31)}),
+              (tuple([]), {"size": (20, 31, 5)})]
 
     for i in inputs:
         v1 = f1(*i[0], **i[1])
@@ -30,10 +30,10 @@ def compare_0_input(f1, f2):
 def compare_1_input(f1, f2, is_small=False):
     a = 0.3 if is_small else 10
     inputs = [((a,), {}),
-              ((a,), {'size': 10}),
+              ((a,), {"size": 10}),
               ((np.array([a] * 10),), {}),
-              ((np.array([a] * 10),), {'size': 10}),
-              ((np.array([a] * 10),), {'size': (100, 10)})]
+              ((np.array([a] * 10),), {"size": 10}),
+              ((np.array([a] * 10),), {"size": (100, 10)})]
     for i in inputs:
         v1 = f1(*i[0], **i[1])
         v2 = f2(*i[0], **i[1])
@@ -48,17 +48,17 @@ def compare_2_input(f1, f2, is_np=False, is_scalar=False):
         a, b = 2, 3
         dtype = np.double
     inputs = [((a, b), {}),
-              ((a, b), {'size': 10}),
-              ((a, b), {'size': (23, 7)}),
+              ((a, b), {"size": 10}),
+              ((a, b), {"size": (23, 7)}),
               ((np.array([a] * 10), b), {}),
               ((a, np.array([b] * 10)), {}),
-              ((a, np.array([b] * 10)), {'size': 10}),
+              ((a, np.array([b] * 10)), {"size": 10}),
               ((np.reshape(np.array([[a] * 100]), (100, 1)),
-                np.array([b] * 10)), {'size': (100, 10)}),
+                np.array([b] * 10)), {"size": (100, 10)}),
               ((np.ones((7, 31), dtype=dtype) * a,
-                np.array([b] * 31)), {'size': (7, 31)}),
+                np.array([b] * 31)), {"size": (7, 31)}),
               ((np.ones((7, 31), dtype=dtype) * a, np.array([b] * 31)),
-               {'size': (10, 7, 31)})]
+               {"size": (10, 7, 31)})]
 
     if is_scalar:
         inputs = inputs[:3]
@@ -72,13 +72,13 @@ def compare_2_input(f1, f2, is_np=False, is_scalar=False):
 def compare_3_input(f1, f2, is_np=False):
     a, b, c = 10, 20, 25
     inputs = [((a, b, c), {}),
-              ((a, b, c), {'size': 10}),
-              ((a, b, c), {'size': (23, 7)}),
+              ((a, b, c), {"size": 10}),
+              ((a, b, c), {"size": (23, 7)}),
               ((np.array([a] * 10), b, c), {}),
               ((a, np.array([b] * 10), c), {}),
               ((a, b, np.array([c] * 10)), {}),
               ((a, np.array([b] * 10), np.array([c] * 10)), {}),
-              ((a, np.array([b] * 10), c), {'size': 10}),
+              ((a, np.array([b] * 10), c), {"size": 10}),
               ((np.ones((1, 37), dtype=np.int) * a,
                 np.ones((23, 1), dtype=np.int) * [b],
                 c * np.ones((7, 1, 1), dtype=np.int)),
@@ -86,7 +86,7 @@ def compare_3_input(f1, f2, is_np=False):
               ((np.ones((1, 37), dtype=np.int) * a,
                 np.ones((23, 1), dtype=np.int) * [b],
                 c * np.ones((7, 1, 1), dtype=np.int)),
-               {'size': (7, 23, 37)})
+               {"size": (7, 23, 37)})
               ]
 
     for i in inputs:
@@ -111,9 +111,9 @@ class TestAgainstNumPy(object):
     def _set_common_state(cls):
         state = cls.rg.bit_generator.state
         st = [[]] * 5
-        st[0] = 'MT19937'
-        st[1] = state['state']['key']
-        st[2] = state['state']['pos']
+        st[0] = "MT19937"
+        st[1] = state["state"]["key"]
+        st[2] = state["state"]["pos"]
         st[3] = 0
         st[4] = 0.0
         cls.nprs.set_state(st)
@@ -122,26 +122,26 @@ class TestAgainstNumPy(object):
     def _set_common_state_legacy(cls):
         state = cls.rs.get_state(legacy=False)
         st = [[]] * 5
-        st[0] = 'MT19937'
-        st[1] = state['state']['key']
-        st[2] = state['state']['pos']
-        st[3] = state['has_gauss']
-        st[4] = state['gauss']
+        st[0] = "MT19937"
+        st[1] = state["state"]["key"]
+        st[2] = state["state"]["pos"]
+        st[3] = state["has_gauss"]
+        st[4] = state["gauss"]
         cls.nprs.set_state(st)
 
     def _is_state_common(self):
         state = self.nprs.get_state()
         state2 = self.rg.bit_generator.state
-        assert (state[1] == state2['state']['key']).all()
-        assert (state[2] == state2['state']['pos'])
+        assert (state[1] == state2["state"]["key"]).all()
+        assert (state[2] == state2["state"]["pos"])
 
     def _is_state_common_legacy(self):
         state = self.nprs.get_state()
         state2 = self.rs.get_state(legacy=False)
-        assert (state[1] == state2['state']['key']).all()
-        assert (state[2] == state2['state']['pos'])
-        assert (state[3] == state2['has_gauss'])
-        assert_allclose(state[4], state2['gauss'], atol=1e-10)
+        assert (state[1] == state2["state"]["key"]).all()
+        assert (state[2] == state2["state"]["pos"])
+        assert (state[3] == state2["has_gauss"])
+        assert_allclose(state[4], state2["gauss"], atol=1e-10)
 
     def test_common_seed(self):
         self.rg.bit_generator.seed(1234)
@@ -157,8 +157,8 @@ class TestAgainstNumPy(object):
         state = nprs.get_state()
         self.rg.bit_generator.state = state
         state2 = self.rg.bit_generator.state
-        assert (state[1] == state2['state']['key']).all()
-        assert (state[2] == state2['state']['pos'])
+        assert (state[1] == state2["state"]["key"]).all()
+        assert (state[2] == state2["state"]["pos"])
 
     def test_random(self):
         self._set_common_state()
@@ -189,7 +189,7 @@ class TestAgainstNumPy(object):
                         self.rs.standard_exponential)
         self._is_state_common_legacy()
 
-    @pytest.mark.xfail(reason='Stream broken for simplicity')
+    @pytest.mark.xfail(reason="Stream broken for simplicity")
     def test_tomaxint(self):
         self._set_common_state()
         self._is_state_common()
@@ -298,7 +298,7 @@ class TestAgainstNumPy(object):
         with pytest.deprecated_call():
             assert_allclose(f(3, 4, 5), g(3, 4, 5))
 
-    @pytest.mark.xfail(reason='Definition of poisson_lam_max changed')
+    @pytest.mark.xfail(reason="Definition of poisson_lam_max changed")
     def test_poisson_lam_max(self):
         assert_allclose(self.rg.poisson_lam_max, self.nprs.poisson_lam_max)
 
@@ -309,7 +309,7 @@ class TestAgainstNumPy(object):
                         self.rg.triangular)
         self._is_state_common()
 
-    @pytest.mark.xfail(reason='Changes to hypergeometic break stream')
+    @pytest.mark.xfail(reason="Changes to hypergeometic break stream")
     def test_hypergeometric(self):
         self._set_common_state()
         self._is_state_common()
@@ -339,7 +339,7 @@ class TestAgainstNumPy(object):
                      g(100, np.array(p), size=(7, 23)))
         self._is_state_common()
 
-    @pytest.mark.xfail(reason='Stream broken for performance')
+    @pytest.mark.xfail(reason="Stream broken for performance")
     def test_choice(self):
         self._set_common_state()
         self._is_state_common()
@@ -413,25 +413,25 @@ class TestAgainstNumPy(object):
         s = Generator(MT19937([4294967295], mode="legacy"))
         assert_equal(s.integers(1000), 265)
 
-    @pytest.mark.skipif(not NP_118, reason='Only value for NumPy 1.18')
+    @pytest.mark.skipif(not NP_118, reason="Only value for NumPy 1.18")
     def test_dir(self):
         nprs_d = set(dir(self.nprs))
         rs_d = dir(self.rg)
-        excluded = {'get_state', 'set_state', 'poisson_lam_max'}
+        excluded = {"get_state", "set_state", "poisson_lam_max"}
         nprs_d.difference_update(excluded)
         assert (len(nprs_d.difference(rs_d)) == 0)
 
         npmod = dir(numpy.random)
         mod = dir(randomgen.generator)
-        known_exlcuded = ['BitGenerator', 'MT19937', 'PCG64', 'Philox',
-                          'RandomState', 'SFC64', 'SeedSequence',
-                          '__RandomState_ctor', '__cached__', '__path__',
-                          '_bit_generator', '_bounded_integers', '_common',
-                          '_generator', '_mt19937', '_pcg64', '_philox',
-                          '_pickle', '_sfc64', 'absolute_import',
-                          'default_rng', 'division', 'get_state', 'mtrand',
-                          'print_function', 'ranf', 'sample', 'seed',
-                          'set_state', 'test']
+        known_exlcuded = ["BitGenerator", "MT19937", "PCG64", "Philox",
+                          "RandomState", "SFC64", "SeedSequence",
+                          "__RandomState_ctor", "__cached__", "__path__",
+                          "_bit_generator", "_bounded_integers", "_common",
+                          "_generator", "_mt19937", "_pcg64", "_philox",
+                          "_pickle", "_sfc64", "absolute_import",
+                          "default_rng", "division", "get_state", "mtrand",
+                          "print_function", "ranf", "sample", "seed",
+                          "set_state", "test"]
         mod += known_exlcuded
         diff = set(npmod).difference(mod)
         print(diff)
@@ -593,8 +593,8 @@ funcs = [randomgen.generator.zipf,
 ids = [f.__name__ for f in funcs]
 
 
-@pytest.mark.filterwarnings('ignore:invalid value encountered:RuntimeWarning')
-@pytest.mark.parametrize('func', funcs, ids=ids)
+@pytest.mark.filterwarnings("ignore:invalid value encountered:RuntimeWarning")
+@pytest.mark.parametrize("func", funcs, ids=ids)
 def test_nan_guard(func):
     with pytest.raises(ValueError):
         func([np.nan])

@@ -16,51 +16,51 @@ from randomgen.xoshiro256 import Xoshiro256
 
 random = randomgen.mtrand
 
-INT_FUNCS = {'binomial': (100.0, 0.6),
-             'geometric': (.5,),
-             'hypergeometric': (20, 20, 10),
-             'logseries': (.5,),
-             'multinomial': (20, np.ones(6) / 6.0),
-             'negative_binomial': (100, .5),
-             'poisson': (10.0,),
-             'zipf': (2,),
+INT_FUNCS = {"binomial": (100.0, 0.6),
+             "geometric": (.5,),
+             "hypergeometric": (20, 20, 10),
+             "logseries": (.5,),
+             "multinomial": (20, np.ones(6) / 6.0),
+             "negative_binomial": (100, .5),
+             "poisson": (10.0,),
+             "zipf": (2,),
              }
 
 if np.iinfo(int).max < 2**32:
     # Windows and some 32-bit platforms, e.g., ARM
-    INT_FUNC_HASHES = {'binomial': '670e1c04223ffdbab27e08fbbad7bdba',
-                       'logseries': '6bd0183d2f8030c61b0d6e11aaa60caf',
-                       'geometric': '6e9df886f3e1e15a643168568d5280c0',
-                       'hypergeometric': '7964aa611b046aecd33063b90f4dec06',
-                       'multinomial': '68a0b049c16411ed0aa4aff3572431e4',
-                       'negative_binomial': 'dc265219eec62b4338d39f849cd36d09',
-                       'poisson': '7b4dce8e43552fc82701c2fa8e94dc6e',
-                       'zipf': 'fcd2a2095f34578723ac45e43aca48c5',
+    INT_FUNC_HASHES = {"binomial": "670e1c04223ffdbab27e08fbbad7bdba",
+                       "logseries": "6bd0183d2f8030c61b0d6e11aaa60caf",
+                       "geometric": "6e9df886f3e1e15a643168568d5280c0",
+                       "hypergeometric": "7964aa611b046aecd33063b90f4dec06",
+                       "multinomial": "68a0b049c16411ed0aa4aff3572431e4",
+                       "negative_binomial": "dc265219eec62b4338d39f849cd36d09",
+                       "poisson": "7b4dce8e43552fc82701c2fa8e94dc6e",
+                       "zipf": "fcd2a2095f34578723ac45e43aca48c5",
                        }
 else:
-    INT_FUNC_HASHES = {'binomial': 'b5f8dcd74f172836536deb3547257b14',
-                       'geometric': '8814571f45c87c59699d62ccd3d6c350',
-                       'hypergeometric': 'bc64ae5976eac452115a16dad2dcf642',
-                       'logseries': '84be924b37485a27c4a98797bc88a7a4',
-                       'multinomial': 'ec3c7f9cf9664044bb0c6fb106934200',
-                       'negative_binomial': '210533b2234943591364d0117a552969',
-                       'poisson': '0536a8850c79da0c78defd742dccc3e0',
-                       'zipf': 'f2841f504dd2525cd67cdcad7561e532',
+    INT_FUNC_HASHES = {"binomial": "b5f8dcd74f172836536deb3547257b14",
+                       "geometric": "8814571f45c87c59699d62ccd3d6c350",
+                       "hypergeometric": "bc64ae5976eac452115a16dad2dcf642",
+                       "logseries": "84be924b37485a27c4a98797bc88a7a4",
+                       "multinomial": "ec3c7f9cf9664044bb0c6fb106934200",
+                       "negative_binomial": "210533b2234943591364d0117a552969",
+                       "poisson": "0536a8850c79da0c78defd742dccc3e0",
+                       "zipf": "f2841f504dd2525cd67cdcad7561e532",
                        }
 
 
-@pytest.fixture(scope='module', params=INT_FUNCS)
+@pytest.fixture(scope="module", params=INT_FUNCS)
 def int_func(request):
     return (request.param, INT_FUNCS[request.param],
             INT_FUNC_HASHES[request.param])
 
 
 def assert_mt19937_state_equal(a, b):
-    assert_equal(a['bit_generator'], b['bit_generator'])
-    assert_array_equal(a['state']['key'], b['state']['key'])
-    assert_array_equal(a['state']['pos'], b['state']['pos'])
-    assert_equal(a['has_gauss'], b['has_gauss'])
-    assert_equal(a['gauss'], b['gauss'])
+    assert_equal(a["bit_generator"], b["bit_generator"])
+    assert_array_equal(a["state"]["key"], b["state"]["key"])
+    assert_array_equal(a["state"]["pos"], b["state"]["pos"])
+    assert_equal(a["has_gauss"], b["has_gauss"])
+    assert_equal(a["gauss"], b["gauss"])
 
 
 class TestSeed(object):
@@ -116,7 +116,7 @@ class TestBinomial(object):
         # Tests the corner case of n == 0 for the binomial distribution.
         # binomial(0, p) should be zero for any p in [0, 1].
         # This test addresses issue #3480.
-        zeros = np.zeros(2, dtype='int')
+        zeros = np.zeros(2, dtype="int")
         for p in [0, .5, 1]:
             assert_(random.binomial(0, p) == 0)
             assert_array_equal(random.binomial(zeros, p), zeros)
@@ -171,7 +171,7 @@ class TestMultinomial(object):
         assert_array_equal(non_contig, contig)
 
     def test_large_p(self):
-        with pytest.raises(ValueError, match=r'sum\(pvals'):
+        with pytest.raises(ValueError, match=r"sum\(pvals"):
             random.multinomial(100, np.array([.7, .6, .5, 0]))
 
 
@@ -229,16 +229,16 @@ class TestSetState(object):
             state = rs.get_state()
             assert_(len(w) == 1)
             assert isinstance(state, dict)
-            assert state['bit_generator'] == 'Xoshiro256'
+            assert state["bit_generator"] == "Xoshiro256"
 
     def test_invalid_legacy_state_setting(self):
         state = self.random_state.get_state()
-        new_state = ('Unknown', ) + state[1:]
+        new_state = ("Unknown", ) + state[1:]
         assert_raises(ValueError, self.random_state.set_state, new_state)
         assert_raises(TypeError, self.random_state.set_state,
                       np.array(new_state, dtype=np.object))
         state = self.random_state.get_state(legacy=False)
-        del state['bit_generator']
+        del state["bit_generator"]
         assert_raises(ValueError, self.random_state.set_state, state)
 
     def test_pickle(self):
@@ -246,7 +246,7 @@ class TestSetState(object):
         self.random_state.random_sample(100)
         self.random_state.standard_normal()
         pickled = self.random_state.get_state(legacy=False)
-        assert_equal(pickled['has_gauss'], 1)
+        assert_equal(pickled["has_gauss"], 1)
         rs_unpick = pickle.loads(pickle.dumps(self.random_state))
         unpickled = rs_unpick.get_state(legacy=False)
         assert_mt19937_state_equal(pickled, unpickled)
@@ -259,7 +259,7 @@ class TestSetState(object):
         assert_mt19937_state_equal(attr_state, state)
 
     def test_repr(self):
-        assert repr(self.random_state).startswith('RandomState(MT19937)')
+        assert repr(self.random_state).startswith("RandomState(MT19937)")
 
 
 class TestRandint(object):
@@ -311,7 +311,7 @@ class TestRandint(object):
                                      "message:\n\n%s" % str(e))
 
     def test_in_bounds_fuzz(self):
-        # Don't use fixed seed
+        # Don"t use fixed seed
         random.seed()
 
         for dt in self.itype[1:]:
@@ -329,21 +329,21 @@ class TestRandint(object):
         # We use a md5 hash of generated sequences of 1000 samples
         # in the range [0, 6) for all but bool, where the range
         # is [0, 2). Hashes are for little endian numbers.
-        tgt = {'bool': '7dd3170d7aa461d201a65f8bcf3944b0',
-               'int16': '1b7741b80964bb190c50d541dca1cac1',
-               'int32': '4dc9fcc2b395577ebb51793e58ed1a05',
-               'int64': '17db902806f448331b5a758d7d2ee672',
-               'int8': '27dd30c4e08a797063dffac2490b0be6',
-               'uint16': '1b7741b80964bb190c50d541dca1cac1',
-               'uint32': '4dc9fcc2b395577ebb51793e58ed1a05',
-               'uint64': '17db902806f448331b5a758d7d2ee672',
-               'uint8': '27dd30c4e08a797063dffac2490b0be6'}
+        tgt = {"bool": "7dd3170d7aa461d201a65f8bcf3944b0",
+               "int16": "1b7741b80964bb190c50d541dca1cac1",
+               "int32": "4dc9fcc2b395577ebb51793e58ed1a05",
+               "int64": "17db902806f448331b5a758d7d2ee672",
+               "int8": "27dd30c4e08a797063dffac2490b0be6",
+               "uint16": "1b7741b80964bb190c50d541dca1cac1",
+               "uint32": "4dc9fcc2b395577ebb51793e58ed1a05",
+               "uint64": "17db902806f448331b5a758d7d2ee672",
+               "uint8": "27dd30c4e08a797063dffac2490b0be6"}
 
         for dt in self.itype[1:]:
             random.seed(1234)
 
             # view as little endian for hash
-            if sys.byteorder == 'little':
+            if sys.byteorder == "little":
                 val = self.rfunc(0, 6, size=1000, dtype=dt)
             else:
                 val = self.rfunc(0, 6, size=1000, dtype=dt).byteswap()
@@ -395,7 +395,7 @@ class TestRandint(object):
 
             # gh-7284: Ensure that we get Python data types
             sample = self.rfunc(lbnd, ubnd, dtype=dt)
-            assert_(not hasattr(sample, 'dtype'))
+            assert_(not hasattr(sample, "dtype"))
             assert_equal(type(sample), dt)
 
 
@@ -486,17 +486,17 @@ class TestRandomDist(object):
         # to generate this integer.
         with suppress_warnings() as sup:
             w = sup.record(DeprecationWarning)
-            actual = random.random_integers(np.iinfo('l').max,
-                                            np.iinfo('l').max)
+            actual = random.random_integers(np.iinfo("l").max,
+                                            np.iinfo("l").max)
             assert_(len(w) == 1)
 
-        desired = np.iinfo('l').max
+        desired = np.iinfo("l").max
         assert_equal(actual, desired)
         with suppress_warnings() as sup:
             w = sup.record(DeprecationWarning)
-            typer = np.dtype('l').type
-            actual = random.random_integers(typer(np.iinfo('l').max),
-                                            typer(np.iinfo('l').max))
+            typer = np.dtype("l").type
+            actual = random.random_integers(typer(np.iinfo("l").max),
+                                            typer(np.iinfo("l").max))
             assert_(len(w) == 1)
         assert_equal(actual, desired)
 
@@ -507,12 +507,12 @@ class TestRandomDist(object):
             # DeprecationWarning raised with high == None
             assert_raises(DeprecationWarning,
                           random.random_integers,
-                          np.iinfo('l').max)
+                          np.iinfo("l").max)
 
             # DeprecationWarning raised with high != None
             assert_raises(DeprecationWarning,
                           random.random_integers,
-                          np.iinfo('l').max, np.iinfo('l').max)
+                          np.iinfo("l").max, np.iinfo("l").max)
 
     def test_random_sample(self):
         random.seed(self.seed)
@@ -552,8 +552,8 @@ class TestRandomDist(object):
 
     def test_choice_noninteger(self):
         random.seed(self.seed)
-        actual = random.choice(['a', 'b', 'c', 'd'], 4)
-        desired = np.array(['c', 'd', 'c', 'd'])
+        actual = random.choice(["a", "b", "c", "d"], 4)
+        desired = np.array(["c", "d", "c", "d"])
         assert_array_equal(actual, desired)
 
     def test_choice_exceptions(self):
@@ -617,14 +617,14 @@ class TestRandomDist(object):
         assert_equal(random.randint(10, 10, size=0).shape, (0,))
         assert_equal(random.choice(0, size=0).shape, (0,))
         assert_equal(random.choice([], size=(0,)).shape, (0,))
-        assert_equal(random.choice(['a', 'b'], size=(3, 0, 4)).shape,
+        assert_equal(random.choice(["a", "b"], size=(3, 0, 4)).shape,
                      (3, 0, 4))
         assert_raises(ValueError, random.choice, [], 10)
 
     def test_choice_nan_probabilities(self):
         a = np.array([42, 1, 2])
         p = [None, None, None]
-        with np.errstate(invalid='ignore'):
+        with np.errstate(invalid="ignore"):
             assert_raises(ValueError, random.choice, a, p=p)
 
     def test_choice_nontintiguous(self):
@@ -639,7 +639,7 @@ class TestRandomDist(object):
     def test_bytes(self):
         random.seed(self.seed)
         actual = random.bytes(10)
-        desired = b'\x82Ui\x9e\xff\x97+Wf\xa5'
+        desired = b"\x82Ui\x9e\xff\x97+Wf\xa5"
         assert_equal(actual, desired)
 
     def test_shuffle(self):
@@ -942,13 +942,13 @@ class TestRandomDist(object):
         cov = [[1, 2], [2, 1]]
         assert_warns(RuntimeWarning, random.multivariate_normal, mean, cov)
 
-        # and that it doesn't warn with RuntimeWarning check_valid='ignore'
+        # and that it doesn"t warn with RuntimeWarning check_valid="ignore"
         assert_no_warnings(random.multivariate_normal, mean, cov,
-                           check_valid='ignore')
+                           check_valid="ignore")
 
-        # and that it raises with RuntimeWarning check_valid='raises'
+        # and that it raises with RuntimeWarning check_valid="raises"
         assert_raises(ValueError, random.multivariate_normal, mean, cov,
-                      check_valid='raise')
+                      check_valid="raise")
 
         cov = np.array([[1, 0.1], [0.1, 1]], dtype=np.float32)
         with suppress_warnings() as sup:
@@ -959,7 +959,7 @@ class TestRandomDist(object):
         mu = np.zeros(2)
         cov = np.eye(2)
         assert_raises(ValueError, random.multivariate_normal, mean, cov,
-                      check_valid='other')
+                      check_valid="other")
         assert_raises(ValueError, random.multivariate_normal,
                       np.zeros((2, 1, 1)), cov)
         assert_raises(ValueError, random.multivariate_normal,
@@ -1053,7 +1053,7 @@ class TestRandomDist(object):
         assert_array_equal(actual, desired)
 
     def test_poisson_exceptions(self):
-        lambig = np.iinfo('l').max
+        lambig = np.iinfo("l").max
         lamneg = -1
         assert_raises(ValueError, random.poisson, lamneg)
         assert_raises(ValueError, random.poisson, [lamneg] * 10)
@@ -1152,8 +1152,8 @@ class TestRandomDist(object):
         assert_array_almost_equal(actual, desired, decimal=15)
 
     def test_uniform_range_bounds(self):
-        fmin = np.finfo('float').min
-        fmax = np.finfo('float').max
+        fmin = np.finfo("float").min
+        fmax = np.finfo("float").max
 
         func = random.uniform
         assert_raises(OverflowError, func, -np.inf, 0)
@@ -1757,7 +1757,7 @@ class TestBroadcast(object):
         actual = zipf(a * 3)
         assert_array_equal(actual, desired)
         assert_raises(ValueError, zipf, bad_a * 3)
-        with np.errstate(invalid='ignore'):
+        with np.errstate(invalid="ignore"):
             assert_raises(ValueError, zipf, np.nan)
             assert_raises(ValueError, zipf, [0, 0, np.nan])
 
@@ -1949,7 +1949,7 @@ def test_integer_dtype(int_func):
     fname, args, md5 = int_func
     f = getattr(random, fname)
     actual = f(*args, size=2)
-    assert_(actual.dtype == np.dtype('l'))
+    assert_(actual.dtype == np.dtype("l"))
 
 
 def test_integer_repeat(int_func):
@@ -1957,7 +1957,7 @@ def test_integer_repeat(int_func):
     fname, args, md5 = int_func
     f = getattr(random, fname)
     val = f(*args, size=1000000)
-    if sys.byteorder != 'little':
+    if sys.byteorder != "little":
         val = val.byteswap()
     res = hashlib.md5(val.view(np.int8)).hexdigest()
     assert_(res == md5)

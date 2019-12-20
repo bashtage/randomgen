@@ -31,7 +31,7 @@ matrix:
       env: [PYPI=true, COVERAGE=false, RANDOMGEN_DEBUG=true, NUMPY=1.17]
     - os: linux-ppc64le
       python: 3.6
-      env: [PYPI=true, PPC64_LE=1, COVERAGE=false]
+      env: [PYPI=true, COVERAGE=true, PPC64_LE=1]
     - os: osx
       language: generic
       env: [PYTHON=3.6, NUMPY=1.16]

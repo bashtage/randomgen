@@ -72,7 +72,7 @@ def test_spawn_equiv():
 
 
 def test_bad_spawn_key():
-    with pytest.raises(TypeError, match='seed must be integer'):
+    with pytest.raises(TypeError, match="seed must be integer"):
         SeedSequence(spawn_key=(np.pi,))
 
 
@@ -84,52 +84,52 @@ def test_invalid_dtype_gen_state():
 
 def test_state():
     ss = SeedSequence(0)
-    assert 'entropy' in ss.state
-    assert ss.state['entropy'] == 0
-    assert 'n_children_spawned' in ss.state
-    assert ss.state['n_children_spawned'] == 0
-    assert 'pool_size' in ss.state
-    assert ss.state['pool_size'] == 4
+    assert "entropy" in ss.state
+    assert ss.state["entropy"] == 0
+    assert "n_children_spawned" in ss.state
+    assert ss.state["n_children_spawned"] == 0
+    assert "pool_size" in ss.state
+    assert ss.state["pool_size"] == 4
 
-    for key in ('spawn_key'):
+    for key in ("spawn_key"):
         assert key not in ss.state
     children = ss.spawn(10)
-    assert ss.state['n_children_spawned'] == 10
+    assert ss.state["n_children_spawned"] == 10
 
-    assert 'spawn_key' in children[0].state
-    assert children[0].state['spawn_key'] == (0,)
+    assert "spawn_key" in children[0].state
+    assert children[0].state["spawn_key"] == (0,)
 
     ss = SeedSequence(0, pool_size=8)
-    assert 'pool_size' in ss.state
-    assert ss.state['pool_size'] == 8
+    assert "pool_size" in ss.state
+    assert ss.state["pool_size"] == 8
 
 
 def test_repr():
     ss = SeedSequence(0, pool_size=16, spawn_key=(0, 1, 7))
     r = ss.__repr__()
     assert isinstance(r, (str, unicode))
-    assert 'entropy' in r
-    assert 'pool_size=16' in r
-    assert 'spawn_key=(0, 1, 7)' in r
-    assert 'n_children_spawned' not in r
+    assert "entropy" in r
+    assert "pool_size=16" in r
+    assert "spawn_key=(0, 1, 7)" in r
+    assert "n_children_spawned" not in r
 
     ss.spawn(10)
-    assert 'n_children_spawned=10' in ss.__repr__()
+    assert "n_children_spawned=10" in ss.__repr__()
 
 
 def test_min_pool_size():
-    with pytest.raises(ValueError, match='The size of the entropy'):
+    with pytest.raises(ValueError, match="The size of the entropy"):
         SeedSequence(pool_size=3)
 
 
 def test_bad_entropy():
     match = None
     if PY3:
-        match = 'SeedSequence expects int'
+        match = "SeedSequence expects int"
     with pytest.raises((TypeError,), match=match):
         SeedSequence(entropy=SeedSequence())
-    with pytest.raises(ValueError, match='unrecognized seed string'):
-        SeedSequence(entropy=['apple'])
+    with pytest.raises(ValueError, match="unrecognized seed string"):
+        SeedSequence(entropy=["apple"])
 
 
 def test_seedless():
@@ -144,9 +144,9 @@ def test_seedless():
 def test_equiv_entropy():
     ss0 = SeedSequence(0)
     sss = [SeedSequence(np.array([0], dtype=np.uint32)),
-           SeedSequence('0'),
-           SeedSequence('0x0'),
-           SeedSequence(['0'])]
+           SeedSequence("0"),
+           SeedSequence("0x0"),
+           SeedSequence(["0"])]
 
     for ss in sss:
         assert_array_equal(ss.generate_state(4), ss0.generate_state(4))
@@ -164,9 +164,9 @@ def test_uint_scalar_entropy():
 
 
 def test_neg_entropy():
-    with pytest.raises(ValueError, match='expected non-negative integer'):
+    with pytest.raises(ValueError, match="expected non-negative integer"):
         SeedSequence([-1])
-    with pytest.raises(ValueError, match='expected non-negative integer'):
+    with pytest.raises(ValueError, match="expected non-negative integer"):
         SeedSequence(-1)
-    with pytest.raises(ValueError, match='expected non-negative integer'):
+    with pytest.raises(ValueError, match="expected non-negative integer"):
         SeedSequence([3, -1])

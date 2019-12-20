@@ -14,7 +14,7 @@ from randomgen.tests.test_direct import assert_state_equal
 random = Generator(MT19937(mode="legacy"))
 
 
-@pytest.fixture(scope='module', params=[True, False])
+@pytest.fixture(scope="module", params=[True, False])
 def endpoint(request):
     return request.param
 
@@ -58,7 +58,7 @@ class TestBinomial(object):
         # Tests the corner case of n == 0 for the binomial distribution.
         # binomial(0, p) should be zero for any p in [0, 1].
         # This test addresses issue #3480.
-        zeros = np.zeros(2, dtype='int')
+        zeros = np.zeros(2, dtype="int")
         for p in [0, .5, 1]:
             assert_(random.binomial(0, p) == 0)
             assert_array_equal(random.binomial(zeros, p), zeros)
@@ -114,7 +114,7 @@ class TestMultinomial(object):
         assert_array_equal(non_contig, contig)
 
     def test_large_p(self):
-        with pytest.raises(ValueError, match=r'sum\(pvals'):
+        with pytest.raises(ValueError, match=r"sum\(pvals"):
             random.multinomial(100, np.array([.7, .6, .5, 0]))
 
 
@@ -124,9 +124,9 @@ class TestSetState(object):
         self.rg = Generator(MT19937(self.seed, mode="legacy"))
         self.bit_generator = self.rg.bit_generator
         self.state = self.bit_generator.state
-        self.legacy_state = (self.state['bit_generator'],
-                             self.state['state']['key'],
-                             self.state['state']['pos'])
+        self.legacy_state = (self.state["bit_generator"],
+                             self.state["state"]["key"],
+                             self.state["state"]["pos"])
 
     def test_basic(self):
         with pytest.deprecated_call():
@@ -295,7 +295,7 @@ class TestIntegers(object):
                                      "message:\n\n%s" % str(e))
 
     def test_in_bounds_fuzz(self, endpoint):
-        # Don't use fixed seed
+        # Don"t use fixed seed
         random.bit_generator.seed()
 
         for dt in self.itype[1:]:
@@ -336,21 +336,21 @@ class TestIntegers(object):
         # We use a md5 hash of generated sequences of 1000 samples
         # in the range [0, 6) for all but bool, where the range
         # is [0, 2). Hashes are for little endian numbers.
-        tgt = {'bool': '7dd3170d7aa461d201a65f8bcf3944b0',
-               'int16': '1b7741b80964bb190c50d541dca1cac1',
-               'int32': '4dc9fcc2b395577ebb51793e58ed1a05',
-               'int64': '17db902806f448331b5a758d7d2ee672',
-               'int8': '27dd30c4e08a797063dffac2490b0be6',
-               'uint16': '1b7741b80964bb190c50d541dca1cac1',
-               'uint32': '4dc9fcc2b395577ebb51793e58ed1a05',
-               'uint64': '17db902806f448331b5a758d7d2ee672',
-               'uint8': '27dd30c4e08a797063dffac2490b0be6'}
+        tgt = {"bool": "7dd3170d7aa461d201a65f8bcf3944b0",
+               "int16": "1b7741b80964bb190c50d541dca1cac1",
+               "int32": "4dc9fcc2b395577ebb51793e58ed1a05",
+               "int64": "17db902806f448331b5a758d7d2ee672",
+               "int8": "27dd30c4e08a797063dffac2490b0be6",
+               "uint16": "1b7741b80964bb190c50d541dca1cac1",
+               "uint32": "4dc9fcc2b395577ebb51793e58ed1a05",
+               "uint64": "17db902806f448331b5a758d7d2ee672",
+               "uint8": "27dd30c4e08a797063dffac2490b0be6"}
 
         for dt in self.itype[1:]:
             random.bit_generator.seed(1234)
 
             # view as little endian for hash
-            if sys.byteorder == 'little':
+            if sys.byteorder == "little":
                 val = self.rfunc(0, 6 - endpoint, size=1000, endpoint=endpoint,
                                  dtype=dt)
             else:
@@ -460,7 +460,7 @@ class TestIntegers(object):
 
             # gh-7284: Ensure that we get Python data types
             sample = self.rfunc(lbnd, ubnd, endpoint=endpoint, dtype=dt)
-            assert not hasattr(sample, 'dtype')
+            assert not hasattr(sample, "dtype")
             assert_equal(type(sample), dt)
 
     def test_respect_dtype_array(self, endpoint):
@@ -491,7 +491,7 @@ class TestIntegers(object):
             assert_equal(random.integers(10, 10, size=0).shape, (0,))
 
     def test_warns_byteorder(self):
-        other_byteord_dt = '<i4' if sys.byteorder == 'big' else '>i4'
+        other_byteord_dt = "<i4" if sys.byteorder == "big" else ">i4"
         with pytest.warns(FutureWarning):
             random.integers(0, 200, size=10, dtype=other_byteord_dt)
 
@@ -599,11 +599,11 @@ class TestRandomDist(object):
         # to generate this integer.
         with suppress_warnings() as sup:
             w = sup.record(DeprecationWarning)
-            actual = random.random_integers(np.iinfo('l').max,
-                                            np.iinfo('l').max)
+            actual = random.random_integers(np.iinfo("l").max,
+                                            np.iinfo("l").max)
             assert_(len(w) == 1)
 
-        desired = np.iinfo('l').max
+        desired = np.iinfo("l").max
         assert_equal(actual, desired)
 
     def test_random_integers_deprecated(self):
@@ -613,12 +613,12 @@ class TestRandomDist(object):
             # DeprecationWarning raised with high == None
             assert_raises(DeprecationWarning,
                           random.random_integers,
-                          np.iinfo('l').max)
+                          np.iinfo("l").max)
 
             # DeprecationWarning raised with high != None
             assert_raises(DeprecationWarning,
                           random.random_integers,
-                          np.iinfo('l').max, np.iinfo('l').max)
+                          np.iinfo("l").max, np.iinfo("l").max)
 
     def test_random(self):
         random.bit_generator.seed(self.seed)
@@ -647,7 +647,7 @@ class TestRandomDist(object):
         assert_array_almost_equal(actual, desired, decimal=7)
 
     def test_random_unsupported_type(self):
-        assert_raises(TypeError, random.random, dtype='int32')
+        assert_raises(TypeError, random.random, dtype="int32")
 
     def test_choice_uniform_replace(self):
         random.bit_generator.seed(self.seed)
@@ -675,8 +675,8 @@ class TestRandomDist(object):
 
     def test_choice_noninteger(self):
         random.bit_generator.seed(self.seed)
-        actual = random.choice(['a', 'b', 'c', 'd'], 4)
-        desired = np.array(['c', 'd', 'c', 'd'])
+        actual = random.choice(["a", "b", "c", "d"], 4)
+        desired = np.array(["c", "d", "c", "d"])
         assert_array_equal(actual, desired)
 
     def test_choice_multidimensional_default_axis(self):
@@ -751,14 +751,14 @@ class TestRandomDist(object):
         assert_equal(random.integers(10, 10, size=0).shape, (0,))
         assert_equal(random.choice(0, size=0).shape, (0,))
         assert_equal(random.choice([], size=(0,)).shape, (0,))
-        assert_equal(random.choice(['a', 'b'], size=(3, 0, 4)).shape,
+        assert_equal(random.choice(["a", "b"], size=(3, 0, 4)).shape,
                      (3, 0, 4))
         assert_raises(ValueError, random.choice, [], 10)
 
     def test_choice_nan_probabilities(self):
         a = np.array([42, 1, 2])
         p = [None, None, None]
-        with np.errstate(invalid='ignore'):
+        with np.errstate(invalid="ignore"):
             assert_raises(ValueError, random.choice, a, p=p)
 
     def test_choice_nontintiguous(self):
@@ -785,10 +785,10 @@ class TestRandomDist(object):
     def test_choice_large_sample(self):
         import hashlib
 
-        choice_hash = '6395868be877d27518c832213c17977c'
+        choice_hash = "6395868be877d27518c832213c17977c"
         random.bit_generator.seed(self.seed)
         actual = random.choice(10000, 5000, replace=False)
-        if sys.byteorder != 'little':
+        if sys.byteorder != "little":
             actual = actual.byteswap()
         res = hashlib.md5(actual.view(np.int8)).hexdigest()
         assert_(choice_hash == res)
@@ -796,7 +796,7 @@ class TestRandomDist(object):
     def test_bytes(self):
         random.bit_generator.seed(self.seed)
         actual = random.bytes(10)
-        desired = b'\x82Ui\x9e\xff\x97+Wf\xa5'
+        desired = b"\x82Ui\x9e\xff\x97+Wf\xa5"
         assert_equal(actual, desired)
 
     def test_shuffle(self):
@@ -973,7 +973,7 @@ class TestRandomDist(object):
         assert_raises(ValueError, random.geometric, [1.1] * 10)
         assert_raises(ValueError, random.geometric, -0.1)
         assert_raises(ValueError, random.geometric, [-0.1] * 10)
-        with np.errstate(invalid='ignore'):
+        with np.errstate(invalid="ignore"):
             assert_raises(ValueError, random.geometric, np.nan)
             assert_raises(ValueError, random.geometric, [np.nan] * 10)
 
@@ -1056,7 +1056,7 @@ class TestRandomDist(object):
         assert_array_equal(actual, desired)
 
     def test_logseries_exceptions(self):
-        with np.errstate(invalid='ignore'):
+        with np.errstate(invalid="ignore"):
             assert_raises(ValueError, random.logseries, np.nan)
             assert_raises(ValueError, random.logseries, [np.nan] * 10)
 
@@ -1097,13 +1097,13 @@ class TestRandomDist(object):
         cov = [[1, 2], [2, 1]]
         assert_warns(RuntimeWarning, random.multivariate_normal, mean, cov)
 
-        # and that it doesn't warn with RuntimeWarning check_valid='ignore'
+        # and that it doesn"t warn with RuntimeWarning check_valid="ignore"
         assert_no_warnings(random.multivariate_normal, mean, cov,
-                           check_valid='ignore')
+                           check_valid="ignore")
 
-        # and that it raises with RuntimeWarning check_valid='raises'
+        # and that it raises with RuntimeWarning check_valid="raises"
         assert_raises(ValueError, random.multivariate_normal, mean, cov,
-                      check_valid='raise')
+                      check_valid="raise")
 
         cov = np.array([[1, 0.1], [0.1, 1]], dtype=np.float32)
         with suppress_warnings() as sup:
@@ -1114,7 +1114,7 @@ class TestRandomDist(object):
         mu = np.zeros(2)
         cov = np.eye(2)
         assert_raises(ValueError, random.multivariate_normal, mean, cov,
-                      check_valid='other')
+                      check_valid="other")
         assert_raises(ValueError, random.multivariate_normal,
                       np.zeros((2, 1, 1)), cov)
         assert_raises(ValueError, random.multivariate_normal,
@@ -1131,7 +1131,7 @@ class TestRandomDist(object):
         assert_array_equal(actual, desired)
 
     def test_negative_binomial_exceptions(self):
-        with np.errstate(invalid='ignore'):
+        with np.errstate(invalid="ignore"):
             assert_raises(ValueError, random.negative_binomial, 100, np.nan)
             assert_raises(ValueError, random.negative_binomial, 100,
                           [np.nan] * 10)
@@ -1206,13 +1206,13 @@ class TestRandomDist(object):
         assert_array_equal(actual, desired)
 
     def test_poisson_exceptions(self):
-        lambig = np.iinfo('int64').max
+        lambig = np.iinfo("int64").max
         lamneg = -1
         assert_raises(ValueError, random.poisson, lamneg)
         assert_raises(ValueError, random.poisson, [lamneg] * 10)
         assert_raises(ValueError, random.poisson, lambig)
         assert_raises(ValueError, random.poisson, [lambig] * 10)
-        with np.errstate(invalid='ignore'):
+        with np.errstate(invalid="ignore"):
             assert_raises(ValueError, random.poisson, np.nan)
             assert_raises(ValueError, random.poisson, [np.nan] * 10)
 
@@ -1246,7 +1246,7 @@ class TestRandomDist(object):
 
     def test_standard_exponential(self):
         random.bit_generator.seed(self.seed)
-        actual = random.standard_exponential(size=(3, 2), method='inv')
+        actual = random.standard_exponential(size=(3, 2), method="inv")
         desired = np.array([[0.96441739162374596, 0.89556604882105506],
                             [2.1953785836319808, 2.22243285392490542],
                             [0.6116915921431676, 1.50592546727413201]])
@@ -1292,7 +1292,7 @@ class TestRandomDist(object):
 
     def test_standard_gamma_unknown_type(self):
         assert_raises(TypeError, random.standard_gamma, 1.,
-                      dtype='int32')
+                      dtype="int32")
 
     def test_out_size_mismatch(self):
         out = np.zeros(10)
@@ -1342,8 +1342,8 @@ class TestRandomDist(object):
         assert_array_almost_equal(actual, desired, decimal=15)
 
     def test_uniform_range_bounds(self):
-        fmin = np.finfo('float').min
-        fmax = np.finfo('float').max
+        fmin = np.finfo("float").min
+        fmax = np.finfo("float").max
 
         func = random.uniform
         assert_raises(OverflowError, func, -np.inf, 0)
@@ -1978,7 +1978,7 @@ class TestBroadcast(object):
         actual = zipf(a * 3)
         assert_array_equal(actual, desired)
         assert_raises(ValueError, zipf, bad_a * 3)
-        with np.errstate(invalid='ignore'):
+        with np.errstate(invalid="ignore"):
             assert_raises(ValueError, zipf, np.nan)
             assert_raises(ValueError, zipf, [0, 0, np.nan])
 
@@ -2246,5 +2246,5 @@ def test_seed_equivalence():
 def test_get_state():
     state = random.state
     get_state = random.__getstate__()
-    assert state['state']['pos'] == get_state['state']['pos']
-    assert np.all(state['state']['key'] == get_state['state']['key'])
+    assert state["state"]["pos"] == get_state["state"]["pos"]
+    assert np.all(state["state"]["key"] == get_state["state"]["key"])

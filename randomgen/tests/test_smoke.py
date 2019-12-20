@@ -15,19 +15,8 @@ from randomgen import (DSFMT, HC128, JSF, MT64, MT19937, PCG32, PCG64, SFMT,
                        Xoshiro512, entropy)
 from randomgen._testing import suppress_warnings
 
-PY3 = sys.version_info >= (3,)
 
-if PY3:
-    long = int
-
-MISSING_AES = False
-try:
-    AESCounter(mode="sequence")
-except RuntimeError:
-    MISSING_AES = True
-
-
-@pytest.fixture(scope='module',
+@pytest.fixture(scope="module",
                 params=(np.bool, np.int8, np.int16, np.int32, np.int64,
                         np.uint8, np.uint16, np.uint32, np.uint64))
 def dtype(request):
@@ -147,19 +136,19 @@ class RNG(object):
     def test_advance(self):
         bg = self.rg.bit_generator
         state = bg.state
-        if hasattr(self.rg.bit_generator, 'advance'):
+        if hasattr(self.rg.bit_generator, "advance"):
             kwargs = {}
             if isinstance(bg, (Philox, ThreeFry)):
-                kwargs = {'counter': True}
+                kwargs = {"counter": True}
             self.rg.bit_generator.advance(self.advance, **kwargs)
             assert_(not comp_state(state, self.rg.bit_generator.state))
         else:
             bit_gen_name = self.rg.bit_generator.__class__.__name__
-            pytest.skip('Advance is not supported by {0}'.format(bit_gen_name))
+            pytest.skip("Advance is not supported by {0}".format(bit_gen_name))
 
     def test_jump(self):
         state = self.rg.bit_generator.state
-        if hasattr(self.rg.bit_generator, 'jump'):
+        if hasattr(self.rg.bit_generator, "jump"):
             with pytest.deprecated_call():
                 self.rg.bit_generator.jump()
             jumped_state = self.rg.bit_generator.state
@@ -172,22 +161,22 @@ class RNG(object):
             assert_(comp_state(jumped_state, rejumped_state))
         else:
             bit_gen_name = self.rg.bit_generator.__class__.__name__
-            pytest.skip('jump is not supported by {0}'.format(bit_gen_name))
+            pytest.skip("jump is not supported by {0}".format(bit_gen_name))
 
     def test_jumped(self):
         state = self.rg.bit_generator.state
-        if hasattr(self.rg.bit_generator, 'jumped'):
+        if hasattr(self.rg.bit_generator, "jumped"):
             new_bit_gen = self.rg.bit_generator.jumped()
             assert isinstance(new_bit_gen, self.rg.bit_generator.__class__)
             assert_(comp_state(state, self.rg.bit_generator.state))
             Generator(new_bit_gen).random(1000000)
         else:
             bit_gen_name = self.rg.bit_generator.__class__.__name__
-            pytest.skip('jumped is not supported by {0}'.format(bit_gen_name))
+            pytest.skip("jumped is not supported by {0}".format(bit_gen_name))
 
     def test_jumped_against_jump(self):
-        if (hasattr(self.rg.bit_generator, 'jumped') and
-                hasattr(self.rg.bit_generator, 'jump')):
+        if (hasattr(self.rg.bit_generator, "jumped") and
+                hasattr(self.rg.bit_generator, "jump")):
             bg = self.rg.bit_generator
             state = bg.state
             new_bg = bg.jumped()
@@ -198,12 +187,12 @@ class RNG(object):
             assert_(comp_state(bg.state, new_bg.state))
         else:
             bit_gen_name = self.rg.bit_generator.__class__.__name__
-            pytest.skip('jump or jumped is not supported by '
-                        '{0}'.format(bit_gen_name))
+            pytest.skip("jump or jumped is not supported by "
+                        "{0}".format(bit_gen_name))
 
     def test_jumped_against_jump_32bit(self):
-        if (hasattr(self.rg.bit_generator, 'jumped') and
-                hasattr(self.rg.bit_generator, 'jump')):
+        if (hasattr(self.rg.bit_generator, "jumped") and
+                hasattr(self.rg.bit_generator, "jump")):
             bg = self.rg.bit_generator
             bg.seed(*self.seed)
             # Draw large prime number of 32bits to move internal state values
@@ -217,8 +206,8 @@ class RNG(object):
             assert_(comp_state(bg.state, new_bg.state))
         else:
             bit_gen_name = self.rg.bit_generator.__class__.__name__
-            pytest.skip('jump or jumped is not supported by '
-                        '{0}'.format(bit_gen_name))
+            pytest.skip("jump or jumped is not supported by "
+                        "{0}".format(bit_gen_name))
 
     def test_uniform(self):
         r = self.rg.uniform(-1.0, 0.0, size=10)
@@ -262,18 +251,18 @@ class RNG(object):
         params_0(self.rg.standard_exponential)
 
     def test_standard_exponential_float(self):
-        randoms = self.rg.standard_exponential(10, dtype='float32')
+        randoms = self.rg.standard_exponential(10, dtype="float32")
         assert_(len(randoms) == 10)
         assert randoms.dtype == np.float32
-        params_0(partial(self.rg.standard_exponential, dtype='float32'))
+        params_0(partial(self.rg.standard_exponential, dtype="float32"))
 
     def test_standard_exponential_float_log(self):
-        randoms = self.rg.standard_exponential(10, dtype='float32',
-                                               method='inv')
+        randoms = self.rg.standard_exponential(10, dtype="float32",
+                                               method="inv")
         assert_(len(randoms) == 10)
         assert randoms.dtype == np.float32
-        params_0(partial(self.rg.standard_exponential, dtype='float32',
-                         method='inv'))
+        params_0(partial(self.rg.standard_exponential, dtype="float32",
+                         method="inv"))
 
     def test_standard_cauchy(self):
         assert_(len(self.rg.standard_cauchy(10)) == 10)
@@ -329,12 +318,12 @@ class RNG(object):
 
     def test_reset_state_float(self):
         rg = Generator(self.bit_generator(*self.seed, mode="legacy"))
-        rg.random(dtype='float32')
+        rg.random(dtype="float32")
         state = rg.bit_generator.state
-        n1 = rg.random(size=10, dtype='float32')
+        n1 = rg.random(size=10, dtype="float32")
         rg2 = Generator(self.bit_generator(mode="sequence"))
         rg2.bit_generator.state = state
-        n2 = rg2.random(size=10, dtype='float32')
+        n2 = rg2.random(size=10, dtype="float32")
         assert_((n1 == n2).all())
 
     def test_shuffle(self):
@@ -351,7 +340,7 @@ class RNG(object):
         with pytest.deprecated_call():
             vals = self.rg.tomaxint(size=100000)
         maxsize = 0
-        if os.name == 'nt':
+        if os.name == "nt":
             maxsize = 2 ** 31 - 1
         else:
             try:
@@ -575,8 +564,8 @@ class RNG(object):
     def test_seed_array(self):
         if self.seed_vector_bits is None:
             bit_gen_name = self.bit_generator.__name__
-            pytest.skip('Vector seeding is not supported by '
-                        '{0}'.format(bit_gen_name))
+            pytest.skip("Vector seeding is not supported by "
+                        "{0}".format(bit_gen_name))
 
         dtype = np.uint32 if self.seed_vector_bits == 32 else np.uint64
         seed = np.array([1], dtype=dtype)
@@ -935,8 +924,8 @@ class RNG(object):
     def test_random_uintegers(self):
         assert len(self.rg.random_uintegers(10)) == 10
         assert len(self.rg.random_uintegers(10, bits=32)) == 10
-        assert isinstance(self.rg.random_uintegers(), (int, long))
-        assert isinstance(self.rg.random_uintegers(bits=32), (int, long))
+        assert isinstance(self.rg.random_uintegers(), int)
+        assert isinstance(self.rg.random_uintegers(bits=32), int)
         with pytest.raises(ValueError):
             self.rg.random_uintegers(bits=128)
 
@@ -963,7 +952,7 @@ class RNG(object):
         bg._benchmark(1000)
         assert not comp_state(state, bg.state)
         state = bg.state
-        bg._benchmark(1000, 'double')
+        bg._benchmark(1000, "double")
         assert not comp_state(state, bg.state)
 
 
@@ -986,8 +975,8 @@ class TestMT19937(RNG):
         state = nprg.get_state()
         self.rg.bit_generator.state = state
         state2 = self.rg.bit_generator.state
-        assert_((state[1] == state2['state']['key']).all())
-        assert_((state[2] == state2['state']['pos']))
+        assert_((state[1] == state2["state"]["key"]).all())
+        assert_((state[2] == state2["state"]["pos"]))
 
 
 class TestMT64(RNG):
@@ -1089,12 +1078,12 @@ class TestPhilox4x64(RNG):
 
     def test_repr(self):
         rpr = repr(self.bit_generator(mode="sequence"))
-        assert '{0}x{1}'.format(self.number, self.width) in rpr
+        assert "{0}x{1}".format(self.number, self.width) in rpr
 
     def test_bad_width_number(self):
-        with pytest.raises(ValueError, match='number must be either 2 or 4'):
+        with pytest.raises(ValueError, match="number must be either 2 or 4"):
             self.bit_generator_base(number=self.number + 1, mode="legacy")
-        with pytest.raises(ValueError, match='width must be either 32 or 64'):
+        with pytest.raises(ValueError, match="width must be either 32 or 64"):
             self.bit_generator_base(width=self.width - 1, mode="legacy")
 
 
@@ -1295,14 +1284,14 @@ class TestEntropy(object):
         e1 = entropy.random_entropy(10)
         e2 = entropy.random_entropy(10)
         assert_((e1 != e2).all())
-        e1 = entropy.random_entropy(10, source='system')
-        e2 = entropy.random_entropy(10, source='system')
+        e1 = entropy.random_entropy(10, source="system")
+        e2 = entropy.random_entropy(10, source="system")
         assert_((e1 != e2).all())
 
     def test_fallback(self):
-        e1 = entropy.random_entropy(source='fallback')
+        e1 = entropy.random_entropy(source="fallback")
         time.sleep(0.1)
-        e2 = entropy.random_entropy(source='fallback')
+        e2 = entropy.random_entropy(source="fallback")
         assert_((e1 != e2))
 
 
@@ -1320,7 +1309,6 @@ class TestPCG32(TestPCG64):
         cls._extra_setup()
 
 
-@pytest.mark.skipif(MISSING_AES, reason='AES is not availble')
 class TestAESCounter(RNG):
     @classmethod
     def setup_class(cls):

@@ -7,7 +7,7 @@ import pytest
 
 import randomgen.mtrand as random
 
-HAS_32BIT_CLONG = np.iinfo('l').max < 2**32
+HAS_32BIT_CLONG = np.iinfo("l").max < 2**32
 
 
 class TestRegression(object):
@@ -29,7 +29,7 @@ class TestRegression(object):
             (2**20 - 2, 2**20 - 2, 2**20 - 2),  # Check for 32-bit systems
         ]
         is_64bits = sys.maxsize > 2**32
-        if is_64bits and sys.platform != 'win32':
+        if is_64bits and sys.platform != "win32":
             # Check for 64-bit systems
             args.append((2**40 - 2, 2**40 - 2, 2**40 - 2))
         for arg in args:
@@ -80,7 +80,7 @@ class TestRegression(object):
             assert_array_equal(m.choice(10, size=10, p=np.ones(10)/10.), res)
 
     def test_multivariate_normal_size_types(self):
-        # Test for multivariate_normal issue with 'size' argument.
+        # Test for multivariate_normal issue with "size" argument.
         # Check that the multivariate_normal size argument can be a
         # numpy integer.
         random.multivariate_normal([0], [[0]], size=1)
@@ -92,7 +92,7 @@ class TestRegression(object):
         # NaNs due to roundoff errors causing 0 / 0, gh-5851
         random.seed(1234567890)
         x = random.beta(0.0001, 0.0001, size=100)
-        assert_(not np.any(np.isnan(x)), 'Nans in random.beta')
+        assert_(not np.any(np.isnan(x)), "Nans in random.beta")
 
     def test_choice_sum_of_probs_tolerance(self):
         # The sum of probs should be 1.0 with some tolerance.
@@ -113,7 +113,7 @@ class TestRegression(object):
         # Tests gh-7710
         random.seed(1234)
 
-        a = np.array(['a', 'a' * 1000])
+        a = np.array(["a", "a" * 1000])
 
         for _ in range(100):
             random.shuffle(a)
@@ -159,16 +159,16 @@ class TestRegression(object):
         assert_array_equal(m.__array__(), np.arange(5))
 
     def test_warns_byteorder(self):
-        other_byteord_dt = '<i4' if sys.byteorder == 'big' else '>i4'
+        other_byteord_dt = "<i4" if sys.byteorder == "big" else ">i4"
         with pytest.warns(FutureWarning):
             random.randint(0, 200, size=10, dtype=other_byteord_dt)
 
     @pytest.mark.skipif(HAS_32BIT_CLONG,
-                        reason='Cannot test with 32-bit C long')
+                        reason="Cannot test with 32-bit C long")
     def test_randint_117(self):
         random.seed(0)
         expected = np.array([2357136044, 2546248239, 3071714933, 3626093760,
                              2588848963, 3684848379, 2340255427, 3638918503,
-                             1819583497, 2678185683], dtype='int64')
+                             1819583497, 2678185683], dtype="int64")
         actual = random.randint(2**32, size=10)
         assert_array_equal(actual, expected)

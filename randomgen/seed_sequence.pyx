@@ -56,7 +56,7 @@ from libc.stdint cimport uint32_t
 from .common cimport (random_raw, benchmark, prepare_ctypes, prepare_cffi)
 from .distributions cimport bitgen_t
 
-__all__ = ['SeedSequence', 'SeedlessSeedSequence']
+__all__ = ['SeedSequence', 'SeedlessSeedSequence', 'ISeedSequence']
 
 np.import_array()
 
