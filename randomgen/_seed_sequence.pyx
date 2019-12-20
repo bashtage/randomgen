@@ -56,7 +56,8 @@ from libc.stdint cimport uint32_t
 from .common cimport (random_raw, benchmark, prepare_ctypes, prepare_cffi)
 from .distributions cimport bitgen_t
 
-__all__ = ['SeedSequence', 'SeedlessSeedSequence', 'ISeedSequence']
+__all__ = ['SeedSequence', 'SeedlessSeedSequence', 'ISeedSequence',
+           'ISpawnableSeedSequence']
 
 np.import_array()
 
@@ -248,11 +249,6 @@ cdef class SeedlessSeedSequence(object):
 
     def spawn(self, n_children):
         return [self] * n_children
-
-
-# We cannot directly subclass a `cdef class` type from an `ABC` in Cython, so
-# we must register it after the fact.
-ISpawnableSeedSequence.register(SeedlessSeedSequence)
 
 
 cdef class SeedSequence(object):
@@ -476,5 +472,7 @@ cdef class SeedSequence(object):
         self.n_children_spawned += n_children
         return seqs
 
-
+# We cannot directly subclass a `cdef class` type from an `ABC` in Cython, so
+# we must register it after the fact.
+ISpawnableSeedSequence.register(SeedlessSeedSequence)
 ISpawnableSeedSequence.register(SeedSequence)

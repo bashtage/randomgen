@@ -1,15 +1,21 @@
-import sys
-
 import numpy as np
 from numpy.testing import assert_array_equal
 import pytest
 
-from randomgen.seed_sequence import SeedlessSeedSequence, SeedSequence
+from randomgen._seed_sequence import SeedlessSeedSequence, SeedSequence
 
-PY3 = sys.version_info >= (3,)
+HAS_NP_SEED_SEQUENCE = False
+try:
+    from numpy.random._bit_generator import SeedSequence as NPSeedSequence
 
-if PY3:
-    unicode = str
+    HAS_NP_SEED_SEQUENCE = True
+except (ImportError, AttributeError):
+    try:
+        from numpy.random.bit_generator import SeedSequence as NPSeedSequence
+
+        HAS_NP_SEED_SEQUENCE = True
+    except (ImportError, AttributeError):
+        pass
 
 
 def test_reference_data():
@@ -107,7 +113,7 @@ def test_state():
 def test_repr():
     ss = SeedSequence(0, pool_size=16, spawn_key=(0, 1, 7))
     r = ss.__repr__()
-    assert isinstance(r, (str, unicode))
+    assert isinstance(r, str)
     assert "entropy" in r
     assert "pool_size=16" in r
     assert "spawn_key=(0, 1, 7)" in r
@@ -123,10 +129,7 @@ def test_min_pool_size():
 
 
 def test_bad_entropy():
-    match = None
-    if PY3:
-        match = "SeedSequence expects int"
-    with pytest.raises((TypeError,), match=match):
+    with pytest.raises((TypeError,), match="SeedSequence expects int"):
         SeedSequence(entropy=SeedSequence())
     with pytest.raises(ValueError, match="unrecognized seed string"):
         SeedSequence(entropy=["apple"])
@@ -170,3 +173,24 @@ def test_neg_entropy():
         SeedSequence(-1)
     with pytest.raises(ValueError, match="expected non-negative integer"):
         SeedSequence([3, -1])
+
+
+@pytest.mark.skipif(not HAS_NP_SEED_SEQUENCE, reason='NumPy too old')
+def test_against_numpy():
+    ss = SeedSequence(0)
+    np_ss = NPSeedSequence(0)
+    assert_array_equal(ss.generate_state(10), np_ss.generate_state(10))
+
+
+@pytest.mark.skipif(not HAS_NP_SEED_SEQUENCE, reason='NumPy too old')
+def test_against_numpy_spawn():
+    entropy = [1231854054, 2485020620, 2472030289,  641337343, 3981837114,
+               248869471,  532471113,  949593482, 1224833511, 2864447214]
+    ss = SeedSequence(entropy)
+    np_ss = NPSeedSequence(entropy)
+    ss_children = ss.spawn(2)
+    np_ss_children = np_ss.spawn(2)
+    assert ss.n_children_spawned == np_ss.n_children_spawned
+    for child, np_child in zip(ss_children, np_ss_children):
+        assert_array_equal(child.generate_state(10),
+                           np_child.generate_state(10))

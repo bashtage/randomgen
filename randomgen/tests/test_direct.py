@@ -1,7 +1,6 @@
 from functools import partial
 import os
 from os.path import join
-import sys
 
 import numpy as np
 from numpy.testing import (assert_allclose, assert_array_equal, assert_equal,
@@ -205,11 +204,6 @@ class Base(object):
         val = bg.random_raw()
         assert isinstance(val, int)
         assert isinstance(bg.seed_seq, ISEED_SEQUENCES)
-
-    def test_default(self):
-        bg = self.setup_bitgenerator([None])
-        val = bg.random_raw()
-        assert isinstance(val, int)
 
     def test_raw(self):
         bit_generator = self.setup_bitgenerator(self.data1["seed"])
