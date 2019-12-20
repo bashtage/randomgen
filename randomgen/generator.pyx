@@ -67,7 +67,7 @@ cdef class Generator:
 
     **No Compatibility Guarantee**
 
-    ``Generator`` is evolving and so it isn't possible to provide a
+    ``Generator`` is evolving and so it is not possible to provide a
     compatibility guarantee like ``RandomState``. In particular, better
     algorithms have already been added and bugs that change the stream
     have been fixed. This will change once ``Generator`` stabilizes.

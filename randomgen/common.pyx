@@ -101,8 +101,6 @@ cdef class BitGenerator:
             self.seed_seq = seed
         elif self.mode == "sequence":
             self.seed_seq = DefaultSeedSequence(seed)
-        elif seed is None:
-            self.seed_seq = DefaultSeedSequence()
         else:
             self.seed_seq = None
         if self.seed_seq is not None:

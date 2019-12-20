@@ -1653,3 +1653,11 @@ class TestSPECK128(TestHC128):
             self.bit_generator(rounds=35, mode="legacy")
         with pytest.raises(ValueError):
             self.bit_generator(rounds=27.5, mode="legacy")
+
+
+def test_mode():
+    with pytest.warns(FutureWarning, match="mode is None which currently"):
+        mt19937 = MT19937()
+    assert mt19937.seed_seq is None
+    with pytest.raises(ValueError, match="mode must be one of None"):
+        MT19937(mode="unknown")

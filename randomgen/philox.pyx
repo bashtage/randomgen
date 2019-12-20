@@ -83,6 +83,9 @@ cdef class Philox(BitGenerator):
         be used in multiple Generators without corrupting the state. Code that
         generates values from a bit generator should hold the bit generator's
         lock.
+    seed_seq : {None, SeedSequence}
+        The SeedSequence instance used to initialize the generator if mode is
+        "sequence" or is seed is a SeedSequence. None if mode is "legacy".
 
     Notes
     -----

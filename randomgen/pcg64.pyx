@@ -24,17 +24,17 @@ cdef class PCG64(BitGenerator):
 
     Parameters
     ----------
-    seed : {None, int}, optional
+    seed : {None, int, SeedSequence}, optional
         Random seed initializing the pseudo-random number generator.
-        Can be an integer in [0, 2**128] or ``None`` (the default).
-        If `seed` is ``None``, then ``PCG64`` will try to read data
-        from ``/dev/urandom`` (or the Windows analog) if available. If
-        unavailable, a 64-bit hash of the time and process ID is used.
+        Can be an integer in [0, 2**128], a SeedSequence instance or ``None``
+        (the default). If `seed` is ``None``, then ``PCG64`` will try to
+        read data from ``/dev/urandom`` (or the Windows analog) if available.
+        If unavailable, a 64-bit hash of the time and process ID is used.
     inc : {None, int}, optional
-        Stream to return.
-        Can be an integer in [0, 2**128] or ``None`` (the default). If `inc` is
-        ``None``, then 0 is used. Can be used with the same seed to
-        produce multiple streams using other values of inc.
+        Stream to return. Can be an integer in [0, 2**128] or ``None``.
+        The default is 0. If `inc` is ``None``, then it is initialized using
+        entropy. Can be used with the same seed to produce multiple streams
+        using other values of inc.
     mode : {None, "sequence", "legacy"}, optional
         The seeding mode to use. "legacy" uses the legacy
         SplitMix64-based initialization. "sequence" uses a SeedSequence
@@ -144,10 +144,18 @@ cdef class PCG64(BitGenerator):
 
         Parameters
         ----------
-        seed : {None, int}
-            Seed for ``PCG64``. Integer between 0 and 2**128-1.
-        inc : {None, int}
-            Increment to use for PCG stream. Integer between 0 and 2**128-1.
+        seed : {None, int, SeedSequence}, optional
+            Random seed initializing the pseudo-random number generator. Can
+            be an integer in [0, 2**128], a SeedSequence instance or ``None``
+            (the default). If `seed` is ``None``, then ``PCG64`` will try to
+            read data from ``/dev/urandom`` (or the Windows analog) if
+            available. If unavailable, a 64-bit hash of the time and process
+            ID is used.
+        inc : {None, int}, optional
+            Stream to return. Can be an integer in [0, 2**128] or ``None``.
+            The default is 0. If `inc` is ``None``, then it is initialized
+            using entropy. Can be used with the same seed to produce multiple
+            streams using other values of inc.
 
         Raises
         ------
@@ -167,10 +175,13 @@ cdef class PCG64(BitGenerator):
         if self.seed_seq is not None:
             return
 
-        inc = 0 if inc is None else inc
-        _inc = <np.ndarray>np.empty(2, np.uint64)
-        _inc[0] = int(inc) // 2**64
-        _inc[1] = int(inc) % 2**64
+        if inc is None:
+            _inc = <np.ndarray>random_entropy(4, 'auto')
+            _inc = <np.ndarray>_inc.view(np.uint64)
+        else:
+            _inc = <np.ndarray>np.empty(2, np.uint64)
+            _inc[0] = int(inc) // 2**64
+            _inc[1] = int(inc) % 2**64
 
         if seed is None:
             _seed = <np.ndarray>random_entropy(4, 'auto')

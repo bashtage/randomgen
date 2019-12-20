@@ -27,17 +27,17 @@ cdef class PCG32(BitGenerator):
 
     Parameters
     ----------
-    seed : {None, int}, optional
-        Random seed initializing the pseudo-random number generator.
-        Can be an integer in [0, 2**64] or ``None`` (the default).
-        If `seed` is ``None``, then ``PCG32`` will try to read data
+    seed : {None, int, SeedSequence}, optional
+        Random seed initializing the pseudo-random number generator. Can be an
+        integer in [0, 2**64], a SeedSequence instance or ``None`` (the
+        default). If `seed` is ``None``, then ``PCG32`` will try to read data
         from ``/dev/urandom`` (or the Windows analog) if available. If
         unavailable, a 64-bit hash of the time and process ID is used.
     inc : {None, int}, optional
-        Stream to return.
-        Can be an integer in [0, 2**64] or ``None`` (the default). If `inc` is
-        ``None``, then 0 is used. Can be used with the same seed to
-        produce multiple streams using other values of inc.
+        Stream to return. Can be an integer in [0, 2**64] or ``None``.
+        The default is 0. If `inc` is ``None``, then it is initialized using
+        entropy. Can be used with the same seed to produce multiple streams
+        using other values of inc.
     mode : {None, "sequence", "legacy"}, optional
         The seeding mode to use. "legacy" uses the legacy
         SplitMix64-based initialization. "sequence" uses a SeedSequence
