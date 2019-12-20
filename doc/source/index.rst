@@ -212,6 +212,7 @@ Random Generator
 .. toctree::
    :maxdepth: 1
 
+   future
    Random Generation <generator>
    legacy
 

@@ -32,15 +32,31 @@ generators in Python and NumPy.
 
 # WARNINGS
 
-## Changes in v1.17
+## Changes in v1.18
 
-There are many changes between v1.16.x and v1.17.x. These reflect API
+There are many changes between v1.16.x and v1.18.x. These reflect API
 decision taken in conjunction with NumPy in preparation of the core
 of `randomgen` being used as the preferred random number generator in
 NumPy. These all issue `DeprecationWarning`s except for `BasicRNG.generator`
 which raises `NotImplementedError`. The C-API has also changed to reflect
 the preferred naming the underlying Pseudo-RNGs, which are now known as
 bit generators (or `BigGenerator`s).
+
+## Future Plans
+
+A substantial portion of randomgen has been merged into NumPy. Revamping NumPy's random
+number generation was always the goal of this project (and its predecessor
+[NextGen NumPy RandomState](https://github.com/bashtage/ng-numpy-randomstate>)),
+and so it has succeeded.
+
+While I have no immediate plans to remove anything, after a 1.19 release I will:
+
+* Remove `Generator` and `RandomState`. These duplicate NumPy and will diverge over time.
+  The versions in NumPy are authoritative.
+* Preserve novel methods of `Generator` in a new class, `ExtendedGenerator`.
+* Add some distributions that are not supported in NumPy.
+* Remove `MT19937` `PCG64` since these are duplicates of bit generators in NumPy.
+* Add any interesting bit generators I come across.
 
 
 ## Python 2.7 Support
@@ -60,7 +76,7 @@ which can fully reproduce the sequence produced by NumPy.
 
 # Features
 
-* Replacement for NumPy's RandomState
+* Designed as a peplacement for NumPy's 1.16's RandomState
 
   ```python
   from randomgen import Generator, MT19937
@@ -116,6 +132,7 @@ This module includes a number of alternative random
 number generators in addition to the MT19937 that is included in NumPy.
 The RNGs include:
 
+* Cryptographic cipher-based random number generator based on AES, ChaCha20, HC128 and Speck128.
 * [MT19937](https://github.com/numpy/numpy/blob/master/numpy/random/mtrand/),
  the NumPy rng
 * [dSFMT](http://www.math.sci.hiroshima-u.ac.jp/~m-mat/MT/SFMT/) a
@@ -130,7 +147,11 @@ The RNGs include:
 
 ## Differences from `numpy.random.RandomState`
 
-### New Features
+### Note
+These comparrisons are relative to NumPy 1.16. The project has been
+substantially merged into NumPy 1.17+.
+
+### New Features relative to NumPy 1.16
 
 * `standard_normal`, `normal`, `randn` and `multivariate_normal` all
   use the much faster (100%+) Ziggurat method.
@@ -186,19 +207,12 @@ Documentation for the latest release is available on
 the latest commit (unreleased) is available under
 [devel](http://bashtage.github.io/randomgen/devel/).
 
-## Plans
-
-This module is essentially complete.  There are a few rough edges that
-need to be smoothed.
-
-* Creation of additional streams from where supported
-  (i.e. a `next_stream()` method)
 
 ## Requirements
 Building requires:
 
-* Python (3.5, 3.6, 3.7, tested on 2.7 but officially dropped)
-* NumPy (1.13, 1.14, 1.15, 1.16)
+* Python (3.5, 3.6, 3.7, 3.8)
+* NumPy (1.13, 1.14, 1.15, 1.16, 1.17, 1.18)
 * Cython (0.26+)
 * tempita (0.5+), if not provided by Cython
 
@@ -210,8 +224,8 @@ versions.
 ## Development and Testing
 
 All development has been on 64-bit Linux, and it is regularly tested on
-Travis-CI (Linux/OSX) and Appveyor (Windows). The library is occasionally
-tested on Linux 32-bit and Free BSD 11.1.
+Travis-CI (Linux/OSX), Appveyor (Windows), Cirrus (FreeBSD) and Drone.io
+(ARM/ARM64 Linux).
 
 Tests are in place for all RNGs. The MT19937 is tested against
 NumPy's implementation for identical results. It also passes NumPy's
@@ -317,4 +331,3 @@ NumPy's mt19937.
     Xorshift1024          232.4%
     Xoshiro256            306.6%
     Xoshiro512            274.6%
-
