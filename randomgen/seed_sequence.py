@@ -10,7 +10,10 @@ except (ImportError, AttributeError):
                                                 ISeedSequence,
                                                 ISpawnableSeedSequence)
     except (ImportError, AttributeError):
-        from randomgen._seed_sequence import (SeedSequence,  # noqa: F401
+        from randomgen._seed_sequence import (SeedSequence,
                                               SeedlessSeedSequence,
                                               ISeedSequence,
                                               ISpawnableSeedSequence)
+
+__all__ = ["SeedSequence", "SeedlessSeedSequence", "ISeedSequence",
+           "ISpawnableSeedSequence"]

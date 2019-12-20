@@ -4,7 +4,7 @@ cimport numpy as np
 from randomgen.common cimport *
 from randomgen.entropy import random_entropy, seed_by_array
 
-__all__ = ['RDRAND']
+__all__ = ["RDRAND"]
 
 cdef extern from "src/rdrand/rdrand.h":
 
@@ -96,7 +96,7 @@ cdef class RDRAND(BitGenerator):
     def __init__(self, seed=None):
         BitGenerator.__init__(self, seed, mode="sequence")
         if not rdrand_capable():
-            raise RuntimeError('The RDRAND instruction is not available')   # pragma: no cover
+            raise RuntimeError("The RDRAND instruction is not available")   # pragma: no cover
         self.rng_state.status = 1
         self.seed(seed)
 
@@ -124,7 +124,7 @@ cdef class RDRAND(BitGenerator):
             If seed is not None
         """
         if seed is not None:
-            raise TypeError('seed cannot be set and so must be None')
+            raise TypeError("seed cannot be set and so must be None")
 
     def jumped(self, iter=1):
         """
@@ -165,14 +165,14 @@ cdef class RDRAND(BitGenerator):
             Dictionary containing the information required to describe the
             state of the PRNG
         """
-        return {'bit_generator': self.__class__.__name__,
-                'status': self.rng_state.status}
+        return {"bit_generator": self.__class__.__name__,
+                "status": self.rng_state.status}
 
     @state.setter
     def state(self, value):
         if not isinstance(value, dict):
-            raise TypeError('state must be a dict')
-        bitgen = value.get('bit_generator', '')
+            raise TypeError("state must be a dict")
+        bitgen = value.get("bit_generator", "")
         if bitgen != self.__class__.__name__:
-            raise ValueError('state must be for a {0} '
-                             'PRNG'.format(self.__class__.__name__))
+            raise ValueError("state must be for a {0} "
+                             "PRNG".format(self.__class__.__name__))

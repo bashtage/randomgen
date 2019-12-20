@@ -5,7 +5,7 @@ cimport numpy as np
 from randomgen.common cimport *
 from randomgen.entropy import random_entropy, seed_by_array
 
-__all__ = ['HC128']
+__all__ = ["HC128"]
 
 cdef uint64_t hc128_uint64(void* st) nogil:
     return hc128_next64(<hc128_state_t *>st)
@@ -152,20 +152,20 @@ cdef class HC128(BitGenerator):
             If seed values are out of range for the PRNG.
         """
         if seed is not None and key is not None:
-            raise ValueError('seed and key cannot be simultaneously used')
+            raise ValueError("seed and key cannot be simultaneously used")
         if key is None:
             BitGenerator._seed_with_seed_sequence(self, seed)
             if self.seed_seq is not None:
                 return
 
-        seed = object_to_int(seed, 256, 'seed')
-        key = object_to_int(key, 256, 'key')
+        seed = object_to_int(seed, 256, "seed")
+        key = object_to_int(key, 256, "key")
         if key is not None:
-            state = int_to_array(key, 'key', 256, 64)
+            state = int_to_array(key, "key", 256, 64)
         elif seed is not None:
-            state = seed_by_array(int_to_array(seed, 'seed', None, 64), 4)
+            state = seed_by_array(int_to_array(seed, "seed", None, 64), 4)
         else:
-            state = random_entropy(8, 'auto')
+            state = random_entropy(8, "auto")
         hc128_seed(&self.rng_state, <uint32_t *>np.PyArray_DATA(state))
 
     @property
@@ -195,12 +195,12 @@ cdef class HC128(BitGenerator):
         buf_arr = <uint32_t *>np.PyArray_DATA(buffer)
         for i in range(16):
             buf_arr[i] = self.rng_state.buffer[i]
-        return {'bit_generator': self.__class__.__name__,
-                'state': {'p': p,
-                          'q': q,
-                          'hc_idx': self.rng_state.hc_idx,
-                          'buffer': buffer,
-                          'buffer_idx': self.rng_state.buffer_idx},
+        return {"bit_generator": self.__class__.__name__,
+                "state": {"p": p,
+                          "q": q,
+                          "hc_idx": self.rng_state.hc_idx,
+                          "buffer": buffer,
+                          "buffer_idx": self.rng_state.buffer_idx},
                 }
 
     @state.setter
@@ -211,15 +211,15 @@ cdef class HC128(BitGenerator):
         cdef uint32_t *buf_arr
 
         if not isinstance(value, dict):
-            raise TypeError('state must be a dict')
-        bitgen = value.get('bit_generator', '')
+            raise TypeError("state must be a dict")
+        bitgen = value.get("bit_generator", "")
         if bitgen != self.__class__.__name__:
-            raise ValueError('state must be for a {0} '
-                             'PRNG'.format(self.__class__.__name__))
-        state = value['state']
-        p = check_state_array(state['p'], 512, 32, 'p')
-        q = check_state_array(state['q'], 512, 32, 'q')
-        buffer = check_state_array(state['buffer'], 16, 32, 'buffer')
+            raise ValueError("state must be for a {0} "
+                             "PRNG".format(self.__class__.__name__))
+        state = value["state"]
+        p = check_state_array(state["p"], 512, 32, "p")
+        q = check_state_array(state["q"], 512, 32, "q")
+        buffer = check_state_array(state["buffer"], 16, 32, "buffer")
         p_arr = <uint32_t *>np.PyArray_DATA(p)
         q_arr = <uint32_t *>np.PyArray_DATA(q)
         for i in range(512):
@@ -228,5 +228,5 @@ cdef class HC128(BitGenerator):
         buf_arr = <uint32_t *>np.PyArray_DATA(buffer)
         for i in range(16):
             self.rng_state.buffer[i] = buf_arr[i]
-        self.rng_state.hc_idx = state['hc_idx']
-        self.rng_state.buffer_idx = state['buffer_idx']
+        self.rng_state.hc_idx = state["hc_idx"]
+        self.rng_state.buffer_idx = state["buffer_idx"]

@@ -1,6 +1,6 @@
 from libc.stdint cimport uint32_t, uint64_t
 
-cdef extern from 'src/threefry/threefry.h':
+cdef extern from "src/threefry/threefry.h":
     struct s_r123array1x32:
         uint32_t v[1]
     ctypedef s_r123array1x32 r123array1x32

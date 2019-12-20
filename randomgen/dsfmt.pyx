@@ -6,7 +6,7 @@ cimport numpy as np
 from randomgen.common cimport *
 from randomgen.entropy import random_entropy
 
-__all__ = ['DSFMT']
+__all__ = ["DSFMT"]
 
 DEF DSFMT_MEXP = 19937
 DEF DSFMT_N = 191  # ((DSFMT_MEXP - 128) / 104 + 1)
@@ -173,23 +173,23 @@ cdef class DSFMT(BitGenerator):
             return
         try:
             if seed is None:
-                seed_arr = random_entropy(2 * DSFMT_N64, 'auto')
+                seed_arr = random_entropy(2 * DSFMT_N64, "auto")
                 dsfmt_init_by_array(self.rng_state.state,
                                     <uint32_t *>np.PyArray_DATA(seed_arr),
                                     2 * DSFMT_N64)
 
             else:
-                if hasattr(seed, 'squeeze'):
+                if hasattr(seed, "squeeze"):
                     seed = seed.squeeze()
                 idx = operator.index(seed)
                 if idx > int(2**32 - 1) or idx < 0:
                     raise ValueError("Seed must be between 0 and 2**32 - 1")
                 dsfmt_init_gen_rand(self.rng_state.state, seed)
         except TypeError:
-            obj = np.asarray(seed).astype(np.int64, casting='safe').ravel()
+            obj = np.asarray(seed).astype(np.int64, casting="safe").ravel()
             if ((obj > int(2**32 - 1)) | (obj < 0)).any():
                 raise ValueError("Seed must be between 0 and 2**32 - 1")
-            seed_arr = obj.astype(np.uint32, casting='unsafe', order='C')
+            seed_arr = obj.astype(np.uint32, casting="unsafe", order="C")
             dsfmt_init_by_array(self.rng_state.state,
                                 <uint32_t *>np.PyArray_DATA(seed_arr),
                                 <int>np.PyArray_DIM(seed_arr, 0))
@@ -208,7 +208,7 @@ cdef class DSFMT(BitGenerator):
             Number of times to jump the state of the rng.
         """
         if iter < 0:
-            raise ValueError('iter must be positive')
+            raise ValueError("iter must be positive")
         dsfmt_jump_n(&self.rng_state, iter)
         # Clear the buffer
         self._reset_state_variables()
@@ -230,8 +230,8 @@ cdef class DSFMT(BitGenerator):
             PRNG jumped iter times
         """
         import warnings
-        warnings.warn('jump (in-place) has been deprecated in favor of jumped'
-                      ', which returns a new instance', DeprecationWarning)
+        warnings.warn("jump (in-place) has been deprecated in favor of jumped"
+                      ", which returns a new instance", DeprecationWarning)
 
         self.jump_inplace(iter)
         return self
@@ -287,30 +287,30 @@ cdef class DSFMT(BitGenerator):
         buffered_uniforms = np.empty(DSFMT_N64, dtype=np.double)
         for i in range(DSFMT_N64):
             buffered_uniforms[i] = self.rng_state.buffered_uniforms[i]
-        return {'bit_generator': self.__class__.__name__,
-                'state': {'state': np.asarray(state),
-                          'idx': self.rng_state.state.idx},
-                'buffer_loc': self.rng_state.buffer_loc,
-                'buffered_uniforms': np.asarray(buffered_uniforms)}
+        return {"bit_generator": self.__class__.__name__,
+                "state": {"state": np.asarray(state),
+                          "idx": self.rng_state.state.idx},
+                "buffer_loc": self.rng_state.buffer_loc,
+                "buffered_uniforms": np.asarray(buffered_uniforms)}
 
     @state.setter
     def state(self, value):
         cdef Py_ssize_t i, j, loc = 0
         if not isinstance(value, dict):
-            raise TypeError('state must be a dict')
-        bitgen = value.get('bit_generator', '')
+            raise TypeError("state must be a dict")
+        bitgen = value.get("bit_generator", "")
         if bitgen != self.__class__.__name__:
-            raise ValueError('state must be for a {0} '
-                             'PRNG'.format(self.__class__.__name__))
-        state = check_state_array(value['state']['state'], 2*DSFMT_N_PLUS_1,
-                                  64, 'state')
+            raise ValueError("state must be for a {0} "
+                             "PRNG".format(self.__class__.__name__))
+        state = check_state_array(value["state"]["state"], 2*DSFMT_N_PLUS_1,
+                                  64, "state")
         for i in range(DSFMT_N_PLUS_1):
             for j in range(2):
                 self.rng_state.state.status[i].u[j] = state[loc]
                 loc += 1
-        self.rng_state.state.idx = value['state']['idx']
-        buffered_uniforms = value['buffered_uniforms']
+        self.rng_state.state.idx = value["state"]["idx"]
+        buffered_uniforms = value["buffered_uniforms"]
         # TODO: Check buffered_uniforms
         for i in range(DSFMT_N64):
             self.rng_state.buffered_uniforms[i] = buffered_uniforms[i]
-        self.rng_state.buffer_loc = value['buffer_loc']
+        self.rng_state.buffer_loc = value["buffer_loc"]

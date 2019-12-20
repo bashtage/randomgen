@@ -21,33 +21,33 @@ from randomgen.common cimport *
 from randomgen.distributions cimport *
 from randomgen cimport api
 
-__all__ = ['Generator', 'beta', 'binomial', 'bytes', 'chisquare', 'choice',
-           'complex_normal', 'dirichlet', 'exponential', 'f', 'gamma',
-           'geometric', 'gumbel', 'hypergeometric', 'integers', 'laplace',
-           'logistic', 'lognormal', 'logseries', 'multinomial',
-           'multivariate_normal', 'negative_binomial', 'noncentral_chisquare',
-           'noncentral_f', 'normal', 'pareto', 'permutation',
-           'poisson', 'power', 'randint', 'random',  'rayleigh', 'shuffle',
-           'standard_cauchy', 'standard_exponential', 'standard_gamma',
-           'standard_normal', 'standard_t', 'triangular',
-           'uniform', 'vonmises', 'wald', 'weibull', 'zipf']
+__all__ = ["Generator", "beta", "binomial", "bytes", "chisquare", "choice",
+           "complex_normal", "dirichlet", "exponential", "f", "gamma",
+           "geometric", "gumbel", "hypergeometric", "integers", "laplace",
+           "logistic", "lognormal", "logseries", "multinomial",
+           "multivariate_normal", "negative_binomial", "noncentral_chisquare",
+           "noncentral_f", "normal", "pareto", "permutation",
+           "poisson", "power", "randint", "random",  "rayleigh", "shuffle",
+           "standard_cauchy", "standard_exponential", "standard_gamma",
+           "standard_normal", "standard_t", "triangular",
+           "uniform", "vonmises", "wald", "weibull", "zipf"]
 
 np.import_array()
 
 
 # TODO: Remove after deprecation
 def _rand_dep_message(old, new, args, dtype):
-    msg = '{old} is deprecated. Use {new}({call}) instead'
+    msg = "{old} is deprecated. Use {new}({call}) instead"
     dtype = np.dtype(dtype).char
     if args:
         if len(args) == 1:
             size = str(args[0])
         else:
-            size = '(' + ', '.join(map(str, args)) + ')'
-        call = '{size}, dtype=\'{dtype}\''.format(size=size,
+            size = "(" + ", ".join(map(str, args)) + ")"
+        call = "{size}, dtype=\"{dtype}\"".format(size=size,
                                                   dtype=str(dtype))
     else:
-        call = 'dtype=\'{dtype}\''.format(dtype=str(dtype))
+        call = "dtype=\"{dtype}\"".format(dtype=str(dtype))
     return msg.format(old=old, new=new, call=call)
 
 
@@ -120,17 +120,17 @@ cdef class Generator:
         capsule = bit_generator.capsule
         cdef const char *name = "BitGenerator"
         if not PyCapsule_IsValid(capsule, name):
-            raise ValueError("Invalid bit generator'. The bit generator must "
+            raise ValueError("Invalid bit generator. The bit generator must "
                              "be instantized.")
         self._bitgen = (<bitgen_t *> PyCapsule_GetPointer(capsule, name))[0]
         self.lock = bit_generator.lock
 
     def __repr__(self):
-        return self.__str__() + ' at 0x{:X}'.format(id(self))
+        return self.__str__() + " at 0x{:X}".format(id(self))
 
     def __str__(self):
         _str = self.__class__.__name__
-        _str += '(' + self.bit_generator.__class__.__name__ + ')'
+        _str += "(" + self.bit_generator.__class__.__name__ + ")"
         return _str
 
     # Pickling support:
@@ -142,7 +142,7 @@ cdef class Generator:
 
     def __reduce__(self):
         from randomgen._pickle import __generator_ctor
-        return (__generator_ctor, (self.bit_generator.state['bit_generator'],),
+        return (__generator_ctor, (self.bit_generator.state["bit_generator"],),
                 self.bit_generator.state)
 
     @property
@@ -156,7 +156,7 @@ cdef class Generator:
             The bit generator instance used by the generator
         """
         import warnings
-        warnings.warn('brng is deprecated. Use bit_generator.', DeprecationWarning)
+        warnings.warn("brng is deprecated. Use bit_generator.", DeprecationWarning)
         return self._bit_generator
 
     @property
@@ -278,13 +278,13 @@ cdef class Generator:
                 for i in range(n):
                     data32[i] = self._bitgen.next_uint32(self._bitgen.state)
         else:
-            raise ValueError('Unknown value of bits. Must be either 32 or 64.')
+            raise ValueError("Unknown value of bits. Must be either 32 or 64.")
 
         return array
 
     def random_sample(self, *args, **kwargs):
         import warnings
-        warnings.warn('random_sample is deprecated in favor of random',
+        warnings.warn("random_sample is deprecated in favor of random",
                       DeprecationWarning)
 
         return self.random(*args, **kwargs)
@@ -341,12 +341,12 @@ cdef class Generator:
         """
         cdef double temp
         key = np.dtype(dtype).name
-        if key == 'float64':
+        if key == "float64":
             return double_fill(&random_double_fill, &self._bitgen, size, self.lock, out)
-        elif key == 'float32':
+        elif key == "float32":
             return float_fill(&random_float, &self._bitgen, size, self.lock, out)
         else:
-            raise TypeError('Unsupported dtype "%s" for random' % key)
+            raise TypeError("Unsupported dtype \"{key}\" for random".format(key=key))
 
     def beta(self, a, b, size=None):
         """
@@ -387,9 +387,9 @@ cdef class Generator:
 
         """
         return cont(&random_beta, &self._bitgen, size, self.lock, 2,
-                    a, 'a', CONS_POSITIVE,
-                    b, 'b', CONS_POSITIVE,
-                    0.0, '', CONS_NONE, None)
+                    a, "a", CONS_POSITIVE,
+                    b, "b", CONS_POSITIVE,
+                    0.0, "", CONS_NONE, None)
 
     def exponential(self, scale=1.0, size=None):
         """
@@ -438,12 +438,12 @@ cdef class Generator:
 
         """
         return cont(&random_exponential, &self._bitgen, size, self.lock, 1,
-                    scale, 'scale', CONS_NON_NEGATIVE,
-                    0.0, '', CONS_NONE,
-                    0.0, '', CONS_NONE,
+                    scale, "scale", CONS_NON_NEGATIVE,
+                    0.0, "", CONS_NONE,
+                    0.0, "", CONS_NONE,
                     None)
 
-    def standard_exponential(self, size=None, dtype=np.float64, method=u'zig', out=None):
+    def standard_exponential(self, size=None, dtype=np.float64, method=u"zig", out=None):
         """
         standard_exponential(size=None, dtype='d', method='zig', out=None)
 
@@ -483,19 +483,18 @@ cdef class Generator:
 
         """
         key = np.dtype(dtype).name
-        if key == 'float64':
-            if method == u'zig':
+        if key == "float64":
+            if method == u"zig":
                 return double_fill(&random_standard_exponential_zig_fill, &self._bitgen, size, self.lock, out)
             else:
                 return double_fill(&random_standard_exponential_fill, &self._bitgen, size, self.lock, out)
-        elif key == 'float32':
-            if method == u'zig':
+        elif key == "float32":
+            if method == u"zig":
                 return float_fill(&random_standard_exponential_zig_f, &self._bitgen, size, self.lock, out)
             else:
                 return float_fill(&random_standard_exponential_f, &self._bitgen, size, self.lock, out)
         else:
-            raise TypeError('Unsupported dtype "%s" for standard_exponential'
-                            % key)
+            raise TypeError("Unsupported dtype \"{key}\" for standard_exponential".format(key=key))
 
     def tomaxint(self, size=None):
         """
@@ -538,7 +537,7 @@ cdef class Generator:
 
         """
         import warnings
-        warnings.warn('tomaxint is deprecated. Use integers.',
+        warnings.warn("tomaxint is deprecated. Use integers.",
                       DeprecationWarning)
 
         return self.integers(0, np.iinfo(np.int).max + 1, dtype=np.int, size=size)
@@ -550,7 +549,7 @@ cdef class Generator:
         See integers docstring for arguments
         """
         import warnings
-        warnings.warn('randint has been deprecated in favor of integers',
+        warnings.warn("randint has been deprecated in favor of integers",
                       DeprecationWarning)
 
         return self.integers(*args, **kwargs)
@@ -651,12 +650,12 @@ cdef class Generator:
         """
         if use_masked is not None:
             import warnings
-            warnings.warn('use_masked will be removed in the final release and'
-                          'only the Lemire method will be available.',
+            warnings.warn("use_masked will be removed in the final release and"
+                          "only the Lemire method will be available.",
                           DeprecationWarning)
         if closed is not None:
             import warnings
-            warnings.warn('closed has been deprecated in favor of endpoint.',
+            warnings.warn("closed has been deprecated in favor of endpoint.",
                           DeprecationWarning)
             endpoint = closed
 
@@ -668,31 +667,31 @@ cdef class Generator:
         dt = np.dtype(dtype)
         key = dt.name
         if key not in _integers_types:
-            raise TypeError('Unsupported dtype "%s" for integers' % key)
-        if dt.byteorder != '=' and dt.byteorder != '|':
+            raise TypeError("Unsupported dtype \"{key}\" for integers".format(key=key))
+        if dt.byteorder != "=" and dt.byteorder != "|":
             import warnings
-            warnings.warn('Byteorder is not supported. If you require '
-                          'platform-independent byteorder, call byteswap when '
-                          'required.\n\nIn future version, specifying '
-                          'byteorder will raise a ValueError', FutureWarning)
+            warnings.warn("Byteorder is not supported. If you require "
+                          "platform-independent byteorder, call byteswap when "
+                          "required.\n\nIn future version, specifying "
+                          "byteorder will raise a ValueError", FutureWarning)
 
-        if key == 'int32':
+        if key == "int32":
             ret = _rand_int32(low, high, size, _use_masked, endpoint, &self._bitgen, self.lock)
-        elif key == 'int64':
+        elif key == "int64":
             ret = _rand_int64(low, high, size, _use_masked, endpoint, &self._bitgen, self.lock)
-        elif key == 'int16':
+        elif key == "int16":
             ret = _rand_int16(low, high, size, _use_masked, endpoint, &self._bitgen, self.lock)
-        elif key == 'int8':
+        elif key == "int8":
             ret = _rand_int8(low, high, size, _use_masked, endpoint, &self._bitgen, self.lock)
-        elif key == 'uint64':
+        elif key == "uint64":
             ret = _rand_uint64(low, high, size, _use_masked, endpoint, &self._bitgen, self.lock)
-        elif key == 'uint32':
+        elif key == "uint32":
             ret = _rand_uint32(low, high, size, _use_masked, endpoint, &self._bitgen, self.lock)
-        elif key == 'uint16':
+        elif key == "uint16":
             ret = _rand_uint16(low, high, size, _use_masked, endpoint, &self._bitgen, self.lock)
-        elif key == 'uint8':
+        elif key == "uint8":
             ret = _rand_uint8(low, high, size, _use_masked, endpoint, &self._bitgen, self.lock)
-        elif key == 'bool':
+        elif key == "bool":
             ret = _rand_bool(low, high, size, _use_masked, endpoint, &self._bitgen, self.lock)
 
         if size is None and dtype in (np.bool, np.int, np.long):
@@ -821,13 +820,13 @@ cdef class Generator:
                 # __index__ must return an integer by python rules.
                 pop_size = operator.index(a.item())
             except TypeError:
-                raise ValueError("a must be 1-dimensional or an integer")
+                raise ValueError("`a` must be 1-dimensional or an integer")
             if pop_size <= 0 and np.prod(size) != 0:
-                raise ValueError("a must be greater than 0 unless no samples are taken")
+                raise ValueError("`a` must be greater than 0 unless no samples are taken")
         else:
             pop_size = a.shape[axis]
             if pop_size == 0 and np.prod(size) != 0:
-                raise ValueError("'a' cannot be empty unless no samples are taken")
+                raise ValueError("`a` cannot be empty unless no samples are taken")
 
         if p is not None:
             d = len(p)
@@ -838,13 +837,13 @@ cdef class Generator:
                     atol = max(atol, np.sqrt(np.finfo(p.dtype).eps))
 
             p = <np.ndarray>np.PyArray_FROM_OTF(p, np.NPY_DOUBLE, api.NPY_ARRAY_ALIGNED | api.NPY_ARRAY_C_CONTIGUOUS)
-            check_array_constraint(p, 'p', CONS_BOUNDED_0_1)
+            check_array_constraint(p, "p", CONS_BOUNDED_0_1)
             pix = <double*>np.PyArray_DATA(p)
 
             if p.ndim != 1:
-                raise ValueError("'p' must be 1-dimensional")
+                raise ValueError("`p` must be 1-dimensional")
             if p.size != pop_size:
-                raise ValueError("'a' and 'p' must have same size")
+                raise ValueError("`a` and `p` must have same size")
             p_sum = kahan_sum(pix, d)
             if abs(p_sum - 1.) > atol:
                 raise ValueError("probabilities do not sum to 1")
@@ -861,14 +860,14 @@ cdef class Generator:
                 cdf = p.cumsum()
                 cdf /= cdf[-1]
                 uniform_samples = self.random(shape)
-                idx = cdf.searchsorted(uniform_samples, side='right')
+                idx = cdf.searchsorted(uniform_samples, side="right")
                 idx = np.array(idx, copy=False, dtype=np.int64)  # searchsorted returns a scalar
             else:
                 idx = self.integers(0, pop_size, size=shape, dtype=np.int64)
         else:
             if size > pop_size:
                 raise ValueError("Cannot take a larger sample than "
-                                 "population when 'replace=False'")
+                                 "population when replace=False")
             elif size < 0:
                 raise ValueError("negative dimensions are not allowed")
 
@@ -885,7 +884,7 @@ cdef class Generator:
                         p[flat_found[0:n_uniq]] = 0
                     cdf = np.cumsum(p)
                     cdf /= cdf[-1]
-                    new = cdf.searchsorted(x, side='right')
+                    new = cdf.searchsorted(x, side="right")
                     _, unique_indices = np.unique(new, return_index=True)
                     unique_indices.sort()
                     new = new.take(unique_indices)
@@ -1035,12 +1034,12 @@ cdef class Generator:
             _high = PyFloat_AsDouble(high)
             range = _high - _low
             if not np.isfinite(range):
-                raise OverflowError('Range exceeds valid bounds')
+                raise OverflowError("Range exceeds valid bounds")
 
             return cont(&random_uniform, &self._bitgen, size, self.lock, 2,
-                        _low, '', CONS_NONE,
-                        range, '', CONS_NONE,
-                        0.0, '', CONS_NONE,
+                        _low, "", CONS_NONE,
+                        range, "", CONS_NONE,
+                        0.0, "", CONS_NONE,
                         None)
 
         temp = np.subtract(ahigh, alow)
@@ -1050,11 +1049,11 @@ cdef class Generator:
 
         arange = <np.ndarray>np.PyArray_EnsureArray(temp)
         if not np.all(np.isfinite(arange)):
-            raise OverflowError('Range exceeds valid bounds')
+            raise OverflowError("Range exceeds valid bounds")
         return cont(&random_uniform, &self._bitgen, size, self.lock, 2,
-                    alow, '', CONS_NONE,
-                    arange, '', CONS_NONE,
-                    0.0, '', CONS_NONE,
+                    alow, "", CONS_NONE,
+                    arange, "", CONS_NONE,
+                    0.0, "", CONS_NONE,
                     None)
 
     def rand(self, *args, dtype=np.float64):
@@ -1101,7 +1100,7 @@ cdef class Generator:
 
         """
         import warnings
-        msg = _rand_dep_message('rand', 'random', args, dtype)
+        msg = _rand_dep_message("rand", "random", args, dtype)
         warnings.warn(msg, DeprecationWarning)
 
         if len(args) == 0:
@@ -1168,7 +1167,7 @@ cdef class Generator:
 
         """
         import warnings
-        msg = _rand_dep_message('randn', 'standard_normal', args, dtype)
+        msg = _rand_dep_message("randn", "standard_normal", args, dtype)
         warnings.warn(msg, DeprecationWarning)
 
         if len(args) == 0:
@@ -1271,7 +1270,7 @@ cdef class Generator:
                            "instead".format(low=low, high=high)),
                           DeprecationWarning)
 
-        return self.integers(low, high + 1, size=size, dtype='l')
+        return self.integers(low, high + 1, size=size, dtype="l")
 
     # Complicated, continuous distributions:
     def standard_normal(self, size=None, dtype=np.float64, out=None):
@@ -1337,13 +1336,13 @@ cdef class Generator:
 
         """
         key = np.dtype(dtype).name
-        if key == 'float64':
+        if key == "float64":
             return double_fill(&random_gauss_zig_fill, &self._bitgen, size, self.lock, out)
-        elif key == 'float32':
+        elif key == "float32":
             return float_fill(&random_gauss_zig_f, &self._bitgen, size, self.lock, out)
 
         else:
-            raise TypeError('Unsupported dtype "%s" for standard_normal' % key)
+            raise TypeError("Unsupported dtype \"{key}\" for standard_normal".format(key=key))
 
     def normal(self, loc=0.0, scale=1.0, size=None):
         """
@@ -1442,9 +1441,9 @@ cdef class Generator:
 
         """
         return cont(&random_normal_zig, &self._bitgen, size, self.lock, 2,
-                    loc, '', CONS_NONE,
-                    scale, 'scale', CONS_NON_NEGATIVE,
-                    0.0, '', CONS_NONE,
+                    loc, "", CONS_NONE,
+                    scale, "scale", CONS_NON_NEGATIVE,
+                    0.0, "", CONS_NONE,
                     None)
 
     def standard_gamma(self, shape, size=None, dtype=np.float64, out=None):
@@ -1526,18 +1525,18 @@ cdef class Generator:
         """
         cdef void *func
         key = np.dtype(dtype).name
-        if key == 'float64':
+        if key == "float64":
             return cont(&random_standard_gamma_zig, &self._bitgen, size, self.lock, 1,
-                        shape, 'shape', CONS_NON_NEGATIVE,
-                        0.0, '', CONS_NONE,
-                        0.0, '', CONS_NONE,
+                        shape, "shape", CONS_NON_NEGATIVE,
+                        0.0, "", CONS_NONE,
+                        0.0, "", CONS_NONE,
                         out)
-        if key == 'float32':
+        if key == "float32":
             return cont_f(&random_standard_gamma_zig_f, &self._bitgen, size, self.lock,
-                          shape, 'shape', CONS_NON_NEGATIVE,
+                          shape, "shape", CONS_NON_NEGATIVE,
                           out)
         else:
-            raise TypeError('Unsupported dtype "%s" for standard_gamma' % key)
+            raise TypeError("Unsupported dtype \"{key}\" for standard_gamma".format(key=key))
 
     def gamma(self, shape, scale=1.0, size=None):
         """
@@ -1613,9 +1612,9 @@ cdef class Generator:
 
         """
         return cont(&random_gamma, &self._bitgen, size, self.lock, 2,
-                    shape, 'shape', CONS_NON_NEGATIVE,
-                    scale, 'scale', CONS_NON_NEGATIVE,
-                    0.0, '', CONS_NONE, None)
+                    shape, "shape", CONS_NON_NEGATIVE,
+                    scale, "scale", CONS_NON_NEGATIVE,
+                    0.0, "", CONS_NONE, None)
 
     def f(self, dfnum, dfden, size=None):
         """
@@ -1701,9 +1700,9 @@ cdef class Generator:
 
         """
         return cont(&random_f, &self._bitgen, size, self.lock, 2,
-                    dfnum, 'dfnum', CONS_POSITIVE,
-                    dfden, 'dfden', CONS_POSITIVE,
-                    0.0, '', CONS_NONE, None)
+                    dfnum, "dfnum", CONS_POSITIVE,
+                    dfden, "dfden", CONS_POSITIVE,
+                    0.0, "", CONS_NONE, None)
 
     def noncentral_f(self, dfnum, dfden, nonc, size=None):
         """
@@ -1778,9 +1777,9 @@ cdef class Generator:
 
         """
         return cont(&random_noncentral_f, &self._bitgen, size, self.lock, 3,
-                    dfnum, 'dfnum', CONS_POSITIVE,
-                    dfden, 'dfden', CONS_POSITIVE,
-                    nonc, 'nonc', CONS_NON_NEGATIVE, None)
+                    dfnum, "dfnum", CONS_POSITIVE,
+                    dfden, "dfden", CONS_POSITIVE,
+                    nonc, "nonc", CONS_NON_NEGATIVE, None)
 
     def chisquare(self, df, size=None):
         """
@@ -1846,9 +1845,9 @@ cdef class Generator:
 
         """
         return cont(&random_chisquare, &self._bitgen, size, self.lock, 1,
-                    df, 'df', CONS_POSITIVE,
-                    0.0, '', CONS_NONE,
-                    0.0, '', CONS_NONE, None)
+                    df, "df", CONS_POSITIVE,
+                    0.0, "", CONS_NONE,
+                    0.0, "", CONS_NONE, None)
 
     def noncentral_chisquare(self, df, nonc, size=None):
         """
@@ -1925,9 +1924,9 @@ cdef class Generator:
 
         """
         return cont(&random_noncentral_chisquare, &self._bitgen, size, self.lock, 2,
-                    df, 'df', CONS_POSITIVE,
-                    nonc, 'nonc', CONS_NON_NEGATIVE,
-                    0.0, '', CONS_NONE, None)
+                    df, "df", CONS_POSITIVE,
+                    nonc, "nonc", CONS_NON_NEGATIVE,
+                    0.0, "", CONS_NONE, None)
 
     def standard_cauchy(self, size=None):
         """
@@ -1992,7 +1991,7 @@ cdef class Generator:
 
         """
         return cont(&random_standard_cauchy, &self._bitgen, size, self.lock, 0,
-                    0.0, '', CONS_NONE, 0.0, '', CONS_NONE, 0.0, '', CONS_NONE, None)
+                    0.0, "", CONS_NONE, 0.0, "", CONS_NONE, 0.0, "", CONS_NONE, None)
 
     def standard_t(self, df, size=None):
         """
@@ -2083,9 +2082,9 @@ cdef class Generator:
 
         """
         return cont(&random_standard_t, &self._bitgen, size, self.lock, 1,
-                    df, 'df', CONS_POSITIVE,
-                    0, '', CONS_NONE,
-                    0, '', CONS_NONE,
+                    df, "df", CONS_POSITIVE,
+                    0, "", CONS_NONE,
+                    0, "", CONS_NONE,
                     None)
 
     def vonmises(self, mu, kappa, size=None):
@@ -2167,9 +2166,9 @@ cdef class Generator:
 
         """
         return cont(&random_vonmises, &self._bitgen, size, self.lock, 2,
-                    mu, 'mu', CONS_NONE,
-                    kappa, 'kappa', CONS_NON_NEGATIVE,
-                    0.0, '', CONS_NONE, None)
+                    mu, "mu", CONS_NONE,
+                    kappa, "kappa", CONS_NON_NEGATIVE,
+                    0.0, "", CONS_NONE, None)
 
     def pareto(self, a, size=None):
         """
@@ -2264,9 +2263,9 @@ cdef class Generator:
 
         """
         return cont(&random_pareto, &self._bitgen, size, self.lock, 1,
-                    a, 'a', CONS_POSITIVE,
-                    0.0, '', CONS_NONE,
-                    0.0, '', CONS_NONE, None)
+                    a, "a", CONS_POSITIVE,
+                    0.0, "", CONS_NONE,
+                    0.0, "", CONS_NONE, None)
 
     def weibull(self, a, size=None):
         """
@@ -2362,9 +2361,9 @@ cdef class Generator:
 
         """
         return cont(&random_weibull, &self._bitgen, size, self.lock, 1,
-                    a, 'a', CONS_NON_NEGATIVE,
-                    0.0, '', CONS_NONE,
-                    0.0, '', CONS_NONE, None)
+                    a, "a", CONS_NON_NEGATIVE,
+                    0.0, "", CONS_NONE,
+                    0.0, "", CONS_NONE, None)
 
     def power(self, a, size=None):
         """
@@ -2462,9 +2461,9 @@ cdef class Generator:
 
         """
         return cont(&random_power, &self._bitgen, size, self.lock, 1,
-                    a, 'a', CONS_POSITIVE,
-                    0.0, '', CONS_NONE,
-                    0.0, '', CONS_NONE, None)
+                    a, "a", CONS_POSITIVE,
+                    0.0, "", CONS_NONE,
+                    0.0, "", CONS_NONE, None)
 
     def laplace(self, loc=0.0, scale=1.0, size=None):
         """
@@ -2547,9 +2546,9 @@ cdef class Generator:
 
         """
         return cont(&random_laplace, &self._bitgen, size, self.lock, 2,
-                    loc, 'loc', CONS_NONE,
-                    scale, 'scale', CONS_NON_NEGATIVE,
-                    0.0, '', CONS_NONE, None)
+                    loc, "loc", CONS_NONE,
+                    scale, "scale", CONS_NON_NEGATIVE,
+                    0.0, "", CONS_NONE, None)
 
     def gumbel(self, loc=0.0, scale=1.0, size=None):
         """
@@ -2665,9 +2664,9 @@ cdef class Generator:
 
         """
         return cont(&random_gumbel, &self._bitgen, size, self.lock, 2,
-                    loc, 'loc', CONS_NONE,
-                    scale, 'scale', CONS_NON_NEGATIVE,
-                    0.0, '', CONS_NONE, None)
+                    loc, "loc", CONS_NONE,
+                    scale, "scale", CONS_NON_NEGATIVE,
+                    0.0, "", CONS_NONE, None)
 
     def logistic(self, loc=0.0, scale=1.0, size=None):
         """
@@ -2745,9 +2744,9 @@ cdef class Generator:
 
         """
         return cont(&random_logistic, &self._bitgen, size, self.lock, 2,
-                    loc, 'loc', CONS_NONE,
-                    scale, 'scale', CONS_NON_NEGATIVE,
-                    0.0, '', CONS_NONE, None)
+                    loc, "loc", CONS_NONE,
+                    scale, "scale", CONS_NON_NEGATIVE,
+                    0.0, "", CONS_NONE, None)
 
     def lognormal(self, mean=0.0, sigma=1.0, size=None):
         """
@@ -2855,9 +2854,9 @@ cdef class Generator:
 
         """
         return cont(&random_lognormal, &self._bitgen, size, self.lock, 2,
-                    mean, 'mean', CONS_NONE,
-                    sigma, 'sigma', CONS_NON_NEGATIVE,
-                    0.0, '', CONS_NONE, None)
+                    mean, "mean", CONS_NONE,
+                    sigma, "sigma", CONS_NON_NEGATIVE,
+                    0.0, "", CONS_NONE, None)
 
     def rayleigh(self, scale=1.0, size=None):
         """
@@ -2923,9 +2922,9 @@ cdef class Generator:
 
         """
         return cont(&random_rayleigh, &self._bitgen, size, self.lock, 1,
-                    scale, 'scale', CONS_NON_NEGATIVE,
-                    0.0, '', CONS_NONE,
-                    0.0, '', CONS_NONE, None)
+                    scale, "scale", CONS_NON_NEGATIVE,
+                    0.0, "", CONS_NONE,
+                    0.0, "", CONS_NONE, None)
 
     def wald(self, mean, scale, size=None):
         """
@@ -2991,9 +2990,9 @@ cdef class Generator:
 
         """
         return cont(&random_wald, &self._bitgen, size, self.lock, 2,
-                    mean, 'mean', CONS_POSITIVE,
-                    scale, 'scale', CONS_POSITIVE,
-                    0.0, '', CONS_NONE, None)
+                    mean, "mean", CONS_POSITIVE,
+                    scale, "scale", CONS_POSITIVE,
+                    0.0, "", CONS_NONE, None)
 
     def triangular(self, left, mode, right, size=None):
         """
@@ -3078,9 +3077,9 @@ cdef class Generator:
             if fleft == fright:
                 raise ValueError("left == right")
             return cont(&random_triangular, &self._bitgen, size, self.lock, 3,
-                        fleft, '', CONS_NONE,
-                        fmode, '', CONS_NONE,
-                        fright, '', CONS_NONE, None)
+                        fleft, "", CONS_NONE,
+                        fmode, "", CONS_NONE,
+                        fright, "", CONS_NONE, None)
 
         if np.any(np.greater(oleft, omode)):
             raise ValueError("left > mode")
@@ -3090,9 +3089,9 @@ cdef class Generator:
             raise ValueError("left == right")
 
         return cont_broadcast_3(&random_triangular, &self._bitgen, size, self.lock,
-                                oleft, '', CONS_NONE,
-                                omode, '', CONS_NONE,
-                                oright, '', CONS_NONE)
+                                oleft, "", CONS_NONE,
+                                omode, "", CONS_NONE,
+                                oright, "", CONS_NONE)
 
     # Complicated, discrete distributions:
     def binomial(self, n, p, size=None):
@@ -3196,8 +3195,8 @@ cdef class Generator:
         is_scalar = is_scalar and np.PyArray_NDIM(n_arr) == 0
 
         if not is_scalar:
-            check_array_constraint(p_arr, 'p', CONS_BOUNDED_0_1)
-            check_array_constraint(n_arr, 'n', CONS_NON_NEGATIVE)
+            check_array_constraint(p_arr, "p", CONS_BOUNDED_0_1)
+            check_array_constraint(n_arr, "n", CONS_NON_NEGATIVE)
             if size is not None:
                 randoms = <np.ndarray>np.empty(size, np.int64)
             else:
@@ -3220,8 +3219,8 @@ cdef class Generator:
 
         _dp = PyFloat_AsDouble(p)
         _in = <int64_t>n
-        check_constraint(_dp, 'p', CONS_BOUNDED_0_1)
-        check_constraint(<double>_in, 'n', CONS_NON_NEGATIVE)
+        check_constraint(_dp, "p", CONS_BOUNDED_0_1)
+        check_constraint(<double>_in, "n", CONS_NON_NEGATIVE)
 
         if size is None:
             with self.lock:
@@ -3310,9 +3309,9 @@ cdef class Generator:
 
         """
         return disc(&random_negative_binomial, &self._bitgen, size, self.lock, 2, 0,
-                    n, 'n', CONS_POSITIVE_NOT_NAN,
-                    p, 'p', CONS_BOUNDED_0_1,
-                    0.0, '', CONS_NONE)
+                    n, "n", CONS_POSITIVE_NOT_NAN,
+                    p, "p", CONS_BOUNDED_0_1,
+                    0.0, "", CONS_NONE)
 
     def poisson(self, lam=1.0, size=None):
         """
@@ -3381,9 +3380,9 @@ cdef class Generator:
 
         """
         return disc(&random_poisson, &self._bitgen, size, self.lock, 1, 0,
-                    lam, 'lam', CONS_POISSON,
-                    0.0, '', CONS_NONE,
-                    0.0, '', CONS_NONE)
+                    lam, "lam", CONS_POISSON,
+                    0.0, "", CONS_NONE,
+                    0.0, "", CONS_NONE)
 
     def zipf(self, a, size=None):
         """
@@ -3461,9 +3460,9 @@ cdef class Generator:
 
         """
         return disc(&random_zipf, &self._bitgen, size, self.lock, 1, 0,
-                    a, 'a', CONS_GT_1,
-                    0.0, '', CONS_NONE,
-                    0.0, '', CONS_NONE)
+                    a, "a", CONS_GT_1,
+                    0.0, "", CONS_NONE,
+                    0.0, "", CONS_NONE)
 
     def geometric(self, p, size=None):
         """
@@ -3512,9 +3511,9 @@ cdef class Generator:
 
         """
         return disc(&random_geometric, &self._bitgen, size, self.lock, 1, 0,
-                    p, 'p', CONS_BOUNDED_GT_0_1,
-                    0.0, '', CONS_NONE,
-                    0.0, '', CONS_NONE)
+                    p, "p", CONS_BOUNDED_GT_0_1,
+                    0.0, "", CONS_NONE,
+                    0.0, "", CONS_NONE)
 
     def hypergeometric(self, ngood, nbad, nsample, size=None):
         """
@@ -3628,9 +3627,9 @@ cdef class Generator:
             if lngood + lnbad < lnsample:
                 raise ValueError("ngood + nbad < nsample")
             return disc(&random_hypergeometric, &self._bitgen, size, self.lock, 0, 3,
-                        lngood, 'ngood', CONS_NON_NEGATIVE,
-                        lnbad, 'nbad', CONS_NON_NEGATIVE,
-                        lnsample, 'nsample', CONS_NON_NEGATIVE)
+                        lngood, "ngood", CONS_NON_NEGATIVE,
+                        lnbad, "nbad", CONS_NON_NEGATIVE,
+                        lnsample, "nsample", CONS_NON_NEGATIVE)
 
         if np.any(ongood >= HYPERGEOM_MAX) or np.any(onbad >= HYPERGEOM_MAX):
             raise ValueError("both ngood and nbad must be less than "
@@ -3638,9 +3637,9 @@ cdef class Generator:
         if np.any(np.less(np.add(ongood, onbad), onsample)):
             raise ValueError("ngood + nbad < nsample")
         return discrete_broadcast_iii(&random_hypergeometric, &self._bitgen, size, self.lock,
-                                      ongood, 'ngood', CONS_NON_NEGATIVE,
-                                      onbad, 'nbad', CONS_NON_NEGATIVE,
-                                      onsample, 'nsample', CONS_NON_NEGATIVE)
+                                      ongood, "ngood", CONS_NON_NEGATIVE,
+                                      onbad, "nbad", CONS_NON_NEGATIVE,
+                                      onsample, "nsample", CONS_NON_NEGATIVE)
 
     def logseries(self, p, size=None):
         """
@@ -3718,12 +3717,12 @@ cdef class Generator:
 
         """
         return disc(&random_logseries, &self._bitgen, size, self.lock, 1, 0,
-                    p, 'p', CONS_BOUNDED_0_1,
-                    0.0, '', CONS_NONE,
-                    0.0, '', CONS_NONE)
+                    p, "p", CONS_BOUNDED_0_1,
+                    0.0, "", CONS_NONE,
+                    0.0, "", CONS_NONE)
 
     # Multivariate distributions:
-    def multivariate_normal(self, mean, cov, size=None, check_valid='warn',
+    def multivariate_normal(self, mean, cov, size=None, check_valid="warn",
                             tol=1e-8):
         """
         multivariate_normal(mean, cov, size=None, check_valid='warn', tol=1e-8)
@@ -3874,13 +3873,14 @@ cdef class Generator:
         cov = cov.astype(np.double)
         (u, s, v) = svd(cov)
 
-        if check_valid != 'ignore':
-            if check_valid != 'warn' and check_valid != 'raise':
-                raise ValueError("check_valid must equal 'warn', 'raise', or 'ignore'")
+        if check_valid != "ignore":
+            if check_valid != "warn" and check_valid != "raise":
+                raise ValueError("check_valid must equal \"warn\", \"raise\","
+                                 " or \"ignore\"")
 
             psd = np.allclose(np.dot(v.T * s, v), cov, rtol=tol, atol=tol)
             if not psd:
-                if check_valid == 'warn':
+                if check_valid == "warn":
                     import warnings
                     warnings.warn("covariance is not positive-semidefinite.",
                                   RuntimeWarning)
@@ -3991,13 +3991,13 @@ cdef class Generator:
         d = len(pvals)
         on = <np.ndarray>np.PyArray_FROM_OTF(n, np.NPY_INT64, api.NPY_ARRAY_ALIGNED)
         parr = <np.ndarray>np.PyArray_FROM_OTF(pvals, np.NPY_DOUBLE, api.NPY_ARRAY_ALIGNED | api.NPY_ARRAY_C_CONTIGUOUS)
-        check_array_constraint(parr, 'pvals', CONS_BOUNDED_0_1)
+        check_array_constraint(parr, "pvals", CONS_BOUNDED_0_1)
         pix = <double*>np.PyArray_DATA(parr)
         if kahan_sum(pix, d-1) > (1.0 + 1e-12):
             raise ValueError("sum(pvals[:-1]) > 1.0")
 
         if np.PyArray_NDIM(on) != 0:  # vector
-            check_array_constraint(on, 'n', CONS_NON_NEGATIVE)
+            check_array_constraint(on, "n", CONS_NON_NEGATIVE)
             if size is None:
                 it = np.PyArray_MultiIterNew1(on)
             else:
@@ -4031,7 +4031,7 @@ cdef class Generator:
         mnix = <int64_t*>np.PyArray_DATA(mnarr)
         sz = np.PyArray_SIZE(mnarr)
         ni = n
-        check_constraint(<double>ni, 'n', CONS_NON_NEGATIVE)
+        check_constraint(<double>ni, "n", CONS_NON_NEGATIVE)
         offset = 0
         with self.lock, nogil:
             for i in range(sz // d):
@@ -4146,7 +4146,7 @@ cdef class Generator:
         k = len(alpha)
         alpha_arr = <np.ndarray>np.PyArray_FROM_OTF(alpha, np.NPY_DOUBLE, api.NPY_ARRAY_ALIGNED | api.NPY_ARRAY_C_CONTIGUOUS)
         if np.any(np.less_equal(alpha_arr, 0)):
-            raise ValueError('alpha <= 0')
+            raise ValueError("alpha <= 0")
         alpha_data = <double*>np.PyArray_DATA(alpha_arr)
 
         if size is None:
@@ -4424,16 +4424,16 @@ cdef class Generator:
             fvar_r = 0.5 * (fgamma_r + frelation_r)
             fvar_i = 0.5 * (fgamma_r - frelation_r)
             if fgamma_i != 0:
-                raise ValueError('Im(gamma) != 0')
+                raise ValueError("Im(gamma) != 0")
             if fvar_i < 0:
-                raise ValueError('Re(gamma - relation) < 0')
+                raise ValueError("Re(gamma - relation) < 0")
             if fvar_r < 0:
-                raise ValueError('Re(gamma + relation) < 0')
+                raise ValueError("Re(gamma + relation) < 0")
             f_rho = 0.0
             if fvar_i > 0 and fvar_r > 0:
                 f_rho = frelation_i / sqrt(fvar_i * fvar_r)
             if f_rho > 1.0 or f_rho < -1.0:
-                raise ValueError('Im(relation) ** 2 > Re(gamma ** 2 - relation** 2)')
+                raise ValueError("Im(relation) ** 2 > Re(gamma ** 2 - relation** 2)")
 
             if size is None:
                 f_real = random_gauss_zig(&self._bitgen)
@@ -4464,19 +4464,19 @@ cdef class Generator:
         gmc = ogamma - orelation
         v_real = <np.ndarray>(0.5 * np.real(gpc))
         if np.any(np.less(v_real, 0)):
-            raise ValueError('Re(gamma + relation) < 0')
+            raise ValueError("Re(gamma + relation) < 0")
         v_imag = <np.ndarray>(0.5 * np.real(gmc))
         if np.any(np.less(v_imag, 0)):
-            raise ValueError('Re(gamma - relation) < 0')
+            raise ValueError("Re(gamma - relation) < 0")
         if np.any(np.not_equal(np.imag(ogamma), 0)):
-            raise ValueError('Im(gamma) != 0')
+            raise ValueError("Im(gamma) != 0")
 
         cov = 0.5 * np.imag(orelation)
         rho = np.zeros_like(cov)
         idx = (v_real.flat > 0) & (v_imag.flat > 0)
         rho.flat[idx] = cov.flat[idx] / np.sqrt(v_real.flat[idx] * v_imag.flat[idx])
         if np.any(cov.flat[~idx] != 0) or np.any(np.abs(rho) > 1):
-            raise ValueError('Im(relation) ** 2 > Re(gamma ** 2 - relation ** 2)')
+            raise ValueError("Im(relation) ** 2 > Re(gamma ** 2 - relation ** 2)")
 
         if size is not None:
             randoms = <np.ndarray>np.empty(size, np.complex128)

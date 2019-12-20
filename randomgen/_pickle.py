@@ -21,29 +21,29 @@ from randomgen.xorshift1024 import Xorshift1024
 from randomgen.xoshiro256 import Xoshiro256
 from randomgen.xoshiro512 import Xoshiro512
 
-BitGenerators = {'AESCounter': AESCounter,
-                 'ChaCha': ChaCha,
-                 'DSFMT': DSFMT,
-                 'HC128': HC128,
-                 'JSF': JSF,
-                 'MT19937': MT19937,
-                 'MT64': MT64,
-                 'PCG32': PCG32,
-                 'PCG64': PCG64,
-                 'Philox': Philox,
-                 'ThreeFry': ThreeFry,
-                 'Xorshift1024': Xorshift1024,
-                 'Xoroshiro128': Xoroshiro128,
-                 'Xoshiro256': Xoshiro256,
-                 'Xoshiro512': Xoshiro512,
-                 'SPECK128': SPECK128,
-                 'SFMT': SFMT,
-                 'RDRAND': RDRAND,
+BitGenerators = {"AESCounter": AESCounter,
+                 "ChaCha": ChaCha,
+                 "DSFMT": DSFMT,
+                 "HC128": HC128,
+                 "JSF": JSF,
+                 "MT19937": MT19937,
+                 "MT64": MT64,
+                 "PCG32": PCG32,
+                 "PCG64": PCG64,
+                 "Philox": Philox,
+                 "ThreeFry": ThreeFry,
+                 "Xorshift1024": Xorshift1024,
+                 "Xoroshiro128": Xoroshiro128,
+                 "Xoshiro256": Xoshiro256,
+                 "Xoshiro512": Xoshiro512,
+                 "SPECK128": SPECK128,
+                 "SFMT": SFMT,
+                 "RDRAND": RDRAND,
 
                  }
 
 
-def __generator_ctor(bit_generator_name='mt19937'):
+def __generator_ctor(bit_generator_name="mt19937"):
     """
     Pickling helper function that returns a Generator object
 
@@ -58,21 +58,21 @@ def __generator_ctor(bit_generator_name='mt19937'):
         Generator using the named core BitGenerator
     """
     try:
-        bit_generator_name = bit_generator_name.decode('ascii')
+        bit_generator_name = bit_generator_name.decode("ascii")
     except AttributeError:
         pass
     if bit_generator_name in BitGenerators:
         bit_generator = BitGenerators[bit_generator_name]
     else:
         raise ValueError(
-            str(bit_generator_name) + ' is not a known BitGenerator module.')
+            str(bit_generator_name) + " is not a known BitGenerator module.")
     with warnings.catch_warnings():
         warnings.filterwarnings("ignore", category=FutureWarning)
         bit_gen = bit_generator()
     return Generator(bit_gen)
 
 
-def __bit_generator_ctor(bit_generator_name='MT19937'):
+def __bit_generator_ctor(bit_generator_name="MT19937"):
     """
     Pickling helper function that returns a bit generator object
 
@@ -87,21 +87,21 @@ def __bit_generator_ctor(bit_generator_name='MT19937'):
         Bit generator instance
     """
     try:
-        bit_generator_name = bit_generator_name.decode('ascii')
+        bit_generator_name = bit_generator_name.decode("ascii")
     except AttributeError:
         pass
     if bit_generator_name in BitGenerators:
         bit_generator = BitGenerators[bit_generator_name]
     else:
         raise ValueError(
-            str(bit_generator_name) + ' is not a known BitGenerator module.')
+            str(bit_generator_name) + " is not a known BitGenerator module.")
     with warnings.catch_warnings():
         warnings.filterwarnings("ignore", category=FutureWarning)
         bit_gen = bit_generator()
     return bit_gen
 
 
-def __randomstate_ctor(bit_generator_name='mt19937'):
+def __randomstate_ctor(bit_generator_name="mt19937"):
     """
     Pickling helper function that returns a legacy RandomState-like object
 
@@ -116,14 +116,14 @@ def __randomstate_ctor(bit_generator_name='mt19937'):
         Legacy RandomState using the named core BitGenerator
     """
     try:
-        bit_generator_name = bit_generator_name.decode('ascii')
+        bit_generator_name = bit_generator_name.decode("ascii")
     except AttributeError:
         pass
     if bit_generator_name in BitGenerators:
         bit_generator = BitGenerators[bit_generator_name]
     else:
         raise ValueError(
-            str(bit_generator_name) + ' is not a known BitGenerator module.')
+            str(bit_generator_name) + " is not a known BitGenerator module.")
     with warnings.catch_warnings():
         warnings.filterwarnings("ignore", category=FutureWarning)
         bit_gen = bit_generator()

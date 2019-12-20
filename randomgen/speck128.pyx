@@ -3,7 +3,7 @@ import numpy as np
 from randomgen.common cimport *
 from randomgen.entropy import random_entropy, seed_by_array
 
-__all__ = ['SPECK128']
+__all__ = ["SPECK128"]
 
 DEF SPECK_UNROLL = 12
 DEF SPECK_MAX_ROUNDS = 34
@@ -139,7 +139,7 @@ cdef class SPECK128(BitGenerator):
         # Calloc since ctr needs to be 0
         self.rng_state = <speck_state_t *>PyArray_calloc_aligned(sizeof(speck_state_t), 1)
         if (rounds <= 0) or rounds > SPECK_MAX_ROUNDS or int(rounds) != rounds:
-            raise ValueError('rounds must be an integer in [1, 34]')
+            raise ValueError("rounds must be an integer in [1, 34]")
         self.rng_state.rounds = int(rounds)
         self.seed(seed, counter, key)
 
@@ -199,27 +199,27 @@ cdef class SPECK128(BitGenerator):
         array[i] = (value // 2**(64*i)) % 2**64.
         """
         if seed is not None and key is not None:
-            raise ValueError('seed and key cannot be both used')
+            raise ValueError("seed and key cannot be both used")
         if key is None:
             BitGenerator._seed_with_seed_sequence(self, seed, counter=counter)
             if self.seed_seq is not None:
                 return
 
-        seed = object_to_int(seed, 256, 'seed')
-        key = object_to_int(key, 256, 'key')
-        counter = object_to_int(counter, 128, 'counter')
+        seed = object_to_int(seed, 256, "seed")
+        key = object_to_int(key, 256, "key")
+        counter = object_to_int(counter, 128, "counter")
 
         if key is None:
             if seed is None:
-                _seed = random_entropy(8, 'auto')
+                _seed = random_entropy(8, "auto")
                 _seed = _seed.view(np.uint64)
             else:
-                _seed = seed_by_array(int_to_array(seed, 'seed', None, 64), 4)
+                _seed = seed_by_array(int_to_array(seed, "seed", None, 64), 4)
         else:
-            _seed = int_to_array(key, 'key', 256, 64)
+            _seed = int_to_array(key, "key", 256, 64)
         speck_seed(self.rng_state, <uint64_t *>np.PyArray_DATA(_seed))
         counter = 0 if counter is None else counter
-        _counter = int_to_array(counter, 'counter', 128, 64)
+        _counter = int_to_array(counter, "counter", 128, 64)
         speck_set_counter(self.rng_state,
                           <uint64_t *>np.PyArray_DATA(_counter))
         self._reset_state_variables()
@@ -250,7 +250,7 @@ cdef class SPECK128(BitGenerator):
     def use_sse41(self, value):
         capable = speck_sse41_capable()
         if value and not capable:
-            raise ValueError('CPU does not support SSE41')
+            raise ValueError("CPU does not support SSE41")
         speck_use_sse41(value)
 
     @property
@@ -285,14 +285,14 @@ cdef class SPECK128(BitGenerator):
             arr[2*i] = self.rng_state.round_key[i].u64[0]
             arr[2*i+1] = self.rng_state.round_key[i].u64[1]
 
-        return {'bit_generator': self.__class__.__name__,
-                'state': {'ctr': ctr,
-                          'buffer': buffer,
-                          'round_key': round_key,
-                          'offset': self.rng_state.offset,
-                          'rounds': self.rng_state.rounds},
-                'has_uint32': self.rng_state.has_uint32,
-                'uinteger': self.rng_state.uinteger}
+        return {"bit_generator": self.__class__.__name__,
+                "state": {"ctr": ctr,
+                          "buffer": buffer,
+                          "round_key": round_key,
+                          "offset": self.rng_state.offset,
+                          "rounds": self.rng_state.rounds},
+                "has_uint32": self.rng_state.has_uint32,
+                "uinteger": self.rng_state.uinteger}
 
     @state.setter
     def state(self, value):
@@ -301,19 +301,19 @@ cdef class SPECK128(BitGenerator):
         cdef uint64_t *arr
 
         if not isinstance(value, dict):
-            raise TypeError('state must be a dict')
-        bitgen = value.get('bit_generator', '')
+            raise TypeError("state must be a dict")
+        bitgen = value.get("bit_generator", "")
         if bitgen != self.__class__.__name__:
-            raise ValueError('state must be for a {0} '
-                             'PRNG'.format(self.__class__.__name__))
+            raise ValueError("state must be for a {0} "
+                             "PRNG".format(self.__class__.__name__))
 
-        state =value['state']
+        state =value["state"]
 
-        ctr = check_state_array(state['ctr'], SPECK_UNROLL, 64, 'ctr')
-        buffer = check_state_array(state['buffer'], 8 * SPECK_UNROLL, 8,
-                                   'buffer')
-        round_key = check_state_array(state['round_key'], 2*SPECK_MAX_ROUNDS, 64,
-                                      'round_key')
+        ctr = check_state_array(state["ctr"], SPECK_UNROLL, 64, "ctr")
+        buffer = check_state_array(state["buffer"], 8 * SPECK_UNROLL, 8,
+                                   "buffer")
+        round_key = check_state_array(state["round_key"], 2*SPECK_MAX_ROUNDS, 64,
+                                      "round_key")
 
         arr = <uint64_t*>np.PyArray_DATA(ctr)
         for i in range(SPECK_UNROLL):
@@ -328,10 +328,10 @@ cdef class SPECK128(BitGenerator):
             self.rng_state.round_key[i].u64[0] = arr[2 * i]
             self.rng_state.round_key[i].u64[1] = arr[2 * i + 1]
 
-        self.rng_state.rounds = state['rounds']
-        self.rng_state.offset = state['offset']
-        self.rng_state.has_uint32 = value['has_uint32']
-        self.rng_state.uinteger = value['uinteger']
+        self.rng_state.rounds = state["rounds"]
+        self.rng_state.offset = state["offset"]
+        self.rng_state.has_uint32 = value["has_uint32"]
+        self.rng_state.uinteger = value["uinteger"]
 
     cdef jump_inplace(self, object iter):
         """
@@ -365,8 +365,8 @@ cdef class SPECK128(BitGenerator):
         required to ensure exact reproducibility.
         """
         import warnings
-        warnings.warn('jump (in-place) has been deprecated in favor of jumped'
-                      ', which returns a new instance', DeprecationWarning)
+        warnings.warn("jump (in-place) has been deprecated in favor of jumped"
+                      ", which returns a new instance", DeprecationWarning)
         self.jump_inplace(iter)
         return self
 
@@ -434,7 +434,7 @@ cdef class SPECK128(BitGenerator):
         if delta == 0:
             return self
 
-        step = int_to_array(delta, 'delta', 64*3, 64)
+        step = int_to_array(delta, "delta", 64*3, 64)
         speck_advance(self.rng_state, <uint64_t *>np.PyArray_DATA(step))
         self.rng_state.has_uint32 = 0
         self.rng_state.uinteger = 0

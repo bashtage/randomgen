@@ -3,7 +3,7 @@ import numpy as np
 from randomgen.common cimport *
 from randomgen.entropy import random_entropy, seed_by_array
 
-__all__ = ['ChaCha']
+__all__ = ["ChaCha"]
 
 cdef uint64_t chacha_uint64(void* st) nogil:
     return chacha_next64(<chacha_state_t *>st)
@@ -134,7 +134,7 @@ cdef class ChaCha(BitGenerator):
         BitGenerator.__init__(self, seed, mode)
         self.rng_state = <chacha_state_t *>PyArray_malloc_aligned(sizeof(chacha_state_t))
         if rounds % 2 != 0 or rounds <= 0:
-            raise ValueError('rounds must be even and >= 2')
+            raise ValueError("rounds must be even and >= 2")
         self.rng_state.rounds = rounds
         self.seed(seed, counter, key)
 
@@ -178,7 +178,7 @@ cdef class ChaCha(BitGenerator):
     def use_simd(self, value):
         capable = chacha_simd_capable()
         if value and not capable:
-            raise ValueError('CPU does not support SIMD implementation')
+            raise ValueError("CPU does not support SIMD implementation")
         chacha_use_simd(bool(value))
 
 
@@ -223,27 +223,27 @@ cdef class ChaCha(BitGenerator):
         cdef int i
 
         if seed is not None and key is not None:
-            raise ValueError('seed and key cannot be both used')
+            raise ValueError("seed and key cannot be both used")
         if key is None:
             BitGenerator._seed_with_seed_sequence(self, seed, counter=counter)
             if self.seed_seq is not None:
                 return
 
-        seed = object_to_int(seed, 256, 'seed')
-        key = object_to_int(key, 256, 'key')
-        counter = object_to_int(counter, 128, 'counter')
+        seed = object_to_int(seed, 256, "seed")
+        key = object_to_int(key, 256, "key")
+        counter = object_to_int(counter, 128, "counter")
         if seed is not None and key is not None:
-            raise ValueError('seed and key cannot be simultaneously used')
+            raise ValueError("seed and key cannot be simultaneously used")
         if key is not None:
-            seed = int_to_array(key, 'key', 256, 32)
+            seed = int_to_array(key, "key", 256, 32)
         elif seed is not None:
-            seed = seed_by_array(int_to_array(seed, 'seed', None, 64), 4)
+            seed = seed_by_array(int_to_array(seed, "seed", None, 64), 4)
         else:
-            seed = random_entropy(8, 'auto')
+            seed = random_entropy(8, "auto")
         _seed = seed.view(np.uint64)
         _stream = _seed[2:]
         counter = 0 if counter is None else counter
-        _counter = int_to_array(counter, 'counter', 128, 64)
+        _counter = int_to_array(counter, "counter", 128, 64)
 
         chacha_seed(self.rng_state,
                     <uint64_t *>np.PyArray_DATA(_seed),
@@ -272,30 +272,30 @@ cdef class ChaCha(BitGenerator):
         for i in range(2):
             ctr[i] = self.rng_state.ctr[i]
 
-        return {'bit_generator': self.__class__.__name__,
-                'state': {'block': block, 'keysetup': keysetup, 'ctr': ctr,
-                          'rounds': self.rng_state.rounds}}
+        return {"bit_generator": self.__class__.__name__,
+                "state": {"block": block, "keysetup": keysetup, "ctr": ctr,
+                          "rounds": self.rng_state.rounds}}
 
     @state.setter
     def state(self, value):
         if not isinstance(value, dict):
-            raise TypeError('state must be a dict')
-        bitgen = value.get('bit_generator', '')
+            raise TypeError("state must be a dict")
+        bitgen = value.get("bit_generator", "")
         if bitgen != self.__class__.__name__:
-            raise ValueError('state must be for a {0} '
-                             'PRNG'.format(self.__class__.__name__))
+            raise ValueError("state must be for a {0} "
+                             "PRNG".format(self.__class__.__name__))
 
-        state = value['state']
-        block = state['block']
+        state = value["state"]
+        block = state["block"]
         for i in range(16):
             self.rng_state.block[i] = block[i]
-        keysetup = state['keysetup']
+        keysetup = state["keysetup"]
         for i in range(8):
             self.rng_state.keysetup[i] = keysetup[i]
-        ctr = state['ctr']
+        ctr = state["ctr"]
         for i in range(2):
             self.rng_state.ctr[i] = ctr[i]
-        self.rng_state.rounds = state['rounds']
+        self.rng_state.rounds = state["rounds"]
 
     cdef jump_inplace(self, object iter):
         """
@@ -332,8 +332,8 @@ cdef class ChaCha(BitGenerator):
         required to ensure exact reproducibility.
         """
         import warnings
-        warnings.warn('jump (in-place) has been deprecated in favor of jumped'
-                      ', which returns a new instance', DeprecationWarning)
+        warnings.warn("jump (in-place) has been deprecated in favor of jumped"
+                      ", which returns a new instance", DeprecationWarning)
         self.jump_inplace(iter)
         return self
 
@@ -402,6 +402,6 @@ cdef class ChaCha(BitGenerator):
         cdef np.ndarray step
 
         delta = wrap_int(delta, 128)
-        step = int_to_array(delta, 'delta', 128, 64)
+        step = int_to_array(delta, "delta", 128, 64)
         chacha_advance(self.rng_state, <uint64_t *>np.PyArray_DATA(step))
         return self

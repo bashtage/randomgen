@@ -9,29 +9,29 @@ from randomgen.legacy.distributions cimport *
 
 np.import_array()
 
-_integers_types = {'bool': (0, 2),
-                   'int8': (-2 ** 7, 2 ** 7),
-                   'int16': (-2 ** 15, 2 ** 15),
-                   'int32': (-2 ** 31, 2 ** 31),
-                   'int64': (-2 ** 63, 2 ** 63),
-                   'uint8': (0, 2 ** 8),
-                   'uint16': (0, 2 ** 16),
-                   'uint32': (0, 2 ** 32),
-                   'uint64': (0, 2 ** 64)}
+_integers_types = {"bool": (0, 2),
+                   "int8": (-2 ** 7, 2 ** 7),
+                   "int16": (-2 ** 15, 2 ** 15),
+                   "int32": (-2 ** 31, 2 ** 31),
+                   "int64": (-2 ** 63, 2 ** 63),
+                   "uint8": (0, 2 ** 8),
+                   "uint16": (0, 2 ** 16),
+                   "uint32": (0, 2 ** 32),
+                   "uint64": (0, 2 ** 64)}
 {{
 py:
-type_info = (('uint64', 'uint64', '0x0ULL', '0xFFFFFFFFFFFFFFFFULL'),
-             ('uint32', 'uint32', '0x0UL', '0XFFFFFFFFUL'),
-             ('uint16', 'uint16', '0x0UL', '0XFFFFUL'),
-             ('uint8', 'uint8', '0x0UL', '0XFFUL'),
-             ('bool', 'bool', '0x0UL', '0x1UL'),
-             ('int64', 'uint64', '-0x8000000000000000LL', '0x7FFFFFFFFFFFFFFFL'),
-             ('int32', 'uint32', '-0x80000000L', '0x7FFFFFFFL'),
-             ('int16', 'uint16', '-0x8000L', '0x7FFFL' ),
-             ('int8', 'uint8', '-0x80L', '0x7FL' )
+type_info = (("uint64", "uint64", "0x0ULL", "0xFFFFFFFFFFFFFFFFULL"),
+             ("uint32", "uint32", "0x0UL", "0XFFFFFFFFUL"),
+             ("uint16", "uint16", "0x0UL", "0XFFFFUL"),
+             ("uint8", "uint8", "0x0UL", "0XFFUL"),
+             ("bool", "bool", "0x0UL", "0x1UL"),
+             ("int64", "uint64", "-0x8000000000000000LL", "0x7FFFFFFFFFFFFFFFL"),
+             ("int32", "uint32", "-0x80000000L", "0x7FFFFFFFL"),
+             ("int16", "uint16", "-0x8000L", "0x7FFFL" ),
+             ("int8", "uint8", "-0x80L", "0x7FL" )
 )}}
 {{for  nptype, utype, lb, ub in type_info}}
-{{ py: otype = nptype + '_' if nptype == 'bool' else nptype }}
+{{ py: otype = nptype + "_" if nptype == "bool" else nptype }}
 cdef object _legacy_rand_{{nptype}}(object low, object high, object size,
                             aug_bitgen_t *aug_state, object lock):
     """
@@ -92,7 +92,7 @@ cdef object _legacy_rand_{{nptype}}(object low, object high, object size,
     scalar = ((low_ndim == 0 or (low_ndim == 1 and low_arr.size == 1 and size is not None)) and
               (high_ndim == 0 or (high_ndim == 1 and high_arr.size == 1 and size is not None)))
     if not scalar:
-        raise ValueError('Only scalar-compatible inputs are accepted for low and high')
+        raise ValueError("Only scalar-compatible inputs are accepted for low and high")
 
     low = int(low_arr)
     high = int(high_arr)
@@ -104,7 +104,7 @@ cdef object _legacy_rand_{{nptype}}(object low, object high, object size,
     if high > {{ub}}:
         raise ValueError("high is out of bounds for {{nptype}}")
     if low > high:  # -1 already subtracted, closed interval
-        raise ValueError('low >= high')
+        raise ValueError("low >= high")
 
     rng = <{{utype}}_t>(high - low)
     off = <{{utype}}_t>(<{{nptype}}_t>low)

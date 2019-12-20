@@ -3,7 +3,7 @@ import numpy as np
 from randomgen.common cimport *
 from randomgen.entropy import random_entropy, seed_by_array
 
-__all__ = ['AESCounter']
+__all__ = ["AESCounter"]
 
 cdef uint64_t aes_uint64(void* st) nogil:
     return aes_next64(<aesctr_state_t *>st)
@@ -171,7 +171,7 @@ cdef class AESCounter(BitGenerator):
     def use_aesni(self, value):
         capable = aes_capable()
         if value and not capable:
-            raise ValueError('CPU does not support AESNI')
+            raise ValueError("CPU does not support AESNI")
         aesctr_use_aesni(bool(value))
 
     def _seed_from_seq(self, counter=None):
@@ -220,31 +220,31 @@ cdef class AESCounter(BitGenerator):
         cdef np.ndarray _seed
 
         if seed is not None and key is not None:
-            raise ValueError('seed and key cannot be both used')
+            raise ValueError("seed and key cannot be both used")
         if key is None:
             BitGenerator._seed_with_seed_sequence(self, seed, counter=counter)
             if self.seed_seq is not None:
                 return
 
-        seed = object_to_int(seed, 128, 'seed')
-        key = object_to_int(key, 128, 'key')
-        counter = object_to_int(counter, 128, 'counter')
+        seed = object_to_int(seed, 128, "seed")
+        key = object_to_int(key, 128, "key")
+        counter = object_to_int(counter, 128, "counter")
         if seed is not None and key is not None:
-            raise ValueError('seed and key cannot be both used')
+            raise ValueError("seed and key cannot be both used")
         ub = 2 ** 128
         if key is None:
             if seed is None:
-                _seed = random_entropy(4, 'auto')
+                _seed = random_entropy(4, "auto")
                 _seed = _seed.view(np.uint64)
             else:
-                _seed = seed_by_array(int_to_array(seed, 'seed', None, 64), 2)
+                _seed = seed_by_array(int_to_array(seed, "seed", None, 64), 2)
         else:
-            _seed = int_to_array(key, 'key', 128, 64)
+            _seed = int_to_array(key, "key", 128, 64)
         aesctr_seed(self.rng_state, <uint64_t*>np.PyArray_DATA(_seed))
         _counter = np.empty(8, dtype=np.uint64)
         counter = 0 if counter is None else counter
         for i in range(4):
-            _counter[2*i:2*i+2] = int_to_array(counter+i, 'counter', 128, 64)
+            _counter[2*i:2*i+2] = int_to_array(counter+i, "counter", 128, 64)
         aesctr_set_counter(self.rng_state,
                            <uint64_t*>np.PyArray_DATA(_counter))
         self._reset_state_variables()
@@ -273,39 +273,39 @@ cdef class AESCounter(BitGenerator):
         for i in range(16 * 4):
             state[i] = self.rng_state.state[i]
         offset = self.rng_state.offset
-        return {'bit_generator': self.__class__.__name__,
-                's': {'state': state, 'seed': seed, 'counter': counter,
-                      'offset': offset},
-                'has_uint32': self.rng_state.has_uint32,
-                'uinteger': self.rng_state.uinteger}
+        return {"bit_generator": self.__class__.__name__,
+                "s": {"state": state, "seed": seed, "counter": counter,
+                      "offset": offset},
+                "has_uint32": self.rng_state.has_uint32,
+                "uinteger": self.rng_state.uinteger}
 
     @state.setter
     def state(self, value):
         cdef np.npy_intp i
 
         if not isinstance(value, dict):
-            raise TypeError('state must be a dict')
-        bitgen = value.get('bit_generator', '')
+            raise TypeError("state must be a dict")
+        bitgen = value.get("bit_generator", "")
         if bitgen != self.__class__.__name__:
-            raise ValueError('state must be for a {0} '
-                             'PRNG'.format(self.__class__.__name__))
-        state =value['s']['state']
+            raise ValueError("state must be for a {0} "
+                             "PRNG".format(self.__class__.__name__))
+        state =value["s"]["state"]
         for i in range(16 * 4):
             self.rng_state.state[i] = state[i]
         offset = self.rng_state.offset
-        self.rng_state.offset = value['s']['offset']
-        seed = np.ascontiguousarray(value['s']['seed'], dtype=np.uint64)
-        counter = np.ascontiguousarray(value['s']['counter'], dtype=np.uint64)
+        self.rng_state.offset = value["s"]["offset"]
+        seed = np.ascontiguousarray(value["s"]["seed"], dtype=np.uint64)
+        counter = np.ascontiguousarray(value["s"]["counter"], dtype=np.uint64)
         if seed.ndim != 1 or seed.shape[0] != 2 * (10 + 1):
-            raise ValueError('seed must be a 1d uint64 array with 22 elements')
+            raise ValueError("seed must be a 1d uint64 array with 22 elements")
         if counter.ndim != 1 or counter.shape[0] != 2 * (4):
-            raise ValueError('counter must be a 1d uint64 array with 8 '
-                             'elements')
+            raise ValueError("counter must be a 1d uint64 array with 8 "
+                             "elements")
         aesctr_set_seed_counter(self.rng_state,
                                 <uint64_t*>np.PyArray_DATA(seed),
                                 <uint64_t*>np.PyArray_DATA(counter))
-        self.rng_state.has_uint32 = value['has_uint32']
-        self.rng_state.uinteger = value['uinteger']
+        self.rng_state.has_uint32 = value["has_uint32"]
+        self.rng_state.uinteger = value["uinteger"]
 
     cdef jump_inplace(self, object iter):
         """
@@ -342,8 +342,8 @@ cdef class AESCounter(BitGenerator):
         required to ensure exact reproducibility.
         """
         import warnings
-        warnings.warn('jump (in-place) has been deprecated in favor of jumped'
-                      ', which returns a new instance', DeprecationWarning)
+        warnings.warn("jump (in-place) has been deprecated in favor of jumped"
+                      ", which returns a new instance", DeprecationWarning)
         self.jump_inplace(iter)
         return self
 
@@ -413,7 +413,7 @@ cdef class AESCounter(BitGenerator):
         if delta == 0:
             return self
 
-        step = int_to_array(delta, 'delta', 64*3, 64)
+        step = int_to_array(delta, "delta", 64*3, 64)
         aesctr_advance(self.rng_state, <uint64_t *>np.PyArray_DATA(step))
         self.rng_state.has_uint32 = 0
         self.rng_state.uinteger = 0

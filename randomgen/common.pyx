@@ -29,13 +29,13 @@ except AttributeError:
     pass
 
 
-__all__ = ['interface']
+__all__ = ["interface"]
 
 np.import_array()
 
-interface = namedtuple('interface', ['state_address', 'state', 'next_uint64',
-                                     'next_uint32', 'next_double',
-                                     'bit_generator'])
+interface = namedtuple("interface", ["state_address", "state", "next_uint64",
+                                     "next_uint32", "next_double",
+                                     "bit_generator"])
 
 
 cdef class BitGenerator:
@@ -68,7 +68,7 @@ cdef class BitGenerator:
         cdef const char *name = "BitGenerator"
         self.capsule = PyCapsule_New(<void *>&self._bitgen, name, NULL)
         if type(self) is BitGenerator:
-            raise NotImplementedError('BitGenerator cannot be instantized')
+            raise NotImplementedError("BitGenerator cannot be instantized")
         self.seed_seq = None
 
     # Pickling support:
@@ -80,7 +80,7 @@ cdef class BitGenerator:
 
     def __reduce__(self):
         from randomgen._pickle import __bit_generator_ctor
-        return __bit_generator_ctor, (self.state['bit_generator'],), self.state
+        return __bit_generator_ctor, (self.state["bit_generator"],), self.state
 
     def _seed_from_seq(self):
         raise NotImplementedError("Subclass must override")
@@ -109,11 +109,11 @@ cdef class BitGenerator:
 
     @property
     def state(self):
-        raise NotImplemented('subclasses must implement')
+        raise NotImplemented("subclasses must implement")
 
     @state.setter
     def state(self, value):
-        raise NotImplemented('subclasses must implement')
+        raise NotImplemented("subclasses must implement")
 
     def random_raw(self, size=None, output=True):
         """
@@ -146,7 +146,7 @@ cdef class BitGenerator:
         """
         return random_raw(&self._bitgen, self.lock, size, output)
 
-    def _benchmark(self, Py_ssize_t cnt, method=u'uint64'):
+    def _benchmark(self, Py_ssize_t cnt, method=u"uint64"):
         return benchmark(&self._bitgen, self.lock, cnt, method)
 
     @property
@@ -198,23 +198,23 @@ cdef class BitGenerator:
         """
         Removed, raises NotImplementedError
         """
-        raise NotImplementedError('This method for accessing a Generator has'
-                                  'been removed.')
+        raise NotImplementedError("This method for accessing a Generator has"
+                                  "been removed.")
 
 
 cdef object benchmark(bitgen_t *bitgen, object lock, Py_ssize_t cnt, object method):
     """Benchmark command used by BitGenerator"""
     cdef Py_ssize_t i
-    if method==u'uint64':
+    if method==u"uint64":
         with lock, nogil:
             for i in range(cnt):
                 bitgen.next_uint64(bitgen.state)
-    elif method==u'double':
+    elif method==u"double":
         with lock, nogil:
             for i in range(cnt):
                 bitgen.next_double(bitgen.state)
     else:
-        raise ValueError('Unknown method')
+        raise ValueError("Unknown method")
 
 
 cdef object random_raw(bitgen_t *bitgen, object lock, object size, object output):
@@ -298,15 +298,15 @@ cdef object prepare_cffi(bitgen_t *bitgen):
     try:
         import cffi
     except ImportError:
-        raise ImportError('cffi cannot be imported.')
+        raise ImportError("cffi cannot be imported.")
 
     ffi = cffi.FFI()
     _cffi = interface(<uintptr_t>bitgen.state,
-                      ffi.cast('void *', <uintptr_t>bitgen.state),
-                      ffi.cast('uint64_t (*)(void *)', <uintptr_t>bitgen.next_uint64),
-                      ffi.cast('uint32_t (*)(void *)', <uintptr_t>bitgen.next_uint32),
-                      ffi.cast('double (*)(void *)', <uintptr_t>bitgen.next_double),
-                      ffi.cast('void *', <uintptr_t>bitgen))
+                      ffi.cast("void *", <uintptr_t>bitgen.state),
+                      ffi.cast("uint64_t (*)(void *)", <uintptr_t>bitgen.next_uint64),
+                      ffi.cast("uint32_t (*)(void *)", <uintptr_t>bitgen.next_uint32),
+                      ffi.cast("double (*)(void *)", <uintptr_t>bitgen.next_double),
+                      ffi.cast("void *", <uintptr_t>bitgen))
     return _cffi
 
 cdef object prepare_ctypes(bitgen_t *bitgen):
@@ -393,33 +393,33 @@ cpdef object object_to_int(object val, object bits, object name, int default_bit
         if 32 in allowed_sizes:
             dtypes.append(np.uint32)
         if val.dtype not in dtypes:
-            all_sz = ','.join(map(str, allowed_sizes))
-            raise TypeError('{0} arrays must be unsigned with a size in'
-                            ' {1}'.format(name, all_sz))
+            all_sz = ",".join(map(str, allowed_sizes))
+            raise TypeError("{0} arrays must be unsigned with a size in"
+                            " {1}".format(name, all_sz))
     else:
         dtype = np.uint64 if default_bits==64 else np.uint32
         val = np.array(val)
         if not np.issubdtype(val.dtype, np.number):
-            raise ValueError('{0} contains non-numeric values or values '
-                             'out-of-range'.format(name))
+            raise ValueError("{0} contains non-numeric values or values "
+                             "out-of-range".format(name))
         if not np.all((val // 1) == val):
-            raise TypeError('{0} contains floating point values'.format(name))
+            raise TypeError("{0} contains floating point values".format(name))
         max_val = np.iinfo(dtype).max
         if not (np.all(val<=max_val) and np.all(val>=0)):
-            raise ValueError('{0} has elements that are out-of-range for '
-                             '{1}'.format(name, str(dtype(0).dtype)))
-        val = val.astype(dtype, casting='unsafe')
+            raise ValueError("{0} has elements that are out-of-range for "
+                             "{1}".format(name, str(dtype(0).dtype)))
+        val = val.astype(dtype, casting="unsafe")
     if isinstance(val, np.ndarray):
         val = np.atleast_1d(val)
         if val.ndim != 1 or val.size == 0:
-            raise ValueError('{0} must be 1-d and non-empty'.format(name))
+            raise ValueError("{0} must be 1-d and non-empty".format(name))
         power = 32 if val.dtype == np.uint32 else 64
         if val.ndim == 0:
             return int(val.item())
         out = sum([int(val[i]) * 2**(power * i) for i in range(len(val))])
     if out < 0 or (bits is not None and out >= (int(2)**bits)):
-        raise ValueError('{0} is out-of-range for '
-                         '[0,2**{1})'.format(name, bits))
+        raise ValueError("{0} is out-of-range for "
+                         "[0,2**{1})".format(name, bits))
 
     return out
 
@@ -433,12 +433,12 @@ cdef object wrap_int(object val, object bits):
 
 cdef object check_state_array(object arr, np.npy_intp required_len,
                               int required_bits, object name):
-    req_dtype = np.dtype('uint' + str(required_bits))
+    req_dtype = np.dtype("uint" + str(required_bits))
     if not isinstance(arr, np.ndarray):
         arr = np.array(arr, dtype=req_dtype)
     if arr.ndim != 1 or arr.dtype != req_dtype or arr.shape[0]!=required_len:
-        raise ValueError('State element {0} must be a 1-d array with dtype {1} '
-                         'and {2} elements'.format(name, req_dtype,
+        raise ValueError("State element {0} must be a 1-d array with dtype {1} "
+                         "and {2} elements".format(name, req_dtype,
                                                    required_len))
     return arr
 
@@ -472,17 +472,17 @@ cdef np.ndarray int_to_array(object value, object name, object bits, object uint
     elif uint_size == 64:
         dtype = np.uint64
     else:
-        raise ValueError('Unknown uint_size')
+        raise ValueError("Unknown uint_size")
     if value.shape == ():
         orig = value
         value = int(value)
         if value != orig:
-            raise TypeError('value must be an integer.')
+            raise TypeError("value must be an integer.")
         if bits is not None:
             upper = int(2)**int(bits)
             if value < 0 or value >= upper:
-                raise ValueError('{name} must be positive and less than '
-                                 '2**{bits}.'.format(name=name, bits=bits))
+                raise ValueError("{name} must be positive and less than "
+                                 "2**{bits}.".format(name=name, bits=bits))
         out = []
         while value:
             out.append(value % 2**int(uint_size))
@@ -493,12 +493,12 @@ cdef np.ndarray int_to_array(object value, object name, object bits, object uint
     else:
         if not (np.all(value >= np.iinfo(dtype).min) and
                 np.all(value <= np.iinfo(dtype).max)):
-            raise ValueError('value is out of range for dtype '
-                             '{0}'.format(str(dtype)))
-        out = value.astype(dtype, casting='safe')
+            raise ValueError("value is out of range for dtype "
+                             "{0}".format(str(dtype)))
+        out = value.astype(dtype, casting="safe")
         if req_len is not None and out.shape != (req_len,):
-            raise ValueError('{name} must have {len} elements when using array'
-                             ' form'.format(name=name, len=len))
+            raise ValueError("{name} must have {len} elements when using array"
+                             " form".format(name=name, len=len))
     return out
 
 
@@ -508,17 +508,17 @@ cdef check_output(object out, object dtype, object size):
     cdef np.ndarray out_array = <np.ndarray>out
     if not (np.PyArray_CHKFLAGS(out_array, api.NPY_ARRAY_CARRAY) or
             np.PyArray_CHKFLAGS(out_array, api.NPY_ARRAY_FARRAY)):
-        raise ValueError('Supplied output array is not contiguous, writable or aligned.')
+        raise ValueError("Supplied output array is not contiguous, writable or aligned.")
     if out_array.dtype != dtype:
-        raise TypeError('Supplied output array has the wrong type. '
-                        'Expected {0}, got {0}'.format(dtype, out_array.dtype))
+        raise TypeError("Supplied output array has the wrong type. "
+                        "Expected {0}, got {0}".format(dtype, out_array.dtype))
     if size is not None:
         try:
             tup_size = tuple(size)
         except TypeError:
             tup_size = tuple([size])
         if tup_size != out.shape:
-            raise ValueError('size must match out.shape when used together')
+            raise ValueError("size must match out.shape when used together")
 
 
 cdef object double_fill(void *func, bitgen_t *state, object size, object lock, object out):
@@ -592,8 +592,8 @@ cdef object float_fill_from_double(void *func, bitgen_t *state, object size, obj
     return out_array
 
 
-cdef double LEGACY_POISSON_LAM_MAX = <double>np.iinfo('l').max - np.sqrt(np.iinfo('l').max)*10
-cdef double POISSON_LAM_MAX = <double>np.iinfo('int64').max - np.sqrt(np.iinfo('int64').max)*10
+cdef double LEGACY_POISSON_LAM_MAX = <double>np.iinfo("l").max - np.sqrt(np.iinfo("l").max)*10
+cdef double POISSON_LAM_MAX = <double>np.iinfo("int64").max - np.sqrt(np.iinfo("int64").max)*10
 
 cdef uint64_t MAXSIZE = <uint64_t>sys.maxsize
 

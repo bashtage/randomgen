@@ -5,7 +5,7 @@ cimport numpy as np
 from randomgen.common cimport *
 from randomgen.entropy import random_entropy, seed_by_array
 
-__all__ = ['Xoroshiro1024']
+__all__ = ["Xoroshiro1024"]
 
 cdef uint64_t xorshift1024_uint64(void* st) nogil:
     return xorshift1024_next64(<xorshift1024_state_t *>st)
@@ -174,7 +174,7 @@ cdef class Xorshift1024(BitGenerator):
         # Legacy seeding
         ub = 2 ** 64
         if seed is None:
-            state = random_entropy(32, 'auto')
+            state = random_entropy(32, "auto")
             state = state.view(np.uint64)
         else:
             state = seed_by_array(seed, 16)
@@ -221,8 +221,8 @@ cdef class Xorshift1024(BitGenerator):
         required to ensure exact reproducibility.
         """
         import warnings
-        warnings.warn('jump (in-place) has been deprecated in favor of jumped'
-                      ', which returns a new instance', DeprecationWarning)
+        warnings.warn("jump (in-place) has been deprecated in favor of jumped"
+                      ", which returns a new instance", DeprecationWarning)
         self.jump_inplace(iter)
         return self
 
@@ -267,22 +267,22 @@ cdef class Xorshift1024(BitGenerator):
         s = np.empty(16, dtype=np.uint64)
         for i in range(16):
             s[i] = self.rng_state.s[i]
-        return {'bit_generator': self.__class__.__name__,
-                'state': {'s': s, 'p': self.rng_state.p},
-                'has_uint32': self.rng_state.has_uint32,
-                'uinteger': self.rng_state.uinteger}
+        return {"bit_generator": self.__class__.__name__,
+                "state": {"s": s, "p": self.rng_state.p},
+                "has_uint32": self.rng_state.has_uint32,
+                "uinteger": self.rng_state.uinteger}
 
     @state.setter
     def state(self, value):
         if not isinstance(value, dict):
-            raise TypeError('state must be a dict')
-        bitgen = value.get('bit_generator', '')
+            raise TypeError("state must be a dict")
+        bitgen = value.get("bit_generator", "")
         if bitgen != self.__class__.__name__:
-            raise ValueError('state must be for a {0} '
-                             'PRNG'.format(self.__class__.__name__))
-        state = check_state_array(value['state']['s'], 16, 64, 's')
+            raise ValueError("state must be for a {0} "
+                             "PRNG".format(self.__class__.__name__))
+        state = check_state_array(value["state"]["s"], 16, 64, "s")
         for i in range(16):
             self.rng_state.s[i] = <uint64_t>state[i]
-        self.rng_state.p = value['state']['p']
-        self.rng_state.has_uint32 = value['has_uint32']
-        self.rng_state.uinteger = value['uinteger']
+        self.rng_state.p = value["state"]["p"]
+        self.rng_state.has_uint32 = value["has_uint32"]
+        self.rng_state.uinteger = value["uinteger"]

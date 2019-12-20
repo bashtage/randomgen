@@ -4,7 +4,7 @@ cimport numpy as np
 from randomgen.common cimport *
 from randomgen.entropy import random_entropy
 
-__all__ = ['PCG64']
+__all__ = ["PCG64"]
 
 cdef uint64_t pcg64_uint64(void* st) nogil:
     return pcg64_next64(<pcg64_state_t *>st)
@@ -165,8 +165,8 @@ cdef class PCG64(BitGenerator):
         cdef np.ndarray _seed, _inc
         ub = 2 ** 128
         if inc is not None:
-            err_msg = 'inc must be a scalar integer between 0 and ' \
-                      '{ub}'.format(ub=ub)
+            err_msg = "inc must be a scalar integer between 0 and " \
+                      "{ub}".format(ub=ub)
             if inc < 0 or inc > ub or int(inc) != inc:
                 raise ValueError(err_msg)
             if not np.isscalar(inc):
@@ -176,7 +176,7 @@ cdef class PCG64(BitGenerator):
             return
 
         if inc is None:
-            _inc = <np.ndarray>random_entropy(4, 'auto')
+            _inc = <np.ndarray>random_entropy(4, "auto")
             _inc = <np.ndarray>_inc.view(np.uint64)
         else:
             _inc = <np.ndarray>np.empty(2, np.uint64)
@@ -184,11 +184,11 @@ cdef class PCG64(BitGenerator):
             _inc[1] = int(inc) % 2**64
 
         if seed is None:
-            _seed = <np.ndarray>random_entropy(4, 'auto')
+            _seed = <np.ndarray>random_entropy(4, "auto")
             _seed = <np.ndarray>_seed.view(np.uint64)
         else:
-            err_msg = 'seed must be a scalar integer between 0 and ' \
-                      '{ub}'.format(ub=ub)
+            err_msg = "seed must be a scalar integer between 0 and " \
+                      "{ub}".format(ub=ub)
             if not np.isscalar(seed):
                 raise TypeError(err_msg)
             if int(seed) != seed:
@@ -226,10 +226,10 @@ cdef class PCG64(BitGenerator):
                         &has_uint32, &uinteger)
         state = int(state_vec[0]) * 2**64 + int(state_vec[1])
         inc = int(state_vec[2]) * 2**64 + int(state_vec[3])
-        return {'bit_generator': self.__class__.__name__,
-                'state': {'state': state, 'inc': inc},
-                'has_uint32': has_uint32,
-                'uinteger': uinteger}
+        return {"bit_generator": self.__class__.__name__,
+                "state": {"state": state, "inc": inc},
+                "has_uint32": has_uint32,
+                "uinteger": uinteger}
 
     @state.setter
     def state(self, value):
@@ -237,20 +237,20 @@ cdef class PCG64(BitGenerator):
         cdef int has_uint32
         cdef uint32_t uinteger
         if not isinstance(value, dict):
-            raise TypeError('state must be a dict')
-        bitgen = value.get('bit_generator', '')
+            raise TypeError("state must be a dict")
+        bitgen = value.get("bit_generator", "")
         if bitgen != self.__class__.__name__:
-            raise ValueError('state must be for a {0} '
-                             'RNG'.format(self.__class__.__name__))
+            raise ValueError("state must be for a {0} "
+                             "RNG".format(self.__class__.__name__))
         state_vec = <np.ndarray>np.empty(4, dtype=np.uint64)
-        state = int(value['state']['state'])
-        inc = int(value['state']['inc'])
+        state = int(value["state"]["state"])
+        inc = int(value["state"]["inc"])
         state_vec[0] = state // 2 ** 64
         state_vec[1] = state % 2 ** 64
         state_vec[2] = inc // 2 ** 64
         state_vec[3] = inc % 2 ** 64
-        has_uint32 = value['has_uint32']
-        uinteger = value['uinteger']
+        has_uint32 = value["has_uint32"]
+        uinteger = value["uinteger"]
         pcg64_set_state(&self.rng_state,
                         <uint64_t *>np.PyArray_DATA(state_vec),
                         has_uint32, uinteger)
@@ -348,8 +348,8 @@ cdef class PCG64(BitGenerator):
         The step size is phi when divided by 2**128
         """
         import warnings
-        warnings.warn('jump (in-place) has been deprecated in favor of jumped'
-                      ', which returns a new instance', DeprecationWarning)
+        warnings.warn("jump (in-place) has been deprecated in favor of jumped"
+                      ", which returns a new instance", DeprecationWarning)
 
         self.jump_inplace(iter)
 

@@ -175,14 +175,14 @@ def test_neg_entropy():
         SeedSequence([3, -1])
 
 
-@pytest.mark.skipif(not HAS_NP_SEED_SEQUENCE, reason='NumPy too old')
+@pytest.mark.skipif(not HAS_NP_SEED_SEQUENCE, reason="NumPy too old")
 def test_against_numpy():
     ss = SeedSequence(0)
     np_ss = NPSeedSequence(0)
     assert_array_equal(ss.generate_state(10), np_ss.generate_state(10))
 
 
-@pytest.mark.skipif(not HAS_NP_SEED_SEQUENCE, reason='NumPy too old')
+@pytest.mark.skipif(not HAS_NP_SEED_SEQUENCE, reason="NumPy too old")
 def test_against_numpy_spawn():
     entropy = [1231854054, 2485020620, 2472030289,  641337343, 3981837114,
                248869471,  532471113,  949593482, 1224833511, 2864447214]

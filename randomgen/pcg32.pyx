@@ -4,7 +4,7 @@ cimport numpy as np
 from randomgen.common cimport *
 from randomgen.entropy import random_entropy
 
-__all__ = ['PCG32']
+__all__ = ["PCG32"]
 
 cdef uint64_t pcg32_uint64(void* st) nogil:
     return pcg32_next64(<pcg32_state_t *>st)
@@ -149,8 +149,8 @@ cdef class PCG32(BitGenerator):
         """
         ub = 2 ** 64
         if inc is not None:
-            err_msg = 'inc must be a scalar integer between 0 and ' \
-                      '{ub}'.format(ub=ub)
+            err_msg = "inc must be a scalar integer between 0 and " \
+                      "{ub}".format(ub=ub)
             if inc < 0 or inc > ub or int(inc) != inc:
                 raise ValueError(err_msg)
             if not np.isscalar(inc):
@@ -161,11 +161,11 @@ cdef class PCG32(BitGenerator):
 
         inc = 0 if inc is None else inc
         if seed is None:
-            seed = <np.ndarray>random_entropy(2, 'auto')
+            seed = <np.ndarray>random_entropy(2, "auto")
             seed = seed.view(np.uint64).squeeze()
         else:
-            err_msg = 'seed must be a scalar integer between 0 and ' \
-                      '{ub}'.format(ub=ub)
+            err_msg = "seed must be a scalar integer between 0 and " \
+                      "{ub}".format(ub=ub)
             if not np.isscalar(seed):
                 raise TypeError(err_msg)
             if int(seed) != seed:
@@ -186,20 +186,20 @@ cdef class PCG32(BitGenerator):
             Dictionary containing the information required to describe the
             state of the PRNG
         """
-        return {'bit_generator': self.__class__.__name__,
-                'state': {'state': self.rng_state.pcg_state.state,
-                          'inc': self.rng_state.pcg_state.inc}}
+        return {"bit_generator": self.__class__.__name__,
+                "state": {"state": self.rng_state.pcg_state.state,
+                          "inc": self.rng_state.pcg_state.inc}}
 
     @state.setter
     def state(self, value):
         if not isinstance(value, dict):
-            raise TypeError('state must be a dict')
-        bitgen = value.get('bit_generator', '')
+            raise TypeError("state must be a dict")
+        bitgen = value.get("bit_generator", "")
         if bitgen != self.__class__.__name__:
-            raise ValueError('state must be for a {0} '
-                             'PRNG'.format(self.__class__.__name__))
-        self.rng_state.pcg_state.state = value['state']['state']
-        self.rng_state.pcg_state.inc = value['state']['inc']
+            raise ValueError("state must be for a {0} "
+                             "PRNG".format(self.__class__.__name__))
+        self.rng_state.pcg_state.state = value["state"]["state"]
+        self.rng_state.pcg_state.inc = value["state"]["inc"]
 
     def advance(self, delta):
         """
@@ -280,8 +280,8 @@ cdef class PCG32(BitGenerator):
         The step size is phi when divided by the period 2**64
         """
         import warnings
-        warnings.warn('jump (in-place) has been deprecated in favor of jumped'
-                      ', which returns a new instance', DeprecationWarning)
+        warnings.warn("jump (in-place) has been deprecated in favor of jumped"
+                      ", which returns a new instance", DeprecationWarning)
 
         self.jump_inplace(iter)
         return self

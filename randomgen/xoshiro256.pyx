@@ -4,7 +4,7 @@ cimport numpy as np
 from randomgen.common cimport *
 from randomgen.entropy import random_entropy, seed_by_array
 
-__all__ = ['Xoshiro256']
+__all__ = ["Xoshiro256"]
 
 cdef uint64_t xoshiro256_uint64(void* st) nogil:
     return xoshiro256_next64(<xoshiro256_state_t *>st)
@@ -172,7 +172,7 @@ cdef class Xoshiro256(BitGenerator):
         # Legacy seeding
         ub = 2 ** 64
         if seed is None:
-            state = random_entropy(8, 'auto')
+            state = random_entropy(8, "auto")
             state = state.view(np.uint64)
         else:
             state = seed_by_array(seed, 4)
@@ -220,8 +220,8 @@ cdef class Xoshiro256(BitGenerator):
         required to ensure exact reproducibility.
         """
         import warnings
-        warnings.warn('jump (in-place) has been deprecated in favor of jumped'
-                      ', which returns a new instance', DeprecationWarning)
+        warnings.warn("jump (in-place) has been deprecated in favor of jumped"
+                      ", which returns a new instance", DeprecationWarning)
 
         self.jump_inplace(iter)
         return self
@@ -269,23 +269,23 @@ cdef class Xoshiro256(BitGenerator):
         state[1] = self.rng_state.s[1]
         state[2] = self.rng_state.s[2]
         state[3] = self.rng_state.s[3]
-        return {'bit_generator': self.__class__.__name__,
-                's': state,
-                'has_uint32': self.rng_state.has_uint32,
-                'uinteger': self.rng_state.uinteger}
+        return {"bit_generator": self.__class__.__name__,
+                "s": state,
+                "has_uint32": self.rng_state.has_uint32,
+                "uinteger": self.rng_state.uinteger}
 
     @state.setter
     def state(self, value):
         if not isinstance(value, dict):
-            raise TypeError('state must be a dict')
-        bitgen = value.get('bit_generator', '')
+            raise TypeError("state must be a dict")
+        bitgen = value.get("bit_generator", "")
         if bitgen != self.__class__.__name__:
-            raise ValueError('state must be for a {0} '
-                             'PRNG'.format(self.__class__.__name__))
-        state = check_state_array(value['s'], 4, 64, 's')
+            raise ValueError("state must be for a {0} "
+                             "PRNG".format(self.__class__.__name__))
+        state = check_state_array(value["s"], 4, 64, "s")
         self.rng_state.s[0] = <uint64_t>state[0]
         self.rng_state.s[1] = <uint64_t>state[1]
         self.rng_state.s[2] = <uint64_t>state[2]
         self.rng_state.s[3] = <uint64_t>state[3]
-        self.rng_state.has_uint32 = value['has_uint32']
-        self.rng_state.uinteger = value['uinteger']
+        self.rng_state.has_uint32 = value["has_uint32"]
+        self.rng_state.uinteger = value["uinteger"]

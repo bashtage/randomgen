@@ -7,7 +7,7 @@ cimport numpy as np
 from randomgen.common cimport *
 from randomgen.entropy import random_entropy
 
-__all__ = ['MT19937']
+__all__ = ["MT19937"]
 
 cdef uint64_t mt19937_uint64(void *st) nogil:
     return mt19937_next64(<mt19937_state_t *> st)
@@ -155,12 +155,12 @@ cdef class MT19937(BitGenerator):
 
         try:
             if seed is None:
-                seed = random_entropy(624, 'auto')
+                seed = random_entropy(624, "auto")
                 mt19937_init_by_array(&self.rng_state,
                                       <uint32_t*>np.PyArray_DATA(seed),
                                       624)
             else:
-                if hasattr(seed, 'squeeze'):
+                if hasattr(seed, "squeeze"):
                     seed = seed.squeeze()
                 idx = operator.index(seed)
                 if idx > int(2**32 - 1) or idx < 0:
@@ -170,12 +170,12 @@ cdef class MT19937(BitGenerator):
             obj = np.asarray(seed)
             if obj.size == 0:
                 raise ValueError("Seed must be non-empty")
-            obj = obj.astype(np.int64, casting='safe')
+            obj = obj.astype(np.int64, casting="safe")
             if np.PyArray_NDIM(obj) != 1:
                 raise ValueError("Seed array must be 1-d")
             if ((obj > int(2**32 - 1)) | (obj < 0)).any():
                 raise ValueError("Seed must be between 0 and 2**32 - 1")
-            obj = obj.astype(np.uint32, casting='unsafe', order='C')
+            obj = obj.astype(np.uint32, casting="unsafe", order="C")
             mt19937_init_by_array(&self.rng_state,
                                   <uint32_t*>np.PyArray_DATA(obj),
                                   <int>np.PyArray_DIM(obj, 0))
@@ -192,7 +192,7 @@ cdef class MT19937(BitGenerator):
             Number of times to jump the state of the rng.
         """
         if jumps < 0:
-            raise ValueError('jumps must be positive')
+            raise ValueError("jumps must be positive")
         mt19937_jump_n(&self.rng_state, jumps)
 
     def jump(self, int jumps=1):
@@ -212,8 +212,8 @@ cdef class MT19937(BitGenerator):
             PRNG jumped jumps times
         """
         import warnings
-        warnings.warn('jump (in-place) has been deprecated in favor of jumped'
-                      ', which returns a new instance', DeprecationWarning)
+        warnings.warn("jump (in-place) has been deprecated in favor of jumped"
+                      ", which returns a new instance", DeprecationWarning)
 
         self.jump_inplace(jumps)
         return self
@@ -260,24 +260,24 @@ cdef class MT19937(BitGenerator):
         for i in range(624):
             key[i] = self.rng_state.key[i]
 
-        return {'bit_generator': self.__class__.__name__,
-                'state': {'key': key, 'pos': self.rng_state.pos}}
+        return {"bit_generator": self.__class__.__name__,
+                "state": {"key": key, "pos": self.rng_state.pos}}
 
     @state.setter
     def state(self, value):
         if isinstance(value, tuple):
-            if value[0] != 'MT19937' or len(value) not in (3, 5):
-                raise ValueError('state is not a legacy MT19937 state')
-            value ={'bit_generator': 'MT19937',
-                    'state': {'key': value[1], 'pos': value[2]}}
+            if value[0] != "MT19937" or len(value) not in (3, 5):
+                raise ValueError("state is not a legacy MT19937 state")
+            value ={"bit_generator": "MT19937",
+                    "state": {"key": value[1], "pos": value[2]}}
 
         if not isinstance(value, dict):
-            raise TypeError('state must be a dict')
-        bitgen = value.get('bit_generator', '')
+            raise TypeError("state must be a dict")
+        bitgen = value.get("bit_generator", "")
         if bitgen != self.__class__.__name__:
-            raise ValueError('state must be for a {0} '
-                             'PRNG'.format(self.__class__.__name__))
-        key = check_state_array(value['state']['key'], 624, 32, 'key')
+            raise ValueError("state must be for a {0} "
+                             "PRNG".format(self.__class__.__name__))
+        key = check_state_array(value["state"]["key"], 624, 32, "key")
         for i in range(624):
             self.rng_state.key[i] = key[i]
-        self.rng_state.pos = value['state']['pos']
+        self.rng_state.pos = value["state"]["pos"]

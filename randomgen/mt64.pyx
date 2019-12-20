@@ -7,7 +7,7 @@ cimport numpy as np
 from randomgen.common cimport *
 from randomgen.entropy import random_entropy
 
-__all__ = ['MT64']
+__all__ = ["MT64"]
 
 cdef uint64_t mt64_uint64(void *st) nogil:
     return mt64_next64(<mt64_state_t *> st)
@@ -142,12 +142,12 @@ cdef class MT64(BitGenerator):
 
         try:
             if seed is None:
-                seed = random_entropy(624, 'auto')
+                seed = random_entropy(624, "auto")
                 mt64_init_by_array(&self.rng_state,
                                    <uint64_t*>np.PyArray_DATA(seed),
                                    624 // 2)
             else:
-                if hasattr(seed, 'squeeze'):
+                if hasattr(seed, "squeeze"):
                     seed = seed.squeeze()
                 idx = operator.index(seed)
                 if idx > int(2**64 - 1) or idx < 0:
@@ -157,7 +157,7 @@ cdef class MT64(BitGenerator):
             obj = np.asarray(seed)
             if obj.size == 0:
                 raise ValueError("Seed must be non-empty")
-            obj = obj.astype(np.object, casting='safe')
+            obj = obj.astype(np.object, casting="safe")
             if np.PyArray_NDIM(obj) != 1:
                 raise ValueError("Seed array must be 1-d")
             if ((obj > int(2**64 - 1)) | (obj < 0)).any():
@@ -165,7 +165,7 @@ cdef class MT64(BitGenerator):
             for val in obj:
                 if np.floor(val) != val:
                     raise ValueError("Seed must contains integers")
-            obj = obj.astype(np.uint64, casting='unsafe', order='C')
+            obj = obj.astype(np.uint64, casting="unsafe", order="C")
             mt64_init_by_array(&self.rng_state,
                                <uint64_t*>np.PyArray_DATA(obj),
                                np.PyArray_DIM(obj, 0))
@@ -187,22 +187,22 @@ cdef class MT64(BitGenerator):
         for i in range(312):
             key[i] = self.rng_state.mt[i]
 
-        return {'bit_generator': self.__class__.__name__,
-                'state': {'key': key, 'pos': self.rng_state.mti},
-                'has_uint32': self.rng_state.has_uint32,
-                'uinteger': self.rng_state.uinteger}
+        return {"bit_generator": self.__class__.__name__,
+                "state": {"key": key, "pos": self.rng_state.mti},
+                "has_uint32": self.rng_state.has_uint32,
+                "uinteger": self.rng_state.uinteger}
 
     @state.setter
     def state(self, value):
         if not isinstance(value, dict):
-            raise TypeError('state must be a dict')
-        bitgen = value.get('bit_generator', '')
+            raise TypeError("state must be a dict")
+        bitgen = value.get("bit_generator", "")
         if bitgen != self.__class__.__name__:
-            raise ValueError('state must be for a {0} '
-                             'PRNG'.format(self.__class__.__name__))
-        key = check_state_array(value['state']['key'], 312, 64, 'key')
+            raise ValueError("state must be for a {0} "
+                             "PRNG".format(self.__class__.__name__))
+        key = check_state_array(value["state"]["key"], 312, 64, "key")
         for i in range(312):
             self.rng_state.mt[i] = key[i]
-        self.rng_state.mti = value['state']['pos']
-        self.rng_state.has_uint32 = value['has_uint32']
-        self.rng_state.uinteger = value['uinteger']
+        self.rng_state.mti = value["state"]["pos"]
+        self.rng_state.has_uint32 = value["has_uint32"]
+        self.rng_state.uinteger = value["uinteger"]
