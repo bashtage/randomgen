@@ -189,7 +189,7 @@ class TestAgainstNumPy(object):
                         self.rs.standard_exponential)
         self._is_state_common_legacy()
 
-    @pytest.mark.xfail(reason="Stream broken for simplicity")
+    @pytest.mark.xfail(reason="Stream broken for simplicity", strict=True)
     def test_tomaxint(self):
         self._set_common_state()
         self._is_state_common()
@@ -298,7 +298,7 @@ class TestAgainstNumPy(object):
         with pytest.deprecated_call():
             assert_allclose(f(3, 4, 5), g(3, 4, 5))
 
-    @pytest.mark.xfail(reason="Definition of poisson_lam_max changed")
+    @pytest.mark.xfail(reason="poisson_lam_max changed", strict=True)
     def test_poisson_lam_max(self):
         assert_allclose(self.rg.poisson_lam_max, self.nprs.poisson_lam_max)
 
@@ -309,7 +309,7 @@ class TestAgainstNumPy(object):
                         self.rg.triangular)
         self._is_state_common()
 
-    @pytest.mark.xfail(reason="Changes to hypergeometic break stream")
+    @pytest.mark.xfail(reason="Changes to hypergeometic", strict=True)
     def test_hypergeometric(self):
         self._set_common_state()
         self._is_state_common()
@@ -339,7 +339,7 @@ class TestAgainstNumPy(object):
                      g(100, np.array(p), size=(7, 23)))
         self._is_state_common()
 
-    @pytest.mark.xfail(reason="Stream broken for performance")
+    @pytest.mark.xfail(reason="Stream broken for performance", strict=True)
     def test_choice(self):
         self._set_common_state()
         self._is_state_common()

@@ -570,11 +570,11 @@ cdef class Generator:
 
         Parameters
         ----------
-        low : int or array-like of ints
+        low : {int, array_like[int]}
             Lowest (signed) integers to be drawn from the distribution (unless
             ``high=None``, in which case this parameter is one above the
             *highest* such integer).
-        high : int or array-like of ints, optional
+        high : {int, array_like[int]}, optional
             If provided, one above the largest (signed) integer to be drawn
             from the distribution (see above for behavior if ``high=None``).
             If array-like, must contain integer values
@@ -648,10 +648,10 @@ cdef class Generator:
                CoRR, Aug. 13, 2018, http://arxiv.org/abs/1805.10941.
 
         """
-        if use_masked is not None:
+        if use_masked is not None and use_masked:
             import warnings
             warnings.warn("use_masked will be removed in the final release and"
-                          "only the Lemire method will be available.",
+                          " only the Lemire method will be available.",
                           DeprecationWarning)
         if closed is not None:
             import warnings
@@ -725,32 +725,34 @@ cdef class Generator:
         return self.integers(0, 4294967296, size=n_uint32, dtype=np.uint32).tobytes()[:length]
 
     @cython.wraparound(True)
-    def choice(self, a, size=None, replace=True, p=None, axis=0):
+    def choice(self, a, size=None, replace=True, p=None, axis=0, bint shuffle=True):
         """
-        choice(a, size=None, replace=True, p=None, axis=0):
-
-        Generates a random sample from a given 1-D array
-
-                .. versionadded:: 1.7.0
+        choice(a, size=None, replace=True, p=None, axis=0, shuffle=True):
 
         Parameters
         ----------
-        a : 1-D array-like or int
+        a : {array_like, int}
             If an ndarray, a random sample is generated from its elements.
             If an int, the random sample is generated as if a were np.arange(a)
         size : int or tuple of ints, optional
-            Output shape. If the given shape is, e.g., ``(m, n, k)``, then
-            ``m * n * k`` samples are drawn. Default is None, in which case a
-            single value is returned.
+            Output shape.  If the given shape is, e.g., ``(m, n, k)``, then
+            ``m * n * k`` samples are drawn from the 1-d `a`. If `a` has more
+            than one dimension, the `size` shape will be inserted into the
+            `axis` dimension, so the output ``ndim`` will be ``a.ndim - 1 +
+            len(size)``. Default is None, in which case a single value is
+            returned.
         replace : boolean, optional
             Whether the sample is with or without replacement
-        p : 1-D array-like, optional
+        p : 1-D array_like, optional
             The probabilities associated with each entry in a.
             If not given the sample assumes a uniform distribution over all
             entries in a.
         axis : int, optional
             The axis along which the selection is performed. The default, 0,
             selects by row.
+        shuffle : boolean, optional
+            Whether the sample is shuffled when sampling without replacement.
+            Default is True, False provides a speedup.
 
         Returns
         -------
@@ -805,14 +807,12 @@ cdef class Generator:
               dtype='<U11')
 
         """
-        cdef char* idx_ptr
-        cdef int64_t buf
-        cdef char* buf_ptr
 
-        cdef set idx_set
         cdef int64_t val, t, loc, size_i, pop_size_i
         cdef int64_t *idx_data
         cdef np.npy_intp j
+        cdef uint64_t set_size, mask
+        cdef uint64_t[::1] hash_set
         # Format and Verify input
         a = np.array(a, copy=False)
         if a.ndim == 0:
@@ -820,7 +820,7 @@ cdef class Generator:
                 # __index__ must return an integer by python rules.
                 pop_size = operator.index(a.item())
             except TypeError:
-                raise ValueError("`a` must be 1-dimensional or an integer")
+                raise ValueError("`a` must an array or an integer")
             if pop_size <= 0 and np.prod(size) != 0:
                 raise ValueError("`a` must be greater than 0 unless no samples are taken")
         else:
@@ -837,7 +837,6 @@ cdef class Generator:
                     atol = max(atol, np.sqrt(np.finfo(p.dtype).eps))
 
             p = <np.ndarray>np.PyArray_FROM_OTF(p, np.NPY_DOUBLE, api.NPY_ARRAY_ALIGNED | api.NPY_ARRAY_C_CONTIGUOUS)
-            check_array_constraint(p, "p", CONS_BOUNDED_0_1)
             pix = <double*>np.PyArray_DATA(p)
 
             if p.ndim != 1:
@@ -845,6 +844,10 @@ cdef class Generator:
             if p.size != pop_size:
                 raise ValueError("`a` and `p` must have same size")
             p_sum = kahan_sum(pix, d)
+            if np.isnan(p_sum):
+                raise ValueError("probabilities contain NaN")
+            if np.logical_or.reduce(p < 0):
+                raise ValueError("probabilities are not non-negative")
             if abs(p_sum - 1.) > atol:
                 raise ValueError("probabilities do not sum to 1")
 
@@ -863,7 +866,7 @@ cdef class Generator:
                 idx = cdf.searchsorted(uniform_samples, side="right")
                 idx = np.array(idx, copy=False, dtype=np.int64)  # searchsorted returns a scalar
             else:
-                idx = self.integers(0, pop_size, size=shape, dtype=np.int64)
+                idx = self.integers(0, pop_size, size=shape, dtype=np.int64, use_masked=False)
         else:
             if size > pop_size:
                 raise ValueError("Cannot take a larger sample than "
@@ -879,7 +882,7 @@ cdef class Generator:
                 found = np.zeros(shape, dtype=np.int64)
                 flat_found = found.ravel()
                 while n_uniq < size:
-                    x = self.random(size - n_uniq)
+                    x = self.random((size - n_uniq,))
                     if n_uniq > 0:
                         p[flat_found[0:n_uniq]] = 0
                     cdf = np.cumsum(p)
@@ -895,36 +898,46 @@ cdef class Generator:
                 size_i = size
                 pop_size_i = pop_size
                 # This is a heuristic tuning. should be improvable
-                if pop_size_i > 200 and (size > 200 or size > (10 * pop_size // size)):
+                if shuffle:
+                    cutoff = 50
+                else:
+                    cutoff = 20
+
+                if pop_size_i > 10000 and (size_i > (pop_size_i // cutoff)):
                     # Tail shuffle size elements
-                    idx = np.arange(pop_size, dtype=np.int64)
-                    idx_ptr = np.PyArray_BYTES(<np.ndarray>idx)
-                    buf_ptr = <char*>&buf
-                    self._shuffle_raw(pop_size_i, max(pop_size_i - size_i, 1),
-                                      8, 8, idx_ptr, buf_ptr)
+                    idx = np.PyArray_Arange(0, pop_size_i, 1, np.NPY_INT64)
+                    idx_data = <int64_t*>np.PyArray_DATA(<np.ndarray>idx)
+                    with self.lock, nogil:
+                        self._shuffle_int(pop_size_i, max(pop_size_i - size_i, 1),
+                                          idx_data)
                     # Copy to allow potentially large array backing idx to be gc
                     idx = idx[(pop_size - size):].copy()
                 else:
-                    # Floyds's algorithm with precomputed indices
-                    # Worst case, O(n**2) when size is close to pop_size
+                    # Floyd's algorithm
                     idx = np.empty(size, dtype=np.int64)
                     idx_data = <int64_t*>np.PyArray_DATA(<np.ndarray>idx)
-                    idx_set = set()
-                    loc = 0
-                    # Sample indices with one pass to avoid reacquiring the lock
-                    with self.lock:
+                    # smallest power of 2 larger than 1.2 * size
+                    set_size = <uint64_t>(1.2 * size_i)
+                    mask = _gen_mask(set_size)
+                    set_size = 1 + mask
+                    hash_set = np.full(set_size, <uint64_t>-1, np.uint64)
+                    with self.lock, cython.wraparound(False), nogil:
                         for j in range(pop_size_i - size_i, pop_size_i):
-                            idx_data[loc] = random_interval(&self._bitgen, j)
-                            loc += 1
-                    loc = 0
-                    while len(idx_set) < size_i:
-                        for j in range(pop_size_i - size_i, pop_size_i):
-                            if idx_data[loc] not in idx_set:
-                                val = idx_data[loc]
-                            else:
-                                idx_data[loc] = val = j
-                            idx_set.add(val)
-                            loc += 1
+                            val = random_bounded_uint64(&self._bitgen, 0, j, 0, 0)
+                            loc = val & mask
+                            while hash_set[loc] != <uint64_t>-1 and hash_set[loc] != <uint64_t>val:
+                                loc = (loc + 1) & mask
+                            if hash_set[loc] == <uint64_t>-1: # then val not in hash_set
+                                hash_set[loc] = val
+                                idx_data[j - pop_size_i + size_i] = val
+                            else: # we need to insert j instead
+                                loc = j & mask
+                                while hash_set[loc] != <uint64_t>-1:
+                                    loc = (loc + 1) & mask
+                                hash_set[loc] = j
+                                idx_data[j - pop_size_i + size_i] = j
+                        if shuffle:
+                            self._shuffle_int(size_i, 1, idx_data)
                 if shape is not None:
                     idx.shape = shape
 
@@ -3908,7 +3921,7 @@ cdef class Generator:
 
         Parameters
         ----------
-        n : int or array-like of ints
+        n : {int, array_like[int]}
             Number of experiments.
         pvals : sequence of floats, length p
             Probabilities of each of the ``p`` different outcomes. These
@@ -4285,6 +4298,28 @@ cdef class Generator:
             string.memcpy(buf, data + j * stride, itemsize)
             string.memcpy(data + j * stride, data + i * stride, itemsize)
             string.memcpy(data + i * stride, buf, itemsize)
+
+    cdef inline void _shuffle_int(self, np.npy_intp n, np.npy_intp first,
+                                  int64_t* data) nogil:
+        """
+        Parameters
+        ----------
+        n
+            Number of elements in data
+        first
+            First observation to shuffle.  Shuffles n-1,
+            n-2, ..., first, so that when first=1 the entire
+            array is shuffled
+        data
+            Location of data
+        """
+        cdef np.npy_intp i, j
+        cdef int64_t temp
+        for i in reversed(range(first, n)):
+            j = random_bounded_uint64(&self._bitgen, 0, i, 0, 0)
+            temp = data[j]
+            data[j] = data[i]
+            data[i] = temp
 
     def permutation(self, object x):
         """

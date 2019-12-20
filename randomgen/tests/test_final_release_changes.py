@@ -58,9 +58,9 @@ def test_integers_closed():
         random_gen.integers(0, 10, closed=False)
 
 
-def test_integers_use_masked(endpoint):
+def test_integers_use_masked():
     with pytest.deprecated_call():
-        random_gen.integers(0, 10, use_masked=endpoint)
+        random_gen.integers(0, 10, use_masked=True)
 
 
 def test_integers_large_negative_value():

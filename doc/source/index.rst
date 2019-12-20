@@ -9,7 +9,7 @@ generator be be changed.
     There are many changes between v1.16.x and v1.18.x. These reflect API
     decision taken in conjunction with NumPy in preparation of the core
     of ``randomgen`` being used as the preferred random number generator in
-    NumPy. These all issue ``DeprecationWarning`` except for ``BasicRNG.generator``
+    NumPy. These all issue ``DeprecationWarning`` except for ``BitGenerator.generator``
     which raises ``NotImplementedError``. The C-API has also changed to reflect
     the preferred naming the underlying Pseudo-RNGs, which are now known as
     bit generators (or ``BitGenerator``).
