@@ -56,11 +56,12 @@ from libc.stdint cimport uint32_t
 from .common cimport (random_raw, benchmark, prepare_ctypes, prepare_cffi)
 from .distributions cimport bitgen_t
 
-__all__ = ['SeedSequence', 'SeedlessSeedSequence']
+__all__ = ["SeedSequence", "SeedlessSeedSequence", "ISeedSequence",
+           "ISpawnableSeedSequence"]
 
 np.import_array()
 
-DECIMAL_RE = re.compile(r'[0-9]+')
+DECIMAL_RE = re.compile(r"[0-9]+")
 
 cdef int DEFAULT_POOL_SIZE = 4  # Appears also in docstring for pool_size
 cdef uint32_t INIT_A = 0x43b0d7e5
@@ -76,7 +77,7 @@ cdef uint32_t MASK32 = 0xFFFFFFFF
 def _int_to_uint32_array(n):
     arr = []
     if n < 0:
-        raise ValueError('expected non-negative integer')
+        raise ValueError("expected non-negative integer")
     if n == 0:
         arr.append(np.uint32(n))
     if isinstance(n, np.unsignedinteger):
@@ -120,11 +121,11 @@ def _coerce_to_uint32_array(x):
     >>> from randomgen.seed_sequence import _coerce_to_uint32_array
     >>> _coerce_to_uint32_array(12345)
     array([12345], dtype=uint32)
-    >>> _coerce_to_uint32_array('12345')
+    >>> _coerce_to_uint32_array("12345")
     array([12345], dtype=uint32)
-    >>> _coerce_to_uint32_array('0x12345')
+    >>> _coerce_to_uint32_array("0x12345")
     array([74565], dtype=uint32)
-    >>> _coerce_to_uint32_array([12345, '67890'])
+    >>> _coerce_to_uint32_array([12345, "67890"])
     array([12345, 67890], dtype=uint32)
     >>> _coerce_to_uint32_array(np.array([12345, 67890], dtype=np.uint32))
     array([12345, 67890], dtype=uint32)
@@ -139,17 +140,17 @@ def _coerce_to_uint32_array(x):
     """
     if isinstance(x, np.ndarray) and x.dtype == np.dtype(np.uint32):
         return x.copy()
-    elif isinstance(x, (str, basestring)):
-        if x.startswith('0x'):
+    elif isinstance(x, str):
+        if x.startswith("0x"):
             x = int(x, base=16)
         elif DECIMAL_RE.match(x):
             x = int(x)
         else:
-            raise ValueError('unrecognized seed string')
-    if isinstance(x, (int, long, np.integer)):
+            raise ValueError("unrecognized seed string")
+    if isinstance(x, (int, np.integer)):
         return _int_to_uint32_array(x)
     elif isinstance(x, (float, np.inexact)):
-        raise TypeError('seed must be integer')
+        raise TypeError("seed must be integer")
     else:
         if len(x) == 0:
             return np.array([], dtype=np.uint32)
@@ -200,7 +201,7 @@ class ISeedSequence(metaclass=abc.ABCMeta):
         n_words : int
         dtype : np.uint32 or np.uint64, optional
             The size of each word. This should only be either `uint32` or
-            `uint64`. Strings (`'uint32'`, `'uint64'`) are fine. Note that
+            `uint64`. Strings (`"uint32"`, `"uint64"`) are fine. Note that
             requesting `uint64` will draw twice as many bits as `uint32` for
             the same `n_words`. This is a convenience for `BitGenerator`s that
             express their states as `uint64` arrays.
@@ -244,20 +245,15 @@ cdef class SeedlessSeedSequence(object):
     """
 
     def generate_state(self, n_words, dtype=np.uint32):
-        raise NotImplementedError('seedless SeedSequences cannot generate state')
+        raise NotImplementedError("seedless SeedSequences cannot generate state")
 
     def spawn(self, n_children):
         return [self] * n_children
 
 
-# We cannot directly subclass a `cdef class` type from an `ABC` in Cython, so
-# we must register it after the fact.
-ISpawnableSeedSequence.register(SeedlessSeedSequence)
-
-
 cdef class SeedSequence(object):
     """
-    SeedSequence(entropy=None, spawn_key=(), pool_size=4)
+    SeedSequence(entropy=None, *, spawn_key=(), pool_size=4)
 
     SeedSequence mixes sources of entropy in a reproducible way to set the
     initial state for independent and very probably non-overlapping
@@ -299,49 +295,49 @@ cdef class SeedSequence(object):
     True
     """
 
-    def __init__(self, entropy=None, spawn_key=(),
+    def __init__(self, entropy=None, *, spawn_key=(),
                  pool_size=DEFAULT_POOL_SIZE, n_children_spawned=0):
         if pool_size < DEFAULT_POOL_SIZE:
-            raise ValueError('The size of the entropy pool should be at least '
-                             '{0}'.format(DEFAULT_POOL_SIZE))
+            raise ValueError("The size of the entropy pool should be at least "
+                             "{0}".format(DEFAULT_POOL_SIZE))
         if entropy is None:
             entropy = randbits(pool_size * 32)
         elif not isinstance(entropy, (int, np.integer, list, tuple, range,
-                                      np.ndarray, str, basestring)):
-            raise TypeError('SeedSequence expects int or sequence of ints for '
-                            'entropy not {}'.format(entropy))
+                                      np.ndarray, str)):
+            raise TypeError("SeedSequence expects int or sequence of ints for "
+                            "entropy not {}".format(entropy))
         self.entropy = entropy
         self.spawn_key = tuple(spawn_key)
         self.pool_size = pool_size
         self.n_children_spawned = n_children_spawned
-        np.zeros(1)  # Fixes a standard Python 2.7 error
+
         self.pool = np.zeros(pool_size, dtype=np.uint32)
         self.mix_entropy(self.pool, self.get_assembled_entropy())
 
     def __repr__(self):
         lines = [
-            '{0}('.format(type(self).__name__),
-            '    entropy={0},'.format(self.entropy),
+            "{0}(".format(type(self).__name__),
+            "    entropy={0},".format(self.entropy),
         ]
         # Omit some entries if they are left as the defaults in order to
         # simplify things.
         if self.spawn_key:
-            lines.append('    spawn_key={0},'.format(self.spawn_key))
+            lines.append("    spawn_key={0},".format(self.spawn_key))
         if self.pool_size != DEFAULT_POOL_SIZE:
-            lines.append('    pool_size={0},'.format(self.pool_size))
+            lines.append("    pool_size={0},".format(self.pool_size))
         if self.n_children_spawned != 0:
             n_child = self.n_children_spawned
-            lines.append('    n_children_spawned={0},'.format(n_child))
-        lines.append(')')
-        text = '\n'.join(lines)
+            lines.append("    n_children_spawned={0},".format(n_child))
+        lines.append(")")
+        text = "\n".join(lines)
         return text
 
     @property
     def state(self):
         """Get the state of the SeedSequence"""
         return {k: getattr(self, k) for k in
-                ['entropy', 'spawn_key', 'pool_size',
-                 'n_children_spawned']
+                ["entropy", "spawn_key", "pool_size",
+                 "n_children_spawned"]
                 if getattr(self, k) is not None}
 
     cdef mix_entropy(self, np.ndarray[np.npy_uint32, ndim=1] mixer,
@@ -402,7 +398,7 @@ cdef class SeedSequence(object):
         """
         generate_state(n_words, dtype=np.uint32)
 
-        Return the requested number of words for PRNG seeding
+        Return the requested number of words for PRNG seeding.
 
         A BitGenerator should call this method in its constructor with
         an appropriate `n_words` parameter to properly seed itself.
@@ -412,27 +408,25 @@ cdef class SeedSequence(object):
         n_words : int
         dtype : np.uint32 or np.uint64, optional
             The size of each word. This should only be either `uint32` or
-            `uint64`. Strings (`'uint32'`, `'uint64'`) are fine. Note that
+            `uint64`. Strings (`"uint32"`, `"uint64"`) are fine. Note that
             requesting `uint64` will draw twice as many bits as `uint32` for
             the same `n_words`. This is a convenience for `BitGenerator`s that
             express their states as `uint64` arrays.
 
         Returns
         -------
-        state : array
-            uint32 or uint64 array with shape (n_words,) containing values
-            appropriate for seeding a random number generator
+        state : {array_like[uint32], array_like[uint64]}, shape=(n_words,)
         """
         cdef uint32_t hash_const = INIT_B
         cdef uint32_t data_val
-        with np.errstate(over='ignore'):
+        with np.errstate(over="ignore"):
             out_dtype = np.dtype(dtype)
             if out_dtype == np.dtype(np.uint32):
                 pass
             elif out_dtype == np.dtype(np.uint64):
                 n_words *= 2
             else:
-                raise ValueError('only support uint32 or uint64')
+                raise ValueError("only support uint32 or uint64")
             state = np.zeros(n_words, dtype=np.uint32)
             src_cycle = cycle(self.pool)
             for i_dst in range(n_words):
@@ -444,16 +438,16 @@ cdef class SeedSequence(object):
                 state[i_dst] = data_val
             if out_dtype == np.dtype(np.uint64):
                 # For consistency across different endiannesses, view first as
-                # little-endian then convert the values to the native
-                # endianness.
-                state = state.astype('<u4').view('<u8').astype(np.uint64)
+                # little-endian then convert the values to the native endianness.
+                state = state.astype("<u4").view("<u8").astype(np.uint64)
         return state
 
     def spawn(self, n_children):
         """
         spawn(n_children)
 
-        Spawn a number of child `SeedSequence` s by extending the `spawn_key`
+        Spawn a number of child `SeedSequence` instances by extending the
+        `spawn_key`.
 
         Parameters
         ----------
@@ -465,6 +459,8 @@ cdef class SeedSequence(object):
         seqs : List[SeedSequence]
             Child SeedSequences with incremented  ``spawn_key``
         """
+        cdef int i
+
         seqs = []
         for i in range(self.n_children_spawned,
                        self.n_children_spawned + n_children):
@@ -476,5 +472,7 @@ cdef class SeedSequence(object):
         self.n_children_spawned += n_children
         return seqs
 
-
+# We cannot directly subclass a `cdef class` type from an `ABC` in Cython, so
+# we must register it after the fact.
+ISpawnableSeedSequence.register(SeedlessSeedSequence)
 ISpawnableSeedSequence.register(SeedSequence)

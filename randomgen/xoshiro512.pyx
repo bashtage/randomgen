@@ -4,7 +4,7 @@ cimport numpy as np
 from randomgen.common cimport *
 from randomgen.entropy import random_entropy, seed_by_array
 
-__all__ = ['Xoshiro512']
+__all__ = ["Xoshiro512"]
 
 cdef uint64_t xoshiro512_uint64(void* st) nogil:
     return xoshiro512_next64(<xoshiro512_state_t *>st)
@@ -17,26 +17,35 @@ cdef double xoshiro512_double(void* st) nogil:
 
 cdef class Xoshiro512(BitGenerator):
     """
-    Xoshiro512(seed=None)
+    Xoshiro512(seed=None, *, mode=None)
 
     Container for the xoshiro512** pseudo-random number generator.
 
     Parameters
     ----------
-    seed : {None, int, array_like}, optional
-        Random seed initializing the pseudo-random number generator.
-        Can be an integer in [0, 2**64-1], array of integers in [0, 2**64-1]
-        or ``None`` (the default). If `seed` is ``None``, then  data is read
-        from ``/dev/urandom`` (or the Windows analog) if available.  If
-        unavailable, a hash of the time and process ID is used.
+    seed : {None, int, array_like[uint64], SeedSequence}, optional
+        Entropy initializing the pseudo-random number generator.
+        Can be an integer in [0, 2**64-1], array of integers in [0, 2**64-1],
+        a SeedSequence instance or ``None`` (the default). If `seed`
+        is ``None``, then  data is read from ``/dev/urandom`` (or the
+        Windows analog) if available. If unavailable, a hash of the time
+        and process ID is used.
+    mode : {None, "sequence", "legacy"}
+        The seeding mode to use. "legacy" uses the legacy
+        SplitMix64-based initialization. "sequence" uses a SeedSequence
+        to transforms the seed into an initial state. None defaults to "legacy"
+        and warns that the default after 1.19 will change to "sequence".
 
     Attributes
     ----------
-    lock: threading.Lock
+    lock : threading.Lock
         Lock instance that is shared so that the same bit git generator can
         be used in multiple Generators without corrupting the state. Code that
         generates values from a bit generator should hold the bit generator's
         lock.
+    seed_seq : {None, SeedSequence}
+        The SeedSequence instance used to initialize the generator if mode is
+        "sequence" or is seed is a SeedSequence. None if mode is "legacy".
 
     Notes
     -----
@@ -61,7 +70,7 @@ cdef class Xoshiro512(BitGenerator):
     of 64-bit unsigned integers.
 
     ``Xoshiro512`` is seeded using either a single 64-bit unsigned
-    integer or a vector of 64-bit unsigned integers.  In either case, the seed
+    integer or a vector of 64-bit unsigned integers. In either case, the seed
     is used as an input for another simple random number generator, SplitMix64,
     and the output of this PRNG function is used as the initial state. Using
     a single 64-bit value for the seed can only initialize a small range of
@@ -105,8 +114,8 @@ cdef class Xoshiro512(BitGenerator):
     .. [1] "xoroshiro+ / xorshift* / xorshift+ generators and the PRNG shootout",
            http://xorshift.di.unimi.it/
     """
-    def __init__(self, seed=None):
-        BitGenerator.__init__(self)
+    def __init__(self, seed=None, *, mode=None):
+        BitGenerator.__init__(self, seed, mode)
         self.seed(seed)
 
         self._bitgen.state = <void *>&self.rng_state
@@ -119,40 +128,15 @@ cdef class Xoshiro512(BitGenerator):
         self.rng_state.has_uint32 = 0
         self.rng_state.uinteger = 0
 
-    @classmethod
-    def from_seed_seq(cls, entropy=None):
-        """
-        from_seed_seq(entropy=None)
-
-        Create a instance using a SeedSequence
-
-        Parameters
-        ----------
-        entropy : {None, int, sequence[int], SeedSequence}
-            Entropy to pass to SeedSequence, or a SeedSequence instance. Using
-            a SeedSequence instance allows all parameters to be set.
-
-        Returns
-        -------
-        bit_gen : Xoshiro512
-            SeedSequence initialized bit generator with SeedSequence instance
-            attached to ``bit_gen.seed_seq``
-
-        See Also
-        --------
-        randomgen.seed_sequence.SeedSequence
-        """
-        return super(Xoshiro512, cls).from_seed_seq(entropy)
-
-    def _seed_from_seq(self, seed_seq):
+    def _seed_from_seq(self):
         cdef int i
         cdef uint64_t *state_arr
 
-        self.seed_seq = seed_seq
         state = self.seed_seq.generate_state(8, np.uint64)
         state_arr = <np.uint64_t *>np.PyArray_DATA(state)
         for i in range(8):
             self.rng_state.s[i] = state[i]
+        self._reset_state_variables()
 
     def seed(self, seed=None):
         """
@@ -165,18 +149,25 @@ cdef class Xoshiro512(BitGenerator):
 
         Parameters
         ----------
-        seed : {int, ndarray}, optional
-            Seed for PRNG. Can be a single 64 bit unsigned integer or an array
-            of 64 bit unsigned integers.
+        seed : {None, int, array_like[uint64], SeedSequence}, optional
+            Entropy initializing the pseudo-random number generator.
+            Can be an integer in [0, 2**64-1], array of integers in
+            [0, 2**64-1], a SeedSequence instance or ``None`` (the default).
+            If `seed` is ``None``, then  data is read from ``/dev/urandom``
+            (or the Windows analog) if available. If unavailable, a hash
+            of the time and process ID is used.
 
         Raises
         ------
         ValueError
             If seed values are out of range for the PRNG.
         """
+        BitGenerator._seed_with_seed_sequence(self, seed)
+        if self.seed_seq is not None:
+            return
         ub = 2 ** 64
         if seed is None:
-            state = random_entropy(16, 'auto')
+            state = random_entropy(16, "auto")
             state = state.view(np.uint64)
         else:
             state = seed_by_array(seed, 8)
@@ -222,8 +213,8 @@ cdef class Xoshiro512(BitGenerator):
         required to ensure exact reproducibility.
         """
         import warnings
-        warnings.warn('jump (in-place) has been deprecated in favor of jumped'
-                      ', which returns a new instance', DeprecationWarning)
+        warnings.warn("jump (in-place) has been deprecated in favor of jumped"
+                      ", which returns a new instance", DeprecationWarning)
 
         self.jump_inplace(iter)
         return self
@@ -249,7 +240,7 @@ cdef class Xoshiro512(BitGenerator):
         """
         cdef Xoshiro512 bit_generator
 
-        bit_generator = self.__class__()
+        bit_generator = self.__class__(mode=self.mode)
         bit_generator.state = self.state
         bit_generator.jump_inplace(iter)
 
@@ -269,21 +260,21 @@ cdef class Xoshiro512(BitGenerator):
         state = np.empty(8, dtype=np.uint64)
         for i in range(8):
             state[i] = self.rng_state.s[i]
-        return {'bit_generator': self.__class__.__name__,
-                's': state,
-                'has_uint32': self.rng_state.has_uint32,
-                'uinteger': self.rng_state.uinteger}
+        return {"bit_generator": self.__class__.__name__,
+                "s": state,
+                "has_uint32": self.rng_state.has_uint32,
+                "uinteger": self.rng_state.uinteger}
 
     @state.setter
     def state(self, value):
         if not isinstance(value, dict):
-            raise TypeError('state must be a dict')
-        bitgen = value.get('bit_generator', '')
+            raise TypeError("state must be a dict")
+        bitgen = value.get("bit_generator", "")
         if bitgen != self.__class__.__name__:
-            raise ValueError('state must be for a {0} '
-                             'PRNG'.format(self.__class__.__name__))
-        state = check_state_array(value['s'], 8, 64, 's')
+            raise ValueError("state must be for a {0} "
+                             "PRNG".format(self.__class__.__name__))
+        state = check_state_array(value["s"], 8, 64, "s")
         for i in range(8):
             self.rng_state.s[i] = <uint64_t>state[i]
-        self.rng_state.has_uint32 = value['has_uint32']
-        self.rng_state.uinteger = value['uinteger']
+        self.rng_state.has_uint32 = value["has_uint32"]
+        self.rng_state.uinteger = value["uinteger"]

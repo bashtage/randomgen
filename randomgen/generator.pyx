@@ -21,33 +21,33 @@ from randomgen.common cimport *
 from randomgen.distributions cimport *
 from randomgen cimport api
 
-__all__ = ['Generator', 'beta', 'binomial', 'bytes', 'chisquare', 'choice',
-           'complex_normal', 'dirichlet', 'exponential', 'f', 'gamma',
-           'geometric', 'gumbel', 'hypergeometric', 'integers', 'laplace',
-           'logistic', 'lognormal', 'logseries', 'multinomial',
-           'multivariate_normal', 'negative_binomial', 'noncentral_chisquare',
-           'noncentral_f', 'normal', 'pareto', 'permutation',
-           'poisson', 'power', 'randint', 'random',  'rayleigh', 'shuffle',
-           'standard_cauchy', 'standard_exponential', 'standard_gamma',
-           'standard_normal', 'standard_t', 'triangular',
-           'uniform', 'vonmises', 'wald', 'weibull', 'zipf']
+__all__ = ["Generator", "beta", "binomial", "bytes", "chisquare", "choice",
+           "complex_normal", "dirichlet", "exponential", "f", "gamma",
+           "geometric", "gumbel", "hypergeometric", "integers", "laplace",
+           "logistic", "lognormal", "logseries", "multinomial",
+           "multivariate_normal", "negative_binomial", "noncentral_chisquare",
+           "noncentral_f", "normal", "pareto", "permutation",
+           "poisson", "power", "randint", "random",  "rayleigh", "shuffle",
+           "standard_cauchy", "standard_exponential", "standard_gamma",
+           "standard_normal", "standard_t", "triangular",
+           "uniform", "vonmises", "wald", "weibull", "zipf"]
 
 np.import_array()
 
 
 # TODO: Remove after deprecation
 def _rand_dep_message(old, new, args, dtype):
-    msg = '{old} is deprecated. Use {new}({call}) instead'
+    msg = "{old} is deprecated. Use {new}({call}) instead"
     dtype = np.dtype(dtype).char
     if args:
         if len(args) == 1:
             size = str(args[0])
         else:
-            size = '(' + ', '.join(map(str, args)) + ')'
-        call = '{size}, dtype=\'{dtype}\''.format(size=size,
+            size = "(" + ", ".join(map(str, args)) + ")"
+        call = "{size}, dtype=\"{dtype}\"".format(size=size,
                                                   dtype=str(dtype))
     else:
-        call = 'dtype=\'{dtype}\''.format(dtype=str(dtype))
+        call = "dtype=\"{dtype}\"".format(dtype=str(dtype))
     return msg.format(old=old, new=new, call=call)
 
 
@@ -67,7 +67,7 @@ cdef class Generator:
 
     **No Compatibility Guarantee**
 
-    ``Generator`` is evolving and so it isn't possible to provide a
+    ``Generator`` is evolving and so it is not possible to provide a
     compatibility guarantee like ``RandomState``. In particular, better
     algorithms have already been added and bugs that change the stream
     have been fixed. This will change once ``Generator`` stabilizes.
@@ -114,23 +114,23 @@ cdef class Generator:
 
     def __init__(self, bit_generator=None):
         if bit_generator is None:
-            bit_generator = Xoroshiro128()
+            bit_generator = Xoroshiro128(mode="sequence")
         self._bit_generator = bit_generator
 
         capsule = bit_generator.capsule
         cdef const char *name = "BitGenerator"
         if not PyCapsule_IsValid(capsule, name):
-            raise ValueError("Invalid bit generator'. The bit generator must "
+            raise ValueError("Invalid bit generator. The bit generator must "
                              "be instantized.")
         self._bitgen = (<bitgen_t *> PyCapsule_GetPointer(capsule, name))[0]
         self.lock = bit_generator.lock
 
     def __repr__(self):
-        return self.__str__() + ' at 0x{:X}'.format(id(self))
+        return self.__str__() + " at 0x{:X}".format(id(self))
 
     def __str__(self):
         _str = self.__class__.__name__
-        _str += '(' + self.bit_generator.__class__.__name__ + ')'
+        _str += "(" + self.bit_generator.__class__.__name__ + ")"
         return _str
 
     # Pickling support:
@@ -142,7 +142,7 @@ cdef class Generator:
 
     def __reduce__(self):
         from randomgen._pickle import __generator_ctor
-        return (__generator_ctor, (self.bit_generator.state['bit_generator'],),
+        return (__generator_ctor, (self.bit_generator.state["bit_generator"],),
                 self.bit_generator.state)
 
     @property
@@ -156,7 +156,7 @@ cdef class Generator:
             The bit generator instance used by the generator
         """
         import warnings
-        warnings.warn('brng is deprecated. Use bit_generator.', DeprecationWarning)
+        warnings.warn("brng is deprecated. Use bit_generator.", DeprecationWarning)
         return self._bit_generator
 
     @property
@@ -218,7 +218,7 @@ cdef class Generator:
 
         Notes
         -----
-        This is a trivial pass-through function.  Generator does not
+        This is a trivial pass-through function. Generator does not
         directly contain or manipulate the bit generator's state.
 
         """
@@ -235,8 +235,8 @@ cdef class Generator:
         Parameters
         ----------
         size : int or tuple of ints, optional
-            Output shape.  If the given shape is, e.g., ``(m, n, k)``, then
-            ``m * n * k`` samples are drawn.  Default is None, in which case a
+            Output shape. If the given shape is, e.g., ``(m, n, k)``, then
+            ``m * n * k`` samples are drawn. Default is None, in which case a
             single value is returned.
         bits : int {32, 64}
             Size of the unsigned integer to return, either 32 bit or 64 bit.
@@ -278,13 +278,13 @@ cdef class Generator:
                 for i in range(n):
                     data32[i] = self._bitgen.next_uint32(self._bitgen.state)
         else:
-            raise ValueError('Unknown value of bits.  Must be either 32 or 64.')
+            raise ValueError("Unknown value of bits. Must be either 32 or 64.")
 
         return array
 
     def random_sample(self, *args, **kwargs):
         import warnings
-        warnings.warn('random_sample is deprecated in favor of random',
+        warnings.warn("random_sample is deprecated in favor of random",
                       DeprecationWarning)
 
         return self.random(*args, **kwargs)
@@ -296,7 +296,7 @@ cdef class Generator:
         Return random floats in the half-open interval [0.0, 1.0).
 
         Results are from the "continuous uniform" distribution over the
-        stated interval.  To sample :math:`Unif[a, b), b > a` multiply
+        stated interval. To sample :math:`Unif[a, b), b > a` multiply
         the output of `random` by `(b-a)` and add `a`::
 
           (b - a) * random() + a
@@ -304,8 +304,8 @@ cdef class Generator:
         Parameters
         ----------
         size : int or tuple of ints, optional
-            Output shape.  If the given shape is, e.g., ``(m, n, k)``, then
-            ``m * n * k`` samples are drawn.  Default is None, in which case a
+            Output shape. If the given shape is, e.g., ``(m, n, k)``, then
+            ``m * n * k`` samples are drawn. Default is None, in which case a
             single value is returned.
         dtype : {str, dtype}, optional
             Desired dtype of the result, either 'd' (or 'float64') or 'f'
@@ -341,12 +341,12 @@ cdef class Generator:
         """
         cdef double temp
         key = np.dtype(dtype).name
-        if key == 'float64':
+        if key == "float64":
             return double_fill(&random_double_fill, &self._bitgen, size, self.lock, out)
-        elif key == 'float32':
+        elif key == "float32":
             return float_fill(&random_float, &self._bitgen, size, self.lock, out)
         else:
-            raise TypeError('Unsupported dtype "%s" for random' % key)
+            raise TypeError("Unsupported dtype \"{key}\" for random".format(key=key))
 
     def beta(self, a, b, size=None):
         """
@@ -355,7 +355,7 @@ cdef class Generator:
         Draw samples from a Beta distribution.
 
         The Beta distribution is a special case of the Dirichlet distribution,
-        and is related to the Gamma distribution.  It has the probability
+        and is related to the Gamma distribution. It has the probability
         distribution function
 
         .. math:: f(x; a,b) = \\frac{1}{B(\\alpha, \\beta)} x^{\\alpha - 1}
@@ -375,8 +375,8 @@ cdef class Generator:
         b : float or array_like of floats
             Beta, positive (>0).
         size : int or tuple of ints, optional
-            Output shape.  If the given shape is, e.g., ``(m, n, k)``, then
-            ``m * n * k`` samples are drawn.  If size is ``None`` (default),
+            Output shape. If the given shape is, e.g., ``(m, n, k)``, then
+            ``m * n * k`` samples are drawn. If size is ``None`` (default),
             a single value is returned if ``a`` and ``b`` are both scalars.
             Otherwise, ``np.broadcast(a, b).size`` samples are drawn.
 
@@ -387,9 +387,9 @@ cdef class Generator:
 
         """
         return cont(&random_beta, &self._bitgen, size, self.lock, 2,
-                    a, 'a', CONS_POSITIVE,
-                    b, 'b', CONS_POSITIVE,
-                    0.0, '', CONS_NONE, None)
+                    a, "a", CONS_POSITIVE,
+                    b, "b", CONS_POSITIVE,
+                    0.0, "", CONS_NONE, None)
 
     def exponential(self, scale=1.0, size=None):
         """
@@ -407,7 +407,7 @@ cdef class Generator:
         of the exponential distribution [3]_.
 
         The exponential distribution is a continuous analogue of the
-        geometric distribution.  It describes many common situations, such as
+        geometric distribution. It describes many common situations, such as
         the size of raindrops measured over many rainstorms [1]_, or the time
         between page requests to Wikipedia [2]_.
 
@@ -417,9 +417,9 @@ cdef class Generator:
             The scale parameter, :math:`\\beta = 1/\\lambda`. Must be
             non-negative.
         size : int or tuple of ints, optional
-            Output shape.  If the given shape is, e.g., ``(m, n, k)``, then
-            ``m * n * k`` samples are drawn.  If size is ``None`` (default),
-            a single value is returned if ``scale`` is a scalar.  Otherwise,
+            Output shape. If the given shape is, e.g., ``(m, n, k)``, then
+            ``m * n * k`` samples are drawn. If size is ``None`` (default),
+            a single value is returned if ``scale`` is a scalar. Otherwise,
             ``np.array(scale).size`` samples are drawn.
 
         Returns
@@ -438,12 +438,12 @@ cdef class Generator:
 
         """
         return cont(&random_exponential, &self._bitgen, size, self.lock, 1,
-                    scale, 'scale', CONS_NON_NEGATIVE,
-                    0.0, '', CONS_NONE,
-                    0.0, '', CONS_NONE,
+                    scale, "scale", CONS_NON_NEGATIVE,
+                    0.0, "", CONS_NONE,
+                    0.0, "", CONS_NONE,
                     None)
 
-    def standard_exponential(self, size=None, dtype=np.float64, method=u'zig', out=None):
+    def standard_exponential(self, size=None, dtype=np.float64, method=u"zig", out=None):
         """
         standard_exponential(size=None, dtype='d', method='zig', out=None)
 
@@ -455,8 +455,8 @@ cdef class Generator:
         Parameters
         ----------
         size : int or tuple of ints, optional
-            Output shape.  If the given shape is, e.g., ``(m, n, k)``, then
-            ``m * n * k`` samples are drawn.  Default is None, in which case a
+            Output shape. If the given shape is, e.g., ``(m, n, k)``, then
+            ``m * n * k`` samples are drawn. Default is None, in which case a
             single value is returned.
         dtype : dtype, optional
             Desired dtype of the result, either 'd' (or 'float64') or 'f'
@@ -483,19 +483,18 @@ cdef class Generator:
 
         """
         key = np.dtype(dtype).name
-        if key == 'float64':
-            if method == u'zig':
+        if key == "float64":
+            if method == u"zig":
                 return double_fill(&random_standard_exponential_zig_fill, &self._bitgen, size, self.lock, out)
             else:
                 return double_fill(&random_standard_exponential_fill, &self._bitgen, size, self.lock, out)
-        elif key == 'float32':
-            if method == u'zig':
+        elif key == "float32":
+            if method == u"zig":
                 return float_fill(&random_standard_exponential_zig_f, &self._bitgen, size, self.lock, out)
             else:
                 return float_fill(&random_standard_exponential_f, &self._bitgen, size, self.lock, out)
         else:
-            raise TypeError('Unsupported dtype "%s" for standard_exponential'
-                            % key)
+            raise TypeError("Unsupported dtype \"{key}\" for standard_exponential".format(key=key))
 
     def tomaxint(self, size=None):
         """
@@ -508,8 +507,8 @@ cdef class Generator:
         Parameters
         ----------
         size : int or tuple of ints, optional
-            Output shape.  If the given shape is, e.g., ``(m, n, k)``, then
-            ``m * n * k`` samples are drawn.  Default is None, in which case a
+            Output shape. If the given shape is, e.g., ``(m, n, k)``, then
+            ``m * n * k`` samples are drawn. Default is None, in which case a
             single value is returned.
 
         Returns
@@ -538,7 +537,7 @@ cdef class Generator:
 
         """
         import warnings
-        warnings.warn('tomaxint is deprecated. Use integers.',
+        warnings.warn("tomaxint is deprecated. Use integers.",
                       DeprecationWarning)
 
         return self.integers(0, np.iinfo(np.int).max + 1, dtype=np.int, size=size)
@@ -550,7 +549,7 @@ cdef class Generator:
         See integers docstring for arguments
         """
         import warnings
-        warnings.warn('randint has been deprecated in favor of integers',
+        warnings.warn("randint has been deprecated in favor of integers",
                       DeprecationWarning)
 
         return self.integers(*args, **kwargs)
@@ -580,8 +579,8 @@ cdef class Generator:
             from the distribution (see above for behavior if ``high=None``).
             If array-like, must contain integer values
         size : int or tuple of ints, optional
-            Output shape.  If the given shape is, e.g., ``(m, n, k)``, then
-            ``m * n * k`` samples are drawn.  Default is None, in which case a
+            Output shape. If the given shape is, e.g., ``(m, n, k)``, then
+            ``m * n * k`` samples are drawn. Default is None, in which case a
             single value is returned.
         dtype : {str, dtype}, optional
             Desired dtype of the result. All dtypes are determined by their
@@ -651,12 +650,12 @@ cdef class Generator:
         """
         if use_masked is not None:
             import warnings
-            warnings.warn('use_masked will be removed in the final release and'
-                          'only the Lemire method will be available.',
+            warnings.warn("use_masked will be removed in the final release and"
+                          "only the Lemire method will be available.",
                           DeprecationWarning)
         if closed is not None:
             import warnings
-            warnings.warn('closed has been deprecated in favor of endpoint.',
+            warnings.warn("closed has been deprecated in favor of endpoint.",
                           DeprecationWarning)
             endpoint = closed
 
@@ -668,31 +667,31 @@ cdef class Generator:
         dt = np.dtype(dtype)
         key = dt.name
         if key not in _integers_types:
-            raise TypeError('Unsupported dtype "%s" for integers' % key)
-        if dt.byteorder != '=' and dt.byteorder != '|':
+            raise TypeError("Unsupported dtype \"{key}\" for integers".format(key=key))
+        if dt.byteorder != "=" and dt.byteorder != "|":
             import warnings
-            warnings.warn('Byteorder is not supported. If you require '
-                          'platform-independent byteorder, call byteswap when '
-                          'required.\n\nIn future version, specifying '
-                          'byteorder will raise a ValueError', FutureWarning)
+            warnings.warn("Byteorder is not supported. If you require "
+                          "platform-independent byteorder, call byteswap when "
+                          "required.\n\nIn future version, specifying "
+                          "byteorder will raise a ValueError", FutureWarning)
 
-        if key == 'int32':
+        if key == "int32":
             ret = _rand_int32(low, high, size, _use_masked, endpoint, &self._bitgen, self.lock)
-        elif key == 'int64':
+        elif key == "int64":
             ret = _rand_int64(low, high, size, _use_masked, endpoint, &self._bitgen, self.lock)
-        elif key == 'int16':
+        elif key == "int16":
             ret = _rand_int16(low, high, size, _use_masked, endpoint, &self._bitgen, self.lock)
-        elif key == 'int8':
+        elif key == "int8":
             ret = _rand_int8(low, high, size, _use_masked, endpoint, &self._bitgen, self.lock)
-        elif key == 'uint64':
+        elif key == "uint64":
             ret = _rand_uint64(low, high, size, _use_masked, endpoint, &self._bitgen, self.lock)
-        elif key == 'uint32':
+        elif key == "uint32":
             ret = _rand_uint32(low, high, size, _use_masked, endpoint, &self._bitgen, self.lock)
-        elif key == 'uint16':
+        elif key == "uint16":
             ret = _rand_uint16(low, high, size, _use_masked, endpoint, &self._bitgen, self.lock)
-        elif key == 'uint8':
+        elif key == "uint8":
             ret = _rand_uint8(low, high, size, _use_masked, endpoint, &self._bitgen, self.lock)
-        elif key == 'bool':
+        elif key == "bool":
             ret = _rand_bool(low, high, size, _use_masked, endpoint, &self._bitgen, self.lock)
 
         if size is None and dtype in (np.bool, np.int, np.long):
@@ -740,8 +739,8 @@ cdef class Generator:
             If an ndarray, a random sample is generated from its elements.
             If an int, the random sample is generated as if a were np.arange(a)
         size : int or tuple of ints, optional
-            Output shape.  If the given shape is, e.g., ``(m, n, k)``, then
-            ``m * n * k`` samples are drawn.  Default is None, in which case a
+            Output shape. If the given shape is, e.g., ``(m, n, k)``, then
+            ``m * n * k`` samples are drawn. Default is None, in which case a
             single value is returned.
         replace : boolean, optional
             Whether the sample is with or without replacement
@@ -821,13 +820,13 @@ cdef class Generator:
                 # __index__ must return an integer by python rules.
                 pop_size = operator.index(a.item())
             except TypeError:
-                raise ValueError("a must be 1-dimensional or an integer")
+                raise ValueError("`a` must be 1-dimensional or an integer")
             if pop_size <= 0 and np.prod(size) != 0:
-                raise ValueError("a must be greater than 0 unless no samples are taken")
+                raise ValueError("`a` must be greater than 0 unless no samples are taken")
         else:
             pop_size = a.shape[axis]
             if pop_size == 0 and np.prod(size) != 0:
-                raise ValueError("'a' cannot be empty unless no samples are taken")
+                raise ValueError("`a` cannot be empty unless no samples are taken")
 
         if p is not None:
             d = len(p)
@@ -838,13 +837,13 @@ cdef class Generator:
                     atol = max(atol, np.sqrt(np.finfo(p.dtype).eps))
 
             p = <np.ndarray>np.PyArray_FROM_OTF(p, np.NPY_DOUBLE, api.NPY_ARRAY_ALIGNED | api.NPY_ARRAY_C_CONTIGUOUS)
-            check_array_constraint(p, 'p', CONS_BOUNDED_0_1)
+            check_array_constraint(p, "p", CONS_BOUNDED_0_1)
             pix = <double*>np.PyArray_DATA(p)
 
             if p.ndim != 1:
-                raise ValueError("'p' must be 1-dimensional")
+                raise ValueError("`p` must be 1-dimensional")
             if p.size != pop_size:
-                raise ValueError("'a' and 'p' must have same size")
+                raise ValueError("`a` and `p` must have same size")
             p_sum = kahan_sum(pix, d)
             if abs(p_sum - 1.) > atol:
                 raise ValueError("probabilities do not sum to 1")
@@ -861,14 +860,14 @@ cdef class Generator:
                 cdf = p.cumsum()
                 cdf /= cdf[-1]
                 uniform_samples = self.random(shape)
-                idx = cdf.searchsorted(uniform_samples, side='right')
+                idx = cdf.searchsorted(uniform_samples, side="right")
                 idx = np.array(idx, copy=False, dtype=np.int64)  # searchsorted returns a scalar
             else:
                 idx = self.integers(0, pop_size, size=shape, dtype=np.int64)
         else:
             if size > pop_size:
                 raise ValueError("Cannot take a larger sample than "
-                                 "population when 'replace=False'")
+                                 "population when replace=False")
             elif size < 0:
                 raise ValueError("negative dimensions are not allowed")
 
@@ -885,7 +884,7 @@ cdef class Generator:
                         p[flat_found[0:n_uniq]] = 0
                     cdf = np.cumsum(p)
                     cdf /= cdf[-1]
-                    new = cdf.searchsorted(x, side='right')
+                    new = cdf.searchsorted(x, side="right")
                     _, unique_indices = np.unique(new, return_index=True)
                     unique_indices.sort()
                     new = new.take(unique_indices)
@@ -958,21 +957,21 @@ cdef class Generator:
         Draw samples from a uniform distribution.
 
         Samples are uniformly distributed over the half-open interval
-        ``[low, high)`` (includes low, but excludes high).  In other words,
+        ``[low, high)`` (includes low, but excludes high). In other words,
         any value within the given interval is equally likely to be drawn
         by `uniform`.
 
         Parameters
         ----------
         low : float or array_like of floats, optional
-            Lower boundary of the output interval.  All values generated will be
-            greater than or equal to low.  The default value is 0.
+            Lower boundary of the output interval. All values generated will be
+            greater than or equal to low. The default value is 0.
         high : float or array_like of floats
-            Upper boundary of the output interval.  All values generated will be
-            less than high.  The default value is 1.0.
+            Upper boundary of the output interval. All values generated will be
+            less than high. The default value is 1.0.
         size : int or tuple of ints, optional
-            Output shape.  If the given shape is, e.g., ``(m, n, k)``, then
-            ``m * n * k`` samples are drawn.  If size is ``None`` (default),
+            Output shape. If the given shape is, e.g., ``(m, n, k)``, then
+            ``m * n * k`` samples are drawn. If size is ``None`` (default),
             a single value is returned if ``low`` and ``high`` are both scalars.
             Otherwise, ``np.broadcast(low, high).size`` samples are drawn.
 
@@ -1035,12 +1034,12 @@ cdef class Generator:
             _high = PyFloat_AsDouble(high)
             range = _high - _low
             if not np.isfinite(range):
-                raise OverflowError('Range exceeds valid bounds')
+                raise OverflowError("Range exceeds valid bounds")
 
             return cont(&random_uniform, &self._bitgen, size, self.lock, 2,
-                        _low, '', CONS_NONE,
-                        range, '', CONS_NONE,
-                        0.0, '', CONS_NONE,
+                        _low, "", CONS_NONE,
+                        range, "", CONS_NONE,
+                        0.0, "", CONS_NONE,
                         None)
 
         temp = np.subtract(ahigh, alow)
@@ -1050,11 +1049,11 @@ cdef class Generator:
 
         arange = <np.ndarray>np.PyArray_EnsureArray(temp)
         if not np.all(np.isfinite(arange)):
-            raise OverflowError('Range exceeds valid bounds')
+            raise OverflowError("Range exceeds valid bounds")
         return cont(&random_uniform, &self._bitgen, size, self.lock, 2,
-                    alow, '', CONS_NONE,
-                    arange, '', CONS_NONE,
-                    0.0, '', CONS_NONE,
+                    alow, "", CONS_NONE,
+                    arange, "", CONS_NONE,
+                    0.0, "", CONS_NONE,
                     None)
 
     def rand(self, *args, dtype=np.float64):
@@ -1101,7 +1100,7 @@ cdef class Generator:
 
         """
         import warnings
-        msg = _rand_dep_message('rand', 'random', args, dtype)
+        msg = _rand_dep_message("rand", "random", args, dtype)
         warnings.warn(msg, DeprecationWarning)
 
         if len(args) == 0:
@@ -1168,7 +1167,7 @@ cdef class Generator:
 
         """
         import warnings
-        msg = _rand_dep_message('randn', 'standard_normal', args, dtype)
+        msg = _rand_dep_message("randn", "standard_normal", args, dtype)
         warnings.warn(msg, DeprecationWarning)
 
         if len(args) == 0:
@@ -1183,7 +1182,7 @@ cdef class Generator:
         Random integers of type np.int between `low` and `high`, inclusive.
 
         Return random integers of type np.int from the "discrete uniform"
-        distribution in the closed interval [`low`, `high`].  If `high` is
+        distribution in the closed interval [`low`, `high`]. If `high` is
         None (the default), then results are from [1, `low`]. The np.int
         type translates to the C long integer type and its precision
         is platform dependent.
@@ -1202,8 +1201,8 @@ cdef class Generator:
             If provided, the largest (signed) integer to be drawn from the
             distribution (see above for behavior if ``high=None``).
         size : int or tuple of ints, optional
-            Output shape.  If the given shape is, e.g., ``(m, n, k)``, then
-            ``m * n * k`` samples are drawn.  Default is None, in which case a
+            Output shape. If the given shape is, e.g., ``(m, n, k)``, then
+            ``m * n * k`` samples are drawn. Default is None, in which case a
             single value is returned.
 
         Returns
@@ -1271,7 +1270,7 @@ cdef class Generator:
                            "instead".format(low=low, high=high)),
                           DeprecationWarning)
 
-        return self.integers(low, high + 1, size=size, dtype='l')
+        return self.integers(low, high + 1, size=size, dtype="l")
 
     # Complicated, continuous distributions:
     def standard_normal(self, size=None, dtype=np.float64, out=None):
@@ -1283,8 +1282,8 @@ cdef class Generator:
         Parameters
         ----------
         size : int or tuple of ints, optional
-            Output shape.  If the given shape is, e.g., ``(m, n, k)``, then
-            ``m * n * k`` samples are drawn.  Default is None, in which case a
+            Output shape. If the given shape is, e.g., ``(m, n, k)``, then
+            ``m * n * k`` samples are drawn. Default is None, in which case a
             single value is returned.
         dtype : {str, dtype}, optional
             Desired dtype of the result, either 'd' (or 'float64') or 'f'
@@ -1337,13 +1336,13 @@ cdef class Generator:
 
         """
         key = np.dtype(dtype).name
-        if key == 'float64':
+        if key == "float64":
             return double_fill(&random_gauss_zig_fill, &self._bitgen, size, self.lock, out)
-        elif key == 'float32':
+        elif key == "float32":
             return float_fill(&random_gauss_zig_f, &self._bitgen, size, self.lock, out)
 
         else:
-            raise TypeError('Unsupported dtype "%s" for standard_normal' % key)
+            raise TypeError("Unsupported dtype \"{key}\" for standard_normal".format(key=key))
 
     def normal(self, loc=0.0, scale=1.0, size=None):
         """
@@ -1356,7 +1355,7 @@ cdef class Generator:
         independently [2]_, is often called the bell curve because of
         its characteristic shape (see the example below).
 
-        The normal distributions occurs often in nature.  For example, it
+        The normal distributions occurs often in nature. For example, it
         describes the commonly occurring distribution of samples influenced
         by a large number of tiny, random disturbances, each with its own
         unique distribution [2]_.
@@ -1369,8 +1368,8 @@ cdef class Generator:
             Standard deviation (spread or "width") of the distribution. Must be
             non-negative.
         size : int or tuple of ints, optional
-            Output shape.  If the given shape is, e.g., ``(m, n, k)``, then
-            ``m * n * k`` samples are drawn.  If size is ``None`` (default),
+            Output shape. If the given shape is, e.g., ``(m, n, k)``, then
+            ``m * n * k`` samples are drawn. If size is ``None`` (default),
             a single value is returned if ``loc`` and ``scale`` are both scalars.
             Otherwise, ``np.broadcast(loc, scale).size`` samples are drawn.
 
@@ -1397,7 +1396,7 @@ cdef class Generator:
 
         The function has its peak at the mean, and its "spread" increases with
         the standard deviation (the function reaches 0.607 times its maximum at
-        :math:`x + \\sigma` and :math:`x - \\sigma` [2]_).  This implies that
+        :math:`x + \\sigma` and :math:`x - \\sigma` [2]_). This implies that
         `randomgen.generator.normal` is more likely to return samples lying close to
         the mean, rather than those far away.
 
@@ -1442,9 +1441,9 @@ cdef class Generator:
 
         """
         return cont(&random_normal_zig, &self._bitgen, size, self.lock, 2,
-                    loc, '', CONS_NONE,
-                    scale, 'scale', CONS_NON_NEGATIVE,
-                    0.0, '', CONS_NONE,
+                    loc, "", CONS_NONE,
+                    scale, "scale", CONS_NON_NEGATIVE,
+                    0.0, "", CONS_NONE,
                     None)
 
     def standard_gamma(self, shape, size=None, dtype=np.float64, out=None):
@@ -1461,9 +1460,9 @@ cdef class Generator:
         shape : float or array_like of floats
             Parameter, must be non-negative.
         size : int or tuple of ints, optional
-            Output shape.  If the given shape is, e.g., ``(m, n, k)``, then
-            ``m * n * k`` samples are drawn.  If size is ``None`` (default),
-            a single value is returned if ``shape`` is a scalar.  Otherwise,
+            Output shape. If the given shape is, e.g., ``(m, n, k)``, then
+            ``m * n * k`` samples are drawn. If size is ``None`` (default),
+            a single value is returned if ``shape`` is a scalar. Otherwise,
             ``np.array(shape).size`` samples are drawn.
         dtype : {str, dtype}, optional
             Desired dtype of the result, either 'd' (or 'float64') or 'f'
@@ -1526,18 +1525,18 @@ cdef class Generator:
         """
         cdef void *func
         key = np.dtype(dtype).name
-        if key == 'float64':
+        if key == "float64":
             return cont(&random_standard_gamma_zig, &self._bitgen, size, self.lock, 1,
-                        shape, 'shape', CONS_NON_NEGATIVE,
-                        0.0, '', CONS_NONE,
-                        0.0, '', CONS_NONE,
+                        shape, "shape", CONS_NON_NEGATIVE,
+                        0.0, "", CONS_NONE,
+                        0.0, "", CONS_NONE,
                         out)
-        if key == 'float32':
+        if key == "float32":
             return cont_f(&random_standard_gamma_zig_f, &self._bitgen, size, self.lock,
-                          shape, 'shape', CONS_NON_NEGATIVE,
+                          shape, "shape", CONS_NON_NEGATIVE,
                           out)
         else:
-            raise TypeError('Unsupported dtype "%s" for standard_gamma' % key)
+            raise TypeError("Unsupported dtype \"{key}\" for standard_gamma".format(key=key))
 
     def gamma(self, shape, scale=1.0, size=None):
         """
@@ -1557,8 +1556,8 @@ cdef class Generator:
             The scale of the gamma distribution. Must be non-negative.
             Default is equal to 1.
         size : int or tuple of ints, optional
-            Output shape.  If the given shape is, e.g., ``(m, n, k)``, then
-            ``m * n * k`` samples are drawn.  If size is ``None`` (default),
+            Output shape. If the given shape is, e.g., ``(m, n, k)``, then
+            ``m * n * k`` samples are drawn. If size is ``None`` (default),
             a single value is returned if ``shape`` and ``scale`` are both scalars.
             Otherwise, ``np.broadcast(shape, scale).size`` samples are drawn.
 
@@ -1597,7 +1596,7 @@ cdef class Generator:
         --------
         Draw samples from the distribution:
 
-        >>> shape, scale = 2., 2.  # mean=4, std=2*sqrt(2)
+        >>> shape, scale = 2., 2. # mean=4, std=2*sqrt(2)
         >>> s = randomgen.generator.gamma(shape, scale, 1000)
 
         Display the histogram of the samples, along with
@@ -1613,9 +1612,9 @@ cdef class Generator:
 
         """
         return cont(&random_gamma, &self._bitgen, size, self.lock, 2,
-                    shape, 'shape', CONS_NON_NEGATIVE,
-                    scale, 'scale', CONS_NON_NEGATIVE,
-                    0.0, '', CONS_NONE, None)
+                    shape, "shape", CONS_NON_NEGATIVE,
+                    scale, "scale", CONS_NON_NEGATIVE,
+                    0.0, "", CONS_NONE, None)
 
     def f(self, dfnum, dfden, size=None):
         """
@@ -1640,8 +1639,8 @@ cdef class Generator:
         dfden : float or array_like of float
             Degrees of freedom in denominator, must be > 0.
         size : int or tuple of ints, optional
-            Output shape.  If the given shape is, e.g., ``(m, n, k)``, then
-            ``m * n * k`` samples are drawn.  If size is ``None`` (default),
+            Output shape. If the given shape is, e.g., ``(m, n, k)``, then
+            ``m * n * k`` samples are drawn. If size is ``None`` (default),
             a single value is returned if ``dfnum`` and ``dfden`` are both scalars.
             Otherwise, ``np.broadcast(dfnum, dfden).size`` samples are drawn.
 
@@ -1660,7 +1659,7 @@ cdef class Generator:
         The F statistic is used to compare in-group variances to between-group
         variances. Calculating the distribution depends on the sampling, and
         so it is a function of the respective degrees of freedom in the
-        problem.  The variable `dfnum` is the number of samples minus one, the
+        problem. The variable `dfnum` is the number of samples minus one, the
         between-groups degrees of freedom, while `dfden` is the within-groups
         degrees of freedom, the sum of the number of samples in each group
         minus the number of groups.
@@ -1701,9 +1700,9 @@ cdef class Generator:
 
         """
         return cont(&random_f, &self._bitgen, size, self.lock, 2,
-                    dfnum, 'dfnum', CONS_POSITIVE,
-                    dfden, 'dfden', CONS_POSITIVE,
-                    0.0, '', CONS_NONE, None)
+                    dfnum, "dfnum", CONS_POSITIVE,
+                    dfden, "dfden", CONS_POSITIVE,
+                    0.0, "", CONS_NONE, None)
 
     def noncentral_f(self, dfnum, dfden, nonc, size=None):
         """
@@ -1729,10 +1728,10 @@ cdef class Generator:
             Non-centrality parameter, the sum of the squares of the numerator
             means, must be >= 0.
         size : int or tuple of ints, optional
-            Output shape.  If the given shape is, e.g., ``(m, n, k)``, then
-            ``m * n * k`` samples are drawn.  If size is ``None`` (default),
+            Output shape. If the given shape is, e.g., ``(m, n, k)``, then
+            ``m * n * k`` samples are drawn. If size is ``None`` (default),
             a single value is returned if ``dfnum``, ``dfden``, and ``nonc``
-            are all scalars.  Otherwise, ``np.broadcast(dfnum, dfden, nonc).size``
+            are all scalars. Otherwise, ``np.broadcast(dfnum, dfden, nonc).size``
             samples are drawn.
 
         Returns
@@ -1744,7 +1743,7 @@ cdef class Generator:
         -----
         When calculating the power of an experiment (power = probability of
         rejecting the null hypothesis when a specific alternative is true) the
-        non-central F statistic becomes important.  When the null hypothesis is
+        non-central F statistic becomes important. When the null hypothesis is
         true, the F statistic follows a central F distribution. When the null
         hypothesis is not true, then it follows a non-central F statistic.
 
@@ -1761,7 +1760,7 @@ cdef class Generator:
         In a study, testing for a specific alternative to the null hypothesis
         requires use of the Noncentral F distribution. We need to calculate the
         area in the tail of the distribution that exceeds the value of the F
-        distribution for the null hypothesis.  We'll plot the two probability
+        distribution for the null hypothesis. We'll plot the two probability
         distributions for comparison.
 
         >>> dfnum = 3 # between group deg of freedom
@@ -1778,9 +1777,9 @@ cdef class Generator:
 
         """
         return cont(&random_noncentral_f, &self._bitgen, size, self.lock, 3,
-                    dfnum, 'dfnum', CONS_POSITIVE,
-                    dfden, 'dfden', CONS_POSITIVE,
-                    nonc, 'nonc', CONS_NON_NEGATIVE, None)
+                    dfnum, "dfnum", CONS_POSITIVE,
+                    dfden, "dfden", CONS_POSITIVE,
+                    nonc, "nonc", CONS_NON_NEGATIVE, None)
 
     def chisquare(self, df, size=None):
         """
@@ -1790,7 +1789,7 @@ cdef class Generator:
 
         When `df` independent random variables, each with standard normal
         distributions (mean 0, variance 1), are squared and summed, the
-        resulting distribution is chi-square (see Notes).  This distribution
+        resulting distribution is chi-square (see Notes). This distribution
         is often used in hypothesis testing.
 
         Parameters
@@ -1798,9 +1797,9 @@ cdef class Generator:
         df : float or array_like of floats
              Number of degrees of freedom, must be > 0.
         size : int or tuple of ints, optional
-            Output shape.  If the given shape is, e.g., ``(m, n, k)``, then
-            ``m * n * k`` samples are drawn.  If size is ``None`` (default),
-            a single value is returned if ``df`` is a scalar.  Otherwise,
+            Output shape. If the given shape is, e.g., ``(m, n, k)``, then
+            ``m * n * k`` samples are drawn. If size is ``None`` (default),
+            a single value is returned if ``df`` is a scalar. Otherwise,
             ``np.array(df).size`` samples are drawn.
 
         Returns
@@ -1846,9 +1845,9 @@ cdef class Generator:
 
         """
         return cont(&random_chisquare, &self._bitgen, size, self.lock, 1,
-                    df, 'df', CONS_POSITIVE,
-                    0.0, '', CONS_NONE,
-                    0.0, '', CONS_NONE, None)
+                    df, "df", CONS_POSITIVE,
+                    0.0, "", CONS_NONE,
+                    0.0, "", CONS_NONE, None)
 
     def noncentral_chisquare(self, df, nonc, size=None):
         """
@@ -1869,8 +1868,8 @@ cdef class Generator:
         nonc : float or array_like of floats
             Non-centrality, must be non-negative.
         size : int or tuple of ints, optional
-            Output shape.  If the given shape is, e.g., ``(m, n, k)``, then
-            ``m * n * k`` samples are drawn.  If size is ``None`` (default),
+            Output shape. If the given shape is, e.g., ``(m, n, k)``, then
+            ``m * n * k`` samples are drawn. If size is ``None`` (default),
             a single value is returned if ``df`` and ``nonc`` are both scalars.
             Otherwise, ``np.broadcast(df, nonc).size`` samples are drawn.
 
@@ -1925,9 +1924,9 @@ cdef class Generator:
 
         """
         return cont(&random_noncentral_chisquare, &self._bitgen, size, self.lock, 2,
-                    df, 'df', CONS_POSITIVE,
-                    nonc, 'nonc', CONS_NON_NEGATIVE,
-                    0.0, '', CONS_NONE, None)
+                    df, "df", CONS_POSITIVE,
+                    nonc, "nonc", CONS_NON_NEGATIVE,
+                    0.0, "", CONS_NONE, None)
 
     def standard_cauchy(self, size=None):
         """
@@ -1940,8 +1939,8 @@ cdef class Generator:
         Parameters
         ----------
         size : int or tuple of ints, optional
-            Output shape.  If the given shape is, e.g., ``(m, n, k)``, then
-            ``m * n * k`` samples are drawn.  Default is None, in which case a
+            Output shape. If the given shape is, e.g., ``(m, n, k)``, then
+            ``m * n * k`` samples are drawn. Default is None, in which case a
             single value is returned.
 
         Returns
@@ -1992,7 +1991,7 @@ cdef class Generator:
 
         """
         return cont(&random_standard_cauchy, &self._bitgen, size, self.lock, 0,
-                    0.0, '', CONS_NONE, 0.0, '', CONS_NONE, 0.0, '', CONS_NONE, None)
+                    0.0, "", CONS_NONE, 0.0, "", CONS_NONE, 0.0, "", CONS_NONE, None)
 
     def standard_t(self, df, size=None):
         """
@@ -2001,7 +2000,7 @@ cdef class Generator:
         Draw samples from a standard Student's t distribution with `df` degrees
         of freedom.
 
-        A special case of the hyperbolic distribution.  As `df` gets
+        A special case of the hyperbolic distribution. As `df` gets
         large, the result resembles that of the standard normal
         distribution (`standard_normal`).
 
@@ -2010,9 +2009,9 @@ cdef class Generator:
         df : float or array_like of floats
             Degrees of freedom, must be > 0.
         size : int or tuple of ints, optional
-            Output shape.  If the given shape is, e.g., ``(m, n, k)``, then
-            ``m * n * k`` samples are drawn.  If size is ``None`` (default),
-            a single value is returned if ``df`` is a scalar.  Otherwise,
+            Output shape. If the given shape is, e.g., ``(m, n, k)``, then
+            ``m * n * k`` samples are drawn. If size is ``None`` (default),
+            a single value is returned if ``df`` is a scalar. Otherwise,
             ``np.array(df).size`` samples are drawn.
 
         Returns
@@ -2083,9 +2082,9 @@ cdef class Generator:
 
         """
         return cont(&random_standard_t, &self._bitgen, size, self.lock, 1,
-                    df, 'df', CONS_POSITIVE,
-                    0, '', CONS_NONE,
-                    0, '', CONS_NONE,
+                    df, "df", CONS_POSITIVE,
+                    0, "", CONS_NONE,
+                    0, "", CONS_NONE,
                     None)
 
     def vonmises(self, mu, kappa, size=None):
@@ -2099,7 +2098,7 @@ cdef class Generator:
 
         The von Mises distribution (also known as the circular normal
         distribution) is a continuous probability distribution on the unit
-        circle.  It may be thought of as the circular analogue of the normal
+        circle. It may be thought of as the circular analogue of the normal
         distribution.
 
         Parameters
@@ -2109,8 +2108,8 @@ cdef class Generator:
         kappa : float or array_like of floats
             Dispersion of the distribution, has to be >=0.
         size : int or tuple of ints, optional
-            Output shape.  If the given shape is, e.g., ``(m, n, k)``, then
-            ``m * n * k`` samples are drawn.  If size is ``None`` (default),
+            Output shape. If the given shape is, e.g., ``(m, n, k)``, then
+            ``m * n * k`` samples are drawn. If size is ``None`` (default),
             a single value is returned if ``mu`` and ``kappa`` are both scalars.
             Otherwise, ``np.broadcast(mu, kappa).size`` samples are drawn.
 
@@ -2134,8 +2133,8 @@ cdef class Generator:
         and :math:`I_0(\\kappa)` is the modified Bessel function of order 0.
 
         The von Mises is named for Richard Edler von Mises, who was born in
-        Austria-Hungary, in what is now the Ukraine.  He fled to the United
-        States in 1939 and became a professor at Harvard.  He worked in
+        Austria-Hungary, in what is now the Ukraine. He fled to the United
+        States in 1939 and became a professor at Harvard. He worked in
         probability theory, aerodynamics, fluid mechanics, and philosophy of
         science.
 
@@ -2167,9 +2166,9 @@ cdef class Generator:
 
         """
         return cont(&random_vonmises, &self._bitgen, size, self.lock, 2,
-                    mu, 'mu', CONS_NONE,
-                    kappa, 'kappa', CONS_NON_NEGATIVE,
-                    0.0, '', CONS_NONE, None)
+                    mu, "mu", CONS_NONE,
+                    kappa, "kappa", CONS_NON_NEGATIVE,
+                    0.0, "", CONS_NONE, None)
 
     def pareto(self, a, size=None):
         """
@@ -2181,16 +2180,16 @@ cdef class Generator:
         The Lomax or Pareto II distribution is a shifted Pareto
         distribution. The classical Pareto distribution can be
         obtained from the Lomax distribution by adding 1 and
-        multiplying by the scale parameter ``m`` (see Notes).  The
+        multiplying by the scale parameter ``m`` (see Notes). The
         smallest value of the Lomax distribution is zero while for the
         classical Pareto distribution it is ``mu``, where the standard
-        Pareto distribution has location ``mu = 1``.  Lomax can also
+        Pareto distribution has location ``mu = 1``. Lomax can also
         be considered as a simplified version of the Generalized
         Pareto distribution (available in SciPy), with the scale set
         to one and the location set to zero.
 
         The Pareto distribution must be greater than zero, and is
-        unbounded above.  It is also known as the "80-20 rule".  In
+        unbounded above. It is also known as the "80-20 rule". In
         this distribution, 80 percent of the weights are in the lowest
         20 percent of the range, while the other 20 percent fill the
         remaining 80 percent of the range.
@@ -2200,9 +2199,9 @@ cdef class Generator:
         a : float or array_like of floats
             Shape of the distribution. Must be positive.
         size : int or tuple of ints, optional
-            Output shape.  If the given shape is, e.g., ``(m, n, k)``, then
-            ``m * n * k`` samples are drawn.  If size is ``None`` (default),
-            a single value is returned if ``a`` is a scalar.  Otherwise,
+            Output shape. If the given shape is, e.g., ``(m, n, k)``, then
+            ``m * n * k`` samples are drawn. If size is ``None`` (default),
+            a single value is returned if ``a`` is a scalar. Otherwise,
             ``np.array(a).size`` samples are drawn.
 
         Returns
@@ -2227,13 +2226,13 @@ cdef class Generator:
 
         The Pareto distribution, named after the Italian economist
         Vilfredo Pareto, is a power law probability distribution
-        useful in many real world problems.  Outside the field of
+        useful in many real world problems. Outside the field of
         economics it is generally referred to as the Bradford
         distribution. Pareto developed the distribution to describe
-        the distribution of wealth in an economy.  It has also found
+        the distribution of wealth in an economy. It has also found
         use in insurance, web page access statistics, oil field sizes,
         and many other problems, including the download frequency for
-        projects in Sourceforge [1]_.  It is one of the so-called
+        projects in Sourceforge [1]_. It is one of the so-called
         "fat-tailed" distributions.
 
         References
@@ -2250,7 +2249,7 @@ cdef class Generator:
         --------
         Draw samples from the distribution:
 
-        >>> a, m = 3., 2.  # shape and mode
+        >>> a, m = 3., 2. # shape and mode
         >>> s = (randomgen.generator.pareto(a, 1000) + 1) * m
 
         Display the histogram of the samples, along with the probability
@@ -2264,9 +2263,9 @@ cdef class Generator:
 
         """
         return cont(&random_pareto, &self._bitgen, size, self.lock, 1,
-                    a, 'a', CONS_POSITIVE,
-                    0.0, '', CONS_NONE,
-                    0.0, '', CONS_NONE, None)
+                    a, "a", CONS_POSITIVE,
+                    0.0, "", CONS_NONE,
+                    0.0, "", CONS_NONE, None)
 
     def weibull(self, a, size=None):
         """
@@ -2287,11 +2286,11 @@ cdef class Generator:
         Parameters
         ----------
         a : float or array_like of floats
-            Shape parameter of the distribution.  Must be nonnegative.
+            Shape parameter of the distribution. Must be nonnegative.
         size : int or tuple of ints, optional
-            Output shape.  If the given shape is, e.g., ``(m, n, k)``, then
-            ``m * n * k`` samples are drawn.  If size is ``None`` (default),
-            a single value is returned if ``a`` is a scalar.  Otherwise,
+            Output shape. If the given shape is, e.g., ``(m, n, k)``, then
+            ``m * n * k`` samples are drawn. If size is ``None`` (default),
+            a single value is returned if ``a`` is a scalar. Otherwise,
             ``np.array(a).size`` samples are drawn.
 
         Returns
@@ -2362,9 +2361,9 @@ cdef class Generator:
 
         """
         return cont(&random_weibull, &self._bitgen, size, self.lock, 1,
-                    a, 'a', CONS_NON_NEGATIVE,
-                    0.0, '', CONS_NONE,
-                    0.0, '', CONS_NONE, None)
+                    a, "a", CONS_NON_NEGATIVE,
+                    0.0, "", CONS_NONE,
+                    0.0, "", CONS_NONE, None)
 
     def power(self, a, size=None):
         """
@@ -2380,9 +2379,9 @@ cdef class Generator:
         a : float or array_like of floats
             Parameter of the distribution. Must be non-negative.
         size : int or tuple of ints, optional
-            Output shape.  If the given shape is, e.g., ``(m, n, k)``, then
-            ``m * n * k`` samples are drawn.  If size is ``None`` (default),
-            a single value is returned if ``a`` is a scalar.  Otherwise,
+            Output shape. If the given shape is, e.g., ``(m, n, k)``, then
+            ``m * n * k`` samples are drawn. If size is ``None`` (default),
+            a single value is returned if ``a`` is a scalar. Otherwise,
             ``np.array(a).size`` samples are drawn.
 
         Returns
@@ -2462,9 +2461,9 @@ cdef class Generator:
 
         """
         return cont(&random_power, &self._bitgen, size, self.lock, 1,
-                    a, 'a', CONS_POSITIVE,
-                    0.0, '', CONS_NONE,
-                    0.0, '', CONS_NONE, None)
+                    a, "a", CONS_POSITIVE,
+                    0.0, "", CONS_NONE,
+                    0.0, "", CONS_NONE, None)
 
     def laplace(self, loc=0.0, scale=1.0, size=None):
         """
@@ -2486,8 +2485,8 @@ cdef class Generator:
             :math:`\\lambda`, the exponential decay. Default is 1. Must be non-
             negative.
         size : int or tuple of ints, optional
-            Output shape.  If the given shape is, e.g., ``(m, n, k)``, then
-            ``m * n * k`` samples are drawn.  If size is ``None`` (default),
+            Output shape. If the given shape is, e.g., ``(m, n, k)``, then
+            ``m * n * k`` samples are drawn. If size is ``None`` (default),
             a single value is returned if ``loc`` and ``scale`` are both scalars.
             Otherwise, ``np.broadcast(loc, scale).size`` samples are drawn.
 
@@ -2547,9 +2546,9 @@ cdef class Generator:
 
         """
         return cont(&random_laplace, &self._bitgen, size, self.lock, 2,
-                    loc, 'loc', CONS_NONE,
-                    scale, 'scale', CONS_NON_NEGATIVE,
-                    0.0, '', CONS_NONE, None)
+                    loc, "loc", CONS_NONE,
+                    scale, "scale", CONS_NON_NEGATIVE,
+                    0.0, "", CONS_NONE, None)
 
     def gumbel(self, loc=0.0, scale=1.0, size=None):
         """
@@ -2558,7 +2557,7 @@ cdef class Generator:
         Draw samples from a Gumbel distribution.
 
         Draw samples from a Gumbel distribution with specified location and
-        scale.  For more information on the Gumbel distribution, see
+        scale. For more information on the Gumbel distribution, see
         Notes and References below.
 
         Parameters
@@ -2569,8 +2568,8 @@ cdef class Generator:
             The scale parameter of the distribution. Default is 1. Must be non-
             negative.
         size : int or tuple of ints, optional
-            Output shape.  If the given shape is, e.g., ``(m, n, k)``, then
-            ``m * n * k`` samples are drawn.  If size is ``None`` (default),
+            Output shape. If the given shape is, e.g., ``(m, n, k)``, then
+            ``m * n * k`` samples are drawn. If size is ``None`` (default),
             a single value is returned if ``loc`` and ``scale`` are both scalars.
             Otherwise, ``np.broadcast(loc, scale).size`` samples are drawn.
 
@@ -2605,7 +2604,7 @@ cdef class Generator:
         The Gumbel (named for German mathematician Emil Julius Gumbel) was used
         very early in the hydrology literature, for modeling the occurrence of
         flood events. It is also used for modeling maximum wind speed and
-        rainfall rates.  It is a "fat-tailed" distribution - the probability of
+        rainfall rates. It is a "fat-tailed" distribution - the probability of
         an event in the tail of the distribution is larger than if one used a
         Gaussian, hence the surprisingly frequent occurrence of 100-year
         floods. Floods were initially modeled as a Gaussian process, which
@@ -2665,9 +2664,9 @@ cdef class Generator:
 
         """
         return cont(&random_gumbel, &self._bitgen, size, self.lock, 2,
-                    loc, 'loc', CONS_NONE,
-                    scale, 'scale', CONS_NON_NEGATIVE,
-                    0.0, '', CONS_NONE, None)
+                    loc, "loc", CONS_NONE,
+                    scale, "scale", CONS_NON_NEGATIVE,
+                    0.0, "", CONS_NONE, None)
 
     def logistic(self, loc=0.0, scale=1.0, size=None):
         """
@@ -2686,8 +2685,8 @@ cdef class Generator:
             Parameter of the distribution. Must be non-negative.
             Default is 1.
         size : int or tuple of ints, optional
-            Output shape.  If the given shape is, e.g., ``(m, n, k)``, then
-            ``m * n * k`` samples are drawn.  If size is ``None`` (default),
+            Output shape. If the given shape is, e.g., ``(m, n, k)``, then
+            ``m * n * k`` samples are drawn. If size is ``None`` (default),
             a single value is returned if ``loc`` and ``scale`` are both scalars.
             Otherwise, ``np.broadcast(loc, scale).size`` samples are drawn.
 
@@ -2745,9 +2744,9 @@ cdef class Generator:
 
         """
         return cont(&random_logistic, &self._bitgen, size, self.lock, 2,
-                    loc, 'loc', CONS_NONE,
-                    scale, 'scale', CONS_NON_NEGATIVE,
-                    0.0, '', CONS_NONE, None)
+                    loc, "loc", CONS_NONE,
+                    scale, "scale", CONS_NON_NEGATIVE,
+                    0.0, "", CONS_NONE, None)
 
     def lognormal(self, mean=0.0, sigma=1.0, size=None):
         """
@@ -2756,7 +2755,7 @@ cdef class Generator:
         Draw samples from a log-normal distribution.
 
         Draw samples from a log-normal distribution with specified mean,
-        standard deviation, and array shape.  Note that the mean and standard
+        standard deviation, and array shape. Note that the mean and standard
         deviation are not the values for the distribution itself, but of the
         underlying normal distribution it is derived from.
 
@@ -2768,8 +2767,8 @@ cdef class Generator:
             Standard deviation of the underlying normal distribution. Must be
             non-negative. Default is 1.
         size : int or tuple of ints, optional
-            Output shape.  If the given shape is, e.g., ``(m, n, k)``, then
-            ``m * n * k`` samples are drawn.  If size is ``None`` (default),
+            Output shape. If the given shape is, e.g., ``(m, n, k)``, then
+            ``m * n * k`` samples are drawn. If size is ``None`` (default),
             a single value is returned if ``mean`` and ``sigma`` are both scalars.
             Otherwise, ``np.broadcast(mean, sigma).size`` samples are drawn.
 
@@ -2786,7 +2785,7 @@ cdef class Generator:
         Notes
         -----
         A variable `x` has a log-normal distribution if `log(x)` is normally
-        distributed.  The probability density function for the log-normal
+        distributed. The probability density function for the log-normal
         distribution is:
 
         .. math:: p(x) = \\frac{1}{\\sigma x \\sqrt{2\\pi}}
@@ -2855,9 +2854,9 @@ cdef class Generator:
 
         """
         return cont(&random_lognormal, &self._bitgen, size, self.lock, 2,
-                    mean, 'mean', CONS_NONE,
-                    sigma, 'sigma', CONS_NON_NEGATIVE,
-                    0.0, '', CONS_NONE, None)
+                    mean, "mean", CONS_NONE,
+                    sigma, "sigma", CONS_NON_NEGATIVE,
+                    0.0, "", CONS_NONE, None)
 
     def rayleigh(self, scale=1.0, size=None):
         """
@@ -2873,9 +2872,9 @@ cdef class Generator:
         scale : float or array_like of floats, optional
             Scale, also equals the mode. Must be non-negative. Default is 1.
         size : int or tuple of ints, optional
-            Output shape.  If the given shape is, e.g., ``(m, n, k)``, then
-            ``m * n * k`` samples are drawn.  If size is ``None`` (default),
-            a single value is returned if ``scale`` is a scalar.  Otherwise,
+            Output shape. If the given shape is, e.g., ``(m, n, k)``, then
+            ``m * n * k`` samples are drawn. If size is ``None`` (default),
+            a single value is returned if ``scale`` is a scalar. Otherwise,
             ``np.array(scale).size`` samples are drawn.
 
         Returns
@@ -2891,7 +2890,7 @@ cdef class Generator:
 
         The Rayleigh distribution would arise, for example, if the East
         and North components of the wind velocity had identical zero-mean
-        Gaussian distributions.  Then the wind speed would have a Rayleigh
+        Gaussian distributions. Then the wind speed would have a Rayleigh
         distribution.
 
         References
@@ -2923,9 +2922,9 @@ cdef class Generator:
 
         """
         return cont(&random_rayleigh, &self._bitgen, size, self.lock, 1,
-                    scale, 'scale', CONS_NON_NEGATIVE,
-                    0.0, '', CONS_NONE,
-                    0.0, '', CONS_NONE, None)
+                    scale, "scale", CONS_NON_NEGATIVE,
+                    0.0, "", CONS_NONE,
+                    0.0, "", CONS_NONE, None)
 
     def wald(self, mean, scale, size=None):
         """
@@ -2949,8 +2948,8 @@ cdef class Generator:
         scale : float or array_like of floats
             Scale parameter, must be > 0.
         size : int or tuple of ints, optional
-            Output shape.  If the given shape is, e.g., ``(m, n, k)``, then
-            ``m * n * k`` samples are drawn.  If size is ``None`` (default),
+            Output shape. If the given shape is, e.g., ``(m, n, k)``, then
+            ``m * n * k`` samples are drawn. If size is ``None`` (default),
             a single value is returned if ``mean`` and ``scale`` are both scalars.
             Otherwise, ``np.broadcast(mean, scale).size`` samples are drawn.
 
@@ -2991,9 +2990,9 @@ cdef class Generator:
 
         """
         return cont(&random_wald, &self._bitgen, size, self.lock, 2,
-                    mean, 'mean', CONS_POSITIVE,
-                    scale, 'scale', CONS_POSITIVE,
-                    0.0, '', CONS_NONE, None)
+                    mean, "mean", CONS_POSITIVE,
+                    scale, "scale", CONS_POSITIVE,
+                    0.0, "", CONS_NONE, None)
 
     def triangular(self, left, mode, right, size=None):
         """
@@ -3017,10 +3016,10 @@ cdef class Generator:
         right : float or array_like of floats
             Upper limit, must be larger than `left`.
         size : int or tuple of ints, optional
-            Output shape.  If the given shape is, e.g., ``(m, n, k)``, then
-            ``m * n * k`` samples are drawn.  If size is ``None`` (default),
+            Output shape. If the given shape is, e.g., ``(m, n, k)``, then
+            ``m * n * k`` samples are drawn. If size is ``None`` (default),
             a single value is returned if ``left``, ``mode``, and ``right``
-            are all scalars.  Otherwise, ``np.broadcast(left, mode, right).size``
+            are all scalars. Otherwise, ``np.broadcast(left, mode, right).size``
             samples are drawn.
 
         Returns
@@ -3078,9 +3077,9 @@ cdef class Generator:
             if fleft == fright:
                 raise ValueError("left == right")
             return cont(&random_triangular, &self._bitgen, size, self.lock, 3,
-                        fleft, '', CONS_NONE,
-                        fmode, '', CONS_NONE,
-                        fright, '', CONS_NONE, None)
+                        fleft, "", CONS_NONE,
+                        fmode, "", CONS_NONE,
+                        fright, "", CONS_NONE, None)
 
         if np.any(np.greater(oleft, omode)):
             raise ValueError("left > mode")
@@ -3090,9 +3089,9 @@ cdef class Generator:
             raise ValueError("left == right")
 
         return cont_broadcast_3(&random_triangular, &self._bitgen, size, self.lock,
-                                oleft, '', CONS_NONE,
-                                omode, '', CONS_NONE,
-                                oright, '', CONS_NONE)
+                                oleft, "", CONS_NONE,
+                                omode, "", CONS_NONE,
+                                oright, "", CONS_NONE)
 
     # Complicated, discrete distributions:
     def binomial(self, n, p, size=None):
@@ -3114,8 +3113,8 @@ cdef class Generator:
         p : float or array_like of floats
             Parameter of the distribution, >= 0 and <=1.
         size : int or tuple of ints, optional
-            Output shape.  If the given shape is, e.g., ``(m, n, k)``, then
-            ``m * n * k`` samples are drawn.  If size is ``None`` (default),
+            Output shape. If the given shape is, e.g., ``(m, n, k)``, then
+            ``m * n * k`` samples are drawn. If size is ``None`` (default),
             a single value is returned if ``n`` and ``p`` are both scalars.
             Otherwise, ``np.broadcast(n, p).size`` samples are drawn.
 
@@ -3196,8 +3195,8 @@ cdef class Generator:
         is_scalar = is_scalar and np.PyArray_NDIM(n_arr) == 0
 
         if not is_scalar:
-            check_array_constraint(p_arr, 'p', CONS_BOUNDED_0_1)
-            check_array_constraint(n_arr, 'n', CONS_NON_NEGATIVE)
+            check_array_constraint(p_arr, "p", CONS_BOUNDED_0_1)
+            check_array_constraint(n_arr, "n", CONS_NON_NEGATIVE)
             if size is not None:
                 randoms = <np.ndarray>np.empty(size, np.int64)
             else:
@@ -3220,8 +3219,8 @@ cdef class Generator:
 
         _dp = PyFloat_AsDouble(p)
         _in = <int64_t>n
-        check_constraint(_dp, 'p', CONS_BOUNDED_0_1)
-        check_constraint(<double>_in, 'n', CONS_NON_NEGATIVE)
+        check_constraint(_dp, "p", CONS_BOUNDED_0_1)
+        check_constraint(<double>_in, "n", CONS_NON_NEGATIVE)
 
         if size is None:
             with self.lock:
@@ -3255,8 +3254,8 @@ cdef class Generator:
         p : float or array_like of floats
             Parameter of the distribution, >= 0 and <=1.
         size : int or tuple of ints, optional
-            Output shape.  If the given shape is, e.g., ``(m, n, k)``, then
-            ``m * n * k`` samples are drawn.  If size is ``None`` (default),
+            Output shape. If the given shape is, e.g., ``(m, n, k)``, then
+            ``m * n * k`` samples are drawn. If size is ``None`` (default),
             a single value is returned if ``n`` and ``p`` are both scalars.
             Otherwise, ``np.broadcast(n, p).size`` samples are drawn.
 
@@ -3299,7 +3298,7 @@ cdef class Generator:
 
         A real world example. A company drills wild-cat oil
         exploration wells, each with an estimated probability of
-        success of 0.1.  What is the probability of having one success
+        success of 0.1. What is the probability of having one success
         for each successive well, that is what is the probability of a
         single success after drilling 5 wells, after 6 wells, etc.?
 
@@ -3310,9 +3309,9 @@ cdef class Generator:
 
         """
         return disc(&random_negative_binomial, &self._bitgen, size, self.lock, 2, 0,
-                    n, 'n', CONS_POSITIVE_NOT_NAN,
-                    p, 'p', CONS_BOUNDED_0_1,
-                    0.0, '', CONS_NONE)
+                    n, "n", CONS_POSITIVE_NOT_NAN,
+                    p, "p", CONS_BOUNDED_0_1,
+                    0.0, "", CONS_NONE)
 
     def poisson(self, lam=1.0, size=None):
         """
@@ -3329,8 +3328,8 @@ cdef class Generator:
             Expectation of interval, must be >= 0. A sequence of expectation
             intervals must be broadcastable over the requested size.
         size : int or tuple of ints, optional
-            Output shape.  If the given shape is, e.g., ``(m, n, k)``, then
-            ``m * n * k`` samples are drawn.  If size is ``None`` (default),
+            Output shape. If the given shape is, e.g., ``(m, n, k)``, then
+            ``m * n * k`` samples are drawn. If size is ``None`` (default),
             a single value is returned if ``lam`` is a scalar. Otherwise,
             ``np.array(lam).size`` samples are drawn.
 
@@ -3381,9 +3380,9 @@ cdef class Generator:
 
         """
         return disc(&random_poisson, &self._bitgen, size, self.lock, 1, 0,
-                    lam, 'lam', CONS_POISSON,
-                    0.0, '', CONS_NONE,
-                    0.0, '', CONS_NONE)
+                    lam, "lam", CONS_POISSON,
+                    0.0, "", CONS_NONE,
+                    0.0, "", CONS_NONE)
 
     def zipf(self, a, size=None):
         """
@@ -3404,8 +3403,8 @@ cdef class Generator:
         a : float or array_like of floats
             Distribution parameter. Must be greater than 1.
         size : int or tuple of ints, optional
-            Output shape.  If the given shape is, e.g., ``(m, n, k)``, then
-            ``m * n * k`` samples are drawn.  If size is ``None`` (default),
+            Output shape. If the given shape is, e.g., ``(m, n, k)``, then
+            ``m * n * k`` samples are drawn. If size is ``None`` (default),
             a single value is returned if ``a`` is a scalar. Otherwise,
             ``np.array(a).size`` samples are drawn.
 
@@ -3461,9 +3460,9 @@ cdef class Generator:
 
         """
         return disc(&random_zipf, &self._bitgen, size, self.lock, 1, 0,
-                    a, 'a', CONS_GT_1,
-                    0.0, '', CONS_NONE,
-                    0.0, '', CONS_NONE)
+                    a, "a", CONS_GT_1,
+                    0.0, "", CONS_NONE,
+                    0.0, "", CONS_NONE)
 
     def geometric(self, p, size=None):
         """
@@ -3473,8 +3472,8 @@ cdef class Generator:
 
         Bernoulli trials are experiments with one of two outcomes:
         success or failure (an example of such an experiment is flipping
-        a coin).  The geometric distribution models the number of trials
-        that must be run in order to achieve success.  It is therefore
+        a coin). The geometric distribution models the number of trials
+        that must be run in order to achieve success. It is therefore
         supported on the positive integers, ``k = 1, 2, ...``.
 
         The probability mass function of the geometric distribution is
@@ -3488,9 +3487,9 @@ cdef class Generator:
         p : float or array_like of floats
             The probability of success of an individual trial.
         size : int or tuple of ints, optional
-            Output shape.  If the given shape is, e.g., ``(m, n, k)``, then
-            ``m * n * k`` samples are drawn.  If size is ``None`` (default),
-            a single value is returned if ``p`` is a scalar.  Otherwise,
+            Output shape. If the given shape is, e.g., ``(m, n, k)``, then
+            ``m * n * k`` samples are drawn. If size is ``None`` (default),
+            a single value is returned if ``p`` is a scalar. Otherwise,
             ``np.array(p).size`` samples are drawn.
 
         Returns
@@ -3512,9 +3511,9 @@ cdef class Generator:
 
         """
         return disc(&random_geometric, &self._bitgen, size, self.lock, 1, 0,
-                    p, 'p', CONS_BOUNDED_GT_0_1,
-                    0.0, '', CONS_NONE,
-                    0.0, '', CONS_NONE)
+                    p, "p", CONS_BOUNDED_GT_0_1,
+                    0.0, "", CONS_NONE,
+                    0.0, "", CONS_NONE)
 
     def hypergeometric(self, ngood, nbad, nsample, size=None):
         """
@@ -3530,17 +3529,17 @@ cdef class Generator:
         Parameters
         ----------
         ngood : int or array_like of ints
-            Number of ways to make a good selection.  Must be nonnegative.
+            Number of ways to make a good selection. Must be nonnegative.
         nbad : int or array_like of ints
-            Number of ways to make a bad selection.  Must be nonnegative.
+            Number of ways to make a bad selection. Must be nonnegative.
         nsample : int or array_like of ints
-            Number of items sampled.  Must be nonnegative and less than
+            Number of items sampled. Must be nonnegative and less than
             ``ngood + nbad``.
         size : int or tuple of ints, optional
-            Output shape.  If the given shape is, e.g., ``(m, n, k)``, then
-            ``m * n * k`` samples are drawn.  If size is ``None`` (default),
+            Output shape. If the given shape is, e.g., ``(m, n, k)``, then
+            ``m * n * k`` samples are drawn. If size is ``None`` (default),
             a single value is returned if `ngood`, `nbad`, and `nsample`
-            are all scalars.  Otherwise, ``np.broadcast(ngood, nbad, nsample).size``
+            are all scalars. Otherwise, ``np.broadcast(ngood, nbad, nsample).size``
             samples are drawn.
 
         Returns
@@ -3628,9 +3627,9 @@ cdef class Generator:
             if lngood + lnbad < lnsample:
                 raise ValueError("ngood + nbad < nsample")
             return disc(&random_hypergeometric, &self._bitgen, size, self.lock, 0, 3,
-                        lngood, 'ngood', CONS_NON_NEGATIVE,
-                        lnbad, 'nbad', CONS_NON_NEGATIVE,
-                        lnsample, 'nsample', CONS_NON_NEGATIVE)
+                        lngood, "ngood", CONS_NON_NEGATIVE,
+                        lnbad, "nbad", CONS_NON_NEGATIVE,
+                        lnsample, "nsample", CONS_NON_NEGATIVE)
 
         if np.any(ongood >= HYPERGEOM_MAX) or np.any(onbad >= HYPERGEOM_MAX):
             raise ValueError("both ngood and nbad must be less than "
@@ -3638,9 +3637,9 @@ cdef class Generator:
         if np.any(np.less(np.add(ongood, onbad), onsample)):
             raise ValueError("ngood + nbad < nsample")
         return discrete_broadcast_iii(&random_hypergeometric, &self._bitgen, size, self.lock,
-                                      ongood, 'ngood', CONS_NON_NEGATIVE,
-                                      onbad, 'nbad', CONS_NON_NEGATIVE,
-                                      onsample, 'nsample', CONS_NON_NEGATIVE)
+                                      ongood, "ngood", CONS_NON_NEGATIVE,
+                                      onbad, "nbad", CONS_NON_NEGATIVE,
+                                      onsample, "nsample", CONS_NON_NEGATIVE)
 
     def logseries(self, p, size=None):
         """
@@ -3654,11 +3653,11 @@ cdef class Generator:
         Parameters
         ----------
         p : float or array_like of floats
-            Shape parameter for the distribution.  Must be in the range (0, 1).
+            Shape parameter for the distribution. Must be in the range (0, 1).
         size : int or tuple of ints, optional
-            Output shape.  If the given shape is, e.g., ``(m, n, k)``, then
-            ``m * n * k`` samples are drawn.  If size is ``None`` (default),
-            a single value is returned if ``p`` is a scalar.  Otherwise,
+            Output shape. If the given shape is, e.g., ``(m, n, k)``, then
+            ``m * n * k`` samples are drawn. If size is ``None`` (default),
+            a single value is returned if ``p`` is a scalar. Otherwise,
             ``np.array(p).size`` samples are drawn.
 
         Returns
@@ -3681,7 +3680,7 @@ cdef class Generator:
 
         The log series distribution is frequently used to represent species
         richness and occurrence, first proposed by Fisher, Corbet, and
-        Williams in 1943 [2].  It may also be used to model the numbers of
+        Williams in 1943 [2]. It may also be used to model the numbers of
         occupants seen in cars [3].
 
         References
@@ -3718,12 +3717,12 @@ cdef class Generator:
 
         """
         return disc(&random_logseries, &self._bitgen, size, self.lock, 1, 0,
-                    p, 'p', CONS_BOUNDED_0_1,
-                    0.0, '', CONS_NONE,
-                    0.0, '', CONS_NONE)
+                    p, "p", CONS_BOUNDED_0_1,
+                    0.0, "", CONS_NONE,
+                    0.0, "", CONS_NONE)
 
     # Multivariate distributions:
-    def multivariate_normal(self, mean, cov, size=None, check_valid='warn',
+    def multivariate_normal(self, mean, cov, size=None, check_valid="warn",
                             tol=1e-8):
         """
         multivariate_normal(mean, cov, size=None, check_valid='warn', tol=1e-8)
@@ -3732,8 +3731,8 @@ cdef class Generator:
 
         The multivariate normal, multinormal or Gaussian distribution is a
         generalization of the one-dimensional normal distribution to higher
-        dimensions.  Such a distribution is specified by its mean and
-        covariance matrix.  These parameters are analogous to the mean
+        dimensions. Such a distribution is specified by its mean and
+        covariance matrix. These parameters are analogous to the mean
         (average or "center") and variance (standard deviation, or "width,"
         squared) of the one-dimensional normal distribution.
 
@@ -3746,7 +3745,7 @@ cdef class Generator:
             positive-semidefinite for proper sampling.
         size : int or tuple of ints, optional
             Given a shape of, for example, ``(m,n,k)``, ``m*n*k`` samples are
-            generated, and packed in an `m`-by-`n`-by-`k` arrangement.  Because
+            generated, and packed in an `m`-by-`n`-by-`k` arrangement. Because
             each sample is `N`-dimensional, the output shape is ``(m,n,k,N)``.
             If no shape is specified, a single (`N`-D) sample is returned.
         check_valid : { 'warn', 'raise', 'ignore' }, optional
@@ -3758,7 +3757,7 @@ cdef class Generator:
         Returns
         -------
         out : ndarray
-            The drawn samples, of shape *size*, if that was provided.  If not,
+            The drawn samples, of shape *size*, if that was provided. If not,
             the shape is ``(N,)``.
 
             In other words, each entry ``out[i,j,...,:]`` is an N-dimensional
@@ -3767,13 +3766,13 @@ cdef class Generator:
         Notes
         -----
         The mean is a coordinate in N-dimensional space, which represents the
-        location where samples are most likely to be generated.  This is
+        location where samples are most likely to be generated. This is
         analogous to the peak of the bell curve for the one-dimensional or
         univariate normal distribution.
 
         Covariance indicates the level to which two variables vary together.
         From the multivariate normal distribution, we draw N-dimensional
-        samples, :math:`X = [x_1, x_2, ... x_N]`.  The covariance matrix
+        samples, :math:`X = [x_1, x_2, ... x_N]`. The covariance matrix
         element :math:`C_{ij}` is the covariance of :math:`x_i` and :math:`x_j`.
         The element :math:`C_{ii}` is the variance of :math:`x_i` (i.e. its
         "spread").
@@ -3836,7 +3835,7 @@ cdef class Generator:
         cov = np.array(cov)
         if size is None:
             shape = []
-        elif isinstance(size, (int, long, np.integer)):
+        elif isinstance(size, (int, np.integer)):
             shape = [size]
         else:
             shape = size
@@ -3874,13 +3873,14 @@ cdef class Generator:
         cov = cov.astype(np.double)
         (u, s, v) = svd(cov)
 
-        if check_valid != 'ignore':
-            if check_valid != 'warn' and check_valid != 'raise':
-                raise ValueError("check_valid must equal 'warn', 'raise', or 'ignore'")
+        if check_valid != "ignore":
+            if check_valid != "warn" and check_valid != "raise":
+                raise ValueError("check_valid must equal \"warn\", \"raise\","
+                                 " or \"ignore\"")
 
             psd = np.allclose(np.dot(v.T * s, v), cov, rtol=tol, atol=tol)
             if not psd:
-                if check_valid == 'warn':
+                if check_valid == "warn":
                     import warnings
                     warnings.warn("covariance is not positive-semidefinite.",
                                   RuntimeWarning)
@@ -3899,10 +3899,10 @@ cdef class Generator:
         Draw samples from a multinomial distribution.
 
         The multinomial distribution is a multivariate generalization of the
-        binomial distribution.  Take an experiment with one of ``p``
-        possible outcomes.  An example of such an experiment is throwing a dice,
-        where the outcome can be 1 through 6.  Each sample drawn from the
-        distribution represents `n` such experiments.  Its values,
+        binomial distribution. Take an experiment with one of ``p``
+        possible outcomes. An example of such an experiment is throwing a dice,
+        where the outcome can be 1 through 6. Each sample drawn from the
+        distribution represents `n` such experiments. Its values,
         ``X_i = [X_0, X_1, ..., X_p]``, represent the number of times the
         outcome was ``i``.
 
@@ -3911,19 +3911,19 @@ cdef class Generator:
         n : int or array-like of ints
             Number of experiments.
         pvals : sequence of floats, length p
-            Probabilities of each of the ``p`` different outcomes.  These
+            Probabilities of each of the ``p`` different outcomes. These
             must sum to 1 (however, the last element is always assumed to
             account for the remaining probability, as long as
             ``sum(pvals[:-1]) <= 1)``.
         size : int or tuple of ints, optional
-            Output shape.  If the given shape is, e.g., ``(m, n, k)``, then
-            ``m * n * k`` samples are drawn.  Default is None, in which case a
+            Output shape. If the given shape is, e.g., ``(m, n, k)``, then
+            ``m * n * k`` samples are drawn. Default is None, in which case a
             single value is returned.
 
         Returns
         -------
         out : ndarray
-            The drawn samples, of shape *size*, if that was provided.  If not,
+            The drawn samples, of shape *size*, if that was provided. If not,
             the shape is ``(N,)``.
 
             In other words, each entry ``out[i,j,...,:]`` is an N-dimensional
@@ -3944,7 +3944,7 @@ cdef class Generator:
         array([[3, 4, 3, 3, 4, 3],
                [2, 4, 3, 4, 0, 7]])  # random
 
-        For the first run, we threw 3 times 1, 4 times 2, etc.  For the second,
+        For the first run, we threw 3 times 1, 4 times 2, etc. For the second,
         we threw 2 times 1, 4 times 2, etc.
 
         Now, do one experiment throwing the dice 10 time, and 10 times again,
@@ -3991,13 +3991,13 @@ cdef class Generator:
         d = len(pvals)
         on = <np.ndarray>np.PyArray_FROM_OTF(n, np.NPY_INT64, api.NPY_ARRAY_ALIGNED)
         parr = <np.ndarray>np.PyArray_FROM_OTF(pvals, np.NPY_DOUBLE, api.NPY_ARRAY_ALIGNED | api.NPY_ARRAY_C_CONTIGUOUS)
-        check_array_constraint(parr, 'pvals', CONS_BOUNDED_0_1)
+        check_array_constraint(parr, "pvals", CONS_BOUNDED_0_1)
         pix = <double*>np.PyArray_DATA(parr)
         if kahan_sum(pix, d-1) > (1.0 + 1e-12):
             raise ValueError("sum(pvals[:-1]) > 1.0")
 
         if np.PyArray_NDIM(on) != 0:  # vector
-            check_array_constraint(on, 'n', CONS_NON_NEGATIVE)
+            check_array_constraint(on, "n", CONS_NON_NEGATIVE)
             if size is None:
                 it = np.PyArray_MultiIterNew1(on)
             else:
@@ -4031,7 +4031,7 @@ cdef class Generator:
         mnix = <int64_t*>np.PyArray_DATA(mnarr)
         sz = np.PyArray_SIZE(mnarr)
         ni = n
-        check_constraint(<double>ni, 'n', CONS_NON_NEGATIVE)
+        check_constraint(<double>ni, "n", CONS_NON_NEGATIVE)
         offset = 0
         with self.lock, nogil:
             for i in range(sz // d):
@@ -4058,8 +4058,8 @@ cdef class Generator:
             Parameter of the distribution (k dimension for sample of
             dimension k).
         size : int or tuple of ints, optional
-            Output shape.  If the given shape is, e.g., ``(m, n, k)``, then
-            ``m * n * k`` samples are drawn.  Default is None, in which case a
+            Output shape. If the given shape is, e.g., ``(m, n, k)``, then
+            ``m * n * k`` samples are drawn. Default is None, in which case a
             single value is returned.
 
         Returns
@@ -4146,7 +4146,7 @@ cdef class Generator:
         k = len(alpha)
         alpha_arr = <np.ndarray>np.PyArray_FROM_OTF(alpha, np.NPY_DOUBLE, api.NPY_ARRAY_ALIGNED | api.NPY_ARRAY_C_CONTIGUOUS)
         if np.any(np.less_equal(alpha_arr, 0)):
-            raise ValueError('alpha <= 0')
+            raise ValueError("alpha <= 0")
         alpha_data = <double*>np.PyArray_DATA(alpha_arr)
 
         if size is None:
@@ -4267,7 +4267,7 @@ cdef class Generator:
         n
             Number of elements in data
         first
-            First observation to shuffle.  Shuffles n-1,
+            First observation to shuffle. Shuffles n-1,
             n-2, ..., first, so that when first=1 the entire
             array is shuffled
         itemsize
@@ -4324,7 +4324,7 @@ cdef class Generator:
                [3, 4, 5]])
 
         """
-        if isinstance(x, (int, long, np.integer)):
+        if isinstance(x, (int, np.integer)):
             arr = np.arange(x)
             self.shuffle(arr)
             return arr
@@ -4359,8 +4359,8 @@ cdef class Generator:
         relation : float, complex or array_like of float or complex
             Relation between the two component normals
         size : int or tuple of ints, optional
-            Output shape.  If the given shape is, e.g., ``(m, n, k)``, then
-            ``m * n * k`` samples are drawn.  If size is ``None`` (default),
+            Output shape. If the given shape is, e.g., ``(m, n, k)``, then
+            ``m * n * k`` samples are drawn. If size is ``None`` (default),
             a single value is returned if ``loc``, ``gamma`` and ``relation``
             are all scalars. Otherwise,
             ``np.broadcast(loc, gamma, relation).size`` samples are drawn.
@@ -4383,7 +4383,7 @@ cdef class Generator:
         Complex normals are generated from a bivariate normal where the
         variance of the real component is 0.5 Re(gamma + relation), the
         variance of the imaginary component is 0.5 Re(gamma - relation), and
-        the covariance between the two is 0.5 Im(relation).  The implied
+        the covariance between the two is 0.5 Im(relation). The implied
         covariance matrix must be positive semi-definite and so both variances
         must be zero and the covariance must be weakly smaller than the
         product of the two standard deviations.
@@ -4424,16 +4424,16 @@ cdef class Generator:
             fvar_r = 0.5 * (fgamma_r + frelation_r)
             fvar_i = 0.5 * (fgamma_r - frelation_r)
             if fgamma_i != 0:
-                raise ValueError('Im(gamma) != 0')
+                raise ValueError("Im(gamma) != 0")
             if fvar_i < 0:
-                raise ValueError('Re(gamma - relation) < 0')
+                raise ValueError("Re(gamma - relation) < 0")
             if fvar_r < 0:
-                raise ValueError('Re(gamma + relation) < 0')
+                raise ValueError("Re(gamma + relation) < 0")
             f_rho = 0.0
             if fvar_i > 0 and fvar_r > 0:
                 f_rho = frelation_i / sqrt(fvar_i * fvar_r)
             if f_rho > 1.0 or f_rho < -1.0:
-                raise ValueError('Im(relation) ** 2 > Re(gamma ** 2 - relation** 2)')
+                raise ValueError("Im(relation) ** 2 > Re(gamma ** 2 - relation** 2)")
 
             if size is None:
                 f_real = random_gauss_zig(&self._bitgen)
@@ -4464,19 +4464,19 @@ cdef class Generator:
         gmc = ogamma - orelation
         v_real = <np.ndarray>(0.5 * np.real(gpc))
         if np.any(np.less(v_real, 0)):
-            raise ValueError('Re(gamma + relation) < 0')
+            raise ValueError("Re(gamma + relation) < 0")
         v_imag = <np.ndarray>(0.5 * np.real(gmc))
         if np.any(np.less(v_imag, 0)):
-            raise ValueError('Re(gamma - relation) < 0')
+            raise ValueError("Re(gamma - relation) < 0")
         if np.any(np.not_equal(np.imag(ogamma), 0)):
-            raise ValueError('Im(gamma) != 0')
+            raise ValueError("Im(gamma) != 0")
 
         cov = 0.5 * np.imag(orelation)
         rho = np.zeros_like(cov)
         idx = (v_real.flat > 0) & (v_imag.flat > 0)
         rho.flat[idx] = cov.flat[idx] / np.sqrt(v_real.flat[idx] * v_imag.flat[idx])
         if np.any(cov.flat[~idx] != 0) or np.any(np.abs(rho) > 1):
-            raise ValueError('Im(relation) ** 2 > Re(gamma ** 2 - relation ** 2)')
+            raise ValueError("Im(relation) ** 2 > Re(gamma ** 2 - relation ** 2)")
 
         if size is not None:
             randoms = <np.ndarray>np.empty(size, np.complex128)

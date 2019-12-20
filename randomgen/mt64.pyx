@@ -7,7 +7,7 @@ cimport numpy as np
 from randomgen.common cimport *
 from randomgen.entropy import random_entropy
 
-__all__ = ['MT64']
+__all__ = ["MT64"]
 
 cdef uint64_t mt64_uint64(void *st) nogil:
     return mt64_next64(<mt64_state_t *> st)
@@ -23,27 +23,36 @@ cdef uint64_t mt64_raw(void *st) nogil:
 
 cdef class MT64(BitGenerator):
     """
-    MT64(seed=None)
+    MT64(seed=None, *, mode=None)
 
     Container for the 64-bit Mersenne Twister pseudo-random number generator
 
     Parameters
     ----------
-    seed : {None, int, array_like}, optional
-        Random seed used to initialize the pseudo-random number generator.  Can
+    seed : {None, int, array_like[uint64], SeedSequence}, optional
+        Random seed used to initialize the pseudo-random number generator. Can
         be any integer between 0 and 2**64 - 1 inclusive, an array (or other
-        sequence) of unsigned 64-bit integers, or ``None`` (the default).  If
-        `seed` is ``None``, then 312 64-bit unsigned integers are read from
-        ``/dev/urandom`` (or the Windows analog) if available. If unavailable,
-        a  hash of the time and process ID is used.
+        sequence) of unsigned 64-bit integers, a SeedSequence instance or
+        ``None`` (the default). If `seed` is ``None``, then 312 64-bit
+        unsigned integers are read from ``/dev/urandom`` (or the Windows
+        analog) if available. If unavailable, a hash of the time and process
+        ID is used.
+    mode : {None, "sequence", "legacy"}, optional
+        The seeding mode to use. "legacy" uses the legacy
+        SplitMix64-based initialization. "sequence" uses a SeedSequence
+        to transforms the seed into an initial state. None defaults to "legacy"
+        and warns that the default after 1.19 will change to "sequence".
 
     Attributes
     ----------
-    lock: threading.Lock
+    lock : threading.Lock
         Lock instance that is shared so that the same bit git generator can
         be used in multiple Generators without corrupting the state. Code that
         generates values from a bit generator should hold the bit generator's
         lock.
+    seed_seq : {None, SeedSequence}
+        The SeedSequence instance used to initialize the generator if mode is
+        "sequence" or is seed is a SeedSequence. None if mode is "legacy".
 
     Notes
     -----
@@ -62,7 +71,7 @@ cdef class MT64(BitGenerator):
     that indexes the current position within the main array.
 
     ``MT64`` is seeded using either a single 64-bit unsigned integer
-    or a vector of 64-bit unsigned integers.  In either case, the input seed is
+    or a vector of 64-bit unsigned integers. In either case, the input seed is
     used as an input (or inputs) for a hashing function, and the output of the
     hashing function is used as the initial state. Using a single 64-bit value
     for the seed can only initialize a small range of the possible initial
@@ -82,8 +91,8 @@ cdef class MT64(BitGenerator):
     .. [2] Nishimura, T. "Tables of 64-bit Mersenne Twisters" ACM Transactions
         on Modeling and Computer Simulation 10. (2000) 348-357.
     """
-    def __init__(self, seed=None):
-        BitGenerator.__init__(self)
+    def __init__(self, seed=None, *, mode=None):
+        BitGenerator.__init__(self, seed, mode)
         self.seed(seed)
 
         self._bitgen.state = &self.rng_state
@@ -96,37 +105,12 @@ cdef class MT64(BitGenerator):
         self.rng_state.has_uint32 = 0
         self.rng_state.uinteger = 0
 
-    @classmethod
-    def from_seed_seq(cls, entropy=None):
-        """
-        from_seed_seq(entropy=None)
-
-        Create a instance using a SeedSequence
-
-        Parameters
-        ----------
-        entropy : {None, int, sequence[int], SeedSequence}
-            Entropy to pass to SeedSequence, or a SeedSequence instance. Using
-            a SeedSequence instance allows all parameters to be set.
-
-        Returns
-        -------
-        bit_gen : MT64
-            SeedSequence initialized bit generator with SeedSequence instance
-            attached to ``bit_gen.seed_seq``
-
-        See Also
-        --------
-        randomgen.seed_sequence.SeedSequence
-        """
-        return super(MT64, cls).from_seed_seq(entropy)
-
-    def _seed_from_seq(self, seed_seq):
-        self.seed_seq = seed_seq
+    def _seed_from_seq(self):
         state = self.seed_seq.generate_state(312, np.uint64)
         mt64_init_by_array(&self.rng_state,
                            <uint64_t*>np.PyArray_DATA(state),
                            312)
+        self._reset_state_variables()
 
     def seed(self, seed=None):
         """
@@ -136,13 +120,13 @@ cdef class MT64(BitGenerator):
 
         Parameters
         ----------
-        seed : {None, int, array_like}, optional
-            Random seed initializing the pseudo-random number generator.
-            Can be an integer in [0, 2**64-1], array of integers in
-            [0, 2**64-1] or ``None`` (the default). If `seed` is ``None``,
-            then ``MT64`` will try to read entropy from ``/dev/urandom``
-            (or the Windows analog) if available to produce a 64-bit
-            seed. If unavailable, a 64-bit hash of the time and process
+        seed : {None, int, array_like[uint64], SeedSequence}, optional
+            Random seed used to initialize the pseudo-random number generator. Can
+            be any integer between 0 and 2**64 - 1 inclusive, an array (or other
+            sequence) of unsigned 64-bit integers, a SeedSequence instance or
+            ``None`` (the default). If `seed` is ``None``, then 312 64-bit
+            unsigned integers are read from ``/dev/urandom`` (or the Windows
+            analog) if available. If unavailable, a hash of the time and process
             ID is used.
 
         Raises
@@ -151,14 +135,19 @@ cdef class MT64(BitGenerator):
             If seed values are out of range for the PRNG.
         """
         cdef np.ndarray obj
+
+        BitGenerator._seed_with_seed_sequence(self, seed)
+        if self.seed_seq is not None:
+            return
+
         try:
             if seed is None:
-                seed = random_entropy(624, 'auto')
+                seed = random_entropy(624, "auto")
                 mt64_init_by_array(&self.rng_state,
                                    <uint64_t*>np.PyArray_DATA(seed),
                                    624 // 2)
             else:
-                if hasattr(seed, 'squeeze'):
+                if hasattr(seed, "squeeze"):
                     seed = seed.squeeze()
                 idx = operator.index(seed)
                 if idx > int(2**64 - 1) or idx < 0:
@@ -168,7 +157,7 @@ cdef class MT64(BitGenerator):
             obj = np.asarray(seed)
             if obj.size == 0:
                 raise ValueError("Seed must be non-empty")
-            obj = obj.astype(np.object, casting='safe')
+            obj = obj.astype(np.object, casting="safe")
             if np.PyArray_NDIM(obj) != 1:
                 raise ValueError("Seed array must be 1-d")
             if ((obj > int(2**64 - 1)) | (obj < 0)).any():
@@ -176,7 +165,7 @@ cdef class MT64(BitGenerator):
             for val in obj:
                 if np.floor(val) != val:
                     raise ValueError("Seed must contains integers")
-            obj = obj.astype(np.uint64, casting='unsafe', order='C')
+            obj = obj.astype(np.uint64, casting="unsafe", order="C")
             mt64_init_by_array(&self.rng_state,
                                <uint64_t*>np.PyArray_DATA(obj),
                                np.PyArray_DIM(obj, 0))
@@ -198,22 +187,22 @@ cdef class MT64(BitGenerator):
         for i in range(312):
             key[i] = self.rng_state.mt[i]
 
-        return {'bit_generator': self.__class__.__name__,
-                'state': {'key': key, 'pos': self.rng_state.mti},
-                'has_uint32': self.rng_state.has_uint32,
-                'uinteger': self.rng_state.uinteger}
+        return {"bit_generator": self.__class__.__name__,
+                "state": {"key": key, "pos": self.rng_state.mti},
+                "has_uint32": self.rng_state.has_uint32,
+                "uinteger": self.rng_state.uinteger}
 
     @state.setter
     def state(self, value):
         if not isinstance(value, dict):
-            raise TypeError('state must be a dict')
-        bitgen = value.get('bit_generator', '')
+            raise TypeError("state must be a dict")
+        bitgen = value.get("bit_generator", "")
         if bitgen != self.__class__.__name__:
-            raise ValueError('state must be for a {0} '
-                             'PRNG'.format(self.__class__.__name__))
-        key = check_state_array(value['state']['key'], 312, 64, 'key')
+            raise ValueError("state must be for a {0} "
+                             "PRNG".format(self.__class__.__name__))
+        key = check_state_array(value["state"]["key"], 312, 64, "key")
         for i in range(312):
             self.rng_state.mt[i] = key[i]
-        self.rng_state.mti = value['state']['pos']
-        self.rng_state.has_uint32 = value['has_uint32']
-        self.rng_state.uinteger = value['uinteger']
+        self.rng_state.mti = value["state"]["pos"]
+        self.rng_state.has_uint32 = value["has_uint32"]
+        self.rng_state.uinteger = value["uinteger"]

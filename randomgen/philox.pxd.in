@@ -4,7 +4,7 @@ py:
 N = (1, 2, 4)
 W = (32, 64)
 }}
-cdef extern from 'src/philox/philox.h':
+cdef extern from "src/philox/philox.h":
 
 {{for w in W}}
 {{for n in N}}

@@ -137,7 +137,7 @@ for templated_file in files:
 
 extensions = []
 for name in ('bounded_integers', 'common', 'entropy', 'generator',
-             'legacy.bounded_integers', 'mtrand', 'seed_sequence'):
+             'legacy.bounded_integers', 'mtrand', '_seed_sequence'):
     extra_source = []
     extra_macros = []
     extra_incl = []

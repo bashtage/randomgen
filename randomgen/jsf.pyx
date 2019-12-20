@@ -4,11 +4,11 @@ cimport numpy as np
 from randomgen.common cimport *
 from randomgen.entropy import random_entropy, seed_by_array
 
-__all__ = ['JSF']
+__all__ = ["JSF"]
 
-INT_TYPES = (int, long, np.integer)
-JSF_DEFAULTS = {64: {'p': 7, 'q': 13, 'r': 37},
-                32: {'p': 27, 'q': 17, 'r': 0}}
+INT_TYPES = (int, np.integer)
+JSF_DEFAULTS = {64: {"p": 7, "q": 13, "r": 37},
+                32: {"p": 27, "q": 17, "r": 0}}
 
 JSF32_ALT_PARAMETERS = ((27, 17, 0),
                         (9, 16, 0),
@@ -51,9 +51,9 @@ JSF64_ALT_PARAMETERS = ((7, 13, 37),
 
 JSF_PARAMETERS = {32: [], 64: []}
 for p, q, r in JSF32_ALT_PARAMETERS:
-    JSF_PARAMETERS[32].append({'p': p, 'q': q, 'r': r})
+    JSF_PARAMETERS[32].append({"p": p, "q": q, "r": r})
 for p, q, r in JSF64_ALT_PARAMETERS:
-    JSF_PARAMETERS[64].append({'p': p, 'q': q, 'r': r})
+    JSF_PARAMETERS[64].append({"p": p, "q": q, "r": r})
 
 cdef uint64_t jsf64_uint64(void* st) nogil:
     return jsf64_next64(<jsf_state_t *>st)
@@ -78,20 +78,21 @@ cdef uint64_t jsf32_raw(void* st) nogil:
 
 cdef class JSF(BitGenerator):
     """
-    JSF(seed=None, seed_size=1, size=64, p=None, q=None, r=None)
+    JSF(seed=None, *, seed_size=1, size=64, p=None, q=None, r=None, mode=None)
 
     Container for Jenkins's Fast Small (JSF) pseudo-random number generator
 
     Parameters
     ----------
-    seed : {None, int, array_like}, optional
+    seed : {None, int, array_like[uint], SeedSequence}, optional
         Random seed initializing the pseudo-random number generator. Can be
-        an integer in [0, 2**size-1] or ``None`` (the default). If `seed`
-        is ``None``, then  data is read from ``/dev/urandom`` (or the Windows
-        analog) if available.  If unavailable, a hash of the time and process
-        ID is used.
+        an integer in [0, 2**size-1], an array of integers in
+        [0, 2**size-1], a SeedSequence or ``None`` (the default). If
+        `seed` is ``None``, then  data is read from ``/dev/urandom``
+        (or the Windows analog) if available. If unavailable, a hash of
+        the time and process ID is used.
     seed_size : {1, 2, 3}, optional
-        Number of distinct seed values used to initialize JSF.  The original
+        Number of distinct seed values used to initialize JSF. The original
         implementation uses 1 (default). Higher values increase the size of
         the seed space which is ``2**(size*seed_size)``.
     size : {32, 64}, optional
@@ -106,14 +107,22 @@ cdef class JSF(BitGenerator):
     r : int, optional
         One the the three parameters that defines JSF. See Notes. If not
         provided uses the default values for the selected size listed in Notes.
+    mode : {None, "sequence", "legacy"}, optional
+        The seeding mode to use. "legacy" uses the legacy
+        SplitMix64-based initialization. "sequence" uses a SeedSequence
+        to transforms the seed into an initial state. None defaults to "legacy"
+        and warns that the default after 1.19 will change to "sequence".
 
     Attributes
     ----------
-    lock: threading.Lock
+    lock : threading.Lock
         Lock instance that is shared so that the same bit git generator can
         be used in multiple Generators without corrupting the state. Code that
         generates values from a bit generator should hold the bit generator's
         lock.
+    seed_seq : {None, SeedSequence}
+        The SeedSequence instance used to initialize the generator if mode is
+        "sequence" or is seed is a SeedSequence. None if mode is "legacy".
 
     Notes
     -----
@@ -152,7 +161,7 @@ cdef class JSF(BitGenerator):
 
     **State and Seeding**
 
-    The state consists of the 4 values a, b, c and d.  The size of these values
+    The state consists of the 4 values a, b, c and d. The size of these values
     depends on ``size``. The seed value is an unsided integer with the same
     size as the generator (e.g., uint64 for ``size==64``).
 
@@ -175,17 +184,17 @@ cdef class JSF(BitGenerator):
     """
     parameters = JSF_PARAMETERS
 
-    def __init__(self, seed=None, seed_size=1, size=64, p=None, q=None,
-                 r=None):
-        BitGenerator.__init__(self)
+    def __init__(self, seed=None, *, seed_size=1, size=64, p=None, q=None,
+                 r=None, mode=None):
+        BitGenerator.__init__(self, seed, mode)
         if size not in (32, 64) or not isinstance(size, INT_TYPES):
-            raise ValueError('size must be either 32 or 64')
+            raise ValueError("size must be either 32 or 64")
         if seed_size not in (1, 2, 3) or not isinstance(seed_size, INT_TYPES):
-            raise ValueError('seed size must be one of 1, 2, or 3')
-        for val, val_name in ((p, 'p'), (q, 'q'), (r, 'r')):
+            raise ValueError("seed size must be one of 1, 2, or 3")
+        for val, val_name in ((p, "p"), (q, "q"), (r, "r")):
             if val is not None and not (0<= val <= size-1 and isinstance(val, INT_TYPES)):
-                raise ValueError('{0} must be an integer between 0 and'
-                                 '{1}'.format(val_name, size-1))
+                raise ValueError("{0} must be an integer between 0 and"
+                                 "{1}".format(val_name, size-1))
         self.size = size
         self.seed_size = seed_size
         self._bitgen.state = <void *>&self.rng_state
@@ -203,60 +212,15 @@ cdef class JSF(BitGenerator):
             self._bitgen.next_uint32 = &jsf32_uint32
             self._bitgen.next_double = &jsf32_double
             self._bitgen.next_raw = &jsf32_raw
-        self.rng_state.p = p if p is not None else JSF_DEFAULTS[self.size]['p']
-        self.rng_state.q = q if q is not None else JSF_DEFAULTS[self.size]['q']
-        self.rng_state.r = r if r is not None else JSF_DEFAULTS[self.size]['r']
+        self.rng_state.p = p if p is not None else JSF_DEFAULTS[self.size]["p"]
+        self.rng_state.q = q if q is not None else JSF_DEFAULTS[self.size]["q"]
+        self.rng_state.r = r if r is not None else JSF_DEFAULTS[self.size]["r"]
 
     cdef _reset_state_variables(self):
         self.rng_state.has_uint32 = 0
         self.rng_state.uinteger = 0
 
-    @classmethod
-    def from_seed_seq(cls, entropy=None, seed_size=1, size=64, p=None, q=None,
-                      r=None):
-        """
-        from_seed_seq(entropy=None, seed_size=1, size=64, p=None, q=None, r=None)
-
-        Create a instance using a SeedSequence
-
-        Parameters
-        ----------
-        entropy : {None, int, sequence[int], SeedSequence}
-            Entropy to pass to SeedSequence, or a SeedSequence instance. Using
-            a SeedSequence instance allows all parameters to be set.
-        seed_size : {1, 2, 3}, optional
-            Number of distinct seed values used to initialize JSF.  The
-            original implementation uses 1 (default). Higher values increase
-            the size of the seed space which is ``2**(size*seed_size)``.
-        size : {32, 64}, optional
-            Output size of a single iteration of JSF. 32 is better suited to
-            32-bit systems.
-        p : int, optional
-            One the the three parameters that defines JSF. See Notes for
-            ``JSF``.
-            Notes.
-        q : int, optional
-            One the the three parameters that defines JSF. See Notes for
-            ``JSF``.
-        r : int, optional
-            One the the three parameters that defines JSF. See Notes for
-            ``JSF``.
-
-        Returns
-        -------
-        bit_gen : JSF
-            SeedSequence initialized bit generator with SeedSequence instance
-            attached to ``bit_gen.seed_seq``
-
-        See Also
-        --------
-        randomgen.seed_sequence.SeedSequence
-        """
-        cls_kwargs = dict(seed_size=seed_size, size=size, p=p, q=q, r=r)
-        return super(JSF, cls).from_seed_seq(entropy, cls_kwargs=cls_kwargs)
-
-    def _seed_from_seq(self, seed_seq):
-        self.seed_seq = seed_seq
+    def _seed_from_seq(self):
         dtype = np.uint64 if self.size == 64 else np.uint32
         state = self.seed_seq.generate_state(self.seed_size, dtype)
         if self.size == 64:
@@ -267,6 +231,7 @@ cdef class JSF(BitGenerator):
             jsf32_seed(&self.rng_state,
                        <uint32_t*>np.PyArray_DATA(state),
                        self.seed_size)
+        self._reset_state_variables()
 
     def seed(self, seed=None):
         """
@@ -279,18 +244,26 @@ cdef class JSF(BitGenerator):
 
         Parameters
         ----------
-        seed : {int, ndarray}, optional
-            Seed for PRNG. Can be a single 64 bit unsigned integer or an array
-            of 64 bit unsigned integers.
+        seed : {None, int, array_like[uint], SeedSequence}, optional
+            Random seed initializing the pseudo-random number generator. Can be
+            an integer in [0, 2**size-1], an array of integers in
+            [0, 2**size-1], a SeedSequence or ``None`` (the default). If
+            `seed` is ``None``, then  data is read from ``/dev/urandom``
+            (or the Windows analog) if available. If unavailable, a hash of
+            the time and process ID is used.
 
         Raises
         ------
         ValueError
             If seed values are out of range for the PRNG.
         """
+        BitGenerator._seed_with_seed_sequence(self, seed)
+        if self.seed_seq is not None:
+            return
+
         ub = 2 ** self.size
         if seed is None:
-            state = random_entropy(3 * self.size // 32, 'auto')
+            state = random_entropy(3 * self.size // 32, "auto")
         else:
             state = seed_by_array(seed, 3)
         dtype = np.uint64 if self.size==64 else np.uint32
@@ -324,38 +297,38 @@ cdef class JSF(BitGenerator):
             b = self.rng_state.b.u32
             c = self.rng_state.c.u32
             d = self.rng_state.d.u32
-        return {'bit_generator': self.__class__.__name__,
-                'state': {'a': a, 'b': b, 'c': c, 'd': d,
-                          'p': self.rng_state.p,
-                          'q': self.rng_state.q,
-                          'r': self.rng_state.r},
-                'size': self.size,
-                'has_uint32': self.rng_state.has_uint32,
-                'uinteger': self.rng_state.uinteger,
-                'seed_size': self.seed_size}
+        return {"bit_generator": self.__class__.__name__,
+                "state": {"a": a, "b": b, "c": c, "d": d,
+                          "p": self.rng_state.p,
+                          "q": self.rng_state.q,
+                          "r": self.rng_state.r},
+                "size": self.size,
+                "has_uint32": self.rng_state.has_uint32,
+                "uinteger": self.rng_state.uinteger,
+                "seed_size": self.seed_size}
 
     @state.setter
     def state(self, value):
         if not isinstance(value, dict):
-            raise TypeError('state must be a dict')
-        bitgen = value.get('bit_generator', '')
+            raise TypeError("state must be a dict")
+        bitgen = value.get("bit_generator", "")
         if bitgen != self.__class__.__name__:
-            raise ValueError('state must be for a {0} '
-                             'PRNG'.format(self.__class__.__name__))
-        self.size = value['size']
-        state = value['state']
-        self.setup_generator(state['p'], state['q'], state['r'])
+            raise ValueError("state must be for a {0} "
+                             "PRNG".format(self.__class__.__name__))
+        self.size = value["size"]
+        state = value["state"]
+        self.setup_generator(state["p"], state["q"], state["r"])
         if self.size == 64:
-            self.rng_state.a.u64 = state['a']
-            self.rng_state.b.u64 = state['b']
-            self.rng_state.c.u64 = state['c']
-            self.rng_state.d.u64 = state['d']
+            self.rng_state.a.u64 = state["a"]
+            self.rng_state.b.u64 = state["b"]
+            self.rng_state.c.u64 = state["c"]
+            self.rng_state.d.u64 = state["d"]
         else:
-            self.rng_state.a.u32 = state['a']
-            self.rng_state.b.u32 = state['b']
-            self.rng_state.c.u32 = state['c']
-            self.rng_state.d.u32 = state['d']
+            self.rng_state.a.u32 = state["a"]
+            self.rng_state.b.u32 = state["b"]
+            self.rng_state.c.u32 = state["c"]
+            self.rng_state.d.u32 = state["d"]
 
-        self.rng_state.has_uint32 = value['has_uint32']
-        self.rng_state.uinteger = value['uinteger']
-        self.seed_size = value['seed_size']
+        self.rng_state.has_uint32 = value["has_uint32"]
+        self.rng_state.uinteger = value["uinteger"]
+        self.seed_size = value["seed_size"]

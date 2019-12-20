@@ -3,7 +3,7 @@ import numpy as np
 from randomgen.common cimport *
 from randomgen.entropy import random_entropy, seed_by_array
 
-__all__ = ['ThreeFry']
+__all__ = ["ThreeFry"]
 
 DEF THREEFRY_BUFFER_SIZE=4
 
@@ -42,27 +42,27 @@ cdef uint64_t threefry2x32_raw(void *st) nogil:
 
 cdef class ThreeFry(BitGenerator):
     """
-    ThreeFry(seed=None, counter=None, key=None, number=4, width=64)
+    ThreeFry(seed=None, *, counter=None, key=None, number=4, width=64, mode=None)
 
     Container for the ThreeFry (4x64) pseudo-random number generator.
 
     Parameters
     ----------
-    seed : {None, int, array_like}, optional
-        Random seed initializing the pseudo-random number generator.
+    seed : {None, int, array_like[uint64], SeedSequence}, optional
+        Entropy initializing the pseudo-random number generator.
         Can be an integer in [0, 2**64-1], array of integers in
-        [0, 2**64-1] or ``None`` (the default). If `seed` is ``None``,
-        data will be read from ``/dev/urandom`` (or the Windows analog)
-        if available.  If unavailable, a hash of the time and process ID is
-        used.
-    counter : {None, int, array_like}, optional
+        [0, 2**64-1], a SeedSequence instance or ``None`` (the default).
+        If `seed` is ``None``, data will be read from ``/dev/urandom``
+        (or the Windows analog) if available. If unavailable, a hash of the
+        time and process ID is used.
+    counter : {None, int, array_like[uint64]}, optional
         Counter to use in the ThreeFry state. Can be either
-        a Python int (long in 2.x) in [0, 2**256) or a 4-element uint64 array.
-        If not provided, the RNG is initialized at 0.
-    key : {None, int, array_like}, optional
-        Key to use in the ThreeFry state.  Unlike seed, which is run through
+        a Python int in [0, 2**256) or a 4-element uint64 array.
+        If not provided, the counter is initialized at 0.
+    key : {None, int, array_like[uint64]}, optional
+        Key to use in the ThreeFry state. Unlike seed, which is run through
         another RNG before use, the value in key is directly set. Can be either
-        a Python int (long in 2.x) in [0, 2**128) or a 2-element uint64 array.
+        a Python int in [0, 2**128) or a 2-element uint64 array.
         key and seed cannot both be used.
     number : {2, 4}, optional
         Number of values to produce in a single call. Maps to N in the ThreeFry
@@ -70,20 +70,28 @@ cdef class ThreeFry(BitGenerator):
     width : {32, 64}, optional
         Bit width the values produced. Maps to W in the ThreeFry variant naming
         scheme ThreeFryNxW.
+    mode : {None, "sequence", "legacy"}, optional
+        The seeding mode to use. "legacy" uses the legacy
+        SplitMix64-based initialization. "sequence" uses a SeedSequence
+        to transforms the seed into an initial state. None defaults to "legacy"
+        and warns that the default after 1.19 will change to "sequence".
 
     Attributes
     ----------
-    lock: threading.Lock
+    lock : threading.Lock
         Lock instance that is shared so that the same bit git generator can
         be used in multiple Generators without corrupting the state. Code that
         generates values from a bit generator should hold the bit generator's
         lock.
+    seed_seq : {None, SeedSequence}
+        The SeedSequence instance used to initialize the generator if mode is
+        "sequence" or is seed is a SeedSequence. None if mode is "legacy".
 
     Notes
     -----
     ThreeFry is a 64-bit PRNG that uses a counter-based design based on
     weaker (and faster) versions of cryptographic functions [1]_. Instances
-    using different values of the key produce independent sequences.  ``ThreeFry``
+    using different values of the key produce independent sequences. ``ThreeFry``
     has a period of :math:`2^{256} - 1` and supports arbitrary advancing and
     jumping the sequence in increments of :math:`2^{128}`. These features allow
     multiple non-overlapping sequences to be generated.
@@ -99,12 +107,12 @@ cdef class ThreeFry(BitGenerator):
 
     The ``ThreeFry`` state vector consists of a 2 256-bit values encoded as
     4-element uint64 arrays. One is a counter which is incremented by 1 for
-    every 4 64-bit randoms produced.  The second is a key which determined
-    the sequence produced.  Using different keys produces independent
+    every 4 64-bit randoms produced. The second is a key which determined
+    the sequence produced. Using different keys produces independent
     sequences.
 
     ``ThreeFry`` is seeded using either a single 64-bit unsigned integer
-    or a vector of 64-bit unsigned integers.  In either case, the seed is
+    or a vector of 64-bit unsigned integers. In either case, the seed is
     used as an input for a second random number generator,
     SplitMix64, and the output of this PRNG function is used as the initial state.
     Using a single 64-bit value for the seed can only initialize a small range of
@@ -160,12 +168,12 @@ cdef class ThreeFry(BitGenerator):
     cdef int n
     cdef int w
 
-    def __init__(self, seed=None, counter=None, key=None, number=4, width=64):
-        BitGenerator.__init__(self)
+    def __init__(self, seed=None, *, counter=None, key=None, number=4, width=64, mode=None):
+        BitGenerator.__init__(self, seed, mode)
         if number not in (2, 4):
-            raise ValueError('number must be either 2 or 4')
+            raise ValueError("number must be either 2 or 4")
         if width not in (32, 64):
-            raise ValueError('width must be either 32 or 64')
+            raise ValueError("width must be either 32 or 64")
         self.n = number
         self.w = width
         self.rng_state.number = number
@@ -200,8 +208,8 @@ cdef class ThreeFry(BitGenerator):
 
     def __repr__(self):
         out = object.__repr__(self)
-        out = out.replace('ThreeFry',
-                          'ThreeFry (' + str(self.n) + 'x' + str(self.w) + ')')
+        out = out.replace("ThreeFry",
+                          "ThreeFry (" + str(self.n) + "x" + str(self.w) + ")")
         return out
 
     cdef _reset_state_variables(self):
@@ -211,49 +219,10 @@ cdef class ThreeFry(BitGenerator):
         for i in range(THREEFRY_BUFFER_SIZE):
             self.rng_state.buffer[i].u64 = 0
 
-    @classmethod
-    def from_seed_seq(cls, entropy=None, counter=None, number=4, width=64):
-        """
-        from_seed_seq(entropy=None, counter=None, number=4, width=64)
-
-        Create a instance using a SeedSequence
-
-        Parameters
-        ----------
-        entropy : {None, int, sequence[int], SeedSequence}
-            Entropy to pass to SeedSequence, or a SeedSequence instance. Using
-            a SeedSequence instance allows all parameters to be set.
-        counter : {None, int, array_like}, optional
-            Counter to use in the ThreeFry state. Can be either
-            a Python int (long in 2.x) in [0, 2**256) or a 4-element uint64
-            array. If not provided, the RNG is initialized at 0.
-        number : {2, 4}, optional
-            Number of values to produce in a single call. Maps to N in the
-            ThreeFry variant naming scheme ThreeFryNxW.
-        width : {32, 64}, optional
-            Bit width the values produced. Maps to W in the ThreeFry variant
-            naming scheme ThreeFryNxW.
-
-        Returns
-        -------
-        bit_gen : ThreeFry
-            SeedSequence initialized bit generator with SeedSequence instance
-            attached to ``bit_gen.seed_seq``
-
-        See Also
-        --------
-        randomgen.seed_sequence.SeedSequence
-        """
-        seed_kwargs = dict(counter=counter)
-        cls_kwargs = dict(number=number, width=width)
-        return super(ThreeFry, cls).from_seed_seq(entropy,
-                                                  cls_kwargs=cls_kwargs,
-                                                  seed_kwargs=seed_kwargs)
-
-    def _seed_from_seq(self, seed_seq, counter=None):
-        self.seed_seq = seed_seq
+    def _seed_from_seq(self, counter=None):
         state = self.seed_seq.generate_state(self.n * self.w // 64, np.uint64)
         self.seed(key=state, counter=counter)
+        self._reset_state_variables()
 
     def seed(self, seed=None, counter=None, key=None):
         """
@@ -267,25 +236,28 @@ cdef class ThreeFry(BitGenerator):
 
         Parameters
         ----------
-        seed : int, optional
-            Value initializing the pseudo-random number generator. Can be an
-            integer in [0, 2**(number*width)), a ``number*width//64``-element
-            array of uint64 values or ``None`` (the default). If `seed` is
-            ``None``, then  data is read from ``/dev/urandom``
-            (or the Windows analog) if available.  If unavailable, a hash of
+        seed : {None, int, array_like[uint64], SeedSequence}, optional
+            Entropy initializing the pseudo-random number generator.
+            Can be an integer in [0, 2**64-1], array of integers in
+            [0, 2**64-1], a SeedSequence instance or ``None`` (the default).
+            If `seed` is ``None``, data will be read from ``/dev/urandom``
+            (or the Windows analog) if available. If unavailable, a hash of
             the time and process ID is used.
-        counter : {int array}, optional
-            Positive integer less than 2**(number*width) containing the counter
-            position or a (number*width)//64-element array of uint64 containing
-            the counter
-        key : {int, array}, options
-            Integer in [0, 2**(number*width)) containing the key or a
-            (number*width)//64-element array of uint64 containing the key.
+        counter : {None, int, array_like[uint64]}, optional
+            Counter to use in the ThreeFry state. Can be either a Python
+            int in [0, 2**256) or a 4-element uint64 array.
+            If not provided, the counter is initialized at 0.
+        key : {None, int, array_like[uint64]}, optional
+            Key to use in the ThreeFry state. Unlike seed, which is run
+            through another RNG before use, the value in key is directly set.
+            Can be either a Python int in [0, 2**128) or a 2-element uint64
+            array. key and seed cannot both be used.
 
         Raises
         ------
         ValueError
-            If values are out of range for the PRNG.
+            If values are out of range for the PRNG or If seed and key are
+            both set.
 
         Notes
         -----
@@ -293,21 +265,28 @@ cdef class ThreeFry(BitGenerator):
         array[i] = (value // 2**(64*i)) % 2**64.
         """
         cdef int nxw = self.n * self.w
-        seed = object_to_int(seed, nxw, 'seed')
-        key = object_to_int(key, nxw, 'key')
-        counter = object_to_int(counter, nxw, 'counter')
 
         if seed is not None and key is not None:
-            raise ValueError('seed and key cannot be both used')
+            raise ValueError("seed and key cannot be both used")
+        if key is None:
+            BitGenerator._seed_with_seed_sequence(self, seed, counter=counter)
+            if self.seed_seq is not None:
+                return
+
+        # Legacy seeding
+        seed = object_to_int(seed, nxw, "seed")
+        key = object_to_int(key, nxw, "key")
+        counter = object_to_int(counter, nxw, "counter")
+
         # Number of uint32 values in the seed
         cdef int u32_size = nxw // 32
         if key is not None:
-            _seed = int_to_array(key, 'key', nxw, self.w)
+            _seed = int_to_array(key, "key", nxw, self.w)
         elif seed is not None:
-            seed = int_to_array(seed, 'seed', None, 64)
+            seed = int_to_array(seed, "seed", None, 64)
             _seed = seed_by_array(seed, u32_size // 2)
         else:
-            _seed = random_entropy(u32_size, 'auto')
+            _seed = random_entropy(u32_size, "auto")
         dtype = np.uint64 if self.w==64 else np.uint32
         _seed = _seed.view(dtype)
         for i in range(self.n):
@@ -321,7 +300,7 @@ cdef class ThreeFry(BitGenerator):
                 self.rng_state.state.state4x64.key.v[i] = _seed[i]
 
         counter = 0 if counter is None else counter
-        counter = int_to_array(counter, 'counter', nxw, self.w)
+        counter = int_to_array(counter, "counter", nxw, self.w)
         for i in range(self.n):
             if self.w == 32 and self.n == 2:
                 self.rng_state.state.state2x32.ctr.v[i] = counter[i]
@@ -367,32 +346,32 @@ cdef class ThreeFry(BitGenerator):
             else:
                 buffer[i] = self.rng_state.buffer[i].u32
 
-        return {'bit_generator': self.__class__.__name__,
-                'state': {'counter': ctr, 'key': key},
-                'buffer': buffer,
-                'buffer_pos': self.rng_state.buffer_pos,
-                'has_uint32': self.rng_state.has_uint32,
-                'uinteger': self.rng_state.uinteger,
-                'number': self.rng_state.number,
-                'width': self.rng_state.width}
+        return {"bit_generator": self.__class__.__name__,
+                "state": {"counter": ctr, "key": key},
+                "buffer": buffer,
+                "buffer_pos": self.rng_state.buffer_pos,
+                "has_uint32": self.rng_state.has_uint32,
+                "uinteger": self.rng_state.uinteger,
+                "number": self.rng_state.number,
+                "width": self.rng_state.width}
 
     @state.setter
     def state(self, value):
         if not isinstance(value, dict):
-            raise TypeError('state must be a dict')
-        bitgen = value.get('bit_generator', '')
+            raise TypeError("state must be a dict")
+        bitgen = value.get("bit_generator", "")
         if bitgen != self.__class__.__name__:
-            raise ValueError('state must be for a {0} '
-                             'PRNG'.format(self.__class__.__name__))
+            raise ValueError("state must be for a {0} "
+                             "PRNG".format(self.__class__.__name__))
         # Default for previous version
-        self.rng_state.number = self.n = value.get('number', 4)
-        self.rng_state.width = self.w = value.get('width', 64)
+        self.rng_state.number = self.n = value.get("number", 4)
+        self.rng_state.width = self.w = value.get("width", 64)
         self._setup_generator()
 
-        state = value['state']
-        ctr = check_state_array(state['counter'], self.n, self.w, 'counter')
-        key = check_state_array(state['key'], self.n, self.w, 'key')
-        buffer = check_state_array(value['buffer'], self.n, self.w, 'buffer')
+        state = value["state"]
+        ctr = check_state_array(state["counter"], self.n, self.w, "counter")
+        key = check_state_array(state["key"], self.n, self.w, "key")
+        buffer = check_state_array(value["buffer"], self.n, self.w, "buffer")
         # Reset to make sure buffer is 0ed
         self._reset_state_variables()
         for i in range(self.n):
@@ -413,9 +392,9 @@ cdef class ThreeFry(BitGenerator):
                     self.rng_state.state.state4x64.ctr.v[i] = ctr[i]
                     self.rng_state.state.state4x64.key.v[i] = key[i]
 
-        self.rng_state.has_uint32 = value['has_uint32']
-        self.rng_state.uinteger = value['uinteger']
-        self.rng_state.buffer_pos = value['buffer_pos']
+        self.rng_state.has_uint32 = value["has_uint32"]
+        self.rng_state.uinteger = value["uinteger"]
+        self.rng_state.buffer_pos = value["buffer_pos"]
 
     cdef jump_inplace(self, object iter):
         """
@@ -453,8 +432,8 @@ cdef class ThreeFry(BitGenerator):
         required to ensure exact reproducibility.
         """
         import warnings
-        warnings.warn('jump (in-place) has been deprecated in favor of jumped'
-                      ', which returns a new instance', DeprecationWarning)
+        warnings.warn("jump (in-place) has been deprecated in favor of jumped"
+                      ", which returns a new instance", DeprecationWarning)
         self.jump_inplace(iter)
         return self
 
@@ -479,7 +458,7 @@ cdef class ThreeFry(BitGenerator):
         """
         cdef ThreeFry bit_generator
 
-        bit_generator = self.__class__()
+        bit_generator = self.__class__(mode=self.mode)
         bit_generator.state = self.state
         bit_generator.jump_inplace(iter)
 
@@ -500,9 +479,9 @@ cdef class ThreeFry(BitGenerator):
             into this range by taking the modulo.
         counter : bool
             Flag indicating whether the advance the counter only or both the
-            counter and the buffer position.  The default is True, which has
+            counter and the buffer position. The default is True, which has
             been the pattern in in randomgen <= 1.16. This is changing to False
-            for randomgen > 1.17.  To convert between the two, use
+            for randomgen > 1.17. To convert between the two, use
             delta_new = delta * number where number is the number of
             elements in the generator, delta is the step size when
             counter=False and delta_new is the step size for counter=True
@@ -518,14 +497,14 @@ cdef class ThreeFry(BitGenerator):
         number of calls to the underlying RNG have been made. In general
         there is not a one-to-one relationship between the number output
         random values from a particular distribution and the number of
-        draws from the core RNG.  This occurs for two reasons:
+        draws from the core RNG. This occurs for two reasons:
 
         * The random values are simulated using a rejection-based method
           and so, on average, more than one value from the underlying
           RNG is required to generate an single draw.
         * The number of bits required to generate a simulated value
           differs from the number of bits generated by the underlying
-          RNG.  For example, two 16-bit integer values can be simulated
+          RNG. For example, two 16-bit integer values can be simulated
           from a single draw of a 32-bit RNG.
 
         Advancing the RNG state resets any stored 32-bit values. If counter is
@@ -534,9 +513,9 @@ cdef class ThreeFry(BitGenerator):
         """
         if counter is None:
             import warnings
-            warnings.warn('counter defaults to True now, but will become '
-                          'False.  Explicitly set counter to silence this'
-                          'warning. ', FutureWarning)
+            warnings.warn("counter defaults to True now, but will become "
+                          "False. Explicitly set counter to silence this"
+                          "warning. ", FutureWarning)
             counter = True
         if delta == 0:
             return self
@@ -545,7 +524,7 @@ cdef class ThreeFry(BitGenerator):
         delta = wrap_int(delta, self.n * self.w + self.n // 2)
 
         cdef np.ndarray delta_a
-        delta_a = int_to_array(delta, 'step', (self.n + 1) * self.w, self.w)
+        delta_a = int_to_array(delta, "step", (self.n + 1) * self.w, self.w)
         orig_buffer_pos = self.rng_state.buffer_pos
 
         if self.n == 2 and self.w == 32:

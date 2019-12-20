@@ -15,7 +15,6 @@ Seeding and State
 
    ~JSF.seed
    ~JSF.state
-   ~JSF.from_seed_seq
 
 Extending
 =========

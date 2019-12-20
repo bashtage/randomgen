@@ -3,7 +3,7 @@ import numpy as np
 
 from libc.stdint cimport uint32_t, uint64_t
 
-__all__ = ['random_entropy', 'seed_by_array']
+__all__ = ["random_entropy", "seed_by_array"]
 
 np.import_array()
 
@@ -31,7 +31,7 @@ def seed_by_array(object seed, Py_ssize_t n):
     Parameters
     ----------
     seed: int, array or uint64
-        Array to use.  If seed is a scalar, it is promoted to an array.
+        Array to use. If seed is a scalar, it is promoted to an array.
     n : int
         Number of 64-bit unsigned integers required in the seed
 
@@ -50,11 +50,11 @@ def seed_by_array(object seed, Py_ssize_t n):
     cdef Py_ssize_t seed_size, iter_bound
     cdef int i, loc = 0
 
-    if hasattr(seed, 'squeeze'):
+    if hasattr(seed, "squeeze"):
         seed = seed.squeeze()
     arr = np.asarray(seed)
     if arr.shape == ():
-        err_msg = 'Scalar seeds must be integers between 0 and 2**64 - 1'
+        err_msg = "Scalar seeds must be integers between 0 and 2**64 - 1"
         if not np.isreal(arr):
             raise TypeError(err_msg)
         int_seed = int(seed)
@@ -67,13 +67,13 @@ def seed_by_array(object seed, Py_ssize_t n):
         err_msg = "Seed values must be integers between 0 and 2**64 - 1"
         obj = np.asarray(seed).astype(np.object)
         if obj.ndim != 1:
-            raise ValueError('Array-valued seeds must be 1-dimensional')
+            raise ValueError("Array-valued seeds must be 1-dimensional")
         if not np.isreal(obj).all():
             raise TypeError(err_msg)
         if ((obj > int(2**64 - 1)) | (obj < 0)).any():
             raise ValueError(err_msg)
         try:
-            obj_int = obj.astype(np.uint64, casting='unsafe')
+            obj_int = obj.astype(np.uint64, casting="unsafe")
         except ValueError:
             raise ValueError(err_msg)
         if not (obj == obj_int).all():
@@ -95,7 +95,7 @@ def seed_by_array(object seed, Py_ssize_t n):
     return np.array(initial_state)
 
 
-def random_entropy(size=None, source='system'):
+def random_entropy(size=None, source="system"):
     """
     random_entropy(size=None, source='system')
 
@@ -104,11 +104,11 @@ def random_entropy(size=None, source='system'):
     Parameters
     ----------
     size : int or tuple of ints, optional
-        Output shape.  If the given shape is, e.g., ``(m, n, k)``, then
-        ``m * n * k`` samples are drawn.  Default is None, in which case a
+        Output shape. If the given shape is, e.g., ``(m, n, k)``, then
+        ``m * n * k`` samples are drawn. Default is None, in which case a
         single value is returned.
     source : str {'system', 'fallback', 'auto'}
-        Source of entropy.  'system' uses system cryptographic pool.
+        Source of entropy. 'system' uses system cryptographic pool.
         'fallback' uses a hash of the time and process id. 'auto' attempts
         'system' before automatically falling back to 'fallback'
 
@@ -125,7 +125,7 @@ def random_entropy(size=None, source='system'):
     provider.
 
     This function reads from the system entropy pool and so samples are
-    not reproducible.  In particular, it does *NOT* make use of a
+    not reproducible. In particular, it does *NOT* make use of a
     bit generator, and so ``seed`` and setting ``state`` have no
     effect.
 
@@ -136,30 +136,30 @@ def random_entropy(size=None, source='system'):
     cdef uint32_t random = 0
     cdef uint32_t [:] randoms
 
-    if source not in ('system', 'fallback', 'auto'):
-        raise ValueError('Unknown value in source.')
+    if source not in ("system", "fallback", "auto"):
+        raise ValueError("Unknown value in source.")
 
     if size is None:
-        if source in ('system', 'auto'):
+        if source in ("system", "auto"):
             success = entropy_getbytes(<void *>&random, 4)
         else:
             success = entropy_fallback_getbytes(<void *>&random, 4)
     else:
         n = compute_numel(size)
         randoms = np.zeros(n, dtype=np.uint32)
-        if source == 'system':
+        if source == "system":
             success = entropy_getbytes(<void *>(&randoms[0]), 4 * n)
         else:
             success = entropy_fallback_getbytes(<void *>(&randoms[0]), 4 * n)
     if not success:
-        if source == 'auto':
+        if source == "auto":
             import warnings
-            warnings.warn('Unable to read from system cryptographic provider',
+            warnings.warn("Unable to read from system cryptographic provider",
                           RuntimeWarning)
-            return random_entropy(size=size, source='fallback')
+            return random_entropy(size=size, source="fallback")
         else:
-            raise RuntimeError('Unable to read from system cryptographic '
-                               'provider')
+            raise RuntimeError("Unable to read from system cryptographic "
+                               "provider")
 
     if n == 0:
         return random

@@ -3,7 +3,7 @@ import numpy as np
 from randomgen.common cimport *
 from randomgen.entropy import random_entropy, seed_by_array
 
-__all__ = ['AESCounter']
+__all__ = ["AESCounter"]
 
 cdef uint64_t aes_uint64(void* st) nogil:
     return aes_next64(<aesctr_state_t *>st)
@@ -16,42 +16,49 @@ cdef double aes_double(void* st) nogil:
 
 cdef class AESCounter(BitGenerator):
     """
-    AESCounter(seed=None)
+    AESCounter(, seed=None, *, counter=None, key=None, mode=None)
 
     Container for the AES Counter pseudo-random number generator.
 
     Parameters
     ----------
-    seed : {None, int}, optional
+    seed : {None, int, SeedSequence}, optional
         Random seed initializing the pseudo-random number generator.
-        Can be an integer in [0, 2**128-1], or ``None`` (the default).
-        If `seed` is ``None``, then  data is read
-        from ``/dev/urandom`` (or the Windows analog) if available.  If
+        Can be an integer in [0, 2**128-1], a SeedSequence instance or
+        ``None`` (the default). If `seed` is ``None``, then  data is read
+        from ``/dev/urandom`` (or the Windows analog) if available. If
         unavailable, a hash of the time and process ID is used.
-    counter : {None, int, array_like}, optional
+    counter : {None, int, array_like[uint64]}, optional
         Counter to use in the AESCounter state. Can be either
         a Python int in [0, 2**128) or a 2-element uint64 array.
-        If not provided, the RNG is initialized at 0.
-    key : {None, int, array_like}, optional
-        Key to use in the AESCounter state.  Unlike seed, which is run through
+        If not provided, the counter is initialized at 0.
+    key : {None, int, array_like[uint64]}, optional
+        Key to use in the AESCounter state. Unlike seed, which is run through
         another RNG before use, the value in key is directly set. Can be either
         a Python int in [0, 2**128) or a 2-element uint64 array.
         key and seed cannot both be used.
-
+    mode : {None, "sequence", "legacy"}, optional
+        The seeding mode to use. "legacy" uses the legacy
+        SplitMix64-based initialization. "sequence" uses a SeedSequence
+        to transforms the seed into an initial state. None defaults to "legacy"
+        and warns that the default after 1.19 will change to "sequence".
 
     Attributes
     ----------
-    lock: threading.Lock
+    lock : threading.Lock
         Lock instance that is shared so that the same bit git generator can
         be used in multiple Generators without corrupting the state. Code that
         generates values from a bit generator should hold the bit generator's
         lock.
+    seed_seq : {None, SeedSequence}
+        The SeedSequence instance used to initialize the generator if mode is
+        "sequence" or is seed is a SeedSequence. None if mode is "legacy".
 
     Notes
     -----
     AESCounter is a 64-bit PRNG that uses a counter-based design based on
     the AES-128 cryptographic function [1]_. Instances using different values
-    of the key produce independent sequences.  ``AESCounter`` has a period
+    of the key produce independent sequences. ``AESCounter`` has a period
     of :math:`2^{128} - 1` and supports arbitrary advancing and
     jumping the sequence in increments of :math:`2^{64}`. These features allow
     multiple non-overlapping sequences to be generated.
@@ -74,7 +81,7 @@ cdef class AESCounter(BitGenerator):
     the next 64 bits.
 
     ``AESCounter`` is seeded using either a single 128-bit unsigned integer
-    or a vector of 2 64-bit unsigned integers.  In either case, the seed is
+    or a vector of 2 64-bit unsigned integers. In either case, the seed is
     used as an input for a second random number generator,
     SplitMix64, and the output of this PRNG function is used as the initial
     state. Using a single 64-bit value for the seed can only initialize a small
@@ -118,8 +125,8 @@ cdef class AESCounter(BitGenerator):
     .. [1] Advanced Encryption Standard. (n.d.). In Wikipedia. Retrieved
         June 1, 2019, from https://en.wikipedia.org/wiki/Advanced_Encryption_Standard
     """
-    def __init__(self, seed=None, counter=None, key=None):
-        BitGenerator.__init__(self)
+    def __init__(self, seed=None, *, counter=None, key=None, mode=None):
+        BitGenerator.__init__(self, seed, mode)
         # Calloc since ctr needs to be 0
         self.rng_state = <aesctr_state_t *>PyArray_calloc_aligned(sizeof(aesctr_state_t), 1)
         self.seed(seed, counter, key)
@@ -164,43 +171,13 @@ cdef class AESCounter(BitGenerator):
     def use_aesni(self, value):
         capable = aes_capable()
         if value and not capable:
-            raise ValueError('CPU does not support AESNI')
+            raise ValueError("CPU does not support AESNI")
         aesctr_use_aesni(bool(value))
 
-    @classmethod
-    def from_seed_seq(cls, entropy=None, counter=None):
-        """
-        from_seed_seq(entropy=None, counter=None)
-
-        Create a instance using a SeedSequence
-
-        Parameters
-        ----------
-        entropy : {None, int, sequence[int], SeedSequence}
-            Entropy to pass to SeedSequence, or a SeedSequence instance. Using
-            a SeedSequence instance allows all parameters to be set.
-        counter : {None, int, array_like}
-            Positive integer less than 2**128 containing the counter position
-            or a 2 element array of uint64 containing the counter
-
-        Returns
-        -------
-        bit_gen : AESCounter
-            SeedSequence initialized bit generator with SeedSequence instance
-            attached to ``bit_gen.seed_seq``
-
-        See Also
-        --------
-        randomgen.seed_sequence.SeedSequence
-        """
-        seed_kwargs = {'counter': counter}
-        return super(AESCounter, cls).from_seed_seq(entropy,
-                                                    seed_kwargs=seed_kwargs)
-
-    def _seed_from_seq(self, seed_seq, counter=None):
-        self.seed_seq = seed_seq
+    def _seed_from_seq(self, counter=None):
         state = self.seed_seq.generate_state(2, np.uint64)
         self.seed(key=state, counter=counter)
+        self._reset_state_variables()
 
     def seed(self, seed=None, counter=None, key=None):
         """
@@ -214,19 +191,21 @@ cdef class AESCounter(BitGenerator):
 
         Parameters
         ----------
-        seed : int, optional
-            Value initializing the pseudo-random number generator.
-            Can be an integer in [0, 2**128), a 2-element array of uint64
-            values or ``None`` (the default). If `seed` is ``None``, then
-            data is read from ``/dev/urandom`` (or the Windows analog) if
-            available.  If unavailable, a hash of the time and process ID is
-            used.
-        counter : {None, int, array_like}
-            Positive integer less than 2**128 containing the counter position
-            or a 2 element array of uint64 containing the counter
-        key : {int, array}, optional
-            Positive integer less than 2**128 containing the key
-            or a 2 element array of uint64 containing the key
+        seed : {None, int, SeedSequence}, optional
+            Random seed initializing the pseudo-random number generator.
+            Can be an integer in [0, 2**128-1], a SeedSequence instance or
+            ``None`` (the default). If `seed` is ``None``, then  data is read
+            from ``/dev/urandom`` (or the Windows analog) if available. If
+            unavailable, a hash of the time and process ID is used.
+        counter : {None, int, array_like[uint64]}, optional
+            Counter to use in the AESCounter state. Can be either
+            a Python int in [0, 2**128) or a 2-element uint64 array.
+            If not provided, the counter is initialized at 0.
+        key : {None, int, array_like[uint64]}, optional
+            Key to use in the AESCounter state. Unlike seed, which is run
+            through another RNG before use, the value in key is directly set.
+            Can be either a Python int in [0, 2**128) or a 2-element uint64
+            array. key and seed cannot both be used.
 
         Raises
         ------
@@ -239,25 +218,33 @@ cdef class AESCounter(BitGenerator):
         array[i] = (value // 2**(64*i)) % 2**64.
         """
         cdef np.ndarray _seed
-        seed = object_to_int(seed, 128, 'seed')
-        key = object_to_int(key, 128, 'key')
-        counter = object_to_int(counter, 128, 'counter')
+
         if seed is not None and key is not None:
-            raise ValueError('seed and key cannot be both used')
+            raise ValueError("seed and key cannot be both used")
+        if key is None:
+            BitGenerator._seed_with_seed_sequence(self, seed, counter=counter)
+            if self.seed_seq is not None:
+                return
+
+        seed = object_to_int(seed, 128, "seed")
+        key = object_to_int(key, 128, "key")
+        counter = object_to_int(counter, 128, "counter")
+        if seed is not None and key is not None:
+            raise ValueError("seed and key cannot be both used")
         ub = 2 ** 128
         if key is None:
             if seed is None:
-                _seed = random_entropy(4, 'auto')
+                _seed = random_entropy(4, "auto")
                 _seed = _seed.view(np.uint64)
             else:
-                _seed = seed_by_array(int_to_array(seed, 'seed', None, 64), 2)
+                _seed = seed_by_array(int_to_array(seed, "seed", None, 64), 2)
         else:
-            _seed = int_to_array(key, 'key', 128, 64)
+            _seed = int_to_array(key, "key", 128, 64)
         aesctr_seed(self.rng_state, <uint64_t*>np.PyArray_DATA(_seed))
         _counter = np.empty(8, dtype=np.uint64)
         counter = 0 if counter is None else counter
         for i in range(4):
-            _counter[2*i:2*i+2] = int_to_array(counter+i, 'counter', 128, 64)
+            _counter[2*i:2*i+2] = int_to_array(counter+i, "counter", 128, 64)
         aesctr_set_counter(self.rng_state,
                            <uint64_t*>np.PyArray_DATA(_counter))
         self._reset_state_variables()
@@ -286,39 +273,39 @@ cdef class AESCounter(BitGenerator):
         for i in range(16 * 4):
             state[i] = self.rng_state.state[i]
         offset = self.rng_state.offset
-        return {'bit_generator': self.__class__.__name__,
-                's': {'state': state, 'seed': seed, 'counter': counter,
-                      'offset': offset},
-                'has_uint32': self.rng_state.has_uint32,
-                'uinteger': self.rng_state.uinteger}
+        return {"bit_generator": self.__class__.__name__,
+                "s": {"state": state, "seed": seed, "counter": counter,
+                      "offset": offset},
+                "has_uint32": self.rng_state.has_uint32,
+                "uinteger": self.rng_state.uinteger}
 
     @state.setter
     def state(self, value):
         cdef np.npy_intp i
 
         if not isinstance(value, dict):
-            raise TypeError('state must be a dict')
-        bitgen = value.get('bit_generator', '')
+            raise TypeError("state must be a dict")
+        bitgen = value.get("bit_generator", "")
         if bitgen != self.__class__.__name__:
-            raise ValueError('state must be for a {0} '
-                             'PRNG'.format(self.__class__.__name__))
-        state =value['s']['state']
+            raise ValueError("state must be for a {0} "
+                             "PRNG".format(self.__class__.__name__))
+        state =value["s"]["state"]
         for i in range(16 * 4):
             self.rng_state.state[i] = state[i]
         offset = self.rng_state.offset
-        self.rng_state.offset = value['s']['offset']
-        seed = np.ascontiguousarray(value['s']['seed'], dtype=np.uint64)
-        counter = np.ascontiguousarray(value['s']['counter'], dtype=np.uint64)
+        self.rng_state.offset = value["s"]["offset"]
+        seed = np.ascontiguousarray(value["s"]["seed"], dtype=np.uint64)
+        counter = np.ascontiguousarray(value["s"]["counter"], dtype=np.uint64)
         if seed.ndim != 1 or seed.shape[0] != 2 * (10 + 1):
-            raise ValueError('seed must be a 1d uint64 array with 22 elements')
+            raise ValueError("seed must be a 1d uint64 array with 22 elements")
         if counter.ndim != 1 or counter.shape[0] != 2 * (4):
-            raise ValueError('counter must be a 1d uint64 array with 8 '
-                             'elements')
+            raise ValueError("counter must be a 1d uint64 array with 8 "
+                             "elements")
         aesctr_set_seed_counter(self.rng_state,
                                 <uint64_t*>np.PyArray_DATA(seed),
                                 <uint64_t*>np.PyArray_DATA(counter))
-        self.rng_state.has_uint32 = value['has_uint32']
-        self.rng_state.uinteger = value['uinteger']
+        self.rng_state.has_uint32 = value["has_uint32"]
+        self.rng_state.uinteger = value["uinteger"]
 
     cdef jump_inplace(self, object iter):
         """
@@ -355,8 +342,8 @@ cdef class AESCounter(BitGenerator):
         required to ensure exact reproducibility.
         """
         import warnings
-        warnings.warn('jump (in-place) has been deprecated in favor of jumped'
-                      ', which returns a new instance', DeprecationWarning)
+        warnings.warn("jump (in-place) has been deprecated in favor of jumped"
+                      ", which returns a new instance", DeprecationWarning)
         self.jump_inplace(iter)
         return self
 
@@ -381,7 +368,7 @@ cdef class AESCounter(BitGenerator):
         """
         cdef AESCounter bit_generator
 
-        bit_generator = self.__class__()
+        bit_generator = self.__class__(mode=self.mode)
         bit_generator.state = self.state
         bit_generator.jump_inplace(iter)
 
@@ -409,14 +396,14 @@ cdef class AESCounter(BitGenerator):
         number of calls to the underlying RNG have been made. In general
         there is not a one-to-one relationship between the number output
         random values from a particular distribution and the number of
-        draws from the core RNG.  This occurs for two reasons:
+        draws from the core RNG. This occurs for two reasons:
 
         * The random values are simulated using a rejection-based method
           and so, on average, more than one value from the underlying
           RNG is required to generate an single draw.
         * The number of bits required to generate a simulated value
           differs from the number of bits generated by the underlying
-          RNG.  For example, two 16-bit integer values can be simulated
+          RNG. For example, two 16-bit integer values can be simulated
           from a single draw of a 32-bit RNG.
 
         Advancing the RNG state resets any pre-computed random numbers.
@@ -426,7 +413,7 @@ cdef class AESCounter(BitGenerator):
         if delta == 0:
             return self
 
-        step = int_to_array(delta, 'delta', 64*3, 64)
+        step = int_to_array(delta, "delta", 64*3, 64)
         aesctr_advance(self.rng_state, <uint64_t *>np.PyArray_DATA(step))
         self.rng_state.has_uint32 = 0
         self.rng_state.uinteger = 0

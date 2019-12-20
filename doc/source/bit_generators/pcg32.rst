@@ -1,5 +1,5 @@
-Parallel Congruent Generator (32-bit, PCG32)
---------------------------------------------
+Permuted Congruential Generator (32-bit, PCG32)
+-----------------------------------------------
 
 .. module:: randomgen.pcg32
 
@@ -15,7 +15,6 @@ Seeding and State
 
    ~PCG32.seed
    ~PCG32.state
-   ~PCG32.from_seed_seq
 
 Parallel generation
 ===================

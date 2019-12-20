@@ -19,7 +19,7 @@ cdef inline uint64_t _gen_mask(uint64_t max_val) nogil:
     return mask
 {{
 py:
-inttypes = ('uint64','uint32','uint16','uint8','bool','int64','int32','int16','int8')
+inttypes = ("uint64","uint32","uint16","uint8","bool","int64","int32","int16","int8")
 }}
 {{for inttype in inttypes}}
 cdef object _rand_{{inttype}}(object low, object high, object size, bint use_masked, bint closed, bitgen_t *state, object lock)

@@ -123,6 +123,7 @@ ddof
 zipf
 Ziggurat
 congruential
+Congruential
 ctype
 CTypes
 dfden
@@ -231,3 +232,6 @@ broadcastable
 zig
 multithreaded
 al
+SIMD
+SeedSequence
+inbounds

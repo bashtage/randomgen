@@ -7,15 +7,15 @@ import numpy as np
 from setuptools.extension import Extension
 
 extending = Extension("extending",
-                      sources=['extending.pyx'],
+                      sources=["extending.pyx"],
                       include_dirs=[np.get_include()])
 distributions = Extension("extending_distributions",
-                          sources=['extending_distributions.pyx',
-                                   join('..', '..', '..', 'randomgen', 'src',
-                                        'distributions', 'distributions.c')],
+                          sources=["extending_distributions.pyx",
+                                   join("..", "..", "..", "randomgen", "src",
+                                        "distributions", "distributions.c")],
                           include_dirs=[np.get_include()])
 low_level = Extension("low_level",
-                      sources=['low_level.pyx'],
+                      sources=["low_level.pyx"],
                       include_dirs=[np.get_include()])
 
 extensions = [extending, distributions, low_level]

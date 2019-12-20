@@ -1,8 +1,8 @@
 from itertools import product
 
 import numpy as np
-import pytest
 from numpy.testing import assert_allclose, assert_array_equal
+import pytest
 
 from randomgen import Generator
 
@@ -192,7 +192,7 @@ def test_equivalence(distribution, args):
     gen.bit_generator.state = initial_state
     result = rvs(*args)
     if isinstance(result, (np.ndarray, float)):
-        dtype = getattr(result, 'dtype', None)
+        dtype = getattr(result, "dtype", None)
         if isinstance(result, float) or dtype in (np.float32, np.float64):
             assert_allclose(result, expected)
         else:

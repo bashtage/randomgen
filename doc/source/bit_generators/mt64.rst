@@ -16,7 +16,6 @@ Seeding and State
 
    ~MT64.seed
    ~MT64.state
-   ~MT64.from_seed_seq
 
 Extending
 =========

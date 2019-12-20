@@ -7,7 +7,7 @@ cimport numpy as np
 from randomgen.common cimport *
 from randomgen.entropy import random_entropy
 
-__all__ = ['MT19937']
+__all__ = ["MT19937"]
 
 cdef uint64_t mt19937_uint64(void *st) nogil:
     return mt19937_next64(<mt19937_state_t *> st)
@@ -23,27 +23,36 @@ cdef uint64_t mt19937_raw(void *st) nogil:
 
 cdef class MT19937(BitGenerator):
     u"""
-    MT19937(seed=None)
+    MT19937(seed=None, *, mode=None)
 
     Container for the Mersenne Twister pseudo-random number generator.
 
     Parameters
     ----------
-    seed : {None, int, array_like}, optional
-        Random seed used to initialize the pseudo-random number generator.  Can
+    seed : {None, int, array_like[uint32], SeedSequence}, optional
+        Random seed used to initialize the pseudo-random number generator. Can
         be any integer between 0 and 2**32 - 1 inclusive, an array (or other
-        sequence) of unsigned 32-bit integers, or ``None`` (the default).  If
-        `seed` is ``None``, then 624 32-bit unsigned integers are read from
-        ``/dev/urandom`` (or the Windows analog) if available. If unavailable,
-        a hash of the time and process ID is used.
+        sequence) of unsigned 32-bit integers, a SeedSequence instance or
+        ``None`` (the default). If `seed` is ``None``, then 624 32-bit
+        unsigned integers are read from ``/dev/urandom`` (or the Windows
+        analog) if available. If unavailable, a hash of the time and process
+        ID is used.
+    mode : {None, "sequence", "legacy"}, optional
+        The seeding mode to use. "legacy" uses the legacy
+        SplitMix64-based initialization. "sequence" uses a SeedSequence
+        to transforms the seed into an initial state. None defaults to "legacy"
+        and warns that the default after 1.19 will change to "sequence".
 
     Attributes
     ----------
-    lock: threading.Lock
+    lock : threading.Lock
         Lock instance that is shared so that the same bit git generator can
         be used in multiple Generators without corrupting the state. Code that
         generates values from a bit generator should hold the bit generator's
         lock.
+    seed_seq : {None, SeedSequence}
+        The SeedSequence instance used to initialize the generator if mode is
+        "sequence" or is seed is a SeedSequence. None if mode is "legacy".
 
     Notes
     -----
@@ -62,7 +71,7 @@ cdef class MT19937(BitGenerator):
     that indexes the current position within the main array.
 
     ``MT19937`` is seeded using either a single 32-bit unsigned integer
-    or a vector of 32-bit unsigned integers.  In either case, the input seed is
+    or a vector of 32-bit unsigned integers. In either case, the input seed is
     used as an input (or inputs) for a hashing function, and the output of the
     hashing function is used as the initial state. Using a single 32-bit value
     for the seed can only initialize a small range of the possible initial
@@ -101,8 +110,8 @@ cdef class MT19937(BitGenerator):
         No. 3, Summer 2008, pp. 385-390.
 
     """
-    def __init__(self, seed=None):
-        BitGenerator.__init__(self)
+    def __init__(self, seed=None, *, mode=None):
+        BitGenerator.__init__(self, seed, mode)
         self.seed(seed)
         self._bitgen.state = &self.rng_state
         self._bitgen.next_uint64 = &mt19937_uint64
@@ -110,33 +119,7 @@ cdef class MT19937(BitGenerator):
         self._bitgen.next_double = &mt19937_double
         self._bitgen.next_raw = &mt19937_raw
 
-    @classmethod
-    def from_seed_seq(cls, entropy=None):
-        """
-        from_seed_seq(entropy=None)
-
-        Create a instance using a SeedSequence
-
-        Parameters
-        ----------
-        entropy : {None, int, sequence[int], SeedSequence}
-            Entropy to pass to SeedSequence, or a SeedSequence instance. Using
-            a SeedSequence instance allows all parameters to be set.
-
-        Returns
-        -------
-        bit_gen : MT19937
-            SeedSequence initialized bit generator with SeedSequence instance
-            attached to ``bit_gen.seed_seq``
-
-        See Also
-        --------
-        randomgen.seed_sequence.SeedSequence
-        """
-        return super(MT19937, cls).from_seed_seq(entropy)
-
-    def _seed_from_seq(self, seed_seq):
-        self.seed_seq = seed_seq
+    def _seed_from_seq(self):
         state = self.seed_seq.generate_state(624, np.uint32)
         mt19937_init_by_array(&self.rng_state,
                               <uint32_t*>np.PyArray_DATA(state),
@@ -150,14 +133,14 @@ cdef class MT19937(BitGenerator):
 
         Parameters
         ----------
-        seed : {None, int, array_like}, optional
-            Random seed initializing the pseudo-random number generator.
-            Can be an integer in [0, 2**32-1], array of integers in
-            [0, 2**32-1] or ``None`` (the default). If `seed` is ``None``,
-            then ``MT19937`` will try to read entropy from ``/dev/urandom``
-            (or the Windows analog) if available to produce a 32-bit
-            seed. If unavailable, a 32-bit hash of the time and process
-            ID is used.
+        seed : {None, int, array_like[uint32], SeedSequence}, optional
+            Random seed used to initialize the pseudo-random number generator.
+            Can be any integer between 0 and 2**32 - 1 inclusive, an array (or
+            other sequence) of unsigned 32-bit integers, a SeedSequence
+            instance or ``None`` (the default). If `seed` is ``None``, then
+            624 32-bit unsigned integers are read from ``/dev/urandom`` (or
+            the Windows analog) if available. If unavailable, a hash of the
+            time and process ID is used.
 
         Raises
         ------
@@ -165,14 +148,19 @@ cdef class MT19937(BitGenerator):
             If seed values are out of range for the PRNG.
         """
         cdef np.ndarray obj
+
+        BitGenerator._seed_with_seed_sequence(self, seed)
+        if self.seed_seq is not None:
+            return
+
         try:
             if seed is None:
-                seed = random_entropy(624, 'auto')
+                seed = random_entropy(624, "auto")
                 mt19937_init_by_array(&self.rng_state,
                                       <uint32_t*>np.PyArray_DATA(seed),
                                       624)
             else:
-                if hasattr(seed, 'squeeze'):
+                if hasattr(seed, "squeeze"):
                     seed = seed.squeeze()
                 idx = operator.index(seed)
                 if idx > int(2**32 - 1) or idx < 0:
@@ -182,12 +170,12 @@ cdef class MT19937(BitGenerator):
             obj = np.asarray(seed)
             if obj.size == 0:
                 raise ValueError("Seed must be non-empty")
-            obj = obj.astype(np.int64, casting='safe')
+            obj = obj.astype(np.int64, casting="safe")
             if np.PyArray_NDIM(obj) != 1:
                 raise ValueError("Seed array must be 1-d")
             if ((obj > int(2**32 - 1)) | (obj < 0)).any():
                 raise ValueError("Seed must be between 0 and 2**32 - 1")
-            obj = obj.astype(np.uint32, casting='unsafe', order='C')
+            obj = obj.astype(np.uint32, casting="unsafe", order="C")
             mt19937_init_by_array(&self.rng_state,
                                   <uint32_t*>np.PyArray_DATA(obj),
                                   <int>np.PyArray_DIM(obj, 0))
@@ -204,7 +192,7 @@ cdef class MT19937(BitGenerator):
             Number of times to jump the state of the rng.
         """
         if jumps < 0:
-            raise ValueError('jumps must be positive')
+            raise ValueError("jumps must be positive")
         mt19937_jump_n(&self.rng_state, jumps)
 
     def jump(self, int jumps=1):
@@ -224,8 +212,8 @@ cdef class MT19937(BitGenerator):
             PRNG jumped jumps times
         """
         import warnings
-        warnings.warn('jump (in-place) has been deprecated in favor of jumped'
-                      ', which returns a new instance', DeprecationWarning)
+        warnings.warn("jump (in-place) has been deprecated in favor of jumped"
+                      ", which returns a new instance", DeprecationWarning)
 
         self.jump_inplace(jumps)
         return self
@@ -251,7 +239,7 @@ cdef class MT19937(BitGenerator):
         """
         cdef MT19937 bit_generator
 
-        bit_generator = self.__class__()
+        bit_generator = self.__class__(mode=self.mode)
         bit_generator.state = self.state
         bit_generator.jump_inplace(jumps)
 
@@ -272,24 +260,24 @@ cdef class MT19937(BitGenerator):
         for i in range(624):
             key[i] = self.rng_state.key[i]
 
-        return {'bit_generator': self.__class__.__name__,
-                'state': {'key': key, 'pos': self.rng_state.pos}}
+        return {"bit_generator": self.__class__.__name__,
+                "state": {"key": key, "pos": self.rng_state.pos}}
 
     @state.setter
     def state(self, value):
         if isinstance(value, tuple):
-            if value[0] != 'MT19937' or len(value) not in (3, 5):
-                raise ValueError('state is not a legacy MT19937 state')
-            value ={'bit_generator': 'MT19937',
-                    'state': {'key': value[1], 'pos': value[2]}}
+            if value[0] != "MT19937" or len(value) not in (3, 5):
+                raise ValueError("state is not a legacy MT19937 state")
+            value ={"bit_generator": "MT19937",
+                    "state": {"key": value[1], "pos": value[2]}}
 
         if not isinstance(value, dict):
-            raise TypeError('state must be a dict')
-        bitgen = value.get('bit_generator', '')
+            raise TypeError("state must be a dict")
+        bitgen = value.get("bit_generator", "")
         if bitgen != self.__class__.__name__:
-            raise ValueError('state must be for a {0} '
-                             'PRNG'.format(self.__class__.__name__))
-        key = check_state_array(value['state']['key'], 624, 32, 'key')
+            raise ValueError("state must be for a {0} "
+                             "PRNG".format(self.__class__.__name__))
+        key = check_state_array(value["state"]["key"], 624, 32, "key")
         for i in range(624):
             self.rng_state.key[i] = key[i]
-        self.rng_state.pos = value['state']['pos']
+        self.rng_state.pos = value["state"]["pos"]

@@ -4,7 +4,7 @@ cimport numpy as np
 from randomgen.common cimport *
 from randomgen.entropy import random_entropy
 
-__all__ = ['PCG32']
+__all__ = ["PCG32"]
 
 cdef uint64_t pcg32_uint64(void* st) nogil:
     return pcg32_next64(<pcg32_state_t *>st)
@@ -21,35 +21,43 @@ cdef uint64_t pcg32_raw(void* st) nogil:
 
 cdef class PCG32(BitGenerator):
     u"""
-    PCG32(seed=None, inc=0)
+    PCG32(seed=None, inc=0, *, mode=None)
 
     Container for the PCG-32 pseudo-random number generator.
 
     Parameters
     ----------
-    seed : {None, long}, optional
-        Random seed initializing the pseudo-random number generator.
-        Can be an integer in [0, 2**64] or ``None`` (the default).
-        If `seed` is ``None``, then ``PCG32`` will try to read data
+    seed : {None, int, SeedSequence}, optional
+        Random seed initializing the pseudo-random number generator. Can be an
+        integer in [0, 2**64], a SeedSequence instance or ``None`` (the
+        default). If `seed` is ``None``, then ``PCG32`` will try to read data
         from ``/dev/urandom`` (or the Windows analog) if available. If
         unavailable, a 64-bit hash of the time and process ID is used.
     inc : {None, int}, optional
-        Stream to return.
-        Can be an integer in [0, 2**64] or ``None`` (the default).  If `inc` is
-        ``None``, then 0 is used.  Can be used with the same seed to
-        produce multiple streams using other values of inc.
+        Stream to return. Can be an integer in [0, 2**64] or ``None``.
+        The default is 0. If `inc` is ``None``, then it is initialized using
+        entropy. Can be used with the same seed to produce multiple streams
+        using other values of inc.
+    mode : {None, "sequence", "legacy"}, optional
+        The seeding mode to use. "legacy" uses the legacy
+        SplitMix64-based initialization. "sequence" uses a SeedSequence
+        to transforms the seed into an initial state. None defaults to "legacy"
+        and warns that the default after 1.19 will change to "sequence".
 
     Attributes
     ----------
-    lock: threading.Lock
+    lock : threading.Lock
         Lock instance that is shared so that the same bit git generator can
         be used in multiple Generators without corrupting the state. Code that
         generates values from a bit generator should hold the bit generator's
         lock.
+    seed_seq : {None, SeedSequence}
+        The SeedSequence instance used to initialize the generator if mode is
+        "sequence" or is seed is a SeedSequence. None if mode is "legacy".
 
     Notes
     -----
-    PCG-32 is a 64-bit implementation of O'Neill's permutation congruential
+    PCG-32 is a 64-bit implementation of O'Neill's permuted congruential
     generator ([1]_, [2]_). PCG-32 has a period of :math:`2^{64}` and supports
     advancing an arbitrary number of steps as well as :math:`2^{63}` streams.
 
@@ -98,8 +106,8 @@ cdef class PCG32(BitGenerator):
     .. [2] O'Neill, Melissa E. "PCG: A Family of Simple Fast Space-Efficient
            Statistically Good Algorithms for Random Number Generation"
     """
-    def __init__(self, seed=None, inc=0):
-        BitGenerator.__init__(self)
+    def __init__(self, seed=None, inc=0, *, mode=None):
+        BitGenerator.__init__(self, seed, mode)
         self.seed(seed, inc)
         self._bitgen.state = <void *>&self.rng_state
         self._bitgen.next_uint64 = &pcg32_uint64
@@ -107,37 +115,15 @@ cdef class PCG32(BitGenerator):
         self._bitgen.next_double = &pcg32_double
         self._bitgen.next_raw = &pcg32_raw
 
-    @classmethod
-    def from_seed_seq(cls, entropy=None):
-        """
-        from_seed_seq(entropy=None)
-
-        Create a instance using a SeedSequence
-
-        Parameters
-        ----------
-        entropy : {None, int, sequence[int], SeedSequence}
-            Entropy to pass to SeedSequence, or a SeedSequence instance. Using
-            a SeedSequence instance allows all parameters to be set.
-
-        Returns
-        -------
-        bit_gen : PCG32
-            SeedSequence initialized bit generator with SeedSequence instance
-            attached to ``bit_gen.seed_seq``
-
-        See Also
-        --------
-        randomgen.seed_sequence.SeedSequence
-        """
-        return super(PCG32, cls).from_seed_seq(entropy)
-
-    def _seed_from_seq(self, seed_seq):
-        self.seed_seq = seed_seq
-        state = self.seed_seq.generate_state(2, np.uint64)
-        pcg32_set_seed(&self.rng_state,
-                       <uint64_t>state[0],
-                       <uint64_t>state[1])
+    def _seed_from_seq(self, inc=None):
+        cdef uint64_t _inc
+        if inc is None:
+            state = self.seed_seq.generate_state(2, np.uint64)
+            _inc = state[1]
+        else:
+            state = self.seed_seq.generate_state(1, np.uint64)
+            _inc = <uint64_t>inc
+        pcg32_set_seed(&self.rng_state, <uint64_t>state[0], _inc)
 
     def seed(self, seed=None, inc=0):
         """
@@ -162,25 +148,30 @@ cdef class PCG32(BitGenerator):
             If seed values are out of range for the PRNG.
         """
         ub = 2 ** 64
+        if inc is not None:
+            err_msg = "inc must be a scalar integer between 0 and " \
+                      "{ub}".format(ub=ub)
+            if inc < 0 or inc > ub or int(inc) != inc:
+                raise ValueError(err_msg)
+            if not np.isscalar(inc):
+                raise TypeError(err_msg)
+        BitGenerator._seed_with_seed_sequence(self, seed, inc=inc)
+        if self.seed_seq is not None:
+            return
+
+        inc = 0 if inc is None else inc
         if seed is None:
-            seed = <np.ndarray>random_entropy(2, 'auto')
+            seed = <np.ndarray>random_entropy(2, "auto")
             seed = seed.view(np.uint64).squeeze()
         else:
-            err_msg = 'seed must be a scalar integer between 0 and ' \
-                      '{ub}'.format(ub=ub)
+            err_msg = "seed must be a scalar integer between 0 and " \
+                      "{ub}".format(ub=ub)
             if not np.isscalar(seed):
                 raise TypeError(err_msg)
             if int(seed) != seed:
                 raise TypeError(err_msg)
             if seed < 0 or seed > ub:
                 raise ValueError(err_msg)
-
-        if not np.isscalar(inc):
-            raise TypeError('inc must be a scalar integer between 0 '
-                            'and {ub}'.format(ub=ub))
-        if inc < 0 or inc > ub or int(inc) != inc:
-            raise ValueError('inc must be a scalar integer between 0 '
-                             'and {ub}'.format(ub=ub))
 
         pcg32_set_seed(&self.rng_state, <uint64_t>seed, <uint64_t>inc)
 
@@ -195,20 +186,20 @@ cdef class PCG32(BitGenerator):
             Dictionary containing the information required to describe the
             state of the PRNG
         """
-        return {'bit_generator': self.__class__.__name__,
-                'state': {'state': self.rng_state.pcg_state.state,
-                          'inc': self.rng_state.pcg_state.inc}}
+        return {"bit_generator": self.__class__.__name__,
+                "state": {"state": self.rng_state.pcg_state.state,
+                          "inc": self.rng_state.pcg_state.inc}}
 
     @state.setter
     def state(self, value):
         if not isinstance(value, dict):
-            raise TypeError('state must be a dict')
-        bitgen = value.get('bit_generator', '')
+            raise TypeError("state must be a dict")
+        bitgen = value.get("bit_generator", "")
         if bitgen != self.__class__.__name__:
-            raise ValueError('state must be for a {0} '
-                             'PRNG'.format(self.__class__.__name__))
-        self.rng_state.pcg_state.state = value['state']['state']
-        self.rng_state.pcg_state.inc = value['state']['inc']
+            raise ValueError("state must be for a {0} "
+                             "PRNG".format(self.__class__.__name__))
+        self.rng_state.pcg_state.state = value["state"]["state"]
+        self.rng_state.pcg_state.inc = value["state"]["inc"]
 
     def advance(self, delta):
         """
@@ -233,14 +224,14 @@ cdef class PCG32(BitGenerator):
         number of calls to the underlying RNG have been made. In general
         there is not a one-to-one relationship between the number output
         random values from a particular distribution and the number of
-        draws from the core RNG.  This occurs for two reasons:
+        draws from the core RNG. This occurs for two reasons:
 
         * The random values are simulated using a rejection-based method
           and so, on average, more than one value from the underlying
           RNG is required to generate an single draw.
         * The number of bits required to generate a simulated value
           differs from the number of bits generated by the underlying
-          RNG.  For example, two 16-bit integer values can be simulated
+          RNG. For example, two 16-bit integer values can be simulated
           from a single draw of a 32-bit RNG.
         """
         delta = wrap_int(delta, 64)
@@ -289,8 +280,8 @@ cdef class PCG32(BitGenerator):
         The step size is phi when divided by the period 2**64
         """
         import warnings
-        warnings.warn('jump (in-place) has been deprecated in favor of jumped'
-                      ', which returns a new instance', DeprecationWarning)
+        warnings.warn("jump (in-place) has been deprecated in favor of jumped"
+                      ", which returns a new instance", DeprecationWarning)
 
         self.jump_inplace(iter)
         return self
@@ -320,7 +311,7 @@ cdef class PCG32(BitGenerator):
         """
         cdef PCG32 bit_generator
 
-        bit_generator = self.__class__()
+        bit_generator = self.__class__(mode=self.mode)
         bit_generator.state = self.state
         bit_generator.jump_inplace(iter)
 

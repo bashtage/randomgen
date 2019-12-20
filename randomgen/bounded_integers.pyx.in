@@ -12,27 +12,27 @@ __all__ = []
 
 np.import_array()
 
-_integers_types = {'bool': (0, 2),
-                   'int8': (-2 ** 7, 2 ** 7),
-                   'int16': (-2 ** 15, 2 ** 15),
-                   'int32': (-2 ** 31, 2 ** 31),
-                   'int64': (-2 ** 63, 2 ** 63),
-                   'uint8': (0, 2 ** 8),
-                   'uint16': (0, 2 ** 16),
-                   'uint32': (0, 2 ** 32),
-                   'uint64': (0, 2 ** 64)}
+_integers_types = {"bool": (0, 2),
+                   "int8": (-2 ** 7, 2 ** 7),
+                   "int16": (-2 ** 15, 2 ** 15),
+                   "int32": (-2 ** 31, 2 ** 31),
+                   "int64": (-2 ** 63, 2 ** 63),
+                   "uint8": (0, 2 ** 8),
+                   "uint16": (0, 2 ** 16),
+                   "uint32": (0, 2 ** 32),
+                   "uint64": (0, 2 ** 64)}
 {{
 py:
-type_info = (('uint32', 'uint32', 'uint64', 'NPY_UINT64', 0, 0, 0, '0X100000000ULL'),
-          ('uint16', 'uint16', 'uint32', 'NPY_UINT32', 1, 16, 0, '0X10000UL'),
-          ('uint8', 'uint8', 'uint16', 'NPY_UINT16', 3, 8, 0, '0X100UL'),
-          ('bool','bool', 'uint8', 'NPY_UINT8', 31, 1, 0, '0x2UL'),
-          ('int32', 'uint32', 'uint64', 'NPY_INT64', 0, 0, '-0x80000000LL', '0x80000000LL'),
-          ('int16', 'uint16', 'uint32', 'NPY_INT32', 1, 16, '-0x8000LL', '0x8000LL' ),
-          ('int8', 'uint8', 'uint16', 'NPY_INT16', 3, 8, '-0x80LL', '0x80LL' ),
+type_info = (("uint32", "uint32", "uint64", "NPY_UINT64", 0, 0, 0, "0X100000000ULL"),
+          ("uint16", "uint16", "uint32", "NPY_UINT32", 1, 16, 0, "0X10000UL"),
+          ("uint8", "uint8", "uint16", "NPY_UINT16", 3, 8, 0, "0X100UL"),
+          ("bool","bool", "uint8", "NPY_UINT8", 31, 1, 0, "0x2UL"),
+          ("int32", "uint32", "uint64", "NPY_INT64", 0, 0, "-0x80000000LL", "0x80000000LL"),
+          ("int16", "uint16", "uint32", "NPY_INT32", 1, 16, "-0x8000LL", "0x8000LL" ),
+          ("int8", "uint8", "uint16", "NPY_INT16", 3, 8, "-0x80LL", "0x80LL" ),
 )}}
 {{for  nptype, utype, nptype_up, npctype, remaining, bitshift, lb, ub in type_info}}
-{{ py: otype = nptype + '_' if nptype == 'bool' else nptype }}
+{{ py: otype = nptype + "_" if nptype == "bool" else nptype }}
 cdef object _rand_{{nptype}}_broadcast(np.ndarray low, np.ndarray high, object size,
                                   bint use_masked, bint closed,
                                   bitgen_t *state, object lock):
@@ -58,7 +58,7 @@ cdef object _rand_{{nptype}}_broadcast(np.ndarray low, np.ndarray high, object s
     low_arr = <np.ndarray>low
     high_arr = <np.ndarray>high
     if np.any(np.less(low_arr, {{lb}})):
-        raise ValueError('low is out of bounds for {{nptype}}')
+        raise ValueError("low is out of bounds for {{nptype}}")
     if closed:
         high_comp = np.greater_equal
         low_high_comp = np.greater
@@ -67,10 +67,10 @@ cdef object _rand_{{nptype}}_broadcast(np.ndarray low, np.ndarray high, object s
         low_high_comp = np.greater_equal
 
     if np.any(high_comp(high_arr, {{ub}})):
-        raise ValueError('high is out of bounds for {{nptype}}')
+        raise ValueError("high is out of bounds for {{nptype}}")
     if np.any(low_high_comp(low_arr, high_arr)):
-        comp = '>' if closed else '>='
-        raise ValueError('low {comp} high'.format(comp=comp))
+        comp = ">" if closed else ">="
+        raise ValueError("low {comp} high".format(comp=comp))
 
     low_arr = <np.ndarray>np.PyArray_FROM_OTF(low, np.{{npctype}}, api.NPY_ARRAY_ALIGNED | api.NPY_ARRAY_FORCECAST)
     high_arr = <np.ndarray>np.PyArray_FROM_OTF(high, np.{{npctype}}, api.NPY_ARRAY_ALIGNED | api.NPY_ARRAY_FORCECAST)
@@ -104,8 +104,8 @@ cdef object _rand_{{nptype}}_broadcast(np.ndarray low, np.ndarray high, object s
 {{endfor}}
 {{
 py:
-big_type_info = (('uint64', 'uint64', 'NPY_UINT64', '0x0ULL', '0xFFFFFFFFFFFFFFFFULL'),
-                 ('int64', 'uint64', 'NPY_INT64', '-0x8000000000000000LL', '0x7FFFFFFFFFFFFFFFLL' )
+big_type_info = (("uint64", "uint64", "NPY_UINT64", "0x0ULL", "0xFFFFFFFFFFFFFFFFULL"),
+                 ("int64", "uint64", "NPY_INT64", "-0x8000000000000000LL", "0x7FFFFFFFFFFFFFFFLL" )
 )}}
 {{for  nptype, utype, npctype, lb, ub in big_type_info}}
 {{ py: otype = nptype}}
@@ -137,17 +137,17 @@ cdef object _rand_{{nptype}}_broadcast(object low, object high, object size,
     high_arr = <np.ndarray>high
 
     if np.any(np.less(low_arr, {{lb}})):
-        raise ValueError('low is out of bounds for {{nptype}}')
+        raise ValueError("low is out of bounds for {{nptype}}")
     dt = high_arr.dtype
     if closed or np.issubdtype(dt, np.integer):
         # Avoid object dtype path if already an integer
         high_lower_comp = np.less if closed else np.less_equal
         if np.any(high_lower_comp(high_arr, {{lb}})):
-            comp = '>' if closed else '>='
-            raise ValueError('low {comp} high'.format(comp=comp))
+            comp = ">" if closed else ">="
+            raise ValueError("low {comp} high".format(comp=comp))
         high_m1 = high_arr if closed else high_arr - dt.type(1)
         if np.any(np.greater(high_m1, {{ub}})):
-            raise ValueError('high is out of bounds for {{nptype}}')
+            raise ValueError("high is out of bounds for {{nptype}}")
         highm1_arr = <np.ndarray>np.PyArray_FROM_OTF(high_m1, np.{{npctype}}, api.NPY_ARRAY_ALIGNED | api.NPY_ARRAY_FORCECAST)
     else:
         # If input is object or a floating type
@@ -159,15 +159,15 @@ cdef object _rand_{{nptype}}_broadcast(object low, object high, object size,
             # Subtract 1 since generator produces values on the closed int [off, off+rng]
             closed_upper = int(flat[i]) - 1
             if closed_upper > {{ub}}:
-                raise ValueError('high is out of bounds for {{nptype}}')
+                raise ValueError("high is out of bounds for {{nptype}}")
             if closed_upper < {{lb}}:
-                comp = '>' if closed else '>='
-                raise ValueError('low {comp} high'.format(comp=comp))
+                comp = ">" if closed else ">="
+                raise ValueError("low {comp} high".format(comp=comp))
             highm1_data[i] = <{{nptype}}_t>closed_upper
 
     if np.any(np.greater(low_arr, highm1_arr)):
-        comp = '>' if closed else '>='
-        raise ValueError('low {comp} high'.format(comp=comp))
+        comp = ">" if closed else ">="
+        raise ValueError("low {comp} high".format(comp=comp))
 
     high_arr = highm1_arr
     low_arr = <np.ndarray>np.PyArray_FROM_OTF(low, np.{{npctype}}, api.NPY_ARRAY_ALIGNED | api.NPY_ARRAY_FORCECAST)
@@ -200,18 +200,18 @@ cdef object _rand_{{nptype}}_broadcast(object low, object high, object size,
 {{endfor}}
 {{
 py:
-type_info = (('uint64', 'uint64', '0x0ULL', '0xFFFFFFFFFFFFFFFFULL'),
-             ('uint32', 'uint32', '0x0UL', '0XFFFFFFFFUL'),
-             ('uint16', 'uint16', '0x0UL', '0XFFFFUL'),
-             ('uint8', 'uint8', '0x0UL', '0XFFUL'),
-             ('bool', 'bool', '0x0UL', '0x1UL'),
-             ('int64', 'uint64', '-0x8000000000000000LL', '0x7FFFFFFFFFFFFFFFL'),
-             ('int32', 'uint32', '-0x80000000L', '0x7FFFFFFFL'),
-             ('int16', 'uint16', '-0x8000L', '0x7FFFL' ),
-             ('int8', 'uint8', '-0x80L', '0x7FL' )
+type_info = (("uint64", "uint64", "0x0ULL", "0xFFFFFFFFFFFFFFFFULL"),
+             ("uint32", "uint32", "0x0UL", "0XFFFFFFFFUL"),
+             ("uint16", "uint16", "0x0UL", "0XFFFFUL"),
+             ("uint8", "uint8", "0x0UL", "0XFFUL"),
+             ("bool", "bool", "0x0UL", "0x1UL"),
+             ("int64", "uint64", "-0x8000000000000000LL", "0x7FFFFFFFFFFFFFFFL"),
+             ("int32", "uint32", "-0x80000000L", "0x7FFFFFFFL"),
+             ("int16", "uint16", "-0x8000L", "0x7FFFL" ),
+             ("int8", "uint8", "-0x80L", "0x7FL" )
 )}}
 {{for  nptype, utype, lb, ub in type_info}}
-{{ py: otype = nptype + '_' if nptype == 'bool' else nptype }}
+{{ py: otype = nptype + "_" if nptype == "bool" else nptype }}
 cdef object _rand_{{nptype}}(object low, object high, object size,
                          bint use_masked, bint closed,
                          bitgen_t *state, object lock):
@@ -287,8 +287,8 @@ cdef object _rand_{{nptype}}(object low, object high, object size,
         if high > {{ub}}:
             raise ValueError("high is out of bounds for {{nptype}}")
         if low > high:  # -1 already subtracted, closed interval
-            comp = '>' if closed else '>='
-            raise ValueError('low {comp} high'.format(comp=comp))
+            comp = ">" if closed else ">="
+            raise ValueError("low {comp} high".format(comp=comp))
 
         rng = <{{utype}}_t>(high - low)
         off = <{{utype}}_t>(<{{nptype}}_t>low)

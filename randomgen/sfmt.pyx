@@ -6,7 +6,7 @@ cimport numpy as np
 from randomgen.common cimport *
 from randomgen.entropy import random_entropy
 
-__all__ = ['SFMT']
+__all__ = ["SFMT"]
 
 DEF SFMT_MEXP = 19937
 DEF SFMT_N = 156  # SFMT_MEXP / 128 + 1
@@ -27,27 +27,36 @@ cdef double sfmt_double(void* st) nogil:
 
 cdef class SFMT(BitGenerator):
     u"""
-    SFMT(seed=None)
+    SFMT(seed=None, *, mode=None)
 
     Container for the SIMD-based Mersenne Twister pseudo RNG.
 
     Parameters
     ----------
-    seed : {None, int, array_like}, optional
-        Random seed used to initialize the pseudo-random number generator.  Can
+    seed : {None, int, array_like[uint32], SeedSequence}, optional
+        Entropy used to initialize the pseudo-random number generator. Can
         be any integer between 0 and 2**32 - 1 inclusive, an array (or other
-        sequence) of unsigned 32-bit integers, or ``None`` (the default).  If
-        `seed` is ``None``, the 624 32-bit unsigned integers are read from
-        ``/dev/urandom`` (or the Windows analog) if available. If unavailable,
-        a hash of the time and process ID is used.
+        sequence) of unsigned 32-bit integers, , a SeedSequence instance or
+        ``None`` (the default). If `seed` is ``None``, the 624 32-bit
+        unsigned integers are read from ``/dev/urandom`` (or the Windows
+        analog) if available. If unavailable, a hash of the time and process
+        ID is used.
+    mode : {None, "sequence", "legacy"}, optional
+        The seeding mode to use. "legacy" uses the legacy
+        SplitMix64-based initialization. "sequence" uses a SeedSequence
+        to transforms the seed into an initial state. None defaults to "legacy"
+        and warns that the default after 1.19 will change to "sequence".
 
     Attributes
     ----------
-    lock: threading.Lock
+    lock : threading.Lock
         Lock instance that is shared so that the same bit git generator can
         be used in multiple Generators without corrupting the state. Code that
         generates values from a bit generator should hold the bit generator's
         lock.
+    seed_seq : {None, SeedSequence}
+        The SeedSequence instance used to initialize the generator if mode is
+        "sequence" or is seed is a SeedSequence. None if mode is "legacy".
 
     Notes
     -----
@@ -101,12 +110,12 @@ cdef class SFMT(BitGenerator):
     .. [1] Mutsuo Saito and Makoto Matsumoto, "SIMD-oriented Fast Mersenne
            Twister: a 128-bit Pseudorandom Number Generator." Monte Carlo
            and Quasi-Monte Carlo Methods 2006, Springer, pp. 607--622, 2008.
-    .. [2] Hiroshi Haramoto, Makoto Matsumoto, and Pierre L\'Ecuyer, "A Fast
+    .. [2] Hiroshi Haramoto, Makoto Matsumoto, and Pierre L'Ecuyer, "A Fast
            Jump Ahead Algorithm for Linear Recurrences in a Polynomial Space",
            Sequences and Their Applications - SETA, 290--298, 2008.
     """
-    def __init__(self, seed=None):
-        BitGenerator.__init__(self)
+    def __init__(self, seed=None, *, mode=None):
+        BitGenerator.__init__(self, seed, mode)
         self.rng_state.state = <sfmt_t *>PyArray_malloc_aligned(sizeof(sfmt_t))
         self.rng_state.buffered_uint64 = <uint64_t *>PyArray_calloc_aligned(SFMT_N64, sizeof(uint64_t))
         self.rng_state.buffer_loc = SFMT_N64
@@ -129,38 +138,13 @@ cdef class SFMT(BitGenerator):
         self.rng_state.has_uint32 = 0
         self.rng_state.uinteger = 0
 
-    @classmethod
-    def from_seed_seq(cls, entropy=None):
-        """
-        from_seed_seq(entropy=None)
-
-        Create a instance using a SeedSequence
-
-        Parameters
-        ----------
-        entropy : {None, int, sequence[int], SeedSequence}
-            Entropy to pass to SeedSequence, or a SeedSequence instance. Using
-            a SeedSequence instance allows all parameters to be set.
-
-        Returns
-        -------
-        bit_gen : SFMT
-            SeedSequence initialized bit generator with SeedSequence instance
-            attached to ``bit_gen.seed_seq``
-
-        See Also
-        --------
-        randomgen.seed_sequence.SeedSequence
-        """
-        return super(SFMT, cls).from_seed_seq(entropy)
-
-    def _seed_from_seq(self, seed_seq):
-        self.seed_seq = seed_seq
+    def _seed_from_seq(self):
         state = self.seed_seq.generate_state(2 * SFMT_N64, np.uint32)
 
         sfmt_init_by_array(self.rng_state.state,
                            <uint32_t *>np.PyArray_DATA(state),
                            2 * SFMT_N64)
+        self._reset_state_variables()
 
     def seed(self, seed=None):
         """
@@ -170,14 +154,14 @@ cdef class SFMT(BitGenerator):
 
         Parameters
         ----------
-        seed : {None, int, array_like}, optional
-            Random seed initializing the pseudo-random number generator.
-            Can be an integer in [0, 2**32-1], array of integers in
-            [0, 2**32-1] or ``None`` (the default). If `seed` is ``None``,
-            then ``SFMT`` will try to read entropy from ``/dev/urandom``
-            (or the Windows analog) if available to produce a 32-bit
-            seed. If unavailable, a 32-bit hash of the time and process
-            ID is used.
+        seed : {None, int, array_like[uint32], SeedSequence}, optional
+            Entropy used to initialize the pseudo-random number generator. Can
+            be any integer between 0 and 2**32 - 1 inclusive, an array (or
+            other sequence) of unsigned 32-bit integers, , a SeedSequence
+            instance or ``None`` (the default). If `seed` is ``None``, the
+            624 32-bit unsigned integers are read from ``/dev/urandom`` (or
+            the Windows analog) if available. If unavailable, a hash of the
+            time and process ID is used.
 
         Raises
         ------
@@ -185,24 +169,29 @@ cdef class SFMT(BitGenerator):
             If seed values are out of range for the PRNG.
         """
         cdef np.ndarray obj, seed_arr
+
+        BitGenerator._seed_with_seed_sequence(self, seed)
+        if self.seed_seq is not None:
+            return
+
         try:
             if seed is None:
-                seed_arr = random_entropy(2 * SFMT_N64, 'auto')
+                seed_arr = random_entropy(2 * SFMT_N64, "auto")
                 sfmt_init_by_array(self.rng_state.state,
                                    <uint32_t *>np.PyArray_DATA(seed_arr),
                                    2 * SFMT_N64)
             else:
-                if hasattr(seed, 'squeeze'):
+                if hasattr(seed, "squeeze"):
                     seed = seed.squeeze()
                 idx = operator.index(seed)
                 if idx > int(2**32 - 1) or idx < 0:
                     raise ValueError("Seed must be between 0 and 2**32 - 1")
                 sfmt_init_gen_rand(self.rng_state.state, seed)
         except TypeError:
-            obj = np.asarray(seed).astype(np.int64, casting='safe').ravel()
+            obj = np.asarray(seed).astype(np.int64, casting="safe").ravel()
             if ((obj > int(2**32 - 1)) | (obj < 0)).any():
                 raise ValueError("Seed must be between 0 and 2**32 - 1")
-            seed_arr = obj.astype(np.uint32, casting='unsafe', order='C')
+            seed_arr = obj.astype(np.uint32, casting="unsafe", order="C")
             sfmt_init_by_array(self.rng_state.state,
                                <uint32_t *>np.PyArray_DATA(seed_arr),
                                <int>np.PyArray_DIM(seed_arr, 0))
@@ -221,7 +210,7 @@ cdef class SFMT(BitGenerator):
             Number of times to jump the state of the rng.
         """
         if iter < 0:
-            raise ValueError('iter must be positive')
+            raise ValueError("iter must be positive")
         sfmt_jump_n(&self.rng_state, iter)
         # Clear the buffer
         self._reset_state_variables()
@@ -243,8 +232,8 @@ cdef class SFMT(BitGenerator):
             PRNG jumped iter times
         """
         import warnings
-        warnings.warn('jump (in-place) has been deprecated in favor of jumped'
-                      ', which returns a new instance', DeprecationWarning)
+        warnings.warn("jump (in-place) has been deprecated in favor of jumped"
+                      ", which returns a new instance", DeprecationWarning)
 
         self.jump_inplace(iter)
         return self
@@ -270,7 +259,7 @@ cdef class SFMT(BitGenerator):
         """
         cdef SFMT bit_generator
 
-        bit_generator = self.__class__()
+        bit_generator = self.__class__(mode=self.mode)
         bit_generator.state = self.state
         bit_generator.jump_inplace(iter)
 
@@ -300,34 +289,34 @@ cdef class SFMT(BitGenerator):
         buffered_uint64 = np.empty(SFMT_N64, dtype=np.uint64)
         for i in range(SFMT_N64):
             buffered_uint64[i] = self.rng_state.buffered_uint64[i]
-        return {'bit_generator': self.__class__.__name__,
-                'state': {'state': np.asarray(state),
-                          'idx': self.rng_state.state.idx},
-                'buffer_loc': self.rng_state.buffer_loc,
-                'buffered_uint64': np.asarray(buffered_uint64),
-                'has_uint32': self.rng_state.has_uint32,
-                'uinteger': self.rng_state.uinteger}
+        return {"bit_generator": self.__class__.__name__,
+                "state": {"state": np.asarray(state),
+                          "idx": self.rng_state.state.idx},
+                "buffer_loc": self.rng_state.buffer_loc,
+                "buffered_uint64": np.asarray(buffered_uint64),
+                "has_uint32": self.rng_state.has_uint32,
+                "uinteger": self.rng_state.uinteger}
 
     @state.setter
     def state(self, value):
         cdef Py_ssize_t i, j, loc = 0
         if not isinstance(value, dict):
-            raise TypeError('state must be a dict')
-        bitgen = value.get('bit_generator', '')
+            raise TypeError("state must be a dict")
+        bitgen = value.get("bit_generator", "")
         if bitgen != self.__class__.__name__:
-            raise ValueError('state must be for a {0} '
-                             'PRNG'.format(self.__class__.__name__))
-        state = check_state_array(value['state']['state'], 2 * SFMT_N, 64,
-                                  'state')
+            raise ValueError("state must be for a {0} "
+                             "PRNG".format(self.__class__.__name__))
+        state = check_state_array(value["state"]["state"], 2 * SFMT_N, 64,
+                                  "state")
         for i in range(SFMT_N):
             for j in range(2):
                 self.rng_state.state.state[i].u64[j] = state[loc]
                 loc += 1
-        self.rng_state.state.idx = value['state']['idx']
-        buffered_uint64 = check_state_array(value['buffered_uint64'], SFMT_N64,
-                                            64,  'buffered_uint64')
+        self.rng_state.state.idx = value["state"]["idx"]
+        buffered_uint64 = check_state_array(value["buffered_uint64"], SFMT_N64,
+                                            64,  "buffered_uint64")
         for i in range(SFMT_N64):
             self.rng_state.buffered_uint64[i] = buffered_uint64[i]
-        self.rng_state.buffer_loc = value['buffer_loc']
-        self.rng_state.has_uint32 = value['has_uint32']
-        self.rng_state.uinteger = value['uinteger']
+        self.rng_state.buffer_loc = value["buffer_loc"]
+        self.rng_state.has_uint32 = value["has_uint32"]
+        self.rng_state.uinteger = value["uinteger"]

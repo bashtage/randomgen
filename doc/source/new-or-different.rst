@@ -3,22 +3,54 @@
 What's New or Different
 -----------------------
 
-.. warning::
-
-  The Box-Muller method used to produce NumPy's normals is no longer available
-  in :class:`~randomgen.generator.Generator`.  It is not possible to
-  reproduce the random values using :class:`~randomgen.generator.Generator`
-  for the normal distribution or any other distribution that relies on the
-  normal such as the gamma or student's t. If you require backward compatibility, a
-  legacy generator, :class:`~randomgen.mtrand.RandomState`, has been created
-  which can fully reproduce the sequence produced by NumPy.
-
-
+Differences from NumPy 1.17+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 * :func:`~randomgen.entropy.random_entropy` provides access to the system
   source of randomness that is used in cryptographic applications (e.g.,
   ``/dev/urandom`` on Unix).
 * Simulate from the complex normal distribution
   (:meth:`~randomgen.generator.Generator.complex_normal`)
+* A wider range of bit generators:
+
+  * Chaotic mappings
+
+    * :class:`~randomgen.jsf.JSF`
+
+  * Cryptographic Cipher-based:
+
+    * :class:`~randomgen.aes.AESCounter`
+    * :class:`~randomgen.chacha.ChaCha`
+    * :class:`~randomgen.hc128.HC128`
+    * :class:`~randomgen.philox.Philox` (limited version in NumPy)
+    * :class:`~randomgen.speck128.SPECK128`
+    * :class:`~randomgen.threefry.ThreeFry`
+
+  * Hardware-based:
+
+    * :class:`~randomgen.rdrand.RDRAND`
+
+  * Mersenne Twisters
+
+    * :class:`~randomgen.dsfmt.DSFMT`
+    * :class:`~randomgen.mt64.MT64`
+    * :class:`~randomgen.mt19937.MT19937` (in NumPy)
+    * :class:`~randomgen.sfmt.SFMT`
+
+  * Permuted Congruential Generators
+
+    * :class:`~randomgen.pcg32.PCG32`
+    * :class:`~randomgen.pcg64.PCG64` (in NumPy)
+
+  * Shift/rotate based:
+
+    * :class:`~randomgen.xoroshiro128.Xoroshiro128`
+    * :class:`~randomgen.xorshift1024.Xorshift1024`
+    * :class:`~randomgen.xoshiro256.Xoshiro256`
+    * :class:`~randomgen.xoshiro512.Xoshiro512`
+
+
+Differences from NumPy before 1.17
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 * The normal, exponential and gamma generators use 256-step Ziggurat
   methods which are 2-10 times faster than NumPy's default implementation in
   :meth:`~randomgen.generator.Generator.standard_normal`,
@@ -29,7 +61,7 @@ What's New or Different
 
   from randomgen import Generator, Xoroshiro128
   import numpy.random
-  rg = Generator(Xoroshiro128())
+  rg = Generator(Xoroshiro128(mode="sequence"))
   %timeit rg.standard_normal(100000)
   %timeit numpy.random.standard_normal(100000)
 
