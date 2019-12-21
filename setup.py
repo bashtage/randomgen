@@ -131,9 +131,15 @@ for templated_file in files:
     output_file_name = splitext(templated_file)[0]
     with open(templated_file, "r") as source_file:
         template = tempita.Template(source_file.read())
-    processed = template.substitute()
-    with open(output_file_name, "w", newline="\n") as output_file:
-        output_file.write(processed)
+    processed = template.substitute().replace("\r\n", "\n")
+    contents = ''
+    if exists(output_file_name):
+        with open(output_file_name, "r") as output_file:
+            contents = output_file.read()
+    if contents != processed:
+        print("Processing {0} to {1}".format(templated_file, output_file_name))
+        with open(output_file_name, "w", newline="\n") as output_file:
+            output_file.write(processed)
 
 extensions = []
 for name in ("bounded_integers", "common", "entropy", "generator",
