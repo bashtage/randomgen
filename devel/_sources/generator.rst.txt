@@ -24,6 +24,7 @@ Seed and State Manipulation
 
    ~Generator.seed
    ~Generator.state
+   ~Generator.bit_generator
 
 Simple random data
 ==================
@@ -36,6 +37,7 @@ Simple random data
    ~Generator.random
    ~Generator.choice
    ~Generator.bytes
+   ~Generator.uintegers
 
 Permutations
 ============
