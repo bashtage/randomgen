@@ -10,6 +10,8 @@ Differences from NumPy 1.17+
   ``/dev/urandom`` on Unix).
 * Simulate from the complex normal distribution
   (:meth:`~randomgen.generator.Generator.complex_normal`)
+* Direct access to unsigned integers is provided by
+  (:meth:`~randomgen.generator.Generator.uintegers`)
 * A wider range of bit generators:
 
   * Chaotic mappings
@@ -48,12 +50,43 @@ Differences from NumPy 1.17+
     * :class:`~randomgen.xoshiro256.Xoshiro256`
     * :class:`~randomgen.xoshiro512.Xoshiro512`
 
+* randomgen's :class:`~randomgen.generator.Generator` continues to expose legacy
+  methods :func:`~randomgen.generator.Generator.random_sample` \,
+  :func:`~randomgen.generator.Generator.randint` \,
+  :func:`~randomgen.generator.Generator.random_integers` \,
+  :func:`~randomgen.generator.Generator.rand` \, :func:`~randomgen.generator.Generator.randn` \,
+  and :func:`~randomgen.generator.Generator.tomaxint`. **Note**: These should
+  not be used, and their modern replacements are preferred:
+
+  * :func:`~randomgen.generator.Generator.random_sample`\, :func:`~randomgen.generator.Generator.rand` → :func:`~randomgen.generator.Generator.random`
+  * :func:`~randomgen.generator.Generator.random_integers`\, :func:`~randomgen.generator.Generator.randint` → :func:`~randomgen.generator.Generator.integers`
+  * :func:`~randomgen.generator.Generator.randn` → :func:`~randomgen.generator.Generator.standard_normal`
+  * :func:`~randomgen.generator.Generator.tomaxint` → :func:`~randomgen.generator.Generator.integers` with ``dtype`` set to ``np.long``
+
+* randomgen's bit generators remain seedable and the convenience function
+  :func:`~randomgen.generator.Generator.seed` is exposed as part of
+  :class:`~randomgen.generator.Generator`. Additionally, the convenience
+  property :func:`~randomgen.generator.Generator.state` is available
+  to get or set the state of the underlying bit generator.
+
+* The legacy name :attr:`~randomgen.generator.Generator.brng` remains.  You should use
+  :attr:`~randomgen.generator.Generator.bit_generator` instead.
+
+* :func:`numpy.random.Generator.multivariate_hypergeometric` was added after
+  :class:`~randomgen.generator.Generator` was merged into NumPy and will not
+  be ported over.  Please use the NumPy version.
+
+* :func:`numpy.random.Generator.shuffle` and :func:`numpy.random.Generator.permutation`
+  support ``axis`` keyword to operator along an axis other than 0.
+
+* :func:`~randomgen.generator.Generator.integers` supports the keyword argument ``use_masked``
+  to switch between masked generation of bounded integers and Lemire's superior method.
 
 Differences from NumPy before 1.17
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 * The normal, exponential and gamma generators use 256-step Ziggurat
   methods which are 2-10 times faster than NumPy's default implementation in
-  :meth:`~randomgen.generator.Generator.standard_normal`,
+  :meth:`~randomgen.generator.Generator.standard_normal` \,
   :meth:`~randomgen.generator.Generator.standard_exponential` or
   :meth:`~randomgen.generator.Generator.standard_gamma`.
 
