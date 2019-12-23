@@ -922,12 +922,13 @@ class RNG(object):
         np.testing.assert_allclose(c.imag, n, atol=1e-8)
 
     def test_random_uintegers(self):
-        assert len(self.rg.random_uintegers(10)) == 10
-        assert len(self.rg.random_uintegers(10, bits=32)) == 10
-        assert isinstance(self.rg.random_uintegers(), int)
-        assert isinstance(self.rg.random_uintegers(bits=32), int)
+        assert len(self.rg.uintegers(10)) == 10
+        assert len(self.rg.uintegers(10, bits=32)) == 10
+        assert isinstance(self.rg.uintegers(), int)
+        assert isinstance(self.rg.uintegers(bits=32), int)
         with pytest.raises(ValueError):
-            self.rg.random_uintegers(bits=128)
+            with pytest.deprecated_call():
+                self.rg.random_uintegers(bits=128)
 
     def test_bit_generator_raw_large(self):
         bg = self.rg.bit_generator

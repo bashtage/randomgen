@@ -228,10 +228,12 @@ cdef class Generator:
     def state(self, value):
         self._bit_generator.state = value
 
-    def random_uintegers(self, size=None, int bits=64):
+    def uintegers(self, size=None, int bits=64):
         """
-        random_uintegers(size=None, bits=64)
+        uintegers(size=None, bits=64)
+
         Return random unsigned integers
+
         Parameters
         ----------
         size : int or tuple of ints, optional
@@ -240,10 +242,12 @@ cdef class Generator:
             single value is returned.
         bits : int {32, 64}
             Size of the unsigned integer to return, either 32 bit or 64 bit.
+
         Returns
         -------
         out : uint or ndarray
             Drawn samples.
+
         Notes
         -----
         This method effectively exposes access to the raw underlying
@@ -281,6 +285,20 @@ cdef class Generator:
             raise ValueError("Unknown value of bits. Must be either 32 or 64.")
 
         return array
+
+    def random_uintegers(self, size=None, int bits=64):
+        """
+        random_uintegers(size=None, bits=64)
+
+        .. deprecated:: 1.18.0
+
+        Alias for uintegers.  Use uintegers.
+        """
+        import warnings
+        warnings.warn("This function is deprecated. Please use uintegers.",
+                      DeprecationWarning)
+
+        return self.uintegers(size=size, bits=bits)
 
     def random_sample(self, *args, **kwargs):
         import warnings
