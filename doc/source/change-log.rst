@@ -3,6 +3,9 @@
 Change Log
 ----------
 
+Since v1.18.0
+=============
+- Fixed a bug the produced incorrect results in :func:`~randomgen.mt19937.MT19937.jumped`.
 
 v1.18.0
 =======
