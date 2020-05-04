@@ -56,4 +56,5 @@ static INLINE double mt19937_next_double(mt19937_state_t *state) {
 }
 
 void mt19937_jump(mt19937_state_t *state);
+void mt19937_jump_test(mt19937_state_t *state);
 void mt19937_jump_n(mt19937_state_t *state, int count);

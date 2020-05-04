@@ -1,3 +1,13 @@
+/*
+ * Requires a modern NTL and GMP.
+ *
+ * Assuming you have a standard config
+ *
+ * g++ mt19937-generate-jump-poly.c -I /usr/local/include/NTL -lntl -lm -pthread -lgmp -o jump-poly
+ *
+ */
+
+
 #include <NTL/GF2X.h>
 #include <NTL/vec_GF2.h>
 #include <cstdlib>
