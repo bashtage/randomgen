@@ -195,6 +195,27 @@ cdef class MT19937(BitGenerator):
             raise ValueError("jumps must be positive")
         mt19937_jump_n(&self.rng_state, jumps)
 
+    def _jump_tester(self):
+        """
+        Private jump testing function
+
+        Returns
+        -------
+        jumped : MT19937
+            A new instance with a jumped state.
+
+        Notes
+        -----
+        Used the jump polynomial that ships with the jump program.
+        """
+        cdef MT19937 bit_generator
+
+        bit_generator = self.__class__(mode=self.mode)
+        bit_generator.state = self.state
+        mt19937_jump_default(&bit_generator.rng_state)
+
+        return bit_generator
+
     def jump(self, int jumps=1):
         """
         jump(jumps=1)

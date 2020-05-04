@@ -1,7 +1,8 @@
 import sys
 import warnings
-
+from distutils.version import LooseVersion
 import numpy as np
+import hashlib
 from numpy.testing import (assert_, assert_array_almost_equal,
                            assert_array_equal, assert_equal,
                            assert_no_warnings, assert_raises, assert_warns)
@@ -12,6 +13,35 @@ from randomgen._testing import suppress_warnings
 from randomgen.tests.test_direct import assert_state_equal
 
 random = Generator(MT19937(mode="legacy"))
+
+NP_LT_118 = LooseVersion(np.__version__) < LooseVersion("1.18.0")
+
+JUMP_TEST_DATA = {
+    ("_jump_tester", (0,), 10): {
+        "initial": {"key_md5": "64eaf265d2203179fb5ffb73380cd589", "pos": 9},
+        "jumped": {"key_md5": "14e9a7d1e247f0f8565b77784c9a6b83", "pos": 601},
+    },
+    ("_jump_tester", (384908324,), 312): {
+        "initial": {"key_md5": "e99708a47b82ff51a2c7b0625b81afb5", "pos": 311},
+        "jumped": {"key_md5": "8bfd5e1ab46befd06cc54146541f1ce8", "pos": 279},
+    },
+    ("_jump_tester", (839438204, 980239840, 859048019, 821), 511): {
+        "initial": {"key_md5": "9fcd6280df9199785e17e93162ce283c", "pos": 510},
+        "jumped": {"key_md5": "f8ac8f010bd3eabc8afbc8b690220177", "pos": 478},
+    },
+    ("jumped", (0,), 10): {
+        "initial": {"key_md5": "64eaf265d2203179fb5ffb73380cd589", "pos": 9},
+        "jumped": {"key_md5": "8cb7b061136efceef5217a9ce2cc9a5a", "pos": 598},
+    },
+    ("jumped", (384908324,), 312): {
+        "initial": {"key_md5": "e99708a47b82ff51a2c7b0625b81afb5", "pos": 311},
+        "jumped": {"key_md5": "2ecdbfc47a895b253e6e19ccb2e74b90", "pos": 276},
+    },
+    ("jumped", (839438204, 980239840, 859048019, 821), 511): {
+        "initial": {"key_md5": "9fcd6280df9199785e17e93162ce283c", "pos": 510},
+        "jumped": {"key_md5": "433b85229f2ed853cde06cd872818305", "pos": 475},
+    },
+}
 
 
 @pytest.fixture(scope="module", params=[True, False])
@@ -392,14 +422,14 @@ class TestIntegers(object):
             assert_array_equal(val, val_bc)
 
     def test_int64_uint64_broadcast_exceptions(self, endpoint):
-        configs = {np.uint64: ((0, 2**65), (-1, 2**62), (10, 9), (0, 0)),
-                   np.int64: ((0, 2**64), (-(2**64), 2**62), (10, 9), (0, 0),
-                              (-2**63-1, -2**63-1))}
+        configs = {np.uint64: ((0, 2 ** 65), (-1, 2 ** 62), (10, 9), (0, 0)),
+                   np.int64: ((0, 2 ** 64), (-(2 ** 64), 2 ** 62), (10, 9),
+                              (0, 0), (-2 ** 63 - 1, -2 ** 63 - 1))}
         for dtype in configs:
             for config in configs[dtype]:
                 low, high = config
                 high = high - endpoint
-                low_a = np.array([[low]*10])
+                low_a = np.array([[low] * 10])
                 high_a = np.array([high] * 10)
                 assert_raises(ValueError, random.integers, low, high,
                               endpoint=endpoint, dtype=dtype)
@@ -410,7 +440,7 @@ class TestIntegers(object):
                 assert_raises(ValueError, random.integers, low_a, high_a,
                               endpoint=endpoint, dtype=dtype)
 
-                low_o = np.array([[low]*10], dtype=np.object)
+                low_o = np.array([[low] * 10], dtype=np.object)
                 high_o = np.array([high] * 10, dtype=np.object)
                 assert_raises(ValueError, random.integers, low_o, high,
                               endpoint=endpoint, dtype=dtype)
@@ -525,7 +555,7 @@ class TestRandomDist(object):
             actual = random.randn(3, 2)
         desired = np.array([[-3.472754000610961, -0.108938564229143],
                             [-0.245965753396411, -0.704101550261701],
-                            [0.360102487116356,  0.127832101772367]])
+                            [0.360102487116356, 0.127832101772367]])
         assert_array_almost_equal(actual, desired, decimal=15)
 
         random.bit_generator.seed(self.seed)
@@ -1256,9 +1286,9 @@ class TestRandomDist(object):
     def test_standard_gamma(self):
         random.bit_generator.seed(self.seed)
         actual = random.standard_gamma(shape=3, size=(3, 2))
-        desired = np.array([[2.28483515569645,  3.29899524967824],
-                            [11.12492298902645,  2.16784417297277],
-                            [0.92121813690910,  1.12853552328470]])
+        desired = np.array([[2.28483515569645, 3.29899524967824],
+                            [11.12492298902645, 2.16784417297277],
+                            [0.92121813690910, 1.12853552328470]])
         assert_array_almost_equal(actual, desired, decimal=14)
 
     def test_standard_gammma_scalar_float(self):
@@ -1388,7 +1418,7 @@ class TestRandomDist(object):
     def test_vonmises_small(self):
         # check infinite loop, gh-4720
         random.bit_generator.seed(self.seed)
-        r = random.vonmises(mu=0., kappa=1.1e-8, size=10**6)
+        r = random.vonmises(mu=0., kappa=1.1e-8, size=10 ** 6)
         assert_(np.isfinite(r).all())
 
     def test_vonmises_nan(self):
@@ -1630,7 +1660,7 @@ class TestBroadcast(object):
 
     def test_noncentral_f_small_df(self):
         self.set_seed()
-        desired = np.array([21.57878070681719,  1.17110217503908])
+        desired = np.array([21.57878070681719, 1.17110217503908])
         actual = random.noncentral_f(0.9, 0.9, 2, size=2)
         assert_array_almost_equal(actual, desired, decimal=14)
 
@@ -2246,3 +2276,23 @@ def test_get_state():
     get_state = random.__getstate__()
     assert state["state"]["pos"] == get_state["state"]["pos"]
     assert np.all(state["state"]["key"] == get_state["state"]["key"])
+
+
+@pytest.mark.skipif(NP_LT_118, reason="Can only test with NumPy >= 1.18")
+@pytest.mark.parametrize("config", list(JUMP_TEST_DATA.keys()))
+def test_jumped(config):
+    values = JUMP_TEST_DATA[config]
+    typ, seed_tpl, step = config
+
+    seed = seed_tpl[0] if len(seed_tpl) == 1 else list(seed_tpl)
+    initial_state = np.random.MT19937(seed).state
+    mt19937 = MT19937(mode="sequence")
+    mt19937.state = initial_state
+    mt19937.random_raw(step)
+    if typ == "jumped":
+        jumped = mt19937.jumped()
+    else:
+        jumped = mt19937._jump_tester()
+    md5 = hashlib.md5(jumped.state["state"]["key"])
+    assert md5.hexdigest() == values["jumped"]["key_md5"]
+    assert jumped.state["state"]["pos"] == values["jumped"]["pos"]

@@ -14,6 +14,7 @@ cdef extern from "src/mt19937/mt19937.h":
     void mt19937_init_by_array(mt19937_state_t *state, uint32_t *init_key, int key_length)
     void mt19937_seed(mt19937_state_t *state, uint32_t seed)
     void mt19937_jump(mt19937_state_t *state)
+    void mt19937_jump_default(mt19937_state_t *state)
     void mt19937_jump_n(mt19937_state_t *state, int count)
 
 cdef class MT19937(BitGenerator):
