@@ -410,9 +410,7 @@ class Base(object):
         g.integers(0, 2 ** 32, dtype=np.uint32)
         if "has_uint32" not in bg.state or bg.state["has_uint32"] == 0:
             name = bg.__class__.__name__
-            pytest.skip(
-                "bit generator does not cache 32-bit value ({0})".format(name)
-            )
+            pytest.skip("bit generator does not cache 32-bit value ({0})".format(name))
         bg.seed()
         assert bg.state["has_uint32"] == 0
 
@@ -453,7 +451,12 @@ class Base(object):
 
     def test_seed_sequence(self):
         bg = self.bit_generator(mode="sequence")
-        assert isinstance(bg, self.bit_generator)
+        typ = (
+            self.bit_generator.func
+            if isinstance(self.bit_generator, partial)
+            else self.bit_generator
+        )
+        assert isinstance(bg, typ)
         assert isinstance(bg.seed_seq, SeedSequence)
 
         bg = self.bit_generator(0, mode="sequence")
@@ -633,6 +636,20 @@ class TestXoroshiro128(Base):
         cls.seed_error_type = TypeError
         cls.invalid_seed_types = [("apple",), (2 + 3j,), (3.1,)]
         cls.invalid_seed_values = [(-2,), (np.empty((2, 2), dtype=np.int64),)]
+
+
+class TestXoroshiro128PlusPlus(TestXoroshiro128):
+    @classmethod
+    def setup_class(cls):
+        cls.bit_generator = partial(Xoroshiro128, plusplus=True)
+        cls.bits = 64
+        cls.dtype = np.uint64
+        cls.data1 = cls._read_csv(
+            join(pwd, "./data/xoroshiro128plusplus-testset-1.csv")
+        )
+        cls.data2 = cls._read_csv(
+            join(pwd, "./data/xoroshiro128plusplus-testset-2.csv")
+        )
 
 
 class TestXoshiro256(Base):
