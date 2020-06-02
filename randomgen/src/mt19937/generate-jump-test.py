@@ -12,16 +12,18 @@ Get the state using NumPy's state initialization
 poly-128 is the 2**128 poly computed using the original author's code
 clist_mt19937 is the polynomial shipped by the original author
 """
-from numpy.random import MT19937 as NP19937
-from randomgen import MT19937
-import numpy as np
-import subprocess
-import os
-import shutil
-import platform
 import hashlib
+import os
+import platform
 import pprint
+import shutil
+import subprocess
+
 import black
+import numpy as np
+from numpy.random import MT19937 as NP19937
+
+from randomgen import MT19937
 
 SEEDS = [0, 384908324, [839438204, 980239840, 859048019, 821]]
 STEPS = [10, 312, 511]
@@ -88,22 +90,16 @@ for poly in ("poly-128", "clist_mt19937"):
         out = subprocess.run(EXECUTABLE, stdout=subprocess.PIPE)
         parsed, pf = parse_output(out.stdout.decode("utf8"))
         hash = hashlib.md5(parsed[-1]["key"])
-        values[key]["jumped"] = {
-            "key_md5": hash.hexdigest(),
-            "pos": parsed[-1]["pos"]
-        }
+        values[key]["jumped"] = {"key_md5": hash.hexdigest(), "pos": parsed[-1]["pos"]}
         with open(f"out-{fn}-{seed}-{step}.txt", "w") as o:
-            o.write(out.stdout.decode("utf8").replace("\r\n","\n"))
+            o.write(out.stdout.decode("utf8").replace("\r\n", "\n"))
         if "128" in poly:
             jumped = mt19937.jumped()
         else:
             jumped = mt19937._jump_tester()
         hash = hashlib.md5(jumped.state["state"]["key"])
         pos = jumped.state["state"]["pos"]
-        assert values[key]["jumped"] == {
-            "key_md5": hash.hexdigest(),
-            "pos": pos
-        }
+        assert values[key]["jumped"] == {"key_md5": hash.hexdigest(), "pos": pos}
 
 txt = "JUMP_TEST_DATA=" + pprint.pformat(values)
 fm = black.FileMode(target_versions=black.PY36_VERSIONS)

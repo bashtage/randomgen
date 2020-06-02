@@ -9,11 +9,10 @@ mt19937 = Generator(MT19937(mode="legacy"))
 
 
 class TestRegression(object):
-
     def test_VonMises_range(self):
         # Make sure generated random variables are in [-pi, pi].
         # Regression test for ticket #986.
-        for mu in np.linspace(-7., 7., 5):
+        for mu in np.linspace(-7.0, 7.0, 5):
             r = mt19937.vonmises(mu, 1, 50)
             assert_(np.all(r > -np.pi) and np.all(r <= np.pi))
 
@@ -23,7 +22,7 @@ class TestRegression(object):
         assert_(np.all(mt19937.hypergeometric(18, 3, 11, size=10) > 0))
 
         # Test for ticket #5623
-        args = (2**20 - 2, 2**20 - 2, 2**20 - 2)  # Check for 32-bit systems
+        args = (2 ** 20 - 2, 2 ** 20 - 2, 2 ** 20 - 2)  # Check for 32-bit systems
         assert_(mt19937.hypergeometric(*args) > 0)
 
     def test_logseries_convergence(self):
@@ -51,10 +50,12 @@ class TestRegression(object):
 
     def test_shuffle_mixed_dimension(self):
         # Test for trac ticket #2074
-        for t in [[1, 2, 3, None],
-                  [(1, 1), (2, 2), (3, 3), None],
-                  [1, (2, 2), (3, 3), None],
-                  [(1, 1), 2, 3, None]]:
+        for t in [
+            [1, 2, 3, None],
+            [(1, 1), (2, 2), (3, 3), None],
+            [1, (2, 2), (3, 3), None],
+            [(1, 1), 2, 3, None],
+        ]:
             mt19937.bit_generator.seed(12345)
             shuffled = list(t)
             mt19937.shuffle(shuffled)
@@ -68,7 +69,7 @@ class TestRegression(object):
             mt19937.bit_generator.seed(i)
             m.bit_generator.seed(4321)
             # If m.state is not honored, the result will change
-            assert_array_equal(m.choice(10, size=10, p=np.ones(10)/10.), res)
+            assert_array_equal(m.choice(10, size=10, p=np.ones(10) / 10.0), res)
 
     def test_multivariate_normal_size_types(self):
         # Test for multivariate_normal issue with "size" argument.
@@ -97,7 +98,7 @@ class TestRegression(object):
             c = mt19937.choice(a, p=probs)
             assert_(c in a)
             with pytest.raises(ValueError):
-                mt19937.choice(a, p=probs*0.9)
+                mt19937.choice(a, p=probs * 0.9)
 
     def test_shuffle_of_array_of_different_length_strings(self):
         # Test that permuting an array of different length strings
@@ -112,6 +113,7 @@ class TestRegression(object):
 
         # Force Garbage Collection - should not segfault.
         import gc
+
         gc.collect()
 
     def test_shuffle_of_array_of_objects(self):
@@ -126,6 +128,7 @@ class TestRegression(object):
 
         # Force Garbage Collection - should not segfault.
         import gc
+
         gc.collect()
 
     def test_permutation_subclass(self):
@@ -155,5 +158,5 @@ class TestRegression(object):
         assert_array_equal(mt19937.standard_gamma([0.0]), 0.0)
 
         actual = mt19937.standard_gamma([0.0], dtype="float")
-        expected = np.array([0.], dtype=np.float32)
+        expected = np.array([0.0], dtype=np.float32)
         assert_array_equal(actual, expected)

@@ -16,10 +16,12 @@ NP_118 = LooseVersion("1.18") <= NP_VERSION < LooseVersion("1.19")
 
 
 def compare_0_input(f1, f2):
-    inputs = [(tuple([]), {}),
-              (tuple([]), {"size": 10}),
-              (tuple([]), {"size": (20, 31)}),
-              (tuple([]), {"size": (20, 31, 5)})]
+    inputs = [
+        (tuple([]), {}),
+        (tuple([]), {"size": 10}),
+        (tuple([]), {"size": (20, 31)}),
+        (tuple([]), {"size": (20, 31, 5)}),
+    ]
 
     for i in inputs:
         v1 = f1(*i[0], **i[1])
@@ -29,11 +31,13 @@ def compare_0_input(f1, f2):
 
 def compare_1_input(f1, f2, is_small=False):
     a = 0.3 if is_small else 10
-    inputs = [((a,), {}),
-              ((a,), {"size": 10}),
-              ((np.array([a] * 10),), {}),
-              ((np.array([a] * 10),), {"size": 10}),
-              ((np.array([a] * 10),), {"size": (100, 10)})]
+    inputs = [
+        ((a,), {}),
+        ((a,), {"size": 10}),
+        ((np.array([a] * 10),), {}),
+        ((np.array([a] * 10),), {"size": 10}),
+        ((np.array([a] * 10),), {"size": (100, 10)}),
+    ]
     for i in inputs:
         v1 = f1(*i[0], **i[1])
         v2 = f2(*i[0], **i[1])
@@ -47,18 +51,23 @@ def compare_2_input(f1, f2, is_np=False, is_scalar=False):
     else:
         a, b = 2, 3
         dtype = np.double
-    inputs = [((a, b), {}),
-              ((a, b), {"size": 10}),
-              ((a, b), {"size": (23, 7)}),
-              ((np.array([a] * 10), b), {}),
-              ((a, np.array([b] * 10)), {}),
-              ((a, np.array([b] * 10)), {"size": 10}),
-              ((np.reshape(np.array([[a] * 100]), (100, 1)),
-                np.array([b] * 10)), {"size": (100, 10)}),
-              ((np.ones((7, 31), dtype=dtype) * a,
-                np.array([b] * 31)), {"size": (7, 31)}),
-              ((np.ones((7, 31), dtype=dtype) * a, np.array([b] * 31)),
-               {"size": (10, 7, 31)})]
+    inputs = [
+        ((a, b), {}),
+        ((a, b), {"size": 10}),
+        ((a, b), {"size": (23, 7)}),
+        ((np.array([a] * 10), b), {}),
+        ((a, np.array([b] * 10)), {}),
+        ((a, np.array([b] * 10)), {"size": 10}),
+        (
+            (np.reshape(np.array([[a] * 100]), (100, 1)), np.array([b] * 10)),
+            {"size": (100, 10)},
+        ),
+        ((np.ones((7, 31), dtype=dtype) * a, np.array([b] * 31)), {"size": (7, 31)}),
+        (
+            (np.ones((7, 31), dtype=dtype) * a, np.array([b] * 31)),
+            {"size": (10, 7, 31)},
+        ),
+    ]
 
     if is_scalar:
         inputs = inputs[:3]
@@ -71,23 +80,32 @@ def compare_2_input(f1, f2, is_np=False, is_scalar=False):
 
 def compare_3_input(f1, f2, is_np=False):
     a, b, c = 10, 20, 25
-    inputs = [((a, b, c), {}),
-              ((a, b, c), {"size": 10}),
-              ((a, b, c), {"size": (23, 7)}),
-              ((np.array([a] * 10), b, c), {}),
-              ((a, np.array([b] * 10), c), {}),
-              ((a, b, np.array([c] * 10)), {}),
-              ((a, np.array([b] * 10), np.array([c] * 10)), {}),
-              ((a, np.array([b] * 10), c), {"size": 10}),
-              ((np.ones((1, 37), dtype=np.int) * a,
+    inputs = [
+        ((a, b, c), {}),
+        ((a, b, c), {"size": 10}),
+        ((a, b, c), {"size": (23, 7)}),
+        ((np.array([a] * 10), b, c), {}),
+        ((a, np.array([b] * 10), c), {}),
+        ((a, b, np.array([c] * 10)), {}),
+        ((a, np.array([b] * 10), np.array([c] * 10)), {}),
+        ((a, np.array([b] * 10), c), {"size": 10}),
+        (
+            (
+                np.ones((1, 37), dtype=np.int) * a,
                 np.ones((23, 1), dtype=np.int) * [b],
-                c * np.ones((7, 1, 1), dtype=np.int)),
-               {}),
-              ((np.ones((1, 37), dtype=np.int) * a,
+                c * np.ones((7, 1, 1), dtype=np.int),
+            ),
+            {},
+        ),
+        (
+            (
+                np.ones((1, 37), dtype=np.int) * a,
                 np.ones((23, 1), dtype=np.int) * [b],
-                c * np.ones((7, 1, 1), dtype=np.int)),
-               {"size": (7, 23, 37)})
-              ]
+                c * np.ones((7, 1, 1), dtype=np.int),
+            ),
+            {"size": (7, 23, 37)},
+        ),
+    ]
 
     for i in inputs:
         v1 = f1(*i[0], **i[1])
@@ -133,14 +151,14 @@ class TestAgainstNumPy(object):
         state = self.nprs.get_state()
         state2 = self.rg.bit_generator.state
         assert (state[1] == state2["state"]["key"]).all()
-        assert (state[2] == state2["state"]["pos"])
+        assert state[2] == state2["state"]["pos"]
 
     def _is_state_common_legacy(self):
         state = self.nprs.get_state()
         state2 = self.rs.get_state(legacy=False)
         assert (state[1] == state2["state"]["key"]).all()
-        assert (state[2] == state2["state"]["pos"])
-        assert (state[3] == state2["has_gauss"])
+        assert state[2] == state2["state"]["pos"]
+        assert state[3] == state2["has_gauss"]
         assert_allclose(state[4], state2["gauss"], atol=1e-10)
 
     def test_common_seed(self):
@@ -158,7 +176,7 @@ class TestAgainstNumPy(object):
         self.rg.bit_generator.state = state
         state2 = self.rg.bit_generator.state
         assert (state[1] == state2["state"]["key"]).all()
-        assert (state[2] == state2["state"]["pos"])
+        assert state[2] == state2["state"]["pos"]
 
     def test_random(self):
         self._set_common_state()
@@ -171,22 +189,19 @@ class TestAgainstNumPy(object):
     def test_standard_normal(self):
         self._set_common_state_legacy()
         self._is_state_common_legacy()
-        compare_0_input(self.nprs.standard_normal,
-                        self.rs.standard_normal)
+        compare_0_input(self.nprs.standard_normal, self.rs.standard_normal)
         self._is_state_common_legacy()
 
     def test_standard_cauchy(self):
         self._set_common_state_legacy()
         self._is_state_common_legacy()
-        compare_0_input(self.nprs.standard_cauchy,
-                        self.rs.standard_cauchy)
+        compare_0_input(self.nprs.standard_cauchy, self.rs.standard_cauchy)
         self._is_state_common_legacy()
 
     def test_standard_exponential(self):
         self._set_common_state_legacy()
         self._is_state_common_legacy()
-        compare_0_input(self.nprs.standard_exponential,
-                        self.rs.standard_exponential)
+        compare_0_input(self.nprs.standard_exponential, self.rs.standard_exponential)
         self._is_state_common_legacy()
 
     @pytest.mark.xfail(reason="Stream broken for simplicity", strict=True)
@@ -194,80 +209,67 @@ class TestAgainstNumPy(object):
         self._set_common_state()
         self._is_state_common()
         with pytest.deprecated_call():
-            compare_0_input(self.nprs.tomaxint,
-                            self.rg.tomaxint)
+            compare_0_input(self.nprs.tomaxint, self.rg.tomaxint)
         self._is_state_common()
 
     def test_poisson(self):
         self._set_common_state()
         self._is_state_common()
-        compare_1_input(self.nprs.poisson,
-                        self.rg.poisson)
+        compare_1_input(self.nprs.poisson, self.rg.poisson)
         self._is_state_common()
 
     def test_rayleigh(self):
         self._set_common_state()
         self._is_state_common()
-        compare_1_input(self.nprs.rayleigh,
-                        self.rg.rayleigh)
+        compare_1_input(self.nprs.rayleigh, self.rg.rayleigh)
         self._is_state_common()
 
     def test_zipf(self):
         self._set_common_state()
         self._is_state_common()
-        compare_1_input(self.nprs.zipf,
-                        self.rg.zipf)
+        compare_1_input(self.nprs.zipf, self.rg.zipf)
         self._is_state_common()
 
     def test_logseries(self):
         self._set_common_state()
         self._is_state_common()
-        compare_1_input(self.nprs.logseries,
-                        self.rg.logseries,
-                        is_small=True)
+        compare_1_input(self.nprs.logseries, self.rg.logseries, is_small=True)
         self._is_state_common()
 
     def test_geometric(self):
         self._set_common_state()
         self._is_state_common()
-        compare_1_input(self.nprs.geometric,
-                        self.rg.geometric,
-                        is_small=True)
+        compare_1_input(self.nprs.geometric, self.rg.geometric, is_small=True)
         self._is_state_common()
 
     def test_logistic(self):
         self._set_common_state()
         self._is_state_common()
-        compare_2_input(self.nprs.logistic,
-                        self.rg.logistic)
+        compare_2_input(self.nprs.logistic, self.rg.logistic)
         self._is_state_common()
 
     def test_gumbel(self):
         self._set_common_state()
         self._is_state_common()
-        compare_2_input(self.nprs.gumbel,
-                        self.rg.gumbel)
+        compare_2_input(self.nprs.gumbel, self.rg.gumbel)
         self._is_state_common()
 
     def test_laplace(self):
         self._set_common_state()
         self._is_state_common()
-        compare_2_input(self.nprs.laplace,
-                        self.rg.laplace)
+        compare_2_input(self.nprs.laplace, self.rg.laplace)
         self._is_state_common()
 
     def test_uniform(self):
         self._set_common_state()
         self._is_state_common()
-        compare_2_input(self.nprs.uniform,
-                        self.rg.uniform)
+        compare_2_input(self.nprs.uniform, self.rg.uniform)
         self._is_state_common()
 
     def test_vonmises(self):
         self._set_common_state()
         self._is_state_common()
-        compare_2_input(self.nprs.vonmises,
-                        self.rg.vonmises)
+        compare_2_input(self.nprs.vonmises, self.rg.vonmises)
         self._is_state_common()
 
     def test_random_integers(self):
@@ -275,17 +277,15 @@ class TestAgainstNumPy(object):
         self._is_state_common()
         with suppress_warnings() as sup:
             sup.record(DeprecationWarning)
-            compare_2_input(self.nprs.random_integers,
-                            self.rg.random_integers,
-                            is_scalar=True)
+            compare_2_input(
+                self.nprs.random_integers, self.rg.random_integers, is_scalar=True
+            )
         self._is_state_common()
 
     def test_binomial(self):
         self._set_common_state()
         self._is_state_common()
-        compare_2_input(self.nprs.binomial,
-                        self.rg.binomial,
-                        is_np=True)
+        compare_2_input(self.nprs.binomial, self.rg.binomial, is_np=True)
         self._is_state_common()
 
     def test_rand(self):
@@ -305,16 +305,14 @@ class TestAgainstNumPy(object):
     def test_triangular(self):
         self._set_common_state()
         self._is_state_common()
-        compare_3_input(self.nprs.triangular,
-                        self.rg.triangular)
+        compare_3_input(self.nprs.triangular, self.rg.triangular)
         self._is_state_common()
 
     @pytest.mark.xfail(reason="Changes to hypergeometic", strict=True)
     def test_hypergeometric(self):
         self._set_common_state()
         self._is_state_common()
-        compare_3_input(self.nprs.hypergeometric,
-                        self.rg.hypergeometric)
+        compare_3_input(self.nprs.hypergeometric, self.rg.hypergeometric)
         self._is_state_common()
 
     def test_bytes(self):
@@ -332,11 +330,12 @@ class TestAgainstNumPy(object):
         self._is_state_common()
         f = self.rg.multinomial
         g = self.nprs.multinomial
-        p = [.1, .3, .4, .2]
+        p = [0.1, 0.3, 0.4, 0.2]
         assert_equal(f(100, p), g(100, p))
         assert_equal(f(100, np.array(p)), g(100, np.array(p)))
-        assert_equal(f(100, np.array(p), size=(7, 23)),
-                     g(100, np.array(p), size=(7, 23)))
+        assert_equal(
+            f(100, np.array(p), size=(7, 23)), g(100, np.array(p), size=(7, 23))
+        )
         self._is_state_common()
 
     @pytest.mark.xfail(reason="Stream broken for performance", strict=True)
@@ -378,9 +377,7 @@ class TestAgainstNumPy(object):
     def test_randint(self):
         self._set_common_state()
         self._is_state_common()
-        compare_2_input(self.rg.integers,
-                        self.nprs.randint,
-                        is_scalar=True)
+        compare_2_input(self.rg.integers, self.nprs.randint, is_scalar=True)
         self._is_state_common()
 
     def test_scalar(self):
@@ -419,19 +416,42 @@ class TestAgainstNumPy(object):
         rs_d = dir(self.rg)
         excluded = {"get_state", "set_state", "poisson_lam_max"}
         nprs_d.difference_update(excluded)
-        assert (len(nprs_d.difference(rs_d)) == 0)
+        assert len(nprs_d.difference(rs_d)) == 0
 
         npmod = dir(numpy.random)
         mod = dir(randomgen.generator)
-        known_exlcuded = ["BitGenerator", "MT19937", "PCG64", "Philox",
-                          "RandomState", "SFC64", "SeedSequence",
-                          "__RandomState_ctor", "__cached__", "__path__",
-                          "_bit_generator", "_bounded_integers", "_common",
-                          "_generator", "_mt19937", "_pcg64", "_philox",
-                          "_pickle", "_sfc64", "absolute_import",
-                          "default_rng", "division", "get_state", "mtrand",
-                          "print_function", "ranf", "sample", "seed",
-                          "set_state", "test"]
+        known_exlcuded = [
+            "BitGenerator",
+            "MT19937",
+            "PCG64",
+            "Philox",
+            "RandomState",
+            "SFC64",
+            "SeedSequence",
+            "__RandomState_ctor",
+            "__cached__",
+            "__path__",
+            "_bit_generator",
+            "_bounded_integers",
+            "_common",
+            "_generator",
+            "_mt19937",
+            "_pcg64",
+            "_philox",
+            "_pickle",
+            "_sfc64",
+            "absolute_import",
+            "default_rng",
+            "division",
+            "get_state",
+            "mtrand",
+            "print_function",
+            "ranf",
+            "sample",
+            "seed",
+            "set_state",
+            "test",
+        ]
         mod += known_exlcuded
         diff = set(npmod).difference(mod)
         print(diff)
@@ -441,107 +461,93 @@ class TestAgainstNumPy(object):
     def test_chisquare(self):
         self._set_common_state_legacy()
         self._is_state_common_legacy()
-        compare_1_input(self.nprs.chisquare,
-                        self.rs.chisquare)
+        compare_1_input(self.nprs.chisquare, self.rs.chisquare)
         self._is_state_common_legacy()
 
     def test_standard_gamma(self):
         self._set_common_state_legacy()
         self._is_state_common_legacy()
-        compare_1_input(self.nprs.standard_gamma,
-                        self.rs.standard_gamma)
+        compare_1_input(self.nprs.standard_gamma, self.rs.standard_gamma)
         self._is_state_common_legacy()
 
     def test_standard_t(self):
         self._set_common_state_legacy()
         self._is_state_common_legacy()
-        compare_1_input(self.nprs.standard_t,
-                        self.rs.standard_t)
+        compare_1_input(self.nprs.standard_t, self.rs.standard_t)
         self._is_state_common_legacy()
 
     def test_pareto(self):
         self._set_common_state_legacy()
         self._is_state_common_legacy()
-        compare_1_input(self.nprs.pareto,
-                        self.rs.pareto)
+        compare_1_input(self.nprs.pareto, self.rs.pareto)
         self._is_state_common_legacy()
 
     def test_power(self):
         self._set_common_state_legacy()
         self._is_state_common_legacy()
-        compare_1_input(self.nprs.power,
-                        self.rs.power)
+        compare_1_input(self.nprs.power, self.rs.power)
         self._is_state_common_legacy()
 
     def test_weibull(self):
         self._set_common_state_legacy()
         self._is_state_common_legacy()
-        compare_1_input(self.nprs.weibull,
-                        self.rs.weibull)
+        compare_1_input(self.nprs.weibull, self.rs.weibull)
         self._is_state_common_legacy()
 
     def test_beta(self):
         self._set_common_state_legacy()
         self._is_state_common_legacy()
-        compare_2_input(self.nprs.beta,
-                        self.rs.beta)
+        compare_2_input(self.nprs.beta, self.rs.beta)
         self._is_state_common_legacy()
 
     def test_exponential(self):
         self._set_common_state_legacy()
         self._is_state_common_legacy()
-        compare_1_input(self.nprs.exponential,
-                        self.rs.exponential)
+        compare_1_input(self.nprs.exponential, self.rs.exponential)
         self._is_state_common_legacy()
 
     def test_f(self):
         self._set_common_state_legacy()
         self._is_state_common_legacy()
-        compare_2_input(self.nprs.f,
-                        self.rs.f)
+        compare_2_input(self.nprs.f, self.rs.f)
         self._is_state_common_legacy()
 
     def test_gamma(self):
         self._set_common_state_legacy()
         self._is_state_common_legacy()
-        compare_2_input(self.nprs.gamma,
-                        self.rs.gamma)
+        compare_2_input(self.nprs.gamma, self.rs.gamma)
         self._is_state_common_legacy()
 
     def test_lognormal(self):
         self._set_common_state_legacy()
         self._is_state_common_legacy()
-        compare_2_input(self.nprs.lognormal,
-                        self.rs.lognormal)
+        compare_2_input(self.nprs.lognormal, self.rs.lognormal)
         self._is_state_common_legacy()
 
     def test_noncentral_chisquare(self):
         self._set_common_state_legacy()
         self._is_state_common_legacy()
-        compare_2_input(self.nprs.noncentral_chisquare,
-                        self.rs.noncentral_chisquare)
+        compare_2_input(self.nprs.noncentral_chisquare, self.rs.noncentral_chisquare)
         self._is_state_common_legacy()
 
     def test_normal(self):
         self._set_common_state_legacy()
         self._is_state_common_legacy()
-        compare_2_input(self.nprs.normal,
-                        self.rs.normal)
+        compare_2_input(self.nprs.normal, self.rs.normal)
         self._is_state_common_legacy()
 
     def test_wald(self):
         self._set_common_state_legacy()
         self._is_state_common_legacy()
-        compare_2_input(self.nprs.wald,
-                        self.rs.wald)
+        compare_2_input(self.nprs.wald, self.rs.wald)
         self._is_state_common_legacy()
 
     def test_negative_binomial(self):
         self._set_common_state_legacy()
         self._is_state_common_legacy()
-        compare_2_input(self.nprs.negative_binomial,
-                        self.rs.negative_binomial,
-                        is_np=True)
+        compare_2_input(
+            self.nprs.negative_binomial, self.rs.negative_binomial, is_np=True
+        )
         self._is_state_common_legacy()
 
     def test_randn(self):
@@ -567,29 +573,31 @@ class TestAgainstNumPy(object):
     def test_noncentral_f(self):
         self._set_common_state_legacy()
         self._is_state_common_legacy()
-        compare_3_input(self.nprs.noncentral_f,
-                        self.rs.noncentral_f)
+        compare_3_input(self.nprs.noncentral_f, self.rs.noncentral_f)
         self._is_state_common_legacy()
 
     def test_multivariate_normal(self):
         self._set_common_state_legacy()
         self._is_state_common_legacy()
         mu = [1, 2, 3]
-        cov = [[1, .2, .3], [.2, 4, 1], [.3, 1, 10]]
+        cov = [[1, 0.2, 0.3], [0.2, 4, 1], [0.3, 1, 10]]
         f = self.rs.multivariate_normal
         g = self.nprs.multivariate_normal
         assert_allclose(f(mu, cov), g(mu, cov))
         assert_allclose(f(np.array(mu), cov), g(np.array(mu), cov))
-        assert_allclose(f(np.array(mu), np.array(cov)),
-                        g(np.array(mu), np.array(cov)))
-        assert_allclose(f(np.array(mu), np.array(cov), size=(7, 31)),
-                        g(np.array(mu), np.array(cov), size=(7, 31)))
+        assert_allclose(f(np.array(mu), np.array(cov)), g(np.array(mu), np.array(cov)))
+        assert_allclose(
+            f(np.array(mu), np.array(cov), size=(7, 31)),
+            g(np.array(mu), np.array(cov), size=(7, 31)),
+        )
         self._is_state_common_legacy()
 
 
-funcs = [randomgen.generator.zipf,
-         randomgen.generator.logseries,
-         randomgen.generator.poisson]
+funcs = [
+    randomgen.generator.zipf,
+    randomgen.generator.logseries,
+    randomgen.generator.poisson,
+]
 ids = [f.__name__ for f in funcs]
 
 

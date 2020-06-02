@@ -3,14 +3,36 @@ import os
 from os.path import join
 
 import numpy as np
-from numpy.testing import (assert_allclose, assert_array_equal, assert_equal,
-                           assert_raises)
+from numpy.testing import (
+    assert_allclose,
+    assert_array_equal,
+    assert_equal,
+    assert_raises,
+)
 import pytest
 
-from randomgen import (DSFMT, HC128, JSF, MT64, MT19937, PCG32, PCG64, RDRAND,
-                       SFMT, SPECK128, AESCounter, ChaCha, Generator, Philox,
-                       RandomState, ThreeFry, Xoroshiro128, Xorshift1024,
-                       Xoshiro256, Xoshiro512)
+from randomgen import (
+    DSFMT,
+    HC128,
+    JSF,
+    MT64,
+    MT19937,
+    PCG32,
+    PCG64,
+    RDRAND,
+    SFMT,
+    SPECK128,
+    AESCounter,
+    ChaCha,
+    Generator,
+    Philox,
+    RandomState,
+    ThreeFry,
+    Xoroshiro128,
+    Xorshift1024,
+    Xoshiro256,
+    Xoshiro512,
+)
 from randomgen.common import interface
 from randomgen.seed_sequence import ISeedSequence
 
@@ -88,7 +110,7 @@ def assert_state_equal(actual, target):
 def uniform32_from_uint64(x):
     x = np.uint64(x)
     upper = np.array(x >> np.uint64(32), dtype=np.uint32)
-    lower = np.uint64(0xffffffff)
+    lower = np.uint64(0xFFFFFFFF)
     lower = np.array(x & lower, dtype=np.uint32)
     joined = np.column_stack([lower, upper]).ravel()
     out = (joined >> np.uint32(9)) * (1.0 / 2 ** 23)
@@ -97,7 +119,7 @@ def uniform32_from_uint64(x):
 
 def uniform32_from_uint53(x):
     x = np.uint64(x) >> np.uint64(16)
-    x = np.uint32(x & np.uint64(0xffffffff))
+    x = np.uint32(x & np.uint64(0xFFFFFFFF))
     out = (x >> np.uint32(9)) * (1.0 / 2 ** 23)
     return out.astype(np.float32)
 
@@ -230,15 +252,11 @@ class Base(object):
         rs = RandomState(self.setup_bitgenerator(self.data1["seed"]))
         gauss = rs.standard_normal(n)
         bits = getattr(self, "bit_name", self.bits)
-        assert_allclose(gauss,
-                        gauss_from_uint(self.data1["data"], n, bits),
-                        rtol=3e-6)
+        assert_allclose(gauss, gauss_from_uint(self.data1["data"], n, bits), rtol=3e-6)
 
         rs = RandomState(self.setup_bitgenerator(self.data2["seed"]))
         gauss = rs.standard_normal(25)
-        assert_allclose(gauss,
-                        gauss_from_uint(self.data2["data"], n, bits),
-                        rtol=3e-6)
+        assert_allclose(gauss, gauss_from_uint(self.data2["data"], n, bits), rtol=3e-6)
 
     def test_uniform_double(self):
         rs = Generator(self.setup_bitgenerator(self.data1["seed"]))
@@ -292,15 +310,13 @@ class Base(object):
     def test_seed_out_of_range(self):
         # GH #82
         rs = Generator(self.setup_bitgenerator(self.data1["seed"]))
-        assert_raises(ValueError, rs.bit_generator.seed,
-                      2 ** (4 * self.bits + 1))
+        assert_raises(ValueError, rs.bit_generator.seed, 2 ** (4 * self.bits + 1))
         assert_raises(ValueError, rs.bit_generator.seed, -1)
 
     def test_seed_out_of_range_array(self):
         # GH #82
         rs = Generator(self.setup_bitgenerator(self.data1["seed"]))
-        assert_raises(ValueError, rs.bit_generator.seed,
-                      [2 ** (2 * self.bits + 1)])
+        assert_raises(ValueError, rs.bit_generator.seed, [2 ** (2 * self.bits + 1)])
         assert_raises(ValueError, rs.bit_generator.seed, [-1])
 
     def test_repr(self):
@@ -329,8 +345,9 @@ class Base(object):
         reloaded = pickle.loads(bit_generator_pkl)
         orig_gen = Generator(bit_generator)
         reloaded_gen = Generator(reloaded)
-        assert_array_equal(orig_gen.standard_normal(1000),
-                           reloaded_gen.standard_normal(1000))
+        assert_array_equal(
+            orig_gen.standard_normal(1000), reloaded_gen.standard_normal(1000)
+        )
         assert bit_generator is not reloaded
         assert_state_equal(reloaded.state, bit_generator.state)
 
@@ -393,8 +410,9 @@ class Base(object):
         g.integers(0, 2 ** 32, dtype=np.uint32)
         if "has_uint32" not in bg.state or bg.state["has_uint32"] == 0:
             name = bg.__class__.__name__
-            pytest.skip("bit generator does not cache 32-bit value "
-                        "({0})".format(name))
+            pytest.skip(
+                "bit generator does not cache 32-bit value ({0})".format(name)
+            )
         bg.seed()
         assert bg.state["has_uint32"] == 0
 
@@ -488,30 +506,30 @@ class Random123(Base):
         step = 2 ** self.width
         bg.advance(step, True)
         state = bg.state
-        assert_equal(state["state"]["counter"],
-                     np.array([0, 1, 0, 0], dtype=dtype))
+        assert_equal(state["state"]["counter"], np.array([0, 1, 0, 0], dtype=dtype))
 
         bg = self.bit_generator(mode="sequence")
         step = 2 ** self.width - 1
         bg.advance(step, True)
         state = bg.state
         size_max = np.iinfo(dtype).max
-        assert_equal(state["state"]["counter"],
-                     np.array([size_max, 0, 0, 0], dtype=dtype))
+        assert_equal(
+            state["state"]["counter"], np.array([size_max, 0, 0, 0], dtype=dtype)
+        )
 
         bg = self.bit_generator(mode="sequence")
         step = 2 ** (2 * self.width)
         bg.advance(step, True)
         state = bg.state
-        assert_equal(state["state"]["counter"],
-                     np.array([0, 0, 1, 0], dtype=dtype))
+        assert_equal(state["state"]["counter"], np.array([0, 0, 1, 0], dtype=dtype))
 
         bg = self.bit_generator(mode="sequence")
         step = 2 ** (2 * self.width) - 1
         bg.advance(step, True)
         state = bg.state
-        assert_equal(state["state"]["counter"],
-                     np.array([size_max, size_max, 0, 0], dtype=dtype))
+        assert_equal(
+            state["state"]["counter"], np.array([size_max, size_max, 0, 0], dtype=dtype)
+        )
 
     def test_advance_deprecated(self):
         bg = self.bit_generator(mode="sequence")
@@ -538,10 +556,8 @@ class TestJSF64(Base):
         cls.bit_generator = JSF
         cls.bits = 64
         cls.dtype = np.uint64
-        cls.data1 = cls._read_csv(
-            join(pwd, "./data/jsf64-testset-1.csv"))
-        cls.data2 = cls._read_csv(
-            join(pwd, "./data/jsf64-testset-2.csv"))
+        cls.data1 = cls._read_csv(join(pwd, "./data/jsf64-testset-1.csv"))
+        cls.data2 = cls._read_csv(join(pwd, "./data/jsf64-testset-2.csv"))
         cls.seed_error_type = TypeError
         cls.invalid_seed_types = [("apple",), (2 + 3j,), (3.1,)]
         cls.invalid_seed_values = [(-2,), (np.empty((2, 2), dtype=np.int64),)]
@@ -583,10 +599,8 @@ class TestJSF32(TestJSF64):
         cls.size = 32
         cls.bits = 32
         cls.dtype = np.uint32
-        cls.data1 = cls._read_csv(
-            join(pwd, "./data/jsf32-testset-1.csv"))
-        cls.data2 = cls._read_csv(
-            join(pwd, "./data/jsf32-testset-2.csv"))
+        cls.data1 = cls._read_csv(join(pwd, "./data/jsf32-testset-1.csv"))
+        cls.data2 = cls._read_csv(join(pwd, "./data/jsf32-testset-2.csv"))
         cls.seed_error_type = TypeError
         cls.invalid_seed_types = [("apple",), (2 + 3j,), (3.1,)]
         cls.invalid_seed_values = [(-2,), (np.empty((2, 2), dtype=np.int64),)]
@@ -614,10 +628,8 @@ class TestXoroshiro128(Base):
         cls.bit_generator = Xoroshiro128
         cls.bits = 64
         cls.dtype = np.uint64
-        cls.data1 = cls._read_csv(
-            join(pwd, "./data/xoroshiro128-testset-1.csv"))
-        cls.data2 = cls._read_csv(
-            join(pwd, "./data/xoroshiro128-testset-2.csv"))
+        cls.data1 = cls._read_csv(join(pwd, "./data/xoroshiro128-testset-1.csv"))
+        cls.data2 = cls._read_csv(join(pwd, "./data/xoroshiro128-testset-2.csv"))
         cls.seed_error_type = TypeError
         cls.invalid_seed_types = [("apple",), (2 + 3j,), (3.1,)]
         cls.invalid_seed_values = [(-2,), (np.empty((2, 2), dtype=np.int64),)]
@@ -629,16 +641,15 @@ class TestXoshiro256(Base):
         cls.bit_generator = Xoshiro256
         cls.bits = 64
         cls.dtype = np.uint64
-        cls.data1 = cls._read_csv(
-            join(pwd, "./data/xoshiro256-testset-1.csv"))
-        cls.data2 = cls._read_csv(
-            join(pwd, "./data/xoshiro256-testset-2.csv"))
+        cls.data1 = cls._read_csv(join(pwd, "./data/xoshiro256-testset-1.csv"))
+        cls.data2 = cls._read_csv(join(pwd, "./data/xoshiro256-testset-2.csv"))
         cls.seed_error_type = TypeError
         cls.invalid_seed_types = [("apple",), (2 + 3j,), (3.1,)]
         cls.invalid_seed_values = [(-2,), (np.empty((2, 2), dtype=np.int64),)]
 
     def test_old_name(self):
         from randomgen.xoshiro256starstar import Xoshiro256StarStar
+
         with pytest.deprecated_call():
             bitgen = Xoshiro256StarStar()
             assert isinstance(bitgen, Xoshiro256)
@@ -650,16 +661,15 @@ class TestXoshiro512(Base):
         cls.bit_generator = Xoshiro512
         cls.bits = 64
         cls.dtype = np.uint64
-        cls.data1 = cls._read_csv(
-            join(pwd, "./data/xoshiro512-testset-1.csv"))
-        cls.data2 = cls._read_csv(
-            join(pwd, "./data/xoshiro512-testset-2.csv"))
+        cls.data1 = cls._read_csv(join(pwd, "./data/xoshiro512-testset-1.csv"))
+        cls.data2 = cls._read_csv(join(pwd, "./data/xoshiro512-testset-2.csv"))
         cls.seed_error_type = TypeError
         cls.invalid_seed_types = [("apple",), (2 + 3j,), (3.1,)]
         cls.invalid_seed_values = [(-2,), (np.empty((2, 2), dtype=np.int64),)]
 
     def test_old_name(self):
         from randomgen.xoshiro512starstar import Xoshiro512StarStar
+
         with pytest.deprecated_call():
             bitgen = Xoshiro512StarStar()
             assert isinstance(bitgen, Xoshiro512)
@@ -671,10 +681,8 @@ class TestXorshift1024(Base):
         cls.bit_generator = Xorshift1024
         cls.bits = 64
         cls.dtype = np.uint64
-        cls.data1 = cls._read_csv(
-            join(pwd, "./data/xorshift1024-testset-1.csv"))
-        cls.data2 = cls._read_csv(
-            join(pwd, "./data/xorshift1024-testset-2.csv"))
+        cls.data1 = cls._read_csv(join(pwd, "./data/xorshift1024-testset-1.csv"))
+        cls.data2 = cls._read_csv(join(pwd, "./data/xorshift1024-testset-2.csv"))
         cls.seed_error_type = TypeError
         cls.invalid_seed_types = [("apple",), (2 + 3j,), (3.1,)]
         cls.invalid_seed_values = [(-2,), (np.empty((2, 2), dtype=np.int64),)]
@@ -689,38 +697,45 @@ class TestThreeFry(Random123):
         cls.width = 64
         cls.bits = 64
         cls.dtype = np.uint64
-        cls.data1 = cls._read_csv(
-            join(pwd, "./data/threefry-testset-1.csv"))
-        cls.data2 = cls._read_csv(
-            join(pwd, "./data/threefry-testset-2.csv"))
+        cls.data1 = cls._read_csv(join(pwd, "./data/threefry-testset-1.csv"))
+        cls.data2 = cls._read_csv(join(pwd, "./data/threefry-testset-2.csv"))
         cls.seed_error_type = TypeError
         cls.invalid_seed_types = []
-        cls.invalid_seed_values = [(1, None, 1), (-1,), (2 ** 257 + 1,),
-                                   (None, None, 2 ** 257 + 1)]
+        cls.invalid_seed_values = [
+            (1, None, 1),
+            (-1,),
+            (2 ** 257 + 1,),
+            (None, None, 2 ** 257 + 1),
+        ]
 
     def test_set_key(self):
         bit_generator = self.setup_bitgenerator(self.data1["seed"])
         state = bit_generator.state
-        keyed = self.bit_generator(counter=state["state"]["counter"],
-                                   key=state["state"]["key"], mode="legacy")
+        keyed = self.bit_generator(
+            counter=state["state"]["counter"], key=state["state"]["key"], mode="legacy"
+        )
         assert_state_equal(bit_generator.state, keyed.state)
 
     def test_advance(self):
         bg = self.bit_generator(mode="sequence")
         state0 = bg.state
         bg.advance(1, True)
-        assert_equal(bg.state["state"]["counter"],
-                     np.array([1, 0, 0, 0], dtype=np.uint64))
+        assert_equal(
+            bg.state["state"]["counter"], np.array([1, 0, 0, 0], dtype=np.uint64)
+        )
         bg.advance(1, True)
-        assert_equal(bg.state["state"]["counter"],
-                     np.array([2, 0, 0, 0], dtype=np.uint64))
+        assert_equal(
+            bg.state["state"]["counter"], np.array([2, 0, 0, 0], dtype=np.uint64)
+        )
         bg.advance(2 ** 64, True)
-        assert_equal(bg.state["state"]["counter"],
-                     np.array([2, 1, 0, 0], dtype=np.uint64))
+        assert_equal(
+            bg.state["state"]["counter"], np.array([2, 1, 0, 0], dtype=np.uint64)
+        )
         bg.state = state0
         bg.advance(2 ** 128, True)
-        assert_equal(bg.state["state"]["counter"],
-                     np.array([0, 0, 1, 0], dtype=np.uint64))
+        assert_equal(
+            bg.state["state"]["counter"], np.array([0, 0, 1, 0], dtype=np.uint64)
+        )
 
 
 class TestPCG64(Base):
@@ -732,34 +747,36 @@ class TestPCG64(Base):
         cls.data1 = cls._read_csv(join(pwd, "./data/pcg64-testset-1.csv"))
         cls.data2 = cls._read_csv(join(pwd, "./data/pcg64-testset-2.csv"))
         cls.seed_error_type = TypeError
-        cls.invalid_seed_types = [(np.array([1, 2]),), (3.2,),
-                                  (None, np.zeros(1))]
-        cls.invalid_seed_values = [(-1,), (2 ** 129 + 1,), (None, -1),
-                                   (None, 2 ** 129 + 1)]
+        cls.invalid_seed_types = [(np.array([1, 2]),), (3.2,), (None, np.zeros(1))]
+        cls.invalid_seed_values = [
+            (-1,),
+            (2 ** 129 + 1,),
+            (None, -1),
+            (None, 2 ** 129 + 1),
+        ]
 
     def test_seed_float_array(self):
         rs = Generator(self.setup_bitgenerator(self.data1["seed"]))
-        assert_raises(self.seed_error_type, rs.bit_generator.seed,
-                      np.array([np.pi]))
-        assert_raises(self.seed_error_type, rs.bit_generator.seed,
-                      np.array([-np.pi]))
-        assert_raises(self.seed_error_type, rs.bit_generator.seed,
-                      np.array([np.pi, -np.pi]))
-        assert_raises(self.seed_error_type, rs.bit_generator.seed,
-                      np.array([0, np.pi]))
+        assert_raises(self.seed_error_type, rs.bit_generator.seed, np.array([np.pi]))
+        assert_raises(self.seed_error_type, rs.bit_generator.seed, np.array([-np.pi]))
+        assert_raises(
+            self.seed_error_type, rs.bit_generator.seed, np.array([np.pi, -np.pi])
+        )
+        assert_raises(self.seed_error_type, rs.bit_generator.seed, np.array([0, np.pi]))
         assert_raises(self.seed_error_type, rs.bit_generator.seed, [np.pi])
         assert_raises(self.seed_error_type, rs.bit_generator.seed, [0, np.pi])
 
     def test_seed_out_of_range_array(self):
         rs = Generator(self.setup_bitgenerator(self.data1["seed"]))
-        assert_raises(self.seed_error_type, rs.bit_generator.seed,
-                      [2 ** (2 * self.bits + 1)])
+        assert_raises(
+            self.seed_error_type, rs.bit_generator.seed, [2 ** (2 * self.bits + 1)]
+        )
         assert_raises(self.seed_error_type, rs.bit_generator.seed, [-1])
 
     def test_advance_symmetry(self):
         rs = Generator(self.setup_bitgenerator(self.data1["seed"]))
         state = rs.bit_generator.state
-        step = -0x9e3779b97f4a7c150000000000000000
+        step = -0x9E3779B97F4A7C150000000000000000
         rs.bit_generator.advance(step)
         val_neg = rs.integers(10)
         rs.bit_generator.state = state
@@ -788,21 +805,23 @@ class TestPhilox(Random123):
         cls.width = 64
         cls.bits = 64
         cls.dtype = np.uint64
-        cls.data1 = cls._read_csv(
-            join(pwd, "./data/philox-testset-1.csv"))
-        cls.data2 = cls._read_csv(
-            join(pwd, "./data/philox-testset-2.csv"))
+        cls.data1 = cls._read_csv(join(pwd, "./data/philox-testset-1.csv"))
+        cls.data2 = cls._read_csv(join(pwd, "./data/philox-testset-2.csv"))
         cls.seed_error_type = TypeError
         cls.invalid_seed_types = []
-        cls.invalid_seed_values = [(1, None, 1), (-1,), (2 ** 257 + 1,),
-                                   (None, None, 2 ** 257 + 1)]
+        cls.invalid_seed_values = [
+            (1, None, 1),
+            (-1,),
+            (2 ** 257 + 1,),
+            (None, None, 2 ** 257 + 1),
+        ]
 
     def test_set_key(self):
         bit_generator = self.setup_bitgenerator(self.data1["seed"])
         state = bit_generator.state
-        keyed = self.bit_generator(counter=state["state"]["counter"],
-                                   key=state["state"]["key"],
-                                   mode="legacy")
+        keyed = self.bit_generator(
+            counter=state["state"]["counter"], key=state["state"]["key"], mode="legacy"
+        )
         assert_state_equal(bit_generator.state, keyed.state)
 
 
@@ -816,23 +835,27 @@ class TestPhilox4x32(Random123):
         cls.width = 32
         cls.bits = 32
         cls.dtype = np.uint32
-        cls.data1 = cls._read_csv(
-            join(pwd, "./data/philox4x32-testset-1.csv"))
-        cls.data2 = cls._read_csv(
-            join(pwd, "./data/philox4x32-testset-2.csv"))
+        cls.data1 = cls._read_csv(join(pwd, "./data/philox4x32-testset-1.csv"))
+        cls.data2 = cls._read_csv(join(pwd, "./data/philox4x32-testset-2.csv"))
         cls.seed_error_type = TypeError
         cls.invalid_seed_types = []
-        cls.invalid_seed_values = [(1, None, 1), (-1,), (2 ** 257 + 1,),
-                                   (None, None, 2 ** 257 + 1)]
+        cls.invalid_seed_values = [
+            (1, None, 1),
+            (-1,),
+            (2 ** 257 + 1,),
+            (None, None, 2 ** 257 + 1),
+        ]
 
     def test_seed_sequence(self):
-        bg = self.bit_generator_base(number=self.number, width=self.width,
-                                     mode="sequence")
+        bg = self.bit_generator_base(
+            number=self.number, width=self.width, mode="sequence"
+        )
         assert isinstance(bg, self.bit_generator_base)
         assert isinstance(bg.seed_seq, SeedSequence)
 
-        bg = self.bit_generator_base(0, number=self.number, width=self.width,
-                                     mode="sequence")
+        bg = self.bit_generator_base(
+            0, number=self.number, width=self.width, mode="sequence"
+        )
         assert bg.seed_seq.entropy == 0
 
         ss = SeedSequence(0)
@@ -850,14 +873,16 @@ class TestAESCounter(TestPhilox):
         cls.bit_generator = AESCounter
         cls.bits = 64
         cls.dtype = np.uint64
-        cls.data1 = cls._read_csv(
-            join(pwd, "./data/aesctr-testset-1.csv"))
-        cls.data2 = cls._read_csv(
-            join(pwd, "./data/aesctr-testset-2.csv"))
+        cls.data1 = cls._read_csv(join(pwd, "./data/aesctr-testset-1.csv"))
+        cls.data2 = cls._read_csv(join(pwd, "./data/aesctr-testset-2.csv"))
         cls.seed_error_type = TypeError
         cls.invalid_seed_types = []
-        cls.invalid_seed_values = [(1, None, 1), (-1,), (2 ** 257 + 1,),
-                                   (None, None, 2 ** 257 + 1)]
+        cls.invalid_seed_values = [
+            (1, None, 1),
+            (-1,),
+            (2 ** 257 + 1,),
+            (None, None, 2 ** 257 + 1),
+        ]
 
     @pytest.fixture(autouse=True, params=USE_AESNI)
     def set_use_aesni(self, request):
@@ -880,12 +905,11 @@ class TestAESCounter(TestPhilox):
     def test_seed_float_array(self):
         # GH #82
         rs = Generator(self.setup_bitgenerator(self.data1["seed"]))
-        assert_raises(self.seed_error_type, rs.bit_generator.seed,
-                      np.array([np.pi]))
-        assert_raises(self.seed_error_type, rs.bit_generator.seed,
-                      np.array([-np.pi]))
-        assert_raises(self.seed_error_type, rs.bit_generator.seed,
-                      np.array([np.pi, -np.pi]))
+        assert_raises(self.seed_error_type, rs.bit_generator.seed, np.array([np.pi]))
+        assert_raises(self.seed_error_type, rs.bit_generator.seed, np.array([-np.pi]))
+        assert_raises(
+            self.seed_error_type, rs.bit_generator.seed, np.array([np.pi, -np.pi])
+        )
         assert_raises(TypeError, rs.bit_generator.seed, np.array([0, np.pi]))
         assert_raises(TypeError, rs.bit_generator.seed, [np.pi])
         assert_raises(TypeError, rs.bit_generator.seed, [0, np.pi])
@@ -928,28 +952,32 @@ class TestAESCounter(TestPhilox):
         step = 2 ** 65
         bg.advance(step)
         state = bg.state
-        assert_equal(state["s"]["counter"],
-                     np.array([4, 1, 5, 1, 6, 1, 7, 1], dtype=np.uint64))
+        assert_equal(
+            state["s"]["counter"], np.array([4, 1, 5, 1, 6, 1, 7, 1], dtype=np.uint64)
+        )
 
         bg = self.bit_generator(mode="sequence")
         step = 2 ** 65 - 7
         bg.advance(step)
         state = bg.state
-        assert_equal(state["s"]["counter"],
-                     np.array([0, 1, 1, 1, 2, 1, 3, 1], dtype=np.uint64))
+        assert_equal(
+            state["s"]["counter"], np.array([0, 1, 1, 1, 2, 1, 3, 1], dtype=np.uint64)
+        )
 
         bg = self.bit_generator(mode="sequence")
         step = 2 ** 129 - 16
         bg.advance(step)
         state = bg.state
         m = np.iinfo(np.uint64).max
-        assert_equal(state["s"]["counter"],
-                     np.array([m - 3, m, m - 2, m, m - 1, m, m, m],
-                              dtype=np.uint64))
+        assert_equal(
+            state["s"]["counter"],
+            np.array([m - 3, m, m - 2, m, m - 1, m, m, m], dtype=np.uint64),
+        )
         bg.random_raw(9)
         state = bg.state
-        assert_equal(state["s"]["counter"],
-                     np.array([0, 0, 1, 0, 2, 0, 3, 0], dtype=np.uint64))
+        assert_equal(
+            state["s"]["counter"], np.array([0, 0, 1, 0, 2, 0, 3, 0], dtype=np.uint64)
+        )
 
         bg = self.bit_generator(mode="sequence")
         state0 = bg.state
@@ -974,7 +1002,6 @@ class TestAESCounter(TestPhilox):
 
 
 class TestMT19937(Base):
-
     @classmethod
     def setup_class(cls):
         cls.bit_generator = MT19937
@@ -991,21 +1018,16 @@ class TestMT19937(Base):
     def test_seed_out_of_range(self):
         # GH #82
         rs = Generator(self.setup_bitgenerator(self.data1["seed"]))
-        assert_raises(ValueError,
-                      rs.bit_generator.seed,
-                      2 ** (self.seed_bits + 1))
+        assert_raises(ValueError, rs.bit_generator.seed, 2 ** (self.seed_bits + 1))
         assert_raises(ValueError, rs.bit_generator.seed, -1)
-        assert_raises(ValueError,
-                      rs.bit_generator.seed, 2 ** (2 * self.seed_bits + 1))
+        assert_raises(ValueError, rs.bit_generator.seed, 2 ** (2 * self.seed_bits + 1))
 
     def test_seed_out_of_range_array(self):
         # GH #82
         rs = Generator(self.setup_bitgenerator(self.data1["seed"]))
-        assert_raises(ValueError, rs.bit_generator.seed,
-                      [2 ** (self.seed_bits + 1)])
+        assert_raises(ValueError, rs.bit_generator.seed, [2 ** (self.seed_bits + 1)])
         assert_raises(ValueError, rs.bit_generator.seed, [-1])
-        assert_raises(TypeError, rs.bit_generator.seed,
-                      [2 ** (2 * self.seed_bits + 1)])
+        assert_raises(TypeError, rs.bit_generator.seed, [2 ** (2 * self.seed_bits + 1)])
 
     def test_seed_float(self):
         # GH #82
@@ -1029,8 +1051,7 @@ class TestMT19937(Base):
         bit_generator = rs.bit_generator
         state = bit_generator.state
         desired = rs.integers(2 ** 16)
-        tup = (state["bit_generator"], state["state"]["key"],
-               state["state"]["pos"])
+        tup = (state["bit_generator"], state["state"]["key"], state["state"]["pos"])
         bit_generator.state = tup
         actual = rs.integers(2 ** 16)
         assert_equal(actual, desired)
@@ -1064,14 +1085,15 @@ class TestSFMT(TestMT19937):
         cls.bits = 64
         cls.seed_bits = 32
         cls.dtype = np.uint64
-        cls.data1 = cls._read_csv(
-            join(pwd, "./data/sfmt-testset-1.csv"))
-        cls.data2 = cls._read_csv(
-            join(pwd, "./data/sfmt-testset-2.csv"))
+        cls.data1 = cls._read_csv(join(pwd, "./data/sfmt-testset-1.csv"))
+        cls.data2 = cls._read_csv(join(pwd, "./data/sfmt-testset-2.csv"))
         cls.seed_error_type = TypeError
         cls.invalid_seed_types = []
-        cls.invalid_seed_values = [(-1,), (np.array([2 ** 33]),),
-                                   (np.array([2 ** 33, 2 ** 33]),)]
+        cls.invalid_seed_values = [
+            (-1,),
+            (np.array([2 ** 33]),),
+            (np.array([2 ** 33, 2 ** 33]),),
+        ]
         cls.state_name = "state"
 
     @pytest.mark.skip(reason="Not applicable to SFMT")
@@ -1093,38 +1115,35 @@ class TestDSFMT(Base):
         cls.data2 = cls._read_csv(join(pwd, "./data/dSFMT-testset-2.csv"))
         cls.seed_error_type = TypeError
         cls.invalid_seed_types = []
-        cls.invalid_seed_values = [(-1,), (np.array([2 ** 33]),),
-                                   (np.array([2 ** 33, 2 ** 33]),)]
+        cls.invalid_seed_values = [
+            (-1,),
+            (np.array([2 ** 33]),),
+            (np.array([2 ** 33, 2 ** 33]),),
+        ]
 
     def test_uniform_double(self):
         rs = Generator(self.setup_bitgenerator(self.data1["seed"]))
-        assert_array_equal(uniform_from_dsfmt(self.data1["data"]),
-                           rs.random(1000))
+        assert_array_equal(uniform_from_dsfmt(self.data1["data"]), rs.random(1000))
 
         rs = Generator(self.setup_bitgenerator(self.data2["seed"]))
-        assert_equal(uniform_from_dsfmt(self.data2["data"]),
-                     rs.random(1000))
+        assert_equal(uniform_from_dsfmt(self.data2["data"]), rs.random(1000))
 
     def test_gauss_inv(self):
         n = 25
         rs = RandomState(self.setup_bitgenerator(self.data1["seed"]))
         gauss = rs.standard_normal(n)
-        assert_allclose(gauss,
-                        gauss_from_uint(self.data1["data"], n, "dsfmt"))
+        assert_allclose(gauss, gauss_from_uint(self.data1["data"], n, "dsfmt"))
 
         rs = RandomState(self.setup_bitgenerator(self.data2["seed"]))
         gauss = rs.standard_normal(25)
-        assert_allclose(gauss,
-                        gauss_from_uint(self.data2["data"], n, "dsfmt"))
+        assert_allclose(gauss, gauss_from_uint(self.data2["data"], n, "dsfmt"))
 
     def test_seed_out_of_range_array(self):
         # GH #82
         rs = Generator(self.setup_bitgenerator(self.data1["seed"]))
-        assert_raises(ValueError, rs.bit_generator.seed,
-                      [2 ** (self.bits + 1)])
+        assert_raises(ValueError, rs.bit_generator.seed, [2 ** (self.bits + 1)])
         assert_raises(ValueError, rs.bit_generator.seed, [-1])
-        assert_raises(TypeError, rs.bit_generator.seed,
-                      [2 ** (2 * self.bits + 1)])
+        assert_raises(TypeError, rs.bit_generator.seed, [2 ** (2 * self.bits + 1)])
 
     def test_seed_float(self):
         # GH #82
@@ -1137,8 +1156,7 @@ class TestDSFMT(Base):
         rs = Generator(self.setup_bitgenerator(self.data1["seed"]))
         assert_raises(TypeError, rs.bit_generator.seed, np.array([np.pi]))
         assert_raises(TypeError, rs.bit_generator.seed, np.array([-np.pi]))
-        assert_raises(TypeError, rs.bit_generator.seed,
-                      np.array([np.pi, -np.pi]))
+        assert_raises(TypeError, rs.bit_generator.seed, np.array([np.pi, -np.pi]))
         assert_raises(TypeError, rs.bit_generator.seed, np.array([0, np.pi]))
         assert_raises(TypeError, rs.bit_generator.seed, [np.pi])
         assert_raises(TypeError, rs.bit_generator.seed, [0, np.pi])
@@ -1183,17 +1201,23 @@ class TestThreeFry4x32(Random123):
         cls.data2 = cls._read_csv(join(pwd, "./data/threefry32-testset-2.csv"))
         cls.seed_error_type = TypeError
         cls.invalid_seed_types = []
-        cls.invalid_seed_values = [(1, None, 1), (-1,), (2 ** 257 + 1,),
-                                   (None, None, 2 ** 129 + 1)]
+        cls.invalid_seed_values = [
+            (1, None, 1),
+            (-1,),
+            (2 ** 257 + 1,),
+            (None, None, 2 ** 129 + 1),
+        ]
 
     def test_seed_sequence(self):
-        bg = self.bit_generator_base(number=self.number, width=self.width,
-                                     mode="sequence")
+        bg = self.bit_generator_base(
+            number=self.number, width=self.width, mode="sequence"
+        )
         assert isinstance(bg, self.bit_generator_base)
         assert isinstance(bg.seed_seq, SeedSequence)
 
-        bg = self.bit_generator_base(0, number=self.number, width=self.width,
-                                     mode="sequence")
+        bg = self.bit_generator_base(
+            0, number=self.number, width=self.width, mode="sequence"
+        )
         assert bg.seed_seq.entropy == 0
 
         ss = SeedSequence(0)
@@ -1211,8 +1235,7 @@ class TestThreeFry4x32(Random123):
         power = 32 if key.dtype == np.uint32 else 64
         key = sum([int(key[i]) * 2 ** (power * i) for i in range(len(key))])
         counter = state["state"]["counter"]
-        counter = sum([int(counter[i]) * 2 ** (power * i)
-                       for i in range(len(counter))])
+        counter = sum([int(counter[i]) * 2 ** (power * i) for i in range(len(counter))])
         keyed = self.bit_generator(counter=counter, key=key, mode="legacy")
         assert_state_equal(bit_generator.state, keyed.state)
 
@@ -1226,15 +1249,18 @@ class TestPCG32(TestPCG64):
         cls.data1 = cls._read_csv(join(pwd, "./data/pcg32-testset-1.csv"))
         cls.data2 = cls._read_csv(join(pwd, "./data/pcg32-testset-2.csv"))
         cls.seed_error_type = TypeError
-        cls.invalid_seed_types = [(np.array([1, 2]),), (3.2,),
-                                  (None, np.zeros(1))]
-        cls.invalid_seed_values = [(-1,), (2 ** 129 + 1,), (None, -1),
-                                   (None, 2 ** 129 + 1)]
+        cls.invalid_seed_types = [(np.array([1, 2]),), (3.2,), (None, np.zeros(1))]
+        cls.invalid_seed_values = [
+            (-1,),
+            (2 ** 129 + 1,),
+            (None, -1),
+            (None, 2 ** 129 + 1),
+        ]
 
     def test_advance_symmetry(self):
         rs = Generator(self.setup_bitgenerator(self.data1["seed"]))
         state = rs.bit_generator.state
-        step = -0x9e3779b97f4a7c16
+        step = -0x9E3779B97F4A7C16
         rs.bit_generator.advance(step)
         val_neg = rs.integers(10)
         rs.bit_generator.state = state
@@ -1266,8 +1292,7 @@ class TestMT64(Base):
         bit_generator = rs.bit_generator
         assert_raises(ValueError, bit_generator.seed, np.array([np.pi]))
         assert_raises(ValueError, bit_generator.seed, np.array([-np.pi]))
-        assert_raises(ValueError, bit_generator.seed,
-                      np.array([np.pi, -np.pi]))
+        assert_raises(ValueError, bit_generator.seed, np.array([np.pi, -np.pi]))
         assert_raises(ValueError, bit_generator.seed, np.array([0, np.pi]))
         assert_raises(ValueError, bit_generator.seed, [np.pi])
         assert_raises(ValueError, bit_generator.seed, [0, np.pi])
@@ -1431,34 +1456,33 @@ class TestChaCha(Base):
         step = 2 ** 64
         bg.advance(step)
         state = bg.state
-        assert_equal(state["state"]["ctr"],
-                     np.array([0, 1], dtype=np.uint64))
+        assert_equal(state["state"]["ctr"], np.array([0, 1], dtype=np.uint64))
 
         bg = self.bit_generator(mode="sequence")
         step = 2 ** 64 - 1
         bg.advance(step)
         state = bg.state
         u64_max = np.iinfo(np.uint64).max
-        assert_equal(state["state"]["ctr"],
-                     np.array([u64_max, 0], dtype=np.uint64))
+        assert_equal(state["state"]["ctr"], np.array([u64_max, 0], dtype=np.uint64))
 
         bg = self.bit_generator(mode="sequence")
         step = 2 ** 128 - 16
         bg.advance(step)
         state = bg.state
-        assert_equal(state["state"]["ctr"],
-                     np.array([u64_max - 15, u64_max], dtype=np.uint64))
+        assert_equal(
+            state["state"]["ctr"], np.array([u64_max - 15, u64_max], dtype=np.uint64)
+        )
 
         bg = self.bit_generator(mode="sequence")
         step = 2 ** 128 - 1
         bg.advance(step)
         state = bg.state
-        assert_equal(state["state"]["ctr"],
-                     np.array([u64_max, u64_max], dtype=np.uint64))
+        assert_equal(
+            state["state"]["ctr"], np.array([u64_max, u64_max], dtype=np.uint64)
+        )
         bg.advance(1)
         state = bg.state
-        assert_equal(state["state"]["ctr"],
-                     np.array([0, 0], dtype=np.uint64))
+        assert_equal(state["state"]["ctr"], np.array([0, 0], dtype=np.uint64))
 
         bg = self.bit_generator(mode="sequence")
         state0 = bg.state
@@ -1491,19 +1515,23 @@ class TestHC128(Base):
         cls.data1 = cls._read_csv(join(pwd, "./data/hc-128-testset-1.csv"))
         cls.data2 = cls._read_csv(join(pwd, "./data/hc-128-testset-2.csv"))
         cls.seed_error_type = TypeError
-        cls.invalid_seed_types = [("apple",), (2 + 3j,), (3.1,), (-2,),
-                                  (np.empty((2, 2), dtype=np.int64),)]
+        cls.invalid_seed_types = [
+            ("apple",),
+            (2 + 3j,),
+            (3.1,),
+            (-2,),
+            (np.empty((2, 2), dtype=np.int64),),
+        ]
         cls.invalid_seed_values = []
 
     def test_seed_float_array(self):
         # GH #82
         rs = Generator(self.setup_bitgenerator(self.data1["seed"]))
-        assert_raises(self.seed_error_type, rs.bit_generator.seed,
-                      np.array([np.pi]))
-        assert_raises(self.seed_error_type, rs.bit_generator.seed,
-                      np.array([-np.pi]))
-        assert_raises(self.seed_error_type, rs.bit_generator.seed,
-                      np.array([np.pi, -np.pi]))
+        assert_raises(self.seed_error_type, rs.bit_generator.seed, np.array([np.pi]))
+        assert_raises(self.seed_error_type, rs.bit_generator.seed, np.array([-np.pi]))
+        assert_raises(
+            self.seed_error_type, rs.bit_generator.seed, np.array([np.pi, -np.pi])
+        )
         assert_raises(TypeError, rs.bit_generator.seed, np.array([0, np.pi]))
         assert_raises(TypeError, rs.bit_generator.seed, [np.pi])
         assert_raises(TypeError, rs.bit_generator.seed, [0, np.pi])
@@ -1537,15 +1565,19 @@ class TestSPECK128(TestHC128):
         cls.data1 = cls._read_csv(join(pwd, "./data/speck-128-testset-1.csv"))
         cls.data2 = cls._read_csv(join(pwd, "./data/speck-128-testset-2.csv"))
         cls.seed_error_type = TypeError
-        cls.invalid_seed_types = [("apple",), (2 + 3j,), (3.1,), (-2,),
-                                  (np.empty((2, 2), dtype=np.int64),)]
+        cls.invalid_seed_types = [
+            ("apple",),
+            (2 + 3j,),
+            (3.1,),
+            (-2,),
+            (np.empty((2, 2), dtype=np.int64),),
+        ]
         cls.invalid_seed_values = []
 
     def test_seed_out_of_range(self):
         # GH #82
         rs = Generator(self.setup_bitgenerator(self.data1["seed"]))
-        assert_raises(ValueError, rs.bit_generator.seed,
-                      2 ** 257)
+        assert_raises(ValueError, rs.bit_generator.seed, 2 ** 257)
         assert_raises(ValueError, rs.bit_generator.seed, -1)
 
     def test_invalid_seed_type(self):
@@ -1565,8 +1597,7 @@ class TestSPECK128(TestHC128):
     def test_seed_out_of_range_array(self):
         # GH #82
         rs = Generator(self.setup_bitgenerator(self.data1["seed"]))
-        assert_raises(ValueError, rs.bit_generator.seed,
-                      [2 ** (4 * self.bits + 1)])
+        assert_raises(ValueError, rs.bit_generator.seed, [2 ** (4 * self.bits + 1)])
         assert_raises(ValueError, rs.bit_generator.seed, [-1])
 
     def test_advance(self, step, warmup):
@@ -1596,32 +1627,38 @@ class TestSPECK128(TestHC128):
         step = 2 ** 65
         bg.advance(step)
         state = bg.state
-        assert_equal(state["state"]["ctr"],
-                     np.array([6, 1, 7, 1, 8, 1, 9, 1, 10, 1, 11, 1],
-                              dtype=np.uint64))
+        assert_equal(
+            state["state"]["ctr"],
+            np.array([6, 1, 7, 1, 8, 1, 9, 1, 10, 1, 11, 1], dtype=np.uint64),
+        )
 
         bg = self.bit_generator(mode="sequence")
         step = 2 ** 65 - 11
         bg.advance(step)
         state = bg.state
-        assert_equal(state["state"]["ctr"],
-                     np.array([0, 1, 1, 1, 2, 1, 3, 1, 4, 1, 5, 1],
-                              dtype=np.uint64))
+        assert_equal(
+            state["state"]["ctr"],
+            np.array([0, 1, 1, 1, 2, 1, 3, 1, 4, 1, 5, 1], dtype=np.uint64),
+        )
 
         bg = self.bit_generator(mode="sequence")
         step = 2 ** 129 - 24
         bg.advance(step)
         state = bg.state
         m = np.iinfo(np.uint64).max
-        assert_equal(state["state"]["ctr"],
-                     np.array([m - 5, m, m - 4, m, m - 3, m,
-                               m - 2, m, m - 1, m, m, m],
-                              dtype=np.uint64))
+        assert_equal(
+            state["state"]["ctr"],
+            np.array(
+                [m - 5, m, m - 4, m, m - 3, m, m - 2, m, m - 1, m, m, m],
+                dtype=np.uint64,
+            ),
+        )
         bg.random_raw(13)
         state = bg.state
-        assert_equal(state["state"]["ctr"],
-                     np.array([0, 0, 1, 0, 2, 0, 3, 0, 4, 0, 5, 0],
-                              dtype=np.uint64))
+        assert_equal(
+            state["state"]["ctr"],
+            np.array([0, 0, 1, 0, 2, 0, 3, 0, 4, 0, 5, 0], dtype=np.uint64),
+        )
 
         bg = self.bit_generator(mode="sequence")
         state0 = bg.state
