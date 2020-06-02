@@ -121,7 +121,7 @@ extern INLINE double mt19937_next_double(mt19937_state_t *state);
 void mt19937_jump_default(mt19937_state_t *state)
 {
     /*
-     * Testing function for comparrison with default
+     * Testing function for comparison with default
      */
     mt19937_jump_state(state, poly_default);
 }

@@ -92,8 +92,8 @@ for poly in ("poly-128", "clist_mt19937"):
             "key_md5": hash.hexdigest(),
             "pos": parsed[-1]["pos"]
         }
-        with open(f"out-{seed}-{step}.txt", "w") as o:
-            o.write(out.stdout.decode("utf8"))
+        with open(f"out-{fn}-{seed}-{step}.txt", "w") as o:
+            o.write(out.stdout.decode("utf8").replace("\r\n","\n"))
         if "128" in poly:
             jumped = mt19937.jumped()
         else:
