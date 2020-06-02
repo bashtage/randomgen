@@ -7,15 +7,14 @@ import pytest
 
 import randomgen.mtrand as random
 
-HAS_32BIT_CLONG = np.iinfo("l").max < 2**32
+HAS_32BIT_CLONG = np.iinfo("l").max < 2 ** 32
 
 
 class TestRegression(object):
-
     def test_VonMises_range(self):
         # Make sure generated random variables are in [-pi, pi].
         # Regression test for ticket #986.
-        for mu in np.linspace(-7., 7., 5):
+        for mu in np.linspace(-7.0, 7.0, 5):
             r = random.vonmises(mu, 1, 50)
             assert_(np.all(r > -np.pi) and np.all(r <= np.pi))
 
@@ -26,12 +25,12 @@ class TestRegression(object):
 
         # Test for ticket #5623
         args = [
-            (2**20 - 2, 2**20 - 2, 2**20 - 2),  # Check for 32-bit systems
+            (2 ** 20 - 2, 2 ** 20 - 2, 2 ** 20 - 2),  # Check for 32-bit systems
         ]
-        is_64bits = sys.maxsize > 2**32
+        is_64bits = sys.maxsize > 2 ** 32
         if is_64bits and sys.platform != "win32":
             # Check for 64-bit systems
-            args.append((2**40 - 2, 2**40 - 2, 2**40 - 2))
+            args.append((2 ** 40 - 2, 2 ** 40 - 2, 2 ** 40 - 2))
         for arg in args:
             assert_(random.hypergeometric(*arg) > 0)
 
@@ -60,10 +59,12 @@ class TestRegression(object):
 
     def test_shuffle_mixed_dimension(self):
         # Test for trac ticket #2074
-        for t in [[1, 2, 3, None],
-                  [(1, 1), (2, 2), (3, 3), None],
-                  [1, (2, 2), (3, 3), None],
-                  [(1, 1), 2, 3, None]]:
+        for t in [
+            [1, 2, 3, None],
+            [(1, 1), (2, 2), (3, 3), None],
+            [1, (2, 2), (3, 3), None],
+            [(1, 1), 2, 3, None],
+        ]:
             random.seed(12345)
             shuffled = list(t)
             random.shuffle(shuffled)
@@ -77,7 +78,7 @@ class TestRegression(object):
             random.seed(i)
             m.seed(4321)
             # If m.state is not honored, the result will change
-            assert_array_equal(m.choice(10, size=10, p=np.ones(10)/10.), res)
+            assert_array_equal(m.choice(10, size=10, p=np.ones(10) / 10.0), res)
 
     def test_multivariate_normal_size_types(self):
         # Test for multivariate_normal issue with "size" argument.
@@ -105,7 +106,7 @@ class TestRegression(object):
             probs = np.array(counts, dtype=dt) / sum(counts)
             c = random.choice(a, p=probs)
             assert_(c in a)
-            assert_raises(ValueError, random.choice, a, p=probs*0.9)
+            assert_raises(ValueError, random.choice, a, p=probs * 0.9)
 
     def test_shuffle_of_array_of_different_length_strings(self):
         # Test that permuting an array of different length strings
@@ -120,6 +121,7 @@ class TestRegression(object):
 
         # Force Garbage Collection - should not segfault.
         import gc
+
         gc.collect()
 
     def test_shuffle_of_array_of_objects(self):
@@ -134,6 +136,7 @@ class TestRegression(object):
 
         # Force Garbage Collection - should not segfault.
         import gc
+
         gc.collect()
 
     def test_permutation_subclass(self):
@@ -163,12 +166,23 @@ class TestRegression(object):
         with pytest.warns(FutureWarning):
             random.randint(0, 200, size=10, dtype=other_byteord_dt)
 
-    @pytest.mark.skipif(HAS_32BIT_CLONG,
-                        reason="Cannot test with 32-bit C long")
+    @pytest.mark.skipif(HAS_32BIT_CLONG, reason="Cannot test with 32-bit C long")
     def test_randint_117(self):
         random.seed(0)
-        expected = np.array([2357136044, 2546248239, 3071714933, 3626093760,
-                             2588848963, 3684848379, 2340255427, 3638918503,
-                             1819583497, 2678185683], dtype="int64")
-        actual = random.randint(2**32, size=10)
+        expected = np.array(
+            [
+                2357136044,
+                2546248239,
+                3071714933,
+                3626093760,
+                2588848963,
+                3684848379,
+                2340255427,
+                3638918503,
+                1819583497,
+                2678185683,
+            ],
+            dtype="int64",
+        )
+        actual = random.randint(2 ** 32, size=10)
         assert_array_equal(actual, expected)

@@ -9,17 +9,26 @@ __all__ = ["Xoroshiro128"]
 cdef uint64_t xoroshiro128_uint64(void* st) nogil:
     return xoroshiro128_next64(<xoroshiro128_state_t *>st)
 
+cdef uint64_t xoroshiro128plusplus_uint64(void* st) nogil:
+    return xoroshiro128plusplus_next64(<xoroshiro128_state_t *>st)
+
 cdef uint32_t xoroshiro128_uint32(void *st) nogil:
     return xoroshiro128_next32(<xoroshiro128_state_t *> st)
+
+cdef uint32_t xoroshiro128plusplus_uint32(void *st) nogil:
+    return xoroshiro128plusplus_next32(<xoroshiro128_state_t *> st)
 
 cdef double xoroshiro128_double(void* st) nogil:
     return uint64_to_double(xoroshiro128_next64(<xoroshiro128_state_t *>st))
 
+cdef double xoroshiro128plusplus_double(void* st) nogil:
+    return uint64_to_double(xoroshiro128plusplus_next64(<xoroshiro128_state_t *>st))
+
 cdef class Xoroshiro128(BitGenerator):
     """
-    Xoroshiro128(seed=None)
+    Xoroshiro128(seed=None, *, method=None, plusplus=False)
 
-    Container for the xoroshiro128+ pseudo-random number generator.
+    Container for the xoroshiro128+/++ pseudo-random number generator.
 
     Parameters
     ----------
@@ -35,6 +44,9 @@ cdef class Xoroshiro128(BitGenerator):
         SplitMix64-based initialization. "sequence" uses a SeedSequence
         to transforms the seed into an initial state. None defaults to "legacy"
         and warns that the default after 1.19 will change to "sequence".
+    plusplus : bool, default False
+        Whether to use the ++ version (xoroshiro128++). The default is False
+        which uses the xoroshiro128+ PRNG which
 
     Attributes
     ----------
@@ -55,7 +67,8 @@ cdef class Xoroshiro128(BitGenerator):
     improves speed and statistical quality of the PRNG [1]_. xoroshiro128+ has
     a period of :math:`2^{128} - 1` and supports jumping the sequence in
     increments of :math:`2^{64}`, which allows  multiple non-overlapping
-    sequences to be generated.
+    sequences to be generated. xoroshiro128++ improves xoroshiro128+ to remove
+    some low-frequency correlation.
 
     ``Xoroshiro128`` provides a capsule containing function pointers that produce
     doubles, and unsigned 32 and 64- bit integers. These are not
@@ -115,15 +128,24 @@ cdef class Xoroshiro128(BitGenerator):
     .. [1] "xoroshiro+ / xorshift* / xorshift+ generators and the PRNG shootout",
            http://xorshift.di.unimi.it/
     """
-    def __init__(self, seed=None, *, mode=None):
+    def __init__(self, seed=None, *, mode=None, plusplus=False):
         BitGenerator.__init__(self, seed, mode)
         self.seed(seed)
-
+        self._plusplus = plusplus
+        self._set_generators()
         self._bitgen.state = <void *>&self.rng_state
-        self._bitgen.next_uint64 = &xoroshiro128_uint64
-        self._bitgen.next_uint32 = &xoroshiro128_uint32
-        self._bitgen.next_double = &xoroshiro128_double
-        self._bitgen.next_raw = &xoroshiro128_uint64
+
+    cdef _set_generators(self):
+        if self._plusplus:
+            self._bitgen.next_uint64 = &xoroshiro128plusplus_uint64
+            self._bitgen.next_uint32 = &xoroshiro128plusplus_uint32
+            self._bitgen.next_double = &xoroshiro128plusplus_double
+            self._bitgen.next_raw = &xoroshiro128plusplus_uint64
+        else:
+            self._bitgen.next_uint64 = &xoroshiro128_uint64
+            self._bitgen.next_uint32 = &xoroshiro128_uint32
+            self._bitgen.next_double = &xoroshiro128_double
+            self._bitgen.next_raw = &xoroshiro128_uint64
 
     cdef _reset_state_variables(self):
         self.rng_state.has_uint32 = 0
@@ -190,7 +212,10 @@ cdef class Xoroshiro128(BitGenerator):
         """
         cdef np.npy_intp i
         for i in range(iter):
-            xoroshiro128_jump(&self.rng_state)
+            if self._plusplus:
+                xoroshiro128_jump(&self.rng_state)
+            else:
+                xoroshiro128plusplus_jump(&self.rng_state)
         self._reset_state_variables()
 
     def jump(self, np.npy_intp iter=1):
@@ -263,6 +288,7 @@ cdef class Xoroshiro128(BitGenerator):
         state[1] = self.rng_state.s[1]
         return {"bit_generator": self.__class__.__name__,
                 "s": state,
+                "plusplus": self._plusplus,
                 "has_uint32": self.rng_state.has_uint32,
                 "uinteger": self.rng_state.uinteger}
 
@@ -279,3 +305,8 @@ cdef class Xoroshiro128(BitGenerator):
         self.rng_state.s[1] = <uint64_t>state[1]
         self.rng_state.has_uint32 = value["has_uint32"]
         self.rng_state.uinteger = value["uinteger"]
+        plusplus = False
+        if "plusplus" in value:
+            plusplus = value["plusplus"]
+        self._plusplus = plusplus
+        self._set_generators()

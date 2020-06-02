@@ -21,9 +21,9 @@ move distributions.dll ../../examples/numba/
 import os
 
 from cffi import FFI
-import numba as nb
 import numpy as np
 
+import numba as nb
 from randomgen import Xoroshiro128
 
 ffi = FFI()
@@ -34,9 +34,11 @@ elif os.path.exists("./libdistributions.so"):
 else:
     raise RuntimeError("Required DLL/so file was not found.")
 
-ffi.cdef("""
+ffi.cdef(
+    """
 double random_gauss_zig(void *bitgen_state);
-""")
+"""
+)
 x = Xoroshiro128()
 xffi = x.cffi
 bit_generator = xffi.bit_generator

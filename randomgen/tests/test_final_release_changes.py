@@ -1,13 +1,33 @@
 import pytest
 
-from randomgen import (DSFMT, MT19937, PCG32, PCG64, Generator, Philox,
-                       ThreeFry, Xoroshiro128, Xorshift1024, Xoshiro256,
-                       Xoshiro512)
+from randomgen import (
+    DSFMT,
+    MT19937,
+    PCG32,
+    PCG64,
+    Generator,
+    Philox,
+    ThreeFry,
+    Xoroshiro128,
+    Xorshift1024,
+    Xoshiro256,
+    Xoshiro512,
+)
 
 random_gen = Generator()
 
-bit_generators = [DSFMT, MT19937, PCG32, PCG64, Philox, ThreeFry,
-                  Xoroshiro128, Xorshift1024, Xoshiro256, Xoshiro512]
+bit_generators = [
+    DSFMT,
+    MT19937,
+    PCG32,
+    PCG64,
+    Philox,
+    ThreeFry,
+    Xoroshiro128,
+    Xorshift1024,
+    Xoshiro256,
+    Xoshiro512,
+]
 
 
 @pytest.fixture(scope="module", params=bit_generators)

@@ -20,11 +20,9 @@ except ImportError:
         so it can be used in NumPy with older Python versions.
         """
 
-        _WARNING_DETAILS = ("message", "category", "filename", "lineno",
-                            "file", "line")
+        _WARNING_DETAILS = ("message", "category", "filename", "lineno", "file", "line")
 
-        def __init__(self, message, category, filename, lineno, file=None,
-                     line=None):
+        def __init__(self, message, category, filename, lineno, file=None, line=None):
             local_values = locals()
             for attr in self._WARNING_DETAILS:
                 setattr(self, attr, local_values[attr])
@@ -34,10 +32,18 @@ except ImportError:
                 self._category_name = None
 
         def __str__(self):
-            return ("{message : %r, category : %r, "
-                    "filename : %r, lineno : %s, "
-                    "line : %r}" % (self.message, self._category_name,
-                                    self.filename, self.lineno, self.line))
+            return (
+                "{message : %r, category : %r, "
+                "filename : %r, lineno : %s, "
+                "line : %r}"
+                % (
+                    self.message,
+                    self._category_name,
+                    self.filename,
+                    self.lineno,
+                    self.line,
+                )
+            )
 
     import re
     import warnings
@@ -103,6 +109,7 @@ except ImportError:
         ...     # do something which causes a warning in np.ma.core
         ...     pass
         """
+
         def __init__(self, forwarding_rule="always"):
             self._entered = False
 
@@ -125,8 +132,7 @@ except ImportError:
                 if hasattr(module, "__warningregistry__"):
                     module.__warningregistry__.clear()
 
-        def _filter(self, category=Warning, message="", module=None,
-                    record=False):
+        def _filter(self, category=Warning, message="", module=None, record=False):
             if record:
                 record = []  # The log where to store warnings
             else:
@@ -134,22 +140,26 @@ except ImportError:
             if self._entered:
                 if module is None:
                     warnings.filterwarnings(
-                        "always", category=category, message=message)
+                        "always", category=category, message=message
+                    )
                 else:
                     module_regex = module.__name__.replace(".", r"\.") + "$"
                     warnings.filterwarnings(
-                        "always", category=category, message=message,
-                        module=module_regex)
+                        "always",
+                        category=category,
+                        message=message,
+                        module=module_regex,
+                    )
                     self._tmp_modules.add(module)
                     self._clear_registries()
 
                 self._tmp_suppressions.append(
-                    (category, message, re.compile(message, re.I), module,
-                     record))
+                    (category, message, re.compile(message, re.I), module, record)
+                )
             else:
                 self._suppressions.append(
-                    (category, message, re.compile(message, re.I), module,
-                     record))
+                    (category, message, re.compile(message, re.I), module, record)
+                )
 
             return record
 
@@ -171,8 +181,9 @@ except ImportError:
             When added within a context, filters are only added inside
             the context and will be forgotten when the context is exited.
             """
-            self._filter(category=category, message=message, module=module,
-                         record=False)
+            self._filter(
+                category=category, message=message, module=module, record=False
+            )
 
         def record(self, category=Warning, message="", module=None):
             """
@@ -197,8 +208,9 @@ except ImportError:
             When added within a context, filters are only added inside
             the context and will be forgotten when the context is exited.
             """
-            return self._filter(category=category, message=message,
-                                module=module, record=True)
+            return self._filter(
+                category=category, message=message, module=module, record=True
+            )
 
         def __enter__(self):
             if self._entered:
@@ -221,13 +233,12 @@ except ImportError:
                 if log is not None:
                     del log[:]  # clear the log
                 if mod is None:
-                    warnings.filterwarnings(
-                        "always", category=cat, message=mess)
+                    warnings.filterwarnings("always", category=cat, message=mess)
                 else:
                     module_regex = mod.__name__.replace(".", r"\.") + "$"
                     warnings.filterwarnings(
-                        "always", category=cat, message=mess,
-                        module=module_regex)
+                        "always", category=cat, message=mess, module=module_regex
+                    )
                     self._tmp_modules.add(mod)
             warnings.showwarning = self._showwarning
             if hasattr(warnings, "_showwarnmsg"):
@@ -247,21 +258,31 @@ except ImportError:
             del self._filters
 
         def _showwarnmsg(self, msg):
-            self._showwarning(msg.message, msg.category, msg.filename,
-                              msg.lineno, msg.file, msg.line, use_warnmsg=msg)
+            self._showwarning(
+                msg.message,
+                msg.category,
+                msg.filename,
+                msg.lineno,
+                msg.file,
+                msg.line,
+                use_warnmsg=msg,
+            )
 
-        def _showwarning(self, message, category, filename, lineno,
-                         *args, **kwargs):
+        def _showwarning(self, message, category, filename, lineno, *args, **kwargs):
             use_warnmsg = kwargs.pop("use_warnmsg", None)
             for cat, _, pattern, mod, rec in (
-                    self._suppressions + self._tmp_suppressions)[::-1]:
-                if (issubclass(category, cat) and
-                        pattern.match(message.args[0]) is not None):
+                self._suppressions + self._tmp_suppressions
+            )[::-1]:
+                if (
+                    issubclass(category, cat)
+                    and pattern.match(message.args[0]) is not None
+                ):
                     if mod is None:
                         # Message and category match, recorded or ignored
                         if rec is not None:
-                            msg = WarningMessage(message, category, filename,
-                                                 lineno, **kwargs)
+                            msg = WarningMessage(
+                                message, category, filename, lineno, **kwargs
+                            )
                             self.log.append(msg)
                             rec.append(msg)
                         return
@@ -270,8 +291,9 @@ except ImportError:
                     elif mod.__file__.startswith(filename):
                         # The message and module (filename) match
                         if rec is not None:
-                            msg = WarningMessage(message, category, filename,
-                                                 lineno, **kwargs)
+                            msg = WarningMessage(
+                                message, category, filename, lineno, **kwargs
+                            )
                             self.log.append(msg)
                             rec.append(msg)
                         return
@@ -280,8 +302,9 @@ except ImportError:
             # unless we should only pass it once
             if self._forwarding_rule == "always":
                 if use_warnmsg is None:
-                    self._orig_show(message, category, filename, lineno,
-                                    *args, **kwargs)
+                    self._orig_show(
+                        message, category, filename, lineno, *args, **kwargs
+                    )
                 else:
                     self._orig_showmsg(use_warnmsg)
                 return
@@ -297,8 +320,7 @@ except ImportError:
                 return
             self._forwarded.add(signature)
             if use_warnmsg is None:
-                self._orig_show(message, category, filename, lineno, *args,
-                                **kwargs)
+                self._orig_show(message, category, filename, lineno, *args, **kwargs)
             else:
                 self._orig_showmsg(use_warnmsg)
 
@@ -307,6 +329,7 @@ except ImportError:
             Function decorator to apply certain suppressions to a whole
             function.
             """
+
             @wraps(func)
             def new_func(*args, **kwargs):
                 with self:

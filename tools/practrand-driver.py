@@ -21,27 +21,28 @@ import numpy as np
 
 import randomgen as rg
 
-CONFIG = {rg.PCG32: {'output': 32, 'seed': 64, 'seed_size': 64},
-          rg.PCG64: {'output': 64, 'seed': 128, 'seed_size': 128},
-          rg.ThreeFry: {'output': 64, 'seed': 256, 'seed_size': 64},
-          rg.Xoshiro256: {'output': 64, 'seed': 256, 'seed_size': 64},
-          rg.Philox: {'output': 64, 'seed': 256, 'seed_size': 64},
-          rg.SFMT: {'output': 64, 'seed': 128, 'seed_size': 32}}
+CONFIG = {
+    rg.PCG32: {"output": 32, "seed": 64, "seed_size": 64},
+    rg.PCG64: {"output": 64, "seed": 128, "seed_size": 128},
+    rg.ThreeFry: {"output": 64, "seed": 256, "seed_size": 64},
+    rg.Xoshiro256: {"output": 64, "seed": 256, "seed_size": 64},
+    rg.Philox: {"output": 64, "seed": 256, "seed_size": 64},
+    rg.SFMT: {"output": 64, "seed": 128, "seed_size": 32},
+}
 
 
 def gen_interleaved_bytes(bitgens, n_per_gen=1024, output=32):
     astype = np.uint32 if output == 32 else np.uint64
     view = np.uint64
     while True:
-        draws = [g.random_raw(n_per_gen).astype(astype).view(view) for g in
-                 bitgens]
+        draws = [g.random_raw(n_per_gen).astype(astype).view(view) for g in bitgens]
         interleaved = np.column_stack(draws).ravel()
         bytes_chunk = bytes(interleaved.data)
         yield bytes_chunk
 
 
 def bitgen_from_state(state):
-    cls = getattr(rg, state['bit_generator'])
+    cls = getattr(rg, state["bit_generator"])
     bitgen = cls()
     bitgen.state = state
     return bitgen
@@ -50,24 +51,24 @@ def bitgen_from_state(state):
 def jumped_state(bit_generator, n_streams=2, entropy=None):
     bitgen = getattr(rg, bit_generator)
     config = CONFIG[bitgen]
-    seed = config['seed']
+    seed = config["seed"]
     if entropy is None:
         entropy = rg.random_entropy(seed // 32)
-        if config['seed_size'] == 64:
+        if config["seed_size"] == 64:
             entropy = entropy.view(np.uint64)
-            if config['seed'] == 64:
+            if config["seed"] == 64:
                 entropy = entropy[0]
-        elif config['seed_size'] == 128:
+        elif config["seed_size"] == 128:
             entropy = int(entropy[0]) + int(entropy[1]) * 2 ** 64
-        elif config['seed_size'] == 256:
+        elif config["seed_size"] == 256:
             base = int(0)
             for i in range(4):
                 base += int(entropy[i]) * (2 ** (64 * i))
             entropy = base
-        elif config['seed_size'] != 32:
+        elif config["seed_size"] != 32:
             raise NotImplementedError
     else:
-        seed_size = config['seed_size']
+        seed_size = config["seed_size"]
         if seed_size in (32, 64):
             _entropy = []
             while entropy > 0:
@@ -123,59 +124,71 @@ def from_json(filename):
 def main():
     logging.basicConfig(level=logging.INFO)
     import argparse
+
     parser = argparse.ArgumentParser(
-        formatter_class=argparse.ArgumentDefaultsHelpFormatter)
-    parser.add_argument('-bg', '--bit_generator', type=str, default='PCG32',
-                        help='BitGenerator to use.')
-    parser.add_argument('--load', action='store_true',
-                        help='Load BitGenerators from JSON file.')
-    parser.add_argument('--save', action='store_true',
-                        help='Save BitGenerators to JSON file.')
-    parser.add_argument('-j', '--jumped', action='store_true',
-                        help='Use jumped() to get new streams.')
-    parser.add_argument('-s', '--seed', type=int,
-                        help='Set a single seed')
-    parser.add_argument('-n', '--n-streams', type=int, default=2,
-                        help='The number of streams to interleave')
-    parser.add_argument('-f', '--filename', type=str,
-                        default='',
-                        help='JSON filename. Does not save if empty')
+        formatter_class=argparse.ArgumentDefaultsHelpFormatter
+    )
+    parser.add_argument(
+        "-bg", "--bit_generator", type=str, default="PCG32", help="BitGenerator to use."
+    )
+    parser.add_argument(
+        "--load", action="store_true", help="Load BitGenerators from JSON file."
+    )
+    parser.add_argument(
+        "--save", action="store_true", help="Save BitGenerators to JSON file."
+    )
+    parser.add_argument(
+        "-j", "--jumped", action="store_true", help="Use jumped() to get new streams."
+    )
+    parser.add_argument("-s", "--seed", type=int, help="Set a single seed")
+    parser.add_argument(
+        "-n",
+        "--n-streams",
+        type=int,
+        default=2,
+        help="The number of streams to interleave",
+    )
+    parser.add_argument(
+        "-f",
+        "--filename",
+        type=str,
+        default="",
+        help="JSON filename. Does not save if empty",
+    )
 
     args = parser.parse_args()
     filename = args.filename
     if not filename:
-        filename = args.bit_generator.lower() + '.json'
-        logging.log(logging.INFO, 'Default filename is ' + filename)
+        filename = args.bit_generator.lower() + ".json"
+        logging.log(logging.INFO, "Default filename is " + filename)
     if args.load:
-        logging.log(logging.INFO, 'Loading bit generator config from ' +
-                    filename)
+        logging.log(logging.INFO, "Loading bit generator config from " + filename)
         bitgens = from_json(filename)
     elif args.jumped:
-        msg = 'Creating {n} bit generators ' \
-              'of {bg_type}'.format(n=args.n_streams,
-                                    bg_type=args.bit_generator)
+        msg = "Creating {n} bit generators of {bg_type}".format(
+            n=args.n_streams, bg_type=args.bit_generator
+        )
         logging.log(logging.INFO, msg)
-        bitgens = jumped_state(args.bit_generator, n_streams=args.n_streams,
-                               entropy=args.seed)
+        bitgens = jumped_state(
+            args.bit_generator, n_streams=args.n_streams, entropy=args.seed
+        )
     else:
-        logging.log(logging.WARN, 'You are only testing a single stream')
-        bitgens = jumped_state(args.bit_generator, n_streams=1,
-                               entropy=args.seed)
+        logging.log(logging.WARN, "You are only testing a single stream")
+        bitgens = jumped_state(args.bit_generator, n_streams=1, entropy=args.seed)
 
     if args.save:
-        logging.log(logging.INFO, 'Saving bit generator config to ' +
-                    filename)
+        logging.log(logging.INFO, "Saving bit generator config to " + filename)
         dumped = dump_states(bitgens, disp=False)
-        with open(filename, 'w') as out:
+        with open(filename, "w") as out:
             out.write(dumped)
 
-    output = CONFIG[bitgens[0].__class__]['output']
-    logging.log(logging.INFO, 'Output bit size is {0}'.format(output))
+    output = CONFIG[bitgens[0].__class__]["output"]
+    logging.log(logging.INFO, "Output bit size is {0}".format(output))
     for chunk in gen_interleaved_bytes(bitgens, output=output):
         sys.stdout.buffer.write(chunk)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     try:
         main()
     except (BrokenPipeError, IOError):

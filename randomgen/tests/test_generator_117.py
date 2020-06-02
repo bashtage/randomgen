@@ -25,15 +25,18 @@ v118 = LooseVersion("1.18")
 NP_LT_1174 = LooseVersion(np.__version__) < v1174
 NP_LT_1174_OR_GT_118 = NP_LT_1174 or LooseVersion(np.__version__) > v118
 
-pytestmark = pytest.mark.skipif(NP_LT_1174_OR_GT_118,
-                                reason="Only test 1.17.4 to 1.18.x")
+pytestmark = pytest.mark.skipif(
+    NP_LT_1174_OR_GT_118, reason="Only test 1.17.4 to 1.18.x"
+)
 
 
 def positive_param():
     base = Generator(PCG64())
-    return [base.chisquare(10),
-            base.chisquare(10, (5, 1, 3)),
-            base.chisquare(10, (6, 5, 4, 3))]
+    return [
+        base.chisquare(10),
+        base.chisquare(10, (5, 1, 3)),
+        base.chisquare(10, (6, 5, 4, 3)),
+    ]
 
 
 def positive(num_args):
@@ -47,20 +50,24 @@ def positive(num_args):
 
 def int_prob():
     base = Generator(PCG64())
-    return ([100, 0.5],
-            [100, 0.5, (6, 5, 4, 3)],
-            [base.integers(10, 100, size=(10, 2)), 0.3],
-            [10, base.random((20, 2, 2))],
-            [base.integers(10, 100, size=(5, 4, 3)), base.random(3)])
+    return (
+        [100, 0.5],
+        [100, 0.5, (6, 5, 4, 3)],
+        [base.integers(10, 100, size=(10, 2)), 0.3],
+        [10, base.random((20, 2, 2))],
+        [base.integers(10, 100, size=(5, 4, 3)), base.random(3)],
+    )
 
 
 def prob():
     base = Generator(PCG64())
-    return ([0.5],
-            [0.5, (6, 5, 4, 3)],
-            [0.3],
-            [base.random((20, 2, 2))],
-            [base.random(3)])
+    return (
+        [0.5],
+        [0.5, (6, 5, 4, 3)],
+        [0.3],
+        [base.random((20, 2, 2))],
+        [base.random(3)],
+    )
 
 
 def length():
@@ -68,9 +75,7 @@ def length():
 
 
 def input_0():
-    return (tuple([]),
-            (5,),
-            ((5, 4, 3),))
+    return (tuple([]), (5,), ((5, 4, 3),))
 
 
 def loc_scale():
@@ -91,13 +96,20 @@ def uniform():
     lo = positive_param()
     high = positive_param()
     scale = positive_param()
-    return [(l / l + h + s, (l + h) / (l + h + s)) for l, h, s in
-            zip(lo, high, scale)]
+    return [(l / l + h + s, (l + h) / (l + h + s)) for l, h, s in zip(lo, high, scale)]
 
 
 def integers():
-    dtypes = [np.int8, np.int16, np.int32, np.int64,
-              np.uint8, np.uint16, np.uint32, np.uint64]
+    dtypes = [
+        np.int8,
+        np.int16,
+        np.int32,
+        np.int64,
+        np.uint8,
+        np.uint16,
+        np.uint32,
+        np.uint64,
+    ]
     base = Generator(PCG64())
     shape = tuple(base.integers(5, 10, size=2))
     configs = []
@@ -107,10 +119,14 @@ def integers():
         s2 = np.ones((1,) + shape, dtype=dt)
         lo = np.iinfo(dt).min
         hi = np.iinfo(dt).max
-        configs.extend([(0, np.iinfo(dt).max, None, dt),
-                        (lo, hi // 2, None, dt),
-                        (lo, hi, (10, 2), dt),
-                        (lo // 2 * s1, hi // 2 * s2, None, dt)])
+        configs.extend(
+            [
+                (0, np.iinfo(dt).max, None, dt),
+                (lo, hi // 2, None, dt),
+                (lo, hi, (10, 2), dt),
+                (lo // 2 * s1, hi // 2 * s2, None, dt),
+            ]
+        )
     return configs
 
 
@@ -143,42 +159,44 @@ def multinomial():
     return (10, probs), (base.integers(10, 100, size=(3, 4)), probs)
 
 
-distributions = {"beta": positive(2),
-                 "binomial": int_prob,
-                 "bytes": length,
-                 "chisquare": positive(1),
-                 "dirichlet": dirichlet,
-                 "exponential": positive(1),
-                 "f": positive(2),
-                 "gamma": positive(2),
-                 "geometric": prob,
-                 "gumbel": positive(2),
-                 "laplace": loc_scale,
-                 "logistic": loc_scale,
-                 "lognormal": loc_scale,
-                 "logseries": prob,
-                 "multinomial": multinomial,
-                 "multivariate_normal": "",
-                 "negative_binomial": int_prob,
-                 "noncentral_chisquare": positive(2),
-                 "noncentral_f": positive(3),
-                 "normal": loc_scale,
-                 "pareto": positive(1),
-                 "poisson": positive(1),
-                 "power": positive(1),
-                 "random": input_0,
-                 "rayleigh": positive(1),
-                 "standard_cauchy": input_0,
-                 "standard_exponential": input_0,
-                 "standard_gamma": positive(1),
-                 "standard_normal": input_0,
-                 "standard_t": positive(1),
-                 "triangular": triangular,
-                 "uniform": uniform,
-                 "vonmises": loc_scale,
-                 "wald": positive(2),
-                 "weibull": positive(1),
-                 "zipf": above_1}
+distributions = {
+    "beta": positive(2),
+    "binomial": int_prob,
+    "bytes": length,
+    "chisquare": positive(1),
+    "dirichlet": dirichlet,
+    "exponential": positive(1),
+    "f": positive(2),
+    "gamma": positive(2),
+    "geometric": prob,
+    "gumbel": positive(2),
+    "laplace": loc_scale,
+    "logistic": loc_scale,
+    "lognormal": loc_scale,
+    "logseries": prob,
+    "multinomial": multinomial,
+    "multivariate_normal": "",
+    "negative_binomial": int_prob,
+    "noncentral_chisquare": positive(2),
+    "noncentral_f": positive(3),
+    "normal": loc_scale,
+    "pareto": positive(1),
+    "poisson": positive(1),
+    "power": positive(1),
+    "random": input_0,
+    "rayleigh": positive(1),
+    "standard_cauchy": input_0,
+    "standard_exponential": input_0,
+    "standard_gamma": positive(1),
+    "standard_normal": input_0,
+    "standard_t": positive(1),
+    "triangular": triangular,
+    "uniform": uniform,
+    "vonmises": loc_scale,
+    "wald": positive(2),
+    "weibull": positive(1),
+    "zipf": above_1,
+}
 
 tests = []
 ids = []

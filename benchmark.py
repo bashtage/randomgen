@@ -8,7 +8,7 @@ import pandas as pd
 
 rs = RandomState()
 
-SETUP = '''
+SETUP = """
 import numpy as np
 if '{bitgen}' == 'numpy':
     import numpy.random
@@ -18,19 +18,35 @@ else:
     from randomgen import Generator, {bitgen}
     rg = Generator({bitgen}())
     rg.random()
-'''
+"""
 
 scale_32 = scale_64 = 1
-if struct.calcsize('P') == 8 and os.name != 'nt':
+if struct.calcsize("P") == 8 and os.name != "nt":
     # 64 bit
     scale_32 = 0.5
 else:
     scale_64 = 2
 
-PRNGS = ['DSFMT', 'PCG64', 'PCG32', 'MT19937', 'MT64', 'Xoroshiro128',
-         'Xorshift1024', 'Xoshiro256', 'Xoshiro512', 'Philox', 'ThreeFry',
-         'numpy', 'SFMT', 'AESCounter', 'ChaCha', 'HC128', 'SPECK128',
-         'JSF']
+PRNGS = [
+    "DSFMT",
+    "PCG64",
+    "PCG32",
+    "MT19937",
+    "MT64",
+    "Xoroshiro128",
+    "Xorshift1024",
+    "Xoshiro256",
+    "Xoshiro512",
+    "Philox",
+    "ThreeFry",
+    "numpy",
+    "SFMT",
+    "AESCounter",
+    "ChaCha",
+    "HC128",
+    "SPECK128",
+    "JSF",
+]
 
 
 def timer(code, setup):
@@ -38,56 +54,56 @@ def timer(code, setup):
 
 
 def print_legend(legend):
-    print('\n' + legend + '\n' + '*' * max(60, len(legend)))
+    print("\n" + legend + "\n" + "*" * max(60, len(legend)))
 
 
 def add_color(val):
     color = str(2) if val > 0 else str(1)
-    return "\33[38;5;" + color + "m" + '{0:0.1f}%'.format(val) + "\33[0m"
+    return "\33[38;5;" + color + "m" + "{0:0.1f}%".format(val) + "\33[0m"
 
 
-def run_timer(command, numpy_command=None, setup='', random_type=''):
-    print('-' * 80)
+def run_timer(command, numpy_command=None, setup="", random_type=""):
+    print("-" * 80)
     if numpy_command is None:
         numpy_command = command
 
     res = {}
     for bitgen in PRNGS:
-        cmd = numpy_command if bitgen == 'numpy' else command
+        cmd = numpy_command if bitgen == "numpy" else command
         res[bitgen] = timer(cmd, setup=setup.format(bitgen=bitgen))
 
     s = pd.Series(res).sort_index()
-    t = s.apply(lambda x: '{0:0.2f} ms'.format(x))
-    print_legend('Time to produce 1,000,000 ' + random_type)
+    t = s.apply(lambda x: "{0:0.2f} ms".format(x))
+    print_legend("Time to produce 1,000,000 " + random_type)
     print(t)
 
     p = 1000.0 / s
-    p = p.apply(lambda x: '{0:0.2f} million'.format(x))
-    print_legend(random_type + ' per second')
+    p = p.apply(lambda x: "{0:0.2f} million".format(x))
+    print_legend(random_type + " per second")
     print(p)
 
-    baseline = [k for k in p.index if 'numpy' in k][0]
+    baseline = [k for k in p.index if "numpy" in k][0]
     p = 1000.0 / s
     p = p / p[baseline] * 100 - 100
     p = p.drop(baseline, 0)
     p = p.apply(add_color)
-    print_legend('Speed-up relative to NumPy')
+    print_legend("Speed-up relative to NumPy")
     print(p)
-    print('-' * 80)
+    print("-" * 80)
 
 
 def timer_raw():
-    command = 'rg._bit_generator.random_raw(size=1000000, output=False)'
+    command = "rg._bit_generator.random_raw(size=1000000, output=False)"
     info = np.iinfo(np.int32)
-    command_numpy = 'rg.random_integers({max},size=1000000)'
+    command_numpy = "rg.random_integers({max},size=1000000)"
     command_numpy = command_numpy.format(max=info.max)
-    run_timer(command, command_numpy, SETUP, 'Raw Values')
+    run_timer(command, command_numpy, SETUP, "Raw Values")
 
 
 def timer_uniform():
-    command = 'rg.random(1000000)'
-    command_numpy = 'rg.random_sample(1000000)'
-    run_timer(command, command_numpy, SETUP, 'Uniforms')
+    command = "rg.random(1000000)"
+    command_numpy = "rg.random_sample(1000000)"
+    run_timer(command, command_numpy, SETUP, "Uniforms")
 
 
 def timer_bounded(bits=8, max=95, use_masked=True):
@@ -111,64 +127,79 @@ def timer_bounded(bits=8, max=95, use_masked=True):
     power of two.
     """
     if bits not in (8, 16, 32, 64):
-        raise ValueError('bits must be one of 8, 16, 32, 64.')
+        raise ValueError("bits must be one of 8, 16, 32, 64.")
     minimum = 0
 
     if use_masked:  # Use masking & rejection.
-        command = 'rg.randint({min}, {max}+1, 1000000, dtype=np.uint{bits},' \
-                  ' use_masked=True)'
+        command = (
+            "rg.randint({min}, {max}+1, 1000000, dtype=np.uint{bits},"
+            " use_masked=True)"
+        )
     else:  # Use Lemire's algo.
-        command = 'rg.randint({min}, {max}+1, 1000000, dtype=np.uint{bits},' \
-                  ' use_masked=False)'
+        command = (
+            "rg.randint({min}, {max}+1, 1000000, dtype=np.uint{bits},"
+            " use_masked=False)"
+        )
 
     command = command.format(min=minimum, max=max, bits=bits)
 
-    command_numpy = 'rg.randint({min}, {max}+1, 1000000, dtype=np.uint{bits})'
+    command_numpy = "rg.randint({min}, {max}+1, 1000000, dtype=np.uint{bits})"
     command_numpy = command_numpy.format(min=minimum, max=max, bits=bits)
 
-    run_timer(command, command_numpy, SETUP,
-              '{bits}-bit bounded unsigned integers (max={max}, '
-              'use_masked={use_masked})'.format(max=max, use_masked=use_masked,
-                                                bits=bits))
+    run_timer(
+        command,
+        command_numpy,
+        SETUP,
+        "{bits}-bit bounded unsigned integers (max={max}, "
+        "use_masked={use_masked})".format(max=max, use_masked=use_masked, bits=bits),
+    )
 
 
 def timer_32bit():
     info = np.iinfo(np.uint32)
     minimum, maximum = info.min, info.max
-    command = 'rg.randint(2**32, size=1000000, dtype=\'uint32\')'
-    command_numpy = 'rg.randint({min}, {max}+1, 1000000, dtype=np.uint32)'
+    command = "rg.randint(2**32, size=1000000, dtype='uint32')"
+    command_numpy = "rg.randint({min}, {max}+1, 1000000, dtype=np.uint32)"
     command_numpy = command_numpy.format(min=minimum, max=maximum)
-    run_timer(command, command_numpy, SETUP, '32-bit unsigned integers')
+    run_timer(command, command_numpy, SETUP, "32-bit unsigned integers")
 
 
 def timer_64bit():
     info = np.iinfo(np.uint64)
     minimum, maximum = info.min, info.max
-    command = 'rg.randint(2**64, size=1000000, dtype=\'uint64\')'
-    command_numpy = 'rg.randint({min}, {max}+1, 1000000, dtype=np.uint64)'
+    command = "rg.randint(2**64, size=1000000, dtype='uint64')"
+    command_numpy = "rg.randint({min}, {max}+1, 1000000, dtype=np.uint64)"
     command_numpy = command_numpy.format(min=minimum, max=maximum)
-    run_timer(command, command_numpy, SETUP, '64-bit unsigned integers')
+    run_timer(command, command_numpy, SETUP, "64-bit unsigned integers")
 
 
 def timer_normal_zig():
-    command = 'rg.standard_normal(1000000)'
-    command_numpy = 'rg.standard_normal(1000000)'
-    run_timer(command, command_numpy, SETUP, 'Standard normals (Ziggurat)')
+    command = "rg.standard_normal(1000000)"
+    command_numpy = "rg.standard_normal(1000000)"
+    run_timer(command, command_numpy, SETUP, "Standard normals (Ziggurat)")
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     import argparse
 
     parser = argparse.ArgumentParser()
-    parser.add_argument('-f', '--full',
-                        help='Run benchmarks for a wide range of '
-                             'distributions. If not provided, only tests the '
-                             'production of uniform values.',
-                        dest='full', action='store_true')
-    parser.add_argument('-bi', '--bounded-ints',
-                        help='Included benchmark coverage of the bounded '
-                             'integer generators in a full run.',
-                        dest='bounded_ints', action='store_true')
+    parser.add_argument(
+        "-f",
+        "--full",
+        help="Run benchmarks for a wide range of "
+        "distributions. If not provided, only tests the "
+        "production of uniform values.",
+        dest="full",
+        action="store_true",
+    )
+    parser.add_argument(
+        "-bi",
+        "--bounded-ints",
+        help="Included benchmark coverage of the bounded "
+        "integer generators in a full run.",
+        dest="bounded_ints",
+        action="store_true",
+    )
     args = parser.parse_args()
 
     timer_uniform()

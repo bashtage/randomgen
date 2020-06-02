@@ -97,7 +97,7 @@ def test_state():
     assert "pool_size" in ss.state
     assert ss.state["pool_size"] == 4
 
-    for key in ("spawn_key"):
+    for key in "spawn_key":
         assert key not in ss.state
     children = ss.spawn(10)
     assert ss.state["n_children_spawned"] == 10
@@ -146,10 +146,12 @@ def test_seedless():
 
 def test_equiv_entropy():
     ss0 = SeedSequence(0)
-    sss = [SeedSequence(np.array([0], dtype=np.uint32)),
-           SeedSequence("0"),
-           SeedSequence("0x0"),
-           SeedSequence(["0"])]
+    sss = [
+        SeedSequence(np.array([0], dtype=np.uint32)),
+        SeedSequence("0"),
+        SeedSequence("0x0"),
+        SeedSequence(["0"]),
+    ]
 
     for ss in sss:
         assert_array_equal(ss.generate_state(4), ss0.generate_state(4))
@@ -184,13 +186,22 @@ def test_against_numpy():
 
 @pytest.mark.skipif(not HAS_NP_SEED_SEQUENCE, reason="NumPy too old")
 def test_against_numpy_spawn():
-    entropy = [1231854054, 2485020620, 2472030289,  641337343, 3981837114,
-               248869471,  532471113,  949593482, 1224833511, 2864447214]
+    entropy = [
+        1231854054,
+        2485020620,
+        2472030289,
+        641337343,
+        3981837114,
+        248869471,
+        532471113,
+        949593482,
+        1224833511,
+        2864447214,
+    ]
     ss = SeedSequence(entropy)
     np_ss = NPSeedSequence(entropy)
     ss_children = ss.spawn(2)
     np_ss_children = np_ss.spawn(2)
     assert ss.n_children_spawned == np_ss.n_children_spawned
     for child, np_child in zip(ss_children, np_ss_children):
-        assert_array_equal(child.generate_state(10),
-                           np_child.generate_state(10))
+        assert_array_equal(child.generate_state(10), np_child.generate_state(10))
