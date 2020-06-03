@@ -59,8 +59,9 @@ class TestRegression(object):
             mt19937.bit_generator.seed(12345)
             shuffled = np.array(list(t), dtype=np.object)
             mt19937.shuffle(shuffled)
-            assert_array_equal(shuffled,
-                               np.array([t[0], t[3], t[1], t[2]], dtype=np.object))
+            assert_array_equal(
+                shuffled, np.array([t[0], t[3], t[1], t[2]], dtype=np.object)
+            )
 
     def test_call_within_randomstate(self):
         # Check that custom RandomState does not call into global state

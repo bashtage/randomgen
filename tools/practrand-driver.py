@@ -28,6 +28,7 @@ CONFIG = {
     rg.Xoshiro256: {"output": 64, "seed": 256, "seed_size": 64},
     rg.Philox: {"output": 64, "seed": 256, "seed_size": 64},
     rg.SFMT: {"output": 64, "seed": 128, "seed_size": 32},
+    rg.LXM: {"output": 64, "seed": 128, "seed_size": 32},
 }
 
 
@@ -129,7 +130,7 @@ def main():
         formatter_class=argparse.ArgumentDefaultsHelpFormatter
     )
     parser.add_argument(
-        "-bg", "--bit_generator", type=str, default="PCG32", help="BitGenerator to use."
+        "-bg", "--bit_generator", type=str, default="PCG64", help="BitGenerator to use."
     )
     parser.add_argument(
         "--load", action="store_true", help="Load BitGenerators from JSON file."
