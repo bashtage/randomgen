@@ -12,6 +12,7 @@ from randomgen import (
     DSFMT,
     HC128,
     JSF,
+    LXM,
     MT64,
     MT19937,
     PCG32,
@@ -149,11 +150,17 @@ class RNG(object):
         cls.mat = np.arange(2.0, 102.0, 0.01).reshape((100, 100))
         cls.seed_error = TypeError
 
+    def init_generator(self, seed=None, mode="sequence"):
+        if seed is not None:
+            return Generator(self.bit_generator(*seed, mode=mode))
+        else:
+            return Generator(self.bit_generator(seed=seed, mode=mode))
+
     def _reset_state(self):
         self.rg.bit_generator.state = self.initial_state
 
     def test_init(self):
-        rg = Generator(self.bit_generator(mode="sequence"))
+        rg = self.init_generator()
         state = rg.bit_generator.state
         rg.standard_normal(1)
         rg.standard_normal(1)
@@ -309,43 +316,43 @@ class RNG(object):
         assert_(int_1 == int_2)
 
     def test_entropy_init(self):
-        rg = Generator(self.bit_generator(mode="sequence"))
-        rg2 = Generator(self.bit_generator(mode="sequence"))
+        rg = self.init_generator()
+        rg2 = self.init_generator()
         assert_(not comp_state(rg.bit_generator.state, rg2.bit_generator.state))
 
     def test_seed(self):
-        rg = Generator(self.bit_generator(*self.seed, mode="legacy"))
-        rg2 = Generator(self.bit_generator(*self.seed, mode="legacy"))
+        rg = self.init_generator(self.seed, mode="legacy")
+        rg2 = self.init_generator(self.seed, mode="legacy")
         rg.random()
         rg2.random()
         assert_(comp_state(rg.bit_generator.state, rg2.bit_generator.state))
 
     def test_reset_state_gauss(self):
-        rg = Generator(self.bit_generator(*self.seed, mode="legacy"))
+        rg = self.init_generator(seed=self.seed, mode="legacy")
         rg.standard_normal()
         state = rg.bit_generator.state
         n1 = rg.standard_normal(size=10)
-        rg2 = Generator(self.bit_generator(mode="sequence"))
+        rg2 = self.init_generator()
         rg2.bit_generator.state = state
         n2 = rg2.standard_normal(size=10)
         assert_array_equal(n1, n2)
 
     def test_reset_state_uint32(self):
-        rg = Generator(self.bit_generator(*self.seed, mode="legacy"))
+        rg = self.init_generator(seed=self.seed, mode="legacy")
         rg.integers(0, 2 ** 24, 120, dtype=np.uint32)
         state = rg.bit_generator.state
         n1 = rg.integers(0, 2 ** 24, 10, dtype=np.uint32)
-        rg2 = Generator(self.bit_generator(mode="sequence"))
+        rg2 = self.init_generator()
         rg2.bit_generator.state = state
         n2 = rg2.integers(0, 2 ** 24, 10, dtype=np.uint32)
         assert_array_equal(n1, n2)
 
     def test_reset_state_float(self):
-        rg = Generator(self.bit_generator(*self.seed, mode="legacy"))
+        rg = self.init_generator(seed=self.seed, mode="legacy")
         rg.random(dtype="float32")
         state = rg.bit_generator.state
         n1 = rg.random(size=10, dtype="float32")
-        rg2 = Generator(self.bit_generator(mode="sequence"))
+        rg2 = self.init_generator()
         rg2.bit_generator.state = state
         n2 = rg2.random(size=10, dtype="float32")
         assert_((n1 == n2).all())
@@ -646,16 +653,18 @@ class RNG(object):
         with pytest.raises((ValueError, TypeError)):
             self.rg.bit_generator.seed(seed)
 
+        if isinstance(self.rg.bit_generator, LXM):
+            return
         seed = np.array([1, 2, 3, out_of_bounds])
         with pytest.raises((ValueError, TypeError)):
             self.rg.bit_generator.seed(seed)
 
     def test_uniform_float(self):
-        rg = Generator(self.bit_generator(12345, mode="legacy"))
+        rg = self.init_generator(seed=[12345], mode="legacy")
         warmup(rg)
         state = rg.bit_generator.state
         r1 = rg.random(11, dtype=np.float32)
-        rg2 = Generator(self.bit_generator(mode="sequence"))
+        rg2 = self.init_generator()
         warmup(rg2)
         rg2.bit_generator.state = state
         r2 = rg2.random(11, dtype=np.float32)
@@ -664,11 +673,11 @@ class RNG(object):
         assert_(comp_state(rg.bit_generator.state, rg2.bit_generator.state))
 
     def test_gamma_floats(self):
-        rg = Generator(self.bit_generator(mode="sequence"))
+        rg = self.init_generator()
         warmup(rg)
         state = rg.bit_generator.state
         r1 = rg.standard_gamma(4.0, 11, dtype=np.float32)
-        rg2 = Generator(self.bit_generator(mode="legacy"))
+        rg2 = self.init_generator(mode="legacy")
         warmup(rg2)
         rg2.bit_generator.state = state
         r2 = rg2.standard_gamma(4.0, 11, dtype=np.float32)
@@ -677,11 +686,11 @@ class RNG(object):
         assert_(comp_state(rg.bit_generator.state, rg2.bit_generator.state))
 
     def test_normal_floats(self):
-        rg = Generator(self.bit_generator(mode="legacy"))
+        rg = self.init_generator(mode="legacy")
         warmup(rg)
         state = rg.bit_generator.state
         r1 = rg.standard_normal(11, dtype=np.float32)
-        rg2 = Generator(self.bit_generator(mode="sequence"))
+        rg2 = self.init_generator()
         warmup(rg2)
         rg2.bit_generator.state = state
         r2 = rg2.standard_normal(11, dtype=np.float32)
@@ -690,11 +699,11 @@ class RNG(object):
         assert_(comp_state(rg.bit_generator.state, rg2.bit_generator.state))
 
     def test_normal_zig_floats(self):
-        rg = Generator(self.bit_generator(mode="sequence"))
+        rg = self.init_generator()
         warmup(rg)
         state = rg.bit_generator.state
         r1 = rg.standard_normal(11, dtype=np.float32)
-        rg2 = Generator(self.bit_generator(mode="legacy"))
+        rg2 = self.init_generator(mode="legacy")
         warmup(rg2)
         rg2.bit_generator.state = state
         r2 = rg2.standard_normal(11, dtype=np.float32)
@@ -1405,3 +1414,21 @@ class TestSPECK128(RNG):
         cls.seed_vector_bits = 64
         cls._extra_setup()
         cls.seed_error = ValueError
+
+
+class TestLXM(RNG):
+    @classmethod
+    def setup_class(cls):
+        super().setup_class()
+        cls.bit_generator = LXM
+        cls.seed = [2 ** 231 + 2 ** 21 + 2 ** 16 + 2 ** 5 + 1]
+        cls.rg = Generator(cls.bit_generator(*cls.seed))
+        cls.advance = 2 ** 63 + 2 ** 31 + 2 ** 15 + 1
+        cls.initial_state = cls.rg.bit_generator.state
+        cls.seed_vector_bits = 64
+        cls._extra_setup()
+        cls.seed_error = ValueError
+        cls.out_of_bounds = 2 ** 192 + 1
+
+    def init_generator(self, seed=None, mode="sequence"):
+        return Generator(self.bit_generator(seed=seed))

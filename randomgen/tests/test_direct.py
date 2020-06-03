@@ -15,6 +15,7 @@ from randomgen import (
     DSFMT,
     HC128,
     JSF,
+    LXM,
     MT64,
     MT19937,
     PCG32,
@@ -38,8 +39,12 @@ from randomgen.seed_sequence import ISeedSequence
 
 try:
     from numpy.random import SeedSequence
+
+    NP_SEED_SEQ = True
 except ImportError:
     from randomgen import SeedSequence
+
+    NP_SEED_SEQ = False
 
 MISSING_RDRAND = False
 try:
@@ -200,6 +205,7 @@ class Base(object):
         cls.seed_error_type = TypeError
         cls.invalid_seed_types = []
         cls.invalid_seed_values = []
+        cls.seed_sequence_only = False
 
     @classmethod
     def _read_csv(cls, filename):
@@ -219,7 +225,7 @@ class Base(object):
         bg = self.setup_bitgenerator([None])
         val = bg.random_raw()
         assert isinstance(val, int)
-        assert bg.seed_seq is None
+        assert self.seed_sequence_only or bg.seed_seq is None
 
     def test_default_sequence(self):
         bg = self.setup_bitgenerator([None], mode="sequence")
@@ -309,12 +315,18 @@ class Base(object):
 
     def test_seed_out_of_range(self):
         # GH #82
+        if self.seed_sequence_only:
+            # Not valid on PRNG that only support seed sequence
+            return
         rs = Generator(self.setup_bitgenerator(self.data1["seed"]))
         assert_raises(ValueError, rs.bit_generator.seed, 2 ** (4 * self.bits + 1))
         assert_raises(ValueError, rs.bit_generator.seed, -1)
 
     def test_seed_out_of_range_array(self):
         # GH #82
+        if self.seed_sequence_only:
+            # Not valid on PRNG that only support seed sequence
+            return
         rs = Generator(self.setup_bitgenerator(self.data1["seed"]))
         assert_raises(ValueError, rs.bit_generator.seed, [2 ** (2 * self.bits + 1)])
         assert_raises(ValueError, rs.bit_generator.seed, [-1])
@@ -450,7 +462,7 @@ class Base(object):
         assert next_g != next_advanced
 
     def test_seed_sequence(self):
-        bg = self.bit_generator(mode="sequence")
+        bg = self.setup_bitgenerator([None], mode="sequence")
         typ = (
             self.bit_generator.func
             if isinstance(self.bit_generator, partial)
@@ -459,7 +471,7 @@ class Base(object):
         assert isinstance(bg, typ)
         assert isinstance(bg.seed_seq, SeedSequence)
 
-        bg = self.bit_generator(0, mode="sequence")
+        bg = self.setup_bitgenerator([0], mode="sequence")
         assert bg.seed_seq.entropy == 0
 
         ss = SeedSequence(0)
@@ -474,7 +486,7 @@ class Base(object):
 class Random123(Base):
     @classmethod
     def setup_class(cls):
-        super(Random123, cls).setup_class()
+        super().setup_class()
         cls.bit_generator = Philox
         cls.number = 4
         cls.width = 64
@@ -556,6 +568,7 @@ class Random123(Base):
 class TestJSF64(Base):
     @classmethod
     def setup_class(cls):
+        super().setup_class()
         cls.bit_generator = JSF
         cls.bits = 64
         cls.dtype = np.uint64
@@ -597,6 +610,7 @@ class TestJSF64(Base):
 class TestJSF32(TestJSF64):
     @classmethod
     def setup_class(cls):
+        super().setup_class()
         cls.bit_generator_base = JSF
         cls.bit_generator = partial(JSF, size=32)
         cls.size = 32
@@ -628,6 +642,7 @@ class TestJSF32(TestJSF64):
 class TestXoroshiro128(Base):
     @classmethod
     def setup_class(cls):
+        super().setup_class()
         cls.bit_generator = Xoroshiro128
         cls.bits = 64
         cls.dtype = np.uint64
@@ -641,6 +656,7 @@ class TestXoroshiro128(Base):
 class TestXoroshiro128PlusPlus(TestXoroshiro128):
     @classmethod
     def setup_class(cls):
+        super().setup_class()
         cls.bit_generator = partial(Xoroshiro128, plusplus=True)
         cls.bits = 64
         cls.dtype = np.uint64
@@ -655,6 +671,7 @@ class TestXoroshiro128PlusPlus(TestXoroshiro128):
 class TestXoshiro256(Base):
     @classmethod
     def setup_class(cls):
+        super().setup_class()
         cls.bit_generator = Xoshiro256
         cls.bits = 64
         cls.dtype = np.uint64
@@ -675,6 +692,7 @@ class TestXoshiro256(Base):
 class TestXoshiro512(Base):
     @classmethod
     def setup_class(cls):
+        super().setup_class()
         cls.bit_generator = Xoshiro512
         cls.bits = 64
         cls.dtype = np.uint64
@@ -695,6 +713,7 @@ class TestXoshiro512(Base):
 class TestXorshift1024(Base):
     @classmethod
     def setup_class(cls):
+        super().setup_class()
         cls.bit_generator = Xorshift1024
         cls.bits = 64
         cls.dtype = np.uint64
@@ -708,7 +727,7 @@ class TestXorshift1024(Base):
 class TestThreeFry(Random123):
     @classmethod
     def setup_class(cls):
-        super(TestThreeFry, cls).setup_class()
+        super().setup_class()
         cls.bit_generator = ThreeFry
         cls.number = 4
         cls.width = 64
@@ -758,6 +777,7 @@ class TestThreeFry(Random123):
 class TestPCG64(Base):
     @classmethod
     def setup_class(cls):
+        super().setup_class()
         cls.bit_generator = PCG64
         cls.bits = 64
         cls.dtype = np.uint64
@@ -816,7 +836,7 @@ class TestPCG64(Base):
 class TestPhilox(Random123):
     @classmethod
     def setup_class(cls):
-        super(TestPhilox, cls).setup_class()
+        super().setup_class()
         cls.bit_generator = Philox
         cls.number = 4
         cls.width = 64
@@ -845,7 +865,7 @@ class TestPhilox(Random123):
 class TestPhilox4x32(Random123):
     @classmethod
     def setup_class(cls):
-        super(TestPhilox4x32, cls).setup_class()
+        super().setup_class()
         cls.bit_generator_base = Philox
         cls.bit_generator = partial(Philox, number=4, width=32)
         cls.number = 4
@@ -887,6 +907,7 @@ class TestPhilox4x32(Random123):
 class TestAESCounter(TestPhilox):
     @classmethod
     def setup_class(cls):
+        super().setup_class()
         cls.bit_generator = AESCounter
         cls.bits = 64
         cls.dtype = np.uint64
@@ -1021,6 +1042,7 @@ class TestAESCounter(TestPhilox):
 class TestMT19937(Base):
     @classmethod
     def setup_class(cls):
+        super().setup_class()
         cls.bit_generator = MT19937
         cls.bits = 32
         cls.seed_bits = 32
@@ -1098,6 +1120,7 @@ class TestMT19937(Base):
 class TestSFMT(TestMT19937):
     @classmethod
     def setup_class(cls):
+        super().setup_class()
         cls.bit_generator = SFMT
         cls.bits = 64
         cls.seed_bits = 32
@@ -1125,6 +1148,7 @@ class TestSFMT(TestMT19937):
 class TestDSFMT(Base):
     @classmethod
     def setup_class(cls):
+        super().setup_class()
         cls.bit_generator = DSFMT
         cls.bits = 53
         cls.dtype = np.uint64
@@ -1260,6 +1284,7 @@ class TestThreeFry4x32(Random123):
 class TestPCG32(TestPCG64):
     @classmethod
     def setup_class(cls):
+        super().setup_class()
         cls.bit_generator = PCG32
         cls.bits = 32
         cls.dtype = np.uint32
@@ -1293,6 +1318,7 @@ class TestPCG32(TestPCG64):
 class TestMT64(Base):
     @classmethod
     def setup_class(cls):
+        super().setup_class()
         cls.bit_generator = MT64
         cls.bits = 64
         cls.dtype = np.uint64
@@ -1323,6 +1349,7 @@ class TestMT64(Base):
 class TestRDRAND(Base):
     @classmethod
     def setup_class(cls):
+        super().setup_class()
         cls.bit_generator = RDRAND
         cls.bits = 64
         cls.dtype = np.uint64
@@ -1412,6 +1439,7 @@ class TestRDRAND(Base):
 class TestChaCha(Base):
     @classmethod
     def setup_class(cls):
+        super().setup_class()
         cls.bit_generator = ChaCha
         cls.bits = 64
         cls.seed_bits = 64
@@ -1526,6 +1554,7 @@ class TestChaCha(Base):
 class TestHC128(Base):
     @classmethod
     def setup_class(cls):
+        super().setup_class()
         cls.bit_generator = HC128
         cls.bits = 64
         cls.dtype = np.uint64
@@ -1576,6 +1605,7 @@ class TestHC128(Base):
 class TestSPECK128(TestHC128):
     @classmethod
     def setup_class(cls):
+        super().setup_class()
         cls.bit_generator = SPECK128
         cls.bits = 64
         cls.dtype = np.uint64
@@ -1709,3 +1739,28 @@ def test_mode():
     assert mt19937.seed_seq is None
     with pytest.raises(ValueError, match="mode must be one of None"):
         MT19937(mode="unknown")
+
+
+class TestLXM(Base):
+    @classmethod
+    def setup_class(cls):
+        super().setup_class()
+        cls.bit_generator = LXM
+        cls.bits = 64
+        cls.dtype = np.uint64
+        cls.data1 = cls._read_csv(join(pwd, "./data/lxm-testset-1.csv"))
+        cls.data2 = cls._read_csv(join(pwd, "./data/lxm-testset-2.csv"))
+        cls.seed_error_type = TypeError
+        cls.invalid_seed_types = [(2 + 3j,), (3.1,)]
+        cls.invalid_seed_values = [(-2,), ([-2],)]
+        if NP_SEED_SEQ:
+            cls.invalid_seed_types += [("apple",)]
+        else:
+            cls.invalid_seed_values += [("apple",)]
+        cls.seed_sequence_only = True
+
+    def setup_bitgenerator(self, seed, mode=None):
+        return self.bit_generator(*seed)
+
+    def test_seed_sequence_error(self):
+        pass

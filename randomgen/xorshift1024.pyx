@@ -5,7 +5,7 @@ cimport numpy as np
 from randomgen.common cimport *
 from randomgen.entropy import random_entropy, seed_by_array
 
-__all__ = ["Xoroshiro1024"]
+__all__ = ["Xorshift1024"]
 
 cdef uint64_t xorshift1024_uint64(void* st) nogil:
     return xorshift1024_next64(<xorshift1024_state_t *>st)
@@ -18,7 +18,7 @@ cdef double xorshift1024_double(void* st) nogil:
 
 cdef class Xorshift1024(BitGenerator):
     u"""
-    Xorshift1024(seed=None)
+    Xorshift1024(seed=None, *, mode=None)
 
     Container for the xorshift1024*φ pseudo-random number generator.
 
@@ -113,7 +113,7 @@ cdef class Xorshift1024(BitGenerator):
     .. [1] "xorshift*/xorshift+ generators and the PRNG shootout",
            http://xorshift.di.unimi.it/
     .. [2] Marsaglia, George. "Xorshift RNGs." Journal of Statistical Software
-           [Online], 8.14, pp. 1 - 6, .2003.
+           [Online], 8.14, pp. 1 - 6, 2003.
     .. [3] Sebastiano Vigna. "An experimental exploration of Marsaglia's xorshift
            generators, scrambled." CoRR, abs/1402.6246, 2014.
     .. [4] Sebastiano Vigna. "Further scramblings of Marsaglia's xorshift
@@ -145,7 +145,7 @@ cdef class Xorshift1024(BitGenerator):
 
     def seed(self, seed=None):
         """
-        seed(seed=None, stream=None)
+        seed(seed=None)
 
         Seed the generator.
 

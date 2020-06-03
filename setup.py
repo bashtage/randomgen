@@ -23,19 +23,6 @@ except ImportError:
     except ImportError:
         raise ImportError("tempita required to install, use pip install tempita")
 
-try:
-    import pypandoc
-
-    # With an input file: it will infer the input format from the filename
-    with open("README.rst", "w", newline="\n", encoding="utf-8") as readme:
-        converted = pypandoc.convert_file("README.md", "rst")
-        converted = converted.replace("\r\n", "\n")
-        readme.write(converted)
-except ImportError:
-    import warnings
-
-    warnings.warn("Unable to import pypandoc.  Do not use this as a release build!")
-
 with open("requirements.txt") as f:
     required = f.read().splitlines()
 
@@ -50,7 +37,7 @@ if CYTHON_COVERAGE:
         "RANDOMGEN_CYTHON_COVERAGE=" + os.environ["RANDOMGEN_CYTHON_COVERAGE"]
     )
 
-LONG_DESCRIPTION = io.open("README.rst", encoding="utf-8").read()
+LONG_DESCRIPTION = io.open("README.md", encoding="utf-8").read()
 Cython.Compiler.Options.annotate = True
 
 # Make a guess as to whether SSE2 is present for now, TODO: Improve
@@ -268,6 +255,7 @@ bit_generator("xoroshiro128")
 bit_generator("xorshift1024")
 bit_generator("xoshiro256")
 bit_generator("xoshiro512")
+bit_generator("lxm")
 
 classifiers = [
     "Development Status :: 5 - Production/Stable",
@@ -323,6 +311,7 @@ setup(
     author_email="kevin.k.sheppard@gmail.com",
     distclass=BinaryDistribution,
     long_description=LONG_DESCRIPTION,
+    long_description_content_type="text/markdown",
     description="Random generator supporting multiple PRNGs",
     url="https://github.com/bashtage/randomgen",
     keywords=[
