@@ -1,0 +1,6 @@
+randomgen.lxm.LXM.seed
+======================
+
+.. currentmodule:: randomgen.lxm
+
+.. automethod:: LXM.seed

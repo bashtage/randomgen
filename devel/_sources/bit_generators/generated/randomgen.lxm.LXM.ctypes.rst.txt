@@ -1,0 +1,6 @@
+randomgen.lxm.LXM.ctypes
+========================
+
+.. currentmodule:: randomgen.lxm
+
+.. autoattribute:: LXM.ctypes

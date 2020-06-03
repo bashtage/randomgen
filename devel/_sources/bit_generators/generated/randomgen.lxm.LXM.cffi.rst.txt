@@ -1,0 +1,6 @@
+randomgen.lxm.LXM.cffi
+======================
+
+.. currentmodule:: randomgen.lxm
+
+.. autoattribute:: LXM.cffi
