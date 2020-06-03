@@ -50,7 +50,7 @@ before_install:
   - if [[ $PYPI = true ]]; then source ci/install-gcc-8.sh; fi
   - if [[ $PYPI = true ]]; then source ci/pypi-install.sh; else source ci/conda-install.sh; fi
   - if [[ $PIP_CYTHON = true ]]; then pip install cython --upgrade; fi
-  - pip install tempita "coverage<5" coveralls pytest-cov codecov coveralls -q
+  - pip install tempita coverage coveralls pytest-cov codecov coveralls -q
   - pip list
   - export BUILD_DIR=${PWD}
   - if [[ ${DOCBUILD} == true ]]; then pip install sphinx sphinx_rtd_theme sphinx-material ipython doctr -q; fi

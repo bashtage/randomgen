@@ -3095,14 +3095,14 @@ cdef class RandomState:
 
         Samples are drawn from a negative binomial distribution with specified
         parameters, `n` successes and `p` probability of success where `n`
-        is > 0 and `p` is in the interval [0, 1].
+        is > 0 and `p` is in the interval (0, 1].
 
         Parameters
         ----------
         n : float or array_like of floats
             Parameter of the distribution, > 0.
         p : float or array_like of floats
-            Parameter of the distribution, >= 0 and <=1.
+            Parameter of the distribution. Must satisfy 0 < p <= 1.
         size : int or tuple of ints, optional
             Output shape. If the given shape is, e.g., ``(m, n, k)``, then
             ``m * n * k`` samples are drawn. If size is ``None`` (default),
@@ -3160,7 +3160,7 @@ cdef class RandomState:
         """
         out = disc(&legacy_negative_binomial, &self._aug_state, size, self.lock, 2, 0,
                    n, "n", CONS_POSITIVE,
-                   p, "p", CONS_BOUNDED_0_1,
+                   p, "p", CONS_BOUNDED_GT_0_1,
                    0.0, "", CONS_NONE)
         # Match historical output type
         return int64_to_long(out)
@@ -3830,6 +3830,9 @@ cdef class RandomState:
         cdef long *mnix
         cdef long ni
 
+        if np.ndim(pvals) != 1:
+            raise ValueError("pvals must be 1d array")
+
         d = len(pvals)
         parr = <np.ndarray>np.PyArray_FROM_OTF(pvals, np.NPY_DOUBLE, api.NPY_ARRAY_ALIGNED | api.NPY_ARRAY_C_CONTIGUOUS)
         check_array_constraint(parr, "pvals", CONS_BOUNDED_0_1)
@@ -3873,23 +3876,23 @@ cdef class RandomState:
 
         Parameters
         ----------
-        alpha : array
-            Parameter of the distribution (k dimension for sample of
-            dimension k).
+        alpha : sequence of floats, length k
+            Parameter of the distribution (length ``k`` for sample of
+            length ``k``).
         size : int or tuple of ints, optional
-            Output shape. If the given shape is, e.g., ``(m, n, k)``, then
+            Output shape.  If the given shape is, e.g., ``(m, n)``, then
             ``m * n * k`` samples are drawn. Default is None, in which case a
-            single value is returned.
+            vector of length ``k`` is returned.
 
         Returns
         -------
         samples : ndarray,
-            The drawn samples, of shape (size, alpha.ndim).
+            The drawn samples, of shape ``(size, k)``.
 
         Raises
         -------
         ValueError
-            If any value in alpha is less than or equal to zero
+            If any value in ``alpha`` is less than or equal to zero.
 
         Notes
         -----
@@ -3963,7 +3966,7 @@ cdef class RandomState:
         cdef double  acc, invacc
 
         k = len(alpha)
-        alpha_arr = <np.ndarray>np.PyArray_FROM_OTF(alpha, np.NPY_DOUBLE, api.NPY_ARRAY_ALIGNED | api.NPY_ARRAY_C_CONTIGUOUS)
+        alpha_arr = <np.ndarray>np.PyArray_FROMANY(alpha, np.NPY_DOUBLE, 1, 1, np.NPY_ARRAY_ALIGNED | np.NPY_ARRAY_C_CONTIGUOUS)
         if np.any(np.less_equal(alpha_arr, 0)):
             raise ValueError("alpha <= 0")
         alpha_data = <double*>np.PyArray_DATA(alpha_arr)
@@ -4042,7 +4045,7 @@ cdef class RandomState:
             # Fast, statically typed path: shuffle the underlying buffer.
             # Only for non-empty, 1d objects of class ndarray (subclasses such
             # as MaskedArrays may not support this approach).
-            x_ptr = <char*><size_t>x.ctypes.data
+            x_ptr = <char*><size_t>np.PyArray_DATA(x)
             stride = x.strides[0]
             itemsize = x.dtype.itemsize
             # As the array x could contain python objects we use a buffer
@@ -4050,7 +4053,7 @@ cdef class RandomState:
             # within the buffer and erroneously decrementing it's refcount
             # when the function exits.
             buf = np.empty(itemsize, dtype=np.int8)  # GC'd at function exit
-            buf_ptr = <char*><size_t>buf.ctypes.data
+            buf_ptr = <char*><size_t>np.PyArray_DATA(buf)
             with self.lock:
                 # We trick gcc into providing a specialized implementation for
                 # the most common case, yielding a ~33% performance improvement.
@@ -4127,6 +4130,8 @@ cdef class RandomState:
             return arr
 
         arr = np.asarray(x)
+        if arr.ndim < 1:
+            raise IndexError("x must be an integer or at least 1-dimensional")
 
         # shuffle has fast-path for 1-d
         if arr.ndim == 1:

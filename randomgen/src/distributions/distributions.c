@@ -1138,9 +1138,7 @@ static NPY_INLINE uint64_t bounded_lemire_uint64(bitgen_t *bitgen_state,
   if (leftover < rng_excl) {
     /* `rng_excl` is a simple upper bound for `threshold`. */
 
-    const uint64_t threshold = -rng_excl % rng_excl;
-    /* Same as: threshold=((uint64_t)(0x10000000000000000ULLL - rng_excl)) %
-     * rng_excl; */
+    const uint64_t threshold = (UINT64_MAX - rng) % rng_excl;
 
     while (leftover < threshold) {
       m = ((__uint128_t)next_uint64(bitgen_state)) * rng_excl;
@@ -1164,7 +1162,7 @@ static NPY_INLINE uint64_t bounded_lemire_uint64(bitgen_t *bitgen_state,
   if (leftover < rng_excl) {
     /* `rng_excl` is a simple upper bound for `threshold`. */
 
-    const uint64_t threshold = -rng_excl % rng_excl;
+    const uint64_t threshold = (UINT64_MAX - rng) % rng_excl;
     /* Same as:threshold=((uint64_t)(0x10000000000000000ULLL - rng_excl)) %
      * rng_excl; */
 
@@ -1320,6 +1318,14 @@ uint64_t random_bounded_uint64(bitgen_t *bitgen_state, uint64_t off,
     return off;
   } else if (rng <= 0xFFFFFFFFUL) {
     /* Call 32-bit generator if range in 32-bit. */
+    if (rng == 0xFFFFFFFFUL) {
+      /*
+       * The 32-bit Lemire method does not handle rng=0xFFFFFFFF, so we'll
+       * call next_uint32 directly.  This also works when use_masked is True,
+       * so we handle both cases here.
+       */
+      return off + (uint64_t) next_uint32(bitgen_state);
+    }
     if (use_masked) {
       return off + buffered_bounded_masked_uint32(bitgen_state, (uint32_t)rng,
                                                   (uint32_t)mask, NULL, NULL);
@@ -1433,10 +1439,21 @@ void random_bounded_uint64_fill(bitgen_t *bitgen_state, uint64_t off,
       out[i] = off;
     }
   } else if (rng <= 0xFFFFFFFFUL) {
-    uint32_t buf = 0;
+    /*
+     * The 32-bit Lemire method does not handle rng=0xFFFFFFFF, so we'll
+     * call next_uint32 directly.  This also works when use_masked is True,
+     * so we handle both cases here.
+     */
+    if (rng == 0xFFFFFFFFUL) {
+        for (i = 0; i < cnt; i++) {
+            out[i] = off + (uint64_t) next_uint32(bitgen_state);
+        }
+    }
+    /* Call 32-bit generator if range in 32-bit. */
+    else {
+        uint32_t buf = 0;
     int bcnt = 0;
 
-    /* Call 32-bit generator if range in 32-bit. */
     if (use_masked) {
       /* Smallest bit mask >= max */
       uint64_t mask = gen_mask(rng);
@@ -1450,6 +1467,7 @@ void random_bounded_uint64_fill(bitgen_t *bitgen_state, uint64_t off,
         out[i] = off +
                  buffered_bounded_lemire_uint32(bitgen_state, (uint32_t)rng, &bcnt, &buf);
       }
+    }
     }
   } else if (rng == 0xFFFFFFFFFFFFFFFFULL) {
     /* Lemire64 doesn't support rng = 0xFFFFFFFFFFFFFFFF. */
