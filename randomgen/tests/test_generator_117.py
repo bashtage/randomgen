@@ -25,9 +25,7 @@ v118 = LooseVersion("1.18")
 NP_LT_1174 = LooseVersion(np.__version__) < v1174
 NP_LT_1174_OR_GT_118 = NP_LT_1174 or LooseVersion(np.__version__) > v118
 
-pytestmark = pytest.mark.skipif(
-    NP_LT_1174_OR_GT_118, reason="Only test 1.17.4 to 1.18.x"
-)
+pytestmark = pytest.mark.skipif(NP_LT_1174, reason="Only test 1.17.4 to 1.18.x")
 
 
 def positive_param():
@@ -88,15 +86,18 @@ def above_1():
 
 def triangular():
     out = product(*[positive_param() for _ in range(3)])
-    out = [(l, l + m, l + m + r) for l, m, r in out]
+    out = [(lft, lft + mid, lft + mid + rgt) for lft, mid, rgt in out]
     return out
 
 
 def uniform():
-    lo = positive_param()
+    low = positive_param()
     high = positive_param()
     scale = positive_param()
-    return [(l / l + h + s, (l + h) / (l + h + s)) for l, h, s in zip(lo, high, scale)]
+    return [
+        (lo / lo + hi + sc, (lo + hi) / (lo + hi + sc))
+        for lo, hi, sc in zip(low, high, scale)
+    ]
 
 
 def integers():
@@ -272,8 +273,11 @@ def test_choice(replace):
     assert_array_equal(result, expected)
 
 
+configs = integers()
+ids = [list(map(str, c)) for c in configs]
+
 @pytest.mark.skipif(NP_LT_1174, reason="Changes to lemire generators")
-@pytest.mark.parametrize("args", integers())
+@pytest.mark.parametrize("args", configs)
 def test_integers(args):
     np_gen.bit_generator.state = initial_state
     expected = np_gen.integers(*args)
