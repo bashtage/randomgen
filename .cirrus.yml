@@ -1,6 +1,6 @@
 freebsd_instance:
-  image: freebsd-12-0-release-amd64
+  image_family: freebsd-12-1
 
 task:
   install_script: . ./ci/cirrus-install.sh
-  script: pytest-3.6 randomgen
+  script: pytest-3.7 randomgen

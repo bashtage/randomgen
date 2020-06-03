@@ -1,4 +1,4 @@
-dist: xenial
+dist: bionic
 sudo: required
 language: python
 
@@ -39,9 +39,7 @@ matrix:
       language: generic
       env: [PYTHON=3.6, NUMPY=1.16]
     - os: linux
-      env: [PYTHON=3.6, NUMPY=1.15, CYTHON=0.27]
-    - os: linux
-      env: [PYTHON=3.5, NUMPY=1.14, CYTHON=0.26]
+      env: [PYPI=true, PYTHON=3.6, NUMPY=1.18, CYTHON=0.29]
   allow_failures:
     - os: linux-ppc64le
       python: 3.6
@@ -63,7 +61,7 @@ before_install:
   - if [[ "$COVERAGE" == true ]]; then export COVERAGE_OPTIONS="--cov-config .coveragerc --cov=randomgen"; fi
 
 install:
-  - python setup.py develop
+  - pip install -e . -v -v -v
 
 script:
   - set -e

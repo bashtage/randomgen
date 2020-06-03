@@ -17,7 +17,7 @@ cdef double xoshiro256_double(void* st) nogil:
 
 cdef class Xoshiro256(BitGenerator):
     """
-    Xoshiro256(seed=None)
+    Xoshiro256(seed=None, *, mode=None)
 
     Container for the xoshiro256** pseudo-random number generator.
 

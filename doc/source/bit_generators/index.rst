@@ -27,6 +27,7 @@ These RNGs will be included in future releases.
    DSFMT <dsfmt>
    HC128 <hc128>
    JSF <jsf>
+   LXM <lxm>
    MT19937 <mt19937>
    MT64 <mt64>
    PCG64 <pcg64>
@@ -35,6 +36,7 @@ These RNGs will be included in future releases.
    SFMT <sfmt>
    SPECK128 <speck128>
    ThreeFry <threefry>
+   XoroShiro128+/++ <xoroshiro128>
    Xoshiro256** <xoshiro256>
    Xoshiro512** <xoshiro512>
 
@@ -47,6 +49,5 @@ permanent.
 .. toctree::
    :maxdepth: 1
 
-   XoroShiro128+ <xoroshiro128>
    Xorshift1024*φ <xorshift1024>
    PCG32 <pcg32>

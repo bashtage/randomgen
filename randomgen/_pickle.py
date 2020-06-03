@@ -6,6 +6,7 @@ from randomgen.dsfmt import DSFMT
 from randomgen.generator import Generator
 from randomgen.hc128 import HC128
 from randomgen.jsf import JSF
+from randomgen.lxm import LXM
 from randomgen.mt64 import MT64
 from randomgen.mt19937 import MT19937
 from randomgen.mtrand import RandomState
@@ -27,6 +28,7 @@ BitGenerators = {
     "DSFMT": DSFMT,
     "HC128": HC128,
     "JSF": JSF,
+    "LXM": LXM,
     "MT19937": MT19937,
     "MT64": MT64,
     "PCG32": PCG32,
@@ -43,7 +45,7 @@ BitGenerators = {
 }
 
 
-def __generator_ctor(bit_generator_name="mt19937"):
+def __generator_ctor(bit_generator_name="MT19937"):
     """
     Pickling helper function that returns a Generator object
 
@@ -103,7 +105,7 @@ def __bit_generator_ctor(bit_generator_name="MT19937"):
     return bit_gen
 
 
-def __randomstate_ctor(bit_generator_name="mt19937"):
+def __randomstate_ctor(bit_generator_name="MT19937"):
     """
     Pickling helper function that returns a legacy RandomState-like object
 
