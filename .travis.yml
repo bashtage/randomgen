@@ -9,6 +9,7 @@ env:
     - PYPI=false
     - COVERAGE=true
     - PIP_CYTHON=false
+    - RANDOMGEN_DEBUG=true
 
 cache:
   directories:
@@ -22,10 +23,10 @@ matrix:
       env: [PYTHON=3.7, DOCBUILD=true, CC=clang, NUMPY=1.17]
     - os: linux
       python: 3.7
-      env: [PYPI=true, COVERAGE=true, NUMPY=1.16]
+      env: [PYPI=true, COVERAGE=true, RANDOMGEN_DEBUG=true, NUMPY=1.16]
     - os: linux
       python: 3.8
-      env: [PYPI=true, COVERAGE=true]
+      env: [PYPI=true, COVERAGE=true, RANDOMGEN_DEBUG=true, ]
     - os: linux
       python: 3.8
       env: [PYPI=true, COVERAGE=true, NUMPY=1.19.0rc2]
@@ -61,11 +62,11 @@ before_install:
   - if [[ "$COVERAGE" == true ]]; then export COVERAGE_OPTIONS="--cov-config .coveragerc --cov=randomgen"; fi
 
 install:
-  - pip install -e . -v -v -v
+  - pip install -e . -v -v -v --no-build-isolation
 
 script:
   - set -e
-  - pytest -r a ${COVERAGE_OPTIONS} randomgen
+  - pytest -v -r a ${COVERAGE_OPTIONS} randomgen
   - |
     if [[ ${DOCBUILD} == true ]]; then
       sudo apt-get install -y enchant
