@@ -3754,9 +3754,10 @@ cdef class Generator:
 
     # Multivariate distributions:
     def multivariate_normal(self, mean, cov, size=None, check_valid="warn",
-                            tol=1e-8):
+                            tol=1e-8, *, method="svd"):
         """
-        multivariate_normal(mean, cov, size=None, check_valid='warn', tol=1e-8)
+        multivariate_normal(mean, cov, size=None, check_valid='warn',
+                            tol=1e-8, *, method='svd')
 
         Draw random samples from a multivariate normal distribution.
 
@@ -3769,14 +3770,17 @@ cdef class Generator:
 
         Parameters
         ----------
-        mean : 1-D array_like, of length N
-            Mean of the N-dimensional distribution.
-        cov : 2-D array_like, of shape (N, N)
+        mean : array_like
+            Mean of the distribution. Must have shape (m1, m2, ..., mk, N) where
+            (m1, m2, ..., mk) would broadcast with (c1, c2, ..., cj).
+        cov : array_like
             Covariance matrix of the distribution. It must be symmetric and
-            positive-semidefinite for proper sampling.
+            positive-semidefinite for proper sampling. Must have shape
+            (c1, c2, ..., cj, N, N) where (c1, c2, ..., cj) would broadcast
+            with (m1, m2, ..., mk).
         size : int or tuple of ints, optional
             Given a shape of, for example, ``(m,n,k)``, ``m*n*k`` samples are
-            generated, and packed in an `m`-by-`n`-by-`k` arrangement. Because
+            generated, and packed in an `m`-by-`n`-by-`k` arrangement.  Because
             each sample is `N`-dimensional, the output shape is ``(m,n,k,N)``.
             If no shape is specified, a single (`N`-D) sample is returned.
         check_valid : { 'warn', 'raise', 'ignore' }, optional
@@ -3784,12 +3788,20 @@ cdef class Generator:
         tol : float, optional
             Tolerance when checking the singular values in covariance matrix.
             cov is cast to double before the check.
+        method : { 'svd', 'eigh', 'cholesky'}, optional
+            The cov input is used to compute a factor matrix A such that
+            ``A @ A.T = cov``. This argument is used to select the method
+            used to compute the factor matrix A. The default method 'svd' is
+            the slowest, while 'cholesky' is the fastest but less robust than
+            the slowest method. The method `eigh` uses eigen decomposition to
+            compute A and is faster than svd but slower than cholesky.
 
         Returns
         -------
         out : ndarray
-            The drawn samples, of shape *size*, if that was provided. If not,
-            the shape is ``(N,)``.
+            The drawn samples, of shape determined by broadcasting the
+            leading dimensions of mean and cov with size, if not None.
+            The final dimension is always N.
 
             In other words, each entry ``out[i,j,...,:]`` is an N-dimensional
             value drawn from the distribution.
@@ -3859,68 +3871,90 @@ cdef class Generator:
         [True, True] # random
 
         """
-        from numpy.dual import svd
+        if check_valid not in ("warn", "raise", "ignore"):
+            raise ValueError("check_valid must equal 'warn', 'raise', or 'ignore'")
 
-        # Check preconditions on arguments
         mean = np.array(mean)
-        cov = np.array(cov)
-        if size is None:
-            shape = []
-        elif isinstance(size, (int, np.integer)):
-            shape = [size]
-        else:
-            shape = size
+        cov = np.array(cov, dtype=np.double)
+        if mean.ndim < 1:
+            raise ValueError("mean must have at least 1 dimension")
+        if cov.ndim < 2:
+            raise ValueError("cov must have at least 2 dimensions")
+        n = mean.shape[mean.ndim - 1]
+        cov_dim = cov.ndim
+        if not (cov.shape[cov_dim - 1] == cov.shape[cov_dim - 2] == n):
+            raise ValueError(
+                f"The final two dimension of cov "
+                f"({cov.shape[cov_dim - 1], cov.shape[cov_dim - 2]}) must match "
+                f"the final dimension of mean ({n}). mean must be 1 dimensional"
+            )
 
-        if len(mean.shape) != 1:
-            raise ValueError("mean must be 1 dimensional")
-        if (len(cov.shape) != 2) or (cov.shape[0] != cov.shape[1]):
-            raise ValueError("cov must be 2 dimensional and square")
-        if mean.shape[0] != cov.shape[0]:
-            raise ValueError("mean and cov must have same length")
+        def _factorize(cov, meth, check_valid):
+            if meth == "svd":
+                from numpy.linalg import svd
 
-        # Compute shape of output and create a matrix of independent
-        # standard normally distributed random numbers. The matrix has rows
-        # with the same length as mean and as many rows are necessary to
-        # form a matrix of shape final_shape.
-        final_shape = list(shape[:])
-        final_shape.append(mean.shape[0])
-        x = self.standard_normal(final_shape).reshape(-1, mean.shape[0])
+                (u, s, vh) = svd(cov)
+                psd = np.allclose(np.dot(vh.T * s, vh), cov, rtol=tol, atol=tol)
+                _factor = (u * np.sqrt(s)).T
+            elif meth == "eigh":
+                from numpy.linalg import eigh
 
-        # Transform matrix of standard normals into matrix where each row
-        # contains multivariate normals with the desired covariance.
-        # Compute A such that dot(transpose(A),A) == cov.
-        # Then the matrix products of the rows of x and A has the desired
-        # covariance. Note that sqrt(s)*v where (u,s,v) is the singular value
-        # decomposition of cov is such an A.
-        #
-        # Also check that cov is positive-semidefinite. If so, the u.T and v
-        # matrices should be equal up to roundoff error if cov is
-        # symmetric and the singular value of the corresponding row is
-        # not zero. We continue to use the SVD rather than Cholesky in
-        # order to preserve current outputs. Note that symmetry has not
-        # been checked.
+                # could call linalg.svd(hermitian=True), but that calculates a
+                # vh we don't need
+                (s, u) = eigh(cov)
+                psd = not np.any(s < -tol)
+                _factor = (u * np.sqrt(abs(s))).T
+            else:
+                from numpy.linalg import cholesky
 
-        # GH10839, ensure double to make tol meaningful
-        cov = cov.astype(np.double)
-        (u, s, v) = svd(cov)
+                _factor = cholesky(cov).T
+                psd = True
 
-        if check_valid != "ignore":
-            if check_valid != "warn" and check_valid != "raise":
-                raise ValueError("check_valid must equal \"warn\", \"raise\","
-                                 " or \"ignore\"")
-
-            psd = np.allclose(np.dot(v.T * s, v), cov, rtol=tol, atol=tol)
-            if not psd:
+            if not psd and check_valid != "ignore":
                 if check_valid == "warn":
                     import warnings
-                    warnings.warn("covariance is not positive-semidefinite.",
-                                  RuntimeWarning)
+
+                    warnings.warn(
+                        "covariance is not positive-semidefinite.", RuntimeWarning
+                    )
                 else:
                     raise ValueError("covariance is not positive-semidefinite.")
+            return _factor
 
-        x = mean + x @ (u * np.sqrt(s)).T
-        x.shape = tuple(final_shape)
-        return x
+        drop_dims = (mean.ndim == 1) and (cov.ndim == 2)
+        if mean.ndim == 1:
+            mean = mean.reshape((1, n))
+        if cov.ndim == 2:
+            cov = cov.reshape((1, n, n))
+
+        _factors = np.empty_like(cov)
+        for loc in np.ndindex(*cov.shape[:-2]):
+            _factors[loc] = _factorize(cov[loc], method, check_valid)
+
+        out_shape = np.broadcast(mean[..., 0], cov[..., 0, 0]).shape
+        if size is not None:
+            if isinstance(size, (int, np.integer)):
+                size = (size,)
+            error = len(size) < len(out_shape)
+            final_size = list(size[: -len(out_shape)])
+            for s, os in zip(size[-len(out_shape) :], out_shape):
+                if error or not (s == 1 or os == 1 or s == os):
+                    raise ValueError(
+                        f"The desired out size {size} is not compatible with"
+                        f"the broadcast size of mean and cov {out_shape}. The"
+                        f" final {len(out_shape)} elements of size must be "
+                        f"either 1 or the same as the corresponding element "
+                        f"of the broadcast size"
+                    )
+                final_size.append(max(s, os))
+            out_shape = tuple(final_size)
+
+        out = self.standard_normal(out_shape + (1, n,))
+        prod = np.matmul(out, _factors)
+        final = mean + np.squeeze(prod, axis=prod.ndim - 2)
+        if drop_dims and final.shape[0] == 1:
+            final = final.reshape(final.shape[1:])
+        return final
 
     def multinomial(self, object n, object pvals, size=None):
         """
