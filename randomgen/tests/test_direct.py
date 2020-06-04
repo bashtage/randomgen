@@ -1764,3 +1764,25 @@ class TestLXM(Base):
 
     def test_seed_sequence_error(self):
         pass
+
+
+class TestPCG64DXSM(Base):
+    @classmethod
+    def setup_class(cls):
+        super().setup_class()
+        cls.bit_generator = partial(PCG64, mode="sequence", use_dxsm=True)
+        cls.bits = 64
+        cls.dtype = np.uint64
+        cls.data1 = cls._read_csv(join(pwd, "./data/pcg64-dxsm-testset-1.csv"))
+        cls.data2 = cls._read_csv(join(pwd, "./data/pcg64-dxsm-testset-2.csv"))
+        cls.seed_error_type = TypeError
+        cls.invalid_seed_types = [(2 + 3j,), (3.1,)]
+        cls.invalid_seed_values = [(-2,), ([-2],)]
+        if NP_SEED_SEQ:
+            cls.invalid_seed_types += [("apple",)]
+        else:
+            cls.invalid_seed_values += [("apple",)]
+        cls.seed_sequence_only = True
+
+    def setup_bitgenerator(self, seed, mode=None):
+        return self.bit_generator(*seed)

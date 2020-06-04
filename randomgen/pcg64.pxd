@@ -7,6 +7,7 @@ cdef extern from "src/pcg64/pcg64.h":
 
     struct PCG64_STATE_T:
         pcg64_random_t *pcg_state
+        int use_dxsm
         int has_uint32
         uint32_t uinteger
 
@@ -17,12 +18,13 @@ cdef extern from "src/pcg64/pcg64.h":
     void pcg64_jump(pcg64_state_t *state)
     void pcg64_advance(pcg64_state_t *state, uint64_t *step)
     void pcg64_set_seed(pcg64_state_t *state, uint64_t *seed, uint64_t *inc)
-    void pcg64_get_state(pcg64_state_t *state, uint64_t *state_arr, int *has_uint32, uint32_t *uinteger)
-    void pcg64_set_state(pcg64_state_t *state, uint64_t *state_arr, int has_uint32, uint32_t uinteger)
+    void pcg64_get_state(pcg64_state_t *state, uint64_t *state_arr, int *use_dxsm, int *has_uint32, uint32_t *uinteger)
+    void pcg64_set_state(pcg64_state_t *state, uint64_t *state_arr, int use_dxsm, int has_uint32, uint32_t uinteger)
 
 
 cdef class PCG64(BitGenerator):
 
     cdef pcg64_state_t rng_state
+    cdef bint use_dxsm
     cdef _reset_state_variables(self)
     cdef jump_inplace(self, object iter)

@@ -9,6 +9,7 @@ env:
     - PYPI=false
     - COVERAGE=true
     - PIP_CYTHON=false
+    - RANDOMGEN_DEBUG=true
 
 cache:
   directories:
@@ -19,27 +20,27 @@ matrix:
   include:
     - os: linux
       python: 3.7
-      env: [PYTHON=3.7, DOCBUILD=true, CC=clang, NUMPY=1.17]
+      env: [PYTHON=3.7, DOCBUILD=true, RANDOMGEN_DEBUG=false, CC=clang, NUMPY=1.17]
     - os: linux
       python: 3.7
-      env: [PYPI=true, COVERAGE=true, NUMPY=1.16]
+      env: [PYPI=true, COVERAGE=true, NUMPY=1.16.6]
     - os: linux
       python: 3.8
-      env: [PYPI=true, COVERAGE=true]
+      env: [PYPI=true, COVERAGE=true, RANDOMGEN_DEBUG=false]
     - os: linux
       python: 3.8
       env: [PYPI=true, COVERAGE=true, NUMPY=1.19.0rc2]
     - os: linux
       python: 3.6
-      env: [PYPI=true, COVERAGE=false, RANDOMGEN_DEBUG=true, NUMPY=1.17]
+      env: [PYPI=true, COVERAGE=false,NUMPY=1.17.5]
     - os: linux-ppc64le
       python: 3.6
       env: [PYPI=true, COVERAGE=true, PPC64_LE=1]
     - os: osx
       language: generic
-      env: [PYTHON=3.6, NUMPY=1.16]
+      env: [PYTHON=3.6, NUMPY=1.16.6]
     - os: linux
-      env: [PYPI=true, PYTHON=3.6, NUMPY=1.18, CYTHON=0.29]
+      env: [PYPI=true, PYTHON=3.6, NUMPY=1.18.5, CYTHON=0.29]
   allow_failures:
     - os: linux-ppc64le
       python: 3.6
@@ -61,11 +62,11 @@ before_install:
   - if [[ "$COVERAGE" == true ]]; then export COVERAGE_OPTIONS="--cov-config .coveragerc --cov=randomgen"; fi
 
 install:
-  - pip install -e . -v -v -v
+  - pip install -e . -v -v -v --no-build-isolation
 
 script:
   - set -e
-  - pytest -r a ${COVERAGE_OPTIONS} randomgen
+  - pytest -v -r a ${COVERAGE_OPTIONS} randomgen
   - |
     if [[ ${DOCBUILD} == true ]]; then
       sudo apt-get install -y enchant

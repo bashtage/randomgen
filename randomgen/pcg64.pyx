@@ -18,7 +18,7 @@ cdef double pcg64_double(void* st) nogil:
 
 cdef class PCG64(BitGenerator):
     u"""
-    PCG64(seed=None, inc=0, *, mode=None)
+    PCG64(seed=None, inc=0, *, use_dxsm=False, mode=None)
 
     Container for the PCG-64 pseudo-random number generator.
 
@@ -35,6 +35,9 @@ cdef class PCG64(BitGenerator):
         The default is 0. If `inc` is ``None``, then it is initialized using
         entropy. Can be used with the same seed to produce multiple streams
         using other values of inc.
+    use_dxsm : bool, optional
+        Flag indicating to use the DXSM ouput function. This is the preferred
+        option. The default of False is for backward compatibility.
     mode : {None, "sequence", "legacy"}, optional
         The seeding mode to use. "legacy" uses the legacy
         SplitMix64-based initialization. "sequence" uses a SeedSequence
@@ -104,19 +107,26 @@ cdef class PCG64(BitGenerator):
     .. [2] O'Neill, Melissa E. "PCG: A Family of Simple Fast Space-Efficient
            Statistically Good Algorithms for Random Number Generation"
     """
-    def __init__(self, seed=None, inc=0, *, mode=None):
+    def __init__(self, seed=None, inc=0, *, use_dxsm=False, mode=None):
         BitGenerator.__init__(self, seed, mode)
-        self.seed(seed, inc)
+        self.rng_state.pcg_state = <pcg64_random_t *>PyArray_malloc_aligned(sizeof(pcg64_random_t))
+        self.use_dxsm = use_dxsm
 
+        self.seed(seed, inc)
         self._bitgen.state = <void *>&self.rng_state
         self._bitgen.next_uint64 = &pcg64_uint64
         self._bitgen.next_uint32 = &pcg64_uint32
         self._bitgen.next_double = &pcg64_double
         self._bitgen.next_raw = &pcg64_uint64
 
+    def __dealloc__(self):
+        if self.rng_state.pcg_state:
+            PyArray_free_aligned(self.rng_state.pcg_state)
+
     cdef _reset_state_variables(self):
         self.rng_state.has_uint32 = 0
         self.rng_state.uinteger = 0
+        self.rng_state.use_dxsm = self.use_dxsm
 
     def _seed_from_seq(self, inc=0):
         size = 4 if inc is None else 2
@@ -216,25 +226,26 @@ cdef class PCG64(BitGenerator):
             state of the PRNG
         """
         cdef np.ndarray state_vec
-        cdef int has_uint32
+        cdef int has_uint32, use_dxsm
         cdef uint32_t uinteger
 
         # state_vec is state.high, state.low, inc.high, inc.low
         state_vec = <np.ndarray>np.empty(4, dtype=np.uint64)
         pcg64_get_state(&self.rng_state,
                         <uint64_t *>np.PyArray_DATA(state_vec),
-                        &has_uint32, &uinteger)
+                        &use_dxsm, &has_uint32, &uinteger)
         state = int(state_vec[0]) * 2**64 + int(state_vec[1])
         inc = int(state_vec[2]) * 2**64 + int(state_vec[3])
         return {"bit_generator": self.__class__.__name__,
                 "state": {"state": state, "inc": inc},
+                "use_dxsm": use_dxsm,
                 "has_uint32": has_uint32,
                 "uinteger": uinteger}
 
     @state.setter
     def state(self, value):
         cdef np.ndarray state_vec
-        cdef int has_uint32
+        cdef int has_uint32, use_dxsm
         cdef uint32_t uinteger
         if not isinstance(value, dict):
             raise TypeError("state must be a dict")
@@ -251,9 +262,11 @@ cdef class PCG64(BitGenerator):
         state_vec[3] = inc % 2 ** 64
         has_uint32 = value["has_uint32"]
         uinteger = value["uinteger"]
+        # Default False for backward compat
+        use_dxsm = value.get("use_dxsm", False)
         pcg64_set_state(&self.rng_state,
                         <uint64_t *>np.PyArray_DATA(state_vec),
-                        has_uint32, uinteger)
+                        use_dxsm, has_uint32, uinteger)
 
     def advance(self, delta):
         """
@@ -380,7 +393,7 @@ cdef class PCG64(BitGenerator):
         """
         cdef PCG64 bit_generator
 
-        bit_generator = self.__class__(mode=self.mode)
+        bit_generator = self.__class__(mode=self.mode, use_dxsm=self.use_dxsm)
         bit_generator.state = self.state
         bit_generator.jump_inplace(iter)
 
