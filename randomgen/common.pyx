@@ -501,7 +501,8 @@ cdef np.ndarray int_to_array(object value, object name, object bits, object uint
                              " form".format(name=name, len=len))
     return out
 
-cdef int validate_output_shape(iter_shape, np.ndarray output) except -1:
+
+cdef validate_output_shape(iter_shape, np.ndarray output):
     cdef np.npy_intp *shape, ndim, i
     cdef bint error
     dims = np.PyArray_DIMS(output)
@@ -512,8 +513,6 @@ cdef int validate_output_shape(iter_shape, np.ndarray output) except -1:
             f"Output size {output_shape} is not compatible with broadcast "
             f"dimensions of inputs {iter_shape}."
         )
-        return -1
-    return 0
 
 
 cdef check_output(object out, object dtype, object size):
