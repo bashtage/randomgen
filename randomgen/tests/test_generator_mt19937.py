@@ -1364,6 +1364,8 @@ class TestRandomDist(object):
         with pytest.raises(ValueError):
             random.multivariate_normal(mean, cov)
         mean = np.zeros((2, 3, 4))
+        with pytest.raises(ValueError):
+            random.multivariate_normal(mean, cov, size=size)
 
         with pytest.raises(ValueError):
             random.multivariate_normal(0, [[1]], size=size)
