@@ -94,7 +94,7 @@ def params_1(f, bounded=False):
     # 2d - size - broadcast
     f(e, size=(10, 2))
     # 3d - size
-    f(g, size=(10, 10, 10))
+    f(g, size=(10, 10, 1))
 
 
 def comp_state(state1, state2):
