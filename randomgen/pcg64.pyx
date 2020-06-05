@@ -15,10 +15,19 @@ cdef uint32_t pcg64_uint32(void *st) nogil:
 cdef double pcg64_double(void* st) nogil:
     return uint64_to_double(pcg64_next64(<pcg64_state_t *>st))
 
+cdef uint64_t pcg64_cm_dxsm_uint64(void* st) nogil:
+    return pcg64_cm_dxsm_next64(<pcg64_state_t *>st)
+
+cdef uint32_t pcg64_cm_dxsm_uint32(void *st) nogil:
+    return pcg64_cm_dxsm_next32(<pcg64_state_t *> st)
+
+cdef double pcg64_cm_dxsm_double(void* st) nogil:
+    return uint64_to_double(pcg64_cm_dxsm_next64(<pcg64_state_t *>st))
+
 
 cdef class PCG64(BitGenerator):
     u"""
-    PCG64(seed=None, inc=0, *, use_dxsm=False, mode=None)
+    PCG64(seed=None, inc=0, *, variant="xls-rr", mode=None)
 
     Container for the PCG-64 pseudo-random number generator.
 
@@ -35,9 +44,15 @@ cdef class PCG64(BitGenerator):
         The default is 0. If `inc` is ``None``, then it is initialized using
         entropy. Can be used with the same seed to produce multiple streams
         using other values of inc.
-    use_dxsm : bool, optional
-        Flag indicating to use the DXSM ouput function. This is the preferred
-        option. The default of False is for backward compatibility.
+    variant : {None, "xsl-rr", "1.0", "dxsm", "cm-dxsm", "cm", "2.0"}, optional
+        Name of PCG64 variant to use. "xls-rr" corresponds to the original
+        PCG64 (1.0). "1.0" is an alias for "xls-rr". "dxsm" is identical
+        to the original except that it replaces the mixing function with
+        DXSM. "cm-dxsm" uses a cheap multiplier (64-bit, rather than
+        128-bit) in the underlying LCG and the DXSM output mixer. It also
+        returns the value before advancing the state. This variant is
+        PCG64 2.0. "cm" and "2.0" are aliases for "cm-dxsm". None trusts
+        randomgen to chose the variant.
     mode : {None, "sequence", "legacy"}, optional
         The seeding mode to use. "legacy" uses the legacy
         SplitMix64-based initialization. "sequence" uses a SeedSequence
@@ -107,17 +122,51 @@ cdef class PCG64(BitGenerator):
     .. [2] O'Neill, Melissa E. "PCG: A Family of Simple Fast Space-Efficient
            Statistically Good Algorithms for Random Number Generation"
     """
-    def __init__(self, seed=None, inc=0, *, use_dxsm=False, mode=None):
+    def __init__(self, seed=None, inc=0, *, variant="xls-rr", mode=None):
         BitGenerator.__init__(self, seed, mode)
         self.rng_state.pcg_state = <pcg64_random_t *>PyArray_malloc_aligned(sizeof(pcg64_random_t))
-        self.use_dxsm = use_dxsm
+        if variant is None:
+            import warnings
 
+            warnings.warn(
+                "The current default is xls-rr, aka PCG64 1.0. This will"
+                "change to cm-dxsm, aka PCG64 2.0. starting in release 1.20."
+                "Directly set variant to prevent a change when upgrading past"
+                " 1.19.",
+                FutureWarning
+            )
+        variant = "xls-rr" if variant is None else variant
+        if not isinstance(variant, str):
+            raise TypeError("variant must be a string")
+        variant = variant.lower().replace("-", "")
+        if variant not in ("xlsrr", "1.0", "dxsm", "cm", "cmdxsm", "2.0"):
+            raise ValueError(f"variant {variant} is not known.")
+        self.variant = variant
+        self._setup_rng_state()
         self.seed(seed, inc)
         self._bitgen.state = <void *>&self.rng_state
-        self._bitgen.next_uint64 = &pcg64_uint64
-        self._bitgen.next_uint32 = &pcg64_uint32
-        self._bitgen.next_double = &pcg64_double
-        self._bitgen.next_raw = &pcg64_uint64
+
+    def _setup_rng_state(self):
+        self.use_dxsm = False
+        self.cheap_multiplier = False
+        if self.variant == "dxsm":
+            self.use_dxsm = True
+        elif self.variant.startswith("cm") or self.variant == "2.0":
+            self.cheap_multiplier = True
+            self.variant = "cm-dxsm"
+        else:
+            self.variant = "xls-rr"
+
+        if not self.cheap_multiplier:
+            self._bitgen.next_uint64 = &pcg64_uint64
+            self._bitgen.next_uint32 = &pcg64_uint32
+            self._bitgen.next_double = &pcg64_double
+            self._bitgen.next_raw = &pcg64_uint64
+        else:
+            self._bitgen.next_uint64 = &pcg64_cm_dxsm_uint64
+            self._bitgen.next_uint32 = &pcg64_cm_dxsm_uint32
+            self._bitgen.next_double = &pcg64_cm_dxsm_double
+            self._bitgen.next_raw = &pcg64_cm_dxsm_uint64
 
     def __dealloc__(self):
         if self.rng_state.pcg_state:
@@ -140,7 +189,8 @@ cdef class PCG64(BitGenerator):
 
         pcg64_set_seed(&self.rng_state,
                        <uint64_t *>np.PyArray_DATA(state[:2]),
-                       <uint64_t *>np.PyArray_DATA(_inc))
+                       <uint64_t *>np.PyArray_DATA(_inc),
+                       self.cheap_multiplier)
         self._reset_state_variables()
 
     def seed(self, seed=None, inc=0):
@@ -211,7 +261,8 @@ cdef class PCG64(BitGenerator):
 
         pcg64_set_seed(&self.rng_state,
                        <uint64_t *>np.PyArray_DATA(_seed),
-                       <uint64_t *>np.PyArray_DATA(_inc))
+                       <uint64_t *>np.PyArray_DATA(_inc),
+                       self.cheap_multiplier)
         self._reset_state_variables()
 
     @property
@@ -238,7 +289,7 @@ cdef class PCG64(BitGenerator):
         inc = int(state_vec[2]) * 2**64 + int(state_vec[3])
         return {"bit_generator": self.__class__.__name__,
                 "state": {"state": state, "inc": inc},
-                "use_dxsm": use_dxsm,
+                "variant": self.variant,
                 "has_uint32": has_uint32,
                 "uinteger": uinteger}
 
@@ -262,11 +313,13 @@ cdef class PCG64(BitGenerator):
         state_vec[3] = inc % 2 ** 64
         has_uint32 = value["has_uint32"]
         uinteger = value["uinteger"]
+        self.variant = value.get("variant", "1.0")
+        self._setup_rng_state()
+
         # Default False for backward compat
-        use_dxsm = value.get("use_dxsm", False)
         pcg64_set_state(&self.rng_state,
                         <uint64_t *>np.PyArray_DATA(state_vec),
-                        use_dxsm, has_uint32, uinteger)
+                        self.use_dxsm, has_uint32, uinteger)
 
     def advance(self, delta):
         """
@@ -309,7 +362,7 @@ cdef class PCG64(BitGenerator):
         cdef np.ndarray d = np.empty(2, dtype=np.uint64)
         d[0] = delta // 2**64
         d[1] = delta % 2**64
-        pcg64_advance(&self.rng_state, <uint64_t *>np.PyArray_DATA(d))
+        pcg64_advance(&self.rng_state, <uint64_t *>np.PyArray_DATA(d), self.cheap_multiplier)
         self._reset_state_variables()
         return self
 
@@ -393,7 +446,7 @@ cdef class PCG64(BitGenerator):
         """
         cdef PCG64 bit_generator
 
-        bit_generator = self.__class__(mode=self.mode, use_dxsm=self.use_dxsm)
+        bit_generator = self.__class__(mode=self.mode, variant=self.variant)
         bit_generator.state = self.state
         bit_generator.jump_inplace(iter)
 
