@@ -1,7 +1,7 @@
 # RandomGen
 
-Random Number Generator using settable Basic RNG interface for future
-NumPy RandomState evolution.
+A general purpose Random Number Generator with settable PRNG interface, and a large
+collection of Pseudo-Random Number Generators (PRNGs).
 
 **Continuous Integration**
 
@@ -29,8 +29,30 @@ NumPy RandomState evolution.
 This is a library and generic interface for alternative random
 generators in Python and NumPy.
 
+## New Features
+
+The the [development documentation](https://bashtage.github.io/randomgen/change-log.html) for the latest features,
+or the [stable documentation](https://bashtage.github.io/randomgen/devel/change-log.html) for the latest released features.
+
 
 # WARNINGS
+
+## Changes in v1.19
+
+``Generator`` and ``RandomState`` have been officially deprecated, and will
+warn with a ``FutureWarning`` about their removal. They will also receive virtually
+no maintenance. It is now time to move to NumPy's ``np.random.Generator`` which has
+features not in ``randomstate.Generator`` and is maintained more actively.
+
+A few distributions that are not present in ``np.random.Generator`` have been moved
+to ``randomstate.ExtendedGenerator``:
+
+* `multivariate_normal`: which supports broadcasting
+* `uintegers`: fast 32 and 64-bit uniform integers
+* `complex_normal`: scalar complex normals
+
+There are no plans to remove any of the bit generators, e.g., ``AESCounter``,
+``ThreeFry``, or ``PCG64``. 
 
 ## Changes in v1.18
 
@@ -52,11 +74,10 @@ and so it has succeeded.
 While I have no immediate plans to remove anything, after a 1.19 release I will:
 
 * Remove `Generator` and `RandomState`. These duplicate NumPy and will diverge over time.
-  The versions in NumPy are authoritative.
-* Preserve novel methods of `Generator` in a new class, `ExtendedGenerator`.
-* Add some distributions that are not supported in NumPy.
-* Remove `MT19937` `PCG64` since these are duplicates of bit generators in NumPy.
-* Add any interesting bit generators I come across.
+  The versions in NumPy are authoritative. **Deprecated**
+* Preserve novel methods of `Generator` in a new class, `ExtendedGenerator`. **Done**
+* Add some distributions that are not supported in NumPy. _Ongoing_
+* Add any interesting bit generators I come across. _Recent additions include the DXSM and CM-DXSM variants of PCG64 and the LXM generator._
 
 
 ## Python 2.7 Support
@@ -65,18 +86,9 @@ v1.16 is the final major version that supports Python 2.7. Any bugs
 in v1.16 will be patched until the end of 2019. All future releases
 are Python 3, with an initial minimum version of 3.5.
 
-## Compatibility Warning
-
-`Generator` does not support Box-Muller normal variates and so it not
-100% compatible with NumPy (or randomstate). Box-Muller normals are slow
-to generate and all functions which previously relied on Box-Muller
-normals now use the faster Ziggurat implementation. If you require backward
-compatibility, a legacy generator, ``RandomState``, has been created
-which can fully reproduce the sequence produced by NumPy.
-
 # Features
 
-* Designed as a peplacement for NumPy's 1.16's RandomState
+* Designed as a replacement for NumPy's 1.16's RandomState
 
   ```python
   from randomgen import Generator, MT19937
@@ -148,7 +160,7 @@ The RNGs include:
 ## Differences from `numpy.random.RandomState`
 
 ### Note
-These comparrisons are relative to NumPy 1.16. The project has been
+These comparisons are relative to NumPy 1.16. The project has been
 substantially merged into NumPy 1.17+.
 
 ### New Features relative to NumPy 1.16
@@ -193,7 +205,7 @@ substantially merged into NumPy 1.17+.
   * Linux (ARM/ARM64), Python 3.7
   * OSX 64-bit, Python 2.7, 3.5, 3.6, 3.7
   * Windows 32/64 bit, Python 2.7, 3.5, 3.6, 3.7
-  * PC-BSD (FreeBSD) 64-bit, Python 2.7 _(Occasional, no CI)_
+  * FreeBSD 64-bit
 
 ## Version
 
@@ -212,8 +224,8 @@ the latest commit (unreleased) is available under
 Building requires:
 
 * Python (3.5, 3.6, 3.7, 3.8)
-* NumPy (1.13, 1.14, 1.15, 1.16, 1.17, 1.18)
-* Cython (0.26+)
+* NumPy (1.14, 1.15, 1.16, 1.17, 1.18, 1.19)
+* Cython (0.27+)
 * tempita (0.5+), if not provided by Cython
 
 Testing requires pytest (4.0+).
@@ -287,47 +299,3 @@ rg.random(100)
 ## License
 
 Dual: BSD 3-Clause and NCSA, plus sub licenses for components.
-
-## Performance
-
-Performance is promising, and even the mt19937 seems to be faster than
-NumPy's mt19937.
-
-    Speed-up relative to NumPy (Uniform Doubles)
-    ************************************************************
-    DSFMT                 184.9%
-    MT19937                17.3%
-    PCG32                  83.3%
-    PCG64                 108.3%
-    Philox                 -4.9%
-    ThreeFry              -12.0%
-    Xoroshiro128          159.5%
-    Xorshift1024          150.4%
-    Xoshiro256            145.7%
-    Xoshiro512            113.1%
-
-    Speed-up relative to NumPy (64-bit unsigned integers)
-    ************************************************************
-    DSFMT                  17.4%
-    MT19937                 7.8%
-    PCG32                  60.3%
-    PCG64                  73.5%
-    Philox                -25.5%
-    ThreeFry              -30.5%
-    Xoroshiro128          124.0%
-    Xorshift1024          109.4%
-    Xoshiro256            100.3%
-    Xoshiro512             63.5%
-
-    Speed-up relative to NumPy (Standard normals)
-    ************************************************************
-    DSFMT                 183.0%
-    MT19937               169.0%
-    PCG32                 240.7%
-    PCG64                 231.6%
-    Philox                131.3%
-    ThreeFry              118.3%
-    Xoroshiro128          332.1%
-    Xorshift1024          232.4%
-    Xoshiro256            306.6%
-    Xoshiro512            274.6%

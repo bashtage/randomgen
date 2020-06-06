@@ -3,10 +3,15 @@
 pip install --upgrade pip
 pip install cython pytest setuptools --upgrade
 if [[ -z ${NUMPY} ]]; then
-  pip install numpy pandas
+  pip install numpy --upgrade
 else
-  pip install numpy=="${NUMPY}" --upgrade --pre
+  pip install numpy=="${NUMPY}" --upgrade --pre -v
 fi
-pip install pandas
 
-if [[ -z ${PPC64_LE} ]]; then pip install numpy pandas; fi
+if [[ -z ${PPC64_LE} && -z ${S390X} ]]; then
+    pip install pandas --upgrade
+    # Blocked on DRONE-CI
+    if [[ -z ${DRONE} ]]; then
+        pip install numba --upgrade
+    fi
+fi

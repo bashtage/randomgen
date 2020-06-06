@@ -93,6 +93,23 @@ cdef class RandomState:
     _poisson_lam_max = LEGACY_POISSON_LAM_MAX
 
     def __init__(self, bit_generator=None):
+        import warnings
+
+        warnings.warn("""\
+RandomState is deprecated and will be removed sometime after the release of
+NumPy 1.21 (or 2 releases after 1.19 if there is a major release). 
+
+Now is the time to start using numpy.random.Generator, or if you must have
+backward compatibility, numpy.random.RandomState.
+
+In the mean time RandomState will only be updated for the most egregious bugs.
+
+You can silence this warning using 
+
+import warnings
+warnings.filterwarnings("ignore", "RandomState", FutureWarning)
+""", FutureWarning)
+
         if bit_generator is None:
             bit_generator = _MT19937(mode="legacy")
         elif not hasattr(bit_generator, "capsule"):
@@ -655,7 +672,9 @@ cdef class RandomState:
 
         """
         cdef Py_ssize_t n_uint32 = ((length - 1) // 4 + 1)
-        return self.randint(0, 4294967296, size=n_uint32, dtype=np.uint32).tobytes()[:length]
+
+        return self.randint(0, 4294967296, size=n_uint32,
+                            dtype=np.uint32).astype('<u4').tobytes()[:length]
 
     @cython.wraparound(True)
     def choice(self, a, size=None, replace=True, p=None):
@@ -4146,7 +4165,10 @@ cdef class RandomState:
         self.shuffle(idx)
         return arr[idx]
 
-_rand = RandomState(_MT19937(mode="legacy"))
+with warnings.catch_warnings():
+    warnings.simplefilter("ignore")
+    _rand = RandomState(_MT19937(mode="legacy"))
+
 
 beta = _rand.beta
 binomial = _rand.binomial

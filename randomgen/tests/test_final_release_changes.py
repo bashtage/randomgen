@@ -60,11 +60,6 @@ def test_randn_deprecated():
         random_gen.randn(10)
 
 
-def test_brng_deprecated():
-    with pytest.deprecated_call():
-        random_gen.brng
-
-
 def test_generator_raises(bit_generator):
     bg = bit_generator(mode="sequence")
     with pytest.raises(NotImplementedError):

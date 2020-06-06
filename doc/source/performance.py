@@ -8,6 +8,7 @@ from randomgen import (
     DSFMT,
     HC128,
     JSF,
+    LXM,
     MT64,
     MT19937,
     PCG64,
@@ -27,42 +28,56 @@ class ChaCha8(ChaCha):
     def __init__(self, *args, **kwargs):
         if "rounds" in kwargs:
             del kwargs["rounds"]
-        super(ChaCha8, self).__init__(*args, rounds=8, **kwargs)
+        super().__init__(*args, rounds=8, **kwargs)
 
 
 class JSF32(JSF):
     def __init__(self, *args, **kwargs):
         if "size" in kwargs:
             del kwargs["size"]
-        super(JSF32, self).__init__(*args, size=32, **kwargs)
+        super().__init__(*args, size=32, **kwargs)
 
 
 class Philox4x32(Philox):
     def __init__(self, *args, **kwargs):
         if "width" in kwargs:
             del kwargs["width"]
-        super(Philox4x32, self).__init__(*args, width=32, **kwargs)
+        super().__init__(*args, width=32, **kwargs)
 
 
 class Philox2x64(Philox):
     def __init__(self, *args, **kwargs):
         if "number" in kwargs:
             del kwargs["number"]
-        super(Philox2x64, self).__init__(*args, number=2, **kwargs)
+        super().__init__(*args, number=2, **kwargs)
 
 
 class ThreeFry4x32(ThreeFry):
     def __init__(self, *args, **kwargs):
         if "width" in kwargs:
             del kwargs["width"]
-        super(ThreeFry4x32, self).__init__(*args, width=32, **kwargs)
+        super().__init__(*args, width=32, **kwargs)
 
 
 class ThreeFry2x64(ThreeFry):
     def __init__(self, *args, **kwargs):
         if "number" in kwargs:
             del kwargs["number"]
-        super(ThreeFry2x64, self).__init__(*args, number=2, **kwargs)
+        super().__init__(*args, number=2, **kwargs)
+
+
+class PCG64DXSM(PCG64):
+    def __init__(self, *args, **kwargs):
+        if "variant" in kwargs:
+            del kwargs["variant"]
+        super().__init__(*args, variant="dxsm", **kwargs)
+
+
+class PCG64CMDXSM(PCG64):
+    def __init__(self, *args, **kwargs):
+        if "variant" in kwargs:
+            del kwargs["variant"]
+        super().__init__(*args, variant="cm-dxsm", **kwargs)
 
 
 try:
@@ -85,6 +100,9 @@ PRNGS = [
     MT64,
     MT19937,
     PCG64,
+    PCG64DXSM,
+    PCG64CMDXSM,
+    LXM,
     SFMT,
     AESCounter,
     ChaCha,
@@ -110,7 +128,7 @@ funcs["Normal"] = f"standard_normal(size={SIZE})"
 funcs["Gamma"] = f"standard_gamma(3.0,size={SIZE})"
 
 setup = """
-from randomgen import Generator
+from numpy.random import Generator
 rg = Generator({prng}())
 """
 

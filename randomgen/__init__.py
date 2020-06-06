@@ -2,7 +2,7 @@ from randomgen.aes import AESCounter
 from randomgen.chacha import ChaCha
 from randomgen.dsfmt import DSFMT
 from randomgen.entropy import random_entropy
-from randomgen.generator import Generator
+from randomgen.generator import ExtendedGenerator, Generator
 from randomgen.hc128 import HC128
 from randomgen.jsf import JSF
 from randomgen.lxm import LXM
@@ -17,6 +17,7 @@ from randomgen.seed_sequence import SeedlessSeedSequence, SeedSequence
 from randomgen.sfmt import SFMT
 from randomgen.speck128 import SPECK128
 from randomgen.threefry import ThreeFry
+from randomgen.wrapper import UserBitGenerator
 from randomgen.xoroshiro128 import Xoroshiro128
 from randomgen.xorshift1024 import Xorshift1024
 from randomgen.xoshiro256 import Xoshiro256
@@ -27,6 +28,7 @@ from ._version import get_versions
 __all__ = [
     "DSFMT",
     "Generator",
+    "ExtendedGenerator",
     "HC128",
     "JSF",
     "LXM",
@@ -49,6 +51,7 @@ __all__ = [
     "random_entropy",
     "SeedSequence",
     "SeedlessSeedSequence",
+    "UserBitGenerator",
 ]
 
 __version__ = get_versions()["version"]

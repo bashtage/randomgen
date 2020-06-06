@@ -1277,13 +1277,18 @@ class TestRandomDist(object):
                 ],
             ]
         )
-
         assert_array_almost_equal(actual, desired, decimal=15)
 
         # Check for default size, was raising deprecation warning
         actual = random.multivariate_normal(mean, cov, method=method)
         desired = np.array([0.233278563284287, 9.424140804347195])
         assert_array_almost_equal(actual, desired, decimal=15)
+
+        # Check path with scalar size works correctly
+        scalar = random.multivariate_normal(mean, cov, 3, method=method)
+        tuple1d = random.multivariate_normal(mean, cov, (3,), method=method)
+        assert scalar.shape == tuple1d.shape == (3, 2)
+
         # Check that non symmetric covariance input raises exception when
         # check_valid='raises' if using default svd method.
         mean = [0, 0]
@@ -1346,7 +1351,7 @@ class TestRandomDist(object):
 
     @pytest.mark.parametrize("method", ["svd", "eigh", "cholesky"])
     def test_multivariate_normal_basic_stats(self, method):
-        random = Generator(MT19937(self.seed))
+        random = Generator(MT19937(self.seed, mode="sequence"))
         n_s = 1000
         mean = np.array([1, 2])
         cov = np.array([[2, 1], [1, 2]])

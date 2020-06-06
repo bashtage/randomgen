@@ -16,5 +16,5 @@ PKGS="${PKGS} Cython";
 if [[ -n ${CYTHON} ]]; then PKGS="${PKGS}=${CYTHON}"; fi
 PKGS="${PKGS} pandas";
 if [[ -n ${PANDAS} ]]; then PKGS="${PKGS}=${PANDAS}"; fi
-echo conda create -n randomgen-test ${PKGS} pytest setuptools nose --quiet
-conda create -n randomgen-test ${PKGS} pytest setuptools nose --quiet
+echo conda create -n randomgen-test ${PKGS} pytest setuptools numba pypandoc
+conda create -n randomgen-test ${PKGS} pytest setuptools numba pypandoc

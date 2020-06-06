@@ -161,3 +161,12 @@ the next 64-bit unsigned integer function if not needed. Functions inside
 .. code-block:: c
 
   bitgen_state->next_uint64(bitgen_state->state)
+
+Python BitGenerators
+====================
+
+:class:`~randomgen.wrapper.UserBitGenerator` is a utility class that lets users
+write bit generators in Python. While these are inherently low performance, this
+interface allows users to rapidly prototype a bit generator and to pass this
+bit generator to a :class:`~randomgen.generator.Generator` to generate variates
+from the full spectrum of distributions.

@@ -65,7 +65,7 @@ cdef class LXM(BitGenerator):
     Murmur3 hash function using the parameters suggested by David Stafford
     ([4]_). Is pseudo-code, each value is computed as Mix(LCG + Xorshift).
     While the origins of LXM are not clear from ([1]_), it appears to be
-    derived from Lcg Xorshift Mix.
+    derived from LCG Xorshift Mix.
 
     ``LXM`` provides a capsule containing function pointers that
     produce doubles, and unsigned 32 and 64- bit integers. These are not
@@ -75,7 +75,7 @@ cdef class LXM(BitGenerator):
     **State and Seeding**
 
     The ``LXM`` state vector consists of a 4-element array of 64-bit
-    unsigned integers that constaint he state of the Xorshift generator
+    unsigned integers that constraint he state of the Xorshift generator
     and an addition 64-bit unsigned integer that holds the state of the
     LCG.
 
@@ -139,6 +139,13 @@ cdef class LXM(BitGenerator):
         self._bitgen.next_uint32 = &lxm_uint32
         self._bitgen.next_double = &lxm_double
         self._bitgen.next_raw = &lxm_uint64
+
+    def __repr__(self):
+        out = object.__repr__(self)
+        if self.rng_state.mix:
+            out = out.replace(f"{type(self).__name__}",
+                              f"{type(self).__name__}(Mix)")
+        return out
 
     cdef _reset_state_variables(self):
         self.rng_state.has_uint32 = 0

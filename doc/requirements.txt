@@ -1,0 +1,5 @@
+numba>=0.49
+nbsphinx
+sphinx-material
+sphinx>=3
+ipython>=5

@@ -3,7 +3,7 @@ import warnings
 from randomgen.aes import AESCounter
 from randomgen.chacha import ChaCha
 from randomgen.dsfmt import DSFMT
-from randomgen.generator import Generator
+from randomgen.generator import ExtendedGenerator, Generator
 from randomgen.hc128 import HC128
 from randomgen.jsf import JSF
 from randomgen.lxm import LXM
@@ -45,6 +45,19 @@ BitGenerators = {
 }
 
 
+def _get_bitgenerator(bit_generator_name):
+    """
+    Bit generator look-up with user-friendly errors
+    """
+    if bit_generator_name in BitGenerators:
+        bit_generator = BitGenerators[bit_generator_name]
+    else:
+        raise ValueError(
+            str(bit_generator_name) + " is not a known BitGenerator module."
+        )
+    return bit_generator
+
+
 def __generator_ctor(bit_generator_name="MT19937"):
     """
     Pickling helper function that returns a Generator object
@@ -63,16 +76,36 @@ def __generator_ctor(bit_generator_name="MT19937"):
         bit_generator_name = bit_generator_name.decode("ascii")
     except AttributeError:
         pass
-    if bit_generator_name in BitGenerators:
-        bit_generator = BitGenerators[bit_generator_name]
-    else:
-        raise ValueError(
-            str(bit_generator_name) + " is not a known BitGenerator module."
-        )
+    bit_generator = _get_bitgenerator(bit_generator_name)
     with warnings.catch_warnings():
         warnings.filterwarnings("ignore", category=FutureWarning)
         bit_gen = bit_generator()
     return Generator(bit_gen)
+
+
+def __extended_generator_ctor(bit_generator_name="MT19937"):
+    """
+    Pickling helper function that returns a Generator object
+
+    Parameters
+    ----------
+    bit_generator_name: str
+        String containing the core BitGenerator
+
+    Returns
+    -------
+    rg: Generator
+        Generator using the named core BitGenerator
+    """
+    try:
+        bit_generator_name = bit_generator_name.decode("ascii")
+    except AttributeError:
+        pass
+    bit_generator = _get_bitgenerator(bit_generator_name)
+    with warnings.catch_warnings():
+        warnings.filterwarnings("ignore", category=FutureWarning)
+        bit_gen = bit_generator()
+    return ExtendedGenerator(bit_gen)
 
 
 def __bit_generator_ctor(bit_generator_name="MT19937"):
@@ -93,12 +126,7 @@ def __bit_generator_ctor(bit_generator_name="MT19937"):
         bit_generator_name = bit_generator_name.decode("ascii")
     except AttributeError:
         pass
-    if bit_generator_name in BitGenerators:
-        bit_generator = BitGenerators[bit_generator_name]
-    else:
-        raise ValueError(
-            str(bit_generator_name) + " is not a known BitGenerator module."
-        )
+    bit_generator = _get_bitgenerator(bit_generator_name)
     with warnings.catch_warnings():
         warnings.filterwarnings("ignore", category=FutureWarning)
         bit_gen = bit_generator()
@@ -123,12 +151,7 @@ def __randomstate_ctor(bit_generator_name="MT19937"):
         bit_generator_name = bit_generator_name.decode("ascii")
     except AttributeError:
         pass
-    if bit_generator_name in BitGenerators:
-        bit_generator = BitGenerators[bit_generator_name]
-    else:
-        raise ValueError(
-            str(bit_generator_name) + " is not a known BitGenerator module."
-        )
+    bit_generator = _get_bitgenerator(bit_generator_name)
     with warnings.catch_warnings():
         warnings.filterwarnings("ignore", category=FutureWarning)
         bit_gen = bit_generator()

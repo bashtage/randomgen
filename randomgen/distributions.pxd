@@ -5,6 +5,10 @@ from libc.stdint cimport (uint8_t, uint16_t, uint32_t, uint64_t,
 import numpy as np
 cimport numpy as np
 
+ctypedef uint64_t (*next_uint64_t)(void *st) nogil
+ctypedef uint32_t (*next_uint32_t)(void *st) nogil
+ctypedef double (*next_double_t)(void *st) nogil
+
 cdef extern from "src/distributions/distributions.h":
 
     struct s_binomial_t:
@@ -30,10 +34,10 @@ cdef extern from "src/distributions/distributions.h":
 
     struct bitgen:
         void *state
-        uint64_t (*next_uint64)(void *st) nogil
-        uint32_t (*next_uint32)(void *st) nogil
-        double (*next_double)(void *st) nogil
-        uint64_t (*next_raw)(void *st) nogil
+        next_uint64_t next_uint64
+        next_uint32_t next_uint32
+        next_double_t next_double
+        next_uint64_t next_raw
 
     ctypedef bitgen bitgen_t
 

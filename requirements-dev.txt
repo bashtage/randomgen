@@ -1,5 +1,2 @@
 pytest>=4
 pytest-cov
-sphinx>=3
-ipython>=5
-sphinx-material
