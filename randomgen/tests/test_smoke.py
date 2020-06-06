@@ -592,7 +592,10 @@ class RNG(object):
 
     def test_seed_array(self):
         if self.seed_vector_bits is None:
-            bit_gen_name = self.bit_generator.__name__
+            if isinstance(self.bit_generator, partial):
+                bit_gen_name = self.bit_generator.func.__name__
+            else:
+                bit_gen_name = self.bit_generator.__name__
             pytest.skip("Vector seeding is not supported by {0}".format(bit_gen_name))
 
         dtype = np.uint32 if self.seed_vector_bits == 32 else np.uint64
@@ -1101,6 +1104,26 @@ class TestPCG64(RNG):
 
     def test_array_scalar_seed_diff(self):
         pass
+
+
+class TestPCG64DXSM(TestPCG64):
+    @classmethod
+    def setup_class(cls):
+        super().setup_class()
+        cls.bit_generator = partial(PCG64, variant="dxsm")
+        cls.rg = Generator(cls.bit_generator(*cls.seed, mode="legacy"))
+        cls.initial_state = cls.rg.bit_generator.state
+        cls._extra_setup()
+
+
+class TestPCG64CMDXSM(TestPCG64):
+    @classmethod
+    def setup_class(cls):
+        super().setup_class()
+        cls.bit_generator = partial(PCG64, variant="cm-dxsm")
+        cls.rg = Generator(cls.bit_generator(*cls.seed, mode="legacy"))
+        cls.initial_state = cls.rg.bit_generator.state
+        cls._extra_setup()
 
 
 class TestPhilox4x64(RNG):

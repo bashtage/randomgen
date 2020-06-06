@@ -51,13 +51,11 @@
 
 extern INLINE void pcg_setseq_128_step_r(pcg_state_setseq_128 *rng);
 extern INLINE uint64_t pcg_output_xsl_rr_128_64(pcg128_t state);
-extern INLINE void pcg_setseq_128_srandom_r(pcg_state_setseq_128 *rng,
-                                            pcg128_t initstate,
-                                            pcg128_t initseq);
-extern INLINE uint64_t
-pcg_setseq_128_xsl_rr_64_random_r(pcg_state_setseq_128 *rng, int use_dxsm);
-extern INLINE void pcg_setseq_128_advance_r(pcg_state_setseq_128 *rng,
-                                            pcg128_t delta);
+extern INLINE void pcg_setseq_128_srandom_r(pcg_state_setseq_128 *rng, pcg128_t initstate,
+                                            pcg128_t initseq, int cheap_multiplier);
+extern INLINE uint64_t pcg_setseq_128_xsl_rr_64_random_r(pcg_state_setseq_128 *rng, int use_dxsm);
+extern INLINE void pcg_setseq_128_advance_r(pcg_state_setseq_128 *rng, pcg128_t delta,
+                                            int cheap_multiplier);
 
 /* Multi-step advance functions (jump-ahead, jump-back)
  *
@@ -72,12 +70,14 @@ extern INLINE void pcg_setseq_128_advance_r(pcg_state_setseq_128 *rng,
 
 #ifndef PCG_EMULATED_128BIT_MATH
 
-pcg128_t pcg_advance_lcg_128(pcg128_t state, pcg128_t delta, pcg128_t cur_mult,
-                             pcg128_t cur_plus) {
+pcg128_t pcg_advance_lcg_128(pcg128_t state, pcg128_t delta, pcg128_t cur_mult, pcg128_t cur_plus)
+{
   pcg128_t acc_mult = 1u;
   pcg128_t acc_plus = 0u;
-  while (delta > 0) {
-    if (delta & 1) {
+  while (delta > 0)
+  {
+    if (delta & 1)
+    {
       acc_mult *= cur_mult;
       acc_plus = acc_plus * cur_mult + cur_plus;
     }
@@ -90,17 +90,18 @@ pcg128_t pcg_advance_lcg_128(pcg128_t state, pcg128_t delta, pcg128_t cur_mult,
 
 #else
 
-pcg128_t pcg_advance_lcg_128(pcg128_t state, pcg128_t delta, pcg128_t cur_mult,
-                             pcg128_t cur_plus) {
+pcg128_t pcg_advance_lcg_128(pcg128_t state, pcg128_t delta, pcg128_t cur_mult, pcg128_t cur_plus)
+{
   pcg128_t acc_mult = PCG_128BIT_CONSTANT(0u, 1u);
   pcg128_t acc_plus = PCG_128BIT_CONSTANT(0u, 0u);
-  while ((delta.high > 0) || (delta.low > 0)) {
-    if (delta.low & 1) {
+  while ((delta.high > 0) || (delta.low > 0))
+  {
+    if (delta.low & 1)
+    {
       acc_mult = pcg128_mult(acc_mult, cur_mult);
       acc_plus = pcg128_add(pcg128_mult(acc_plus, cur_mult), cur_plus);
     }
-    cur_plus = pcg128_mult(pcg128_add(cur_mult, PCG_128BIT_CONSTANT(0u, 1u)),
-                           cur_plus);
+    cur_plus = pcg128_mult(pcg128_add(cur_mult, PCG_128BIT_CONSTANT(0u, 1u)), cur_plus);
     cur_mult = pcg128_mult(cur_mult, cur_mult);
     delta.low >>= 1;
     delta.low += delta.high & 1;
@@ -112,9 +113,12 @@ pcg128_t pcg_advance_lcg_128(pcg128_t state, pcg128_t delta, pcg128_t cur_mult,
 #endif
 
 extern INLINE uint64_t pcg64_next64(pcg64_state_t *state);
+extern INLINE uint64_t pcg64_cm_dxsm_next64(pcg64_state_t *state);
 extern INLINE uint32_t pcg64_next32(pcg64_state_t *state);
+extern INLINE uint32_t pcg64_cm_dxsm_next32(pcg64_state_t *state);
 
-extern void pcg64_advance(pcg64_state_t *state, uint64_t *step) {
+extern void pcg64_advance(pcg64_state_t *state, uint64_t *step, int cheap_multiplier)
+{
   pcg128_t delta;
 #ifndef PCG_EMULATED_128BIT_MATH
   delta = (((pcg128_t)step[0]) << 64) | step[1];
@@ -122,10 +126,12 @@ extern void pcg64_advance(pcg64_state_t *state, uint64_t *step) {
   delta.high = step[0];
   delta.low = step[1];
 #endif
-  pcg64_advance_r(state->pcg_state, delta);
+  pcg64_advance_r(state->pcg_state, delta, cheap_multiplier);
 }
 
-extern void pcg64_set_seed(pcg64_state_t *state, uint64_t *seed, uint64_t *inc) {
+extern void pcg64_set_seed(pcg64_state_t *state, uint64_t *seed, uint64_t *inc,
+                           int cheap_multiplier)
+{
   pcg128_t s, i;
 #ifndef PCG_EMULATED_128BIT_MATH
   s = (((pcg128_t)seed[0]) << 64) | seed[1];
@@ -136,7 +142,7 @@ extern void pcg64_set_seed(pcg64_state_t *state, uint64_t *seed, uint64_t *inc) 
   i.high = inc[0];
   i.low = inc[1];
 #endif
-  pcg64_srandom_r(state->pcg_state, s, i);
+  pcg64_srandom_r(state->pcg_state, s, i, cheap_multiplier);
 }
 
 extern void pcg64_get_state(pcg64_state_t *state, uint64_t *state_arr, int *use_dxsm,
