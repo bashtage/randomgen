@@ -166,6 +166,8 @@ cdef class HC128(BitGenerator):
             state = seed_by_array(int_to_array(seed, "seed", None, 64), 4)
         else:
             state = random_entropy(8, "auto")
+        # Ensure state bytes are the same in LE and BE
+        state = byteswap_little_endian(state)
         hc128_seed(&self.rng_state, <uint32_t *>np.PyArray_DATA(state))
 
     @property

@@ -267,7 +267,7 @@ cdef class JSF(BitGenerator):
         else:
             state = seed_by_array(seed, 3)
         dtype = np.uint64 if self.size==64 else np.uint32
-        state = state.view(dtype)
+        state = view_little_endian(state, dtype)
         if self.size == 64:
             jsf64_seed(&self.rng_state, <uint64_t*>np.PyArray_DATA(state),
                        self.seed_size)

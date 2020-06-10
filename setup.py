@@ -268,6 +268,18 @@ extensions.append(
         undef_macros=UNDEF_MACROS,
     )
 )
+extensions.append(
+    Extension(
+        "randomgen.tests._shims",
+        ["randomgen/tests/_shims.pyx"],
+        include_dirs=EXTRA_INCLUDE_DIRS,
+        libraries=EXTRA_LIBRARIES,
+        extra_compile_args=EXTRA_COMPILE_ARGS,
+        extra_link_args=EXTRA_LINK_ARGS,
+        define_macros=DEFS,
+        undef_macros=UNDEF_MACROS,
+    )
+)
 
 classifiers = [
     "Development Status :: 5 - Production/Stable",

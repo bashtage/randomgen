@@ -240,6 +240,8 @@ cdef class AESCounter(BitGenerator):
                 _seed = seed_by_array(int_to_array(seed, "seed", None, 64), 2)
         else:
             _seed = int_to_array(key, "key", 128, 64)
+        # TODO: We have swapped here, but should we always use native in Python?
+        _seed = byteswap_little_endian(_seed)
         aesctr_seed(self.rng_state, <uint64_t*>np.PyArray_DATA(_seed))
         _counter = np.empty(8, dtype=np.uint64)
         counter = 0 if counter is None else counter
