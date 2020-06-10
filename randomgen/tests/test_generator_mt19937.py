@@ -2649,7 +2649,10 @@ def test_jumped(config):
         jumped = mt19937.jumped()
     else:
         jumped = mt19937._jump_tester()
-    md5 = hashlib.md5(jumped.state["state"]["key"])
+    key = jumped.state["state"]["key"]
+    if sys.byteorder == "big":
+        key = key.byteswap()
+    md5 = hashlib.md5(key)
     assert md5.hexdigest() == values["jumped"]["key_md5"]
     assert jumped.state["state"]["pos"] == values["jumped"]["pos"]
 

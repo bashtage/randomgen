@@ -75,9 +75,19 @@ void aesctr_seed_r(aesctr_state_t *state, uint64_t *seed)
     {
         for (i = 0; i < AESCTR_UNROLL; ++i)
         {
-            state->ctr[i].u64[0] = i;
+        /* TODO: Counter setting need to be adjusted for BE:
+            always store as LE, but do math in math in native
+            **might be right, but needs check**
+        */
+
+            state->ctr[i].u64[0] = 0;
             state->ctr[i].u64[1] = 0;
+            /* Always set first byte to deal with endianness */
+            state->ctr[i].u8[0] = i;
         }
+        /* TODO: Need to be coherent about endianness of seed here
+            Already LE or native, in which case needs conversion?
+        */
         tinyaes_expand_key((uint8_t *)&state->seed, (uint8_t *)seed);
     }
     state->offset = 16 * AESCTR_UNROLL;
@@ -101,18 +111,21 @@ void aesctr_get_seed_counter(aesctr_state_t *state, uint64_t *seed,
 
 void aesctr_set_counter(aesctr_state_t *state, uint64_t *counter)
 {
+    /* TODO: need to byteswap counter for BE */
     memcpy(&state->ctr, counter, AESCTR_UNROLL * sizeof(aes128_t));
 }
 
 void aesctr_set_seed_counter(aesctr_state_t *state, uint64_t *seed,
                              uint64_t *counter)
 {
+    /* TODO: need to byteswap seed for BE */
     memcpy(&state->seed, seed, (AESCTR_ROUNDS + 1) * sizeof(aes128_t));
     aesctr_set_counter(state, counter);
 }
 
 void aesctr_advance(aesctr_state_t *state, uint64_t *step)
 {
+    /* TODO: need to be rewritten to deal with BE */
     uint64_t low;
     uint64_t temp[2];
     uint64_t adj_step[2];

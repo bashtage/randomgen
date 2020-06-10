@@ -501,6 +501,21 @@ cdef np.ndarray int_to_array(object value, object name, object bits, object uint
                              " form".format(name=name, len=len))
     return out
 
+cdef view_little_endian(arr, dtype):
+    supported = (np.uint32, np.uint64)
+    if dtype not in supported or arr.dtype not in supported:
+        raise ValueError("Only support conversion between uint 32 and 64.")
+    if arr.ndim != 1:
+        raise ValueError("arr must be 1 dimensional")
+    if arr.dtype == dtype or sys.byteorder == "little":
+        return arr.view(dtype)
+    arr = arr.byteswap().view(dtype).byteswap()
+    return arr
+
+cdef byteswap_little_endian(arr):
+    if sys.byteorder == "little":
+        return arr
+    return arr.byteswap()
 
 cdef validate_output_shape(iter_shape, np.ndarray output):
     cdef np.npy_intp *shape

@@ -16,6 +16,28 @@
 #undef __AES__
 #endif
 
+#ifndef AES_LITTLE_ENDIAN
+    #if defined(__BYTE_ORDER__)
+        #if __BYTE_ORDER__ == __ORDER_LITTLE_ENDIAN__
+            #define AES_LITTLE_ENDIAN 1
+        #elif __BYTE_ORDER__ == __ORDER_BIG_ENDIAN__
+            #define AES_LITTLE_ENDIAN 0
+        #else
+            #error __BYTE_ORDER__ does not match a standard endian, pick a side
+        #endif
+    #elif __LITTLE_ENDIAN__ || _LITTLE_ENDIAN
+        #define AES_LITTLE_ENDIAN 1
+    #elif __BIG_ENDIAN__ || _BIG_ENDIAN
+        #define AES_LITTLE_ENDIAN 0
+    #elif __x86_64 || __x86_64__ || _M_X64 || __i386 || __i386__ || _M_IX86
+        #define AES_LITTLE_ENDIAN 1
+    #elif __powerpc__ || __POWERPC__ || __ppc__ || __PPC__ \
+          || __m68k__ || __mc68000__
+        #define AES_LITTLE_ENDIAN 0
+    #else
+        #error Unable to determine target endianness
+    #endif
+#endif
 
 #include "softaes.h"
 
@@ -82,6 +104,9 @@ static INLINE uint64_t aesctr_r(aesctr_state_t *state) {
         tiny_encrypt((state_t *)&state->state[16 * i], (uint8_t *)&state->seed);
       }
       for (i = 0; i < 4; i++) {
+        /* TODO: Counter advancing need to be adjusted for BE:
+            always store as LE, but do math in math in native
+        */
         state->ctr[i].u64[0] += AESCTR_UNROLL;
         /* Rolled if less than AESCTR_UNROLL */
         state->ctr[i].u64[1] += (state->ctr[i].u64[0] < AESCTR_UNROLL);

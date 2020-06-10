@@ -290,7 +290,7 @@ cdef class Philox(BitGenerator):
         else:
             _seed = random_entropy(u32_size, "auto")
         dtype = np.uint64 if self.w==64 else np.uint32
-        _seed = _seed.view(dtype)
+        _seed = view_little_endian(_seed, dtype)
         for i in range(self.n // 2):
             if self.w == 32 and self.n == 2:
                 self.rng_state.state.state2x32.key.v[i] = _seed[i]
