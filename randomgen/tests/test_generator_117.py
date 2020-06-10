@@ -205,7 +205,6 @@ for key in distributions:
     if not distributions[key]:
         continue
     params = distributions[key]()
-    print(key)
     for i, param in enumerate(params):
         tests.append((key, param))
         ids.append(key + "-config-{0}".format(i))
