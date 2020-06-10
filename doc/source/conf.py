@@ -56,6 +56,7 @@ extensions = [
     "IPython.sphinxext.ipython_console_highlighting",
     "IPython.sphinxext.ipython_directive",
     "sphinx_material",
+    "nbsphinx",
 ]
 
 try:
@@ -227,7 +228,7 @@ texinfo_documents = [
 
 # Example configuration for intersphinx: refer to the Python standard library.
 intersphinx_mapping = {
-    "statsmodels": ("http://www.statsmodels.org/dev/", None),
+    "statsmodels": ("https://www.statsmodels.org/dev/", None),
     "matplotlib": ("https://matplotlib.org", None),
     "scipy": ("https://docs.scipy.org/doc/scipy/reference/", None),
     "python": ("https://docs.python.org/3", None),

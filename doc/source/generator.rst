@@ -1,5 +1,15 @@
 Random Generator
 ----------------
+
+.. container:: admonition danger
+
+  .. raw:: html
+
+      <p class="admonition-title"> Deprecated </p>
+
+  :class:`~randomgen.generator.Generator` is **deprecated**. You should be using
+  :class:`numpy.random.Generator`.
+
 The :class:`~randomgen.generator.Generator` provides access to
 a wide range of distributions, and served as a replacement for
 :class:`~numpy.random.RandomState`.  The main difference between

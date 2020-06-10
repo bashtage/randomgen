@@ -1,13 +1,8 @@
 Bit Generators
 --------------
 
-.. warning::
-
-   These for formerly called Basic Random Number Generators. They have been
-   renamed Bit Generators for compatibility with the version that will ship
-   with NumPy.
-
-The random values produced by :class:`~randomgen.generator.Generator`
+The random values produced by :class:`numpy.random.Generator`
+(and also  :class:`~randomgen.generator.Generator`)
 are produced by a bit generator.  These bit generators do not directly provide
 random numbers and only contains methods used for seeding, getting or
 setting the state, jumping or advancing the state, and for accessing
@@ -30,6 +25,7 @@ These RNGs will be included in future releases.
    LXM <lxm>
    MT19937 <mt19937>
    MT64 <mt64>
+   PCG32 <pcg32>
    PCG64 <pcg64>
    Philox <philox>
    RDRAND <rdrand>
@@ -50,4 +46,11 @@ permanent.
    :maxdepth: 1
 
    Xorshift1024*φ <xorshift1024>
-   PCG32 <pcg32>
+
+User-defined Bit Generators
+===========================
+
+.. toctree::
+   :maxdepth: 1
+
+   userbitgenerator

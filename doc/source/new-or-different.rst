@@ -5,6 +5,10 @@ What's New or Different
 
 Differences from NumPy 1.17+
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+* :class:`~randomgen.wrapper.UserBitGenerator` allows bit generators to be
+  written in Python (slow, suitable for experiments and testing) or numba
+  (fast, similar speed to compiled C). See `the demonstration notebook`_ for
+  examples.
 * :func:`~randomgen.entropy.random_entropy` provides access to the system
   source of randomness that is used in cryptographic applications (e.g.,
   ``/dev/urandom`` on Unix).
@@ -41,14 +45,24 @@ Differences from NumPy 1.17+
   * Permuted Congruential Generators
 
     * :class:`~randomgen.pcg32.PCG32`
-    * :class:`~randomgen.pcg64.PCG64` (in NumPy)
+    * :class:`~randomgen.pcg64.PCG64` (limited version in NumPy)
 
   * Shift/rotate based:
 
+    * :class:`~randomgen.lxm.LXM`
     * :class:`~randomgen.xoroshiro128.Xoroshiro128`
     * :class:`~randomgen.xorshift1024.Xorshift1024`
     * :class:`~randomgen.xoshiro256.Xoshiro256`
     * :class:`~randomgen.xoshiro512.Xoshiro512`
+
+.. container:: admonition danger
+
+  .. raw:: html
+
+      <p class="admonition-title"> Deprecated </p>
+
+  :class:`~randomgen.generator.Generator` is **deprecated**. You should be using
+  :class:`numpy.random.Generator`.
 
 * randomgen's :class:`~randomgen.generator.Generator` continues to expose legacy
   methods :func:`~randomgen.generator.Generator.random_sample` \,
@@ -69,9 +83,6 @@ Differences from NumPy 1.17+
   property :func:`~randomgen.generator.Generator.state` is available
   to get or set the state of the underlying bit generator.
 
-* The legacy name :attr:`~randomgen.generator.Generator.brng` remains.  You should use
-  :attr:`~randomgen.generator.Generator.bit_generator` instead.
-
 * :func:`numpy.random.Generator.multivariate_hypergeometric` was added after
   :class:`~randomgen.generator.Generator` was merged into NumPy and will not
   be ported over.  Please use the NumPy version.
@@ -91,12 +102,23 @@ Differences from NumPy before 1.17
   :meth:`~randomgen.generator.Generator.standard_gamma`.
 
 .. ipython:: python
+   :suppress:
+   :okwarning:
 
-  from randomgen import Generator, Xoroshiro128
-  import numpy.random
-  rg = Generator(Xoroshiro128(mode="sequence"))
-  %timeit rg.standard_normal(100000)
-  %timeit numpy.random.standard_normal(100000)
+   import warnings
+   warnings.filterwarnings("ignore", "RandomState", FutureWarning)
+   warnings.filterwarnings("ignore", "Generator", FutureWarning)
+   from randomgen import Generator
+   Generator()
+
+.. ipython:: python
+   :okwarning:
+
+   from randomgen import Generator, Xoroshiro128
+   import numpy.random
+   rg = Generator(Xoroshiro128(mode="sequence"))
+   %timeit rg.standard_normal(100000)
+   %timeit numpy.random.standard_normal(100000)
 
 .. ipython:: python
 
@@ -214,3 +236,5 @@ Differences from NumPy before 1.17
   rg.choice(x, 2, axis=1)
 
 * For changes since the previous release, see the :ref:`change-log`
+
+.. _the demonstration notebook: custom-bit-generators.ipynb

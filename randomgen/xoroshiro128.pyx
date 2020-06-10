@@ -112,7 +112,7 @@ cdef class Xoroshiro128(BitGenerator):
 
     Examples
     --------
-    Using the preferred verion Xoroshiro128++
+    Using the preferred version Xoroshiro128++
 
     >>> from randomgen import Generator, Xoroshiro128
     >>> rg = Generator(Xoroshiro128(1234, plusplus=True))

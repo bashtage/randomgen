@@ -1,12 +1,13 @@
 #!python
 #cython: wraparound=False, nonecheck=False, boundscheck=False, cdivision=True, language_level=3
 import operator
+import warnings
 
 import numpy as np
 
 from randomgen.bounded_integers import _integers_types
+from randomgen.pcg64 import PCG64
 from randomgen.xoroshiro128 import Xoroshiro128
-
 from cpython.pycapsule cimport PyCapsule_IsValid, PyCapsule_GetPointer
 from cpython cimport (Py_INCREF, PyComplex_FromDoubles,
                       PyComplex_ImagAsDouble, PyComplex_RealAsDouble,
@@ -30,7 +31,7 @@ __all__ = ["Generator", "beta", "binomial", "bytes", "chisquare", "choice",
            "poisson", "power", "randint", "random",  "rayleigh", "shuffle",
            "standard_cauchy", "standard_exponential", "standard_gamma",
            "standard_normal", "standard_t", "triangular",
-           "uniform", "vonmises", "wald", "weibull", "zipf"]
+           "uniform", "vonmises", "wald", "weibull", "zipf", "ExtendedGenerator"]
 
 np.import_array()
 
@@ -113,6 +114,23 @@ cdef class Generator:
     _poisson_lam_max = POISSON_LAM_MAX
 
     def __init__(self, bit_generator=None):
+        warnings.warn("""\
+Generator is deprecated and will be removed sometime after the release of
+NumPy 1.21 (or 2 releases after 1.19 if there is a major release).
+
+Unique features of Generator have been moved to
+randomgen.generator.ExtendedGenerator. 
+
+Now is the time to start using numpy.random.Generator.
+
+In the mean time Generator will only be updated for the most egregious bugs.
+
+You can silence this warning using 
+
+import warnings
+warnings.filterwarnings("ignore", "Generator", FutureWarning)
+""", FutureWarning)
+
         if bit_generator is None:
             bit_generator = Xoroshiro128(mode="sequence")
         self._bit_generator = bit_generator
@@ -126,11 +144,12 @@ cdef class Generator:
         self.lock = bit_generator.lock
 
     def __repr__(self):
-        return self.__str__() + " at 0x{:X}".format(id(self))
+        out = object.__repr__(self)
+        return out.replace(type(self).__name__, self.__str__())
 
     def __str__(self):
-        _str = self.__class__.__name__
-        _str += "(" + self.bit_generator.__class__.__name__ + ")"
+        _str = type(self).__name__
+        _str += "(" + type(self.bit_generator).__name__ + ")"
         return _str
 
     # Pickling support:
@@ -144,20 +163,6 @@ cdef class Generator:
         from randomgen._pickle import __generator_ctor
         return (__generator_ctor, (self.bit_generator.state["bit_generator"],),
                 self.bit_generator.state)
-
-    @property
-    def brng(self):
-        """
-        Gets the bit generator instance used by the generator
-
-        Returns
-        -------
-        bit_generator : BitGenerator
-            The bit generator instance used by the generator
-        """
-        import warnings
-        warnings.warn("brng is deprecated. Use bit_generator.", DeprecationWarning)
-        return self._bit_generator
 
     @property
     def bit_generator(self):
@@ -294,14 +299,12 @@ cdef class Generator:
 
         Alias for uintegers.  Use uintegers.
         """
-        import warnings
         warnings.warn("This function is deprecated. Please use uintegers.",
                       DeprecationWarning)
 
         return self.uintegers(size=size, bits=bits)
 
     def random_sample(self, *args, **kwargs):
-        import warnings
         warnings.warn("random_sample is deprecated in favor of random",
                       DeprecationWarning)
 
@@ -554,7 +557,6 @@ cdef class Generator:
                 [ True,  True]]])
 
         """
-        import warnings
         warnings.warn("tomaxint is deprecated. Use integers.",
                       DeprecationWarning)
 
@@ -566,7 +568,6 @@ cdef class Generator:
 
         See integers docstring for arguments
         """
-        import warnings
         warnings.warn("randint has been deprecated in favor of integers",
                       DeprecationWarning)
 
@@ -667,12 +668,10 @@ cdef class Generator:
 
         """
         if use_masked is not None and use_masked:
-            import warnings
             warnings.warn("use_masked will be removed in the final release and"
                           " only the Lemire method will be available.",
                           DeprecationWarning)
         if closed is not None:
-            import warnings
             warnings.warn("closed has been deprecated in favor of endpoint.",
                           DeprecationWarning)
             endpoint = closed
@@ -687,7 +686,6 @@ cdef class Generator:
         if key not in _integers_types:
             raise TypeError("Unsupported dtype \"{key}\" for integers".format(key=key))
         if dt.byteorder != "=" and dt.byteorder != "|":
-            import warnings
             warnings.warn("Byteorder is not supported. If you require "
                           "platform-independent byteorder, call byteswap when "
                           "required.\n\nIn future version, specifying "
@@ -740,7 +738,9 @@ cdef class Generator:
 
         """
         cdef Py_ssize_t n_uint32 = ((length - 1) // 4 + 1)
-        return self.integers(0, 4294967296, size=n_uint32, dtype=np.uint32).tobytes()[:length]
+
+        return self.integers(0, 4294967296, size=n_uint32,
+                             dtype=np.uint32).astype('<u4').tobytes()[:length]
 
     @cython.wraparound(True)
     def choice(self, a, size=None, replace=True, p=None, axis=0, bint shuffle=True):
@@ -1130,7 +1130,6 @@ cdef class Generator:
                [ 0.49313049,  0.94909878]]) #random
 
         """
-        import warnings
         msg = _rand_dep_message("rand", "random", args, dtype)
         warnings.warn(msg, DeprecationWarning)
 
@@ -1197,7 +1196,6 @@ cdef class Generator:
                [ 0.39924804,  4.68456316,  4.99394529,  4.84057254]])  # random
 
         """
-        import warnings
         msg = _rand_dep_message("randn", "standard_normal", args, dtype)
         warnings.warn(msg, DeprecationWarning)
 
@@ -1287,7 +1285,6 @@ cdef class Generator:
 
         """
         if high is None:
-            import warnings
             warnings.warn(("This function is deprecated. Please call "
                            "integers(1, {low} + 1) instead".format(low=low)),
                           DeprecationWarning)
@@ -1295,7 +1292,6 @@ cdef class Generator:
             low = 1
 
         else:
-            import warnings
             warnings.warn(("This function is deprecated. Please call "
                            "integers({low}, {high} + 1)"
                            "instead".format(low=low, high=high)),
@@ -3238,6 +3234,7 @@ cdef class Generator:
             cnt = np.PyArray_SIZE(randoms)
 
             it = np.PyArray_MultiIterNew3(randoms, p_arr, n_arr)
+            validate_output_shape(it.shape, randoms)
             with self.lock, nogil:
                 for i in range(cnt):
                     _dp = (<double*>np.PyArray_MultiIter_DATA(it, 1))[0]
@@ -3756,8 +3753,7 @@ cdef class Generator:
     def multivariate_normal(self, mean, cov, size=None, check_valid="warn",
                             tol=1e-8, *, method="svd"):
         """
-        multivariate_normal(mean, cov, size=None, check_valid='warn',
-                            tol=1e-8, *, method='svd')
+        multivariate_normal(mean, cov, size=None, check_valid='warn', tol=1e-8, *, method='svd')
 
         Draw random samples from a multivariate normal distribution.
 
@@ -3912,8 +3908,6 @@ cdef class Generator:
 
             if not psd and check_valid != "ignore":
                 if check_valid == "warn":
-                    import warnings
-
                     warnings.warn(
                         "covariance is not positive-semidefinite.", RuntimeWarning
                     )
@@ -3928,7 +3922,7 @@ cdef class Generator:
             cov = cov.reshape((1, n, n))
 
         _factors = np.empty_like(cov)
-        for loc in np.ndindex(*cov.shape[:-2]):
+        for loc in np.ndindex(*cov.shape[:len(cov.shape)-2]):
             _factors[loc] = _factorize(cov[loc], method, check_valid)
 
         out_shape = np.broadcast(mean[..., 0], cov[..., 0, 0]).shape
@@ -4071,6 +4065,7 @@ cdef class Generator:
                 temp = np.empty(size, dtype=np.int8)
                 temp_arr = <np.ndarray>temp
                 it = np.PyArray_MultiIterNew2(on, temp_arr)
+                validate_output_shape(it.shape, temp_arr)
             shape = it.shape + (d,)
             multin = np.zeros(shape, dtype=np.int64)
             mnarr = <np.ndarray>multin
@@ -4578,6 +4573,7 @@ cdef class Generator:
         n = np.PyArray_SIZE(randoms)
 
         it = np.PyArray_MultiIterNew5(randoms, oloc, v_real, v_imag, rho)
+        validate_output_shape(it.shape, randoms)
         with self.lock, nogil:
             n2 = 2 * n  # Avoid compiler noise for cast
             for i in range(n2):
@@ -4598,10 +4594,553 @@ cdef class Generator:
         return randoms
 
 
-_random_generator = Generator()
+cdef class ExtendedGenerator:
+    """
+    ExtendedGenerator(bit_generator=None)
 
-# TODO: Remove after final merge
-RandomGenerator = Generator
+    Additional random value generator using a bit generator source.
+
+    ``ExtendedGenerator`` exposes methods for generating random numbers
+    from some distributions that are not in numpy.random.Generator.
+
+    Parameters
+    ----------
+    bit_generator : BitGenerator, optional
+        Bit generator to use as the core generator. If none is provided, uses
+        PCG64(variant="cm-dxsm").
+
+    See Also
+    --------
+    numpy.random.Generator
+        The primary generator of random variates.
+
+    Examples
+    --------
+    >>> from randomgen import ExtendedGenerator
+    >>> rg = ExtendedGenerator()
+    >>> rg.complex_normal()
+    -0.203 + .936j  # random
+
+    Using a specific generator
+
+    >>> from randomgen import MT19937
+    >>> rg = ExtendedGenerator(MT19937())
+
+    Share a bit generator with numpy
+
+    >>> from numpy.random import Generator, PCG64
+    >>> pcg = PCG64()
+    >>> gen = Generator(pcg)
+    >>> eg = ExtendedGenerator(pcg)
+    """
+
+    cdef public object _bit_generator
+    cdef bitgen_t _bitgen
+    cdef binomial_t _binomial
+    cdef object lock, _generator
+
+    def __init__(self, bit_generator=None):
+        if bit_generator is None:
+            bit_generator = PCG64(mode="sequence", variant="cm-dxsm")
+        self._bit_generator = bit_generator
+
+        capsule = bit_generator.capsule
+        cdef const char *name = "BitGenerator"
+        if not PyCapsule_IsValid(capsule, name):
+            raise ValueError("Invalid bit generator. The bit generator must "
+                             "be instantized.")
+        self._bitgen = (<bitgen_t *> PyCapsule_GetPointer(capsule, name))[0]
+        self.lock = bit_generator.lock
+        try:
+            from numpy.random import Generator
+            self._generator = Generator(bit_generator)
+        except ImportError:
+            from randomgen.generator import Generator
+            self._generator = Generator(bit_generator)
+
+    def __repr__(self):
+        out = object.__repr__(self)
+        return out.replace(type(self).__name__, self.__str__())
+
+    def __str__(self):
+        _str = type(self).__name__
+        _str += "(" + type(self.bit_generator).__name__ + ")"
+        return _str
+
+    # Pickling support:
+    def __getstate__(self):
+        return self.bit_generator.state
+
+    def __setstate__(self, state):
+        self.bit_generator.state = state
+
+    def __reduce__(self):
+        from randomgen._pickle import __extended_generator_ctor
+        return (__extended_generator_ctor, (self.bit_generator.state["bit_generator"],),
+                self.bit_generator.state)
+
+    @property
+    def bit_generator(self):
+        """
+        Gets the bit generator instance used by the generator
+
+        Returns
+        -------
+        bit_generator : BitGenerator
+            The bit generator instance used by the generator
+        """
+        return self._bit_generator
+
+    @property
+    def state(self):
+        """
+        Get or set the bit generator's state
+
+        Returns
+        -------
+        state : dict
+            Dictionary containing the information required to describe the
+            state of the bit generator
+
+        Notes
+        -----
+        This is a trivial pass-through function. Generator does not
+        directly contain or manipulate the bit generator's state.
+
+        """
+        return self._bit_generator.state
+
+    @state.setter
+    def state(self, value):
+        self._bit_generator.state = value
+
+    def uintegers(self, size=None, int bits=64):
+        """
+        uintegers(size=None, bits=64)
+
+        Return random unsigned integers
+
+        Parameters
+        ----------
+        size : int or tuple of ints, optional
+            Output shape. If the given shape is, e.g., ``(m, n, k)``, then
+            ``m * n * k`` samples are drawn. Default is None, in which case a
+            single value is returned.
+        bits : int {32, 64}
+            Size of the unsigned integer to return, either 32 bit or 64 bit.
+
+        Returns
+        -------
+        out : uint or ndarray
+            Drawn samples.
+
+        Notes
+        -----
+        This method effectively exposes access to the raw underlying
+        pseudo-random number generator since these all produce unsigned
+        integers. In practice these are most useful for generating other
+        random numbers.
+        These should not be used to produce bounded random numbers by
+        simple truncation.
+        """
+        cdef np.npy_intp i, n
+        cdef np.ndarray array
+        cdef uint32_t* data32
+        cdef uint64_t* data64
+        if bits == 64:
+            if size is None:
+                with self.lock:
+                    return self._bitgen.next_uint64(self._bitgen.state)
+            array = <np.ndarray>np.empty(size, np.uint64)
+            n = np.PyArray_SIZE(array)
+            data64 = <uint64_t *>np.PyArray_DATA(array)
+            with self.lock, nogil:
+                for i in range(n):
+                    data64[i] = self._bitgen.next_uint64(self._bitgen.state)
+        elif bits == 32:
+            if size is None:
+                with self.lock:
+                    return self._bitgen.next_uint32(self._bitgen.state)
+            array = <np.ndarray>np.empty(size, np.uint32)
+            n = np.PyArray_SIZE(array)
+            data32 = <uint32_t *>np.PyArray_DATA(array)
+            with self.lock, nogil:
+                for i in range(n):
+                    data32[i] = self._bitgen.next_uint32(self._bitgen.state)
+        else:
+            raise ValueError("Unknown value of bits. Must be either 32 or 64.")
+
+        return array
+
+    # Multivariate distributions:
+    def multivariate_normal(self, mean, cov, size=None, check_valid="warn",
+                            tol=1e-8, *, method="svd"):
+        """
+        multivariate_normal(mean, cov, size=None, check_valid='warn', tol=1e-8, *, method='svd')
+
+        Draw random samples from a multivariate normal distribution.
+
+        The multivariate normal, multinormal or Gaussian distribution is a
+        generalization of the one-dimensional normal distribution to higher
+        dimensions. Such a distribution is specified by its mean and
+        covariance matrix. These parameters are analogous to the mean
+        (average or "center") and variance (standard deviation, or "width,"
+        squared) of the one-dimensional normal distribution.
+
+        Parameters
+        ----------
+        mean : array_like
+            Mean of the distribution. Must have shape (m1, m2, ..., mk, N) where
+            (m1, m2, ..., mk) would broadcast with (c1, c2, ..., cj).
+        cov : array_like
+            Covariance matrix of the distribution. It must be symmetric and
+            positive-semidefinite for proper sampling. Must have shape
+            (c1, c2, ..., cj, N, N) where (c1, c2, ..., cj) would broadcast
+            with (m1, m2, ..., mk).
+        size : int or tuple of ints, optional
+            Given a shape of, for example, ``(m,n,k)``, ``m*n*k`` samples are
+            generated, and packed in an `m`-by-`n`-by-`k` arrangement.  Because
+            each sample is `N`-dimensional, the output shape is ``(m,n,k,N)``.
+            If no shape is specified, a single (`N`-D) sample is returned.
+        check_valid : { 'warn', 'raise', 'ignore' }, optional
+            Behavior when the covariance matrix is not positive semidefinite.
+        tol : float, optional
+            Tolerance when checking the singular values in covariance matrix.
+            cov is cast to double before the check.
+        method : { 'svd', 'eigh', 'cholesky'}, optional
+            The cov input is used to compute a factor matrix A such that
+            ``A @ A.T = cov``. This argument is used to select the method
+            used to compute the factor matrix A. The default method 'svd' is
+            the slowest, while 'cholesky' is the fastest but less robust than
+            the slowest method. The method `eigh` uses eigen decomposition to
+            compute A and is faster than svd but slower than cholesky.
+
+        Returns
+        -------
+        out : ndarray
+            The drawn samples, of shape determined by broadcasting the
+            leading dimensions of mean and cov with size, if not None.
+            The final dimension is always N.
+
+            In other words, each entry ``out[i,j,...,:]`` is an N-dimensional
+            value drawn from the distribution.
+
+        Notes
+        -----
+        The mean is a coordinate in N-dimensional space, which represents the
+        location where samples are most likely to be generated. This is
+        analogous to the peak of the bell curve for the one-dimensional or
+        univariate normal distribution.
+
+        Covariance indicates the level to which two variables vary together.
+        From the multivariate normal distribution, we draw N-dimensional
+        samples, :math:`X = [x_1, x_2, ... x_N]`. The covariance matrix
+        element :math:`C_{ij}` is the covariance of :math:`x_i` and :math:`x_j`.
+        The element :math:`C_{ii}` is the variance of :math:`x_i` (i.e. its
+        "spread").
+
+        Instead of specifying the full covariance matrix, popular
+        approximations include:
+
+          - Spherical covariance (`cov` is a multiple of the identity matrix)
+          - Diagonal covariance (`cov` has non-negative elements, and only on
+            the diagonal)
+
+        This geometrical property can be seen in two dimensions by plotting
+        generated data-points:
+
+        >>> mean = [0, 0]
+        >>> cov = [[1, 0], [0, 100]]  # diagonal covariance
+
+        Diagonal covariance means that points are oriented along x or y-axis:
+
+        >>> from randomgen import Generator
+        >>> rg = Generator()
+        >>> import matplotlib.pyplot as plt
+        >>> x, y = rg.multivariate_normal(mean, cov, 5000).T
+        >>> plt.plot(x, y, 'x')
+        >>> plt.axis('equal')
+        >>> plt.show()
+
+        Note that the covariance matrix must be positive semidefinite (a.k.a.
+        nonnegative-definite). Otherwise, the behavior of this method is
+        undefined and backwards compatibility is not guaranteed.
+
+        References
+        ----------
+        .. [1] Papoulis, A., "Probability, Random Variables, and Stochastic
+               Processes," 3rd ed., New York: McGraw-Hill, 1991.
+        .. [2] Duda, R. O., Hart, P. E., and Stork, D. G., "Pattern
+               Classification," 2nd ed., New York: Wiley, 2001.
+
+        Examples
+        --------
+        >>> from randomgen import Generator
+        >>> rg = Generator()
+        >>> mean = (1, 2)
+        >>> cov = [[1, 0], [0, 1]]
+        >>> x = rg.multivariate_normal(mean, cov, (3, 3))
+        >>> x.shape
+        (3, 3, 2)
+
+        The following is probably true, given that 0.6 is roughly twice the
+        standard deviation:
+
+        >>> list((x[0,0,:] - mean) < 0.6)
+        [True, True] # random
+
+        """
+        if check_valid not in ("warn", "raise", "ignore"):
+            raise ValueError("check_valid must equal 'warn', 'raise', or 'ignore'")
+
+        mean = np.array(mean)
+        cov = np.array(cov, dtype=np.double)
+        if mean.ndim < 1:
+            raise ValueError("mean must have at least 1 dimension")
+        if cov.ndim < 2:
+            raise ValueError("cov must have at least 2 dimensions")
+        n = mean.shape[mean.ndim - 1]
+        cov_dim = cov.ndim
+        if not (cov.shape[cov_dim - 1] == cov.shape[cov_dim - 2] == n):
+            raise ValueError(
+                f"The final two dimension of cov "
+                f"({cov.shape[cov_dim - 1], cov.shape[cov_dim - 2]}) must match "
+                f"the final dimension of mean ({n}). mean must be 1 dimensional"
+            )
+
+        def _factorize(cov, meth, check_valid):
+            if meth == "svd":
+                from numpy.linalg import svd
+
+                (u, s, vh) = svd(cov)
+                psd = np.allclose(np.dot(vh.T * s, vh), cov, rtol=tol, atol=tol)
+                _factor = (u * np.sqrt(s)).T
+            elif meth == "eigh":
+                from numpy.linalg import eigh
+
+                # could call linalg.svd(hermitian=True), but that calculates a
+                # vh we don't need
+                (s, u) = eigh(cov)
+                psd = not np.any(s < -tol)
+                _factor = (u * np.sqrt(abs(s))).T
+            else:
+                from numpy.linalg import cholesky
+
+                _factor = cholesky(cov).T
+                psd = True
+
+            if not psd and check_valid != "ignore":
+                if check_valid == "warn":
+                    warnings.warn(
+                        "covariance is not positive-semidefinite.", RuntimeWarning
+                    )
+                else:
+                    raise ValueError("covariance is not positive-semidefinite.")
+            return _factor
+
+        drop_dims = (mean.ndim == 1) and (cov.ndim == 2)
+        if mean.ndim == 1:
+            mean = mean.reshape((1, n))
+        if cov.ndim == 2:
+            cov = cov.reshape((1, n, n))
+
+        _factors = np.empty_like(cov)
+        for loc in np.ndindex(*cov.shape[:len(cov.shape)-2]):
+            _factors[loc] = _factorize(cov[loc], method, check_valid)
+
+        out_shape = np.broadcast(mean[..., 0], cov[..., 0, 0]).shape
+        if size is not None:
+            if isinstance(size, (int, np.integer)):
+                size = (size,)
+            error = len(size) < len(out_shape)
+            final_size = list(size[: -len(out_shape)])
+            for s, os in zip(size[-len(out_shape) :], out_shape):
+                if error or not (s == 1 or os == 1 or s == os):
+                    raise ValueError(
+                        f"The desired out size {size} is not compatible with "
+                        f"the broadcast size of mean and cov {out_shape}. "
+                        f"The desired size must have the same number (or "
+                        f"more) dimensions ({len(size)}) as the broadcast "
+                        f"size or mean and covariance (len({out_shape}). "
+                        f"The final {len(out_shape)} elements of size must be "
+                        f"either 1 or the same as the corresponding element "
+                        f"of the broadcast size."
+                    )
+                final_size.append(max(s, os))
+            out_shape = tuple(final_size)
+
+        out = self._generator.standard_normal(out_shape + (1, n,))
+        prod = np.matmul(out, _factors)
+        final = mean + np.squeeze(prod, axis=prod.ndim - 2)
+        if drop_dims and final.shape[0] == 1:
+            final = final.reshape(final.shape[1:])
+        return final
+
+    def complex_normal(self, loc=0.0, gamma=1.0, relation=0.0, size=None):
+        """
+        complex_normal(loc=0.0, gamma=1.0, relation=0.0, size=None)
+
+        Draw random samples from a complex normal (Gaussian) distribution.
+
+        Parameters
+        ----------
+        loc : complex or array_like of complex
+            Mean of the distribution.
+        gamma : float, complex or array_like of float or complex
+            Variance of the distribution
+        relation : float, complex or array_like of float or complex
+            Relation between the two component normals
+        size : int or tuple of ints, optional
+            Output shape. If the given shape is, e.g., ``(m, n, k)``, then
+            ``m * n * k`` samples are drawn. If size is ``None`` (default),
+            a single value is returned if ``loc``, ``gamma`` and ``relation``
+            are all scalars. Otherwise,
+            ``np.broadcast(loc, gamma, relation).size`` samples are drawn.
+
+        Returns
+        -------
+        out : ndarray or scalar
+            Drawn samples from the parameterized complex normal distribution.
+
+        See Also
+        --------
+        numpy.random.Generator.normal : random values from a real-valued
+            normal distribution
+
+        Notes
+        -----
+        Complex normals are generated from a bivariate normal where the
+        variance of the real component is 0.5 Re(gamma + relation), the
+        variance of the imaginary component is 0.5 Re(gamma - relation), and
+        the covariance between the two is 0.5 Im(relation). The implied
+        covariance matrix must be positive semi-definite and so both variances
+        must be zero and the covariance must be weakly smaller than the
+        product of the two standard deviations.
+
+        References
+        ----------
+        .. [1] Wikipedia, "Complex normal distribution",
+               https://en.wikipedia.org/wiki/Complex_normal_distribution
+        .. [2] Leigh J. Halliwell, "Complex Random Variables" in "Casualty
+               Actuarial Society E-Forum", Fall 2015.
+
+        Examples
+        --------
+        Draw samples from the distribution:
+
+        >>> s = randomgen.generator.complex_normal(size=1000)
+
+        """
+        cdef np.ndarray ogamma, orelation, oloc, randoms, v_real, v_imag, rho
+        cdef double *randoms_data
+        cdef double fgamma_r, fgamma_i, frelation_r, frelation_i, frho, \
+            fvar_r, fvar_i, floc_r, floc_i, f_real, f_imag, f_rho
+        cdef np.npy_intp i, j, n, n2
+        cdef np.broadcast it
+
+        oloc = <np.ndarray>np.PyArray_FROM_OTF(loc, np.NPY_COMPLEX128, api.NPY_ARRAY_ALIGNED)
+        ogamma = <np.ndarray>np.PyArray_FROM_OTF(gamma, np.NPY_COMPLEX128, api.NPY_ARRAY_ALIGNED)
+        orelation = <np.ndarray>np.PyArray_FROM_OTF(relation, np.NPY_COMPLEX128, api.NPY_ARRAY_ALIGNED)
+
+        if np.PyArray_NDIM(ogamma) == np.PyArray_NDIM(orelation) == np.PyArray_NDIM(oloc) == 0:
+            floc_r = PyComplex_RealAsDouble(loc)
+            floc_i = PyComplex_ImagAsDouble(loc)
+            fgamma_r = PyComplex_RealAsDouble(gamma)
+            fgamma_i = PyComplex_ImagAsDouble(gamma)
+            frelation_r = PyComplex_RealAsDouble(relation)
+            frelation_i = 0.5 * PyComplex_ImagAsDouble(relation)
+
+            fvar_r = 0.5 * (fgamma_r + frelation_r)
+            fvar_i = 0.5 * (fgamma_r - frelation_r)
+            if fgamma_i != 0:
+                raise ValueError("Im(gamma) != 0")
+            if fvar_i < 0:
+                raise ValueError("Re(gamma - relation) < 0")
+            if fvar_r < 0:
+                raise ValueError("Re(gamma + relation) < 0")
+            f_rho = 0.0
+            if fvar_i > 0 and fvar_r > 0:
+                f_rho = frelation_i / sqrt(fvar_i * fvar_r)
+            if f_rho > 1.0 or f_rho < -1.0:
+                raise ValueError("Im(relation) ** 2 > Re(gamma ** 2 - relation** 2)")
+
+            if size is None:
+                f_real = random_gauss_zig(&self._bitgen)
+                f_imag = random_gauss_zig(&self._bitgen)
+
+                compute_complex(&f_real, &f_imag, floc_r, floc_i, fvar_r,
+                                fvar_i, f_rho)
+                return PyComplex_FromDoubles(f_real, f_imag)
+
+            randoms = <np.ndarray>np.empty(size, np.complex128)
+            randoms_data = <double *>np.PyArray_DATA(randoms)
+            n = np.PyArray_SIZE(randoms)
+
+            j = 0
+            with self.lock, nogil:
+                for i in range(n):
+                    f_real = random_gauss_zig(&self._bitgen)
+                    f_imag = random_gauss_zig(&self._bitgen)
+                    compute_complex(&f_real, &f_imag, floc_r, floc_i, fvar_r,
+                                    fvar_i, f_rho)
+                    randoms_data[j] = f_real
+                    randoms_data[j+1] = f_imag
+                    j += 2
+
+            return randoms
+
+        gpc = ogamma + orelation
+        gmc = ogamma - orelation
+        v_real = <np.ndarray>(0.5 * np.real(gpc))
+        if np.any(np.less(v_real, 0)):
+            raise ValueError("Re(gamma + relation) < 0")
+        v_imag = <np.ndarray>(0.5 * np.real(gmc))
+        if np.any(np.less(v_imag, 0)):
+            raise ValueError("Re(gamma - relation) < 0")
+        if np.any(np.not_equal(np.imag(ogamma), 0)):
+            raise ValueError("Im(gamma) != 0")
+
+        cov = 0.5 * np.imag(orelation)
+        rho = np.zeros_like(cov)
+        idx = (v_real.flat > 0) & (v_imag.flat > 0)
+        rho.flat[idx] = cov.flat[idx] / np.sqrt(v_real.flat[idx] * v_imag.flat[idx])
+        if np.any(cov.flat[~idx] != 0) or np.any(np.abs(rho) > 1):
+            raise ValueError("Im(relation) ** 2 > Re(gamma ** 2 - relation ** 2)")
+
+        if size is not None:
+            randoms = <np.ndarray>np.empty(size, np.complex128)
+        else:
+            it = np.PyArray_MultiIterNew4(oloc, v_real, v_imag, rho)
+            randoms = <np.ndarray>np.empty(it.shape, np.complex128)
+
+        randoms_data = <double *>np.PyArray_DATA(randoms)
+        n = np.PyArray_SIZE(randoms)
+
+        it = np.PyArray_MultiIterNew5(randoms, oloc, v_real, v_imag, rho)
+        validate_output_shape(it.shape, randoms)
+        with self.lock, nogil:
+            n2 = 2 * n  # Avoid compiler noise for cast
+            for i in range(n2):
+                randoms_data[i] = random_gauss_zig(&self._bitgen)
+        with nogil:
+            j = 0
+            for i in range(n):
+                floc_r= (<double*>np.PyArray_MultiIter_DATA(it, 1))[0]
+                floc_i= (<double*>np.PyArray_MultiIter_DATA(it, 1))[1]
+                fvar_r = (<double*>np.PyArray_MultiIter_DATA(it, 2))[0]
+                fvar_i = (<double*>np.PyArray_MultiIter_DATA(it, 3))[0]
+                f_rho = (<double*>np.PyArray_MultiIter_DATA(it, 4))[0]
+                compute_complex(&randoms_data[j], &randoms_data[j+1], floc_r,
+                                floc_i, fvar_r, fvar_i, f_rho)
+                j += 2
+                np.PyArray_MultiIter_NEXT(it)
+
+        return randoms
+
+
+with warnings.catch_warnings():
+    warnings.simplefilter("ignore")
+    _random_generator = Generator()
 
 beta = _random_generator.beta
 binomial = _random_generator.binomial

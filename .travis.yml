@@ -2,6 +2,11 @@ dist: bionic
 sudo: required
 language: python
 
+addons:
+  apt:
+    packages:
+    - pandoc
+
 env:
   global:
     # Doctr deploy key for bashtage/randomgen
@@ -19,6 +24,14 @@ matrix:
   fast_finish: true
   include:
     - os: linux
+      arch: ppc64le
+      python: 3.6
+      env: [PYPI=true, PPC64_LE=1, COVERAGE=false]
+    - os: linux
+      arch: s390x
+      python: 3.6
+      env: [PYPI=true, S390X=1, COVERAGE=false]
+    - os: linux
       python: 3.7
       env: [PYTHON=3.7, DOCBUILD=true, RANDOMGEN_DEBUG=false, CC=clang, NUMPY=1.17]
     - os: linux
@@ -33,18 +46,20 @@ matrix:
     - os: linux
       python: 3.6
       env: [PYPI=true, COVERAGE=false,NUMPY=1.17.5]
-    - os: linux-ppc64le
-      python: 3.6
-      env: [PYPI=true, COVERAGE=true, PPC64_LE=1]
     - os: osx
       language: generic
       env: [PYTHON=3.6, NUMPY=1.16.6]
     - os: linux
       env: [PYPI=true, PYTHON=3.6, NUMPY=1.18.5, CYTHON=0.29]
   allow_failures:
-    - os: linux-ppc64le
+    - os: linux
+      arch: ppc64le
       python: 3.6
       env: [PYPI=true, PPC64_LE=1, COVERAGE=false]
+    - os: linux
+      arch: s390x
+      python: 3.6
+      env: [PYPI=true, S390X=1, COVERAGE=false]
 
 before_install:
   - git fetch --tags
@@ -54,7 +69,7 @@ before_install:
   - pip install tempita coverage coveralls pytest-cov codecov coveralls -q
   - pip list
   - export BUILD_DIR=${PWD}
-  - if [[ ${DOCBUILD} == true ]]; then pip install sphinx sphinx_rtd_theme sphinx-material ipython doctr -q; fi
+  - if [[ ${DOCBUILD} == true ]]; then pip install sphinx sphinx_rtd_theme sphinx-material ipython doctr nbsphinx -q; fi
   - gcc --version || true
   - clang --version || true
   - export SRCDIR="$PWD"
@@ -62,11 +77,11 @@ before_install:
   - if [[ "$COVERAGE" == true ]]; then export COVERAGE_OPTIONS="--cov-config .coveragerc --cov=randomgen"; fi
 
 install:
-  - pip install -e . -v -v -v --no-build-isolation
+  - pip install -e . -v --no-build-isolation
 
 script:
   - set -e
-  - pytest -v -r a ${COVERAGE_OPTIONS} randomgen
+  - pytest -r a ${COVERAGE_OPTIONS} randomgen
   - |
     if [[ ${DOCBUILD} == true ]]; then
       sudo apt-get install -y enchant

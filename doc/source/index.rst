@@ -6,6 +6,33 @@ generator be be changed.
 
 .. warning::
 
+    .. raw:: html
+
+       <div style="padding-top:1em;"><span style="color:#ef5350;font-weight:700;font-size:1rem;">
+       Changes in 1.19
+       </span></div>
+
+    :class:`~randomgen.generator.Generator` and :class:`~randomgen.mtrand.RandomState` have been
+    officially deprecated, and will warn with a ``FutureWarning`` about their removal. They will
+    also receive virtually no maintenance. It is now time to move to NumPy's :class:`numpy.random.Generator`
+    which has features not in :class:`~randomgen.generator.Generator` and is maintained more actively.
+
+    A few distributions that are not present in :class:`~randomgen.generator.Generator` have been moved
+    to :class:`~randomgen.generator.ExtendedGenerator`:
+
+    * :func:`~randomgen.generator.ExtendedGenerator.multivariate_normal`: which supports broadcasting
+    * :func:`~randomgen.generator.ExtendedGenerator.uintegers`: fast 32 and 64-bit uniform integers
+    * :func:`~randomgen.generator.ExtendedGenerator.complex_normal`: scalar complex normals
+
+    There are no plans to remove any of the bit generators, e.g., :class:`~randomgen.aes.AESCounter`,
+    :class:`~randomgen.threefry.ThreeFry`, or :class:`~randomgen.pcg64.PCG64`.
+
+    .. raw:: html
+
+       <div><span style="color:#ef5350;font-weight:700;font-size:1rem;">
+       Changes between 1.16 and 1.18
+       </span></div>
+
     There are many changes between v1.16.x and v1.18.x. These reflect API
     decision taken in conjunction with NumPy in preparation of the core
     of ``randomgen`` being used as the preferred random number generator in
@@ -116,15 +143,11 @@ access an embedded random generator.
 
 What's New or Different
 ~~~~~~~~~~~~~~~~~~~~~~~
-.. warning::
 
-  The Box-Muller method used to produce NumPy's normals is no longer available
-  in :class:`~randomgen.generator.Generator`.  It is not possible to
-  reproduce the random values using :class:`~randomgen.generator.Generator`
-  for the normal distribution or any other distribution that relies on the
-  normal such as the gamma or student's t. If you require backward compatibility, a
-  legacy generator, :class:`~randomgen.mtrand.RandomState`, has been created
-  which can fully reproduce the sequence produced by NumPy.
+.. note::
+
+   Most of these changes are available in :class:`numpy.random.Generator`.
+   This list is relative to NumPy 1.16.6.
 
 * The normal, exponential and gamma generators use 256-step Ziggurat
   methods which are 2-10 times faster than NumPy's Box-Muller or inverse CDF
@@ -214,16 +237,11 @@ Random Generator
 
    future
    Random Generation <generator>
+   extended-generator
    legacy
 
 Bit Generators
 --------------
-
-.. warning::
-
-   These for formerly called Basic Random Number Generators. They have been
-   renamed Bit Generators for compatibility with the version that will ship
-   with NumPy.
 
 .. toctree::
    :maxdepth: 3
@@ -241,6 +259,7 @@ New Features
    new-or-different
    Comparing Performance <performance>
    extending
+   custom-bit-generators.ipynb
    Reading System Entropy <entropy>
    references
 

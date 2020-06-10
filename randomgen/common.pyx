@@ -51,7 +51,7 @@ cdef class BitGenerator:
                                  "\"legacy\". Using a SeedSequence implies "
                                  "mode=\"sequence\".")
             mode = "sequence"
-        elif mode is None:
+        elif mode is None and seed is not None:
             import warnings
             warnings.warn("mode is None which currently defaults to "
                           "\"legacy\". After 1.19 this will change to "
@@ -503,7 +503,8 @@ cdef np.ndarray int_to_array(object value, object name, object bits, object uint
 
 
 cdef validate_output_shape(iter_shape, np.ndarray output):
-    cdef np.npy_intp *shape, ndim, i
+    cdef np.npy_intp *shape
+    cdef np.npy_intp ndim, i
     cdef bint error
     dims = np.PyArray_DIMS(output)
     ndim = np.PyArray_NDIM(output)

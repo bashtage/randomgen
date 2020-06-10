@@ -334,13 +334,13 @@ class Base(object):
     def test_repr(self):
         rs = Generator(self.setup_bitgenerator(self.data1["seed"]))
         assert "Generator" in repr(rs)
-        assert "{:#x}".format(id(rs)).upper().replace("X", "x") in repr(rs)
+        assert type(rs.bit_generator).__name__ in repr(rs)
 
     def test_str(self):
         rs = Generator(self.setup_bitgenerator(self.data1["seed"]))
         assert "Generator" in str(rs)
         assert str(type(rs.bit_generator).__name__) in str(rs)
-        assert "{:#x}".format(id(rs)).upper().replace("X", "x") not in str(rs)
+        assert "{:#x}".format(id(rs)).upper().replace("X", "x")[2:] not in str(rs)
 
     def test_generator(self):
         bit_generator = self.setup_bitgenerator(self.data1["seed"])
@@ -481,6 +481,12 @@ class Base(object):
     def test_seed_sequence_error(self):
         with pytest.raises(ValueError, match="seed is a SeedSequence"):
             self.bit_generator(SeedSequence(0), mode="legacy")
+
+    def test_bit_generator_repr(self):
+        bg = self.setup_bitgenerator([None])
+        assert isinstance(repr(bg), str)
+        assert type(bg).__name__ in repr(bg)
+        assert type(bg).__name__ in str(bg)
 
 
 class Random123(Base):
@@ -1735,7 +1741,7 @@ class TestSPECK128(TestHC128):
 
 def test_mode():
     with pytest.warns(FutureWarning, match="mode is None which currently"):
-        mt19937 = MT19937()
+        mt19937 = MT19937(0)
     assert mt19937.seed_seq is None
     with pytest.raises(ValueError, match="mode must be one of None"):
         MT19937(mode="unknown")

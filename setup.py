@@ -206,7 +206,7 @@ def bit_generator(
     ext = Extension(
         "randomgen.{0}".format(name),
         sources,
-        include_dirs=EXTRA_INCLUDE_DIRS + [src_join(c_name)],
+        include_dirs=EXTRA_INCLUDE_DIRS,
         libraries=EXTRA_LIBRARIES,
         extra_compile_args=compile_args,
         extra_link_args=EXTRA_LINK_ARGS,
@@ -256,6 +256,18 @@ bit_generator("xorshift1024")
 bit_generator("xoshiro256")
 bit_generator("xoshiro512")
 bit_generator("lxm")
+extensions.append(
+    Extension(
+        "randomgen.wrapper",
+        ["randomgen/wrapper.pyx"],
+        include_dirs=EXTRA_INCLUDE_DIRS,
+        libraries=EXTRA_LIBRARIES,
+        extra_compile_args=EXTRA_COMPILE_ARGS,
+        extra_link_args=EXTRA_LINK_ARGS,
+        define_macros=DEFS,
+        undef_macros=UNDEF_MACROS,
+    )
+)
 
 classifiers = [
     "Development Status :: 5 - Production/Stable",

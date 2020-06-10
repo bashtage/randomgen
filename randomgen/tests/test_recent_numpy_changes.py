@@ -1,4 +1,5 @@
 from distutils.version import LooseVersion
+import warnings
 
 import numpy as np
 from numpy.testing import assert_equal
@@ -19,7 +20,10 @@ NP_LT_119 = LooseVersion(np.__version__) < v119
 pytestmark = pytest.mark.skipif(NP_LT_119, reason="Only test NumPy 1.19+")
 
 
-random = Generator(MT19937(1234))
+# Catch when using internal MT19937
+with warnings.catch_warnings():
+    warnings.simplefilter("ignore")
+    random = Generator(MT19937(1234))
 
 
 @pytest.mark.parametrize(
