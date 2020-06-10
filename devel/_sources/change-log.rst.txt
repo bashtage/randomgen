@@ -3,9 +3,32 @@
 Change Log
 ----------
 
-Since v1.18.0
-=============
+.. container:: admonition danger
+
+  .. raw:: html
+
+      <p class="admonition-title"> Deprecated </p>
+
+  :class:`~randomgen.generator.Generator` and :class:`~randomgen.mtrand.RandomState` are **DEPRECATED**.
+  You should be using :class:`numpy.random.Generator` or ``numpy.random.RandomState`` which are better
+  maintained. These will be maintained until after NumPy 1.21 (or 2 releases after NumPy 1.19) for
+  users who cannot update NumPy.
+
+
+v1.19.0
+=======
+
+- Added a :class:`randomgen.wrapper.UserBitGenerator` which allows bit generators to be written
+  in Python or numba.
+- Added :class:`randomgen.generator.ExtendedGenerator` which contains features not in :class:`numpy.random.Generator`.
+- Added  support for the ``DXSM`` and ``CM-DXSM`` variants of :class:`randomgen.pcg64.PCG64`. The
+  ``CM-DXSM`` variant is the official PCG 2.0 generator.
+- Added support for broadcasting inputs in :class:`randomgen.generator.ExtendedGenerator.multivariate_normal`.
+- Added support for the `++` variant of :class:`randomgen.xoroshiro128.Xoroshiro128`.
+- Added :class:`randomgen.lxm.LXM` which mixes a LCG and an Xorshift PRNGs. This has been
+  proposed for including in `in Java`_.
 - Fixed a bug the produced incorrect results in :func:`~randomgen.mt19937.MT19937.jumped`.
+- Fixed multiple bugs in :class:`~randomgen.generator.Generator` that were fixed in :class:`numpy.random.Generator`.
 
 v1.18.0
 =======
@@ -156,3 +179,5 @@ v1.15
 - Switch to array-fillers for 0 parameter distribution to improve performance
 - Small changes to build on manylinux
 - Build wheels using multibuild
+
+.. _in Java: https://openjdk.java.net/jeps/356

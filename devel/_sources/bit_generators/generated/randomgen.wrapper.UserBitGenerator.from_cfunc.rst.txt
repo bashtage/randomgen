@@ -1,0 +1,6 @@
+randomgen.wrapper.UserBitGenerator.from\_cfunc
+==============================================
+
+.. currentmodule:: randomgen.wrapper
+
+.. automethod:: UserBitGenerator.from_cfunc

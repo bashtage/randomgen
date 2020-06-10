@@ -1,0 +1,6 @@
+randomgen.wrapper.UserBitGenerator.from\_ctypes
+===============================================
+
+.. currentmodule:: randomgen.wrapper
+
+.. automethod:: UserBitGenerator.from_ctypes

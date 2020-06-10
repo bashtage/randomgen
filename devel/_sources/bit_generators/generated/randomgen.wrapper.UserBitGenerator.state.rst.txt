@@ -1,0 +1,6 @@
+randomgen.wrapper.UserBitGenerator.state
+========================================
+
+.. currentmodule:: randomgen.wrapper
+
+.. autoattribute:: UserBitGenerator.state
