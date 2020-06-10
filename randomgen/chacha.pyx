@@ -274,7 +274,7 @@ cdef class ChaCha(BitGenerator):
         for i in range(2):
             ctr[i] = self.rng_state.ctr[i]
 
-        return {"bit_generator": self.__class__.__name__,
+        return {"bit_generator": type(self).__name__,
                 "state": {"block": block, "keysetup": keysetup, "ctr": ctr,
                           "rounds": self.rng_state.rounds}}
 
@@ -283,9 +283,9 @@ cdef class ChaCha(BitGenerator):
         if not isinstance(value, dict):
             raise TypeError("state must be a dict")
         bitgen = value.get("bit_generator", "")
-        if bitgen != self.__class__.__name__:
+        if bitgen != type(self).__name__:
             raise ValueError("state must be for a {0} "
-                             "PRNG".format(self.__class__.__name__))
+                             "PRNG".format(type(self).__name__))
 
         state = value["state"]
         block = state["block"]

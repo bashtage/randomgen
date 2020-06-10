@@ -276,7 +276,7 @@ cdef class LXM(BitGenerator):
         x = np.empty(4, dtype=np.uint64)
         for i in range(4):
             x[i] = self.rng_state.x[i]
-        return {"bit_generator": self.__class__.__name__,
+        return {"bit_generator": type(self).__name__,
                 "state": {"x": x,
                           "lcg_state": self.rng_state.lcg_state,
                           "b": self.rng_state.b,
@@ -289,9 +289,9 @@ cdef class LXM(BitGenerator):
         if not isinstance(value, dict):
             raise TypeError("state must be a dict")
         bitgen = value.get("bit_generator", "")
-        if bitgen != self.__class__.__name__:
+        if bitgen != type(self).__name__:
             raise ValueError("state must be for a {0} "
-                             "PRNG".format(self.__class__.__name__))
+                             "PRNG".format(type(self).__name__))
         state = check_state_array(value["state"]["x"], 4, 64, "x")
         for i in range(4):
             self.rng_state.x[i] = <uint64_t>state[i]

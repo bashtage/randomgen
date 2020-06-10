@@ -130,8 +130,8 @@ warnings.filterwarnings("ignore", "RandomState", FutureWarning)
         return self.__str__() + " at 0x{:X}".format(id(self))
 
     def __str__(self):
-        _str = self.__class__.__name__
-        _str += "(" + self._bit_generator.__class__.__name__ + ")"
+        _str = type(self).__name__
+        _str += "(" + type(self._bit_generator).__name__ + ")"
         return _str
 
     # Pickling support:

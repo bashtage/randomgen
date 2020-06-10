@@ -18,6 +18,7 @@ from randomgen import (
     AESCounter,
     ChaCha,
     Philox,
+    SFC64,
     ThreeFry,
     Xoroshiro128,
     Xorshift1024,
@@ -124,6 +125,7 @@ configs = {
     "MT64": {"seed": seed_seq()},
     "MT19937": {"seed": seed_seq()},
     "DSFMT": {"seed": seed_seq(), "EXCLUDE_KEYS": ("buffered_uniforms",)},
+    "SFC64": {"seed": seed_seq(), "k": [1, UINT64 | np.uint64(0x1)]},
     "SFMT": {"seed": seed_seq()},
     "SPECK128": {
         "seed": seed_seq(),
@@ -182,6 +184,7 @@ BIT_GEN = {
     "PCG32": PCG32,
     "PCG64": PCG64,
     "JSF": JSF,
+    "SFC64": SFC64,
     "AESCounter": AESCounter,
     "HC128": HC128,
     "Philox": Philox,

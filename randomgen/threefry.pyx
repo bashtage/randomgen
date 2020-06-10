@@ -349,7 +349,7 @@ cdef class ThreeFry(BitGenerator):
             else:
                 buffer[i] = self.rng_state.buffer[i].u32
 
-        return {"bit_generator": self.__class__.__name__,
+        return {"bit_generator": type(self).__name__,
                 "state": {"counter": ctr, "key": key},
                 "buffer": buffer,
                 "buffer_pos": self.rng_state.buffer_pos,
@@ -363,9 +363,9 @@ cdef class ThreeFry(BitGenerator):
         if not isinstance(value, dict):
             raise TypeError("state must be a dict")
         bitgen = value.get("bit_generator", "")
-        if bitgen != self.__class__.__name__:
+        if bitgen != type(self).__name__:
             raise ValueError("state must be for a {0} "
-                             "PRNG".format(self.__class__.__name__))
+                             "PRNG".format(type(self).__name__))
         # Default for previous version
         self.rng_state.number = self.n = value.get("number", 4)
         self.rng_state.width = self.w = value.get("width", 64)

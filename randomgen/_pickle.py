@@ -14,6 +14,7 @@ from randomgen.pcg32 import PCG32
 from randomgen.pcg64 import PCG64
 from randomgen.philox import Philox
 from randomgen.rdrand import RDRAND
+from randomgen.sfc import SFC64
 from randomgen.sfmt import SFMT
 from randomgen.speck128 import SPECK128
 from randomgen.threefry import ThreeFry
@@ -40,6 +41,7 @@ BitGenerators = {
     "Xoshiro256": Xoshiro256,
     "Xoshiro512": Xoshiro512,
     "SPECK128": SPECK128,
+    "SFC64": SFC64,
     "SFMT": SFMT,
     "RDRAND": RDRAND,
 }

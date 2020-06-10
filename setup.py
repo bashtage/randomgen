@@ -260,6 +260,7 @@ bit_generator("xorshift1024")
 bit_generator("xoshiro256")
 bit_generator("xoshiro512")
 bit_generator("lxm")
+bit_generator("sfc")
 extensions.append(
     Extension(
         "randomgen.wrapper",

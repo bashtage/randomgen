@@ -6,7 +6,7 @@ Performance
 Recommendation
 **************
 The recommended generator for single use is
-:class:`~randomgen.pcg64.PCG64` with the keyword argument ``variant="cm-dxsm"`.
+:class:`~randomgen.pcg64.PCG64` with the keyword argument ``variant="cm-dxsm"``.
 An excellent alternative is :class:`~randomgen.xoshiro256.Xoshiro256`
 where the `jump` method is used to advance the state. For very large scale
 applications -- requiring 1,000+ independent streams,

@@ -129,7 +129,7 @@ cdef class HC128(BitGenerator):
 
         Seed the generator.
 
-        This method is called at initialized. It can be called again to
+        This method is called at initialization. It can be called again to
         re-seed the generator.
 
         Parameters
@@ -198,7 +198,7 @@ cdef class HC128(BitGenerator):
         buf_arr = <uint32_t *>np.PyArray_DATA(buffer)
         for i in range(16):
             buf_arr[i] = self.rng_state.buffer[i]
-        return {"bit_generator": self.__class__.__name__,
+        return {"bit_generator": type(self).__name__,
                 "state": {"p": p,
                           "q": q,
                           "hc_idx": self.rng_state.hc_idx,
@@ -216,9 +216,9 @@ cdef class HC128(BitGenerator):
         if not isinstance(value, dict):
             raise TypeError("state must be a dict")
         bitgen = value.get("bit_generator", "")
-        if bitgen != self.__class__.__name__:
+        if bitgen != type(self).__name__:
             raise ValueError("state must be for a {0} "
-                             "PRNG".format(self.__class__.__name__))
+                             "PRNG".format(type(self).__name__))
         state = value["state"]
         p = check_state_array(state["p"], 512, 32, "p")
         q = check_state_array(state["q"], 512, 32, "q")

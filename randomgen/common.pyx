@@ -96,7 +96,7 @@ cdef class BitGenerator:
             pass
         if isinstance(seed, ISEED_SEQUENCES):
             if self.mode == "legacy":
-                bg = self.__class__.__name__
+                bg = type(self).__name__
                 raise RuntimeError("{bg} was created using mode=\"legacy\". "
                                    "This is immutable and SeedSequences cannot"
                                    " be used".format(bg=bg))

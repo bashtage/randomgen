@@ -239,7 +239,7 @@ cdef class JSF(BitGenerator):
 
         Seed the generator.
 
-        This method is called at initialized. It can be called again to
+        This method is called at initialization. It can be called again to
         re-seed the generator.
 
         Parameters
@@ -297,7 +297,7 @@ cdef class JSF(BitGenerator):
             b = self.rng_state.b.u32
             c = self.rng_state.c.u32
             d = self.rng_state.d.u32
-        return {"bit_generator": self.__class__.__name__,
+        return {"bit_generator": type(self).__name__,
                 "state": {"a": a, "b": b, "c": c, "d": d,
                           "p": self.rng_state.p,
                           "q": self.rng_state.q,
@@ -312,9 +312,9 @@ cdef class JSF(BitGenerator):
         if not isinstance(value, dict):
             raise TypeError("state must be a dict")
         bitgen = value.get("bit_generator", "")
-        if bitgen != self.__class__.__name__:
+        if bitgen != type(self).__name__:
             raise ValueError("state must be for a {0} "
-                             "PRNG".format(self.__class__.__name__))
+                             "PRNG".format(type(self).__name__))
         self.size = value["size"]
         state = value["state"]
         self.setup_generator(state["p"], state["q"], state["r"])

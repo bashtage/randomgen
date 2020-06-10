@@ -14,6 +14,7 @@ from randomgen.pcg64 import PCG64
 from randomgen.philox import Philox
 from randomgen.rdrand import RDRAND
 from randomgen.seed_sequence import SeedlessSeedSequence, SeedSequence
+from randomgen.sfc import SFC64
 from randomgen.sfmt import SFMT
 from randomgen.speck128 import SPECK128
 from randomgen.threefry import ThreeFry
@@ -39,6 +40,7 @@ __all__ = [
     "Philox",
     "RDRAND",
     "RandomState",
+    "SFC64",
     "SFMT",
     "SPECK128",
     "ThreeFry",

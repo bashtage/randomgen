@@ -29,6 +29,7 @@ These RNGs will be included in future releases.
    PCG64 <pcg64>
    Philox <philox>
    RDRAND <rdrand>
+   SFC64 <sfc>
    SFMT <sfmt>
    SPECK128 <speck128>
    ThreeFry <threefry>
