@@ -38,6 +38,7 @@
 extern "C" {
 #endif
 
+#include "../common/randomgen_endian.h"
 #include <stdio.h>
 #include <assert.h>
 
@@ -64,6 +65,10 @@ extern "C" {
     #define PRIu64 "llu"
     #define PRIx64 "llx"
   #endif
+#endif
+
+#if !(RANDOMGEN_LITTLE_ENDIAN)
+#define BIG_ENDIAN64 1
 #endif
 
 #include "sfmt-params.h"
