@@ -240,7 +240,9 @@ cdef class ChaCha(BitGenerator):
             seed = seed_by_array(int_to_array(seed, "seed", None, 64), 4)
         else:
             seed = random_entropy(8, "auto")
-        _seed = seed.view(np.uint64)
+        _seed = seed
+        if _seed.dtype != np.uint64:
+            _seed = view_little_endian(_seed, np.uint64)
         _stream = _seed[2:]
         counter = 0 if counter is None else counter
         _counter = int_to_array(counter, "counter", 128, 64)

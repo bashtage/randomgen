@@ -38,6 +38,7 @@
 extern "C" {
 #endif
 
+#include "../common/randomgen_endian.h"
 #include <assert.h>
 #include <stdio.h>
 
@@ -62,6 +63,10 @@ extern "C" {
 /** N64 is the size of internal state array when regarded as an array
  * of 64-bit integers.*/
 #define DSFMT_N64 (DSFMT_N * 2)
+
+#if defined(RANDOMGEN_LITTLE_ENDIAN) && !(RANDOMGEN_LITTLE_ENDIAN)
+#define DSFMT_BIG_ENDIAN 1
+#endif
 
 #if !defined(DSFMT_BIG_ENDIAN)
 #if defined(__BYTE_ORDER) && defined(__BIG_ENDIAN)
