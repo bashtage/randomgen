@@ -85,9 +85,14 @@ void aesctr_seed_r(aesctr_state_t *state, uint64_t *seed)
             /* Always set first byte to deal with endianness */
             state->ctr[i].u8[0] = i;
         }
-        /* TODO: Need to be coherent about endianness of seed here
-            Already LE or native, in which case needs conversion?
+#if defined(RANDOMGEN_LITTLE_ENDIAN) && !(RANDOMGEN_LITTLE_ENDIAN)
+        /* Need to apply a byte swap on seed here so that the bytes are the same as LE
+           128-bit seed
+           We don't do in place to be careful
         */
+        uint64_t bwap_seed[2] = {bswap_64(seed[0]), bswap_64(seed[1])};
+        seed = (uint64_t *)&bwap_seed;
+#endif
         tinyaes_expand_key((uint8_t *)&state->seed, (uint8_t *)seed);
     }
     state->offset = 16 * AESCTR_UNROLL;
@@ -107,25 +112,43 @@ void aesctr_get_seed_counter(aesctr_state_t *state, uint64_t *seed,
 {
     memcpy(seed, &state->seed, (AESCTR_ROUNDS + 1) * sizeof(aes128_t));
     memcpy(counter, &state->ctr, AESCTR_UNROLL * sizeof(aes128_t));
+#if defined(RANDOMGEN_LITTLE_ENDIAN) && !(RANDOMGEN_LITTLE_ENDIAN)
+        /* Need to apply a byte swap on seed here so that the bytes are the same as LE
+           128-bit seed
+           We don't do in place to be careful
+        */
+        for (int i=0;i<(2*(AESCTR_ROUNDS + 1));i++){
+            seed[i] = bswap_64(seed[i]);
+        }
+#endif
 }
 
 void aesctr_set_counter(aesctr_state_t *state, uint64_t *counter)
 {
-    /* TODO: need to byteswap counter for BE */
     memcpy(&state->ctr, counter, AESCTR_UNROLL * sizeof(aes128_t));
 }
 
 void aesctr_set_seed_counter(aesctr_state_t *state, uint64_t *seed,
                              uint64_t *counter)
 {
-    /* TODO: need to byteswap seed for BE */
+#if defined(RANDOMGEN_LITTLE_ENDIAN) && !(RANDOMGEN_LITTLE_ENDIAN)
+        /* Need to apply a byte swap on seed here so that the bytes are the same as LE
+           128-bit seed
+           We don't do in place to be careful
+        */
+        uint64_t bwap_seed[2*(AESCTR_ROUNDS + 1)];
+        for (int i=0;i<(2*(AESCTR_ROUNDS + 1));i++){
+            bwap_seed[i] = bswap_64(seed[i]);
+        }
+        seed = (uint64_t *)&bwap_seed;
+#endif
+
     memcpy(&state->seed, seed, (AESCTR_ROUNDS + 1) * sizeof(aes128_t));
     aesctr_set_counter(state, counter);
 }
 
 void aesctr_advance(aesctr_state_t *state, uint64_t *step)
 {
-    /* TODO: need to be rewritten to deal with BE */
     uint64_t low;
     uint64_t temp[2];
     uint64_t adj_step[2];
