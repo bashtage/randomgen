@@ -539,6 +539,10 @@ void dsfmt_chk_init_gen_rand(dsfmt_t *dsfmt, uint32_t seed, int mexp) {
  * @param key_length the length of init_key.
  * @param mexp caller's mersenne expornent
  */
+#if defined(__GNUC__) && (defined(__arm__) || defined(__aarch64__))
+#pragma GCC push_options
+#pragma GCC optimize ("O0")
+#endif
 void dsfmt_chk_init_by_array(dsfmt_t *dsfmt, uint32_t init_key[],
                              int key_length, int mexp) {
   int i, j, count;
@@ -609,6 +613,9 @@ void dsfmt_chk_init_by_array(dsfmt_t *dsfmt, uint32_t init_key[],
   period_certification(dsfmt);
   dsfmt->idx = DSFMT_N64;
 }
+#if defined(__GNUC__) && (defined(__arm__) || defined(__aarch64__))
+#pragma GCC pop_options
+#endif
 #if defined(__INTEL_COMPILER)
 #pragma warning(default : 981)
 #endif
