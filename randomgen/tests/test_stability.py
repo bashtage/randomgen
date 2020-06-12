@@ -1,5 +1,5 @@
 import numpy as np
-from numpy.testing import assert_equal
+from numpy.testing import assert_allclose, assert_equal
 import pytest
 
 import randomgen as rg
@@ -206,3 +206,16 @@ def test_sfmt():
     assert_equal(state["state"]["idx"], stability_results.sfmt_idx)
     assert_equal(state["buffer_loc"], stability_results.sfmt_buffer_loc)
     assert_equal(state["buffered_uint64"], stability_results.sfmt_buffered_uint64)
+
+
+def test_dsfmt():
+    sed_seed = rg.SeedSequence(0)
+    bit_gen = rg.DSFMT(sed_seed)
+    bit_gen.random_raw(1)
+    state = bit_gen.state
+    assert_equal(state["state"]["idx"], stability_results.dsfmt_idx)
+    assert_equal(state["buffer_loc"], stability_results.dsfmt_buffer_loc)
+    assert_allclose(
+        state["buffered_uniforms"], stability_results.dsfmt_buffered_uniforms, rtol=1e-5
+    )
+    assert_equal(state["state"]["state"], stability_results.dsfmt_state)
