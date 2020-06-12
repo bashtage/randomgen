@@ -86,14 +86,10 @@ static INLINE uint64_t aesctr_r(aesctr_state_t *state) {
       }
 #endif
       for (i = 0; i < 4; i++) {
+        /* On BE, the encrypted data has LE order*/
         tiny_encrypt((state_t *)&state->state[16 * i], (uint8_t *)&state->seed);
       }
-#if defined(RANDOMGEN_LITTLE_ENDIAN) && !(RANDOMGEN_LITTLE_ENDIAN)
-      block = (uint64_t *)&state->state[0];
-      for (i=0; i< (2 * AESCTR_UNROLL);i++){
-        block[i] = bswap_64(block[i]);
-      }
-#endif
+
       for (i = 0; i < 4; i++) {
         state->ctr[i].u64[0] += AESCTR_UNROLL;
         /* Rolled if less than AESCTR_UNROLL */
@@ -105,6 +101,11 @@ static INLINE uint64_t aesctr_r(aesctr_state_t *state) {
   output = 0;
   memcpy(&output, &state->state[state->offset], sizeof(output));
   state->offset += sizeof(output);
+#if defined(RANDOMGEN_LITTLE_ENDIAN) && !(RANDOMGEN_LITTLE_ENDIAN)
+  /* On BE, the encrypted data has LE order*/
+  output = bswap_64(output);
+#endif
+
   return output;
 }
 
