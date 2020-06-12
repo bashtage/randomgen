@@ -37,6 +37,8 @@ interface = namedtuple("interface", ["state_address", "state", "next_uint64",
                                      "next_uint32", "next_double",
                                      "bit_generator"])
 
+cdef bint RANDOMGEN_BIG_ENDIAN = sys.byteorder == "big"
+cdef bint RANDOMGEN_LITTLE_ENDIAN = not RANDOMGEN_BIG_ENDIAN
 
 cdef class BitGenerator:
     """
@@ -507,13 +509,13 @@ cdef view_little_endian(arr, dtype):
         raise ValueError("Only support conversion between uint 32 and 64.")
     if arr.ndim != 1:
         raise ValueError("arr must be 1 dimensional")
-    if arr.dtype == dtype or sys.byteorder == "little":
+    if arr.dtype == dtype or RANDOMGEN_LITTLE_ENDIAN:
         return arr.view(dtype)
     arr = arr.byteswap().view(dtype).byteswap()
     return arr
 
 cdef byteswap_little_endian(arr):
-    if sys.byteorder == "little":
+    if RANDOMGEN_LITTLE_ENDIAN:
         return arr
     return arr.byteswap()
 

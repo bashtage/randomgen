@@ -80,7 +80,7 @@ cdef class SPECK128(BitGenerator):
 
     **State and Seeding**
 
-    The ``SPECK128`` state vector consists of a 96-element array of uint8
+    The ``SPECK128`` state vector consists of a 12-element array of uint64 values
     that capture buffered draws from the distribution, a 34-element array of
     uint64s holding the round key, and an 12-element array of
     uint64 that holds the 128-bit counters (6 by 128 bits).
@@ -287,7 +287,7 @@ cdef class SPECK128(BitGenerator):
 
         return {"bit_generator": self.__class__.__name__,
                 "state": {"ctr": ctr,
-                          "buffer": buffer,
+                          "buffer": buffer.view(np.uint64),
                           "round_key": round_key,
                           "offset": self.rng_state.offset,
                           "rounds": self.rng_state.rounds},
@@ -310,8 +310,7 @@ cdef class SPECK128(BitGenerator):
         state =value["state"]
 
         ctr = check_state_array(state["ctr"], SPECK_UNROLL, 64, "ctr")
-        buffer = check_state_array(state["buffer"], 8 * SPECK_UNROLL, 8,
-                                   "buffer")
+        buffer = check_state_array(state["buffer"], SPECK_UNROLL, 64, "buffer")
         round_key = check_state_array(state["round_key"], 2*SPECK_MAX_ROUNDS, 64,
                                       "round_key")
 
