@@ -80,7 +80,7 @@ cdef class SPECK128(BitGenerator):
 
     **State and Seeding**
 
-    The ``SPECK128`` state vector consists of a 96-element array of uint8
+    The ``SPECK128`` state vector consists of a 12-element array of uint64 values
     that capture buffered draws from the distribution, a 34-element array of
     uint64s holding the round key, and an 12-element array of
     uint64 that holds the 128-bit counters (6 by 128 bits).

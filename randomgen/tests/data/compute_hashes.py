@@ -68,19 +68,21 @@ def int_to_array(int_val):
     return np.array(arr_data, dtype=np.uint64)
 
 
-def hash_state(state, hasher=None):
+def hash_state(state, hasher=None, exclude_keys=()):
     if hasher is None:
         hasher = hashlib.sha256()
-    for value in state.values():
+    for key, value in state.items():
         if isinstance(value, int):
             value = int_to_array(value)
 
         if isinstance(value, dict):
-            return hash_state(value, hasher)
+            hash_state(value, hasher, exclude_keys)
         elif isinstance(value, np.ndarray):
             if BIG_ENDIAN:
                 value = value.byteswap()
-            hasher.update(value.data)
+            if key not in exclude_keys:
+                # Skip excluded keys
+                hasher.update(value.data)
         elif not isinstance(value, str):
             raise NotImplementedError(str(value))
     return hasher
@@ -121,7 +123,7 @@ configs = {
     "LXM": {"seed": seed_seq(), "mix": [True, False]},
     "MT64": {"seed": seed_seq()},
     "MT19937": {"seed": seed_seq()},
-    "DSFMT": {"seed": seed_seq()},
+    "DSFMT": {"seed": seed_seq(), "EXCLUDE_KEYS": ("buffered_uniforms",)},
     "SFMT": {"seed": seed_seq()},
     "SPECK128": {
         "seed": seed_seq(),
@@ -192,8 +194,10 @@ for gen in configs:
     bg = BIT_GEN[gen]
     blocked = args.get("BLOCKED", ())
     required = args.get("REQUIRED", ("seed",))
-    keys = [k for k in args if k not in ("BLOCKED", "REQUIRED")]
+    exclude_keys = args.get("EXCLUDE_KEYS", ())
+    keys = [k for k in args if k not in ("BLOCKED", "REQUIRED", "EXCLUDE_KEYS")]
     bit_gen_configs = []
+
     for i in range(1, len(keys) + 1):
         for comb in itertools.combinations(keys, i):
             found = False
@@ -210,7 +214,9 @@ for gen in configs:
                     ex_kwargs["seed"] = seed_seq()
                 ex_kwargs = fix_random_123(gen, ex_kwargs)
                 bit_gen = bg(**ex_kwargs)
-                state_hash = hash_state(bit_gen.state).hexdigest()
+                state_hash = hash_state(
+                    bit_gen.state, exclude_keys=exclude_keys
+                ).hexdigest()
                 randoms = bit_gen.random_raw(1000000)
                 if BIG_ENDIAN:
                     randoms = randoms.byteswap()

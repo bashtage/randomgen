@@ -10,6 +10,8 @@ from randomgen.distributions cimport bitgen_t
 import numpy as np
 cimport numpy as np
 
+cdef bint RANDOMGEN_BIG_ENDIAN
+cdef bint RANDOMGEN_LITTLE_ENDIAN
 cdef double POISSON_LAM_MAX
 cdef double LEGACY_POISSON_LAM_MAX
 cdef uint64_t MAXSIZE

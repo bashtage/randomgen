@@ -3,6 +3,7 @@ from numpy.testing import assert_equal
 import pytest
 
 import randomgen as rg
+from randomgen.tests.data import stability_results
 from randomgen.tests.data.compute_hashes import BIG_ENDIAN, computed_hashes
 from randomgen.tests.data.stable_hashes import known_hashes
 
@@ -194,3 +195,14 @@ def test_speck():
         dtype=np.uint64,
     )
     assert_equal(state["state"]["buffer"], buffer)
+
+
+def test_sfmt():
+    sed_seed = rg.SeedSequence(0)
+    bit_gen = rg.SFMT(sed_seed)
+    bit_gen.random_raw(1)
+    state = bit_gen.state
+    assert_equal(state["state"]["state"], stability_results.sfmt_state)
+    assert_equal(state["state"]["idx"], stability_results.sfmt_idx)
+    assert_equal(state["buffer_loc"], stability_results.sfmt_buffer_loc)
+    assert_equal(state["buffered_uint64"], stability_results.sfmt_buffered_uint64)

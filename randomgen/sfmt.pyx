@@ -24,6 +24,10 @@ cdef uint64_t sfmt_raw(void *st) nogil:
 cdef double sfmt_double(void* st) nogil:
     return uint64_to_double(sfmt_next64(<sfmt_state_t *>st))
 
+cdef swap_even_odd_inplace(arr):
+    temp = arr[::2].copy()
+    arr[::2] = arr[1::2]
+    arr[1::2] = temp
 
 cdef class SFMT(BitGenerator):
     u"""
@@ -70,7 +74,7 @@ cdef class SFMT(BitGenerator):
 
     **State and Seeding**
 
-    The ``SFMT`` state vector consists of a 384 element array of 64-bit
+    The ``SFMT`` state vector consists of a 768 element array of 32-bit
     unsigned integers plus a single integer value between 0 and 382
     indicating the current position within the main array. The implementation
     used here augments this with a 382 element array of doubles which are used
@@ -286,11 +290,15 @@ cdef class SFMT(BitGenerator):
             for j in range(2):
                 state[loc] = self.rng_state.state.state[i].u64[j]
                 loc += 1
+        # If the state is s[0],s[1],s[2],s[3] on LE, it is s[1],s[0],s[3],s[2] on BE
+        # when viewed as uint32
+        state_arr = np.asarray(state).view(np.uint32)
+
         buffered_uint64 = np.empty(SFMT_N64, dtype=np.uint64)
         for i in range(SFMT_N64):
             buffered_uint64[i] = self.rng_state.buffered_uint64[i]
         return {"bit_generator": self.__class__.__name__,
-                "state": {"state": np.asarray(state),
+                "state": {"state": state_arr,
                           "idx": self.rng_state.state.idx},
                 "buffer_loc": self.rng_state.buffer_loc,
                 "buffered_uint64": np.asarray(buffered_uint64),
@@ -306,8 +314,9 @@ cdef class SFMT(BitGenerator):
         if bitgen != self.__class__.__name__:
             raise ValueError("state must be for a {0} "
                              "PRNG".format(self.__class__.__name__))
-        state = check_state_array(value["state"]["state"], 2 * SFMT_N, 64,
+        state = check_state_array(value["state"]["state"], 4 * SFMT_N, 32,
                                   "state")
+        state = state.view(np.uint64)
         for i in range(SFMT_N):
             for j in range(2):
                 self.rng_state.state.state[i].u64[j] = state[loc]

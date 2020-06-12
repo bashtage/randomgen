@@ -57,13 +57,16 @@ cdef class Philox(BitGenerator):
         and process ID is used.
     counter : {None, int, array_like[uint64]}, optional
         Counter to use in the Philox state. Can be either a Python int in
-        [0, 2**256) or a 4-element uint64 array. If not provided, the counter
+        [0, 2**(N*W)) where N is number of W is the width, or a M-element
+        uint64 array where M = N*W // 64. If not provided, the counter
         is initialized at 0.
     key : {None, int, array_like[uint64]}, optional
         Key to use in the Philox state. Unlike seed, which is run through
         another RNG before use, the value in key is directly set. Can be either
-        a Python int in [0, 2**128) or a 2-element uint64 array.
-        key and seed cannot both be used.
+        a Python int in [0, 2**(N*W//2)) or a m-element uint64 array where
+        m = N*W // (2 * 64). If number=2 and width=32, then the value must
+        be in [0, 2**32) even if stored in a uint64 array. key and seed cannot
+        both be used.
     number : {2, 4}, optional
         Number of values to produce in a single call. Maps to N in the Philox
         variant naming scheme PhiloxNxW.
@@ -89,12 +92,12 @@ cdef class Philox(BitGenerator):
 
     Notes
     -----
-    Philox is a 64-bit PRNG that uses a counter-based design based on
+    Philox is a 32 or 64-bit PRNG that uses a counter-based design based on
     weaker (and faster) versions of cryptographic functions [1]_. Instances
     using different values of the key produce independent sequences. ``Philox``
-    has a period of :math:`2^{256} - 1` and supports arbitrary advancing and
-    jumping the sequence in increments of :math:`2^{128}`. These features allow
-    multiple non-overlapping sequences to be generated.
+    has a period of :math:`2^{N*W} - 1` and supports arbitrary advancing and
+    jumping the sequence in increments of :math:`2^{N*W//2}`. These features
+    allow multiple non-overlapping sequences to be generated.
 
     ``Philox`` provides a capsule containing function pointers that produce
     doubles, and unsigned 32 and 64- bit integers. These are not
@@ -105,15 +108,15 @@ cdef class Philox(BitGenerator):
 
     **State and Seeding**
 
-    The ``Philox`` state vector consists of a 2 256-bit values encoded as
-    4-element uint64 arrays. One is a counter which is incremented by 1 for
-    every 4 64-bit randoms produced. The second is a key which determined
-    the sequence produced. Using different keys produces independent
-    sequences.
+    The Philox state vector consists of a (N*W)-bit value and a
+    (N*W//2)-bit value. These are encoded as an n-element w-bit array.
+    One is a counter which is incremented by 1 for every ``n`` ``w``-bit
+    randoms produced. The second is a key which determines the sequence
+    produced. Using different keys produces independent sequences.
 
-    ``Philox`` is seeded using either a single 64-bit unsigned integer
-    or a vector of 64-bit unsigned integers. In either case, the seed is
-    used as an input for a second random number generator,
+    When mode is "legacy", ``Philox`` is seeded using either a single 64-bit
+    unsigned integer or a vector of 64-bit unsigned integers. In either case,
+    the seed is used as an input for a second random number generator,
     SplitMix64, and the output of this PRNG function is used as the initial state.
     Using a single 64-bit value for the seed can only initialize a small range of
     the possible initial state values.
@@ -121,9 +124,9 @@ cdef class Philox(BitGenerator):
     **Parallel Features**
 
     ``Philox`` can be used in parallel applications by calling the ``jump``
-    method  to advances the state as-if :math:`2^{128}` random numbers have
+    method  to advances the state as-if :math:`2^{N*W//2}` random numbers have
     been generated. Alternatively, ``advance`` can be used to advance the
-    counter for any positive step in [0, 2**256). When using ``jump``, all
+    counter for any positive step in [0, 2**N*W). When using ``jump``, all
     generators should be initialized with the same seed to ensure that the
     segments come from the same sequence.
 
