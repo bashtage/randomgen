@@ -21,6 +21,7 @@ from randomgen import (
     PCG32,
     PCG64,
     RDRAND,
+    SFC64,
     SFMT,
     SPECK128,
     AESCounter,
@@ -1770,6 +1771,25 @@ class TestLXM(Base):
 
     def test_seed_sequence_error(self):
         pass
+
+
+class TestSFC64(TestLXM):
+    @classmethod
+    def setup_class(cls):
+        super().setup_class()
+        cls.bit_generator = SFC64
+        cls.bits = 64
+        cls.dtype = np.uint64
+        cls.data1 = cls._read_csv(join(pwd, "./data/sfc-testset-1.csv"))
+        cls.data2 = cls._read_csv(join(pwd, "./data/sfc-testset-2.csv"))
+        cls.seed_error_type = TypeError
+        cls.invalid_seed_types = [(2 + 3j,), (3.1,)]
+        cls.invalid_seed_values = [(-2,), ([-2],)]
+        if NP_SEED_SEQ:
+            cls.invalid_seed_types += [("apple",)]
+        else:
+            cls.invalid_seed_values += [("apple",)]
+        cls.seed_sequence_only = True
 
 
 class TestPCG64DXSM(Base):

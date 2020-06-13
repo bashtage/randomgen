@@ -298,7 +298,7 @@ cdef class PCG64(BitGenerator):
                         &use_dxsm, &has_uint32, &uinteger)
         state = int(state_vec[0]) * 2**64 + int(state_vec[1])
         inc = int(state_vec[2]) * 2**64 + int(state_vec[3])
-        return {"bit_generator": self.__class__.__name__,
+        return {"bit_generator": type(self).__name__,
                 "state": {"state": state, "inc": inc},
                 "variant": self.variant,
                 "has_uint32": has_uint32,
@@ -312,9 +312,9 @@ cdef class PCG64(BitGenerator):
         if not isinstance(value, dict):
             raise TypeError("state must be a dict")
         bitgen = value.get("bit_generator", "")
-        if bitgen != self.__class__.__name__:
+        if bitgen != type(self).__name__:
             raise ValueError("state must be for a {0} "
-                             "RNG".format(self.__class__.__name__))
+                             "RNG".format(type(self).__name__))
         state_vec = <np.ndarray>np.empty(4, dtype=np.uint64)
         state = int(value["state"]["state"])
         inc = int(value["state"]["inc"])

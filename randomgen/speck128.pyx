@@ -285,7 +285,7 @@ cdef class SPECK128(BitGenerator):
             arr[2*i] = self.rng_state.round_key[i].u64[0]
             arr[2*i+1] = self.rng_state.round_key[i].u64[1]
 
-        return {"bit_generator": self.__class__.__name__,
+        return {"bit_generator": type(self).__name__,
                 "state": {"ctr": ctr,
                           "buffer": buffer.view(np.uint64),
                           "round_key": round_key,
@@ -303,9 +303,9 @@ cdef class SPECK128(BitGenerator):
         if not isinstance(value, dict):
             raise TypeError("state must be a dict")
         bitgen = value.get("bit_generator", "")
-        if bitgen != self.__class__.__name__:
+        if bitgen != type(self).__name__:
             raise ValueError("state must be for a {0} "
-                             "PRNG".format(self.__class__.__name__))
+                             "PRNG".format(type(self).__name__))
 
         state =value["state"]
 

@@ -148,7 +148,7 @@ cdef class Xoshiro256(BitGenerator):
 
         Seed the generator.
 
-        This method is called at initialized. It can be called again to
+        This method is called at initialization. It can be called again to
         re-seed the generator.
 
         Parameters
@@ -269,7 +269,7 @@ cdef class Xoshiro256(BitGenerator):
         state[1] = self.rng_state.s[1]
         state[2] = self.rng_state.s[2]
         state[3] = self.rng_state.s[3]
-        return {"bit_generator": self.__class__.__name__,
+        return {"bit_generator": type(self).__name__,
                 "s": state,
                 "has_uint32": self.rng_state.has_uint32,
                 "uinteger": self.rng_state.uinteger}
@@ -279,9 +279,9 @@ cdef class Xoshiro256(BitGenerator):
         if not isinstance(value, dict):
             raise TypeError("state must be a dict")
         bitgen = value.get("bit_generator", "")
-        if bitgen != self.__class__.__name__:
+        if bitgen != type(self).__name__:
             raise ValueError("state must be for a {0} "
-                             "PRNG".format(self.__class__.__name__))
+                             "PRNG".format(type(self).__name__))
         state = check_state_array(value["s"], 4, 64, "s")
         self.rng_state.s[0] = <uint64_t>state[0]
         self.rng_state.s[1] = <uint64_t>state[1]

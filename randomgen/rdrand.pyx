@@ -165,7 +165,7 @@ cdef class RDRAND(BitGenerator):
             Dictionary containing the information required to describe the
             state of the PRNG
         """
-        return {"bit_generator": self.__class__.__name__,
+        return {"bit_generator": type(self).__name__,
                 "status": self.rng_state.status}
 
     @state.setter
@@ -173,6 +173,6 @@ cdef class RDRAND(BitGenerator):
         if not isinstance(value, dict):
             raise TypeError("state must be a dict")
         bitgen = value.get("bit_generator", "")
-        if bitgen != self.__class__.__name__:
+        if bitgen != type(self).__name__:
             raise ValueError("state must be for a {0} "
-                             "PRNG".format(self.__class__.__name__))
+                             "PRNG".format(type(self).__name__))

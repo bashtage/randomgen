@@ -267,7 +267,7 @@ cdef class Xorshift1024(BitGenerator):
         s = np.empty(16, dtype=np.uint64)
         for i in range(16):
             s[i] = self.rng_state.s[i]
-        return {"bit_generator": self.__class__.__name__,
+        return {"bit_generator": type(self).__name__,
                 "state": {"s": s, "p": self.rng_state.p},
                 "has_uint32": self.rng_state.has_uint32,
                 "uinteger": self.rng_state.uinteger}
@@ -277,9 +277,9 @@ cdef class Xorshift1024(BitGenerator):
         if not isinstance(value, dict):
             raise TypeError("state must be a dict")
         bitgen = value.get("bit_generator", "")
-        if bitgen != self.__class__.__name__:
+        if bitgen != type(self).__name__:
             raise ValueError("state must be for a {0} "
-                             "PRNG".format(self.__class__.__name__))
+                             "PRNG".format(type(self).__name__))
         state = check_state_array(value["state"]["s"], 16, 64, "s")
         for i in range(16):
             self.rng_state.s[i] = <uint64_t>state[i]
