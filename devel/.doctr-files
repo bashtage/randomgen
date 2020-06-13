@@ -36,6 +36,8 @@ devel/_sources/bit_generators/generated/randomgen.jsf.JSF.seed.rst.txt
 devel/_sources/bit_generators/generated/randomgen.jsf.JSF.state.rst.txt
 devel/_sources/bit_generators/generated/randomgen.lxm.LXM.cffi.rst.txt
 devel/_sources/bit_generators/generated/randomgen.lxm.LXM.ctypes.rst.txt
+devel/_sources/bit_generators/generated/randomgen.lxm.LXM.jump.rst.txt
+devel/_sources/bit_generators/generated/randomgen.lxm.LXM.jumped.rst.txt
 devel/_sources/bit_generators/generated/randomgen.lxm.LXM.random_raw.rst.txt
 devel/_sources/bit_generators/generated/randomgen.lxm.LXM.seed.rst.txt
 devel/_sources/bit_generators/generated/randomgen.lxm.LXM.state.rst.txt
@@ -81,6 +83,11 @@ devel/_sources/bit_generators/generated/randomgen.rdrand.RDRAND.jumped.rst.txt
 devel/_sources/bit_generators/generated/randomgen.rdrand.RDRAND.random_raw.rst.txt
 devel/_sources/bit_generators/generated/randomgen.rdrand.RDRAND.seed.rst.txt
 devel/_sources/bit_generators/generated/randomgen.rdrand.RDRAND.state.rst.txt
+devel/_sources/bit_generators/generated/randomgen.sfc.SFC64.cffi.rst.txt
+devel/_sources/bit_generators/generated/randomgen.sfc.SFC64.ctypes.rst.txt
+devel/_sources/bit_generators/generated/randomgen.sfc.SFC64.random_raw.rst.txt
+devel/_sources/bit_generators/generated/randomgen.sfc.SFC64.seed.rst.txt
+devel/_sources/bit_generators/generated/randomgen.sfc.SFC64.state.rst.txt
 devel/_sources/bit_generators/generated/randomgen.sfmt.SFMT.cffi.rst.txt
 devel/_sources/bit_generators/generated/randomgen.sfmt.SFMT.ctypes.rst.txt
 devel/_sources/bit_generators/generated/randomgen.sfmt.SFMT.jump.rst.txt
@@ -148,6 +155,7 @@ devel/_sources/bit_generators/pcg32.rst.txt
 devel/_sources/bit_generators/pcg64.rst.txt
 devel/_sources/bit_generators/philox.rst.txt
 devel/_sources/bit_generators/rdrand.rst.txt
+devel/_sources/bit_generators/sfc.rst.txt
 devel/_sources/bit_generators/sfmt.rst.txt
 devel/_sources/bit_generators/speck128.rst.txt
 devel/_sources/bit_generators/threefry.rst.txt
@@ -371,6 +379,8 @@ devel/bit_generators/generated/randomgen.jsf.JSF.seed.html
 devel/bit_generators/generated/randomgen.jsf.JSF.state.html
 devel/bit_generators/generated/randomgen.lxm.LXM.cffi.html
 devel/bit_generators/generated/randomgen.lxm.LXM.ctypes.html
+devel/bit_generators/generated/randomgen.lxm.LXM.jump.html
+devel/bit_generators/generated/randomgen.lxm.LXM.jumped.html
 devel/bit_generators/generated/randomgen.lxm.LXM.random_raw.html
 devel/bit_generators/generated/randomgen.lxm.LXM.seed.html
 devel/bit_generators/generated/randomgen.lxm.LXM.state.html
@@ -416,6 +426,11 @@ devel/bit_generators/generated/randomgen.rdrand.RDRAND.jumped.html
 devel/bit_generators/generated/randomgen.rdrand.RDRAND.random_raw.html
 devel/bit_generators/generated/randomgen.rdrand.RDRAND.seed.html
 devel/bit_generators/generated/randomgen.rdrand.RDRAND.state.html
+devel/bit_generators/generated/randomgen.sfc.SFC64.cffi.html
+devel/bit_generators/generated/randomgen.sfc.SFC64.ctypes.html
+devel/bit_generators/generated/randomgen.sfc.SFC64.random_raw.html
+devel/bit_generators/generated/randomgen.sfc.SFC64.seed.html
+devel/bit_generators/generated/randomgen.sfc.SFC64.state.html
 devel/bit_generators/generated/randomgen.sfmt.SFMT.cffi.html
 devel/bit_generators/generated/randomgen.sfmt.SFMT.ctypes.html
 devel/bit_generators/generated/randomgen.sfmt.SFMT.jump.html
@@ -483,6 +498,7 @@ devel/bit_generators/pcg32.html
 devel/bit_generators/pcg64.html
 devel/bit_generators/philox.html
 devel/bit_generators/rdrand.html
+devel/bit_generators/sfc.html
 devel/bit_generators/sfmt.html
 devel/bit_generators/speck128.html
 devel/bit_generators/threefry.html

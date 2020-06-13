@@ -1,0 +1,6 @@
+randomgen.sfc.SFC64.state
+=========================
+
+.. currentmodule:: randomgen.sfc
+
+.. autoattribute:: SFC64.state
