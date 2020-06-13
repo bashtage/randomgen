@@ -48,6 +48,10 @@ INTEL_LIKE = any(
         for val in ("x86", "i686", "i386", "amd64")
     ]
 )
+machine_processor = platform.machine() + platform.processor()
+ARM_LIKE = any([machine_processor.startswith(name) for name in ("arm", "aarch")])
+if ARM_LIKE:
+    print("Processor appears to be ARM")
 USE_SSE2 = INTEL_LIKE
 print("Building with SSE?: {0}".format(USE_SSE2))
 if "--no-sse2" in sys.argv:
