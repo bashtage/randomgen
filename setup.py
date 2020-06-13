@@ -241,7 +241,24 @@ bit_generator("jsf")
 bit_generator("mt19937", extra_source=src_join("mt19937", "mt19937-jump.c"))
 bit_generator("mt64")
 bit_generator("pcg32")
-bit_generator("pcg64")
+# PCG requires special treatment since it contains multiple bit gens
+ext = Extension(
+    "randomgen.pcg64",
+    ["randomgen/pcg64.pyx"]
+    + [
+        src_join("pcg64", "pcg64-common.c"),
+        src_join("pcg64", "pcg64-v2.c"),
+        src_join("pcg64", "pcg64-custom.c"),
+    ],
+    libraries=EXTRA_LIBRARIES,
+    include_dirs=EXTRA_INCLUDE_DIRS,
+    extra_compile_args=EXTRA_COMPILE_ARGS,
+    extra_link_args=EXTRA_LINK_ARGS,
+    define_macros=DEFS,
+    undef_macros=UNDEF_MACROS,
+)
+extensions.append(ext)
+
 bit_generator("philox", defs=PHILOX_DEFS)
 bit_generator("rdrand", cpu_features=True, compile_args=RDRAND_COMPILE_ARGS)
 bit_generator(

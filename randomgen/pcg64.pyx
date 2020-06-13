@@ -4,7 +4,11 @@ cimport numpy as np
 from randomgen.common cimport *
 from randomgen.entropy import random_entropy
 
-__all__ = ["PCG64"]
+__all__ = ["PCG64", "CustomPCG64"]
+
+DEFAULT_MULTIPLIER = 47026247687942121848144207491837523525
+DEFAULT_DXSM_MULTIPLIER = 0xDA942042E4DD58B5
+
 
 cdef uint64_t pcg64_uint64(void* st) nogil:
     return pcg64_next64(<pcg64_state_t *>st)
@@ -23,6 +27,15 @@ cdef uint32_t pcg64_cm_dxsm_uint32(void *st) nogil:
 
 cdef double pcg64_cm_dxsm_double(void* st) nogil:
     return uint64_to_double(pcg64_cm_dxsm_next64(<pcg64_state_t *>st))
+
+cdef uint64_t pcg64_custom_uint64(void* st) nogil:
+    return pcg64_custom_next64(<pcg64_custom_state_t *>st)
+
+cdef uint32_t pcg64_custom_uint32(void *st) nogil:
+    return pcg64_custom_next32(<pcg64_custom_state_t *> st)
+
+cdef double pcg64_custom_double(void* st) nogil:
+    return uint64_to_double(pcg64_custom_next64(<pcg64_custom_state_t *>st))
 
 
 cdef class PCG64(BitGenerator):
@@ -85,7 +98,7 @@ cdef class PCG64(BitGenerator):
     and :math:`i` is the increment. The multipler is a 128-bit unsigned
     integer with good spectral properties except when using the "cm-dxsm"
     variant, in which case it is a 64-bit unsigned integer. The output of the
-    LCG is the permuted using either with an XOR and a random rotation (XSL-RR)
+    LCG is the permuted using either an XOR and a random rotation (XSL-RR)
     or a function similar to an Xorshift has (DXSM).
 
     ``PCG64`` provides a capsule containing function pointers that produce
@@ -94,8 +107,8 @@ cdef class PCG64(BitGenerator):
     or similar object that supports low-level access.
 
     Supports the method advance to advance the RNG an arbitrary number of
-    steps. The state of the PCG-64 RNG is represented by 2 128-bit unsigned
-    integers.
+    steps. The state of the PCG-64 RNG is represented by a 128-bit unsigned
+    integer.
 
     **State and Seeding**
 
@@ -103,7 +116,7 @@ cdef class PCG64(BitGenerator):
     which are represented externally as Python ints.
     ``PCG64`` is seeded using a single 128-bit unsigned integer.
     In addition, a second 128-bit unsigned integer is used as the increment
-    in the LCG..
+    in the LCG.
 
     **Parallel Features**
 
@@ -390,7 +403,8 @@ cdef class PCG64(BitGenerator):
 
         Notes
         -----
-        The step size is phi when divided by the period 2**64
+        The step size is phi (the Golden Ratio) when divided by the period
+        2**128.
         """
         step = 0x9e3779b97f4a7c15f39cc0605cedc834
         step *= int(iter)
@@ -422,7 +436,7 @@ cdef class PCG64(BitGenerator):
         Jumping the rng state resets any pre-computed random numbers. This is required
         to ensure exact reproducibility.
 
-        The step size is phi when divided by 2**128
+        The step size is phi (the Golden Ratio) when divided by 2**128.
         """
         import warnings
         warnings.warn("jump (in-place) has been deprecated in favor of jumped"
@@ -453,11 +467,471 @@ cdef class PCG64(BitGenerator):
 
         Notes
         -----
-        The step size is phi when divided by the period 2**64
+        The step size is phi (the Golden Ratio) when divided by 2**128.
         """
         cdef PCG64 bit_generator
 
         bit_generator = self.__class__(mode=self.mode, variant=self.variant)
+        bit_generator.state = self.state
+        bit_generator.jump_inplace(iter)
+
+        return bit_generator
+
+cdef class CustomPCG64(BitGenerator):
+    u"""
+    CustomPCG64(seed=None, inc=None, *, multiplier=47026247687942121848144207491837523525, output="xsl-rr", dxsm_multiplier=15750249268501108917, post=True)
+
+    Customizable PCG64 bit generator
+
+    Support changing the LCG's multiplier and the PCG64 output function,
+    including support for user-defined output functions. This big generator
+    is based on the PCG generator in [1]_ and [2]_ but adds additional
+    options that allow the multiplier to be changed (see [3]_ for a list
+    of good multipliers). It has been added based on the discussion in [4]_.
+
+    Parameters
+    ----------
+    seed : {None, int, array_like[int] SeedSequence}, optional
+        Random seed initializing the pseudo-random number generator.
+        Can be an integer, a sequence of integers, a SeedSequence instance
+        or ``None`` (the default). If `seed` is ``None``, then ``PCG64``
+        use a ``SeedSequence`` initialized with system-provided entropy.
+    inc : {None, int}, optional
+        The increment in the LCG. Can be an integer in [0, 2**128] or ``None``.
+        If `inc` is ``None``, then it is initialized using the same``SeedSequence``
+        used by seed.
+    multiplier : int, optional
+        The multipler to use in the LCG. Must be an odd integer in (0, 2**128).
+    output : {str, CFunction, FuncPtr}
+        The name of the output function or a ctypes function or function pointer
+        with a signature uint64(uint64, uint64). Supported options are:
+
+        * "xsl-rr" - Use the XSL-RR output mixed. This mixer is used in PCG 1.0.
+        * "dxsm" - Use the DXSM output mixer.  This mixer is used in PCG 2.0.
+        * "upper" - Use the upper 64 bits of the LCG's state.
+        * "lower" - Use the lower 64 bits of the LCG's state.
+        * "murmur3" - Apply the MurMur3 hash to the upper 64 bits of the
+          LCG's state.
+
+    dxsm_multiplier : int, optional
+        The multiplier to use in the DXSM output function. The default is the
+        DXSM multipler in PCG 2.0.
+    post : bool, optional
+        Whether the mix the output before or after the next increment of
+        the LCG is computed. True updates the state and then mixes the
+        updated state.
+
+    Attributes
+    ----------
+    lock : threading.Lock
+        Lock instance that is shared so that the same bit git generator can
+        be used in multiple Generators without corrupting the state. Code that
+        generates values from a bit generator should hold the bit generator's
+        lock.
+    seed_seq : {None, SeedSequence}
+        The SeedSequence instance used to initialize the generator if mode is
+        "sequence" or is seed is a SeedSequence. None if mode is "legacy".
+
+    Notes
+    -----
+    Custom PCG-64 is a 128-bit implementation of O'Neill's permuted
+    congruential generator ([1]_, [2]_). Assuming an appropriate multiplier is
+    used (see [3]_), Custom PCG-64 has a period of :math:`2^{128}` and supports
+    advancing an arbitrary number of steps.
+
+    Random variates are generated by permuting the output of a 128-bit LCG
+
+    .. math::
+
+       s_{n+1} = m s_{n} + i \mod 2^{128}
+
+    where :math:`s` is the state of the generator, :math:`m` is the multipler
+    and :math:`i` is the increment. The multipler is a 128-bit unsigned
+    integer that should be chosen to have good spectral properties. The output
+    of the LCG is the permuted using a predefined method or a user-defined
+    function.
+
+    ``CustomPCG64`` provides a capsule containing function pointers that
+    produce doubles, and unsigned 32 and 64- bit integers. These are not
+    directly consumable in Python and must be consumed by a ``Generator``
+    or similar object that supports low-level access.
+
+    Supports the method advance to advance the RNG an arbitrary number of
+    steps. The state of the Custom PCG-64 RNG is represented by a 128-bit
+    unsigned integer.
+
+    **State and Seeding**
+
+    The ``CustomPCG64`` state vector consists of an unsigned 128-bit value,
+    which is represented externally as a Python int. ``CustomPCG64`` is
+    seeded using an integer, a sequence of integers, or a ``SeedSequence``.
+    In addition, a second 128-bit unsigned integer is used as the increment
+    in the LCG.
+
+    **Parallel Features**
+
+    The preferred method to use a ``CustomPCG64`` is to couple it with a
+    ``SeedSequence``.
+
+    >>> from randomgen import SeedSequence, CustomPCG64
+    >>> ss = SeedSequence(37548236789240574857439075)
+    >>> children = ss.spawn(10)
+    >>> bit_gens = [CustomPCG64(child) for child in children]
+
+    **Compatibility Guarantee**
+
+    ``CustomPCG64`` makes a guarantee that a fixed seed and will always
+    produce the same random integer stream.
+
+    Examples
+    --------
+    Custom generators can be created using different multipliers.
+
+    >>> lcg_mult = 0x1DA942042E4DD58B5
+    >>> dxsm_mult = 0xff37f1f758180525
+    >>> from randomgen import CustomPCG64
+    >>> CustomPCG64(multiplier=lcg_mult, dxsm_multiplier=dxsm_mult, output="dxsm")
+
+    Writing an output function in numba. This example uses a Murmur3 hash
+    function to permute the upper half of the LCG's output.
+
+    >>> from numba import cfunc, types
+    >>> @cfunc(types.uint64(types.uint64,types.uint64))
+    ... def murmur3_mix(hi, lo):
+    ...     z = (hi ^ (lo >> 30)) * 0xbf58476d1ce4e5b9
+    ...     z = (z ^ (z >> 27)) * 0x94d049bb133111eb
+    ...     return z ^ (z >> 31)
+    >>> cpcg = CustomPCG64(0xDEAD10CC, output=murmur3_mix.ctypes)
+
+    References
+    ----------
+    .. [1] "PCG, A Family of Better Random Number Generators",
+           http://www.pcg-random.org/
+    .. [2] O'Neill, Melissa E. "PCG: A Family of Simple Fast Space-Efficient
+           Statistically Good Algorithms for Random Number Generation"
+    .. [3] L’ecuyer, P. (1999). Tables of linear congruential generators of
+           different sizes and good lattice structure. Mathematics of
+           Computation, 68(225), 249-260.
+    .. [4] NumPy GitHub Repository. 2020. The PCG Implementation Provided By
+           Numpy Has Significant, Dangerous Self-Correlation. [online]
+           Available at: <https://github.com/numpy/numpy/issues/16313>
+           [Accessed 16 June 2020].
+    """
+    def __init__(self, seed=None, inc=None, *,
+                 multiplier=47026247687942121848144207491837523525,
+                 output="xsl-rr", dxsm_multiplier=15750249268501108917, post=True):
+        self._output_lookup = {"xsl-rr": 0,
+                               "dxsm": 1,
+                               "murmur3": 2,
+                               "upper": 3,
+                               "lower": 4}
+        self._inv_output_lookup = {v: k for k, v in self._output_lookup.items()}
+        self._cfunc = None
+        BitGenerator.__init__(self, seed, "sequence")
+        self.rng_state.pcg_state = <pcg64_custom_random_t *>PyArray_malloc_aligned(sizeof(pcg64_custom_random_t))
+        if hasattr(output, "argtypes") and hasattr(output, "restype"):
+            from ctypes import c_ulonglong
+            if output.argtypes != (c_ulonglong, c_ulonglong):
+                raise TypeError("output must take two uint64 arguments")
+            if output.restype != c_ulonglong:
+                raise TypeError("output must return a uint64")
+            self._cfunc = output
+        elif not isinstance(output, str) or output.lower() not in self._output_lookup:
+            valid = ", ".join(self._output_lookup.keys())
+            raise ValueError(f"{output} not supported. Must be one of: {valid} "
+                             f"or a ctypes function or function pointer")
+        if not 0 < multiplier < 2**128 or not (multiplier & 0x1):
+            raise ValueError("multiplier must be an odd integer in (0, 2**128).")
+        if not 0 < dxsm_multiplier < 2**64 or not (dxsm_multiplier & 0x1):
+            raise ValueError("dxsm_multiplier must be an odd integer in (0, 2**64).")
+        if not isinstance(post, bool):
+            raise TypeError("post must be a bool")
+
+        self.multiplier = multiplier
+
+        self.dxsm_multiplier = dxsm_multiplier
+        self.rng_state.pcg_state.dxsm_multiplier = dxsm_multiplier
+
+        self.rng_state.pcg_state.post = <bint>post
+        self.post = post
+
+        if self._cfunc is None:
+            self.output_function = self._output_lookup[output.lower()]
+            self.rng_state.pcg_state.output_idx = self.output_function
+        else:
+            import ctypes
+            self.output_function = -1
+            self.output_function_address = ctypes.cast(self._cfunc, ctypes.c_void_p).value
+            self.rng_state.pcg_state.output_idx = -1
+            self.rng_state.pcg_state.output_func = <pcg_output_func_t>self.output_function_address
+
+        self._bitgen.state = <void *>&self.rng_state
+        self._bitgen.next_uint64 = &pcg64_custom_uint64
+        self._bitgen.next_uint32 = &pcg64_custom_uint32
+        self._bitgen.next_double = &pcg64_custom_double
+        self._bitgen.next_raw = &pcg64_custom_uint64
+
+        self.seed(seed, inc)
+
+    def __repr__(self):
+        out = object.__repr__(self)
+        if self._cfunc is None:
+            output_name = self._inv_output_lookup[self.output_function]
+        else:
+            output_name = "Custom Output Function (ctypes)"
+        extras = [f"Output Function: {output_name}"]
+        if self.multiplier != DEFAULT_MULTIPLIER:
+            extras.append(f"Multiplier: {self.multiplier}")
+        if self.dxsm_multiplier != DEFAULT_DXSM_MULTIPLIER:
+            extras.append(f"DXSM Multiplier: {self.dxsm_multiplier}")
+        if not self.post:
+            extras.append(f"Post: {self.post}")
+        extra_str = ", ".join(extras)
+        out = out.replace(f"{type(self).__name__}",
+                          f"{type(self).__name__}({extra_str})")
+        return out
+
+    def __dealloc__(self):
+        if self.rng_state.pcg_state:
+            PyArray_free_aligned(self.rng_state.pcg_state)
+
+    cdef _reset_state_variables(self):
+        self.rng_state.has_uint32 = 0
+        self.rng_state.uinteger = 0
+
+    def _seed_from_seq(self, inc=None):
+
+        cdef np.ndarray mult_vec, state, _inc
+
+        size = 4 if inc is None else 2
+        state = np.array(self.seed_seq.generate_state(2, np.uint64))
+        mult_vec = np.empty(2, dtype=np.uint64)
+        mult_vec[0] = self.multiplier >> 64
+        mult_vec[1] = self.multiplier & 0xFFFFFFFFFFFFFFFF
+        if inc is None:
+            _inc = state[2:]
+        else:
+            _inc = <np.ndarray>np.empty(2, np.uint64)
+            _inc[0] = int(inc) // 2**64
+            _inc[1] = int(inc) % 2**64
+        pcg64_custom_seed(self.rng_state.pcg_state,
+                           <uint64_t *>np.PyArray_DATA(state),
+                           <uint64_t *>np.PyArray_DATA(_inc),
+                           <uint64_t *>np.PyArray_DATA(mult_vec))
+        self._reset_state_variables()
+
+    def seed(self, seed=None, inc=None):
+        """
+        seed(seed=None, inc=None)
+
+        Seed the generator.
+
+        This method is called at initialization. It can be called again to
+        re-seed the generator. seed and inc must both be set for a sequence
+        to be reproducible.
+
+        Parameters
+        ----------
+        seed : {None, int, array_like[int], SeedSequence}, optional
+            Random seed initializing the pseudo-random number generator. Can
+            be an integer in [0, 2**128], a SeedSequence instance or ``None``
+            (the default). If `seed` is ``None``, then ``PCG64`` will seed
+            using a ``SeedSequence`` which initializes using system-provided
+            entropy.
+        inc : {None, int}, optional
+            The increment in the LCG. Can be an integer in [0, 2**128] or
+            ``None``. If `inc` is ``None``, then it is initialized using
+            a ``SeedSequence`` (which is shared with seed if seed is also
+            None). Can be used with the same seed to produce multiple streams
+            using other values of inc.
+        """
+        BitGenerator._seed_with_seed_sequence(self, seed, inc=inc)
+
+    @property
+    def state(self):
+        """
+        Get or set the PRNG state
+
+        Returns
+        -------
+        state : dict
+            Dictionary containing the information required to describe the
+            state of the PRNG
+        """
+        cdef np.ndarray state_vec, inc_vec, mult_vec
+        cdef int has_uint32, post, output_func
+        cdef uint64_t dxsm_multiplier
+        cdef uint32_t uinteger
+
+        # state_vec is state.high, state.low
+        state_vec = <np.ndarray>np.empty(2, dtype=np.uint64)
+        inc_vec = <np.ndarray>np.empty(2, dtype=np.uint64)
+        mult_vec = <np.ndarray>np.empty(2, dtype=np.uint64)
+        pcg64_custom_get_state(self.rng_state.pcg_state,
+                                <uint64_t *>np.PyArray_DATA(state_vec),
+                                <uint64_t *>np.PyArray_DATA(inc_vec),
+                                <uint64_t *>np.PyArray_DATA(mult_vec),
+                                )
+        dxsm_multiplier = self.rng_state.pcg_state.dxsm_multiplier
+        post = self.rng_state.pcg_state.post
+        if self._cfunc is None:
+            output_function = self._inv_output_lookup[self.rng_state.pcg_state.output_idx]
+        else:
+            output_function = self._cfunc
+        has_uint32 = self.rng_state.has_uint32
+        uinteger = self.rng_state.uinteger
+
+        state = int(state_vec[0]) * 2**64 + int(state_vec[1])
+        inc = int(inc_vec[0]) * 2**64 + int(inc_vec[1])
+        mult = int(mult_vec[0]) * 2**64 + int(mult_vec[1])
+        return {"bit_generator": type(self).__name__,
+                "state": {"state": state,
+                          "inc": inc,
+                          "multiplier": mult,
+                          "dxsm_multiplier":dxsm_multiplier,
+                          "post":bool(post),
+                          "output_func": output_function,
+                          },
+                "has_uint32": has_uint32,
+                "uinteger": uinteger}
+
+    @state.setter
+    def state(self, value):
+        cdef np.ndarray state_vec, inc_vec, mult_vec
+        if not isinstance(value, dict):
+            raise TypeError("state must be a dict")
+        bitgen = value.get("bit_generator", "")
+        if bitgen != type(self).__name__:
+            raise ValueError("state must be for a {0} "
+                             "RNG".format(type(self).__name__))
+        state_vec = <np.ndarray>np.empty(2, dtype=np.uint64)
+        inc_vec = <np.ndarray>np.empty(2, dtype=np.uint64)
+        mult_vec = <np.ndarray>np.empty(2, dtype=np.uint64)
+        state = int(value["state"]["state"])
+        inc = int(value["state"]["inc"])
+        multiplier = int(value["state"]["multiplier"])
+        state_vec[0] = state // 2 ** 64
+        state_vec[1] = state % 2 ** 64
+        inc_vec[0] = inc // 2 ** 64
+        inc_vec[1] = inc % 2 ** 64
+        mult_vec[0] = multiplier // 2 ** 64
+        mult_vec[1] = multiplier % 2 ** 64
+        has_uint32 = value["has_uint32"]
+        uinteger = value["uinteger"]
+
+        # Default False for backward compat
+        pcg64_custom_set_state(self.rng_state.pcg_state,
+                                <uint64_t *>np.PyArray_DATA(state_vec),
+                                <uint64_t *>np.PyArray_DATA(inc_vec),
+                                <uint64_t *>np.PyArray_DATA(mult_vec))
+        self.rng_state.has_uint32 = has_uint32
+        self.rng_state.uinteger = uinteger
+        self.rng_state.pcg_state.dxsm_multiplier = value["state"]["dxsm_multiplier"]
+        self.rng_state.pcg_state.post = value["state"]["post"]
+        output_func = value["state"]["output_func"]
+        if isinstance(output_func, str):
+            self.rng_state.pcg_state.output_idx = self._output_lookup[output_func]
+        elif hasattr(output_func, "argtypes") and hasattr(output_func, "restype"):
+            self._cfunc = output_func
+
+            import ctypes
+            self.output_function = -1
+            self.output_function_address = ctypes.cast(self._cfunc, ctypes.c_void_p).value
+            self.rng_state.pcg_state.output_func = <pcg_output_func_t>self.output_function_address
+
+    def advance(self, delta):
+        """
+        advance(delta)
+
+        Advance the underlying RNG as-if delta draws have occurred.
+
+        Parameters
+        ----------
+        delta : integer, positive
+            Number of draws to advance the RNG. Must be less than the
+            size state variable in the underlying RNG.
+
+        Returns
+        -------
+        self : PCG64
+            RNG advanced delta steps
+
+        Notes
+        -----
+        Advancing a RNG updates the underlying RNG state as-if a given
+        number of calls to the underlying RNG have been made. In general
+        there is not a one-to-one relationship between the number output
+        random values from a particular distribution and the number of
+        draws from the core RNG. This occurs for two reasons:
+
+        * The random values are simulated using a rejection-based method
+          and so, on average, more than one value from the underlying
+          RNG is required to generate an single draw.
+        * The number of bits required to generate a simulated value
+          differs from the number of bits generated by the underlying
+          RNG. For example, two 16-bit integer values can be simulated
+          from a single draw of a 32-bit RNG.
+
+        Advancing the RNG state resets any pre-computed random numbers.
+        This is required to ensure exact reproducibility.
+        """
+        delta = wrap_int(delta, 128)
+
+        cdef np.ndarray d = np.empty(2, dtype=np.uint64)
+        d[0] = delta // 2**64
+        d[1] = delta % 2**64
+        pcg64_custom_advance(&self.rng_state, <uint64_t *>np.PyArray_DATA(d))
+        self._reset_state_variables()
+        return self
+
+    cdef jump_inplace(self, object iter):
+        """
+        Jump state in-place
+
+        Not part of public API
+
+        Parameters
+        ----------
+        iter : integer, positive
+            Number of times to jump the state of the rng.
+
+        Notes
+        -----
+        The step size is phi (the Golden Ratio) when divided by 2**128.
+        """
+        step = 0x9e3779b97f4a7c15f39cc0605cedc834
+        step *= int(iter)
+        divisor = step // 2**128
+        step -= 2**128 * divisor
+        self.advance(step)
+
+    def jumped(self, iter=1):
+        """
+        jumped(iter=1)
+
+        Returns a new bit generator with the state jumped
+
+        The state of the returned big generator is jumped as-if
+        2**(64 * iter) random numbers have been generated.
+
+        Parameters
+        ----------
+        iter : integer, positive
+            Number of times to jump the state of the bit generator returned
+
+        Returns
+        -------
+        bit_generator : PCG64
+            New instance of generator jumped iter times
+
+        Notes
+        -----
+        The step size is phi (the Golden Ratio) when divided by the period
+        2**128.
+        """
+        cdef CustomPCG64 bit_generator
+
+        bit_generator = self.__class__()
         bit_generator.state = self.state
         bit_generator.jump_inplace(iter)
 

@@ -21,6 +21,7 @@ from randomgen import (
     SPECK128,
     AESCounter,
     ChaCha,
+    CustomPCG64,
     Generator,
     Philox,
     ThreeFry,
@@ -323,6 +324,7 @@ class RNG(object):
     def test_seed(self):
         rg = self.init_generator(self.seed, mode="legacy")
         rg2 = self.init_generator(self.seed, mode="legacy")
+        assert_(comp_state(rg.bit_generator.state, rg2.bit_generator.state))
         rg.random()
         rg2.random()
         assert_(comp_state(rg.bit_generator.state, rg2.bit_generator.state))
@@ -656,7 +658,7 @@ class RNG(object):
         with pytest.raises((ValueError, TypeError)):
             self.rg.bit_generator.seed(seed)
 
-        if isinstance(self.rg.bit_generator, LXM):
+        if isinstance(self.rg.bit_generator, (LXM, CustomPCG64)):
             return
         seed = np.array([1, 2, 3, out_of_bounds])
         with pytest.raises((ValueError, TypeError)):
@@ -1444,6 +1446,24 @@ class TestLXM(RNG):
     def setup_class(cls):
         super().setup_class()
         cls.bit_generator = LXM
+        cls.seed = [2 ** 231 + 2 ** 21 + 2 ** 16 + 2 ** 5 + 1]
+        cls.rg = Generator(cls.bit_generator(*cls.seed))
+        cls.advance = 2 ** 63 + 2 ** 31 + 2 ** 15 + 1
+        cls.initial_state = cls.rg.bit_generator.state
+        cls.seed_vector_bits = 64
+        cls._extra_setup()
+        cls.seed_error = ValueError
+        cls.out_of_bounds = 2 ** 192 + 1
+
+    def init_generator(self, seed=None, mode="sequence"):
+        return Generator(self.bit_generator(seed=seed))
+
+
+class TestCustomPCG64(RNG):
+    @classmethod
+    def setup_class(cls):
+        super().setup_class()
+        cls.bit_generator = CustomPCG64
         cls.seed = [2 ** 231 + 2 ** 21 + 2 ** 16 + 2 ** 5 + 1]
         cls.rg = Generator(cls.bit_generator(*cls.seed))
         cls.advance = 2 ** 63 + 2 ** 31 + 2 ** 15 + 1

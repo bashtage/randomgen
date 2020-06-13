@@ -24,10 +24,6 @@ cdef uint64_t sfmt_raw(void *st) nogil:
 cdef double sfmt_double(void* st) nogil:
     return uint64_to_double(sfmt_next64(<sfmt_state_t *>st))
 
-cdef swap_even_odd_inplace(arr):
-    temp = arr[::2].copy()
-    arr[::2] = arr[1::2]
-    arr[1::2] = temp
 
 cdef class SFMT(BitGenerator):
     u"""

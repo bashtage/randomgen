@@ -73,7 +73,8 @@ before_install:
   - gcc --version || true
   - clang --version || true
   - export SRCDIR="$PWD"
-  - export RANDOMGEN_CYTHON_COVERAGE="$COVERAGE"
+  - if [[ -z "$RANDOMGEN_CYTHON_COVERAGE" ]]; then export RANDOMGEN_CYTHON_COVERAGE="$COVERAGE"; fi
+  - if [[ "$RANDOMGEN_CYTHON_COVERAGE" == true ]]; then EXTRA_PYTEST_OPTIONS="--skip-slow"; fi
   - if [[ "$COVERAGE" == true ]]; then export COVERAGE_OPTIONS="--cov-config .coveragerc --cov=randomgen"; fi
 
 install:
@@ -81,7 +82,8 @@ install:
 
 script:
   - set -e
-  - pytest -r a ${COVERAGE_OPTIONS} randomgen
+  - echo pytest -r a ${COVERAGE_OPTIONS} ${EXTRA_PYTEST_OPTIONS} randomgen
+  - pytest -r a ${COVERAGE_OPTIONS} ${EXTRA_PYTEST_OPTIONS} randomgen
   - |
     if [[ ${DOCBUILD} == true ]]; then
       sudo apt-get install -y enchant

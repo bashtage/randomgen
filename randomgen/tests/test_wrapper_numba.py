@@ -57,6 +57,7 @@ class NumbaSplitMix64:
 
     @property
     def next_32(self):
+
         sig = types.uint32(types.CPointer(types.uint64))
 
         @cfunc(sig)

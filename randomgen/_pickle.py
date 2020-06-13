@@ -11,7 +11,7 @@ from randomgen.mt64 import MT64
 from randomgen.mt19937 import MT19937
 from randomgen.mtrand import RandomState
 from randomgen.pcg32 import PCG32
-from randomgen.pcg64 import PCG64
+from randomgen.pcg64 import PCG64, CustomPCG64
 from randomgen.philox import Philox
 from randomgen.rdrand import RDRAND
 from randomgen.sfc import SFC64
@@ -26,6 +26,7 @@ from randomgen.xoshiro512 import Xoshiro512
 BitGenerators = {
     "AESCounter": AESCounter,
     "ChaCha": ChaCha,
+    "CustomPCG64": CustomPCG64,
     "DSFMT": DSFMT,
     "HC128": HC128,
     "JSF": JSF,

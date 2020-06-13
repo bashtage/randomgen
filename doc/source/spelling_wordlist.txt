@@ -254,3 +254,12 @@ zig
 Ziggurat
 zipf
 φ
+sfc
+SFC
+mult
+Weyl
+Customizable
+PractRand
+Invertible
+lcg
+CustomPCG64
