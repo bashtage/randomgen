@@ -1,5 +1,13 @@
 if __name__ == "__main__":
-    from randomgen.tests.data.compute_hashes import computed_hashes
+    from randomgen.tests.data.compute_hashes import (
+        final_configurations,
+        hash_configuration,
+    )
+
+    computed_hashes = {}
+    for key in final_configurations:
+        computed_hashes[key] = hash_configuration(final_configurations[key])
+
     import black
 
     fm = black.FileMode(black.PY36_VERSIONS)

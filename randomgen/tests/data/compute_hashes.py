@@ -13,12 +13,13 @@ from randomgen import (
     MT19937,
     PCG32,
     PCG64,
+    SFC64,
     SFMT,
     SPECK128,
     AESCounter,
     ChaCha,
+    CustomPCG64,
     Philox,
-    SFC64,
     ThreeFry,
     Xoroshiro128,
     Xorshift1024,
@@ -137,7 +138,7 @@ configs = {
     "PCG32": {"seed": seed_seq(), "inc": UINT64},
     "PCG64": {
         "seed": seed_seq(),
-        "inc": UINT128,
+        "inc": [None, UINT128],
         "variant": ["xsl-rr", "dxsm", "cm-dxsm"],
     },
     "AESCounter": {
@@ -167,6 +168,17 @@ configs = {
         "BLOCKED": (("seed", "key"),),
         "REQUIRED": ("seed", "key"),
     },
+    "CustomPCG64": {
+        "seed": seed_seq(),
+        "inc": [0, None],
+        "output": ["xsl-rr", "dxsm"],
+        "post": [True, False],
+        "dxsm_multiplier": [0x9E3779B97F4A7C15, 0xDA942042E4DD58B5],
+        "multiplier": [
+            0x278F2419A4D3A5F7C2280069635487FD,
+            0x2360ED051FC65DA44385DF649FCCF645,
+        ],
+    },
 }
 
 BIT_GEN = {
@@ -189,9 +201,11 @@ BIT_GEN = {
     "HC128": HC128,
     "Philox": Philox,
     "ThreeFry": ThreeFry,
+    "CustomPCG64": CustomPCG64,
 }
 
 computed_hashes = {}
+final_configurations = {}
 for gen in configs:
     args = configs[gen]
     bg = BIT_GEN[gen]
@@ -216,15 +230,18 @@ for gen in configs:
                 if "seed" in ex_kwargs:
                     ex_kwargs["seed"] = seed_seq()
                 ex_kwargs = fix_random_123(gen, ex_kwargs)
+                final_key = (gen,) + ex_key
                 bit_gen = bg(**ex_kwargs)
-                state_hash = hash_state(
-                    bit_gen.state, exclude_keys=exclude_keys
-                ).hexdigest()
-                randoms = bit_gen.random_raw(1000000)
-                if BIG_ENDIAN:
-                    randoms = randoms.byteswap()
-                computed_hashes[(gen,) + ex_key] = {
-                    "random_values": hashlib.sha256(randoms.data).hexdigest(),
-                    "initial_state_hash": state_hash,
-                    "final_state_hash": hash_state(bit_gen.state).hexdigest(),
-                }
+                final_configurations[final_key] = bit_gen
+
+
+def hash_configuration(bit_gen):
+    state_hash = hash_state(bit_gen.state, exclude_keys=exclude_keys).hexdigest()
+    randoms = bit_gen.random_raw(1000000)
+    if BIG_ENDIAN:
+        randoms = randoms.byteswap()
+    return {
+        "random_values": hashlib.sha256(randoms.data).hexdigest(),
+        "initial_state_hash": state_hash,
+        "final_state_hash": hash_state(bit_gen.state).hexdigest(),
+    }

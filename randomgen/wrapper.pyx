@@ -294,14 +294,23 @@ cdef class UserBitGenerator(BitGenerator):
         """
         input_names = ("next_raw", "next_64", "next_32", "next_double")
         inputs = (next_raw, next_64, next_32, next_double)
-        for i_n, i in zip(input_names, inputs):
-            if "CFunctionType" not in str(i):
-                raise TypeError(f"{i_n} must be a CFunctionType {str(i)}")
+        restypes = (ctypes.c_uint64,ctypes.c_uint64,ctypes.c_uint32,ctypes.c_double)
+        for i_n, inp, r in zip(input_names, inputs, restypes):
+            valid = hasattr(inp, "argtypes")
+            valid = valid and hasattr(inp, "restype")
+            if valid:
+                valid = valid and inp.restype == r
+            if not valid:
+                raise TypeError(
+                    f"{i_n} must be a ctypes function with argtypes "
+                    f"{(ctypes.c_void_p,)} (or equivalent) and restype {r}."
+                )
 
         cdef UserBitGenerator bit_gen
 
         def f(x):
             return 0
+        assert f(1) == 0
 
         bit_gen = cls(f, 64)
         bit_gen.next_64 = next_64

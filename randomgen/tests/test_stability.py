@@ -4,21 +4,60 @@ import pytest
 
 import randomgen as rg
 from randomgen.tests.data import stability_results
-from randomgen.tests.data.compute_hashes import BIG_ENDIAN, computed_hashes
+from randomgen.tests.data.compute_hashes import (
+    BIG_ENDIAN,
+    final_configurations,
+    hash_configuration,
+)
 from randomgen.tests.data.stable_hashes import known_hashes
 
-keys = list(known_hashes.keys())
-ids = ["-".join(map(str, key)) for key in known_hashes]
+all_keys = list(known_hashes.keys())
+all_ids = ["-".join(map(str, key)) for key in known_hashes]
+
+minimal_keys = [all_keys[0]]
+minimal_ids = [all_ids[0]]
+for key, test_id in zip(all_keys, all_ids):
+    if key[0] != minimal_keys[-1][0]:
+        minimal_keys.append(key)
+        minimal_ids.append(test_id)
+
+EXECUTED = {}
 
 
-@pytest.mark.parametrize("key", keys, ids=ids)
-@pytest.mark.parametrize(
-    "hash_type", ["random_values", "initial_state_hash", "final_state_hash"]
-)
-def test_stability(key, hash_type):
+@pytest.fixture(params=all_keys, ids=all_ids, scope="module")
+def configuration(request):
+    key = request.param
+    if key in EXECUTED:
+        return EXECUTED[key]
+    EXECUTED[key] = hash_configuration(final_configurations[key])
+    return key, EXECUTED[key]
+
+
+@pytest.fixture(params=minimal_keys, ids=minimal_ids, scope="module")
+def minimal_configuration(request):
+    key = request.param
+    if key in EXECUTED:
+        return key, EXECUTED[key]
+    EXECUTED[key] = hash_configuration(final_configurations[key])
+    return key, EXECUTED[key]
+
+
+@pytest.fixture(params=["random_values", "initial_state_hash", "final_state_hash"])
+def hash_type(request):
+    return request.param
+
+
+@pytest.mark.slow
+def test_stability(configuration, hash_type):
+    key, result = configuration
     expected = known_hashes[key]
-    computed = computed_hashes[key]
-    assert expected[hash_type] == computed[hash_type]
+    assert expected[hash_type] == result[hash_type]
+
+
+def test_basic_stability(minimal_configuration, hash_type):
+    key, result = minimal_configuration
+    expected = known_hashes[key]
+    assert expected[hash_type] == result[hash_type]
 
 
 def test_coverage():

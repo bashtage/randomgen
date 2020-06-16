@@ -1,7 +1,7 @@
 from randomgen.common cimport *
 
 
-cdef extern from "src/pcg64/pcg64.h":
+cdef extern from "src/pcg64/pcg64-v2.h":
     # Use int as generic type, actual type read from pcg64.h and is platform dependent
     ctypedef int pcg64_random_t
 
@@ -18,12 +18,44 @@ cdef extern from "src/pcg64/pcg64.h":
     uint64_t pcg64_cm_dxsm_next64(pcg64_state_t *state) nogil
     uint32_t pcg64_cm_dxsm_next32(pcg64_state_t *state) nogil
 
-    void pcg64_jump(pcg64_state_t *state)
     void pcg64_advance(pcg64_state_t *state, uint64_t *step, int cheap_multiplier)
     void pcg64_set_seed(pcg64_state_t *state, uint64_t *seed, uint64_t *inc, int cheap_multiplier)
     void pcg64_get_state(pcg64_state_t *state, uint64_t *state_arr, int *use_dxsm, int *has_uint32, uint32_t *uinteger)
     void pcg64_set_state(pcg64_state_t *state, uint64_t *state_arr, int use_dxsm, int has_uint32, uint32_t uinteger)
 
+cdef extern from "src/pcg64/pcg64-common.h":
+    ctypedef uint64_t (* pcg_output_func_t)(uint64_t high, uint64_t low) nogil
+
+cdef extern from "src/pcg64/pcg64-custom.h":
+
+    ctypedef int pcg128_t
+
+    struct PCG64_CUSTOM_RANDOM_T:
+        pcg128_t state
+        pcg128_t inc
+        pcg128_t multiplier
+        uint64_t dxsm_multiplier
+        int post
+        int output_idx
+        pcg_output_func_t output_func
+
+    ctypedef PCG64_CUSTOM_RANDOM_T pcg64_custom_random_t
+
+    struct PCG64_CUSTOM_STATE_T:
+      pcg64_custom_random_t *pcg_state
+      int use_dxsm
+      int has_uint32
+      uint32_t uinteger
+
+    ctypedef PCG64_CUSTOM_STATE_T pcg64_custom_state_t
+
+    uint64_t pcg64_custom_next64(pcg64_custom_state_t *state) nogil
+    uint64_t pcg64_custom_next32(pcg64_custom_state_t *state) nogil
+
+    void pcg64_custom_set_state(pcg64_custom_random_t *rng, uint64_t state[], uint64_t inc[], uint64_t multiplier[]) nogil
+    void pcg64_custom_get_state(pcg64_custom_random_t *rng, uint64_t state[], uint64_t inc[], uint64_t multiplier[]) nogil
+    void pcg64_custom_seed(pcg64_custom_random_t *rng, uint64_t state[], uint64_t inc[], uint64_t multiplier[]) nogil
+    void pcg64_custom_advance(pcg64_custom_state_t *rng, uint64_t step[]) nogil
 
 cdef class PCG64(BitGenerator):
 
@@ -31,5 +63,17 @@ cdef class PCG64(BitGenerator):
     cdef readonly str variant
     cdef bint use_dxsm
     cdef bint cheap_multiplier
+    cdef _reset_state_variables(self)
+    cdef jump_inplace(self, object iter)
+
+cdef class CustomPCG64(BitGenerator):
+
+    cdef pcg64_custom_state_t rng_state
+    cdef object multiplier, _default_multiplier, _default_dxsm_multiplier
+    cdef object output_function_name, _output_lookup, _inv_output_lookup, _cfunc
+    cdef bint post
+    cdef size_t output_function_address
+    cdef uint64_t dxsm_multiplier
+    cdef int output_function
     cdef _reset_state_variables(self)
     cdef jump_inplace(self, object iter)

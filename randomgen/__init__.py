@@ -10,7 +10,7 @@ from randomgen.mt64 import MT64
 from randomgen.mt19937 import MT19937
 from randomgen.mtrand import RandomState
 from randomgen.pcg32 import PCG32
-from randomgen.pcg64 import PCG64
+from randomgen.pcg64 import PCG64, CustomPCG64
 from randomgen.philox import Philox
 from randomgen.rdrand import RDRAND
 from randomgen.seed_sequence import SeedlessSeedSequence, SeedSequence
@@ -27,9 +27,12 @@ from randomgen.xoshiro512 import Xoshiro512
 from ._version import get_versions
 
 __all__ = [
+    "AESCounter",
+    "ChaCha",
+    "CustomPCG64",
     "DSFMT",
-    "Generator",
     "ExtendedGenerator",
+    "Generator",
     "HC128",
     "JSF",
     "LXM",
@@ -43,17 +46,15 @@ __all__ = [
     "SFC64",
     "SFMT",
     "SPECK128",
+    "SeedSequence",
+    "SeedlessSeedSequence",
     "ThreeFry",
+    "UserBitGenerator",
     "Xoroshiro128",
     "Xorshift1024",
     "Xoshiro256",
     "Xoshiro512",
-    "AESCounter",
-    "ChaCha",
     "random_entropy",
-    "SeedSequence",
-    "SeedlessSeedSequence",
-    "UserBitGenerator",
 ]
 
 __version__ = get_versions()["version"]

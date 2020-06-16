@@ -26,11 +26,11 @@ matrix:
     - os: linux
       arch: ppc64le
       python: 3.6
-      env: [PYPI=true, PPC64_LE=1, COVERAGE=false]
+      env: [PYPI=true, PPC64_LE=1, COVERAGE=true]
     - os: linux
       arch: s390x
       python: 3.6
-      env: [PYPI=true, S390X=1, COVERAGE=false]
+      env: [PYPI=true, S390X=1, COVERAGE=true]
     - os: linux
       python: 3.7
       env: [PYTHON=3.7, DOCBUILD=true, RANDOMGEN_DEBUG=false, CC=clang, NUMPY=1.17]
@@ -39,13 +39,13 @@ matrix:
       env: [PYPI=true, COVERAGE=true, NUMPY=1.16.6]
     - os: linux
       python: 3.8
-      env: [PYPI=true, COVERAGE=true, RANDOMGEN_DEBUG=false]
+      env: [PYPI=true, COVERAGE=true, RANDOMGEN_CYTHON_COVERAGE=false, RANDOMGEN_DEBUG=false]
     - os: linux
       python: 3.8
       env: [PYPI=true, COVERAGE=true, NUMPY=1.19.0rc2]
     - os: linux
       python: 3.6
-      env: [PYPI=true, COVERAGE=false,NUMPY=1.17.5]
+      env: [PYPI=true, COVERAGE=false, NUMPY=1.17.5]
     - os: osx
       language: generic
       env: [PYTHON=3.6, NUMPY=1.16.6]
@@ -55,11 +55,11 @@ matrix:
     - os: linux
       arch: ppc64le
       python: 3.6
-      env: [PYPI=true, PPC64_LE=1, COVERAGE=false]
+      env: [PYPI=true, PPC64_LE=1, COVERAGE=true]
     - os: linux
       arch: s390x
       python: 3.6
-      env: [PYPI=true, S390X=1, COVERAGE=false]
+      env: [PYPI=true, S390X=1, COVERAGE=true]
 
 before_install:
   - git fetch --tags
@@ -73,7 +73,8 @@ before_install:
   - gcc --version || true
   - clang --version || true
   - export SRCDIR="$PWD"
-  - export RANDOMGEN_CYTHON_COVERAGE="$COVERAGE"
+  - if [[ -z "$RANDOMGEN_CYTHON_COVERAGE" ]]; then export RANDOMGEN_CYTHON_COVERAGE="$COVERAGE"; fi
+  - if [[ "$RANDOMGEN_CYTHON_COVERAGE" == true ]]; then EXTRA_PYTEST_OPTIONS="--skip-slow"; fi
   - if [[ "$COVERAGE" == true ]]; then export COVERAGE_OPTIONS="--cov-config .coveragerc --cov=randomgen"; fi
 
 install:
@@ -81,7 +82,8 @@ install:
 
 script:
   - set -e
-  - pytest -r a ${COVERAGE_OPTIONS} randomgen
+  - echo pytest -r a ${COVERAGE_OPTIONS} ${EXTRA_PYTEST_OPTIONS} randomgen
+  - pytest -r a ${COVERAGE_OPTIONS} ${EXTRA_PYTEST_OPTIONS} randomgen
   - |
     if [[ ${DOCBUILD} == true ]]; then
       sudo apt-get install -y enchant
