@@ -44,7 +44,7 @@ cdef class ThreeFry(BitGenerator):
     """
     ThreeFry(seed=None, *, counter=None, key=None, number=4, width=64, mode=None)
 
-    Container for the ThreeFry (4x64) pseudo-random number generator.
+    Container for the ThreeFry family of pseudo-random number generators.
 
     Parameters
     ----------

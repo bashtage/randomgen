@@ -44,7 +44,7 @@ cdef class Philox(BitGenerator):
     """
     Philox(seed=None, *, counter=None, key=None, number=4, width=64, mode=None)
 
-    Container for the Philox (4x64) pseudo-random number generator.
+    Container for the Philox family of pseudo-random number generators.
 
     Parameters
     ----------
