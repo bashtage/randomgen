@@ -29,6 +29,8 @@ CONFIG = {
     rg.Philox: {"output": 64, "seed": 256, "seed_size": 64},
     rg.SFMT: {"output": 64, "seed": 128, "seed_size": 32},
     rg.LXM: {"output": 64, "seed": 128, "seed_size": 32},
+    rg.SFC64: {"output": 64, "seed": 128, "seed_size": 32},
+    rg.AESCounter: {"output": 64, "seed": 128, "seed_size": 32},
 }
 
 
@@ -47,6 +49,13 @@ def bitgen_from_state(state):
     bitgen = cls()
     bitgen.state = state
     return bitgen
+
+
+def seed_sequence_state(bit_generator, n_streams=2, entropy=None):
+    bitgen = getattr(rg, bit_generator)
+    seed_seq = rg.SeedSequence(entropy)
+    children = seed_seq.spawn(n_streams)
+    return [bitgen(child) for child in children]
 
 
 def jumped_state(bit_generator, n_streams=2, entropy=None):
@@ -100,7 +109,7 @@ def dump_states(bitgens, file=sys.stderr, disp=False):
                 d[key] = d[key].tolist()
         return d
 
-    text = json.dumps([array_to_list(g.state) for g in bitgens], indent=4)
+    text = json.dumps([array_to_list(g.state) for g in bitgens], indent=2, separators=(',', ':'))
     if disp:
         print(text, file=file)
     return text
@@ -141,6 +150,9 @@ def main():
     parser.add_argument(
         "-j", "--jumped", action="store_true", help="Use jumped() to get new streams."
     )
+    parser.add_argument(
+        "-ss", "--seed_seq", action="store_true", help="Use SeedSequence to get new streams."
+    )
     parser.add_argument("-s", "--seed", type=int, help="Set a single seed")
     parser.add_argument(
         "-n",
@@ -165,6 +177,11 @@ def main():
     if args.load:
         logging.log(logging.INFO, "Loading bit generator config from " + filename)
         bitgens = from_json(filename)
+    elif args.seed_seq:
+        msg = (f"Creating {args.n_streams} bit generators of {args.bit_generator}" 
+               "from a single seed sequence")
+        logging.log(logging.INFO, msg)
+        bitgens = seed_sequence_state(args.bit_generator, n_streams=args.n_streams, entropy=args.seed)
     elif args.jumped:
         msg = "Creating {n} bit generators of {bg_type}".format(
             n=args.n_streams, bg_type=args.bit_generator
