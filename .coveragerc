@@ -6,6 +6,7 @@ include = */randomgen/*
 omit =
     */_version.py
     *.pxd
+    */_write_hashes.py
 plugins = Cython.Coverage
 
 [report]
@@ -33,4 +34,3 @@ include = */randomgen/*
 omit =
     */_version.py
 ignore_errors = True
-

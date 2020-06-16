@@ -221,3 +221,14 @@ def test_no_setter_getter(split_mix):
         state_setter=split_mix.state_setter,
     )
     bgf.state = split_mix.state_getter()
+
+
+def test_invalid():
+    with pytest.raises(TypeError, match="next_raw must be"):
+        UserBitGenerator.from_cfunc(
+            "next_raw", "next_64", "next_32", "next_double", "state"
+        )
+    with pytest.raises(TypeError, match="next_raw must be"):
+        UserBitGenerator.from_ctypes(
+            "next_raw", "next_64", "next_32", "next_double", "state"
+        )

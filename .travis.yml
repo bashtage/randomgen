@@ -26,11 +26,11 @@ matrix:
     - os: linux
       arch: ppc64le
       python: 3.6
-      env: [PYPI=true, PPC64_LE=1, COVERAGE=false]
+      env: [PYPI=true, PPC64_LE=1, COVERAGE=true]
     - os: linux
       arch: s390x
       python: 3.6
-      env: [PYPI=true, S390X=1, COVERAGE=false]
+      env: [PYPI=true, S390X=1, COVERAGE=true]
     - os: linux
       python: 3.7
       env: [PYTHON=3.7, DOCBUILD=true, RANDOMGEN_DEBUG=false, CC=clang, NUMPY=1.17]
@@ -39,13 +39,13 @@ matrix:
       env: [PYPI=true, COVERAGE=true, NUMPY=1.16.6]
     - os: linux
       python: 3.8
-      env: [PYPI=true, COVERAGE=true, RANDOMGEN_DEBUG=false]
+      env: [PYPI=true, COVERAGE=true, RANDOMGEN_CYTHON_COVERAGE=false, RANDOMGEN_DEBUG=false]
     - os: linux
       python: 3.8
       env: [PYPI=true, COVERAGE=true, NUMPY=1.19.0rc2]
     - os: linux
       python: 3.6
-      env: [PYPI=true, COVERAGE=false,NUMPY=1.17.5]
+      env: [PYPI=true, COVERAGE=false, NUMPY=1.17.5]
     - os: osx
       language: generic
       env: [PYTHON=3.6, NUMPY=1.16.6]
@@ -55,11 +55,11 @@ matrix:
     - os: linux
       arch: ppc64le
       python: 3.6
-      env: [PYPI=true, PPC64_LE=1, COVERAGE=false]
+      env: [PYPI=true, PPC64_LE=1, COVERAGE=true]
     - os: linux
       arch: s390x
       python: 3.6
-      env: [PYPI=true, S390X=1, COVERAGE=false]
+      env: [PYPI=true, S390X=1, COVERAGE=true]
 
 before_install:
   - git fetch --tags

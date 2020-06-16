@@ -114,9 +114,12 @@ def test_ctypes():
     o_loc = os.path.join(base, "data", "ctypes_testing.o")
     so_loc = os.path.join(base, "data", "libctypes_testing.so")
     try:
-        cmd = ["gcc", "-c", "-Wall", "-Werror", "-fpic", c_loc]
-        subprocess.check_call(cmd)
-        subprocess.check_call(["gcc", "-shared", "-o", so_loc, o_loc])
+        cmd = ["gcc", "-c", "-Wall", "-Werror", "-fpic", c_loc, "-o", o_loc]
+        print(" ".join(cmd))
+        subprocess.call(cmd)
+        cmd = ["gcc", "-shared", "-o", so_loc, o_loc]
+        print(" ".join(cmd))
+        subprocess.call(cmd)
     except Exception as exc:
         pytest.skip(
             "GCC unavailable or other error compiling the test library" + str(exc)
@@ -125,5 +128,62 @@ def test_ctypes():
     libtesting.output_upper.argtypes = (ctypes.c_uint64, ctypes.c_uint64)
     libtesting.output_upper.restype = ctypes.c_uint64
     a = CustomPCG64(SEED, output="upper").random_raw(10)
-    b = CustomPCG64(SEED, output=libtesting.output_upper).random_raw(10)
+    rg = CustomPCG64(SEED, output=libtesting.output_upper)
+    b = rg.random_raw(10)
     np.testing.assert_equal(a, b)
+
+    c = CustomPCG64()
+    c.state = rg.state
+    assert c.random_raw() == rg.random_raw()
+
+    libtesting.output_upper.argtypes = (ctypes.c_uint32, ctypes.c_uint32)
+    with pytest.raises(ValueError):
+        CustomPCG64(SEED, output=libtesting.output_upper)
+    libtesting.output_upper.argtypes = (ctypes.c_uint64, ctypes.c_uint64)
+    libtesting.output_upper.restype = ctypes.c_uint32
+    with pytest.raises(ValueError):
+        CustomPCG64(SEED, output=libtesting.output_upper)
+
+
+def test_pcg_warnings_and_errors():
+    with pytest.warns(FutureWarning, match="The current default"):
+        PCG64(0, mode="sequence", variant=None)
+    with pytest.raises(ValueError, match="variant unknown is not known"):
+        PCG64(0, mode="sequence", variant="unknown")
+
+
+def test_repr():
+    cpcg = CustomPCG64(
+        0,
+        0,
+        output="dxsm",
+        dxsm_multiplier=DEFAULT_DXSM_MULTIPLIER + 2,
+        multiplier=DEFAULT_MULTIPLIER + 2,
+        post=False,
+    )
+    cpcg_repr = repr(cpcg)
+    assert "Output Function: dxsm" in cpcg_repr
+    assert f"Multiplier: {DEFAULT_MULTIPLIER+2}" in cpcg_repr
+    assert f"DXSM Multiplier: {DEFAULT_DXSM_MULTIPLIER+2}" in cpcg_repr
+    assert "Post: False" in cpcg_repr
+
+
+def test_bad_state():
+    a = CustomPCG64()
+    st = a.state
+    with pytest.raises(TypeError):
+        a.state = ((k, v) for k, v in st.items())
+    with pytest.raises(ValueError):
+        st["bit_generator"] = "AnotherBG"
+        a.state = st
+
+
+def test_exceptions():
+    with pytest.raises(ValueError):
+        CustomPCG64(multiplier=DEFAULT_MULTIPLIER + 1)
+    with pytest.raises(ValueError):
+        CustomPCG64(dxsm_multiplier=DEFAULT_MULTIPLIER + 1)
+    with pytest.raises(ValueError):
+        CustomPCG64(SEED, output="not-implemented")
+    with pytest.raises(TypeError):
+        CustomPCG64(SEED, post=3)

@@ -310,6 +310,7 @@ cdef class UserBitGenerator(BitGenerator):
 
         def f(x):
             return 0
+        assert f(1) == 0
 
         bit_gen = cls(f, 64)
         bit_gen.next_64 = next_64

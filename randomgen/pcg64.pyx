@@ -632,9 +632,9 @@ cdef class CustomPCG64(BitGenerator):
         if hasattr(output, "argtypes") and hasattr(output, "restype"):
             from ctypes import c_ulonglong
             if output.argtypes != (c_ulonglong, c_ulonglong):
-                raise TypeError("output must take two uint64 arguments")
+                raise ValueError("output must take two uint64 arguments")
             if output.restype != c_ulonglong:
-                raise TypeError("output must return a uint64")
+                raise ValueError("output must return a uint64")
             self._cfunc = output
         elif not isinstance(output, str) or output.lower() not in self._output_lookup:
             valid = ", ".join(self._output_lookup.keys())
@@ -832,12 +832,14 @@ cdef class CustomPCG64(BitGenerator):
         if isinstance(output_func, str):
             self.rng_state.pcg_state.output_idx = self._output_lookup[output_func]
         elif hasattr(output_func, "argtypes") and hasattr(output_func, "restype"):
-            self._cfunc = output_func
-
             import ctypes
+
+            self._cfunc = output_func
             self.output_function = -1
             self.output_function_address = ctypes.cast(self._cfunc, ctypes.c_void_p).value
+            self.rng_state.pcg_state.output_idx = -1
             self.rng_state.pcg_state.output_func = <pcg_output_func_t>self.output_function_address
+
 
     def advance(self, delta):
         """
