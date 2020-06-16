@@ -9,6 +9,10 @@ Differences from NumPy 1.17+
   written in Python (slow, suitable for experiments and testing) or numba
   (fast, similar speed to compiled C). See `the demonstration notebook`_ for
   examples.
+* :class:`~randomgen.pcg64.PCG64` supports additional variants of PCG64, including
+  the PCG4 2.0 variant (`"cm-dxsm"`).
+* :class:`~randomgen.sfc.SFC64` supports optional Weyl sequence increments other
+  than 1 which is the fixed increment in :class:`numpy.random.SFC64`.
 * :func:`~randomgen.entropy.random_entropy` provides access to the system
   source of randomness that is used in cryptographic applications (e.g.,
   ``/dev/urandom`` on Unix).

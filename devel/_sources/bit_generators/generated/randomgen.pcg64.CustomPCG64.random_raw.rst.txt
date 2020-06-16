@@ -1,0 +1,6 @@
+randomgen.pcg64.CustomPCG64.random\_raw
+=======================================
+
+.. currentmodule:: randomgen.pcg64
+
+.. automethod:: CustomPCG64.random_raw

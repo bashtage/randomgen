@@ -1,0 +1,6 @@
+randomgen.pcg64.CustomPCG64.state
+=================================
+
+.. currentmodule:: randomgen.pcg64
+
+.. autoattribute:: CustomPCG64.state
