@@ -5,108 +5,75 @@ There are three strategies implemented that can be used to produce
 repeatable pseudo-random numbers across multiple processes (local
 or distributed).
 
+* :ref:`using-seed-sequence`
+* :ref:`independent-streams`
+* :ref:`advancing`
+* :ref:`jumping`
+
+.. _using-seed-sequence:
+
+Using a SeedSequence
+--------------------
+
+Using a :class:`~numpy.random.SeedSequence` is a universal way to initialize many streams.
+When using with a bit generator with a moderately large state (say 256-bits), the probability
+of a collision is negligible. This said, some generators can have difficult to detect
+correlation when producing many streams in corner cases.
+
+.. code-block:: python
+
+   import numpy as np
+   from randomgen import SFC64
+
+   NUM_STREAMS = 8196
+   seed_seq = SeedSequence(603484028490308141)
+   children = seed_seq.spawn(NUM_STREAMS)
+
+   streams = [SFC64(child) for child in children]
+
 .. _independent-streams:
 
 Independent Streams
 -------------------
 
-:class:`~randomgen.pcg64.PCG64`, :class:`~randomgen.threefry.ThreeFry`
-and :class:`~randomgen.philox.Philox` support independent streams.  This
-example shows how many streams can be created by passing in different index
+The cryptographic pseudo-random number generators (PRNGs) typically support
+independent streams using distinct keys. Generators that support this form of
+parallelization include :class:`~randomgen.aes.AESCounter`,
+:class:`~randomgen.chacha.ChaCha`,,:class:`~randomgen.hc128.HC128`
+:class:`~randomgen.threefry.ThreeFry`, :class:`~randomgen.philox.Philox`, and
+:class:`~randomgen.speck128.SPECK128`.
+
+This example shows how many streams can be created by passing in different index
 values in the second input while using the same seed in the first.
 
 .. code-block:: python
 
-  from randomgen.entropy import random_entropy
-  from randomgen import PCG64
+   import numpy as np
+   from randomgen import AESCounter, random_entropy
 
-  entropy = random_entropy(4)
-  # 128-bit number as a seed
-  seed = sum([int(entropy[i]) * 2 ** (32 * i) for i in range(4)])
-  streams = [PCG64(seed, stream) for stream in range(10)]
+   NUM_STREAMS = 8196
+   keys = random_entropy(4 * NUM_STREAMS).view(np.uint64)
+   keys = set([tuple(key.tolist()) for key in keys.reshape((-1, 2))])
+   # Essentially 0 probability this is needed
+   while len(keys) < NUM_STREAMS:
+       new_keys = random_entropy(4 * (NUM_STREAMS - len(keys))).view(np.uint8)
+       new_keys = set([tuple(key.tolist()) for key in new_keys.reshape((-1, 2))])
+       keys.update(new_keys)
 
+   # Distinct 128-bit numbers as a key encoded as 2 uint64 values
+   streams = [AESCounter(key=np.array(key,dtype=np.uint64)) for key in keys]
 
-:class:`~randomgen.philox.Philox` and :class:`~randomgen.threefry.ThreeFry` are
-counter-based RNGs which use a counter and key.  Different keys can be used
-to produce independent streams.
+.. _advancing:
 
-.. code-block:: python
+Advancing the PRNG's state
+--------------------------
 
-  import numpy as np
-  from randomgen import ThreeFry
-
-  key = random_entropy(8)
-  key = key.view(np.uint64)
-  key[0] = 0
-  step = np.zeros(4, dtype=np.uint64)
-  step[0] = 1
-  streams = [ThreeFry(key=key + stream * step) for stream in range(10)]
-
-.. _jump-and-advance:
-
-Jump/Advance the PRNG state
----------------------------
-
-Jumped
-******
-
-``jumped`` advances the state of the PRNG *as-if* a large number of random
-numbers have been drawn, and returns a new instance with this state.  The
-specific number of draws varies by PRNG, and ranges from :math:`2^{64}` to
-:math:`2^{512}`.  Additionally, the *as-if* draws also depend on the size of
-the default random number produced by the specific PRNG.  The PRNGs that
-support ``jumped``, along with the period of the PRNG, the size of the jump
-and the bits in the default unsigned random are listed below.
-
-+-----------------+-------------------------+-------------------------+-------------------------+
-| PRNG            | Period                  |  Jump Size              | Bits                    |
-+=================+=========================+=========================+=========================+
-| DSFMT           | :math:`2^{19937}`       | :math:`2^{128}`         | 53                      |
-+-----------------+-------------------------+-------------------------+-------------------------+
-| MT19937         | :math:`2^{19937}`       | :math:`2^{128}`         | 32                      |
-+-----------------+-------------------------+-------------------------+-------------------------+
-| PCG64           | :math:`2^{128}`         | :math:`2^{64}`          | 64                      |
-+-----------------+-------------------------+-------------------------+-------------------------+
-| Philox          | :math:`2^{256}`         | :math:`2^{128}`         | 64                      |
-+-----------------+-------------------------+-------------------------+-------------------------+
-| ThreeFry        | :math:`2^{256}`         | :math:`2^{128}`         | 64                      |
-+-----------------+-------------------------+-------------------------+-------------------------+
-| Xoroshiro128    | :math:`2^{128}`         | :math:`2^{64}`          | 64                      |
-+-----------------+-------------------------+-------------------------+-------------------------+
-| Xorshift1024    | :math:`2^{1024}`        | :math:`2^{512}`         | 64                      |
-+-----------------+-------------------------+-------------------------+-------------------------+
-
-``jumped`` can be used to produce long blocks which should be long enough to not
-overlap.
-
-.. code-block:: python
-
-  from randomgen.entropy import random_entropy
-  from randomgen import Xorshift1024
-
-  entropy = random_entropy(2).astype(np.uint64)
-  # 64-bit number as a seed
-  seed = entropy[0] * 2**32 + entropy[1]
-  blocked_rng = []
-  last_rng = rng = Xorshift1024(seed)
-  for i in range(10):
-      blocked_rng.append(last_rng)
-      last_rng = last_rng.jumped()
-
-
-Advance
-*******
-``advance`` can be used to jump the state an arbitrary number of steps, and so
-is a more general approach than ``jump``.  :class:`~randomgen.pcg64.PCG64`,
-:class:`~randomgen.threefry.ThreeFry` and :class:`~randomgen.philox.Philox`
-support ``advance``, and since these also support independent
-streams, it is not usually necessary to use ``advance``.
-
-Advancing a PRNG updates the underlying PRNG state as-if a given number of
-calls to the underlying PRNG have been made. In general there is not a
-one-to-one relationship between the number output random values from a
-particular distribution and the number of draws from the core PRNG.
-This occurs for two reasons:
+Most of the cryptographic PRNGs are counter-based, and so support advancing
+which increments the coutner. Advancing a PRNG updates the underlying PRNG
+state as if a given number of calls to the underlying PRNG have been made.
+In general there is not a one-to-one relationship between the number output
+random values from a particular distribution and the number of draws from
+the core PRNG. This occurs for two reasons:
 
 * The random values are simulated using a rejection-based method
   and so, on average, more than one value from the underlying
@@ -119,23 +86,96 @@ This occurs for two reasons:
 Advancing the PRNG state resets any pre-computed random numbers. This is
 required to ensure exact reproducibility.
 
-This example uses ``advance`` to advance a :class:`~randomgen.pcg64.PCG64`
-generator 2 ** 127 steps to set a sequence of random number generators.
 
 .. code-block:: python
 
-   from randomgen import PCG64
-   bitgen = PCG64()
-   bitgen_copy = PCG64()
-   bitgen_copy.state = bitgen.state
+   import numpy as np
+   from randomgen import SPECK128, SeedSequence
 
-   advance = 2**127
-   bitgens = [bitgen]
-   for _ in range(9):
-       bitgen_copy.advance(advance)
-       bitgen = PCG64()
-       bitgen.state = bitgen_copy.state
-       bitgens.append(bitgen)
+   PHI = (np.sqrt(5) - 1) / 2
+   STEP = int(PHI * 2**96)
+   NUM_STREAMS = 8196
+
+   seed_seq = SeedSequence(603484028490308141)
+   base = SPECK128(seed_seq)
+   streams = [base]
+   for i in range(1, NUM_STREAMS):
+       next_gen = SPECK128(seed_seq)
+       streams.append(next_gen.advance(i * STEP))
+
+In addition to the cryptographic PRNGs,
+the PCG-based generators also support ``advance``: :class:`~randomgen.pcg64.PCG64`,
+:class:`~randomgen.pcg64.CustomPCG64`, and :class:`~randomgen.pcg32.PCG32`.
+Note that :class:`~randomgen.hc128.HC128` is based on a stream cipher and so
+does not support advancing a counter.
+
+.. _jumping:
+
+Jumping the PRNG state
+----------------------
+
+``jumped`` advances the state of the PRNG as if a large number of random
+numbers have been drawn, and returns a new instance with this state.  Jumping
+is more universal than ``advance`` since the multiplier needed to jump some PRNGs
+is expensive to compute. However, this multiplier can be pre-computed for a fixed
+step size when the PRNG does not support an arbitrary advance which enables the jump.
+The specific number of as if draws varies by PRNG, and ranges from around :math:`2^{64}` to
+:math:`2^{512}`.  Additionally, the as if draws also depend on the size of
+the default random number produced by the specific PRNG.  The PRNGs that
+support ``jumped``, along with the period of the PRNG, the size of the jump
+and the bits in the default unsigned random are listed below.
+
++-----------------+-------------------------+-------------------------+-------------------------+
+| PRNG            | Period                  |  Jump Size              | Bits                    |
++=================+=========================+=========================+=========================+
+| AESCounter      | :math:`2^{128}`         | :math:`2^{64}`          | 64                      |
++-----------------+-------------------------+-------------------------+-------------------------+
+| ChaCha          | :math:`2^{128}`         | :math:`2^{64}`          | 64                      |
++-----------------+-------------------------+-------------------------+-------------------------+
+| CustomPCG64     | :math:`2^{128}`         | :math:`\phi`            | 64                      |
++-----------------+-------------------------+-------------------------+-------------------------+
+| DSFMT           | :math:`2^{19937}`       | :math:`2^{128}`         | 53                      |
++-----------------+-------------------------+-------------------------+-------------------------+
+| LXM             | :math:`2^{256}`         | :math:`2^{128}`         | 64                      |
++-----------------+-------------------------+-------------------------+-------------------------+
+| MT19937         | :math:`2^{19937}`       | :math:`2^{128}`         | 32                      |
++-----------------+-------------------------+-------------------------+-------------------------+
+| PCG32           | :math:`2^{64}`          | :math:`\phi`            | 32                      |
++-----------------+-------------------------+-------------------------+-------------------------+
+| PCG64           | :math:`2^{128}`         | :math:`\phi`            | 64                      |
++-----------------+-------------------------+-------------------------+-------------------------+
+| Philox          | :math:`2^{256}`         | :math:`2^{128}`         | 64                      |
++-----------------+-------------------------+-------------------------+-------------------------+
+| SFMT            | :math:`2^{19937}`       | :math:`2^{128}`         | 64                      |
++-----------------+-------------------------+-------------------------+-------------------------+
+| SPECK128        | :math:`2^{128}`         | :math:`2^{64}`          | 64                      |
++-----------------+-------------------------+-------------------------+-------------------------+
+| ThreeFry        | :math:`2^{256}`         | :math:`2^{128}`         | 64                      |
++-----------------+-------------------------+-------------------------+-------------------------+
+| Xoroshiro128    | :math:`2^{128}`         | :math:`2^{64}`          | 64                      |
++-----------------+-------------------------+-------------------------+-------------------------+
+| Xorshift1024    | :math:`2^{1024}`        | :math:`2^{512}`         | 64                      |
++-----------------+-------------------------+-------------------------+-------------------------+
+| Xoshiro256      | :math:`2^{256}`         | :math:`2^{128}`         | 64                      |
++-----------------+-------------------------+-------------------------+-------------------------+
+| Xoshiro512      | :math:`2^{512}`         | :math:`2^{256}`         | 64                      |
++-----------------+-------------------------+-------------------------+-------------------------+
+
+``jumped`` can be used to produce long blocks that are long enough to not
+overlap. A jump size of :math:`\phi` is the integer value of :math:`\sqrt{5}/2 - 1`, the
+golden ratio, times the full period.
+
+.. code-block:: python
+
+   from randomgen.entropy import random_entropy
+   from randomgen import Xoshiro512, SeedSequence
+
+   NUM_STREAMS = 8196
+   seed = SeedSequence()
+   blocked_rng = []
+   last_rng = rng = Xoshiro512(seed)
+   for i in range(NUM_STREAMS):
+       blocked_rng.append(last_rng)
+       last_rng = last_rng.jumped()
 
 .. end block
-
