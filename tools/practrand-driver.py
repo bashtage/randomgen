@@ -1,25 +1,48 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-
 """
 Example usage:
 
-python practrand-driver.py --jumped -bg ThreeFry \
-       -n 8192 | ./RNG_test stdin64 -tlmax 512GB
+python practrand-driver.py --jumped -bg ThreeFry -n 8192 | ./RNG_test stdin64 -tlmax 4GB
 
 It is recommended to use the patched version that increases the buffer size,
 e.g., practrand-0.93-bigbuffer.patch
 
 Modified from https://gist.github.com/rkern/6cf67aee7ee4d87e1d868517ba44739c/
 
+A simple example of a file that can be used to initialize the driver
+-- driver-setup.py --
+import numpy as np
+import randomgen as rg
+
+ENTROPY = 849387919317419874984
+ss = rg.SeedSequence(ENTROPY + 1)
+bg = rg.SFC64(ss)
+
+seen = set()
+remaining = NUM = 8192
+while remaining:
+    vals = bg.random_raw(remaining) | np.uint64(0x1)
+    seen.update(vals.tolist())
+    remaining = NUM - len(seen)
+
+bitgens = []
+for k in seen:
+    bitgens.append(rg.SFC64(rg.SeedSequence(ENTROPY), k=k))
+output = 64
 """
 import json
 import logging
+import os
 import sys
 
 import numpy as np
 
 import randomgen as rg
+
+DESCRIPTION = """
+A driver that simplifies testing bit generators using PractRand.
+"""
 
 CONFIG = {
     rg.PCG32: {"output": 32, "seed": 64, "seed_size": 64},
@@ -109,10 +132,28 @@ def dump_states(bitgens, file=sys.stderr, disp=False):
                 d[key] = d[key].tolist()
         return d
 
-    text = json.dumps([array_to_list(g.state) for g in bitgens], indent=2, separators=(',', ':'))
+    text = json.dumps(
+        [array_to_list(g.state) for g in bitgens], indent=2, separators=(",", ":")
+    )
     if disp:
         print(text, file=file)
     return text
+
+
+def import_from_file(filename):
+    if not os.path.exists(filename):
+        raise ValueError(f"{filename} cannot be read")
+    _locals = locals()
+    import importlib.machinery
+
+    loader = importlib.machinery.SourceFileLoader("_local", os.path.abspath(filename))
+    mod = loader.load_module()
+    if not hasattr(mod, "bitgens") or not hasattr(mod, "output"):
+        raise RuntimeError(
+            f"Either bitgens or output could not be found after"
+            f"importing {filename}. These must be available."
+        )
+    return mod.bitgens, mod.output
 
 
 def from_json(filename):
@@ -136,7 +177,7 @@ def main():
     import argparse
 
     parser = argparse.ArgumentParser(
-        formatter_class=argparse.ArgumentDefaultsHelpFormatter
+        description=DESCRIPTION, formatter_class=argparse.ArgumentDefaultsHelpFormatter
     )
     parser.add_argument(
         "-bg", "--bit_generator", type=str, default="PCG64", help="BitGenerator to use."
@@ -151,7 +192,10 @@ def main():
         "-j", "--jumped", action="store_true", help="Use jumped() to get new streams."
     )
     parser.add_argument(
-        "-ss", "--seed_seq", action="store_true", help="Use SeedSequence to get new streams."
+        "-ss",
+        "--seed_seq",
+        action="store_true",
+        help="Use SeedSequence to get new streams.",
     )
     parser.add_argument("-s", "--seed", type=int, help="Set a single seed")
     parser.add_argument(
@@ -168,20 +212,42 @@ def main():
         default="",
         help="JSON filename. Does not save if empty",
     )
+    parser.add_argument(
+        "-if",
+        "--import_file",
+        type=str,
+        default="",
+        help="""\
+Python file to import. Python file must contain the
+variable bitgens containing a list of instantized bit
+generators and the variable output that describes the
+number of bits output (either 64 or 32).
+""",
+    )
 
     args = parser.parse_args()
     filename = args.filename
+    output = None
     if not filename:
         filename = args.bit_generator.lower() + ".json"
         logging.log(logging.INFO, "Default filename is " + filename)
     if args.load:
         logging.log(logging.INFO, "Loading bit generator config from " + filename)
         bitgens = from_json(filename)
+    elif args.import_file:
+        bitgens, output = import_from_file(args.import_file)
+        # Update default filename
+        if not args.filename:
+            filename = f"{args.import_file}.json"
     elif args.seed_seq:
-        msg = (f"Creating {args.n_streams} bit generators of {args.bit_generator}" 
-               "from a single seed sequence")
+        msg = (
+            f"Creating {args.n_streams} bit generators of {args.bit_generator}"
+            "from a single seed sequence"
+        )
         logging.log(logging.INFO, msg)
-        bitgens = seed_sequence_state(args.bit_generator, n_streams=args.n_streams, entropy=args.seed)
+        bitgens = seed_sequence_state(
+            args.bit_generator, n_streams=args.n_streams, entropy=args.seed
+        )
     elif args.jumped:
         msg = "Creating {n} bit generators of {bg_type}".format(
             n=args.n_streams, bg_type=args.bit_generator
@@ -199,8 +265,8 @@ def main():
         dumped = dump_states(bitgens, disp=False)
         with open(filename, "w") as out:
             out.write(dumped)
-
-    output = CONFIG[bitgens[0].__class__]["output"]
+    if output is None:
+        output = CONFIG[bitgens[0].__class__]["output"]
     logging.log(logging.INFO, "Output bit size is {0}".format(output))
     for chunk in gen_interleaved_bytes(bitgens, output=output):
         sys.stdout.buffer.write(chunk)
