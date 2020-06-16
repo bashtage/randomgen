@@ -11,7 +11,7 @@ e.g., practrand-0.93-bigbuffer.patch
 Modified from https://gist.github.com/rkern/6cf67aee7ee4d87e1d868517ba44739c/
 
 A simple example of a file that can be used to initialize the driver
--- driver-setup.py --
+-- practrand-driver-config.py --
 import numpy as np
 import randomgen as rg
 
