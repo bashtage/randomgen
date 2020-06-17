@@ -13,6 +13,14 @@ except ImportError:
 
 SEED = 12345678909876543321
 
+C_SOURCE = """
+#include <inttypes.h>
+
+uint64_t output_upper(uint64_t a, uint64_t b) {
+    return a;
+}
+"""
+
 
 def test_pcg64_1():
     pcg = PCG64(SeedSequence(12345678909876543321))
@@ -110,9 +118,11 @@ def test_ctypes():
 
     base = os.path.split(os.path.abspath(__file__))[0]
 
-    c_loc = os.path.join(base, "data", "ctypes_testing.c")
-    o_loc = os.path.join(base, "data", "ctypes_testing.o")
-    so_loc = os.path.join(base, "data", "libctypes_testing.so")
+    c_loc = os.path.join(base, "ctypes_testing.c")
+    with open(c_loc, "w", encoding="utf-8") as c_file:
+        c_file.write(C_SOURCE)
+    o_loc = os.path.join(base, "ctypes_testing.o")
+    so_loc = os.path.join(base, "libctypes_testing.so")
     try:
         cmd = ["gcc", "-c", "-Wall", "-Werror", "-fpic", c_loc, "-o", o_loc]
         print(" ".join(cmd))

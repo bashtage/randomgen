@@ -48,8 +48,8 @@ matrix:
       python: 3.8
       env: [PYPI=true, COVERAGE=true, RANDOMGEN_CYTHON_COVERAGE=false, RANDOMGEN_DEBUG=false]
     - os: linux
-      python: 3.6
-      env: [PYPI=true, COVERAGE=false, NUMPY=1.17.5]
+      python: 3.7
+      env: [PYPI=true, COVERAGE=false, NUMPY=1.17.5, TEST_INSTALL=true]
     - os: linux
       python: 3.8
       env: [PYPI=true, COVERAGE=false, RANDOMGEN_CYTHON_COVERAGE=false, RANDOMGEN_DEBUG=false, PYPI_PRE=true]
@@ -82,12 +82,25 @@ before_install:
   - if [[ "$COVERAGE" == true ]]; then export COVERAGE_OPTIONS="--cov-config .coveragerc --cov=randomgen"; fi
 
 install:
-  - pip install -e . -v --no-build-isolation
+  - |
+    if [[ -n ${TEST_INSTALL} && ${TEST_INSTALL} == true ]]; then
+        pip install . -v --no-build-isolation
+    else
+        pip install -e . -v --no-build-isolation
+    fi
 
 script:
   - set -e
-  - echo pytest -r a ${COVERAGE_OPTIONS} ${EXTRA_PYTEST_OPTIONS} randomgen
-  - pytest -r a ${COVERAGE_OPTIONS} ${EXTRA_PYTEST_OPTIONS} randomgen
+  - |
+    if [[ -n ${TEST_INSTALL} && ${TEST_INSTALL} == true ]]; then
+        mkdir test_run
+        cd test_run
+        python -c 'import randomgen; randomgen.test(extra_args=["--skip-slow", "-n=2"])'
+        cd ..
+    else
+        echo pytest -r a ${COVERAGE_OPTIONS} ${EXTRA_PYTEST_OPTIONS} randomgen
+        pytest -r a ${COVERAGE_OPTIONS} ${EXTRA_PYTEST_OPTIONS} randomgen
+    fi
   - |
     if [[ ${DOCBUILD} == true ]]; then
       sudo apt-get install -y enchant

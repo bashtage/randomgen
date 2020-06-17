@@ -4,6 +4,8 @@ import pytest
 def pytest_configure(config):
     # Minimal config to simplify running tests from lm.test()
     config.addinivalue_line("markers", "slow: mark a test as slow")
+    config.addinivalue_line("filterwarnings", "ignore:Generator:FutureWarning")
+    config.addinivalue_line("filterwarnings", "ignore:RandomState:FutureWarning")
 
 
 def pytest_addoption(parser):

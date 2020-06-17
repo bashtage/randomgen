@@ -15,9 +15,8 @@
 # import os
 # import sys
 # sys.path.insert(0, os.path.abspath('.'))
-import sphinx_material
-
 import randomgen
+import sphinx_material
 
 # -- Project information -----------------------------------------------------
 

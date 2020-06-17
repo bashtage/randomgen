@@ -134,7 +134,7 @@ Building requires:
 * Cython (0.29+)
 * tempita (0.5+), if not provided by Cython
 
-Testing requires pytest (4.0+).
+Testing requires pytest (5.0.1+).
 
 **Note:** it might work with other versions but only tested with these
 versions.

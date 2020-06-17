@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 pip install --upgrade pip
-pip install numpy cython pytest setuptools --upgrade
+pip install numpy cython pytest pytest-xdist setuptools --upgrade
 if [[ -n ${NUMPY} ]]; then
   echo pip install numpy=="${NUMPY}" --upgrade --pre
   pip install numpy=="${NUMPY}" --upgrade --pre
