@@ -791,12 +791,10 @@ class TestPCG64(Base):
         cls.data1 = cls._read_csv(join(pwd, "./data/pcg64-testset-1.csv"))
         cls.data2 = cls._read_csv(join(pwd, "./data/pcg64-testset-2.csv"))
         cls.seed_error_type = TypeError
-        cls.invalid_seed_types = [(np.array([1, 2]),), (3.2,), (None, np.zeros(1))]
+        cls.invalid_seed_types = [(np.array([1, 2]),), (3.2,)]
         cls.invalid_seed_values = [
-            (-1,),
+            (-2,),
             (2 ** 129 + 1,),
-            (None, -1),
-            (None, 2 ** 129 + 1),
         ]
 
     def test_seed_float_array(self):

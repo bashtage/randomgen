@@ -46,16 +46,15 @@ cdef class PCG64(BitGenerator):
 
     Parameters
     ----------
-    seed : {None, int, SeedSequence}, optional
+    seed : {None, int, array_like[int], SeedSequence}, optional
         Random seed initializing the pseudo-random number generator.
-        Can be an integer in [0, 2**128], a SeedSequence instance or ``None``
-        (the default). If `seed` is ``None``, then ``PCG64`` will try to
-        read data from ``/dev/urandom`` (or the Windows analog) if available.
-        If unavailable, a 64-bit hash of the time and process ID is used.
+        Can be an integer in [0, 2**128), a SeedSequence instance or None
+        (the default). If `seed` is None, then ``PCG64`` will ued a
+        SeedSequence initialized with system entropy to seed the gerator.
     inc : {None, int}, optional
-        The increment in the LCG. Can be an integer in [0, 2**128] or ``None``.
-        The default is 0. If `inc` is ``None``, then it is initialized using
-        entropy.
+        The increment in the LCG. Can be an integer in [0, 2**128) or None.
+        If inc is None, then it is initialized using entropy. The default is None
+        if seed is None, else 0. After 1.20, the default inc will change to None.
     variant : {None, "xsl-rr", "1.0", "dxsm", "cm-dxsm", "cm", "2.0"}, optional
         Name of PCG64 variant to use. "xsl-rr" corresponds to the original
         PCG64 (1.0). "1.0" is an alias for "xsl-rr". "dxsm" is identical
@@ -139,7 +138,7 @@ cdef class PCG64(BitGenerator):
     .. [2] O'Neill, Melissa E. "PCG: A Family of Simple Fast Space-Efficient
            Statistically Good Algorithms for Random Number Generation"
     """
-    def __init__(self, seed=None, inc=0, *, variant="xsl-rr", mode=None):
+    def __init__(self, seed=None, inc=-999999, *, variant="xsl-rr", mode=None):
         BitGenerator.__init__(self, seed, mode)
         self.rng_state.pcg_state = <pcg64_random_t *>PyArray_malloc_aligned(sizeof(pcg64_random_t))
         if variant is None:
@@ -152,6 +151,19 @@ cdef class PCG64(BitGenerator):
                 " 1.19.",
                 FutureWarning
             )
+        inc = None if seed is None else inc
+        if inc == -999999:
+            inc = 0
+            from randomgen import SeedSequence
+            if self.mode == "sequence" or isinstance(seed, SeedSequence):
+                import warnings
+                warnings.warn(
+                    "The default value of inc of 0 will change to "
+                    "None in 1.20. To continue using inc=0 explicitly set "
+                    "this value. To use the new default behavior, set "
+                    "inc=None.",
+                    FutureWarning)
+
         variant = "xsl-rr" if variant is None else variant
         if not isinstance(variant, str):
             raise TypeError("variant must be a string")
@@ -217,7 +229,7 @@ cdef class PCG64(BitGenerator):
                        self.cheap_multiplier)
         self._reset_state_variables()
 
-    def seed(self, seed=None, inc=0):
+    def seed(self, seed=None, inc=-999999):
         """
         seed(seed=None, inc=0)
 
@@ -230,16 +242,16 @@ cdef class PCG64(BitGenerator):
         ----------
         seed : {None, int, SeedSequence}, optional
             Random seed initializing the pseudo-random number generator. Can
-            be an integer in [0, 2**128], a SeedSequence instance or ``None``
-            (the default). If `seed` is ``None``, then ``PCG64`` will try to
+            be an integer in [0, 2**128], a SeedSequence instance or None
+            (the default). If `seed` is None, then ``PCG64`` will try to
             read data from ``/dev/urandom`` (or the Windows analog) if
             available. If unavailable, a 64-bit hash of the time and process
             ID is used.
         inc : {None, int}, optional
-            The increment in the LCG. Can be an integer in [0, 2**128] or
-            ``None``. The default is 0. If `inc` is ``None``, then it is
-            initialized using entropy. Can be used with the same seed to
-            produce multiple streams using other values of inc.
+            The increment in the LCG. Can be an integer in [0, 2**128) or
+            None. If inc is None, then it is initialized using entropy. The
+            default is None if seed is None, else 0. After 1.20, the default
+            inc will change to None.
 
         Raises
         ------
@@ -248,13 +260,26 @@ cdef class PCG64(BitGenerator):
         """
         cdef np.ndarray _seed, _inc
         ub = 2 ** 128
-        if inc is not None:
+        inc = None if seed is None else inc
+        if inc == -999999:
+            inc = 0
+            from randomgen import SeedSequence
+            if self.mode == "sequence" or isinstance(seed, SeedSequence):
+                import warnings
+                warnings.warn(
+                    "The default value of inc of 0 will change to "
+                    "None in 1.20. To continue using inc=0 explicitly set "
+                    "this value. To use the new default behavior, set "
+                    "inc=None.",
+                    FutureWarning)
+        elif inc is not None:
             err_msg = "inc must be a scalar integer between 0 and " \
                       "{ub}".format(ub=ub)
             if inc < 0 or inc > ub or int(inc) != inc:
                 raise ValueError(err_msg)
             if not np.isscalar(inc):
                 raise TypeError(err_msg)
+
         BitGenerator._seed_with_seed_sequence(self, seed, inc=inc)
         if self.seed_seq is not None:
             return
@@ -494,11 +519,11 @@ cdef class CustomPCG64(BitGenerator):
     seed : {None, int, array_like[int] SeedSequence}, optional
         Random seed initializing the pseudo-random number generator.
         Can be an integer, a sequence of integers, a SeedSequence instance
-        or ``None`` (the default). If `seed` is ``None``, then ``PCG64``
+        or None (the default). If `seed` is None, then ``PCG64``
         use a ``SeedSequence`` initialized with system-provided entropy.
     inc : {None, int}, optional
-        The increment in the LCG. Can be an integer in [0, 2**128] or ``None``.
-        If `inc` is ``None``, then it is initialized using the same``SeedSequence``
+        The increment in the LCG. Can be an integer in [0, 2**128] or None.
+        If `inc` is None, then it is initialized using the same``SeedSequence``
         used by seed.
     multiplier : int, optional
         The multipler to use in the LCG. Must be an odd integer in (0, 2**128).
@@ -734,13 +759,13 @@ cdef class CustomPCG64(BitGenerator):
         ----------
         seed : {None, int, array_like[int], SeedSequence}, optional
             Random seed initializing the pseudo-random number generator. Can
-            be an integer in [0, 2**128], a SeedSequence instance or ``None``
-            (the default). If `seed` is ``None``, then ``PCG64`` will seed
+            be an integer in [0, 2**128], a SeedSequence instance or None
+            (the default). If `seed` is None, then ``PCG64`` will seed
             using a ``SeedSequence`` which initializes using system-provided
             entropy.
         inc : {None, int}, optional
             The increment in the LCG. Can be an integer in [0, 2**128] or
-            ``None``. If `inc` is ``None``, then it is initialized using
+            None. If `inc` is None, then it is initialized using
             a ``SeedSequence`` (which is shared with seed if seed is also
             None). Can be used with the same seed to produce multiple streams
             using other values of inc.
@@ -839,7 +864,6 @@ cdef class CustomPCG64(BitGenerator):
             self.output_function_address = ctypes.cast(self._cfunc, ctypes.c_void_p).value
             self.rng_state.pcg_state.output_idx = -1
             self.rng_state.pcg_state.output_func = <pcg_output_func_t>self.output_function_address
-
 
     def advance(self, delta):
         """
