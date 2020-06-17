@@ -17,11 +17,11 @@ provided by ``ctypes.next_double``.
 
 .. code-block:: python
 
-    from randomgen import Xoroshiro128
+    from randomgen import ChaCha
     import numpy as np
     import numba as nb
 
-    x = Xoroshiro128()
+    x = ChaCha()
     f = x.ctypes.next_double
     s = x.ctypes.state
     state_addr = x.ctypes.state_address
@@ -49,7 +49,7 @@ provided by ``ctypes.next_double``.
     # Must use state address not state with numba
     normalsj(1, state_addr)
     %timeit normalsj(1000000, state_addr)
-    print('1,000,000 Box-Muller (numba/Xoroshiro128) randoms')
+    print('1,000,000 Box-Muller (numba/ChaCha) randoms')
     %timeit np.random.standard_normal(1000000)
     print('1,000,000 Box-Muller (NumPy) randoms')
 

@@ -1,14 +1,18 @@
 Parallel Random Number Generation
 =================================
 
-There are three strategies implemented that can be used to produce
+There are five strategies implemented that can be used to produce
 repeatable pseudo-random numbers across multiple processes (local
-or distributed).
+or distributed). The final method is suitable for parallel
+applications where reproducibility is not a concern.
+
 
 * :ref:`using-seed-sequence`
 * :ref:`independent-streams`
 * :ref:`advancing`
 * :ref:`jumping`
+* :ref:`weyl-sequences`
+* :red:`non-reproducible-sequences`
 
 .. _using-seed-sequence:
 
@@ -69,7 +73,7 @@ Advancing the PRNG's state
 --------------------------
 
 Most of the cryptographic PRNGs are counter-based, and so support advancing
-which increments the coutner. Advancing a PRNG updates the underlying PRNG
+which increments the counter. Advancing a PRNG updates the underlying PRNG
 state as if a given number of calls to the underlying PRNG have been made.
 In general there is not a one-to-one relationship between the number output
 random values from a particular distribution and the number of draws from
@@ -177,5 +181,53 @@ golden ratio, times the full period.
    for i in range(NUM_STREAMS):
        blocked_rng.append(last_rng)
        last_rng = last_rng.jumped()
+
+.. _weyl-sequences:
+
+Weyl Sequences
+--------------
+
+:class:`~randomgen.sfc.SFC64` uniquely supports generating streams using distinct
+Weyl sequences. Distinct sequences are produced by setting unique values in ``k```
+when initializing :class:`~randomgen.sfc.SFC64`. These increments must be odd.
+There is some indication that sparse bit patterns in the Weyl sequence with 50%
+or fewer non-zero bits perform best.
+
+.. code-block:: python
+
+   import numpy as np
+   from randomgen.entropy import random_entropy
+   from randomgen import SFC64, SeedSequence
+
+   NUM_STREAMS = 8196
+
+   # This is a basic rejection sampler that finds distinct odd 64-bit
+   # values with fewer than 32 non-zero bits. It is simple but somewhat slow
+   # It is easy to vectorize if performance is an issue
+   weyl_inc = set()
+   while len(weyl_inc) < NUM_STREAMS:
+       candidate = random_entropy(2).view(np.uint64) | np.uint64(0x1)
+       if np.unpackbits(candidate.view(np.uint8)).sum() <= 32:
+           weyl_inc.add(candidate[0])
+
+   seed_seq = SeedSequence()
+   streams = [SFC64(seed_seq, k=k) for k in weyl_inc]
+
+.. _non-reproducible-sequences:
+
+Non-reproducible Sequences
+--------------------------
+
+:class:`randomgen.rdrand.RDRAND` uses a hardware based random number generator to
+produce non-reproducible sequences on random numbers. These can be used on any
+system that supports the `RDRAND` instruction, subject to the key limitation that
+results cannot be reproduced without storing the values generated.
+
+.. code-block:: python
+
+   from randomgen import RDRAND
+
+   NUM_STREAMS = 8196
+   streams = [RDRAND() for _ in range(NUM_STREAMS)]
 
 .. end block

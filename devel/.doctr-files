@@ -175,6 +175,7 @@ devel/_sources/bit_generators/xoshiro512.rst.txt
 devel/_sources/change-log.rst.txt
 devel/_sources/custom-bit-generators.ipynb.txt
 devel/_sources/entropy.rst.txt
+devel/_sources/evolution.rst.txt
 devel/_sources/extended-generator.rst.txt
 devel/_sources/extending.rst.txt
 devel/_sources/future.rst.txt
@@ -527,6 +528,7 @@ devel/change-log.html
 devel/custom-bit-generators.html
 devel/custom-bit-generators.ipynb
 devel/entropy.html
+devel/evolution.html
 devel/extended-generator.html
 devel/extending.html
 devel/future.html

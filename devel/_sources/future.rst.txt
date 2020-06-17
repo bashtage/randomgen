@@ -6,12 +6,16 @@ number generation was always the goal of this project (and its predecessor
 `NextGen NumPy RandomState <https://github.com/bashtage/ng-numpy-randomstate>`_),
 and so it has succeeded.
 
-While I have no immediate plans to remove anything, after a 1.19 release I will:
+The future plans for randomgen are:
 
 * Remove :class:`~randomgen.generator.Generator` and :class:`~randomgen.mtrand.RandomState`. These
-  duplicate NumPy and will diverge over time.  The versions in NumPy are authoritative.
-* Preserve novel methods of :class:`~randomgen.generator.Generator` in a
-  :class:`~randomgen.generator.ExtendedGenerator`.
-* Add some distributions that are not supported in NumPy.
-* Add any interesting bit generators I come across.
+  duplicate NumPy and will diverge over time.  The versions in NumPy are authoritative. These
+  have been deprecated as of version 1.19 and will be removed in 1.21.
+* The novel methods of :class:`~randomgen.generator.Generator` in a
+  :class:`~randomgen.generator.ExtendedGenerator`. :class:`~randomgen.generator.ExtendedGenerator`
+  will be maintained, although it is possible that some of the methods may
+  migrate to NumPy.
+* Add useful distributions that are not supported in NumPy. Pull requests adding useful
+  generators are welcome.
+* Add any novel and interesting bit generators, and extend that capabilities of existing ones.
 
