@@ -62,6 +62,38 @@ cdef class SFC64(BitGenerator):
     ``SFC64`` makes a guarantee that a fixed seed will always produce the same
     random integer stream.
 
+    Examples
+    --------
+    ``SFC64`` supports generating distinct streams using different Weyl
+    increments. The recommend practice is to chose a set of distinct
+    odd coefficients that have 32 or fewer bits set of 1 (i.e., <= 50%).
+
+    >>> import numpy as np
+    >>> from randomgen import SFC64, SeedSequence
+    >>> NUM_STREAMS = 8196
+
+    A vectorized rejection sampler is used to find odd, bit-sparse 64 bit
+    values. This example uses ``SFC64`` to generate the Weyl increments.
+
+    >>> weyl_inc = set()
+    >>> remaining = NUM_STREAMS
+    >>> seed_seq = SeedSequence()
+    >>> bit_gen = SFC64(seed_seq)
+    >>> while remaining:
+    ...     # Generate odd 64 bit numbers
+    ...     candidates = bit_gen.random_raw(remaining) | np.uint64(0x1)
+    ...     candidates = np.atleast_2d(candidates).T
+    ...     keep = np.unpackbits(candidates.view(np.uint8), axis=1).sum(1) <= 32
+    ...     candidates = candidates[keep]
+    ...     weyl_inc.update(candidates.ravel().tolist())
+    ...     remaining = NUM_STREAMS - len(weyl_inc)
+
+    These are then used to initialize the bit generators
+
+    >>> streams = [SFC64(seed_seq, k=k) for k in list(weyl_inc)]
+    >>> [stream.random_raw() for stream in streams[:3]]
+    [10438109557552856751, 10703016917516023849, 689096938042951518]
+
     References
     ----------
     .. [1] "PractRand". http://pracrand.sourceforge.net/RNG_engines.txt.

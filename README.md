@@ -1,7 +1,8 @@
 # RandomGen
 
-A general purpose Random Number Generator with settable PRNG interface, and a large
-collection of Pseudo-Random Number Generators (PRNGs).
+This package contains additional bit generators for NumPy's
+`Generator` and an `ExtendedGenerator` exposing methods not in `Generator`.
+
 
 **Continuous Integration**
 
@@ -79,65 +80,6 @@ While I have no immediate plans to remove anything, after a 1.19 release I will:
 * Add some distributions that are not supported in NumPy. _Ongoing_
 * Add any interesting bit generators I come across. _Recent additions include the DXSM and CM-DXSM variants of PCG64 and the LXM generator._
 
-
-## Python 2.7 Support
-
-v1.16 is the final major version that supports Python 2.7. Any bugs
-in v1.16 will be patched until the end of 2019. All future releases
-are Python 3, with an initial minimum version of 3.5.
-
-# Features
-
-* Designed as a replacement for NumPy's 1.16's RandomState
-
-  ```python
-  from randomgen import Generator, MT19937
-  rnd = Generator(MT19937())
-  x = rnd.standard_normal(100)
-  y = rnd.random(100)
-  z = rnd.randn(10,10)
-  ```
-
-* Default random generator is a fast generator called Xoroshiro128plus
-* Support for random number generators that support independent streams
-  and jumping ahead so that sub-streams can be generated
-* Faster random number generation, especially for normal, standard
-  exponential and standard gamma using the Ziggurat method
-
-  ```python
-  from randomgen import Generator
-  # Default bit generator is Xoroshiro128
-  rnd = Generator()
-  w = rnd.standard_normal(10000)
-  x = rnd.standard_exponential(10000)
-  y = rnd.standard_gamma(5.5, 10000)
-  ```
-
-* Support for 32-bit floating randoms for core generators.
-  Currently supported:
-
-  * Uniforms (`random`)
-  * Exponentials (`standard_exponential`, both Inverse CDF and Ziggurat)
-  * Normals (`standard_normal`)
-  * Standard Gammas (via `standard_gamma`)
-
-  **WARNING**: The 32-bit generators are **experimental** and subject
-  to change.
-
-  **Note**: There are _no_ plans to extend the alternative precision
-  generation to all distributions.
-
-* Support for filling existing arrays using `out` keyword argument. Currently
-  supported in (both 32- and 64-bit outputs)
-
-  * Uniforms (`random`)
-  * Exponentials (`standard_exponential`)
-  * Normals (`standard_normal`)
-  * Standard Gammas (via `standard_gamma`)
-
-* Support for Lemire's method of generating uniform integers on an
-  arbitrary interval by setting `use_masked=True`.
-
 ## Included Pseudo Random Number Generators
 
 This module includes a number of alternative random
@@ -156,47 +98,11 @@ The RNGs include:
   and [xoshiro512**](http://xorshift.di.unimi.it/)
 * [PCG64](http://www.pcg-random.org/)
 * ThreeFry and Philox from [Random123](https://www.deshawresearch.com/resources_random123.html)
+* Other cryptographic-based generators: `AESCounter`, `SPECK128`, `ChaCha`, and `HC128`.
+* Hardware (non-reproducible) random number generator on AMD64 using `RDRAND`.
+* Chaotic PRNGS: Small-Fast Chaotic (`SFC64`) and Jenkin's Small-Fast (`JSF`).
 
-## Differences from `numpy.random.RandomState`
-
-### Note
-These comparisons are relative to NumPy 1.16. The project has been
-substantially merged into NumPy 1.17+.
-
-### New Features relative to NumPy 1.16
-
-* `standard_normal`, `normal`, `randn` and `multivariate_normal` all
-  use the much faster (100%+) Ziggurat method.
-* `standard_gamma` and `gamma` both use the much faster Ziggurat method.
-* `standard_exponential` `exponential` both support an additional
-  `method` keyword argument which can be `inv` or
-  `zig` where `inv` corresponds to the current method using the inverse
-  CDF and `zig` uses the much faster (100%+) Ziggurat method.
-* Core random number generators can produce either single precision
-  (`np.float32`) or double precision (`np.float64`, the default) using
-  the optional keyword argument `dtype`
-* Core random number generators can fill existing arrays using the
-  `out` keyword argument
-* Standardizes integer-values random values as int64 for all platforms.
-* `randint` supports generating using rejection sampling on masked
-  values (the default) or Lemire's method.  Lemire's method can be much
-  faster when the required interval length is much smaller than the
-  closes power of 2.
-
-### New Functions
-
-* `random_entropy` - Read from the system entropy provider, which is
-  commonly used in cryptographic applications
-* `random_raw` - Direct access to the values produced by the underlying
-  PRNG. The range of the values returned depends on the specifics of the
-  PRNG implementation.
-* `random_uintegers` - unsigned integers, either 32- (`[0, 2**32-1]`)
-  or 64-bit (`[0, 2**64-1]`)
-* `jump` - Jumps RNGs that support it.  `jump` moves the state a great
-  distance. _Only available if supported by the RNG._
-* `advance` - Advanced the RNG 'as-if' a number of draws were made,
-  without actually drawing the numbers. _Only available if supported by
-  the RNG._
+  
 
 ## Status
 
@@ -210,7 +116,7 @@ substantially merged into NumPy 1.17+.
 ## Version
 
 The package version matches the latest version of NumPy where
-`RandomState(MT19937())` passes all NumPy test.
+`Generator(MT19937())` passes all NumPy test.
 
 ## Documentation
 
@@ -223,9 +129,9 @@ the latest commit (unreleased) is available under
 ## Requirements
 Building requires:
 
-* Python (3.5, 3.6, 3.7, 3.8)
+* Python (3.6, 3.7, 3.8)
 * NumPy (1.14, 1.15, 1.16, 1.17, 1.18, 1.19)
-* Cython (0.27+)
+* Cython (0.29+)
 * tempita (0.5+), if not provided by Cython
 
 Testing requires pytest (4.0+).
@@ -236,8 +142,8 @@ versions.
 ## Development and Testing
 
 All development has been on 64-bit Linux, and it is regularly tested on
-Travis-CI (Linux/OSX), Appveyor (Windows), Cirrus (FreeBSD) and Drone.io
-(ARM/ARM64 Linux).
+Travis-CI (Linux-AMD64, Linux-PPC-LE, Linus-S390X, and OSX), Appveyor (Windows 32/64),
+Cirrus (FreeBSD) and Drone.io (ARM/ARM64 Linux).
 
 Tests are in place for all RNGs. The MT19937 is tested against
 NumPy's implementation for identical results. It also passes NumPy's
@@ -275,26 +181,7 @@ python setup.py install --no-sse2
 ### Windows
 
 Either use a binary installer, or if building from scratch, use
-Python 3.6/3.7 with Visual Studio 2015/2017 Community Edition. It can also
-be build using Microsoft Visual C++ Compiler for Python 2.7 and
-Python 2.7.
-
-## Using
-
-The separate generators are importable from `randomgen`
-
-```python
-from randomgen import Generator, ThreeFry, PCG64, MT19937
-rg = Generator(ThreeFry())
-rg.random(100)
-
-rg = Generator(PCG64())
-rg.random(100)
-
-# Identical to NumPy
-rg = Generator(MT19937())
-rg.random(100)
-```
+Python 3.6/3.7 with Visual Studio 2015 Build Toolx.
 
 ## License
 

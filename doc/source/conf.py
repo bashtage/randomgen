@@ -127,8 +127,8 @@ html_theme_options = {
     "globaltoc_collapse": True,
     "globaltoc_includehidden": True,
     "theme_color": "#2196f3",
-    "color_primary": "red",
-    "color_accent": "amber",
+    "color_primary": "deep-purple",
+    "color_accent": "purple",
     "html_minify": True,
     "css_minify": True,
     "master_doc": False,
@@ -137,6 +137,11 @@ html_theme_options = {
         "1.17's Generator"
     },
     "logo_icon": "casino",
+    "version_dropdown": True,
+    "version_info": {
+        "Release": "https://bashtage.github.io/randomgen/",
+        "Development": "https://bashtage.github.io/randomgen/devel/",
+    },
 }
 # Add any paths that contain custom static files (such as style sheets) here,
 # relative to this directory. They are copied after the builtin static files,

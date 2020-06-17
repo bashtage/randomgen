@@ -13,7 +13,6 @@ env:
     - secure: "czwFlflS1lcfbSQ9ktv+pLAPV9/6+wmwiMTyIYyv5xgQVWRL5NRebWH+ZhQ6s2T5x17wFMtlafcAvkdV0CHQZLru34V2UNldCapuEtQ8b32EDHBXHKbs45b7SSkLx4TFXdjiJurleY4ZIKle0gX6BW21zYBwaHJqbN6I8nRv9Rp47XEU1UV1Mdf/PhfTnxY31rFrPYL77xeWJzoFfT8zao39V4gQds+1Ag7FjdNVdSDVKwDduF4kS7tIbKqb4M+jsbc3PIKyP9nyQpEQF5ebJuG7mqXJhVJGEL83rBx8MLFPA/1X3cUzKacgKyp2+Wmlt0EVhwCa1aRf9cSK6I7TbMC7/eGtDnC2ToiRlFJurVRblaEmhzVQS1yQ4Dkooqsj9hNVl6nhu7JfR52GLogns33Ec/yYuRcWcULKSlR5Cerfef/5YijBEhlr9X76SJiOpjvS4lwWFYX+h8xzuVhRLGwIVB9oQNllxYItzcDSGmRx+EOMXWASHmoUDnBOZg4GMVukqOcF5l0ynoepiA1YHLdZlMy6SB3P7BZKF/aNCOn9nXw+N9X4U/yUpkM3Pb7HoGdNrC8RO4SwrNjGrarkdEB6e1lBReK/dqcylaF/mpK9VLpfQszDI8xnR4VCmlEM+le0xOsyHfeGciabdI4KH0i0SfYl4ls5XrN+CaqFWdo="
     - PYPI=false
     - COVERAGE=true
-    - PIP_CYTHON=false
     - RANDOMGEN_DEBUG=true
 
 cache:
@@ -51,6 +50,9 @@ matrix:
     - os: linux
       python: 3.6
       env: [PYPI=true, COVERAGE=false, NUMPY=1.17.5]
+    - os: linux
+      python: 3.8
+      env: [PYPI=true, COVERAGE=false, RANDOMGEN_CYTHON_COVERAGE=false, RANDOMGEN_DEBUG=false, PYPI_PRE=true]
   allow_failures:
     - os: linux
       arch: ppc64le
@@ -60,13 +62,15 @@ matrix:
       arch: s390x
       python: 3.6
       env: [PYPI=true, S390X=1, COVERAGE=true]
+    - os: linux
+      python: 3.8
+      env: [PYPI=true, COVERAGE=false, RANDOMGEN_CYTHON_COVERAGE=false, RANDOMGEN_DEBUG=false, PYPI_PRE=true]
 
 before_install:
   - git fetch --tags
   - if [[ $PYPI = true ]]; then source ci/install-gcc-8.sh; fi
   - if [[ $PYPI = true ]]; then source ci/pypi-install.sh; else source ci/conda-install.sh; fi
-  - if [[ $PIP_CYTHON = true ]]; then pip install cython --upgrade; fi
-  - pip install tempita coverage coveralls pytest-cov codecov coveralls -q
+  - pip install tempita coverage coveralls pytest-cov codecov coveralls
   - pip list
   - export BUILD_DIR=${PWD}
   - if [[ ${DOCBUILD} == true ]]; then pip install sphinx sphinx_rtd_theme sphinx-material ipython doctr nbsphinx -q; fi
