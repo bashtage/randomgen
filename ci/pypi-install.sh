@@ -1,12 +1,20 @@
 #!/usr/bin/env bash
 
 pip install --upgrade pip
-pip install cython pytest setuptools --upgrade
-if [[ -z ${NUMPY} ]]; then
-  pip install numpy --upgrade
-else
-  pip install numpy=="${NUMPY}" --upgrade --pre -v
+pip install numpy cython pytest setuptools --upgrade
+if [[ -n ${NUMPY} ]]; then
+  echo pip install numpy=="${NUMPY}" --upgrade --pre
+  pip install numpy=="${NUMPY}" --upgrade --pre
 fi
+if [[ -n ${CYTHON} ]]; then
+  echo pip install Cython=="${CYTHON}" --pre --upgrade
+  pip install Cython=="${CYTHON}" --pre --upgrade
+fi
+if [[ -n ${PYPI_PRE} && ${PYPI_PRE} == true ]]; then
+  echo install numpy Cython --pre --upgrade
+  pip install numpy Cython --pre --upgrade
+fi
+
 
 if [[ -z ${PPC64_LE} && -z ${S390X} ]]; then
     pip install pandas --upgrade

@@ -18,6 +18,14 @@ Change Log
 v1.19.0
 =======
 
+- Added a :class:`randomgen.sfc.SFC64` which supports generating streams using distinct
+  Weyl constants.
+- Added a :class:`randomgen.pcg64.CustomPCG64` which supports setting the LCG multiplier,
+  changing the output function (including support for user-defined output functions) and
+  pre- or post-state update generation.
+- Added a :class:`randomgen.lxm.LXM` which generates variates using a mix of two simple,
+  but flawed generators: an Xorshift and a 64-bit LCG. This has been
+  proposed for including in `in Java`_.
 - Added a :class:`randomgen.wrapper.UserBitGenerator` which allows bit generators to be written
   in Python or numba.
 - Added :class:`randomgen.generator.ExtendedGenerator` which contains features not in :class:`numpy.random.Generator`.
@@ -25,8 +33,6 @@ v1.19.0
   ``CM-DXSM`` variant is the official PCG 2.0 generator.
 - Added support for broadcasting inputs in :class:`randomgen.generator.ExtendedGenerator.multivariate_normal`.
 - Added support for the `++` variant of :class:`randomgen.xoroshiro128.Xoroshiro128`.
-- Added :class:`randomgen.lxm.LXM` which mixes a LCG and an Xorshift PRNGs. This has been
-  proposed for including in `in Java`_.
 - Fixed a bug the produced incorrect results in :func:`~randomgen.mt19937.MT19937.jumped`.
 - Fixed multiple bugs in :class:`~randomgen.generator.Generator` that were fixed in :class:`numpy.random.Generator`.
 

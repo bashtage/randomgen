@@ -16,15 +16,18 @@ Differences from NumPy 1.17+
 * :func:`~randomgen.entropy.random_entropy` provides access to the system
   source of randomness that is used in cryptographic applications (e.g.,
   ``/dev/urandom`` on Unix).
+* Support broadcasting when producing multivariate Gaussian values
+  (:meth:`~randomgen.generator.ExtendedGenerator.multivariate_normal`)
 * Simulate from the complex normal distribution
-  (:meth:`~randomgen.generator.Generator.complex_normal`)
+  (:meth:`~randomgen.generator.ExtendedGenerator.complex_normal`)
 * Direct access to unsigned integers is provided by
-  (:meth:`~randomgen.generator.Generator.uintegers`)
+  (:meth:`~randomgen.generator.ExtendedGenerator.uintegers`)
 * A wider range of bit generators:
 
   * Chaotic mappings
 
-    * :class:`~randomgen.jsf.JSF`
+    * :class:`~randomgen.jsf.JSF` (32 and 64-bit variants)
+    * :class:`~randomgen.sfc.SFC64`
 
   * Cryptographic Cipher-based:
 
@@ -50,6 +53,7 @@ Differences from NumPy 1.17+
 
     * :class:`~randomgen.pcg32.PCG32`
     * :class:`~randomgen.pcg64.PCG64` (limited version in NumPy)
+    * :class:`~randomgen.pcg64.CustomPCG64` (limited version in NumPy)
 
   * Shift/rotate based:
 
@@ -89,7 +93,7 @@ Differences from NumPy 1.17+
 
 * :func:`numpy.random.Generator.multivariate_hypergeometric` was added after
   :class:`~randomgen.generator.Generator` was merged into NumPy and will not
-  be ported over.  Please use the NumPy version.
+  be ported over.
 
 * :func:`numpy.random.Generator.shuffle` and :func:`numpy.random.Generator.permutation`
   support ``axis`` keyword to operator along an axis other than 0.
