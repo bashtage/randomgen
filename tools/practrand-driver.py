@@ -57,12 +57,51 @@ CONFIG = {
 }
 
 
+def pack_bits(a, bits):
+    print("Packing bits")
+    assert bits > 32
+    nitems = a.shape[0]
+    block_rows = nitems // 64
+    block = a[: 64 * block_rows].reshape((block_rows, -1))
+    if a.shape[0] != 64 * (nitems // 64):
+        raise ValueError(
+            "Packing bits produces a shape change. Must use a multiple of bits"
+        )
+    current = 0
+    to_fill = 64
+    u = np.uint64
+    for col in range(64):
+        if to_fill == 64:
+            block[:, current] = block[:, col] << u(to_fill - bits)
+            to_fill -= bits
+        elif to_fill > bits:
+            mask = u(int("0b" + "1" * to_fill, 2))
+            block[:, current] = block[:, current] | (
+                (block[:, col] << u(to_fill - bits)) & mask
+            )
+            to_fill -= bits
+        else:
+            mask = u(int("0b" + "1" * to_fill, 2))
+            remaining = shift = bits - to_fill
+            block[:, current] = block[:, current] | ((block[:, col] >> u(shift)) & mask)
+            current += 1
+            if remaining:
+                block[:, current] = block[:, col] << u(64 - remaining)
+                to_fill = 64 - remaining
+    print(f"Output size: {block[:,:bits].shape}")
+    return block[:, :bits].ravel()
+
+
 def gen_interleaved_bytes(bitgens, n_per_gen=1024, output=32):
     astype = np.uint32 if output == 32 else np.uint64
+    # Reduce if bits even divisible into 64
+    n_per_gen = 64 * (n_per_gen // 64)
     view = np.uint64
     while True:
         draws = [g.random_raw(n_per_gen).astype(astype).view(view) for g in bitgens]
         interleaved = np.column_stack(draws).ravel()
+        if output not in (32, 64):
+            interleaved = pack_bits(interleaved, output)
         bytes_chunk = bytes(interleaved.data)
         yield bytes_chunk
 

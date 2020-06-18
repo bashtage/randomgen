@@ -20,7 +20,6 @@ int main() {
   uint64_t seed = 0xDEADBEAF;
   lxm_state_t state;
   state.b = LCG_ADD;
-  state.mix = 1;
   /* Generated from SeedSequece(0xDEADBEAF) */
   state.x[0] = 5778446405158232650ULL;
   state.x[1] = 4639759349701729399ULL;

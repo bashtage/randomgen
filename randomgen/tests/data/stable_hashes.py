@@ -51,18 +51,8 @@ known_hashes = {
     },
     ("LXM", "seed"): {
         "random_values": "c98015d91fe08823720c58803ed790230c6d1a499367cf101d934890063da35c",
-        "initial_state_hash": "627e7dcc2cef199787f262fae45ecf73a7561a0e236e7ac84db7b55a20e4f343",
-        "final_state_hash": "da5473e62d244c4808cefd3818d98cb11a7e6fe65ac4bbbb7a323612abd75cb4",
-    },
-    ("LXM", "seed", "mix", True): {
-        "random_values": "c98015d91fe08823720c58803ed790230c6d1a499367cf101d934890063da35c",
-        "initial_state_hash": "627e7dcc2cef199787f262fae45ecf73a7561a0e236e7ac84db7b55a20e4f343",
-        "final_state_hash": "da5473e62d244c4808cefd3818d98cb11a7e6fe65ac4bbbb7a323612abd75cb4",
-    },
-    ("LXM", "seed", "mix", False): {
-        "random_values": "b63a8d75a689d604a4578f7e11521c05f1b88c52454cf23cdae455e95aa077d0",
-        "initial_state_hash": "627e7dcc2cef199787f262fae45ecf73a7561a0e236e7ac84db7b55a20e4f343",
-        "final_state_hash": "da5473e62d244c4808cefd3818d98cb11a7e6fe65ac4bbbb7a323612abd75cb4",
+        "initial_state_hash": "d91524b0cb1fcec27f88a449755f5f1bf9fe1e958bd4e1e9c18d9305952057c6",
+        "final_state_hash": "7ff45539d8f899936d8ec41736cad1fd475ee8e615832045ad1e8dd9e1b7777d",
     },
     ("MT64", "seed"): {
         "random_values": "9c10fe3d07af95ee3c01e47802704f56c66d5d4fe80df09de9ada20da14c364c",
@@ -129,11 +119,6 @@ known_hashes = {
         "initial_state_hash": "e4388eae288c344c78ad47cdbfe0983778d75b56c117cbb16ffdd0efc68d61aa",
         "final_state_hash": "d1b7623dfdb1084149c34472f63f65b2ae59b5013c5e72d47160597a0fe855a4",
     },
-    ("PCG64", "seed"): {
-        "random_values": "4d8bbff64c61c5f3158a043946b78d9c556091df421baf1dd5fbd506d7610dd2",
-        "initial_state_hash": "52424eb4d0f3518635c0d36a93637c39a9d2b8f949f6dd5d737ca9b83610c3da",
-        "final_state_hash": "6e7714d72766dc092faa6d2bf841aa8e8eae8530834d3eb5324b949d1740fd85",
-    },
     ("PCG64", "seed", "inc", None): {
         "random_values": "fa32239f519b4b8323747a7f426d3443185fd225d1d60dfdca5f631757ecd8d0",
         "initial_state_hash": "dd151441354e39ac64f2bef8c34ed11dd4940240093d25288b4a690a89929ba2",
@@ -143,21 +128,6 @@ known_hashes = {
         "random_values": "63fd3334317fb8902e5fdc9baf11b01ed5d098b3cdb7333e0da529edb8e09ae0",
         "initial_state_hash": "f2c4eba60d5c1dc2818987ad19994cce76fdfa1fc2680e3bd3be2012e32fd0d4",
         "final_state_hash": "e93bed1d80626ae63762c5d64ab099e321c838beaa7ee24006ad50981a0a65ed",
-    },
-    ("PCG64", "seed", "variant", "xsl-rr"): {
-        "random_values": "4d8bbff64c61c5f3158a043946b78d9c556091df421baf1dd5fbd506d7610dd2",
-        "initial_state_hash": "52424eb4d0f3518635c0d36a93637c39a9d2b8f949f6dd5d737ca9b83610c3da",
-        "final_state_hash": "6e7714d72766dc092faa6d2bf841aa8e8eae8530834d3eb5324b949d1740fd85",
-    },
-    ("PCG64", "seed", "variant", "dxsm"): {
-        "random_values": "007aaf954de7435d87abe06fb957cbade21732c6ceafb80335e89a5ca322440e",
-        "initial_state_hash": "52424eb4d0f3518635c0d36a93637c39a9d2b8f949f6dd5d737ca9b83610c3da",
-        "final_state_hash": "6e7714d72766dc092faa6d2bf841aa8e8eae8530834d3eb5324b949d1740fd85",
-    },
-    ("PCG64", "seed", "variant", "cm-dxsm"): {
-        "random_values": "4b984c9ab74ab3473895b0ff4f782826f8c86b8e92e57c198440794153facf9f",
-        "initial_state_hash": "3e093b9322aae9f40219284443010226a068fb2b6f42d41e83a9ee2f992c9886",
-        "final_state_hash": "1aa7f247ad9245d611276469125b2b0dc25b3aed3d9ab6158a439efe0cb9155a",
     },
     ("PCG64", "seed", "inc", None, "variant", "xsl-rr"): {
         "random_values": "fa32239f519b4b8323747a7f426d3443185fd225d1d60dfdca5f631757ecd8d0",
@@ -862,26 +832,12 @@ known_hashes = {
         "initial_state_hash": "8c1ff32d89688ea14e1db0c4623556e7bc7bf34aa27e74e9251fa1170800bc20",
         "final_state_hash": "374b2625f6c5dcca495a19ef372031a1f9b7edb6375d945ca9b96d628083ae68",
     },
-    (
-        "LCG128Mix",
-        "seed",
-        "output",
-        "dxsm",
-        "dxsm_multiplier",
-        11400714819323198485,
-    ): {
+    ("LCG128Mix", "seed", "output", "dxsm", "dxsm_multiplier", 11400714819323198485): {
         "random_values": "d8f99b108d5237dcac86ee6a250b3e9ab5fc3930da8eb83f046a3230c19a48aa",
         "initial_state_hash": "8c50dcc6bc71efe1af580ec8f139de7f6e6478017f775d25ec4901e321ddf7ba",
         "final_state_hash": "275314216146881660a4851271ab303848fb6c1ee281ae436777484bc2c9a548",
     },
-    (
-        "LCG128Mix",
-        "seed",
-        "output",
-        "dxsm",
-        "dxsm_multiplier",
-        15750249268501108917,
-    ): {
+    ("LCG128Mix", "seed", "output", "dxsm", "dxsm_multiplier", 15750249268501108917): {
         "random_values": "0e3a373bb1700e5e1111ce1dbadb7c1448b0c51aad2770b838668f7b9d5d36fa",
         "initial_state_hash": "8c1ff32d89688ea14e1db0c4623556e7bc7bf34aa27e74e9251fa1170800bc20",
         "final_state_hash": "374b2625f6c5dcca495a19ef372031a1f9b7edb6375d945ca9b96d628083ae68",

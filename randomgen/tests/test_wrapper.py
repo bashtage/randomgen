@@ -47,7 +47,7 @@ class _PCG64:
         return _next_32
 
 
-PCG64_NATIVE = PCG64(0, mode="sequence", variant="xsl-rr")
+PCG64_NATIVE = PCG64(0, None, mode="sequence", variant="xsl-rr")
 PCG64_INITIAL_STATE = PCG64_NATIVE.state
 
 
@@ -61,7 +61,7 @@ def python_pcg(request):
 
 @pytest.fixture(scope="function")
 def pcg_native(request):
-    return PCG64(0, mode="sequence", variant="xsl-rr")
+    return PCG64(0, None, mode="sequence", variant="xsl-rr")
 
 
 @pytest.fixture(scope="function")

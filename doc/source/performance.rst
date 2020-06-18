@@ -39,7 +39,6 @@ log function to invert the CDF with a Ziggurat-based generator.
    :header: Bit Gen,Uint32,Uint64,Uniform,Expon,Normal,Gamma
    :widths: 30,10,10,10,10,10,10
 
-   Bit Gen,Uint32,Uint64,Uniform,Expon,Normal,Gamma
    Xoshiro256,2.3,2.7,2.6,4.7,8.8,20.7
    JSF,2.3,3.1,3.0,5.4,9.1,20.4
    PCG64CMDXSM,2.5,3.0,3.1,4.9,10.2,21.2
@@ -75,7 +74,6 @@ percentage. The overall performance is computed using a geometric mean.
    :header: Bit Gen,Uint32,Uint64,Uniform,Expon,Normal,Gamma,Overall
    :widths: 30,10,10,10,10,10,10,10
 
-   Bit Gen,Uint32,Uint64,Uniform,Expon,Normal,Gamma,Overall
    Xoshiro256,130,186,222,431,285,194,224
    JSF,128,163,192,373,275,198,208
    PCG64CMDXSM,120,168,188,407,247,190,204
@@ -105,4 +103,3 @@ percentage. The overall performance is computed using a geometric mean.
 
    All timings were taken using Linux on an Intel Cascade Lake (Family 6,
    Model 85, Stepping 7) running at 3.1GHz.
-
