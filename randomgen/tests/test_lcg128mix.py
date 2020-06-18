@@ -1,7 +1,7 @@
 import numpy as np
 import pytest
 
-from randomgen import PCG64, CustomPCG64, SeedSequence
+from randomgen import PCG64, LCG128Mix, SeedSequence
 from randomgen.pcg64 import DEFAULT_DXSM_MULTIPLIER, DEFAULT_MULTIPLIER
 
 try:
@@ -24,7 +24,7 @@ uint64_t output_upper(uint64_t a, uint64_t b) {
 
 def test_pcg64_1():
     pcg = PCG64(SeedSequence(12345678909876543321))
-    cpcg = CustomPCG64()
+    cpcg = LCG128Mix()
     st = cpcg.state
     st["state"]["state"] = pcg.state["state"]["state"]
     st["state"]["inc"] = pcg.state["state"]["inc"]
@@ -36,7 +36,7 @@ def test_pcg64_1():
 
 def test_pcg64_dxsm():
     pcg = PCG64(SeedSequence(12345678909876543321), variant="dxsm")
-    cpcg = CustomPCG64(output="dxsm")
+    cpcg = LCG128Mix(output="dxsm")
     st = cpcg.state
     st["state"]["state"] = pcg.state["state"]["state"]
     st["state"]["inc"] = pcg.state["state"]["inc"]
@@ -48,7 +48,7 @@ def test_pcg64_dxsm():
 
 def test_pcg64_cm_dxsm():
     pcg = PCG64(SeedSequence(12345678909876543321), variant="cm-dxsm")
-    cpcg = CustomPCG64(output="dxsm", post=False, multiplier=DEFAULT_DXSM_MULTIPLIER)
+    cpcg = LCG128Mix(output="dxsm", post=False, multiplier=DEFAULT_DXSM_MULTIPLIER)
     st = cpcg.state
     st["state"]["state"] = pcg.state["state"]["state"]
     st["state"]["inc"] = pcg.state["state"]["inc"]
@@ -62,7 +62,7 @@ def test_output_functions_distinct():
     fns = ("xsl-rr", "dxsm", "murmur3", "upper", "lower")
     results = {}
     for of in fns:
-        cpcg = CustomPCG64(SEED, output=of)
+        cpcg = LCG128Mix(SEED, output=of)
         results[of] = cpcg.random_raw()
     from itertools import combinations
 
@@ -72,23 +72,23 @@ def test_output_functions_distinct():
 
 def test_multipliers_distinct():
     mult = DEFAULT_DXSM_MULTIPLIER
-    a = CustomPCG64(SEED, multiplier=mult).random_raw(10)
+    a = LCG128Mix(SEED, multiplier=mult).random_raw(10)
     mult = DEFAULT_MULTIPLIER
-    b = CustomPCG64(SEED, multiplier=mult).random_raw(10)
+    b = LCG128Mix(SEED, multiplier=mult).random_raw(10)
     assert np.all(a != b)
 
 
 def test_dxsm_multipliers_distinct():
     mult = DEFAULT_DXSM_MULTIPLIER
-    a = CustomPCG64(SEED, dxsm_multiplier=mult, output="dxsm").random_raw(10)
+    a = LCG128Mix(SEED, dxsm_multiplier=mult, output="dxsm").random_raw(10)
     mult = DEFAULT_DXSM_MULTIPLIER + 2
-    b = CustomPCG64(SEED, dxsm_multiplier=mult, output="dxsm").random_raw(10)
+    b = LCG128Mix(SEED, dxsm_multiplier=mult, output="dxsm").random_raw(10)
     assert np.all(a != b)
 
 
 def test_pre_post():
-    a = CustomPCG64(SEED).random_raw(10)
-    b = CustomPCG64(SEED, post=False).random_raw(10)
+    a = LCG128Mix(SEED).random_raw(10)
+    b = LCG128Mix(SEED, post=False).random_raw(10)
     np.testing.assert_equal(a[:9], b[1:])
 
 
@@ -98,16 +98,16 @@ def test_ouput_ctypes():
     def upper(high, low):
         return high
 
-    a = CustomPCG64(SEED, output=upper.ctypes).random_raw(10)
-    b = CustomPCG64(SEED, output="upper").random_raw(10)
+    a = LCG128Mix(SEED, output=upper.ctypes).random_raw(10)
+    b = LCG128Mix(SEED, output="upper").random_raw(10)
     np.testing.assert_equal(a, b)
 
     @cfunc(types.uint64(types.uint64, types.uint64))
     def lower(high, low):
         return low
 
-    a = CustomPCG64(SEED, output=lower.ctypes).random_raw(10)
-    b = CustomPCG64(SEED, output="lower").random_raw(10)
+    a = LCG128Mix(SEED, output=lower.ctypes).random_raw(10)
+    b = LCG128Mix(SEED, output="lower").random_raw(10)
     np.testing.assert_equal(a, b)
 
 
@@ -137,22 +137,22 @@ def test_ctypes():
     libtesting = ctypes.CDLL(so_loc)
     libtesting.output_upper.argtypes = (ctypes.c_uint64, ctypes.c_uint64)
     libtesting.output_upper.restype = ctypes.c_uint64
-    a = CustomPCG64(SEED, output="upper").random_raw(10)
-    rg = CustomPCG64(SEED, output=libtesting.output_upper)
+    a = LCG128Mix(SEED, output="upper").random_raw(10)
+    rg = LCG128Mix(SEED, output=libtesting.output_upper)
     b = rg.random_raw(10)
     np.testing.assert_equal(a, b)
 
-    c = CustomPCG64()
+    c = LCG128Mix()
     c.state = rg.state
     assert c.random_raw() == rg.random_raw()
 
     libtesting.output_upper.argtypes = (ctypes.c_uint32, ctypes.c_uint32)
     with pytest.raises(ValueError):
-        CustomPCG64(SEED, output=libtesting.output_upper)
+        LCG128Mix(SEED, output=libtesting.output_upper)
     libtesting.output_upper.argtypes = (ctypes.c_uint64, ctypes.c_uint64)
     libtesting.output_upper.restype = ctypes.c_uint32
     with pytest.raises(ValueError):
-        CustomPCG64(SEED, output=libtesting.output_upper)
+        LCG128Mix(SEED, output=libtesting.output_upper)
 
 
 def test_pcg_warnings_and_errors():
@@ -163,7 +163,7 @@ def test_pcg_warnings_and_errors():
 
 
 def test_repr():
-    cpcg = CustomPCG64(
+    cpcg = LCG128Mix(
         0,
         0,
         output="dxsm",
@@ -179,7 +179,7 @@ def test_repr():
 
 
 def test_bad_state():
-    a = CustomPCG64()
+    a = LCG128Mix()
     st = a.state
     with pytest.raises(TypeError):
         a.state = ((k, v) for k, v in st.items())
@@ -190,10 +190,10 @@ def test_bad_state():
 
 def test_exceptions():
     with pytest.raises(ValueError):
-        CustomPCG64(multiplier=DEFAULT_MULTIPLIER + 1)
+        LCG128Mix(multiplier=DEFAULT_MULTIPLIER + 1)
     with pytest.raises(ValueError):
-        CustomPCG64(dxsm_multiplier=DEFAULT_MULTIPLIER + 1)
+        LCG128Mix(dxsm_multiplier=DEFAULT_MULTIPLIER + 1)
     with pytest.raises(ValueError):
-        CustomPCG64(SEED, output="not-implemented")
+        LCG128Mix(SEED, output="not-implemented")
     with pytest.raises(TypeError):
-        CustomPCG64(SEED, post=3)
+        LCG128Mix(SEED, post=3)

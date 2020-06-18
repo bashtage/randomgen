@@ -18,7 +18,7 @@ from randomgen import (
     SPECK128,
     AESCounter,
     ChaCha,
-    CustomPCG64,
+    LCG128Mix,
     Philox,
     ThreeFry,
     Xoroshiro128,
@@ -168,7 +168,7 @@ configs = {
         "BLOCKED": (("seed", "key"),),
         "REQUIRED": ("seed", "key"),
     },
-    "CustomPCG64": {
+    "LCG128Mix": {
         "seed": seed_seq(),
         "inc": [0, None],
         "output": ["xsl-rr", "dxsm"],
@@ -201,7 +201,7 @@ BIT_GEN = {
     "HC128": HC128,
     "Philox": Philox,
     "ThreeFry": ThreeFry,
-    "CustomPCG64": CustomPCG64,
+    "LCG128Mix": LCG128Mix,
 }
 
 computed_hashes = {}

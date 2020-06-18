@@ -53,7 +53,7 @@ Differences from NumPy 1.17+
 
     * :class:`~randomgen.pcg32.PCG32`
     * :class:`~randomgen.pcg64.PCG64` (limited version in NumPy)
-    * :class:`~randomgen.pcg64.CustomPCG64` (limited version in NumPy)
+    * :class:`~randomgen.pcg64.LCG128Mix` (limited version in NumPy)
 
   * Shift/rotate based:
 

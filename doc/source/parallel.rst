@@ -12,7 +12,7 @@ applications where reproducibility is not a concern.
 * :ref:`advancing`
 * :ref:`jumping`
 * :ref:`weyl-sequences`
-* :red:`non-reproducible-sequences`
+* :ref:`non-reproducible-sequences`
 
 .. _using-seed-sequence:
 
@@ -109,7 +109,7 @@ required to ensure exact reproducibility.
 
 In addition to the cryptographic PRNGs,
 the PCG-based generators also support ``advance``: :class:`~randomgen.pcg64.PCG64`,
-:class:`~randomgen.pcg64.CustomPCG64`, and :class:`~randomgen.pcg32.PCG32`.
+:class:`~randomgen.pcg64.LCG128Mix`, and :class:`~randomgen.pcg32.PCG32`.
 Note that :class:`~randomgen.hc128.HC128` is based on a stream cipher and so
 does not support advancing a counter.
 
@@ -136,7 +136,7 @@ and the bits in the default unsigned random are listed below.
 +-----------------+-------------------------+-------------------------+-------------------------+
 | ChaCha          | :math:`2^{128}`         | :math:`2^{64}`          | 64                      |
 +-----------------+-------------------------+-------------------------+-------------------------+
-| CustomPCG64     | :math:`2^{128}`         | :math:`\phi`            | 64                      |
+| LCG128Mix       | :math:`2^{128}`         | :math:`\phi`            | 64                      |
 +-----------------+-------------------------+-------------------------+-------------------------+
 | DSFMT           | :math:`2^{19937}`       | :math:`2^{128}`         | 53                      |
 +-----------------+-------------------------+-------------------------+-------------------------+

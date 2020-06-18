@@ -1,9 +1,9 @@
-#ifndef PCG64_CUSTOM_H_INCLUDED
-#define PCG64_CUSTOM_H_INCLUDED 1
+#ifndef lcg128mix_H_INCLUDED
+#define lcg128mix_H_INCLUDED 1
 
 #include "pcg64-common.h"
 
-typedef struct PCG64_CUSTOM_RANDOM_T {
+typedef struct lcg128mix_RANDOM_T {
   pcg128_t state;
   pcg128_t inc;
   pcg128_t multiplier;
@@ -11,9 +11,9 @@ typedef struct PCG64_CUSTOM_RANDOM_T {
   int post;
   int output_idx;
   pcg_output_func_t output_func;
-} pcg64_custom_random_t;
+} lcg128mix_random_t;
 
-static INLINE void pcg64_custom_step(pcg64_custom_random_t *rng) {
+static INLINE void lcg128mix_step(lcg128mix_random_t *rng) {
 #if defined(_WIN32) && _MSC_VER >= 1900 && _M_AMD64 &&                         \
     defined(PCG_EMULATED_128BIT_MATH) && PCG_EMULATED_128BIT_MATH
   uint64_t h1, multiplier_low = PCG_LOW(rng->multiplier);
@@ -31,7 +31,7 @@ static INLINE void pcg64_custom_step(pcg64_custom_random_t *rng) {
 #endif
 }
 
-static INLINE void pcg64_custom_initialize(pcg64_custom_random_t *rng,
+static INLINE void lcg128mix_initialize(lcg128mix_random_t *rng,
                                            pcg128_t initstate,
                                            pcg128_t initseq) {
   rng->state = PCG_128BIT_CONSTANT(0ULL, 0ULL);
@@ -42,18 +42,18 @@ static INLINE void pcg64_custom_initialize(pcg64_custom_random_t *rng,
 #else
   rng->inc = (initseq << 1U) | 1U;
 #endif
-  pcg64_custom_step(rng);
+  lcg128mix_step(rng);
   rng->state = pcg128_add(rng->state, initstate);
-  pcg64_custom_step(rng);
+  lcg128mix_step(rng);
 }
 
-static INLINE uint64_t pcg64_custom_next(pcg64_custom_random_t *rng) {
+static INLINE uint64_t lcg128mix_next(lcg128mix_random_t *rng) {
   pcg128_t out;
   if (rng->post != 1) {
     out = rng->state;
-    pcg64_custom_step(rng);
+    lcg128mix_step(rng);
   } else {
-    pcg64_custom_step(rng);
+    lcg128mix_step(rng);
     out = rng->state;
   }
   switch (rng->output_idx) {
@@ -73,34 +73,34 @@ static INLINE uint64_t pcg64_custom_next(pcg64_custom_random_t *rng) {
   return (uint64_t)(-1);
 }
 
-typedef struct PCG64_CUSTOM_STATE_T {
-  pcg64_custom_random_t *pcg_state;
+typedef struct lcg128mix_STATE_T {
+  lcg128mix_random_t *pcg_state;
   int use_dxsm;
   int has_uint32;
   uint32_t uinteger;
-} pcg64_custom_state_t;
+} lcg128mix_state_t;
 
-static INLINE uint64_t pcg64_custom_next64(pcg64_custom_state_t *state) {
-  return pcg64_custom_next(state->pcg_state);
+static INLINE uint64_t lcg128mix_next64(lcg128mix_state_t *state) {
+  return lcg128mix_next(state->pcg_state);
 }
 
-static INLINE uint32_t pcg64_custom_next32(pcg64_custom_state_t *state) {
+static INLINE uint32_t lcg128mix_next32(lcg128mix_state_t *state) {
   if (state->has_uint32) {
     state->has_uint32 = 0;
     return state->uinteger;
   }
-  uint64_t value = pcg64_custom_next(state->pcg_state);
+  uint64_t value = lcg128mix_next(state->pcg_state);
   state->has_uint32 = 1;
   state->uinteger = value >> 32;
   return (uint32_t)value;
 }
 
-void pcg64_custom_set_state(pcg64_custom_random_t *rng, uint64_t state[],
+void lcg128mix_set_state(lcg128mix_random_t *rng, uint64_t state[],
                             uint64_t inc[], uint64_t multiplier[]);
-void pcg64_custom_get_state(pcg64_custom_random_t *rng, uint64_t state[],
+void lcg128mix_get_state(lcg128mix_random_t *rng, uint64_t state[],
                             uint64_t inc[], uint64_t multiplier[]);
-void pcg64_custom_seed(pcg64_custom_random_t *rng, uint64_t state[],
+void lcg128mix_seed(lcg128mix_random_t *rng, uint64_t state[],
                        uint64_t inc[], uint64_t multiplier[]);
-void pcg64_custom_advance(pcg64_custom_state_t *rng, uint64_t step[]);
+void lcg128mix_advance(lcg128mix_state_t *rng, uint64_t step[]);
 
-#endif /* PCG64_CUSTOM_H_INCLUDED */
+#endif /* lcg128mix_H_INCLUDED */
