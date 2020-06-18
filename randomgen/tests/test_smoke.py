@@ -21,7 +21,7 @@ from randomgen import (
     SPECK128,
     AESCounter,
     ChaCha,
-    CustomPCG64,
+    LCG128Mix,
     Generator,
     Philox,
     ThreeFry,
@@ -658,7 +658,7 @@ class RNG(object):
         with pytest.raises((ValueError, TypeError)):
             self.rg.bit_generator.seed(seed)
 
-        if isinstance(self.rg.bit_generator, (LXM, CustomPCG64)):
+        if isinstance(self.rg.bit_generator, (LXM, LCG128Mix)):
             return
         seed = np.array([1, 2, 3, out_of_bounds])
         with pytest.raises((ValueError, TypeError)):
@@ -1459,11 +1459,11 @@ class TestLXM(RNG):
         return Generator(self.bit_generator(seed=seed))
 
 
-class TestCustomPCG64(RNG):
+class TestLCG128Mix(RNG):
     @classmethod
     def setup_class(cls):
         super().setup_class()
-        cls.bit_generator = CustomPCG64
+        cls.bit_generator = LCG128Mix
         cls.seed = [2 ** 231 + 2 ** 21 + 2 ** 16 + 2 ** 5 + 1]
         cls.rg = Generator(cls.bit_generator(*cls.seed))
         cls.advance = 2 ** 63 + 2 ** 31 + 2 ** 15 + 1

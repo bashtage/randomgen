@@ -3,8 +3,7 @@ CTypes
 ChaCha
 Congruential
 Covariance
-CustomPCG
-CustomPCG64
+LCG128Mix
 Customizable
 DSFMT
 Docstrings

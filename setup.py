@@ -248,7 +248,7 @@ ext = Extension(
     + [
         src_join("pcg64", "pcg64-common.c"),
         src_join("pcg64", "pcg64-v2.c"),
-        src_join("pcg64", "pcg64-custom.c"),
+        src_join("pcg64", "lcg128mix.c"),
     ],
     libraries=EXTRA_LIBRARIES,
     include_dirs=EXTRA_INCLUDE_DIRS,

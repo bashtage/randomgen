@@ -50,7 +50,7 @@ What's New or Different
   :class:`~randomgen.speck128.SPECK128`).
 * Support for writing :class:`~randomgen.wrapper.UserBitGenerator` in Python (slow) or numba (fast)
   that can be used as an input for :class:`~numpy.random.Generator`.
-* Extended configuration options in :class:`~randomgen.pcg64.PCG64` (see also :class:`~randomgen.pcg64.CustomPCG64`),
+* Extended configuration options in :class:`~randomgen.pcg64.PCG64` (see also :class:`~randomgen.pcg64.LCG128Mix`),
   :class:`~randomgen.sfc.SFC64`, and :class:`~randomgen.philox.Philox`.
 
 See :ref:`new-or-different` for a complete list of improvements and
@@ -91,7 +91,7 @@ generators, 'in addition' to the standard PRNG in NumPy.  The included PRNGs are
   can be advanced by an arbitrary amount. See the documentation for
   :meth:`~randomgen.pcg64.PCG64.advance`. PCG-64 has a period of
   :math:`2^{128}`. See the `PCG author's page`_ for more details about
-  this class of PRNG. :class:`~randomgen.pcg64.CustomPCG64` extends the
+  this class of PRNG. :class:`~randomgen.pcg64.LCG128Mix` extends the
   basic PCG-64 generator to allow user-defined multipliers and output functions.
 * ThreeFry and Philox - counter-based generators capable of being advanced an
   arbitrary number of steps or generating independent streams. See the

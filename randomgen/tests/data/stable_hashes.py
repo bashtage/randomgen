@@ -655,123 +655,123 @@ known_hashes = {
         "initial_state_hash": "35ebc819d8f1aa7221351102db3262f93da7aebd1792989299ca925d7888d500",
         "final_state_hash": "c3853500044108dd8456aed82bd5943f06e471e45e3150dfc7fc30bc29d15f22",
     },
-    ("CustomPCG64", "seed"): {
+    ("LCG128Mix", "seed"): {
         "random_values": "78b425d06f86a7f99d2dbd1a37792a4611c246c80aebe49b8071b6002d081e76",
         "initial_state_hash": "8c1ff32d89688ea14e1db0c4623556e7bc7bf34aa27e74e9251fa1170800bc20",
         "final_state_hash": "374b2625f6c5dcca495a19ef372031a1f9b7edb6375d945ca9b96d628083ae68",
     },
-    ("CustomPCG64", "seed", "inc", 0): {
+    ("LCG128Mix", "seed", "inc", 0): {
         "random_values": "4d8bbff64c61c5f3158a043946b78d9c556091df421baf1dd5fbd506d7610dd2",
         "initial_state_hash": "c30cc6dddf17d6d9a66b1d662ff8a7960670853b1c6172100e2fd3719c98e8c2",
         "final_state_hash": "459beeb952c7dcbe8632a9684684321e1408b5bebdf5a474d9cc85e7d19efdf6",
     },
-    ("CustomPCG64", "seed", "inc", None): {
+    ("LCG128Mix", "seed", "inc", None): {
         "random_values": "78b425d06f86a7f99d2dbd1a37792a4611c246c80aebe49b8071b6002d081e76",
         "initial_state_hash": "8c1ff32d89688ea14e1db0c4623556e7bc7bf34aa27e74e9251fa1170800bc20",
         "final_state_hash": "374b2625f6c5dcca495a19ef372031a1f9b7edb6375d945ca9b96d628083ae68",
     },
-    ("CustomPCG64", "seed", "output", "xsl-rr"): {
+    ("LCG128Mix", "seed", "output", "xsl-rr"): {
         "random_values": "78b425d06f86a7f99d2dbd1a37792a4611c246c80aebe49b8071b6002d081e76",
         "initial_state_hash": "8c1ff32d89688ea14e1db0c4623556e7bc7bf34aa27e74e9251fa1170800bc20",
         "final_state_hash": "374b2625f6c5dcca495a19ef372031a1f9b7edb6375d945ca9b96d628083ae68",
     },
-    ("CustomPCG64", "seed", "output", "dxsm"): {
+    ("LCG128Mix", "seed", "output", "dxsm"): {
         "random_values": "0e3a373bb1700e5e1111ce1dbadb7c1448b0c51aad2770b838668f7b9d5d36fa",
         "initial_state_hash": "8c1ff32d89688ea14e1db0c4623556e7bc7bf34aa27e74e9251fa1170800bc20",
         "final_state_hash": "374b2625f6c5dcca495a19ef372031a1f9b7edb6375d945ca9b96d628083ae68",
     },
-    ("CustomPCG64", "seed", "post", True): {
+    ("LCG128Mix", "seed", "post", True): {
         "random_values": "78b425d06f86a7f99d2dbd1a37792a4611c246c80aebe49b8071b6002d081e76",
         "initial_state_hash": "8c1ff32d89688ea14e1db0c4623556e7bc7bf34aa27e74e9251fa1170800bc20",
         "final_state_hash": "374b2625f6c5dcca495a19ef372031a1f9b7edb6375d945ca9b96d628083ae68",
     },
-    ("CustomPCG64", "seed", "post", False): {
+    ("LCG128Mix", "seed", "post", False): {
         "random_values": "cf6b9277a5ee53cf902657c7643b36c1dee8ac99f1e0cdc8772e770f2fcb0db7",
         "initial_state_hash": "23d9a1abc4ff389811d5a0dbd7ff4ac2eacea3dce401e93c0f1683335446e47f",
         "final_state_hash": "d80562332576fc44ac9dcb507c29c55310b51be1cfb0bc5255fa5daefd316f5f",
     },
-    ("CustomPCG64", "seed", "dxsm_multiplier", 11400714819323198485): {
+    ("LCG128Mix", "seed", "dxsm_multiplier", 11400714819323198485): {
         "random_values": "78b425d06f86a7f99d2dbd1a37792a4611c246c80aebe49b8071b6002d081e76",
         "initial_state_hash": "8c50dcc6bc71efe1af580ec8f139de7f6e6478017f775d25ec4901e321ddf7ba",
         "final_state_hash": "275314216146881660a4851271ab303848fb6c1ee281ae436777484bc2c9a548",
     },
-    ("CustomPCG64", "seed", "dxsm_multiplier", 15750249268501108917): {
+    ("LCG128Mix", "seed", "dxsm_multiplier", 15750249268501108917): {
         "random_values": "78b425d06f86a7f99d2dbd1a37792a4611c246c80aebe49b8071b6002d081e76",
         "initial_state_hash": "8c1ff32d89688ea14e1db0c4623556e7bc7bf34aa27e74e9251fa1170800bc20",
         "final_state_hash": "374b2625f6c5dcca495a19ef372031a1f9b7edb6375d945ca9b96d628083ae68",
     },
-    ("CustomPCG64", "seed", "multiplier", 52583122484843402430317208685168068605): {
+    ("LCG128Mix", "seed", "multiplier", 52583122484843402430317208685168068605): {
         "random_values": "e6571719b3b423787db61e2ce79065f4ce7dbcc00a149207188fb29165bda27a",
         "initial_state_hash": "357a515aa5a1da541c19f34bd07642c4780c2360c69324e49219f1070c51d04c",
         "final_state_hash": "42284476ec5bc9eded19471847d64d951fbe71ffd69639398b5f616db6982374",
     },
-    ("CustomPCG64", "seed", "multiplier", 47026247687942121848144207491837523525): {
+    ("LCG128Mix", "seed", "multiplier", 47026247687942121848144207491837523525): {
         "random_values": "78b425d06f86a7f99d2dbd1a37792a4611c246c80aebe49b8071b6002d081e76",
         "initial_state_hash": "8c1ff32d89688ea14e1db0c4623556e7bc7bf34aa27e74e9251fa1170800bc20",
         "final_state_hash": "374b2625f6c5dcca495a19ef372031a1f9b7edb6375d945ca9b96d628083ae68",
     },
-    ("CustomPCG64", "seed", "inc", 0, "output", "xsl-rr"): {
+    ("LCG128Mix", "seed", "inc", 0, "output", "xsl-rr"): {
         "random_values": "4d8bbff64c61c5f3158a043946b78d9c556091df421baf1dd5fbd506d7610dd2",
         "initial_state_hash": "c30cc6dddf17d6d9a66b1d662ff8a7960670853b1c6172100e2fd3719c98e8c2",
         "final_state_hash": "459beeb952c7dcbe8632a9684684321e1408b5bebdf5a474d9cc85e7d19efdf6",
     },
-    ("CustomPCG64", "seed", "inc", 0, "output", "dxsm"): {
+    ("LCG128Mix", "seed", "inc", 0, "output", "dxsm"): {
         "random_values": "007aaf954de7435d87abe06fb957cbade21732c6ceafb80335e89a5ca322440e",
         "initial_state_hash": "c30cc6dddf17d6d9a66b1d662ff8a7960670853b1c6172100e2fd3719c98e8c2",
         "final_state_hash": "459beeb952c7dcbe8632a9684684321e1408b5bebdf5a474d9cc85e7d19efdf6",
     },
-    ("CustomPCG64", "seed", "inc", None, "output", "xsl-rr"): {
+    ("LCG128Mix", "seed", "inc", None, "output", "xsl-rr"): {
         "random_values": "78b425d06f86a7f99d2dbd1a37792a4611c246c80aebe49b8071b6002d081e76",
         "initial_state_hash": "8c1ff32d89688ea14e1db0c4623556e7bc7bf34aa27e74e9251fa1170800bc20",
         "final_state_hash": "374b2625f6c5dcca495a19ef372031a1f9b7edb6375d945ca9b96d628083ae68",
     },
-    ("CustomPCG64", "seed", "inc", None, "output", "dxsm"): {
+    ("LCG128Mix", "seed", "inc", None, "output", "dxsm"): {
         "random_values": "0e3a373bb1700e5e1111ce1dbadb7c1448b0c51aad2770b838668f7b9d5d36fa",
         "initial_state_hash": "8c1ff32d89688ea14e1db0c4623556e7bc7bf34aa27e74e9251fa1170800bc20",
         "final_state_hash": "374b2625f6c5dcca495a19ef372031a1f9b7edb6375d945ca9b96d628083ae68",
     },
-    ("CustomPCG64", "seed", "inc", 0, "post", True): {
+    ("LCG128Mix", "seed", "inc", 0, "post", True): {
         "random_values": "4d8bbff64c61c5f3158a043946b78d9c556091df421baf1dd5fbd506d7610dd2",
         "initial_state_hash": "c30cc6dddf17d6d9a66b1d662ff8a7960670853b1c6172100e2fd3719c98e8c2",
         "final_state_hash": "459beeb952c7dcbe8632a9684684321e1408b5bebdf5a474d9cc85e7d19efdf6",
     },
-    ("CustomPCG64", "seed", "inc", 0, "post", False): {
+    ("LCG128Mix", "seed", "inc", 0, "post", False): {
         "random_values": "4b028448a5d5bdc72a80201203ffabd31c9680eb79fce732afd8e29ebc785a42",
         "initial_state_hash": "79173a557692071064f5b0c194886d55493edca411e4e2f96e3107093fbe0857",
         "final_state_hash": "77411ad01fb648f72232c1bf560f2cf79f1aa73ba8ce9908f2a728e53e46350e",
     },
-    ("CustomPCG64", "seed", "inc", None, "post", True): {
+    ("LCG128Mix", "seed", "inc", None, "post", True): {
         "random_values": "78b425d06f86a7f99d2dbd1a37792a4611c246c80aebe49b8071b6002d081e76",
         "initial_state_hash": "8c1ff32d89688ea14e1db0c4623556e7bc7bf34aa27e74e9251fa1170800bc20",
         "final_state_hash": "374b2625f6c5dcca495a19ef372031a1f9b7edb6375d945ca9b96d628083ae68",
     },
-    ("CustomPCG64", "seed", "inc", None, "post", False): {
+    ("LCG128Mix", "seed", "inc", None, "post", False): {
         "random_values": "cf6b9277a5ee53cf902657c7643b36c1dee8ac99f1e0cdc8772e770f2fcb0db7",
         "initial_state_hash": "23d9a1abc4ff389811d5a0dbd7ff4ac2eacea3dce401e93c0f1683335446e47f",
         "final_state_hash": "d80562332576fc44ac9dcb507c29c55310b51be1cfb0bc5255fa5daefd316f5f",
     },
-    ("CustomPCG64", "seed", "inc", 0, "dxsm_multiplier", 11400714819323198485): {
+    ("LCG128Mix", "seed", "inc", 0, "dxsm_multiplier", 11400714819323198485): {
         "random_values": "4d8bbff64c61c5f3158a043946b78d9c556091df421baf1dd5fbd506d7610dd2",
         "initial_state_hash": "0a1ab006c181853151094a76e18495865725f89af54fb2d448063aef8a7aea66",
         "final_state_hash": "37110aba91957d5a865a3949e6506a223cb8e50655b9081e047a2ce7a1a7db43",
     },
-    ("CustomPCG64", "seed", "inc", 0, "dxsm_multiplier", 15750249268501108917): {
+    ("LCG128Mix", "seed", "inc", 0, "dxsm_multiplier", 15750249268501108917): {
         "random_values": "4d8bbff64c61c5f3158a043946b78d9c556091df421baf1dd5fbd506d7610dd2",
         "initial_state_hash": "c30cc6dddf17d6d9a66b1d662ff8a7960670853b1c6172100e2fd3719c98e8c2",
         "final_state_hash": "459beeb952c7dcbe8632a9684684321e1408b5bebdf5a474d9cc85e7d19efdf6",
     },
-    ("CustomPCG64", "seed", "inc", None, "dxsm_multiplier", 11400714819323198485): {
+    ("LCG128Mix", "seed", "inc", None, "dxsm_multiplier", 11400714819323198485): {
         "random_values": "78b425d06f86a7f99d2dbd1a37792a4611c246c80aebe49b8071b6002d081e76",
         "initial_state_hash": "8c50dcc6bc71efe1af580ec8f139de7f6e6478017f775d25ec4901e321ddf7ba",
         "final_state_hash": "275314216146881660a4851271ab303848fb6c1ee281ae436777484bc2c9a548",
     },
-    ("CustomPCG64", "seed", "inc", None, "dxsm_multiplier", 15750249268501108917): {
+    ("LCG128Mix", "seed", "inc", None, "dxsm_multiplier", 15750249268501108917): {
         "random_values": "78b425d06f86a7f99d2dbd1a37792a4611c246c80aebe49b8071b6002d081e76",
         "initial_state_hash": "8c1ff32d89688ea14e1db0c4623556e7bc7bf34aa27e74e9251fa1170800bc20",
         "final_state_hash": "374b2625f6c5dcca495a19ef372031a1f9b7edb6375d945ca9b96d628083ae68",
     },
     (
-        "CustomPCG64",
+        "LCG128Mix",
         "seed",
         "inc",
         0,
@@ -783,7 +783,7 @@ known_hashes = {
         "final_state_hash": "69181a61eb6f9f0af060db3a0f8e4b4227117f61e721a9b4c8f3aeda4baa2748",
     },
     (
-        "CustomPCG64",
+        "LCG128Mix",
         "seed",
         "inc",
         0,
@@ -795,7 +795,7 @@ known_hashes = {
         "final_state_hash": "459beeb952c7dcbe8632a9684684321e1408b5bebdf5a474d9cc85e7d19efdf6",
     },
     (
-        "CustomPCG64",
+        "LCG128Mix",
         "seed",
         "inc",
         None,
@@ -807,7 +807,7 @@ known_hashes = {
         "final_state_hash": "42284476ec5bc9eded19471847d64d951fbe71ffd69639398b5f616db6982374",
     },
     (
-        "CustomPCG64",
+        "LCG128Mix",
         "seed",
         "inc",
         None,
@@ -818,28 +818,28 @@ known_hashes = {
         "initial_state_hash": "8c1ff32d89688ea14e1db0c4623556e7bc7bf34aa27e74e9251fa1170800bc20",
         "final_state_hash": "374b2625f6c5dcca495a19ef372031a1f9b7edb6375d945ca9b96d628083ae68",
     },
-    ("CustomPCG64", "seed", "output", "xsl-rr", "post", True): {
+    ("LCG128Mix", "seed", "output", "xsl-rr", "post", True): {
         "random_values": "78b425d06f86a7f99d2dbd1a37792a4611c246c80aebe49b8071b6002d081e76",
         "initial_state_hash": "8c1ff32d89688ea14e1db0c4623556e7bc7bf34aa27e74e9251fa1170800bc20",
         "final_state_hash": "374b2625f6c5dcca495a19ef372031a1f9b7edb6375d945ca9b96d628083ae68",
     },
-    ("CustomPCG64", "seed", "output", "xsl-rr", "post", False): {
+    ("LCG128Mix", "seed", "output", "xsl-rr", "post", False): {
         "random_values": "cf6b9277a5ee53cf902657c7643b36c1dee8ac99f1e0cdc8772e770f2fcb0db7",
         "initial_state_hash": "23d9a1abc4ff389811d5a0dbd7ff4ac2eacea3dce401e93c0f1683335446e47f",
         "final_state_hash": "d80562332576fc44ac9dcb507c29c55310b51be1cfb0bc5255fa5daefd316f5f",
     },
-    ("CustomPCG64", "seed", "output", "dxsm", "post", True): {
+    ("LCG128Mix", "seed", "output", "dxsm", "post", True): {
         "random_values": "0e3a373bb1700e5e1111ce1dbadb7c1448b0c51aad2770b838668f7b9d5d36fa",
         "initial_state_hash": "8c1ff32d89688ea14e1db0c4623556e7bc7bf34aa27e74e9251fa1170800bc20",
         "final_state_hash": "374b2625f6c5dcca495a19ef372031a1f9b7edb6375d945ca9b96d628083ae68",
     },
-    ("CustomPCG64", "seed", "output", "dxsm", "post", False): {
+    ("LCG128Mix", "seed", "output", "dxsm", "post", False): {
         "random_values": "2791046aaabba88b68fa95e6d9dadf0cc322d9b902a1801fb2fa2c459ba67b2b",
         "initial_state_hash": "23d9a1abc4ff389811d5a0dbd7ff4ac2eacea3dce401e93c0f1683335446e47f",
         "final_state_hash": "d80562332576fc44ac9dcb507c29c55310b51be1cfb0bc5255fa5daefd316f5f",
     },
     (
-        "CustomPCG64",
+        "LCG128Mix",
         "seed",
         "output",
         "xsl-rr",
@@ -851,7 +851,7 @@ known_hashes = {
         "final_state_hash": "275314216146881660a4851271ab303848fb6c1ee281ae436777484bc2c9a548",
     },
     (
-        "CustomPCG64",
+        "LCG128Mix",
         "seed",
         "output",
         "xsl-rr",
@@ -863,7 +863,7 @@ known_hashes = {
         "final_state_hash": "374b2625f6c5dcca495a19ef372031a1f9b7edb6375d945ca9b96d628083ae68",
     },
     (
-        "CustomPCG64",
+        "LCG128Mix",
         "seed",
         "output",
         "dxsm",
@@ -875,7 +875,7 @@ known_hashes = {
         "final_state_hash": "275314216146881660a4851271ab303848fb6c1ee281ae436777484bc2c9a548",
     },
     (
-        "CustomPCG64",
+        "LCG128Mix",
         "seed",
         "output",
         "dxsm",
@@ -887,7 +887,7 @@ known_hashes = {
         "final_state_hash": "374b2625f6c5dcca495a19ef372031a1f9b7edb6375d945ca9b96d628083ae68",
     },
     (
-        "CustomPCG64",
+        "LCG128Mix",
         "seed",
         "output",
         "xsl-rr",
@@ -899,7 +899,7 @@ known_hashes = {
         "final_state_hash": "42284476ec5bc9eded19471847d64d951fbe71ffd69639398b5f616db6982374",
     },
     (
-        "CustomPCG64",
+        "LCG128Mix",
         "seed",
         "output",
         "xsl-rr",
@@ -911,7 +911,7 @@ known_hashes = {
         "final_state_hash": "374b2625f6c5dcca495a19ef372031a1f9b7edb6375d945ca9b96d628083ae68",
     },
     (
-        "CustomPCG64",
+        "LCG128Mix",
         "seed",
         "output",
         "dxsm",
@@ -923,7 +923,7 @@ known_hashes = {
         "final_state_hash": "42284476ec5bc9eded19471847d64d951fbe71ffd69639398b5f616db6982374",
     },
     (
-        "CustomPCG64",
+        "LCG128Mix",
         "seed",
         "output",
         "dxsm",
@@ -934,28 +934,28 @@ known_hashes = {
         "initial_state_hash": "8c1ff32d89688ea14e1db0c4623556e7bc7bf34aa27e74e9251fa1170800bc20",
         "final_state_hash": "374b2625f6c5dcca495a19ef372031a1f9b7edb6375d945ca9b96d628083ae68",
     },
-    ("CustomPCG64", "seed", "post", True, "dxsm_multiplier", 11400714819323198485): {
+    ("LCG128Mix", "seed", "post", True, "dxsm_multiplier", 11400714819323198485): {
         "random_values": "78b425d06f86a7f99d2dbd1a37792a4611c246c80aebe49b8071b6002d081e76",
         "initial_state_hash": "8c50dcc6bc71efe1af580ec8f139de7f6e6478017f775d25ec4901e321ddf7ba",
         "final_state_hash": "275314216146881660a4851271ab303848fb6c1ee281ae436777484bc2c9a548",
     },
-    ("CustomPCG64", "seed", "post", True, "dxsm_multiplier", 15750249268501108917): {
+    ("LCG128Mix", "seed", "post", True, "dxsm_multiplier", 15750249268501108917): {
         "random_values": "78b425d06f86a7f99d2dbd1a37792a4611c246c80aebe49b8071b6002d081e76",
         "initial_state_hash": "8c1ff32d89688ea14e1db0c4623556e7bc7bf34aa27e74e9251fa1170800bc20",
         "final_state_hash": "374b2625f6c5dcca495a19ef372031a1f9b7edb6375d945ca9b96d628083ae68",
     },
-    ("CustomPCG64", "seed", "post", False, "dxsm_multiplier", 11400714819323198485): {
+    ("LCG128Mix", "seed", "post", False, "dxsm_multiplier", 11400714819323198485): {
         "random_values": "cf6b9277a5ee53cf902657c7643b36c1dee8ac99f1e0cdc8772e770f2fcb0db7",
         "initial_state_hash": "9e351985349d11cdb6fbb878da2700d7808ab8bac6fd88d2beeb15b7f40729c1",
         "final_state_hash": "1fe897f9eb3aa93d1221ecb240749a0345b407dffac48bda1bc0957cf29c8caa",
     },
-    ("CustomPCG64", "seed", "post", False, "dxsm_multiplier", 15750249268501108917): {
+    ("LCG128Mix", "seed", "post", False, "dxsm_multiplier", 15750249268501108917): {
         "random_values": "cf6b9277a5ee53cf902657c7643b36c1dee8ac99f1e0cdc8772e770f2fcb0db7",
         "initial_state_hash": "23d9a1abc4ff389811d5a0dbd7ff4ac2eacea3dce401e93c0f1683335446e47f",
         "final_state_hash": "d80562332576fc44ac9dcb507c29c55310b51be1cfb0bc5255fa5daefd316f5f",
     },
     (
-        "CustomPCG64",
+        "LCG128Mix",
         "seed",
         "post",
         True,
@@ -967,7 +967,7 @@ known_hashes = {
         "final_state_hash": "42284476ec5bc9eded19471847d64d951fbe71ffd69639398b5f616db6982374",
     },
     (
-        "CustomPCG64",
+        "LCG128Mix",
         "seed",
         "post",
         True,
@@ -979,7 +979,7 @@ known_hashes = {
         "final_state_hash": "374b2625f6c5dcca495a19ef372031a1f9b7edb6375d945ca9b96d628083ae68",
     },
     (
-        "CustomPCG64",
+        "LCG128Mix",
         "seed",
         "post",
         False,
@@ -991,7 +991,7 @@ known_hashes = {
         "final_state_hash": "14cc3923fc978a92b978f814aad03fe0a8027e144e1a64ebeaf4a818f965ce0e",
     },
     (
-        "CustomPCG64",
+        "LCG128Mix",
         "seed",
         "post",
         False,
@@ -1003,7 +1003,7 @@ known_hashes = {
         "final_state_hash": "d80562332576fc44ac9dcb507c29c55310b51be1cfb0bc5255fa5daefd316f5f",
     },
     (
-        "CustomPCG64",
+        "LCG128Mix",
         "seed",
         "dxsm_multiplier",
         11400714819323198485,
@@ -1015,7 +1015,7 @@ known_hashes = {
         "final_state_hash": "087707bacce00c40551708f1dadbf8450e2ddf7b253d06d1898e024eac30b49e",
     },
     (
-        "CustomPCG64",
+        "LCG128Mix",
         "seed",
         "dxsm_multiplier",
         11400714819323198485,
@@ -1027,7 +1027,7 @@ known_hashes = {
         "final_state_hash": "275314216146881660a4851271ab303848fb6c1ee281ae436777484bc2c9a548",
     },
     (
-        "CustomPCG64",
+        "LCG128Mix",
         "seed",
         "dxsm_multiplier",
         15750249268501108917,
@@ -1039,7 +1039,7 @@ known_hashes = {
         "final_state_hash": "42284476ec5bc9eded19471847d64d951fbe71ffd69639398b5f616db6982374",
     },
     (
-        "CustomPCG64",
+        "LCG128Mix",
         "seed",
         "dxsm_multiplier",
         15750249268501108917,
@@ -1050,48 +1050,48 @@ known_hashes = {
         "initial_state_hash": "8c1ff32d89688ea14e1db0c4623556e7bc7bf34aa27e74e9251fa1170800bc20",
         "final_state_hash": "374b2625f6c5dcca495a19ef372031a1f9b7edb6375d945ca9b96d628083ae68",
     },
-    ("CustomPCG64", "seed", "inc", 0, "output", "xsl-rr", "post", True): {
+    ("LCG128Mix", "seed", "inc", 0, "output", "xsl-rr", "post", True): {
         "random_values": "4d8bbff64c61c5f3158a043946b78d9c556091df421baf1dd5fbd506d7610dd2",
         "initial_state_hash": "c30cc6dddf17d6d9a66b1d662ff8a7960670853b1c6172100e2fd3719c98e8c2",
         "final_state_hash": "459beeb952c7dcbe8632a9684684321e1408b5bebdf5a474d9cc85e7d19efdf6",
     },
-    ("CustomPCG64", "seed", "inc", 0, "output", "xsl-rr", "post", False): {
+    ("LCG128Mix", "seed", "inc", 0, "output", "xsl-rr", "post", False): {
         "random_values": "4b028448a5d5bdc72a80201203ffabd31c9680eb79fce732afd8e29ebc785a42",
         "initial_state_hash": "79173a557692071064f5b0c194886d55493edca411e4e2f96e3107093fbe0857",
         "final_state_hash": "77411ad01fb648f72232c1bf560f2cf79f1aa73ba8ce9908f2a728e53e46350e",
     },
-    ("CustomPCG64", "seed", "inc", 0, "output", "dxsm", "post", True): {
+    ("LCG128Mix", "seed", "inc", 0, "output", "dxsm", "post", True): {
         "random_values": "007aaf954de7435d87abe06fb957cbade21732c6ceafb80335e89a5ca322440e",
         "initial_state_hash": "c30cc6dddf17d6d9a66b1d662ff8a7960670853b1c6172100e2fd3719c98e8c2",
         "final_state_hash": "459beeb952c7dcbe8632a9684684321e1408b5bebdf5a474d9cc85e7d19efdf6",
     },
-    ("CustomPCG64", "seed", "inc", 0, "output", "dxsm", "post", False): {
+    ("LCG128Mix", "seed", "inc", 0, "output", "dxsm", "post", False): {
         "random_values": "9d176eaab6fd671d0be8f9cff0b349c2bb641431efa940836d5b8b7ffb16339f",
         "initial_state_hash": "79173a557692071064f5b0c194886d55493edca411e4e2f96e3107093fbe0857",
         "final_state_hash": "77411ad01fb648f72232c1bf560f2cf79f1aa73ba8ce9908f2a728e53e46350e",
     },
-    ("CustomPCG64", "seed", "inc", None, "output", "xsl-rr", "post", True): {
+    ("LCG128Mix", "seed", "inc", None, "output", "xsl-rr", "post", True): {
         "random_values": "78b425d06f86a7f99d2dbd1a37792a4611c246c80aebe49b8071b6002d081e76",
         "initial_state_hash": "8c1ff32d89688ea14e1db0c4623556e7bc7bf34aa27e74e9251fa1170800bc20",
         "final_state_hash": "374b2625f6c5dcca495a19ef372031a1f9b7edb6375d945ca9b96d628083ae68",
     },
-    ("CustomPCG64", "seed", "inc", None, "output", "xsl-rr", "post", False): {
+    ("LCG128Mix", "seed", "inc", None, "output", "xsl-rr", "post", False): {
         "random_values": "cf6b9277a5ee53cf902657c7643b36c1dee8ac99f1e0cdc8772e770f2fcb0db7",
         "initial_state_hash": "23d9a1abc4ff389811d5a0dbd7ff4ac2eacea3dce401e93c0f1683335446e47f",
         "final_state_hash": "d80562332576fc44ac9dcb507c29c55310b51be1cfb0bc5255fa5daefd316f5f",
     },
-    ("CustomPCG64", "seed", "inc", None, "output", "dxsm", "post", True): {
+    ("LCG128Mix", "seed", "inc", None, "output", "dxsm", "post", True): {
         "random_values": "0e3a373bb1700e5e1111ce1dbadb7c1448b0c51aad2770b838668f7b9d5d36fa",
         "initial_state_hash": "8c1ff32d89688ea14e1db0c4623556e7bc7bf34aa27e74e9251fa1170800bc20",
         "final_state_hash": "374b2625f6c5dcca495a19ef372031a1f9b7edb6375d945ca9b96d628083ae68",
     },
-    ("CustomPCG64", "seed", "inc", None, "output", "dxsm", "post", False): {
+    ("LCG128Mix", "seed", "inc", None, "output", "dxsm", "post", False): {
         "random_values": "2791046aaabba88b68fa95e6d9dadf0cc322d9b902a1801fb2fa2c459ba67b2b",
         "initial_state_hash": "23d9a1abc4ff389811d5a0dbd7ff4ac2eacea3dce401e93c0f1683335446e47f",
         "final_state_hash": "d80562332576fc44ac9dcb507c29c55310b51be1cfb0bc5255fa5daefd316f5f",
     },
     (
-        "CustomPCG64",
+        "LCG128Mix",
         "seed",
         "inc",
         0,
@@ -1105,7 +1105,7 @@ known_hashes = {
         "final_state_hash": "37110aba91957d5a865a3949e6506a223cb8e50655b9081e047a2ce7a1a7db43",
     },
     (
-        "CustomPCG64",
+        "LCG128Mix",
         "seed",
         "inc",
         0,
@@ -1119,7 +1119,7 @@ known_hashes = {
         "final_state_hash": "459beeb952c7dcbe8632a9684684321e1408b5bebdf5a474d9cc85e7d19efdf6",
     },
     (
-        "CustomPCG64",
+        "LCG128Mix",
         "seed",
         "inc",
         0,
@@ -1133,7 +1133,7 @@ known_hashes = {
         "final_state_hash": "37110aba91957d5a865a3949e6506a223cb8e50655b9081e047a2ce7a1a7db43",
     },
     (
-        "CustomPCG64",
+        "LCG128Mix",
         "seed",
         "inc",
         0,
@@ -1147,7 +1147,7 @@ known_hashes = {
         "final_state_hash": "459beeb952c7dcbe8632a9684684321e1408b5bebdf5a474d9cc85e7d19efdf6",
     },
     (
-        "CustomPCG64",
+        "LCG128Mix",
         "seed",
         "inc",
         None,
@@ -1161,7 +1161,7 @@ known_hashes = {
         "final_state_hash": "275314216146881660a4851271ab303848fb6c1ee281ae436777484bc2c9a548",
     },
     (
-        "CustomPCG64",
+        "LCG128Mix",
         "seed",
         "inc",
         None,
@@ -1175,7 +1175,7 @@ known_hashes = {
         "final_state_hash": "374b2625f6c5dcca495a19ef372031a1f9b7edb6375d945ca9b96d628083ae68",
     },
     (
-        "CustomPCG64",
+        "LCG128Mix",
         "seed",
         "inc",
         None,
@@ -1189,7 +1189,7 @@ known_hashes = {
         "final_state_hash": "275314216146881660a4851271ab303848fb6c1ee281ae436777484bc2c9a548",
     },
     (
-        "CustomPCG64",
+        "LCG128Mix",
         "seed",
         "inc",
         None,
@@ -1203,7 +1203,7 @@ known_hashes = {
         "final_state_hash": "374b2625f6c5dcca495a19ef372031a1f9b7edb6375d945ca9b96d628083ae68",
     },
     (
-        "CustomPCG64",
+        "LCG128Mix",
         "seed",
         "inc",
         0,
@@ -1217,7 +1217,7 @@ known_hashes = {
         "final_state_hash": "69181a61eb6f9f0af060db3a0f8e4b4227117f61e721a9b4c8f3aeda4baa2748",
     },
     (
-        "CustomPCG64",
+        "LCG128Mix",
         "seed",
         "inc",
         0,
@@ -1231,7 +1231,7 @@ known_hashes = {
         "final_state_hash": "459beeb952c7dcbe8632a9684684321e1408b5bebdf5a474d9cc85e7d19efdf6",
     },
     (
-        "CustomPCG64",
+        "LCG128Mix",
         "seed",
         "inc",
         0,
@@ -1245,7 +1245,7 @@ known_hashes = {
         "final_state_hash": "69181a61eb6f9f0af060db3a0f8e4b4227117f61e721a9b4c8f3aeda4baa2748",
     },
     (
-        "CustomPCG64",
+        "LCG128Mix",
         "seed",
         "inc",
         0,
@@ -1259,7 +1259,7 @@ known_hashes = {
         "final_state_hash": "459beeb952c7dcbe8632a9684684321e1408b5bebdf5a474d9cc85e7d19efdf6",
     },
     (
-        "CustomPCG64",
+        "LCG128Mix",
         "seed",
         "inc",
         None,
@@ -1273,7 +1273,7 @@ known_hashes = {
         "final_state_hash": "42284476ec5bc9eded19471847d64d951fbe71ffd69639398b5f616db6982374",
     },
     (
-        "CustomPCG64",
+        "LCG128Mix",
         "seed",
         "inc",
         None,
@@ -1287,7 +1287,7 @@ known_hashes = {
         "final_state_hash": "374b2625f6c5dcca495a19ef372031a1f9b7edb6375d945ca9b96d628083ae68",
     },
     (
-        "CustomPCG64",
+        "LCG128Mix",
         "seed",
         "inc",
         None,
@@ -1301,7 +1301,7 @@ known_hashes = {
         "final_state_hash": "42284476ec5bc9eded19471847d64d951fbe71ffd69639398b5f616db6982374",
     },
     (
-        "CustomPCG64",
+        "LCG128Mix",
         "seed",
         "inc",
         None,
@@ -1315,7 +1315,7 @@ known_hashes = {
         "final_state_hash": "374b2625f6c5dcca495a19ef372031a1f9b7edb6375d945ca9b96d628083ae68",
     },
     (
-        "CustomPCG64",
+        "LCG128Mix",
         "seed",
         "inc",
         0,
@@ -1329,7 +1329,7 @@ known_hashes = {
         "final_state_hash": "37110aba91957d5a865a3949e6506a223cb8e50655b9081e047a2ce7a1a7db43",
     },
     (
-        "CustomPCG64",
+        "LCG128Mix",
         "seed",
         "inc",
         0,
@@ -1343,7 +1343,7 @@ known_hashes = {
         "final_state_hash": "459beeb952c7dcbe8632a9684684321e1408b5bebdf5a474d9cc85e7d19efdf6",
     },
     (
-        "CustomPCG64",
+        "LCG128Mix",
         "seed",
         "inc",
         0,
@@ -1357,7 +1357,7 @@ known_hashes = {
         "final_state_hash": "35f013d09a45fdaddeda8087468d3945cb3fece180ea3372b1072d49dcebb6ef",
     },
     (
-        "CustomPCG64",
+        "LCG128Mix",
         "seed",
         "inc",
         0,
@@ -1371,7 +1371,7 @@ known_hashes = {
         "final_state_hash": "77411ad01fb648f72232c1bf560f2cf79f1aa73ba8ce9908f2a728e53e46350e",
     },
     (
-        "CustomPCG64",
+        "LCG128Mix",
         "seed",
         "inc",
         None,
@@ -1385,7 +1385,7 @@ known_hashes = {
         "final_state_hash": "275314216146881660a4851271ab303848fb6c1ee281ae436777484bc2c9a548",
     },
     (
-        "CustomPCG64",
+        "LCG128Mix",
         "seed",
         "inc",
         None,
@@ -1399,7 +1399,7 @@ known_hashes = {
         "final_state_hash": "374b2625f6c5dcca495a19ef372031a1f9b7edb6375d945ca9b96d628083ae68",
     },
     (
-        "CustomPCG64",
+        "LCG128Mix",
         "seed",
         "inc",
         None,
@@ -1413,7 +1413,7 @@ known_hashes = {
         "final_state_hash": "1fe897f9eb3aa93d1221ecb240749a0345b407dffac48bda1bc0957cf29c8caa",
     },
     (
-        "CustomPCG64",
+        "LCG128Mix",
         "seed",
         "inc",
         None,
@@ -1427,7 +1427,7 @@ known_hashes = {
         "final_state_hash": "d80562332576fc44ac9dcb507c29c55310b51be1cfb0bc5255fa5daefd316f5f",
     },
     (
-        "CustomPCG64",
+        "LCG128Mix",
         "seed",
         "inc",
         0,
@@ -1441,7 +1441,7 @@ known_hashes = {
         "final_state_hash": "69181a61eb6f9f0af060db3a0f8e4b4227117f61e721a9b4c8f3aeda4baa2748",
     },
     (
-        "CustomPCG64",
+        "LCG128Mix",
         "seed",
         "inc",
         0,
@@ -1455,7 +1455,7 @@ known_hashes = {
         "final_state_hash": "459beeb952c7dcbe8632a9684684321e1408b5bebdf5a474d9cc85e7d19efdf6",
     },
     (
-        "CustomPCG64",
+        "LCG128Mix",
         "seed",
         "inc",
         0,
@@ -1469,7 +1469,7 @@ known_hashes = {
         "final_state_hash": "75a3d23165a86aebfceb12ff94c0642b35bf1e89311a9a624baace34b65e9674",
     },
     (
-        "CustomPCG64",
+        "LCG128Mix",
         "seed",
         "inc",
         0,
@@ -1483,7 +1483,7 @@ known_hashes = {
         "final_state_hash": "77411ad01fb648f72232c1bf560f2cf79f1aa73ba8ce9908f2a728e53e46350e",
     },
     (
-        "CustomPCG64",
+        "LCG128Mix",
         "seed",
         "inc",
         None,
@@ -1497,7 +1497,7 @@ known_hashes = {
         "final_state_hash": "42284476ec5bc9eded19471847d64d951fbe71ffd69639398b5f616db6982374",
     },
     (
-        "CustomPCG64",
+        "LCG128Mix",
         "seed",
         "inc",
         None,
@@ -1511,7 +1511,7 @@ known_hashes = {
         "final_state_hash": "374b2625f6c5dcca495a19ef372031a1f9b7edb6375d945ca9b96d628083ae68",
     },
     (
-        "CustomPCG64",
+        "LCG128Mix",
         "seed",
         "inc",
         None,
@@ -1525,7 +1525,7 @@ known_hashes = {
         "final_state_hash": "14cc3923fc978a92b978f814aad03fe0a8027e144e1a64ebeaf4a818f965ce0e",
     },
     (
-        "CustomPCG64",
+        "LCG128Mix",
         "seed",
         "inc",
         None,
@@ -1539,7 +1539,7 @@ known_hashes = {
         "final_state_hash": "d80562332576fc44ac9dcb507c29c55310b51be1cfb0bc5255fa5daefd316f5f",
     },
     (
-        "CustomPCG64",
+        "LCG128Mix",
         "seed",
         "inc",
         0,
@@ -1553,7 +1553,7 @@ known_hashes = {
         "final_state_hash": "808f052d237bee6e7f7d83806876e227293ea9c41e99f7d2a03aed67f8fc1fcb",
     },
     (
-        "CustomPCG64",
+        "LCG128Mix",
         "seed",
         "inc",
         0,
@@ -1567,7 +1567,7 @@ known_hashes = {
         "final_state_hash": "37110aba91957d5a865a3949e6506a223cb8e50655b9081e047a2ce7a1a7db43",
     },
     (
-        "CustomPCG64",
+        "LCG128Mix",
         "seed",
         "inc",
         0,
@@ -1581,7 +1581,7 @@ known_hashes = {
         "final_state_hash": "69181a61eb6f9f0af060db3a0f8e4b4227117f61e721a9b4c8f3aeda4baa2748",
     },
     (
-        "CustomPCG64",
+        "LCG128Mix",
         "seed",
         "inc",
         0,
@@ -1595,7 +1595,7 @@ known_hashes = {
         "final_state_hash": "459beeb952c7dcbe8632a9684684321e1408b5bebdf5a474d9cc85e7d19efdf6",
     },
     (
-        "CustomPCG64",
+        "LCG128Mix",
         "seed",
         "inc",
         None,
@@ -1609,7 +1609,7 @@ known_hashes = {
         "final_state_hash": "087707bacce00c40551708f1dadbf8450e2ddf7b253d06d1898e024eac30b49e",
     },
     (
-        "CustomPCG64",
+        "LCG128Mix",
         "seed",
         "inc",
         None,
@@ -1623,7 +1623,7 @@ known_hashes = {
         "final_state_hash": "275314216146881660a4851271ab303848fb6c1ee281ae436777484bc2c9a548",
     },
     (
-        "CustomPCG64",
+        "LCG128Mix",
         "seed",
         "inc",
         None,
@@ -1637,7 +1637,7 @@ known_hashes = {
         "final_state_hash": "42284476ec5bc9eded19471847d64d951fbe71ffd69639398b5f616db6982374",
     },
     (
-        "CustomPCG64",
+        "LCG128Mix",
         "seed",
         "inc",
         None,
@@ -1651,7 +1651,7 @@ known_hashes = {
         "final_state_hash": "374b2625f6c5dcca495a19ef372031a1f9b7edb6375d945ca9b96d628083ae68",
     },
     (
-        "CustomPCG64",
+        "LCG128Mix",
         "seed",
         "output",
         "xsl-rr",
@@ -1665,7 +1665,7 @@ known_hashes = {
         "final_state_hash": "275314216146881660a4851271ab303848fb6c1ee281ae436777484bc2c9a548",
     },
     (
-        "CustomPCG64",
+        "LCG128Mix",
         "seed",
         "output",
         "xsl-rr",
@@ -1679,7 +1679,7 @@ known_hashes = {
         "final_state_hash": "374b2625f6c5dcca495a19ef372031a1f9b7edb6375d945ca9b96d628083ae68",
     },
     (
-        "CustomPCG64",
+        "LCG128Mix",
         "seed",
         "output",
         "xsl-rr",
@@ -1693,7 +1693,7 @@ known_hashes = {
         "final_state_hash": "1fe897f9eb3aa93d1221ecb240749a0345b407dffac48bda1bc0957cf29c8caa",
     },
     (
-        "CustomPCG64",
+        "LCG128Mix",
         "seed",
         "output",
         "xsl-rr",
@@ -1707,7 +1707,7 @@ known_hashes = {
         "final_state_hash": "d80562332576fc44ac9dcb507c29c55310b51be1cfb0bc5255fa5daefd316f5f",
     },
     (
-        "CustomPCG64",
+        "LCG128Mix",
         "seed",
         "output",
         "dxsm",
@@ -1721,7 +1721,7 @@ known_hashes = {
         "final_state_hash": "275314216146881660a4851271ab303848fb6c1ee281ae436777484bc2c9a548",
     },
     (
-        "CustomPCG64",
+        "LCG128Mix",
         "seed",
         "output",
         "dxsm",
@@ -1735,7 +1735,7 @@ known_hashes = {
         "final_state_hash": "374b2625f6c5dcca495a19ef372031a1f9b7edb6375d945ca9b96d628083ae68",
     },
     (
-        "CustomPCG64",
+        "LCG128Mix",
         "seed",
         "output",
         "dxsm",
@@ -1749,7 +1749,7 @@ known_hashes = {
         "final_state_hash": "1fe897f9eb3aa93d1221ecb240749a0345b407dffac48bda1bc0957cf29c8caa",
     },
     (
-        "CustomPCG64",
+        "LCG128Mix",
         "seed",
         "output",
         "dxsm",
@@ -1763,7 +1763,7 @@ known_hashes = {
         "final_state_hash": "d80562332576fc44ac9dcb507c29c55310b51be1cfb0bc5255fa5daefd316f5f",
     },
     (
-        "CustomPCG64",
+        "LCG128Mix",
         "seed",
         "output",
         "xsl-rr",
@@ -1777,7 +1777,7 @@ known_hashes = {
         "final_state_hash": "42284476ec5bc9eded19471847d64d951fbe71ffd69639398b5f616db6982374",
     },
     (
-        "CustomPCG64",
+        "LCG128Mix",
         "seed",
         "output",
         "xsl-rr",
@@ -1791,7 +1791,7 @@ known_hashes = {
         "final_state_hash": "374b2625f6c5dcca495a19ef372031a1f9b7edb6375d945ca9b96d628083ae68",
     },
     (
-        "CustomPCG64",
+        "LCG128Mix",
         "seed",
         "output",
         "xsl-rr",
@@ -1805,7 +1805,7 @@ known_hashes = {
         "final_state_hash": "14cc3923fc978a92b978f814aad03fe0a8027e144e1a64ebeaf4a818f965ce0e",
     },
     (
-        "CustomPCG64",
+        "LCG128Mix",
         "seed",
         "output",
         "xsl-rr",
@@ -1819,7 +1819,7 @@ known_hashes = {
         "final_state_hash": "d80562332576fc44ac9dcb507c29c55310b51be1cfb0bc5255fa5daefd316f5f",
     },
     (
-        "CustomPCG64",
+        "LCG128Mix",
         "seed",
         "output",
         "dxsm",
@@ -1833,7 +1833,7 @@ known_hashes = {
         "final_state_hash": "42284476ec5bc9eded19471847d64d951fbe71ffd69639398b5f616db6982374",
     },
     (
-        "CustomPCG64",
+        "LCG128Mix",
         "seed",
         "output",
         "dxsm",
@@ -1847,7 +1847,7 @@ known_hashes = {
         "final_state_hash": "374b2625f6c5dcca495a19ef372031a1f9b7edb6375d945ca9b96d628083ae68",
     },
     (
-        "CustomPCG64",
+        "LCG128Mix",
         "seed",
         "output",
         "dxsm",
@@ -1861,7 +1861,7 @@ known_hashes = {
         "final_state_hash": "14cc3923fc978a92b978f814aad03fe0a8027e144e1a64ebeaf4a818f965ce0e",
     },
     (
-        "CustomPCG64",
+        "LCG128Mix",
         "seed",
         "output",
         "dxsm",
@@ -1875,7 +1875,7 @@ known_hashes = {
         "final_state_hash": "d80562332576fc44ac9dcb507c29c55310b51be1cfb0bc5255fa5daefd316f5f",
     },
     (
-        "CustomPCG64",
+        "LCG128Mix",
         "seed",
         "output",
         "xsl-rr",
@@ -1889,7 +1889,7 @@ known_hashes = {
         "final_state_hash": "087707bacce00c40551708f1dadbf8450e2ddf7b253d06d1898e024eac30b49e",
     },
     (
-        "CustomPCG64",
+        "LCG128Mix",
         "seed",
         "output",
         "xsl-rr",
@@ -1903,7 +1903,7 @@ known_hashes = {
         "final_state_hash": "275314216146881660a4851271ab303848fb6c1ee281ae436777484bc2c9a548",
     },
     (
-        "CustomPCG64",
+        "LCG128Mix",
         "seed",
         "output",
         "xsl-rr",
@@ -1917,7 +1917,7 @@ known_hashes = {
         "final_state_hash": "42284476ec5bc9eded19471847d64d951fbe71ffd69639398b5f616db6982374",
     },
     (
-        "CustomPCG64",
+        "LCG128Mix",
         "seed",
         "output",
         "xsl-rr",
@@ -1931,7 +1931,7 @@ known_hashes = {
         "final_state_hash": "374b2625f6c5dcca495a19ef372031a1f9b7edb6375d945ca9b96d628083ae68",
     },
     (
-        "CustomPCG64",
+        "LCG128Mix",
         "seed",
         "output",
         "dxsm",
@@ -1945,7 +1945,7 @@ known_hashes = {
         "final_state_hash": "087707bacce00c40551708f1dadbf8450e2ddf7b253d06d1898e024eac30b49e",
     },
     (
-        "CustomPCG64",
+        "LCG128Mix",
         "seed",
         "output",
         "dxsm",
@@ -1959,7 +1959,7 @@ known_hashes = {
         "final_state_hash": "275314216146881660a4851271ab303848fb6c1ee281ae436777484bc2c9a548",
     },
     (
-        "CustomPCG64",
+        "LCG128Mix",
         "seed",
         "output",
         "dxsm",
@@ -1973,7 +1973,7 @@ known_hashes = {
         "final_state_hash": "42284476ec5bc9eded19471847d64d951fbe71ffd69639398b5f616db6982374",
     },
     (
-        "CustomPCG64",
+        "LCG128Mix",
         "seed",
         "output",
         "dxsm",
@@ -1987,7 +1987,7 @@ known_hashes = {
         "final_state_hash": "374b2625f6c5dcca495a19ef372031a1f9b7edb6375d945ca9b96d628083ae68",
     },
     (
-        "CustomPCG64",
+        "LCG128Mix",
         "seed",
         "post",
         True,
@@ -2001,7 +2001,7 @@ known_hashes = {
         "final_state_hash": "087707bacce00c40551708f1dadbf8450e2ddf7b253d06d1898e024eac30b49e",
     },
     (
-        "CustomPCG64",
+        "LCG128Mix",
         "seed",
         "post",
         True,
@@ -2015,7 +2015,7 @@ known_hashes = {
         "final_state_hash": "275314216146881660a4851271ab303848fb6c1ee281ae436777484bc2c9a548",
     },
     (
-        "CustomPCG64",
+        "LCG128Mix",
         "seed",
         "post",
         True,
@@ -2029,7 +2029,7 @@ known_hashes = {
         "final_state_hash": "42284476ec5bc9eded19471847d64d951fbe71ffd69639398b5f616db6982374",
     },
     (
-        "CustomPCG64",
+        "LCG128Mix",
         "seed",
         "post",
         True,
@@ -2043,7 +2043,7 @@ known_hashes = {
         "final_state_hash": "374b2625f6c5dcca495a19ef372031a1f9b7edb6375d945ca9b96d628083ae68",
     },
     (
-        "CustomPCG64",
+        "LCG128Mix",
         "seed",
         "post",
         False,
@@ -2057,7 +2057,7 @@ known_hashes = {
         "final_state_hash": "21e3145806cd18fec247ce8bf632815c56eaf5d1318f9fef6f2c26671a86fbfc",
     },
     (
-        "CustomPCG64",
+        "LCG128Mix",
         "seed",
         "post",
         False,
@@ -2071,7 +2071,7 @@ known_hashes = {
         "final_state_hash": "1fe897f9eb3aa93d1221ecb240749a0345b407dffac48bda1bc0957cf29c8caa",
     },
     (
-        "CustomPCG64",
+        "LCG128Mix",
         "seed",
         "post",
         False,
@@ -2085,7 +2085,7 @@ known_hashes = {
         "final_state_hash": "14cc3923fc978a92b978f814aad03fe0a8027e144e1a64ebeaf4a818f965ce0e",
     },
     (
-        "CustomPCG64",
+        "LCG128Mix",
         "seed",
         "post",
         False,
@@ -2099,7 +2099,7 @@ known_hashes = {
         "final_state_hash": "d80562332576fc44ac9dcb507c29c55310b51be1cfb0bc5255fa5daefd316f5f",
     },
     (
-        "CustomPCG64",
+        "LCG128Mix",
         "seed",
         "inc",
         0,
@@ -2115,7 +2115,7 @@ known_hashes = {
         "final_state_hash": "37110aba91957d5a865a3949e6506a223cb8e50655b9081e047a2ce7a1a7db43",
     },
     (
-        "CustomPCG64",
+        "LCG128Mix",
         "seed",
         "inc",
         0,
@@ -2131,7 +2131,7 @@ known_hashes = {
         "final_state_hash": "459beeb952c7dcbe8632a9684684321e1408b5bebdf5a474d9cc85e7d19efdf6",
     },
     (
-        "CustomPCG64",
+        "LCG128Mix",
         "seed",
         "inc",
         0,
@@ -2147,7 +2147,7 @@ known_hashes = {
         "final_state_hash": "35f013d09a45fdaddeda8087468d3945cb3fece180ea3372b1072d49dcebb6ef",
     },
     (
-        "CustomPCG64",
+        "LCG128Mix",
         "seed",
         "inc",
         0,
@@ -2163,7 +2163,7 @@ known_hashes = {
         "final_state_hash": "77411ad01fb648f72232c1bf560f2cf79f1aa73ba8ce9908f2a728e53e46350e",
     },
     (
-        "CustomPCG64",
+        "LCG128Mix",
         "seed",
         "inc",
         0,
@@ -2179,7 +2179,7 @@ known_hashes = {
         "final_state_hash": "37110aba91957d5a865a3949e6506a223cb8e50655b9081e047a2ce7a1a7db43",
     },
     (
-        "CustomPCG64",
+        "LCG128Mix",
         "seed",
         "inc",
         0,
@@ -2195,7 +2195,7 @@ known_hashes = {
         "final_state_hash": "459beeb952c7dcbe8632a9684684321e1408b5bebdf5a474d9cc85e7d19efdf6",
     },
     (
-        "CustomPCG64",
+        "LCG128Mix",
         "seed",
         "inc",
         0,
@@ -2211,7 +2211,7 @@ known_hashes = {
         "final_state_hash": "35f013d09a45fdaddeda8087468d3945cb3fece180ea3372b1072d49dcebb6ef",
     },
     (
-        "CustomPCG64",
+        "LCG128Mix",
         "seed",
         "inc",
         0,
@@ -2227,7 +2227,7 @@ known_hashes = {
         "final_state_hash": "77411ad01fb648f72232c1bf560f2cf79f1aa73ba8ce9908f2a728e53e46350e",
     },
     (
-        "CustomPCG64",
+        "LCG128Mix",
         "seed",
         "inc",
         None,
@@ -2243,7 +2243,7 @@ known_hashes = {
         "final_state_hash": "275314216146881660a4851271ab303848fb6c1ee281ae436777484bc2c9a548",
     },
     (
-        "CustomPCG64",
+        "LCG128Mix",
         "seed",
         "inc",
         None,
@@ -2259,7 +2259,7 @@ known_hashes = {
         "final_state_hash": "374b2625f6c5dcca495a19ef372031a1f9b7edb6375d945ca9b96d628083ae68",
     },
     (
-        "CustomPCG64",
+        "LCG128Mix",
         "seed",
         "inc",
         None,
@@ -2275,7 +2275,7 @@ known_hashes = {
         "final_state_hash": "1fe897f9eb3aa93d1221ecb240749a0345b407dffac48bda1bc0957cf29c8caa",
     },
     (
-        "CustomPCG64",
+        "LCG128Mix",
         "seed",
         "inc",
         None,
@@ -2291,7 +2291,7 @@ known_hashes = {
         "final_state_hash": "d80562332576fc44ac9dcb507c29c55310b51be1cfb0bc5255fa5daefd316f5f",
     },
     (
-        "CustomPCG64",
+        "LCG128Mix",
         "seed",
         "inc",
         None,
@@ -2307,7 +2307,7 @@ known_hashes = {
         "final_state_hash": "275314216146881660a4851271ab303848fb6c1ee281ae436777484bc2c9a548",
     },
     (
-        "CustomPCG64",
+        "LCG128Mix",
         "seed",
         "inc",
         None,
@@ -2323,7 +2323,7 @@ known_hashes = {
         "final_state_hash": "374b2625f6c5dcca495a19ef372031a1f9b7edb6375d945ca9b96d628083ae68",
     },
     (
-        "CustomPCG64",
+        "LCG128Mix",
         "seed",
         "inc",
         None,
@@ -2339,7 +2339,7 @@ known_hashes = {
         "final_state_hash": "1fe897f9eb3aa93d1221ecb240749a0345b407dffac48bda1bc0957cf29c8caa",
     },
     (
-        "CustomPCG64",
+        "LCG128Mix",
         "seed",
         "inc",
         None,
@@ -2355,7 +2355,7 @@ known_hashes = {
         "final_state_hash": "d80562332576fc44ac9dcb507c29c55310b51be1cfb0bc5255fa5daefd316f5f",
     },
     (
-        "CustomPCG64",
+        "LCG128Mix",
         "seed",
         "inc",
         0,
@@ -2371,7 +2371,7 @@ known_hashes = {
         "final_state_hash": "69181a61eb6f9f0af060db3a0f8e4b4227117f61e721a9b4c8f3aeda4baa2748",
     },
     (
-        "CustomPCG64",
+        "LCG128Mix",
         "seed",
         "inc",
         0,
@@ -2387,7 +2387,7 @@ known_hashes = {
         "final_state_hash": "459beeb952c7dcbe8632a9684684321e1408b5bebdf5a474d9cc85e7d19efdf6",
     },
     (
-        "CustomPCG64",
+        "LCG128Mix",
         "seed",
         "inc",
         0,
@@ -2403,7 +2403,7 @@ known_hashes = {
         "final_state_hash": "75a3d23165a86aebfceb12ff94c0642b35bf1e89311a9a624baace34b65e9674",
     },
     (
-        "CustomPCG64",
+        "LCG128Mix",
         "seed",
         "inc",
         0,
@@ -2419,7 +2419,7 @@ known_hashes = {
         "final_state_hash": "77411ad01fb648f72232c1bf560f2cf79f1aa73ba8ce9908f2a728e53e46350e",
     },
     (
-        "CustomPCG64",
+        "LCG128Mix",
         "seed",
         "inc",
         0,
@@ -2435,7 +2435,7 @@ known_hashes = {
         "final_state_hash": "69181a61eb6f9f0af060db3a0f8e4b4227117f61e721a9b4c8f3aeda4baa2748",
     },
     (
-        "CustomPCG64",
+        "LCG128Mix",
         "seed",
         "inc",
         0,
@@ -2451,7 +2451,7 @@ known_hashes = {
         "final_state_hash": "459beeb952c7dcbe8632a9684684321e1408b5bebdf5a474d9cc85e7d19efdf6",
     },
     (
-        "CustomPCG64",
+        "LCG128Mix",
         "seed",
         "inc",
         0,
@@ -2467,7 +2467,7 @@ known_hashes = {
         "final_state_hash": "75a3d23165a86aebfceb12ff94c0642b35bf1e89311a9a624baace34b65e9674",
     },
     (
-        "CustomPCG64",
+        "LCG128Mix",
         "seed",
         "inc",
         0,
@@ -2483,7 +2483,7 @@ known_hashes = {
         "final_state_hash": "77411ad01fb648f72232c1bf560f2cf79f1aa73ba8ce9908f2a728e53e46350e",
     },
     (
-        "CustomPCG64",
+        "LCG128Mix",
         "seed",
         "inc",
         None,
@@ -2499,7 +2499,7 @@ known_hashes = {
         "final_state_hash": "42284476ec5bc9eded19471847d64d951fbe71ffd69639398b5f616db6982374",
     },
     (
-        "CustomPCG64",
+        "LCG128Mix",
         "seed",
         "inc",
         None,
@@ -2515,7 +2515,7 @@ known_hashes = {
         "final_state_hash": "374b2625f6c5dcca495a19ef372031a1f9b7edb6375d945ca9b96d628083ae68",
     },
     (
-        "CustomPCG64",
+        "LCG128Mix",
         "seed",
         "inc",
         None,
@@ -2531,7 +2531,7 @@ known_hashes = {
         "final_state_hash": "14cc3923fc978a92b978f814aad03fe0a8027e144e1a64ebeaf4a818f965ce0e",
     },
     (
-        "CustomPCG64",
+        "LCG128Mix",
         "seed",
         "inc",
         None,
@@ -2547,7 +2547,7 @@ known_hashes = {
         "final_state_hash": "d80562332576fc44ac9dcb507c29c55310b51be1cfb0bc5255fa5daefd316f5f",
     },
     (
-        "CustomPCG64",
+        "LCG128Mix",
         "seed",
         "inc",
         None,
@@ -2563,7 +2563,7 @@ known_hashes = {
         "final_state_hash": "42284476ec5bc9eded19471847d64d951fbe71ffd69639398b5f616db6982374",
     },
     (
-        "CustomPCG64",
+        "LCG128Mix",
         "seed",
         "inc",
         None,
@@ -2579,7 +2579,7 @@ known_hashes = {
         "final_state_hash": "374b2625f6c5dcca495a19ef372031a1f9b7edb6375d945ca9b96d628083ae68",
     },
     (
-        "CustomPCG64",
+        "LCG128Mix",
         "seed",
         "inc",
         None,
@@ -2595,7 +2595,7 @@ known_hashes = {
         "final_state_hash": "14cc3923fc978a92b978f814aad03fe0a8027e144e1a64ebeaf4a818f965ce0e",
     },
     (
-        "CustomPCG64",
+        "LCG128Mix",
         "seed",
         "inc",
         None,
@@ -2611,7 +2611,7 @@ known_hashes = {
         "final_state_hash": "d80562332576fc44ac9dcb507c29c55310b51be1cfb0bc5255fa5daefd316f5f",
     },
     (
-        "CustomPCG64",
+        "LCG128Mix",
         "seed",
         "inc",
         0,
@@ -2627,7 +2627,7 @@ known_hashes = {
         "final_state_hash": "808f052d237bee6e7f7d83806876e227293ea9c41e99f7d2a03aed67f8fc1fcb",
     },
     (
-        "CustomPCG64",
+        "LCG128Mix",
         "seed",
         "inc",
         0,
@@ -2643,7 +2643,7 @@ known_hashes = {
         "final_state_hash": "37110aba91957d5a865a3949e6506a223cb8e50655b9081e047a2ce7a1a7db43",
     },
     (
-        "CustomPCG64",
+        "LCG128Mix",
         "seed",
         "inc",
         0,
@@ -2659,7 +2659,7 @@ known_hashes = {
         "final_state_hash": "69181a61eb6f9f0af060db3a0f8e4b4227117f61e721a9b4c8f3aeda4baa2748",
     },
     (
-        "CustomPCG64",
+        "LCG128Mix",
         "seed",
         "inc",
         0,
@@ -2675,7 +2675,7 @@ known_hashes = {
         "final_state_hash": "459beeb952c7dcbe8632a9684684321e1408b5bebdf5a474d9cc85e7d19efdf6",
     },
     (
-        "CustomPCG64",
+        "LCG128Mix",
         "seed",
         "inc",
         0,
@@ -2691,7 +2691,7 @@ known_hashes = {
         "final_state_hash": "808f052d237bee6e7f7d83806876e227293ea9c41e99f7d2a03aed67f8fc1fcb",
     },
     (
-        "CustomPCG64",
+        "LCG128Mix",
         "seed",
         "inc",
         0,
@@ -2707,7 +2707,7 @@ known_hashes = {
         "final_state_hash": "37110aba91957d5a865a3949e6506a223cb8e50655b9081e047a2ce7a1a7db43",
     },
     (
-        "CustomPCG64",
+        "LCG128Mix",
         "seed",
         "inc",
         0,
@@ -2723,7 +2723,7 @@ known_hashes = {
         "final_state_hash": "69181a61eb6f9f0af060db3a0f8e4b4227117f61e721a9b4c8f3aeda4baa2748",
     },
     (
-        "CustomPCG64",
+        "LCG128Mix",
         "seed",
         "inc",
         0,
@@ -2739,7 +2739,7 @@ known_hashes = {
         "final_state_hash": "459beeb952c7dcbe8632a9684684321e1408b5bebdf5a474d9cc85e7d19efdf6",
     },
     (
-        "CustomPCG64",
+        "LCG128Mix",
         "seed",
         "inc",
         None,
@@ -2755,7 +2755,7 @@ known_hashes = {
         "final_state_hash": "087707bacce00c40551708f1dadbf8450e2ddf7b253d06d1898e024eac30b49e",
     },
     (
-        "CustomPCG64",
+        "LCG128Mix",
         "seed",
         "inc",
         None,
@@ -2771,7 +2771,7 @@ known_hashes = {
         "final_state_hash": "275314216146881660a4851271ab303848fb6c1ee281ae436777484bc2c9a548",
     },
     (
-        "CustomPCG64",
+        "LCG128Mix",
         "seed",
         "inc",
         None,
@@ -2787,7 +2787,7 @@ known_hashes = {
         "final_state_hash": "42284476ec5bc9eded19471847d64d951fbe71ffd69639398b5f616db6982374",
     },
     (
-        "CustomPCG64",
+        "LCG128Mix",
         "seed",
         "inc",
         None,
@@ -2803,7 +2803,7 @@ known_hashes = {
         "final_state_hash": "374b2625f6c5dcca495a19ef372031a1f9b7edb6375d945ca9b96d628083ae68",
     },
     (
-        "CustomPCG64",
+        "LCG128Mix",
         "seed",
         "inc",
         None,
@@ -2819,7 +2819,7 @@ known_hashes = {
         "final_state_hash": "087707bacce00c40551708f1dadbf8450e2ddf7b253d06d1898e024eac30b49e",
     },
     (
-        "CustomPCG64",
+        "LCG128Mix",
         "seed",
         "inc",
         None,
@@ -2835,7 +2835,7 @@ known_hashes = {
         "final_state_hash": "275314216146881660a4851271ab303848fb6c1ee281ae436777484bc2c9a548",
     },
     (
-        "CustomPCG64",
+        "LCG128Mix",
         "seed",
         "inc",
         None,
@@ -2851,7 +2851,7 @@ known_hashes = {
         "final_state_hash": "42284476ec5bc9eded19471847d64d951fbe71ffd69639398b5f616db6982374",
     },
     (
-        "CustomPCG64",
+        "LCG128Mix",
         "seed",
         "inc",
         None,
@@ -2867,7 +2867,7 @@ known_hashes = {
         "final_state_hash": "374b2625f6c5dcca495a19ef372031a1f9b7edb6375d945ca9b96d628083ae68",
     },
     (
-        "CustomPCG64",
+        "LCG128Mix",
         "seed",
         "inc",
         0,
@@ -2883,7 +2883,7 @@ known_hashes = {
         "final_state_hash": "808f052d237bee6e7f7d83806876e227293ea9c41e99f7d2a03aed67f8fc1fcb",
     },
     (
-        "CustomPCG64",
+        "LCG128Mix",
         "seed",
         "inc",
         0,
@@ -2899,7 +2899,7 @@ known_hashes = {
         "final_state_hash": "37110aba91957d5a865a3949e6506a223cb8e50655b9081e047a2ce7a1a7db43",
     },
     (
-        "CustomPCG64",
+        "LCG128Mix",
         "seed",
         "inc",
         0,
@@ -2915,7 +2915,7 @@ known_hashes = {
         "final_state_hash": "69181a61eb6f9f0af060db3a0f8e4b4227117f61e721a9b4c8f3aeda4baa2748",
     },
     (
-        "CustomPCG64",
+        "LCG128Mix",
         "seed",
         "inc",
         0,
@@ -2931,7 +2931,7 @@ known_hashes = {
         "final_state_hash": "459beeb952c7dcbe8632a9684684321e1408b5bebdf5a474d9cc85e7d19efdf6",
     },
     (
-        "CustomPCG64",
+        "LCG128Mix",
         "seed",
         "inc",
         0,
@@ -2947,7 +2947,7 @@ known_hashes = {
         "final_state_hash": "0fe3cc8e1e072afbc3408aeccace40f2b46a7e0d06563f41ce3b56ec01c90f95",
     },
     (
-        "CustomPCG64",
+        "LCG128Mix",
         "seed",
         "inc",
         0,
@@ -2963,7 +2963,7 @@ known_hashes = {
         "final_state_hash": "35f013d09a45fdaddeda8087468d3945cb3fece180ea3372b1072d49dcebb6ef",
     },
     (
-        "CustomPCG64",
+        "LCG128Mix",
         "seed",
         "inc",
         0,
@@ -2979,7 +2979,7 @@ known_hashes = {
         "final_state_hash": "75a3d23165a86aebfceb12ff94c0642b35bf1e89311a9a624baace34b65e9674",
     },
     (
-        "CustomPCG64",
+        "LCG128Mix",
         "seed",
         "inc",
         0,
@@ -2995,7 +2995,7 @@ known_hashes = {
         "final_state_hash": "77411ad01fb648f72232c1bf560f2cf79f1aa73ba8ce9908f2a728e53e46350e",
     },
     (
-        "CustomPCG64",
+        "LCG128Mix",
         "seed",
         "inc",
         None,
@@ -3011,7 +3011,7 @@ known_hashes = {
         "final_state_hash": "087707bacce00c40551708f1dadbf8450e2ddf7b253d06d1898e024eac30b49e",
     },
     (
-        "CustomPCG64",
+        "LCG128Mix",
         "seed",
         "inc",
         None,
@@ -3027,7 +3027,7 @@ known_hashes = {
         "final_state_hash": "275314216146881660a4851271ab303848fb6c1ee281ae436777484bc2c9a548",
     },
     (
-        "CustomPCG64",
+        "LCG128Mix",
         "seed",
         "inc",
         None,
@@ -3043,7 +3043,7 @@ known_hashes = {
         "final_state_hash": "42284476ec5bc9eded19471847d64d951fbe71ffd69639398b5f616db6982374",
     },
     (
-        "CustomPCG64",
+        "LCG128Mix",
         "seed",
         "inc",
         None,
@@ -3059,7 +3059,7 @@ known_hashes = {
         "final_state_hash": "374b2625f6c5dcca495a19ef372031a1f9b7edb6375d945ca9b96d628083ae68",
     },
     (
-        "CustomPCG64",
+        "LCG128Mix",
         "seed",
         "inc",
         None,
@@ -3075,7 +3075,7 @@ known_hashes = {
         "final_state_hash": "21e3145806cd18fec247ce8bf632815c56eaf5d1318f9fef6f2c26671a86fbfc",
     },
     (
-        "CustomPCG64",
+        "LCG128Mix",
         "seed",
         "inc",
         None,
@@ -3091,7 +3091,7 @@ known_hashes = {
         "final_state_hash": "1fe897f9eb3aa93d1221ecb240749a0345b407dffac48bda1bc0957cf29c8caa",
     },
     (
-        "CustomPCG64",
+        "LCG128Mix",
         "seed",
         "inc",
         None,
@@ -3107,7 +3107,7 @@ known_hashes = {
         "final_state_hash": "14cc3923fc978a92b978f814aad03fe0a8027e144e1a64ebeaf4a818f965ce0e",
     },
     (
-        "CustomPCG64",
+        "LCG128Mix",
         "seed",
         "inc",
         None,
@@ -3123,7 +3123,7 @@ known_hashes = {
         "final_state_hash": "d80562332576fc44ac9dcb507c29c55310b51be1cfb0bc5255fa5daefd316f5f",
     },
     (
-        "CustomPCG64",
+        "LCG128Mix",
         "seed",
         "output",
         "xsl-rr",
@@ -3139,7 +3139,7 @@ known_hashes = {
         "final_state_hash": "087707bacce00c40551708f1dadbf8450e2ddf7b253d06d1898e024eac30b49e",
     },
     (
-        "CustomPCG64",
+        "LCG128Mix",
         "seed",
         "output",
         "xsl-rr",
@@ -3155,7 +3155,7 @@ known_hashes = {
         "final_state_hash": "275314216146881660a4851271ab303848fb6c1ee281ae436777484bc2c9a548",
     },
     (
-        "CustomPCG64",
+        "LCG128Mix",
         "seed",
         "output",
         "xsl-rr",
@@ -3171,7 +3171,7 @@ known_hashes = {
         "final_state_hash": "42284476ec5bc9eded19471847d64d951fbe71ffd69639398b5f616db6982374",
     },
     (
-        "CustomPCG64",
+        "LCG128Mix",
         "seed",
         "output",
         "xsl-rr",
@@ -3187,7 +3187,7 @@ known_hashes = {
         "final_state_hash": "374b2625f6c5dcca495a19ef372031a1f9b7edb6375d945ca9b96d628083ae68",
     },
     (
-        "CustomPCG64",
+        "LCG128Mix",
         "seed",
         "output",
         "xsl-rr",
@@ -3203,7 +3203,7 @@ known_hashes = {
         "final_state_hash": "21e3145806cd18fec247ce8bf632815c56eaf5d1318f9fef6f2c26671a86fbfc",
     },
     (
-        "CustomPCG64",
+        "LCG128Mix",
         "seed",
         "output",
         "xsl-rr",
@@ -3219,7 +3219,7 @@ known_hashes = {
         "final_state_hash": "1fe897f9eb3aa93d1221ecb240749a0345b407dffac48bda1bc0957cf29c8caa",
     },
     (
-        "CustomPCG64",
+        "LCG128Mix",
         "seed",
         "output",
         "xsl-rr",
@@ -3235,7 +3235,7 @@ known_hashes = {
         "final_state_hash": "14cc3923fc978a92b978f814aad03fe0a8027e144e1a64ebeaf4a818f965ce0e",
     },
     (
-        "CustomPCG64",
+        "LCG128Mix",
         "seed",
         "output",
         "xsl-rr",
@@ -3251,7 +3251,7 @@ known_hashes = {
         "final_state_hash": "d80562332576fc44ac9dcb507c29c55310b51be1cfb0bc5255fa5daefd316f5f",
     },
     (
-        "CustomPCG64",
+        "LCG128Mix",
         "seed",
         "output",
         "dxsm",
@@ -3267,7 +3267,7 @@ known_hashes = {
         "final_state_hash": "087707bacce00c40551708f1dadbf8450e2ddf7b253d06d1898e024eac30b49e",
     },
     (
-        "CustomPCG64",
+        "LCG128Mix",
         "seed",
         "output",
         "dxsm",
@@ -3283,7 +3283,7 @@ known_hashes = {
         "final_state_hash": "275314216146881660a4851271ab303848fb6c1ee281ae436777484bc2c9a548",
     },
     (
-        "CustomPCG64",
+        "LCG128Mix",
         "seed",
         "output",
         "dxsm",
@@ -3299,7 +3299,7 @@ known_hashes = {
         "final_state_hash": "42284476ec5bc9eded19471847d64d951fbe71ffd69639398b5f616db6982374",
     },
     (
-        "CustomPCG64",
+        "LCG128Mix",
         "seed",
         "output",
         "dxsm",
@@ -3315,7 +3315,7 @@ known_hashes = {
         "final_state_hash": "374b2625f6c5dcca495a19ef372031a1f9b7edb6375d945ca9b96d628083ae68",
     },
     (
-        "CustomPCG64",
+        "LCG128Mix",
         "seed",
         "output",
         "dxsm",
@@ -3331,7 +3331,7 @@ known_hashes = {
         "final_state_hash": "21e3145806cd18fec247ce8bf632815c56eaf5d1318f9fef6f2c26671a86fbfc",
     },
     (
-        "CustomPCG64",
+        "LCG128Mix",
         "seed",
         "output",
         "dxsm",
@@ -3347,7 +3347,7 @@ known_hashes = {
         "final_state_hash": "1fe897f9eb3aa93d1221ecb240749a0345b407dffac48bda1bc0957cf29c8caa",
     },
     (
-        "CustomPCG64",
+        "LCG128Mix",
         "seed",
         "output",
         "dxsm",
@@ -3363,7 +3363,7 @@ known_hashes = {
         "final_state_hash": "14cc3923fc978a92b978f814aad03fe0a8027e144e1a64ebeaf4a818f965ce0e",
     },
     (
-        "CustomPCG64",
+        "LCG128Mix",
         "seed",
         "output",
         "dxsm",
@@ -3379,7 +3379,7 @@ known_hashes = {
         "final_state_hash": "d80562332576fc44ac9dcb507c29c55310b51be1cfb0bc5255fa5daefd316f5f",
     },
     (
-        "CustomPCG64",
+        "LCG128Mix",
         "seed",
         "inc",
         0,
@@ -3397,7 +3397,7 @@ known_hashes = {
         "final_state_hash": "808f052d237bee6e7f7d83806876e227293ea9c41e99f7d2a03aed67f8fc1fcb",
     },
     (
-        "CustomPCG64",
+        "LCG128Mix",
         "seed",
         "inc",
         0,
@@ -3415,7 +3415,7 @@ known_hashes = {
         "final_state_hash": "37110aba91957d5a865a3949e6506a223cb8e50655b9081e047a2ce7a1a7db43",
     },
     (
-        "CustomPCG64",
+        "LCG128Mix",
         "seed",
         "inc",
         0,
@@ -3433,7 +3433,7 @@ known_hashes = {
         "final_state_hash": "69181a61eb6f9f0af060db3a0f8e4b4227117f61e721a9b4c8f3aeda4baa2748",
     },
     (
-        "CustomPCG64",
+        "LCG128Mix",
         "seed",
         "inc",
         0,
@@ -3451,7 +3451,7 @@ known_hashes = {
         "final_state_hash": "459beeb952c7dcbe8632a9684684321e1408b5bebdf5a474d9cc85e7d19efdf6",
     },
     (
-        "CustomPCG64",
+        "LCG128Mix",
         "seed",
         "inc",
         0,
@@ -3469,7 +3469,7 @@ known_hashes = {
         "final_state_hash": "0fe3cc8e1e072afbc3408aeccace40f2b46a7e0d06563f41ce3b56ec01c90f95",
     },
     (
-        "CustomPCG64",
+        "LCG128Mix",
         "seed",
         "inc",
         0,
@@ -3487,7 +3487,7 @@ known_hashes = {
         "final_state_hash": "35f013d09a45fdaddeda8087468d3945cb3fece180ea3372b1072d49dcebb6ef",
     },
     (
-        "CustomPCG64",
+        "LCG128Mix",
         "seed",
         "inc",
         0,
@@ -3505,7 +3505,7 @@ known_hashes = {
         "final_state_hash": "75a3d23165a86aebfceb12ff94c0642b35bf1e89311a9a624baace34b65e9674",
     },
     (
-        "CustomPCG64",
+        "LCG128Mix",
         "seed",
         "inc",
         0,
@@ -3523,7 +3523,7 @@ known_hashes = {
         "final_state_hash": "77411ad01fb648f72232c1bf560f2cf79f1aa73ba8ce9908f2a728e53e46350e",
     },
     (
-        "CustomPCG64",
+        "LCG128Mix",
         "seed",
         "inc",
         0,
@@ -3541,7 +3541,7 @@ known_hashes = {
         "final_state_hash": "808f052d237bee6e7f7d83806876e227293ea9c41e99f7d2a03aed67f8fc1fcb",
     },
     (
-        "CustomPCG64",
+        "LCG128Mix",
         "seed",
         "inc",
         0,
@@ -3559,7 +3559,7 @@ known_hashes = {
         "final_state_hash": "37110aba91957d5a865a3949e6506a223cb8e50655b9081e047a2ce7a1a7db43",
     },
     (
-        "CustomPCG64",
+        "LCG128Mix",
         "seed",
         "inc",
         0,
@@ -3577,7 +3577,7 @@ known_hashes = {
         "final_state_hash": "69181a61eb6f9f0af060db3a0f8e4b4227117f61e721a9b4c8f3aeda4baa2748",
     },
     (
-        "CustomPCG64",
+        "LCG128Mix",
         "seed",
         "inc",
         0,
@@ -3595,7 +3595,7 @@ known_hashes = {
         "final_state_hash": "459beeb952c7dcbe8632a9684684321e1408b5bebdf5a474d9cc85e7d19efdf6",
     },
     (
-        "CustomPCG64",
+        "LCG128Mix",
         "seed",
         "inc",
         0,
@@ -3613,7 +3613,7 @@ known_hashes = {
         "final_state_hash": "0fe3cc8e1e072afbc3408aeccace40f2b46a7e0d06563f41ce3b56ec01c90f95",
     },
     (
-        "CustomPCG64",
+        "LCG128Mix",
         "seed",
         "inc",
         0,
@@ -3631,7 +3631,7 @@ known_hashes = {
         "final_state_hash": "35f013d09a45fdaddeda8087468d3945cb3fece180ea3372b1072d49dcebb6ef",
     },
     (
-        "CustomPCG64",
+        "LCG128Mix",
         "seed",
         "inc",
         0,
@@ -3649,7 +3649,7 @@ known_hashes = {
         "final_state_hash": "75a3d23165a86aebfceb12ff94c0642b35bf1e89311a9a624baace34b65e9674",
     },
     (
-        "CustomPCG64",
+        "LCG128Mix",
         "seed",
         "inc",
         0,
@@ -3667,7 +3667,7 @@ known_hashes = {
         "final_state_hash": "77411ad01fb648f72232c1bf560f2cf79f1aa73ba8ce9908f2a728e53e46350e",
     },
     (
-        "CustomPCG64",
+        "LCG128Mix",
         "seed",
         "inc",
         None,
@@ -3685,7 +3685,7 @@ known_hashes = {
         "final_state_hash": "087707bacce00c40551708f1dadbf8450e2ddf7b253d06d1898e024eac30b49e",
     },
     (
-        "CustomPCG64",
+        "LCG128Mix",
         "seed",
         "inc",
         None,
@@ -3703,7 +3703,7 @@ known_hashes = {
         "final_state_hash": "275314216146881660a4851271ab303848fb6c1ee281ae436777484bc2c9a548",
     },
     (
-        "CustomPCG64",
+        "LCG128Mix",
         "seed",
         "inc",
         None,
@@ -3721,7 +3721,7 @@ known_hashes = {
         "final_state_hash": "42284476ec5bc9eded19471847d64d951fbe71ffd69639398b5f616db6982374",
     },
     (
-        "CustomPCG64",
+        "LCG128Mix",
         "seed",
         "inc",
         None,
@@ -3739,7 +3739,7 @@ known_hashes = {
         "final_state_hash": "374b2625f6c5dcca495a19ef372031a1f9b7edb6375d945ca9b96d628083ae68",
     },
     (
-        "CustomPCG64",
+        "LCG128Mix",
         "seed",
         "inc",
         None,
@@ -3757,7 +3757,7 @@ known_hashes = {
         "final_state_hash": "21e3145806cd18fec247ce8bf632815c56eaf5d1318f9fef6f2c26671a86fbfc",
     },
     (
-        "CustomPCG64",
+        "LCG128Mix",
         "seed",
         "inc",
         None,
@@ -3775,7 +3775,7 @@ known_hashes = {
         "final_state_hash": "1fe897f9eb3aa93d1221ecb240749a0345b407dffac48bda1bc0957cf29c8caa",
     },
     (
-        "CustomPCG64",
+        "LCG128Mix",
         "seed",
         "inc",
         None,
@@ -3793,7 +3793,7 @@ known_hashes = {
         "final_state_hash": "14cc3923fc978a92b978f814aad03fe0a8027e144e1a64ebeaf4a818f965ce0e",
     },
     (
-        "CustomPCG64",
+        "LCG128Mix",
         "seed",
         "inc",
         None,
@@ -3811,7 +3811,7 @@ known_hashes = {
         "final_state_hash": "d80562332576fc44ac9dcb507c29c55310b51be1cfb0bc5255fa5daefd316f5f",
     },
     (
-        "CustomPCG64",
+        "LCG128Mix",
         "seed",
         "inc",
         None,
@@ -3829,7 +3829,7 @@ known_hashes = {
         "final_state_hash": "087707bacce00c40551708f1dadbf8450e2ddf7b253d06d1898e024eac30b49e",
     },
     (
-        "CustomPCG64",
+        "LCG128Mix",
         "seed",
         "inc",
         None,
@@ -3847,7 +3847,7 @@ known_hashes = {
         "final_state_hash": "275314216146881660a4851271ab303848fb6c1ee281ae436777484bc2c9a548",
     },
     (
-        "CustomPCG64",
+        "LCG128Mix",
         "seed",
         "inc",
         None,
@@ -3865,7 +3865,7 @@ known_hashes = {
         "final_state_hash": "42284476ec5bc9eded19471847d64d951fbe71ffd69639398b5f616db6982374",
     },
     (
-        "CustomPCG64",
+        "LCG128Mix",
         "seed",
         "inc",
         None,
@@ -3883,7 +3883,7 @@ known_hashes = {
         "final_state_hash": "374b2625f6c5dcca495a19ef372031a1f9b7edb6375d945ca9b96d628083ae68",
     },
     (
-        "CustomPCG64",
+        "LCG128Mix",
         "seed",
         "inc",
         None,
@@ -3901,7 +3901,7 @@ known_hashes = {
         "final_state_hash": "21e3145806cd18fec247ce8bf632815c56eaf5d1318f9fef6f2c26671a86fbfc",
     },
     (
-        "CustomPCG64",
+        "LCG128Mix",
         "seed",
         "inc",
         None,
@@ -3919,7 +3919,7 @@ known_hashes = {
         "final_state_hash": "1fe897f9eb3aa93d1221ecb240749a0345b407dffac48bda1bc0957cf29c8caa",
     },
     (
-        "CustomPCG64",
+        "LCG128Mix",
         "seed",
         "inc",
         None,
@@ -3937,7 +3937,7 @@ known_hashes = {
         "final_state_hash": "14cc3923fc978a92b978f814aad03fe0a8027e144e1a64ebeaf4a818f965ce0e",
     },
     (
-        "CustomPCG64",
+        "LCG128Mix",
         "seed",
         "inc",
         None,

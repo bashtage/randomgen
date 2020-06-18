@@ -1,5 +1,7 @@
 from randomgen.common cimport *
 
+cdef extern from "src/pcg64/pcg64-common.h":
+    ctypedef uint64_t (* pcg_output_func_t)(uint64_t high, uint64_t low) nogil
 
 cdef extern from "src/pcg64/pcg64-v2.h":
     # Use int as generic type, actual type read from pcg64.h and is platform dependent
@@ -23,14 +25,11 @@ cdef extern from "src/pcg64/pcg64-v2.h":
     void pcg64_get_state(pcg64_state_t *state, uint64_t *state_arr, int *use_dxsm, int *has_uint32, uint32_t *uinteger)
     void pcg64_set_state(pcg64_state_t *state, uint64_t *state_arr, int use_dxsm, int has_uint32, uint32_t uinteger)
 
-cdef extern from "src/pcg64/pcg64-common.h":
-    ctypedef uint64_t (* pcg_output_func_t)(uint64_t high, uint64_t low) nogil
-
-cdef extern from "src/pcg64/pcg64-custom.h":
+cdef extern from "src/pcg64/lcg128mix.h":
 
     ctypedef int pcg128_t
 
-    struct PCG64_CUSTOM_RANDOM_T:
+    struct lcg128mix_RANDOM_T:
         pcg128_t state
         pcg128_t inc
         pcg128_t multiplier
@@ -39,23 +38,23 @@ cdef extern from "src/pcg64/pcg64-custom.h":
         int output_idx
         pcg_output_func_t output_func
 
-    ctypedef PCG64_CUSTOM_RANDOM_T pcg64_custom_random_t
+    ctypedef lcg128mix_RANDOM_T lcg128mix_random_t
 
-    struct PCG64_CUSTOM_STATE_T:
-      pcg64_custom_random_t *pcg_state
+    struct lcg128mix_STATE_T:
+      lcg128mix_random_t *pcg_state
       int use_dxsm
       int has_uint32
       uint32_t uinteger
 
-    ctypedef PCG64_CUSTOM_STATE_T pcg64_custom_state_t
+    ctypedef lcg128mix_STATE_T lcg128mix_state_t
 
-    uint64_t pcg64_custom_next64(pcg64_custom_state_t *state) nogil
-    uint64_t pcg64_custom_next32(pcg64_custom_state_t *state) nogil
+    uint64_t lcg128mix_next64(lcg128mix_state_t *state) nogil
+    uint64_t lcg128mix_next32(lcg128mix_state_t *state) nogil
 
-    void pcg64_custom_set_state(pcg64_custom_random_t *rng, uint64_t state[], uint64_t inc[], uint64_t multiplier[]) nogil
-    void pcg64_custom_get_state(pcg64_custom_random_t *rng, uint64_t state[], uint64_t inc[], uint64_t multiplier[]) nogil
-    void pcg64_custom_seed(pcg64_custom_random_t *rng, uint64_t state[], uint64_t inc[], uint64_t multiplier[]) nogil
-    void pcg64_custom_advance(pcg64_custom_state_t *rng, uint64_t step[]) nogil
+    void lcg128mix_set_state(lcg128mix_random_t *rng, uint64_t state[], uint64_t inc[], uint64_t multiplier[]) nogil
+    void lcg128mix_get_state(lcg128mix_random_t *rng, uint64_t state[], uint64_t inc[], uint64_t multiplier[]) nogil
+    void lcg128mix_seed(lcg128mix_random_t *rng, uint64_t state[], uint64_t inc[], uint64_t multiplier[]) nogil
+    void lcg128mix_advance(lcg128mix_state_t *rng, uint64_t step[]) nogil
 
 cdef class PCG64(BitGenerator):
 
@@ -66,9 +65,9 @@ cdef class PCG64(BitGenerator):
     cdef _reset_state_variables(self)
     cdef jump_inplace(self, object iter)
 
-cdef class CustomPCG64(BitGenerator):
+cdef class LCG128Mix(BitGenerator):
 
-    cdef pcg64_custom_state_t rng_state
+    cdef lcg128mix_state_t rng_state
     cdef object multiplier, _default_multiplier, _default_dxsm_multiplier
     cdef object output_function_name, _output_lookup, _inv_output_lookup, _cfunc
     cdef bint post
