@@ -1,6 +1,0 @@
-randomgen.pcg64.CustomPCG64.ctypes
-==================================
-
-.. currentmodule:: randomgen.pcg64
-
-.. autoattribute:: CustomPCG64.ctypes

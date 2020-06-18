@@ -1,6 +1,6 @@
-randomgen.pcg64.CustomPCG64.state
+randomgen.pcg64.LCG128Mix.advance
 =================================
 
 .. currentmodule:: randomgen.pcg64
 
-.. autoattribute:: CustomPCG64.state
+.. automethod:: LCG128Mix.advance

@@ -1,0 +1,6 @@
+randomgen.pcg64.LCG128Mix.state
+===============================
+
+.. currentmodule:: randomgen.pcg64
+
+.. autoattribute:: LCG128Mix.state

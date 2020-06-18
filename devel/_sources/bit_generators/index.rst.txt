@@ -27,7 +27,7 @@ These RNGs will be included in future releases.
    MT64 <mt64>
    PCG32 <pcg32>
    PCG64 <pcg64>
-   Custom PCG64 <custom-pcg64>
+   128-bit LCG with output mixing <lcg128mix>
    Philox <philox>
    RDRAND <rdrand>
    SFC64 <sfc>

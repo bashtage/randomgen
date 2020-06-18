@@ -1,6 +1,6 @@
-randomgen.pcg64.CustomPCG64.cffi
+randomgen.pcg64.LCG128Mix.ctypes
 ================================
 
 .. currentmodule:: randomgen.pcg64
 
-.. autoattribute:: CustomPCG64.cffi
+.. autoattribute:: LCG128Mix.ctypes

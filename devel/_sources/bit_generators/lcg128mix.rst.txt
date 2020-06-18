@@ -1,9 +1,9 @@
-Customizable Permuted Congruential Generator (64-bit)
------------------------------------------------------
+128-bit Linear Congruential Generator (LCG) with Output Mixing
+--------------------------------------------------------------
 
 .. currentmodule:: randomgen.pcg64
 
-.. autoclass:: CustomPCG64
+.. autoclass:: LCG128Mix
 
 Seeding and State
 =================
@@ -11,28 +11,28 @@ Seeding and State
 .. autosummary::
    :toctree: generated/
 
-   ~CustomPCG64.seed
-   ~CustomPCG64.state
+   ~LCG128Mix.seed
+   ~LCG128Mix.state
 
 Parallel generation
 ===================
 .. autosummary::
    :toctree: generated/
 
-   ~CustomPCG64.advance
-   ~CustomPCG64.jumped
+   ~LCG128Mix.advance
+   ~LCG128Mix.jumped
 
 Extending
 =========
 .. autosummary::
    :toctree: generated/
 
-   ~CustomPCG64.cffi
-   ~CustomPCG64.ctypes
+   ~LCG128Mix.cffi
+   ~LCG128Mix.ctypes
 
 Testing
 =======
 .. autosummary::
    :toctree: generated/
 
-   ~CustomPCG64.random_raw
+   ~LCG128Mix.random_raw

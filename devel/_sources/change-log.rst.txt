@@ -20,7 +20,7 @@ v1.19.0
 
 - Added a :class:`randomgen.sfc.SFC64` which supports generating streams using distinct
   Weyl constants.
-- Added a :class:`randomgen.pcg64.CustomPCG64` which supports setting the LCG multiplier,
+- Added a :class:`randomgen.pcg64.LCG128Mix` which supports setting the LCG multiplier,
   changing the output function (including support for user-defined output functions) and
   pre- or post-state update generation.
 - Added a :class:`randomgen.lxm.LXM` which generates variates using a mix of two simple,

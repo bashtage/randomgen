@@ -1,6 +1,6 @@
-randomgen.pcg64.CustomPCG64.seed
+randomgen.pcg64.LCG128Mix.jumped
 ================================
 
 .. currentmodule:: randomgen.pcg64
 
-.. automethod:: CustomPCG64.seed
+.. automethod:: LCG128Mix.jumped
