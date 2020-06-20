@@ -5,89 +5,85 @@ import pandas as pd
 with open("results.json") as res:
     results = json.load(res)
 
-table = {}
-for key in results:
-    row = {}
-    for size in results[key]:
-        row[size] = "✔" if "FAIL" not in results[key][size] else "✖"
-    table[key] = pd.Series(row)
-results = pd.DataFrame(table).T
-results = results.stack()
 
-new_index = []
-for key in results.index:
-    base = key[0]
-    jumped = False
-    seed_seq = False
-    if "-streams-" in base:
-        jumped = "jumped" in base
-        seed_seq = not jumped
-        base = base.split("-")
-
-        new_base = []
-        for token in base:
-            if token == "jumped" or token == "streams":
-                break
-            new_base.append(token)
-        base = "-".join(new_base)
-    new_base = base.split("-")
-    if "cm" in new_base:
-        for i in range(len(new_base)):
-            new_base[i] = "cm-dxsm" if new_base[i] == "cm" else new_base[i]
-        new_base.remove("dxsm")
-    if "xsl" in new_base:
-        for i in range(len(new_base)):
-            new_base[i] = "xsl-rr" if new_base[i] == "xsl" else new_base[i]
-        new_base.remove("rr")
-    base = new_base[0]
-    if len(new_base) > 1:
-        base += "("
-        for i in range(1, len(new_base), 2):
-            base += new_base[i] + "=" + new_base[i + 1] + ", "
-        base = base[:-2] + ")"
-
-    size = key[1]
-    if jumped:
-        key = (base, "Jumped", key[0].split("-")[-1], size)
-    elif seed_seq:
-        key = (base, "SeedSeq", key[0].split("-")[-1], size)
+def parse_key(key):
+    if "-" not in key:
+        return (key, "", "")
+    if "-jumped-streams-" in key:
+        base, n = key.split("-jumped-streams-")
+        method = "Jumped"
+    elif "-streams-" in key:
+        base, n = key.split("-streams-")
+        method = "Seed Sequence"
     else:
-        key = (base, "", "", size)
+        base = key
+        method = n = ""
+    base = base.replace("xsl-rr", "xsl_rr").replace("cm-dxsm", "cm_dxsm")
+    parts = base.split("-")
+    base = parts[0]
+    for i in range(1, len(parts), 2):
+        if i == 1:
+            base += "("
+        base += f"{parts[i]}={parts[i+1]}, "
+    if "(" in base:
+        base = f"{base[:-2]})"
+    return base, method, n
 
-    new_index.append(key)
 
-results.index = pd.MultiIndex.from_tuples(new_index)
-final = results.unstack(level=[1, 2, 3]).fillna("--")
+def to_bytes(s):
+    if "GB" in s:
+        return int(s[:-2].strip()) * 2 ** 30
+    elif "TB" in s:
+        return int(s[:-2].strip()) * 2 ** 40
 
 
-def find_max(s):
-    if (s == "--").all():
-        return "--"
-    for v in s.index:
-        if s.loc[v] != "✔":
-            s.loc[v] = -1
-        else:
-            end = v[-2:]
-            scale = 1 if end == "GB" else 1024
-            s.loc[v] = int(v[:-2]) * scale
-    return s.astype("i8").idxmax()
+def from_bytes(b):
+    b = b >> 30
+    if b >= 2 ** 10:
+        return f"{b>>10}TB"
+    else:
+        return f"{b}GB"
+
+
+series_data = {}
+for key in results:
+    parsed_key = parse_key(key)
+    result = results[key]
+    result = sorted(
+        [(to_bytes(key), result[key]) for key in result],
+        key=lambda v: v[0],
+        reverse=True,
+    )
+    if "FAIL" not in result[0][1]:
+        series_data[parsed_key] = from_bytes(result[0][0])
+    else:
+        lines = result[0][1].split("\n")
+        lines = lines[::-1]
+        max_pass = None
+        for i in range(len(lines) - 1):
+            if "no anomalies" in lines[i]:
+                max_line = lines[i + 1]
+                max_pass = "".join(max_line.split(" ")[1:3])
+                max_pass = (
+                    max_pass.replace("giga", "G")
+                    .replace("bytes", "B")
+                    .replace("tera", "T")
+                )
+                max_pass = f"❌ ({max_pass})"
+                break
+        series_data[parsed_key] = max_pass
+series = pd.Series(series_data)
+df = series.unstack([1, 2]).fillna("--")
 
 
 keys = [
     ("", ""),
-    ("SeedSeq", "4"),
-    ("SeedSeq", "8196"),
+    ("Seed Sequence", "4"),
+    ("Seed Sequence", "8196"),
     ("Jumped", "4"),
     ("Jumped", "8196"),
 ]
-new_table = {}
-for bg in final.index:
-    row = final.loc[bg]
-    repl = {}
-    for k in keys:
-        repl[k] = find_max(row.loc[k])
-    new_table[bg] = pd.Series(repl)
-new_table = pd.DataFrame(new_table).T
+new_table = df[keys]
 
 
 columns = new_table.columns
