@@ -74,7 +74,7 @@ for key in results:
         series_data[parsed_key] = max_pass
 series = pd.Series(series_data)
 df = series.unstack([1, 2]).fillna("--")
-
+df.index = [val.replace("_","-") for val in df.index]
 
 keys = [
     ("", ""),

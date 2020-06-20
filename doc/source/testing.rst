@@ -8,16 +8,16 @@ Quality Assurance
    show there is nothing glaringly wrong with these bit generators.
 
 A values below are the maximum output size where a bit generator or sequence of bit generators
-have been tested. A -- indicates that configuration is not relevant. Any failures are marked
-with an ✖ (there are none in this version). Most bit generators were only tested in their default
-configuration. Non-default configurations are indicated by listing the keyword arguments to
-the bit generator.
+have been tested. A -- indicates that configuration is not relevant. Failures are marked
+with an ✖ followed by the largest size passed in parentheses. Most bit generators were only
+tested in their default configuration. Non-default configurations are indicated by listing
+the keyword arguments to the bit generator.
 
 All bit generators have been tested using the same :class:`~numpy.random.SeedSequence`
 initialized with 256-bits of entropy taken from random.org.
 
 +-----------------------------+------------+-------------------------+-------------------------+
-| Method                      |            | SeedSeq                 | Jumped                  |
+| Method                      |            | Seed Sequence           | Jumped                  |
 +-----------------------------+------------+------------+------------+------------+------------+
 | Streams                     |            | 4          | 8196       | 4          | 8196       |
 +-----------------------------+------------+------------+------------+------------+------------+
@@ -27,7 +27,7 @@ initialized with 256-bits of entropy taken from random.org.
 +-----------------------------+------------+------------+------------+------------+------------+
 | ChaCha(rounds=8)            |        1TB |        1TB |        1TB |        1TB |        1TB |
 +-----------------------------+------------+------------+------------+------------+------------+
-| DSFMT                       |        1TB |      128GB |        1TB |      128GB |      128GB |
+| DSFMT                       |        1TB |  ❌ (256GB) |        1TB |  ❌ (256GB) |  ❌ (256GB) |
 +-----------------------------+------------+------------+------------+------------+------------+
 | HC128                       |        1TB |        1TB |        1TB |         -- |         -- |
 +-----------------------------+------------+------------+------------+------------+------------+
@@ -39,7 +39,7 @@ initialized with 256-bits of entropy taken from random.org.
 +-----------------------------+------------+------------+------------+------------+------------+
 | LXM                         |        1TB |        1TB |        1TB |        1TB |        1TB |
 +-----------------------------+------------+------------+------------+------------+------------+
-| MT19937                     |        1TB |      128GB |        1TB |      128GB |        1TB |
+| MT19937                     |        1TB |  ❌ (256GB) |        1TB |  ❌ (256GB) |        1TB |
 +-----------------------------+------------+------------+------------+------------+------------+
 | PCG64(variant=cm-dxsm)      |        1TB |        1TB |        1TB |        1TB |        1TB |
 +-----------------------------+------------+------------+------------+------------+------------+
@@ -49,13 +49,13 @@ initialized with 256-bits of entropy taken from random.org.
 +-----------------------------+------------+------------+------------+------------+------------+
 | Philox                      |        1TB |        1TB |        1TB |        1TB |        1TB |
 +-----------------------------+------------+------------+------------+------------+------------+
-| SFC64(k=1)                  |        1TB |        1TB |      128GB |         -- |         -- |
+| SFC64(k=1)                  |        1TB |        1TB |        1TB |         -- |         -- |
 +-----------------------------+------------+------------+------------+------------+------------+
-| SFC64(k=3394385948627484371)|      128GB |        1TB |      128GB |         -- |         -- |
+| SFC64(k=3394385948627484371)|        1TB |        1TB |        1TB |         -- |         -- |
 +-----------------------------+------------+------------+------------+------------+------------+
-| SFMT                        |      128GB |      128GB |      128GB |      128GB |      128GB |
+| SFMT                        |        1TB |  ❌ (256GB) |        1TB |  ❌ (256GB) |        1TB |
 +-----------------------------+------------+------------+------------+------------+------------+
-| SPECK128                    |      128GB |      128GB |      128GB |      128GB |      128GB |
+| SPECK128                    |        1TB |        1TB |      128GB |        1TB |      128GB |
 +-----------------------------+------------+------------+------------+------------+------------+
 | ThreeFry                    |      128GB |      128GB |      128GB |      128GB |      128GB |
 +-----------------------------+------------+------------+------------+------------+------------+
@@ -63,7 +63,3 @@ initialized with 256-bits of entropy taken from random.org.
 +-----------------------------+------------+------------+------------+------------+------------+
 | Xoshiro512                  |      128GB |      128GB |      128GB |      128GB |      128GB |
 +-----------------------------+------------+------------+------------+------------+------------+
-
-Failures
---------
-¹ Passed 128GB, failed at 1TB
