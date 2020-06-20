@@ -46,7 +46,7 @@ JUMPABLE = [bg for bg in ALL_BIT_GENS if hasattr(bg, "jumped")]
 SPECIALS = {
     ChaCha: {"rounds": [8, 20]},
     JSF: {"seed_size": [1, 3]},
-    SFC64: {"k": [1, 3394385948627484371]},
+    SFC64: {"k": [1, 3394385948627484371, "weyl"]},
     LCG128Mix: {"output": ["upper"]},
     PCG64: {"variant": ["cm-dxsm", "dxsm", "xsl-rr"]},
 }
@@ -83,9 +83,29 @@ seed_seq = np.random.SeedSequence(ENTROPY)
 BASE += DSFMT_WRAPPER
 
 
+def configure_sfc64_weyl(streams, entropy):
+    block = f"""\
+
+base = rg.SFC64(seed_seq)
+
+weyl = list(set(list(base.random_raw(10*{streams}) | np.uint64(0x1))))
+retain = []
+for val in weyl:
+    if sum([v=="1" for v in bin(val)]) <= 32:
+        retain.append(val)
+    if len(retain) == {streams}:
+        break
+assert len(retain) == {streams}
+bit_gens = [rg.SFC64(seed_seq, k=k) for k in retain]
+"""
+    return BASE.format(entropy=entropy) + block
+
+
 def configure_stream(
     bit_gen, kwargs=None, jumped=False, streams=8196, entropy=DEFAULT_ENTOPY
 ):
+    if bit_gen == SFC64 and kwargs["k"] == "weyl":
+        return configure_sfc64_weyl(streams, entropy=entropy)
     kwargs_fmt = ""
     if kwargs:
         kwargs_repr = str(kwargs)
