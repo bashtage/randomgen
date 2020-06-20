@@ -96,7 +96,8 @@ for val in weyl:
     if len(retain) == {streams}:
         break
 assert len(retain) == {streams}
-bit_gens = [rg.SFC64(seed_seq, k=k) for k in retain]
+bitgens = [rg.SFC64(seed_seq, k=k) for k in retain]
+output = 64
 """
     return BASE.format(entropy=entropy) + block
 
