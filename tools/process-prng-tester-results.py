@@ -90,6 +90,8 @@ replacements = {
     "SFMT": "SFMT⁴",
     "PCG64(variant=xsl-rr)": "PCG64(variant=xsl-rr)⁵",
     "PCG64(variant=cm-dxsm)": "PCG64(variant=cm-dxsm)²",
+    "JSF(seed-size=1)": "JSF(seed_size=1)",
+    "JSF(seed-size=3)": "JSF(seed_size=3)",
 }
 df.index = [replacements.get(key, key) for key in df.index]
 

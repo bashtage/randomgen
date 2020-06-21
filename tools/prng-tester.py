@@ -1,9 +1,15 @@
 from collections import defaultdict
 import itertools
+import json
 import logging
+from multiprocessing import Manager
 import os
+import random
+import subprocess
 import sys
+import time
 
+from joblib import Parallel, cpu_count, delayed
 from randomgen import (
     DSFMT,
     HC128,
@@ -139,10 +145,15 @@ for i in range({streams}-1):
     return BASE.format(entropy=entropy) + "\n" + "\n".join(contents) + "\n"
 
 
-def get_logger():
-    logger = logging.getLogger(__name__)
+def get_logger(name=None):
+    if name is None:
+        logger = logging.getLogger(__name__)
+    else:
+        logger = logging.getLogger(name)
     logger.setLevel(logging.DEBUG)
-    formatter = logging.Formatter("%(asctime)s %(levelname)s: %(message)s ")
+    formatter = logging.Formatter(
+        "%(name)s - %(asctime)s - %(levelname)s: %(message)s "
+    )
     handler = logging.StreamHandler(sys.stdout)
     handler.setFormatter(formatter)
     logger.addHandler(handler)
@@ -206,7 +217,7 @@ def test_single(
 ):
     file_name = os.path.join(os.path.dirname(__file__), f"{key.lower()}.py")
     file_name = os.path.abspath(file_name)
-    logger = get_logger()
+    logger = get_logger(key)
     with open(file_name, "w") as of:
         of.write(configurations[key])
 
@@ -228,7 +239,6 @@ def test_single(
     if multithreaded:
         cmd += ["-multithreaded"]
     logger.info("Executing " + " ".join(cmd))
-    import subprocess
 
     ps = subprocess.Popen(
         " ".join(cmd), shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT,
@@ -255,9 +265,8 @@ def test_single(
 
 
 if __name__ == "__main__":
-    logger = get_logger()
+    logger = get_logger("prng-tester")
 
-    from multiprocessing import Manager
     import argparse
 
     parser = argparse.ArgumentParser(
@@ -281,6 +290,12 @@ if __name__ == "__main__":
         "--run-tests",
         action="store_true",
         help="Run the tests. If False, only the test configuration files are output.",
+    )
+    parser.add_argument(
+        "-r",
+        "--randomize",
+        action="store_true",
+        help="Execute in a random order by shuffling.",
     )
     parser.add_argument(
         "-s",
@@ -309,24 +324,23 @@ if __name__ == "__main__":
     configurations = setup_configuration_files(entropy=args.entropy)
     if args.run_tests:
         print("Running tests...")
-        import time
 
         time.sleep(0.5)
 
     results = defaultdict(dict)
-    import json
 
     if os.path.exists("results.json"):
-        try:
-            with open("results.json", "r", encoding="utf8") as existing:
-                results.update(json.load(existing))
-        except json.decoder.JSONDecodeError:
-            pass
+        with open("results.json", "r", encoding="utf8") as existing:
+            results.update(json.load(existing))
     manager = Manager()
     lock = manager.Lock()
+    configuration_keys = list(configurations.keys())
+    if args.randomize:
+        random.shuffle(configuration_keys)
+        logger.info("Randomizing the execution order")
     if args.parallel:
         test_args = []
-        for key in configurations:
+        for key in configuration_keys:
             if key in results and args.size in results[key]:
                 logger.info(f"Skipping {key} with size {args.size}")
                 continue
@@ -340,7 +354,6 @@ if __name__ == "__main__":
                     lock,
                 ]
             )
-        from joblib import Parallel, delayed, cpu_count
 
         n_jobs = args.n_jobs if args.n_jobs else cpu_count() // 2 - 1
         n_jobs = max(n_jobs, 1)
@@ -356,7 +369,7 @@ if __name__ == "__main__":
             results[key][size] = value
     else:
         logger.info("Running in series")
-        for key in configurations:
+        for key in configuration_keys:
             if key in results and args.size in results[key]:
                 logger.info(f"Skipping {key} with size {args.size}")
                 continue
