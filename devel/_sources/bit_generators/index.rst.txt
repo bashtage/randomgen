@@ -27,6 +27,7 @@ These RNGs will be included in future releases.
    MT64 <mt64>
    PCG32 <pcg32>
    PCG64 <pcg64>
+   PCG64 2.0 (64-bit multiplier, DXSM mixing) <pcg64dxsm>
    128-bit LCG with output mixing <lcg128mix>
    Philox <philox>
    RDRAND <rdrand>

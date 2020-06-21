@@ -76,6 +76,14 @@ devel/_sources/bit_generators/generated/randomgen.pcg64.PCG64.jumped.rst.txt
 devel/_sources/bit_generators/generated/randomgen.pcg64.PCG64.random_raw.rst.txt
 devel/_sources/bit_generators/generated/randomgen.pcg64.PCG64.seed.rst.txt
 devel/_sources/bit_generators/generated/randomgen.pcg64.PCG64.state.rst.txt
+devel/_sources/bit_generators/generated/randomgen.pcg64.PCG64DXSM.advance.rst.txt
+devel/_sources/bit_generators/generated/randomgen.pcg64.PCG64DXSM.cffi.rst.txt
+devel/_sources/bit_generators/generated/randomgen.pcg64.PCG64DXSM.ctypes.rst.txt
+devel/_sources/bit_generators/generated/randomgen.pcg64.PCG64DXSM.jump.rst.txt
+devel/_sources/bit_generators/generated/randomgen.pcg64.PCG64DXSM.jumped.rst.txt
+devel/_sources/bit_generators/generated/randomgen.pcg64.PCG64DXSM.random_raw.rst.txt
+devel/_sources/bit_generators/generated/randomgen.pcg64.PCG64DXSM.seed.rst.txt
+devel/_sources/bit_generators/generated/randomgen.pcg64.PCG64DXSM.state.rst.txt
 devel/_sources/bit_generators/generated/randomgen.philox.Philox.advance.rst.txt
 devel/_sources/bit_generators/generated/randomgen.philox.Philox.cffi.rst.txt
 devel/_sources/bit_generators/generated/randomgen.philox.Philox.ctypes.rst.txt
@@ -161,6 +169,7 @@ devel/_sources/bit_generators/mt19937.rst.txt
 devel/_sources/bit_generators/mt64.rst.txt
 devel/_sources/bit_generators/pcg32.rst.txt
 devel/_sources/bit_generators/pcg64.rst.txt
+devel/_sources/bit_generators/pcg64dxsm.rst.txt
 devel/_sources/bit_generators/philox.rst.txt
 devel/_sources/bit_generators/rdrand.rst.txt
 devel/_sources/bit_generators/sfc.rst.txt
@@ -429,6 +438,14 @@ devel/bit_generators/generated/randomgen.pcg64.PCG64.jumped.html
 devel/bit_generators/generated/randomgen.pcg64.PCG64.random_raw.html
 devel/bit_generators/generated/randomgen.pcg64.PCG64.seed.html
 devel/bit_generators/generated/randomgen.pcg64.PCG64.state.html
+devel/bit_generators/generated/randomgen.pcg64.PCG64DXSM.advance.html
+devel/bit_generators/generated/randomgen.pcg64.PCG64DXSM.cffi.html
+devel/bit_generators/generated/randomgen.pcg64.PCG64DXSM.ctypes.html
+devel/bit_generators/generated/randomgen.pcg64.PCG64DXSM.jump.html
+devel/bit_generators/generated/randomgen.pcg64.PCG64DXSM.jumped.html
+devel/bit_generators/generated/randomgen.pcg64.PCG64DXSM.random_raw.html
+devel/bit_generators/generated/randomgen.pcg64.PCG64DXSM.seed.html
+devel/bit_generators/generated/randomgen.pcg64.PCG64DXSM.state.html
 devel/bit_generators/generated/randomgen.philox.Philox.advance.html
 devel/bit_generators/generated/randomgen.philox.Philox.cffi.html
 devel/bit_generators/generated/randomgen.philox.Philox.ctypes.html
@@ -514,6 +531,7 @@ devel/bit_generators/mt19937.html
 devel/bit_generators/mt64.html
 devel/bit_generators/pcg32.html
 devel/bit_generators/pcg64.html
+devel/bit_generators/pcg64dxsm.html
 devel/bit_generators/philox.html
 devel/bit_generators/rdrand.html
 devel/bit_generators/sfc.html
