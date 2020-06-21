@@ -14,6 +14,7 @@ from randomgen import (
     MT19937,
     PCG32,
     PCG64,
+    PCG64DXSM,
     SFC64,
     SFMT,
     SPECK128,
@@ -144,6 +145,7 @@ configs = {
         "inc": [None, UINT128],
         "variant": ["xsl-rr", "dxsm", "cm-dxsm"],
     },
+    "PCG64DXSM": {"seed": seed_seq()},
     "AESCounter": {
         "seed": seed_seq(),
         "key": UINT128,
@@ -198,6 +200,7 @@ BIT_GEN = {
     "SPECK128": SPECK128,
     "PCG32": PCG32,
     "PCG64": PCG64,
+    "PCG64DXSM": PCG64DXSM,
     "JSF": JSF,
     "SFC64": SFC64,
     "AESCounter": AESCounter,

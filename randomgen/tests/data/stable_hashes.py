@@ -180,6 +180,11 @@ known_hashes = {
         "initial_state_hash": "73cf476d2aeb333f5f81a1095c2fba66f4e42223e4f32a36390aa83c91104b1e",
         "final_state_hash": "9cd88b41a398af2d2a98d1c0cdafce1181c42cbd0ca3e8ed2595d5b17733d217",
     },
+    ("PCG64DXSM", "seed"): {
+        "random_values": "3503f203529319943b529243a3dec39baf6ea30b0acd50a24af7adb52d7772ad",
+        "initial_state_hash": "5c3b0db91c3e5afc10f017ff323fc7a2e7223fdf5eec6e062a3b71e2aa24e4a4",
+        "final_state_hash": "6833266c64dac01522c5efa67360ccfec309452e19131ad238ff754fdc19003d",
+    },
     ("AESCounter", "seed"): {
         "random_values": "475b8b4363e7aee8bd5022f1a2a0a5a125ca701a3c7585396cc0c7bdfb56c35e",
         "initial_state_hash": "9437a0c633aac707ee481628600ced2f179aa0c02a6e60540cab412e4b80c22e",
