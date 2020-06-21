@@ -17,6 +17,7 @@ from randomgen import (
     MT19937,
     PCG32,
     PCG64,
+    PCG64DXSM,
     SFMT,
     SPECK128,
     AESCounter,
@@ -184,7 +185,9 @@ class RNG(object):
 
     def test_jump(self):
         state = self.rg.bit_generator.state
-        if hasattr(self.rg.bit_generator, "jump"):
+        if hasattr(self.rg.bit_generator, "jump") and not isinstance(
+            self.rg.bit_generator, PCG64DXSM
+        ):
             with pytest.deprecated_call():
                 self.rg.bit_generator.jump()
             jumped_state = self.rg.bit_generator.state
@@ -211,8 +214,10 @@ class RNG(object):
             pytest.skip("jumped is not supported by {0}".format(bit_gen_name))
 
     def test_jumped_against_jump(self):
-        if hasattr(self.rg.bit_generator, "jumped") and hasattr(
-            self.rg.bit_generator, "jump"
+        if (
+            hasattr(self.rg.bit_generator, "jumped")
+            and hasattr(self.rg.bit_generator, "jump")
+            and not isinstance(self.rg.bit_generator, PCG64DXSM)
         ):
             bg = self.rg.bit_generator
             state = bg.state
@@ -227,8 +232,10 @@ class RNG(object):
             pytest.skip("jump or jumped is not supported by {0}".format(bit_gen_name))
 
     def test_jumped_against_jump_32bit(self):
-        if hasattr(self.rg.bit_generator, "jumped") and hasattr(
-            self.rg.bit_generator, "jump"
+        if (
+            hasattr(self.rg.bit_generator, "jumped")
+            and hasattr(self.rg.bit_generator, "jump")
+            and not isinstance(self.rg.bit_generator, PCG64DXSM)
         ):
             bg = self.rg.bit_generator
             bg.seed(*self.seed)
@@ -315,6 +322,12 @@ class RNG(object):
         self.rg.bit_generator.state = state
         int_2 = self.rg.integers(2 ** 31)
         assert_(int_1 == int_2)
+        with pytest.raises(TypeError):
+            self.rg.bit_generator.state = [(k, v) for k, v in state.items()]
+        with pytest.raises(ValueError):
+            wrong_state = state.copy()
+            wrong_state["bit_generator"] = "WrongClass"
+            self.rg.bit_generator.state = wrong_state
 
     def test_entropy_init(self):
         rg = self.init_generator()
@@ -658,7 +671,7 @@ class RNG(object):
         with pytest.raises((ValueError, TypeError)):
             self.rg.bit_generator.seed(seed)
 
-        if isinstance(self.rg.bit_generator, (LXM, LCG128Mix)):
+        if isinstance(self.rg.bit_generator, (LXM, LCG128Mix, PCG64DXSM)):
             return
         seed = np.array([1, 2, 3, out_of_bounds])
         with pytest.raises((ValueError, TypeError)):
@@ -1108,7 +1121,7 @@ class TestPCG64(RNG):
         pass
 
 
-class TestPCG64DXSM(TestPCG64):
+class TestPCG64VariantDXSM(TestPCG64):
     @classmethod
     def setup_class(cls):
         super().setup_class()
@@ -1475,3 +1488,18 @@ class TestLCG128Mix(RNG):
 
     def init_generator(self, seed=None, mode="sequence"):
         return Generator(self.bit_generator(seed=seed))
+
+
+class TestPCG64DXSM(TestLCG128Mix):
+    @classmethod
+    def setup_class(cls):
+        super().setup_class()
+        cls.bit_generator = PCG64DXSM
+        cls.seed = [2 ** 231 + 2 ** 21 + 2 ** 16 + 2 ** 5 + 1]
+        cls.rg = Generator(cls.bit_generator(*cls.seed))
+        cls.advance = 2 ** 63 + 2 ** 31 + 2 ** 15 + 1
+        cls.initial_state = cls.rg.bit_generator.state
+        cls.seed_vector_bits = 64
+        cls._extra_setup()
+        cls.seed_error = ValueError
+        cls.out_of_bounds = 2 ** 192 + 1

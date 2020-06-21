@@ -18,7 +18,10 @@ Change Log
 v1.19.0
 =======
 
-- Added a :class:`randomgen.sfc.SFC64` which supports generating streams using distinct
+- Added :class:`randomgen.pcg64.PCG64DXSM` which is an alias for :class:`randomgen.pcg64.PCG64`
+  with ``variant="cm-dxsm"`` and ``mode="sequence"``. This is the 2.0 version of PCG64 and
+  will likely become the default bit generator in NumPy in the near future.
+- Added :class:`randomgen.sfc.SFC64` which supports generating streams using distinct
   Weyl constants.
 - Added a :class:`randomgen.pcg64.LCG128Mix` which supports setting the LCG multiplier,
   changing the output function (including support for user-defined output functions) and

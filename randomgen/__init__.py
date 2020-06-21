@@ -13,7 +13,7 @@ from randomgen.mt64 import MT64
 from randomgen.mt19937 import MT19937
 from randomgen.mtrand import RandomState
 from randomgen.pcg32 import PCG32
-from randomgen.pcg64 import PCG64, LCG128Mix
+from randomgen.pcg64 import PCG64, PCG64DXSM, LCG128Mix
 from randomgen.philox import Philox
 from randomgen.rdrand import RDRAND
 from randomgen.seed_sequence import SeedlessSeedSequence, SeedSequence
@@ -35,17 +35,18 @@ PKG = os.path.dirname(__file__)
 __all__ = [
     "AESCounter",
     "ChaCha",
-    "LCG128Mix",
     "DSFMT",
     "ExtendedGenerator",
     "Generator",
     "HC128",
     "JSF",
+    "LCG128Mix",
     "LXM",
     "MT19937",
     "MT64",
     "PCG32",
     "PCG64",
+    "PCG64DXSM",
     "Philox",
     "RDRAND",
     "RandomState",

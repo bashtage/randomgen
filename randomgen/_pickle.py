@@ -11,7 +11,7 @@ from randomgen.mt64 import MT64
 from randomgen.mt19937 import MT19937
 from randomgen.mtrand import RandomState
 from randomgen.pcg32 import PCG32
-from randomgen.pcg64 import PCG64, LCG128Mix
+from randomgen.pcg64 import PCG64, PCG64DXSM, LCG128Mix
 from randomgen.philox import Philox
 from randomgen.rdrand import RDRAND
 from randomgen.sfc import SFC64
@@ -35,6 +35,7 @@ BitGenerators = {
     "MT64": MT64,
     "PCG32": PCG32,
     "PCG64": PCG64,
+    "PCG64DXSM": PCG64DXSM,
     "Philox": Philox,
     "ThreeFry": ThreeFry,
     "Xorshift1024": Xorshift1024,

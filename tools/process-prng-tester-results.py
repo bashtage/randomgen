@@ -8,7 +8,7 @@ with open("results.json") as res:
 
 def parse_key(key):
     if "-" not in key:
-        return (key, "", "")
+        return key, "", ""
     if "-jumped-streams-" in key:
         base, n = key.split("-jumped-streams-")
         method = "Jumped"
@@ -69,12 +69,29 @@ for key in results:
                     .replace("bytes", "B")
                     .replace("tera", "T")
                 )
-                max_pass = f"❌ ({max_pass})"
+                # ❌
+                if max_pass == "256GB":
+                    max_pass = "FAIL¹"
+                else:
+                    raise NotImplementedError("need to add footnote")
+
                 break
         series_data[parsed_key] = max_pass
 series = pd.Series(series_data)
 df = series.unstack([1, 2]).fillna("--")
 df.index = [val.replace("_", "-") for val in df.index]
+
+replacements = {
+    "DSFMT": "DSFMT⁴",
+    "MT19937": "MT19937⁴,⁵",
+    "Philox": "Philox⁵",
+    "SFC64(k=1)": "SFC64(k=1)⁵",
+    "SFC64(k=weyl)": "SFC64(k=weyl)³",
+    "SFMT": "SFMT⁴",
+    "PCG64(variant=xsl-rr)": "PCG64(variant=xsl-rr)⁵",
+    "PCG64(variant=cm-dxsm)": "PCG64(variant=cm-dxsm)²",
+}
+df.index = [replacements.get(key, key) for key in df.index]
 
 keys = [
     ("", ""),
@@ -90,7 +107,7 @@ columns = new_table.columns
 header = ["Bit Generator", "", "4", "8196", "4", "8196"]
 widths = list(map(lambda s: 2 + len(s), header))
 widths[0] = max(widths[0], max(map(lambda s: 2 + len(s), new_table.index)))
-widths = [max(w, 12) for w in widths]
+widths = [max(w, 11) for w in widths]
 
 first = "| Method"
 first += " " * (widths[0] - len(first))
@@ -156,5 +173,8 @@ for i in range(len(rows)):
     for c1, c2 in zip(before, after):
         temp += "+" if c1 == "|" or c2 == "|" else "-"
     out.append(temp)
+
+# Fix header setp
+out[4] = out[4].replace("-", "=")
 
 print("\n".join(out))

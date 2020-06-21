@@ -1,7 +1,7 @@
 import numpy as np
 import pytest
 
-from randomgen import PCG64, LCG128Mix, SeedSequence
+from randomgen import PCG64, PCG64DXSM, LCG128Mix, SeedSequence
 from randomgen.pcg64 import DEFAULT_DXSM_MULTIPLIER, DEFAULT_MULTIPLIER
 
 try:
@@ -197,3 +197,20 @@ def test_exceptions():
         LCG128Mix(SEED, output="not-implemented")
     with pytest.raises(TypeError):
         LCG128Mix(SEED, post=3)
+
+
+@pytest.mark.parametrize("seed", [0, sum([2 ** i for i in range(1, 128, 2)])])
+@pytest.mark.parametrize("inc", [0, sum([2 ** i for i in range(0, 128, 3)])])
+def test_equivalence_pcg64dxsm(seed, inc):
+    a = PCG64(seed, inc, mode="sequence", variant="cm-dxsm")
+    b = PCG64DXSM(seed, inc)
+    assert np.all((a.random_raw(10000) - b.random_raw(10000)) == 0)
+    assert np.all((a.random_raw(13) - b.random_raw(13)) == 0)
+    a_st = a.state
+    b_st = b.state
+    assert a_st["state"] == b_st["state"]
+    a = a.advance(345671)
+    b = b.advance(345671)
+    a_st = a.state
+    b_st = b.state
+    assert a_st["state"] == b_st["state"]

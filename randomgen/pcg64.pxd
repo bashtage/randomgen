@@ -76,3 +76,6 @@ cdef class LCG128Mix(BitGenerator):
     cdef int output_function
     cdef _reset_state_variables(self)
     cdef jump_inplace(self, object iter)
+
+cdef class PCG64DXSM(PCG64):
+    pass
