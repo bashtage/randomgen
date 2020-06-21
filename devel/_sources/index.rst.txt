@@ -145,6 +145,7 @@ New Features
    Parallel Applications <parallel>
    Multithreaded Generation <multithreading>
    new-or-different
+   Quality Assurance <testing>
    Comparing Performance <performance>
    extending
    custom-bit-generators.ipynb

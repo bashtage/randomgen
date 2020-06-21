@@ -290,6 +290,7 @@ devel/_sources/parallel.rst.txt
 devel/_sources/performance.rst.txt
 devel/_sources/references.rst.txt
 devel/_sources/seed_sequence.rst.txt
+devel/_sources/testing.rst.txt
 devel/_static/basic.css
 devel/_static/doctools.js
 devel/_static/documentation_options.js
@@ -649,3 +650,4 @@ devel/search.html
 devel/searchindex.js
 devel/seed_sequence.html
 devel/sitemap.xml
+devel/testing.html
