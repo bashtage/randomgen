@@ -13,7 +13,6 @@ struct LXM_STATE_T {
   uint64_t x[4]; /* xorshift */
   uint64_t lcg_state;    /* LCG */
   uint64_t b;    /* LCG add value: default 3037000493 */
-  int mix; /* apply murmur hash */
   int has_uint32;
   uint32_t uinteger;
 };
@@ -54,12 +53,9 @@ static inline void lcg(lxm_state_t *state) {
 }
 
 static inline uint64_t lxm_next64(lxm_state_t *state) {
-  uint64_t next_val = state->x[0] + state->lcg_state;
+  uint64_t next_val = murmur_hash3(state->x[0] + state->lcg_state);
   lcg(state);
   xorshift(state);
-  if (state->mix) {
-    return murmur_hash3(next_val);
-  }
   return next_val;
 }
 

@@ -6,7 +6,6 @@ cdef extern from "src/lxm/lxm.h":
         uint64_t x[4]
         uint64_t lcg_state
         uint64_t b
-        int mix
         int has_uint32
         uint32_t uinteger
 

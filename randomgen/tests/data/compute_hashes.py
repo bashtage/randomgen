@@ -1,6 +1,7 @@
 import hashlib
 import itertools
 import sys
+import warnings
 
 import numpy as np
 
@@ -26,6 +27,8 @@ from randomgen import (
     Xoshiro256,
     Xoshiro512,
 )
+
+warnings.filterwarnings("error", "THe default value of inc")
 
 try:
     from numpy.random import SeedSequence
@@ -122,7 +125,7 @@ configs = {
     "Xorshift1024": {"seed": seed_seq()},
     "Xoshiro256": {"seed": seed_seq()},
     "Xoshiro512": {"seed": seed_seq()},
-    "LXM": {"seed": seed_seq(), "mix": [True, False]},
+    "LXM": {"seed": seed_seq()},
     "MT64": {"seed": seed_seq()},
     "MT19937": {"seed": seed_seq()},
     "DSFMT": {"seed": seed_seq(), "EXCLUDE_KEYS": ("buffered_uniforms",)},
@@ -230,6 +233,9 @@ for gen in configs:
                 if "seed" in ex_kwargs:
                     ex_kwargs["seed"] = seed_seq()
                 ex_kwargs = fix_random_123(gen, ex_kwargs)
+                if bg == PCG64 and "inc" not in kwargs:
+                    # Special case exclude this variant to reduce noise
+                    continue
                 final_key = (gen,) + ex_key
                 bit_gen = bg(**ex_kwargs)
                 final_configurations[final_key] = bit_gen
