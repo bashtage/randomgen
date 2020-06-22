@@ -245,7 +245,7 @@ cdef class PCG64(BitGenerator):
         ----------
         seed : {None, int, SeedSequence}, optional
             Random seed initializing the pseudo-random number generator. Can
-            be an integer in [0, 2**128], a SeedSequence instance or None
+            be an integer in [0, 2**128), a SeedSequence instance or None
             (the default). If `seed` is None, then ``PCG64`` will try to
             read data from ``/dev/urandom`` (or the Windows analog) if
             available. If unavailable, a 64-bit hash of the time and process
@@ -525,7 +525,7 @@ cdef class LCG128Mix(BitGenerator):
         or None (the default). If `seed` is None, then ``PCG64``
         use a ``SeedSequence`` initialized with system-provided entropy.
     inc : {None, int}, optional
-        The increment in the LCG. Can be an integer in [0, 2**128] or None.
+        The increment in the LCG. Can be an integer in [0, 2**128) or None.
         If `inc` is None, then it is initialized using the same``SeedSequence``
         used by seed.
     multiplier : int, optional
@@ -762,16 +762,15 @@ cdef class LCG128Mix(BitGenerator):
         ----------
         seed : {None, int, array_like[int], SeedSequence}, optional
             Random seed initializing the pseudo-random number generator. Can
-            be an integer in [0, 2**128], a SeedSequence instance or None
+            be an integer in [0, 2**128), a SeedSequence instance or None
             (the default). If `seed` is None, then ``PCG64`` will seed
             using a ``SeedSequence`` which initializes using system-provided
             entropy.
         inc : {None, int}, optional
-            The increment in the LCG. Can be an integer in [0, 2**128] or
+            The increment in the LCG. Can be an integer in [0, 2**128) or
             None. If `inc` is None, then it is initialized using
             a ``SeedSequence`` (which is shared with seed if seed is also
-            None). Can be used with the same seed to produce multiple streams
-            using other values of inc.
+            None).
         """
         BitGenerator._seed_with_seed_sequence(self, seed, inc=inc)
 
