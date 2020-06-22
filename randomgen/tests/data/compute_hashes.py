@@ -7,6 +7,7 @@ import numpy as np
 
 from randomgen import (
     DSFMT,
+    EFIIX64,
     HC128,
     JSF,
     LXM,
@@ -126,6 +127,7 @@ configs = {
     "Xorshift1024": {"seed": seed_seq()},
     "Xoshiro256": {"seed": seed_seq()},
     "Xoshiro512": {"seed": seed_seq()},
+    "EFIIX64": {"seed": seed_seq()},
     "LXM": {"seed": seed_seq()},
     "MT64": {"seed": seed_seq()},
     "MT19937": {"seed": seed_seq()},
@@ -192,6 +194,7 @@ BIT_GEN = {
     "Xorshift1024": Xorshift1024,
     "Xoshiro256": Xoshiro256,
     "Xoshiro512": Xoshiro512,
+    "EFIIX64": EFIIX64,
     "LXM": LXM,
     "MT64": MT64,
     "MT19937": MT19937,

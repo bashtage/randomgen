@@ -50,8 +50,8 @@ cdef class ThreeFry(BitGenerator):
     ----------
     seed : {None, int, array_like[uint64], SeedSequence}, optional
         Entropy initializing the pseudo-random number generator.
-        Can be an integer in [0, 2**64-1], array of integers in
-        [0, 2**64-1], a SeedSequence instance or ``None`` (the default).
+        Can be an integer in [0, 2**64), array of integers in
+        [0, 2**64), a SeedSequence instance or ``None`` (the default).
         If `seed` is ``None``, data will be read from ``/dev/urandom``
         (or the Windows analog) if available. If unavailable, a hash of the
         time and process ID is used.
@@ -94,7 +94,7 @@ cdef class ThreeFry(BitGenerator):
     -----
     ThreeFry is a 32 or 64-bit PRNG that uses a counter-based design based on
     weaker (and faster) versions of cryptographic functions [1]_. Instances
-    using different values of the key produce independent sequences. ``Philox``
+    using different values of the key produce distinct sequences. ``Philox``
     has a period of :math:`2^{N*W} - 1` and supports arbitrary advancing and
     jumping the sequence in increments of :math:`2^{N*W//2}`. These features
     allow multiple non-overlapping sequences to be generated.
@@ -112,7 +112,7 @@ cdef class ThreeFry(BitGenerator):
     (N*W//2)-bit value. These are encoded as an n-element w-bit array.
     One is a counter which is incremented by 1 for every ``n`` ``w``-bit
     randoms produced. The second is a key which determines the sequence
-    produced. Using different keys produces independent sequences.
+    produced. Using different keys produces distinct sequences.
 
     When mode is "legacy", ``Philox`` is seeded using either a single 64-bit
     unsigned integer or a vector of 64-bit unsigned integers. In either case,
@@ -151,12 +151,6 @@ cdef class ThreeFry(BitGenerator):
     --------
     >>> from randomgen import Generator, ThreeFry
     >>> rg = Generator(ThreeFry(1234))
-    >>> rg.standard_normal()
-    0.123  # random
-
-    Identical method using only ThreeFry
-
-    >>> rg = ThreeFry(1234).generator
     >>> rg.standard_normal()
     0.123  # random
 
@@ -241,8 +235,8 @@ cdef class ThreeFry(BitGenerator):
         ----------
         seed : {None, int, array_like[uint64], SeedSequence}, optional
             Entropy initializing the pseudo-random number generator.
-            Can be an integer in [0, 2**64-1], array of integers in
-            [0, 2**64-1], a SeedSequence instance or ``None`` (the default).
+            Can be an integer in [0, 2**64), array of integers in
+            [0, 2**64), a SeedSequence instance or ``None`` (the default).
             If `seed` is ``None``, data will be read from ``/dev/urandom``
             (or the Windows analog) if available. If unavailable, a hash of
             the time and process ID is used.

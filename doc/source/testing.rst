@@ -3,7 +3,7 @@ Quality Assurance
 =================
 
 A values below are the maximum output size where a bit generator or sequence of bit generators
-have been tested. A -- indicates that configuration is not relevant. Failures are marked
+have been tested using PractRand_. A -- indicates that configuration is not relevant. Failures are marked
 with FAIL. Most bit generators were only tested in their default configuration.
 Non-default configurations are indicated by listing the keyword arguments to the bit generator.
 
@@ -23,15 +23,17 @@ initialized with 256-bits of entropy taken from random.org.
 +-----------------------------+-----------+-----------+-----------+-----------+-----------+
 | DSFMT⁴                      |       1TB |     FAIL¹ |       1TB |     FAIL¹ |     FAIL¹ |
 +-----------------------------+-----------+-----------+-----------+-----------+-----------+
+| EFIIX64                     |     128GB |     128GB |     128GB |        -- |        -- |
++-----------------------------+-----------+-----------+-----------+-----------+-----------+
 | HC128                       |       1TB |       1TB |       1TB |        -- |        -- |
 +-----------------------------+-----------+-----------+-----------+-----------+-----------+
-| JSF(seed_size=1)            |       1TB |       1TB |       1TB |        -- |        -- |
+| JSF(seed_size=1)            |       1TB |       4TB |       1TB |        -- |        -- |
 +-----------------------------+-----------+-----------+-----------+-----------+-----------+
-| JSF(seed_size=3)            |       1TB |       1TB |       4TB |        -- |        -- |
+| JSF(seed_size=3)            |       1TB |       4TB |       4TB |        -- |        -- |
 +-----------------------------+-----------+-----------+-----------+-----------+-----------+
-| LCG128Mix(output=upper)     |       1TB |       1TB |       1TB |       1TB |       1TB |
+| LCG128Mix(output=upper)     |       1TB |       4TB |       1TB |       4TB |       1TB |
 +-----------------------------+-----------+-----------+-----------+-----------+-----------+
-| LXM                         |       1TB |       1TB |       1TB |       1TB |       4TB |
+| LXM                         |       1TB |       4TB |       1TB |       4TB |       4TB |
 +-----------------------------+-----------+-----------+-----------+-----------+-----------+
 | MT19937⁴,⁵                  |       1TB |     FAIL¹ |       1TB |     FAIL¹ |       1TB |
 +-----------------------------+-----------+-----------+-----------+-----------+-----------+
@@ -73,3 +75,5 @@ generators. These should not be used in large studies except when backward compa
 is required.
 
 ⁵ Identical output to the version included in NumPy 1.19.
+
+.. _PractRand: http://pracrand.sourceforge.net/

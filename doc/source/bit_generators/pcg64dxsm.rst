@@ -1,5 +1,5 @@
-Permuted Congruential Generator 2.0 (64-bit Multiplier, DXSM Ouput)
--------------------------------------------------------------------
+Permuted Congruential Generator 2.0 (64-bit Multiplier, DXSM Output)
+--------------------------------------------------------------------
 
 .. currentmodule:: randomgen.pcg64
 

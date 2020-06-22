@@ -24,7 +24,7 @@ cdef class AESCounter(BitGenerator):
     ----------
     seed : {None, int, SeedSequence}, optional
         Random seed initializing the pseudo-random number generator.
-        Can be an integer in [0, 2**128-1], a SeedSequence instance or
+        Can be an integer in [0, 2**128), a SeedSequence instance or
         ``None`` (the default). If `seed` is ``None``, then  data is read
         from ``/dev/urandom`` (or the Windows analog) if available. If
         unavailable, a hash of the time and process ID is used.
@@ -58,7 +58,7 @@ cdef class AESCounter(BitGenerator):
     -----
     AESCounter is a 64-bit PRNG that uses a counter-based design based on
     the AES-128 cryptographic function [1]_. Instances using different values
-    of the key produce independent sequences. ``AESCounter`` has a period
+    of the key produce distinct sequences. ``AESCounter`` has a period
     of :math:`2^{128} - 1` and supports arbitrary advancing and
     jumping the sequence in increments of :math:`2^{64}`. These features allow
     multiple non-overlapping sequences to be generated.
@@ -193,7 +193,7 @@ cdef class AESCounter(BitGenerator):
         ----------
         seed : {None, int, SeedSequence}, optional
             Random seed initializing the pseudo-random number generator.
-            Can be an integer in [0, 2**128-1], a SeedSequence instance or
+            Can be an integer in [0, 2**128), a SeedSequence instance or
             ``None`` (the default). If `seed` is ``None``, then  data is read
             from ``/dev/urandom`` (or the Windows analog) if available. If
             unavailable, a hash of the time and process ID is used.

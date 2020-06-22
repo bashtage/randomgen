@@ -20,6 +20,7 @@ These RNGs will be included in future releases.
    AES Counter <aesctr>
    ChaCha <chacha>
    DSFMT <dsfmt>
+   EFIIX64 <efiix64>
    HC128 <hc128>
    JSF <jsf>
    LXM <lxm>

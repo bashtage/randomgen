@@ -24,7 +24,7 @@ cdef class ChaCha(BitGenerator):
     ----------
     seed : {None, int, array_like[uint64], SeedSequence}, optional
         Random seed initializing the pseudo-random number generator.
-        Can be an integer in [0, 2**256-1], an array of 4 uint64 values,
+        Can be an integer in [0, 2**256), an array of 4 uint64 values,
         a SeedSequence instance or ``None`` (the default). If `seed` is
         ``None``, then  data is read from ``/dev/urandom`` (or the Windows
         analog) if available. If unavailable, a hash of the time and
@@ -64,7 +64,7 @@ cdef class ChaCha(BitGenerator):
     -----
     ChaCha is a 64-bit PRNG that uses a counter-based design based on
     the ChaCha cipher [1]_. Instances using different values
-    of the key produce independent sequences. ``ChaCha`` has a period
+    of the key produce distinct sequences. ``ChaCha`` has a period
     of :math:`2^{128} - 1` and supports arbitrary advancing and
     jumping the sequence in increments of :math:`2^{64}`. These features allow
     multiple non-overlapping sequences to be generated.
@@ -195,7 +195,7 @@ cdef class ChaCha(BitGenerator):
 
         seed : {None, int, array_like[uint64], SeedSequence}, optional
             Random seed initializing the pseudo-random number generator.
-            Can be an integer in [0, 2**256-1], an array of 4 uint64 values,
+            Can be an integer in [0, 2**256), an array of 4 uint64 values,
             a SeedSequence instance or ``None`` (the default). If `seed` is
             ``None``, then  data is read from ``/dev/urandom`` (or the Windows
             analog) if available. If unavailable, a hash of the time and

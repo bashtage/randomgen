@@ -4,6 +4,7 @@ import sys
 from randomgen.aes import AESCounter
 from randomgen.chacha import ChaCha
 from randomgen.dsfmt import DSFMT
+from randomgen.efiix64 import EFIIX64
 from randomgen.entropy import random_entropy
 from randomgen.generator import ExtendedGenerator, Generator
 from randomgen.hc128 import HC128
@@ -36,6 +37,7 @@ __all__ = [
     "AESCounter",
     "ChaCha",
     "DSFMT",
+    "EFIIX64",
     "ExtendedGenerator",
     "Generator",
     "HC128",

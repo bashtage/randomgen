@@ -63,7 +63,7 @@ The included generators can be used in parallel, distributed applications in
 one of five ways:
 
 * :ref:`using-seed-sequence`
-* :ref:`independent-streams`
+* :ref:`distinct-cryptographic-keys`
 * :ref:`advancing`
 * :ref:`jumping`
 * :ref:`weyl-sequences`

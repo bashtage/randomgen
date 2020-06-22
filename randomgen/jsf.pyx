@@ -86,8 +86,8 @@ cdef class JSF(BitGenerator):
     ----------
     seed : {None, int, array_like[uint], SeedSequence}, optional
         Random seed initializing the pseudo-random number generator. Can be
-        an integer in [0, 2**size-1], an array of integers in
-        [0, 2**size-1], a SeedSequence or ``None`` (the default). If
+        an integer in [0, 2**size), an array of integers in
+        [0, 2**size), a SeedSequence or ``None`` (the default). If
         `seed` is ``None``, then  data is read from ``/dev/urandom``
         (or the Windows analog) if available. If unavailable, a hash of
         the time and process ID is used.
@@ -246,8 +246,8 @@ cdef class JSF(BitGenerator):
         ----------
         seed : {None, int, array_like[uint], SeedSequence}, optional
             Random seed initializing the pseudo-random number generator. Can be
-            an integer in [0, 2**size-1], an array of integers in
-            [0, 2**size-1], a SeedSequence or ``None`` (the default). If
+            an integer in [0, 2**size), an array of integers in
+            [0, 2**size), a SeedSequence or ``None`` (the default). If
             `seed` is ``None``, then  data is read from ``/dev/urandom``
             (or the Windows analog) if available. If unavailable, a hash of
             the time and process ID is used.
