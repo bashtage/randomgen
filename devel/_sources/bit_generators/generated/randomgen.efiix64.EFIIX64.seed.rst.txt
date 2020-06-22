@@ -1,0 +1,6 @@
+randomgen.efiix64.EFIIX64.seed
+==============================
+
+.. currentmodule:: randomgen.efiix64
+
+.. automethod:: EFIIX64.seed

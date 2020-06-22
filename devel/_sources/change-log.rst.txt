@@ -18,6 +18,7 @@ Change Log
 v1.19.0
 =======
 
+- Tested all bit generators out to at least 1TB `using PractRand`_.
 - Added :class:`randomgen.pcg64.PCG64DXSM` which is an alias for :class:`randomgen.pcg64.PCG64`
   with ``variant="cm-dxsm"`` and ``mode="sequence"``. This is the 2.0 version of PCG64 and
   will likely become the default bit generator in NumPy in the near future.
@@ -190,3 +191,4 @@ v1.15
 - Build wheels using multibuild
 
 .. _in Java: https://openjdk.java.net/jeps/356
+.. _using PractRand: http://pracrand.sourceforge.net/

@@ -1,6 +1,7 @@
 devel/_sources/bit_generators/aesctr.rst.txt
 devel/_sources/bit_generators/chacha.rst.txt
 devel/_sources/bit_generators/dsfmt.rst.txt
+devel/_sources/bit_generators/efiix64.rst.txt
 devel/_sources/bit_generators/generated/randomgen.aes.AESCounter.advance.rst.txt
 devel/_sources/bit_generators/generated/randomgen.aes.AESCounter.cffi.rst.txt
 devel/_sources/bit_generators/generated/randomgen.aes.AESCounter.ctypes.rst.txt
@@ -24,6 +25,11 @@ devel/_sources/bit_generators/generated/randomgen.dsfmt.DSFMT.jumped.rst.txt
 devel/_sources/bit_generators/generated/randomgen.dsfmt.DSFMT.random_raw.rst.txt
 devel/_sources/bit_generators/generated/randomgen.dsfmt.DSFMT.seed.rst.txt
 devel/_sources/bit_generators/generated/randomgen.dsfmt.DSFMT.state.rst.txt
+devel/_sources/bit_generators/generated/randomgen.efiix64.EFIIX64.cffi.rst.txt
+devel/_sources/bit_generators/generated/randomgen.efiix64.EFIIX64.ctypes.rst.txt
+devel/_sources/bit_generators/generated/randomgen.efiix64.EFIIX64.random_raw.rst.txt
+devel/_sources/bit_generators/generated/randomgen.efiix64.EFIIX64.seed.rst.txt
+devel/_sources/bit_generators/generated/randomgen.efiix64.EFIIX64.state.rst.txt
 devel/_sources/bit_generators/generated/randomgen.hc128.HC128.cffi.rst.txt
 devel/_sources/bit_generators/generated/randomgen.hc128.HC128.ctypes.rst.txt
 devel/_sources/bit_generators/generated/randomgen.hc128.HC128.random_raw.rst.txt
@@ -363,6 +369,7 @@ devel/_static/underscore.js
 devel/bit_generators/aesctr.html
 devel/bit_generators/chacha.html
 devel/bit_generators/dsfmt.html
+devel/bit_generators/efiix64.html
 devel/bit_generators/generated/randomgen.aes.AESCounter.advance.html
 devel/bit_generators/generated/randomgen.aes.AESCounter.cffi.html
 devel/bit_generators/generated/randomgen.aes.AESCounter.ctypes.html
@@ -386,6 +393,11 @@ devel/bit_generators/generated/randomgen.dsfmt.DSFMT.jumped.html
 devel/bit_generators/generated/randomgen.dsfmt.DSFMT.random_raw.html
 devel/bit_generators/generated/randomgen.dsfmt.DSFMT.seed.html
 devel/bit_generators/generated/randomgen.dsfmt.DSFMT.state.html
+devel/bit_generators/generated/randomgen.efiix64.EFIIX64.cffi.html
+devel/bit_generators/generated/randomgen.efiix64.EFIIX64.ctypes.html
+devel/bit_generators/generated/randomgen.efiix64.EFIIX64.random_raw.html
+devel/bit_generators/generated/randomgen.efiix64.EFIIX64.seed.html
+devel/bit_generators/generated/randomgen.efiix64.EFIIX64.state.html
 devel/bit_generators/generated/randomgen.hc128.HC128.cffi.html
 devel/bit_generators/generated/randomgen.hc128.HC128.ctypes.html
 devel/bit_generators/generated/randomgen.hc128.HC128.random_raw.html

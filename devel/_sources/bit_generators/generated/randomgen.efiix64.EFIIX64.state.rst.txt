@@ -1,0 +1,6 @@
+randomgen.efiix64.EFIIX64.state
+===============================
+
+.. currentmodule:: randomgen.efiix64
+
+.. autoattribute:: EFIIX64.state

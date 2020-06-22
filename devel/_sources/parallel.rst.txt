@@ -8,7 +8,7 @@ applications where reproducibility is not a concern.
 
 
 * :ref:`using-seed-sequence`
-* :ref:`independent-streams`
+* :ref:`distinct-cryptographic-keys`
 * :ref:`advancing`
 * :ref:`jumping`
 * :ref:`weyl-sequences`
@@ -35,14 +35,14 @@ correlation when producing many streams in corner cases.
 
    streams = [SFC64(child) for child in children]
 
-.. _independent-streams:
+.. _distinct-cryptographic-keys:
 
-Independent Streams
--------------------
+Distinct Keys in Cryptographic Generators
+-----------------------------------------
 
-The cryptographic pseudo-random number generators (PRNGs) typically support
-independent streams using distinct keys. Generators that support this form of
-parallelization include :class:`~randomgen.aes.AESCounter`,
+The cryptographic pseudo-random number generators (PRNGs) support using distinct
+keys to produce distinct sequence.
+Generators that support this form of parallelization include :class:`~randomgen.aes.AESCounter`,
 :class:`~randomgen.chacha.ChaCha`,,:class:`~randomgen.hc128.HC128`
 :class:`~randomgen.threefry.ThreeFry`, :class:`~randomgen.philox.Philox`, and
 :class:`~randomgen.speck128.SPECK128`.
