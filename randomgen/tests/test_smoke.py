@@ -10,6 +10,7 @@ import pytest
 
 from randomgen import (
     DSFMT,
+    EFIIX64,
     HC128,
     JSF,
     LXM,
@@ -671,7 +672,7 @@ class RNG(object):
         with pytest.raises((ValueError, TypeError)):
             self.rg.bit_generator.seed(seed)
 
-        if isinstance(self.rg.bit_generator, (LXM, LCG128Mix, PCG64DXSM)):
+        if isinstance(self.rg.bit_generator, (LXM, LCG128Mix, PCG64DXSM, EFIIX64)):
             return
         seed = np.array([1, 2, 3, out_of_bounds])
         with pytest.raises((ValueError, TypeError)):
@@ -1495,6 +1496,21 @@ class TestPCG64DXSM(TestLCG128Mix):
     def setup_class(cls):
         super().setup_class()
         cls.bit_generator = PCG64DXSM
+        cls.seed = [2 ** 231 + 2 ** 21 + 2 ** 16 + 2 ** 5 + 1]
+        cls.rg = Generator(cls.bit_generator(*cls.seed))
+        cls.advance = 2 ** 63 + 2 ** 31 + 2 ** 15 + 1
+        cls.initial_state = cls.rg.bit_generator.state
+        cls.seed_vector_bits = 64
+        cls._extra_setup()
+        cls.seed_error = ValueError
+        cls.out_of_bounds = 2 ** 192 + 1
+
+
+class TestEFIIX64(TestLCG128Mix):
+    @classmethod
+    def setup_class(cls):
+        super().setup_class()
+        cls.bit_generator = EFIIX64
         cls.seed = [2 ** 231 + 2 ** 21 + 2 ** 16 + 2 ** 5 + 1]
         cls.rg = Generator(cls.bit_generator(*cls.seed))
         cls.advance = 2 ** 63 + 2 ** 31 + 2 ** 15 + 1

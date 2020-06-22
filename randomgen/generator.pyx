@@ -99,10 +99,6 @@ cdef class Generator:
 
     >>> from randomgen import MT19937
     >>> rg = Generator(MT19937())
-
-    The generator is also directly available from bit generators
-
-    >>> rg = MT19937().generator
     >>> rg.standard_normal()
     -0.203  # random
 
@@ -192,12 +188,6 @@ warnings.filterwarnings("ignore", "Generator", FutureWarning)
 
         >>> from randomgen import Generator, PCG64
         >>> bit_generator = PCG64(1234567891011)
-        >>> rg = bit_generator.generator
-        >>> bit_generator.seed(1110987654321)
-
-        The method used to create the generator is not important.
-
-        >>> bit_generator = PCG64(1234567891011)
         >>> rg = Generator(bit_generator)
         >>> bit_generator.seed(1110987654321)
 
@@ -205,7 +195,6 @@ warnings.filterwarnings("ignore", "Generator", FutureWarning)
 
         >>> rg = Generator(PCG64(1234567891011))
         >>> rg.seed(1110987654321)
-
         """
         self._bit_generator.seed(*args, **kwargs)
         return self

@@ -12,6 +12,7 @@ import time
 from joblib import Parallel, cpu_count, delayed
 from randomgen import (
     DSFMT,
+    EFIIX64,
     HC128,
     JSF,
     LXM,
@@ -33,6 +34,7 @@ ALL_BIT_GENS = [
     AESCounter,
     ChaCha,
     DSFMT,
+    EFIIX64,
     HC128,
     JSF,
     LXM,

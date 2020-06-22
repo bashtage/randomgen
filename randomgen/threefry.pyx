@@ -154,12 +154,6 @@ cdef class ThreeFry(BitGenerator):
     >>> rg.standard_normal()
     0.123  # random
 
-    Identical method using only ThreeFry
-
-    >>> rg = ThreeFry(1234).generator
-    >>> rg.standard_normal()
-    0.123  # random
-
     References
     ----------
     .. [1] John K. Salmon, Mark A. Moraes, Ron O. Dror, and David E. Shaw,

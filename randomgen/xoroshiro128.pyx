@@ -119,12 +119,6 @@ cdef class Xoroshiro128(BitGenerator):
     >>> rg.standard_normal()
     0.123  # random
 
-    Identical method using only the older Xoroshiro128+
-
-    >>> rg = Xoroshiro128(1234).generator
-    >>> rg.standard_normal()
-    0.123  # random
-
     References
     ----------
     .. [1] "xoroshiro+ / xorshift* / xorshift+ generators and the PRNG shootout",

@@ -3,6 +3,7 @@ import warnings
 from randomgen.aes import AESCounter
 from randomgen.chacha import ChaCha
 from randomgen.dsfmt import DSFMT
+from randomgen.efiix64 import EFIIX64
 from randomgen.generator import ExtendedGenerator, Generator
 from randomgen.hc128 import HC128
 from randomgen.jsf import JSF
@@ -28,6 +29,7 @@ BitGenerators = {
     "ChaCha": ChaCha,
     "LCG128Mix": LCG128Mix,
     "DSFMT": DSFMT,
+    "EFIIX64": EFIIX64,
     "HC128": HC128,
     "JSF": JSF,
     "LXM": LXM,

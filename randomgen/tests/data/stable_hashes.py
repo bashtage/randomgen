@@ -49,6 +49,11 @@ known_hashes = {
         "initial_state_hash": "d2610c1fda0815d51dba75bc0f2cd627b42b418915753df477c008abb7b7ceb1",
         "final_state_hash": "0150dbdde7145328375ef9f93bbd6239dfcee15c68247d84520dc88543a217a2",
     },
+    ("EFIIX64", "seed"): {
+        "random_values": "fa7851ba72e638fa6e89ea8ebe166b4be05b0ab03a3ff6152075b469b2d34681",
+        "initial_state_hash": "7fd11c68462fb540eb3d8be943b64c92b87f29abe12fa03f35dc5889ec4135a1",
+        "final_state_hash": "c0ff31131ad90de2b5f28f490095865046bedf0840d35ee19accab56cacc247e",
+    },
     ("LXM", "seed"): {
         "random_values": "c98015d91fe08823720c58803ed790230c6d1a499367cf101d934890063da35c",
         "initial_state_hash": "d91524b0cb1fcec27f88a449755f5f1bf9fe1e958bd4e1e9c18d9305952057c6",
