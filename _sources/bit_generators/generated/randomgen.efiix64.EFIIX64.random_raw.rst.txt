@@ -1,0 +1,6 @@
+randomgen.efiix64.EFIIX64.random\_raw
+=====================================
+
+.. currentmodule:: randomgen.efiix64
+
+.. automethod:: EFIIX64.random_raw

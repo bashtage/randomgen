@@ -1,0 +1,6 @@
+randomgen.sfc.SFC64.random\_raw
+===============================
+
+.. currentmodule:: randomgen.sfc
+
+.. automethod:: SFC64.random_raw

@@ -1,0 +1,6 @@
+randomgen.lxm.LXM.random\_raw
+=============================
+
+.. currentmodule:: randomgen.lxm
+
+.. automethod:: LXM.random_raw

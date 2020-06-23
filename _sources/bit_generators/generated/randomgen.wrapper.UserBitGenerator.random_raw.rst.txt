@@ -1,0 +1,6 @@
+randomgen.wrapper.UserBitGenerator.random\_raw
+==============================================
+
+.. currentmodule:: randomgen.wrapper
+
+.. automethod:: UserBitGenerator.random_raw

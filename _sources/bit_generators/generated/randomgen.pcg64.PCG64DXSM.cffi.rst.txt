@@ -1,0 +1,6 @@
+randomgen.pcg64.PCG64DXSM.cffi
+==============================
+
+.. currentmodule:: randomgen.pcg64
+
+.. autoattribute:: PCG64DXSM.cffi

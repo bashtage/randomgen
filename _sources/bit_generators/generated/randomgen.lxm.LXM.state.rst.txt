@@ -1,0 +1,6 @@
+randomgen.lxm.LXM.state
+=======================
+
+.. currentmodule:: randomgen.lxm
+
+.. autoattribute:: LXM.state

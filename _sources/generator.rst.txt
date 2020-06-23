@@ -1,5 +1,15 @@
 Random Generator
 ----------------
+
+.. container:: admonition danger
+
+  .. raw:: html
+
+      <p class="admonition-title"> Deprecated </p>
+
+  :class:`~randomgen.generator.Generator` is **deprecated**. You should be using
+  :class:`numpy.random.Generator`.
+
 The :class:`~randomgen.generator.Generator` provides access to
 a wide range of distributions, and served as a replacement for
 :class:`~numpy.random.RandomState`.  The main difference between
@@ -24,6 +34,7 @@ Seed and State Manipulation
 
    ~Generator.seed
    ~Generator.state
+   ~Generator.bit_generator
 
 Simple random data
 ==================
@@ -36,6 +47,7 @@ Simple random data
    ~Generator.random
    ~Generator.choice
    ~Generator.bytes
+   ~Generator.uintegers
 
 Permutations
 ============

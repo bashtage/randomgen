@@ -1,0 +1,6 @@
+randomgen.pcg64.LCG128Mix.cffi
+==============================
+
+.. currentmodule:: randomgen.pcg64
+
+.. autoattribute:: LCG128Mix.cffi

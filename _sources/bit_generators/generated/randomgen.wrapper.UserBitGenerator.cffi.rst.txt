@@ -1,0 +1,6 @@
+randomgen.wrapper.UserBitGenerator.cffi
+=======================================
+
+.. currentmodule:: randomgen.wrapper
+
+.. autoattribute:: UserBitGenerator.cffi

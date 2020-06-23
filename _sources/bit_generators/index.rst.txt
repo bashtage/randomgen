@@ -1,13 +1,8 @@
 Bit Generators
 --------------
 
-.. warning::
-
-   These for formerly called Basic Random Number Generators. They have been
-   renamed Bit Generators for compatibility with the version that will ship
-   with NumPy.
-
-The random values produced by :class:`~randomgen.generator.Generator`
+The random values produced by :class:`numpy.random.Generator`
+(and also  :class:`~randomgen.generator.Generator`)
 are produced by a bit generator.  These bit generators do not directly provide
 random numbers and only contains methods used for seeding, getting or
 setting the state, jumping or advancing the state, and for accessing
@@ -25,16 +20,23 @@ These RNGs will be included in future releases.
    AES Counter <aesctr>
    ChaCha <chacha>
    DSFMT <dsfmt>
+   EFIIX64 <efiix64>
    HC128 <hc128>
    JSF <jsf>
+   LXM <lxm>
    MT19937 <mt19937>
    MT64 <mt64>
+   PCG32 <pcg32>
    PCG64 <pcg64>
+   PCG64 2.0 (64-bit multiplier, DXSM mixing) <pcg64dxsm>
+   128-bit LCG with output mixing <lcg128mix>
    Philox <philox>
    RDRAND <rdrand>
+   SFC64 <sfc>
    SFMT <sfmt>
    SPECK128 <speck128>
    ThreeFry <threefry>
+   XoroShiro128+/++ <xoroshiro128>
    Xoshiro256** <xoshiro256>
    Xoshiro512** <xoshiro512>
 
@@ -47,6 +49,12 @@ permanent.
 .. toctree::
    :maxdepth: 1
 
-   XoroShiro128+ <xoroshiro128>
    Xorshift1024*φ <xorshift1024>
-   PCG32 <pcg32>
+
+User-defined Bit Generators
+===========================
+
+.. toctree::
+   :maxdepth: 1
+
+   userbitgenerator

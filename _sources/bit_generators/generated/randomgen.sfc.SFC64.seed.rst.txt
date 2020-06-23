@@ -1,0 +1,6 @@
+randomgen.sfc.SFC64.seed
+========================
+
+.. currentmodule:: randomgen.sfc
+
+.. automethod:: SFC64.seed

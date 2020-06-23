@@ -1,0 +1,6 @@
+randomgen.lxm.LXM.jump
+======================
+
+.. currentmodule:: randomgen.lxm
+
+.. automethod:: LXM.jump

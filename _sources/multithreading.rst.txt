@@ -16,28 +16,29 @@ that the same seed will produce the same outputs.
 
 .. code-block:: ipython
 
-    from randomgen import Xorshift1024
+    from randomgen import Xoshiro256
     import multiprocessing
     import concurrent.futures
     import numpy as np
+    import warnings
+
+    warnings.filterwarnings("ignore", "Generator", FutureWarning)
 
     class MultithreadedRNG(object):
         def __init__(self, n, seed=None, threads=None):
-            rg = Xorshift1024(seed)
+            last_bg = Xoshiro256(seed, mode="sequence")
             if threads is None:
                 threads = multiprocessing.cpu_count()
             self.threads = threads
 
-            self._random_generators = [rg]
-            last_rg = rg
-            for _ in range(0, threads-1):
-                new_rg = last_rg.jumped()
-                self._random_generators.append()
-                last_rg = new_rg
+            self._random_generators = []
+            for _ in range(0, threads):
+                self._random_generators.append(Generator(last_bg))
+                last_bg = last_bg.jumped()
 
             self.n = n
             self.executor = concurrent.futures.ThreadPoolExecutor(threads)
-            self.values = np.empty(n)
+            self.values = np.zeros(n)
             self.step = np.ceil(n / threads).astype(np.int)
 
         def fill(self):
@@ -64,13 +65,13 @@ random value after.
 
 .. code-block:: ipython
 
-    In [2]: mrng = MultithreadedRNG(10000000, seed=0)
+    In [2]: mrng = MultithreadedRNG(10000000, seed=0, threads=4)
     ...: print(mrng.values[-1])
     0.0
 
     In [3]: mrng.fill()
-        ...: print(mrng.values[-1])
-    3.296046120254392
+    ...: print(mrng.values[-1])
+    1.5228567175856316
 
 The time required to produce using multiple threads can be compared to
 the time required to generate using a single thread.
@@ -81,17 +82,17 @@ the time required to generate using a single thread.
         ...: %timeit mrng.fill()
 
     4
-    32.8 ms ± 2.71 ms per loop (mean ± std. dev. of 7 runs, 10 loops each)
+    17.9 ms ± 85.7 µs per loop (mean ± std. dev. of 7 runs, 100 loops each)
 
 The single threaded call directly uses the PRNG.
 
 .. code-block:: ipython
 
     In [5]: values = np.empty(10000000)
-        ...: rg = Xorshift1024().generator
+        ...: rg = Generator(Xoshiro256())
         ...: %timeit rg.standard_normal(out=values)
 
-    99.6 ms ± 222 µs per loop (mean ± std. dev. of 7 runs, 10 loops each)
+    66.5 ms ± 171 µs per loop (mean ± std. dev. of 7 runs, 10 loops each)
 
 The gains are substantial and the scaling is reasonable even for large that
 are only moderately large.  The gains are even larger when compared to a call
@@ -99,7 +100,7 @@ that does not use an existing array due to array creation overhead.
 
 .. code-block:: ipython
 
-    In [6]: rg = Xorshift1024().generator
+    In [6]: rg = Generator(Xoshiro256())
         ...: %timeit rg.standard_normal(10000000)
 
-    125 ms ± 309 µs per loop (mean ± std. dev. of 7 runs, 10 loops each)
+    76.1 ms ± 208 µs per loop (mean ± std. dev. of 7 runs, 10 loops each)

@@ -1,0 +1,6 @@
+randomgen.sfc.SFC64.cffi
+========================
+
+.. currentmodule:: randomgen.sfc
+
+.. autoattribute:: SFC64.cffi

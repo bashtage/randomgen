@@ -3,6 +3,43 @@
 Change Log
 ----------
 
+.. container:: admonition danger
+
+  .. raw:: html
+
+      <p class="admonition-title"> Deprecated </p>
+
+  :class:`~randomgen.generator.Generator` and :class:`~randomgen.mtrand.RandomState` are **DEPRECATED**.
+  You should be using :class:`numpy.random.Generator` or ``numpy.random.RandomState`` which are better
+  maintained. These will be maintained until after NumPy 1.21 (or 2 releases after NumPy 1.19) for
+  users who cannot update NumPy.
+
+
+v1.19.0
+=======
+
+- Tested all bit generators out to at least 1TB `using PractRand`_.
+- Added :class:`randomgen.pcg64.PCG64DXSM` which is an alias for :class:`randomgen.pcg64.PCG64`
+  with ``variant="dxsm"`` and ``mode="sequence"``. This is the 2.0 version of PCG64 and
+  will likely become the default bit generator in NumPy in the near future.
+- Added :class:`randomgen.efiix64.EFIIX64` which is both fast and high-quality.
+- Added :class:`randomgen.sfc.SFC64` which supports generating streams using distinct
+  Weyl constants.
+- Added a :class:`randomgen.pcg64.LCG128Mix` which supports setting the LCG multiplier,
+  changing the output function (including support for user-defined output functions) and
+  pre- or post-state update generation.
+- Added a :class:`randomgen.lxm.LXM` which generates variates using a mix of two simple,
+  but flawed generators: an Xorshift and a 64-bit LCG. This has been
+  proposed for including in `in Java`_.
+- Added a :class:`randomgen.wrapper.UserBitGenerator` which allows bit generators to be written
+  in Python or numba.
+- Added :class:`randomgen.generator.ExtendedGenerator` which contains features not in :class:`numpy.random.Generator`.
+- Added  support for the ``dxsm`` and ``dxsm-128`` variants of :class:`randomgen.pcg64.PCG64`. The
+  ``dxsm`` variant is the official PCG 2.0 generator.
+- Added support for broadcasting inputs in :class:`randomgen.generator.ExtendedGenerator.multivariate_normal`.
+- Added support for the `++` variant of :class:`randomgen.xoroshiro128.Xoroshiro128`.
+- Fixed a bug the produced incorrect results in :func:`~randomgen.mt19937.MT19937.jumped`.
+- Fixed multiple bugs in :class:`~randomgen.generator.Generator` that were fixed in :class:`numpy.random.Generator`.
 
 v1.18.0
 =======
@@ -153,3 +190,6 @@ v1.15
 - Switch to array-fillers for 0 parameter distribution to improve performance
 - Small changes to build on manylinux
 - Build wheels using multibuild
+
+.. _in Java: https://openjdk.java.net/jeps/356
+.. _using PractRand: http://pracrand.sourceforge.net/
