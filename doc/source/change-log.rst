@@ -20,8 +20,9 @@ v1.19.0
 
 - Tested all bit generators out to at least 1TB `using PractRand`_.
 - Added :class:`randomgen.pcg64.PCG64DXSM` which is an alias for :class:`randomgen.pcg64.PCG64`
-  with ``variant="cm-dxsm"`` and ``mode="sequence"``. This is the 2.0 version of PCG64 and
+  with ``variant="dxsm"`` and ``mode="sequence"``. This is the 2.0 version of PCG64 and
   will likely become the default bit generator in NumPy in the near future.
+- Added :class:`randomgen.efiix64.EFIIX64` which is both fast and high-quality.
 - Added :class:`randomgen.sfc.SFC64` which supports generating streams using distinct
   Weyl constants.
 - Added a :class:`randomgen.pcg64.LCG128Mix` which supports setting the LCG multiplier,
@@ -33,8 +34,8 @@ v1.19.0
 - Added a :class:`randomgen.wrapper.UserBitGenerator` which allows bit generators to be written
   in Python or numba.
 - Added :class:`randomgen.generator.ExtendedGenerator` which contains features not in :class:`numpy.random.Generator`.
-- Added  support for the ``DXSM`` and ``CM-DXSM`` variants of :class:`randomgen.pcg64.PCG64`. The
-  ``CM-DXSM`` variant is the official PCG 2.0 generator.
+- Added  support for the ``dxsm`` and ``dxsm-128`` variants of :class:`randomgen.pcg64.PCG64`. The
+  ``dxsm`` variant is the official PCG 2.0 generator.
 - Added support for broadcasting inputs in :class:`randomgen.generator.ExtendedGenerator.multivariate_normal`.
 - Added support for the `++` variant of :class:`randomgen.xoroshiro128.Xoroshiro128`.
 - Fixed a bug the produced incorrect results in :func:`~randomgen.mt19937.MT19937.jumped`.
