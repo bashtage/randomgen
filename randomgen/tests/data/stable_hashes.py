@@ -139,12 +139,12 @@ known_hashes = {
         "initial_state_hash": "dd151441354e39ac64f2bef8c34ed11dd4940240093d25288b4a690a89929ba2",
         "final_state_hash": "6103e5b139a764c46bfc9b605c08e801911a7c03b540bfc1648e6fece54b9cf7",
     },
-    ("PCG64", "seed", "inc", None, "variant", "dxsm"): {
+    ("PCG64", "seed", "inc", None, "variant", "dxsm-128"): {
         "random_values": "b0e8c51cde24e640ee4a5f02873c96c25c25590bc7f1b83f963de9d1876a05d8",
         "initial_state_hash": "dd151441354e39ac64f2bef8c34ed11dd4940240093d25288b4a690a89929ba2",
         "final_state_hash": "6103e5b139a764c46bfc9b605c08e801911a7c03b540bfc1648e6fece54b9cf7",
     },
-    ("PCG64", "seed", "inc", None, "variant", "cm-dxsm"): {
+    ("PCG64", "seed", "inc", None, "variant", "dxsm"): {
         "random_values": "3503f203529319943b529243a3dec39baf6ea30b0acd50a24af7adb52d7772ad",
         "initial_state_hash": "5c3b0db91c3e5afc10f017ff323fc7a2e7223fdf5eec6e062a3b71e2aa24e4a4",
         "final_state_hash": "6833266c64dac01522c5efa67360ccfec309452e19131ad238ff754fdc19003d",
@@ -167,7 +167,7 @@ known_hashes = {
         "inc",
         332357023390495415282511736547623555666,
         "variant",
-        "dxsm",
+        "dxsm-128",
     ): {
         "random_values": "88539e900241b39371085897fc069e0582ff4529876fba2f4c15d9861d0fed9b",
         "initial_state_hash": "f2c4eba60d5c1dc2818987ad19994cce76fdfa1fc2680e3bd3be2012e32fd0d4",
@@ -179,7 +179,7 @@ known_hashes = {
         "inc",
         332357023390495415282511736547623555666,
         "variant",
-        "cm-dxsm",
+        "dxsm",
     ): {
         "random_values": "eb406352a02f182cc65c5443d028e6ddd7af9260d6fccb9edda7b824d009e1df",
         "initial_state_hash": "73cf476d2aeb333f5f81a1095c2fba66f4e42223e4f32a36390aa83c91104b1e",

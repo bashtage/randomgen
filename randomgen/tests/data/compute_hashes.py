@@ -145,7 +145,7 @@ configs = {
     "PCG64": {
         "seed": seed_seq(),
         "inc": [None, UINT128],
-        "variant": ["xsl-rr", "dxsm", "cm-dxsm"],
+        "variant": ["xsl-rr", "dxsm-128", "dxsm"],
     },
     "PCG64DXSM": {"seed": seed_seq()},
     "AESCounter": {

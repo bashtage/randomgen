@@ -55,15 +55,15 @@ cdef class PCG64(BitGenerator):
         The increment in the LCG. Can be an integer in [0, 2**128) or None.
         If inc is None, then it is initialized using entropy. The default is None
         if seed is None, else 0. After 1.20, the default inc will change to None.
-    variant : {None, "xsl-rr", "1.0", "dxsm", "cm-dxsm", "cm", "2.0"}, optional
+    variant : {None, "xsl-rr", "1.0", 1, "dxsm", "cm-dxsm", 2, "2.0", "dxsm-128"}, optional
         Name of PCG64 variant to use. "xsl-rr" corresponds to the original
-        PCG64 (1.0). "1.0" is an alias for "xsl-rr". "dxsm" is identical
-        to the original except that it replaces the mixing function with
-        DXSM. "cm-dxsm" uses a cheap multiplier (64-bit, rather than
+        PCG64 (1.0). 1 and "1.0" are aliases for "xsl-rr". "dxsm-128" is
+        identical to the original except that it replaces the mixing function
+        with DXSM. "dxsm" uses a cheap multiplier (64-bit, rather than
         128-bit) in the underlying LCG and the DXSM output mixer. It also
         returns the value before advancing the state. This variant is
-        PCG64 2.0. "cm" and "2.0" are aliases for "cm-dxsm". None trusts
-        randomgen to chose the variant.
+        PCG64 2.0. "cm-dxsm" (cheap multiplier-dxsm), 2 and "2.0" are aliases
+        for "dxsm". None trusts randomgen to chose the variant.
     mode : {None, "sequence", "legacy"}, optional
         The seeding mode to use. "legacy" uses the legacy
         SplitMix64-based initialization. "sequence" uses a SeedSequence
@@ -95,7 +95,7 @@ cdef class PCG64(BitGenerator):
 
     where :math:`s` is the state of the generator, :math:`m` is the multipler
     and :math:`i` is the increment. The multipler is a 128-bit unsigned
-    integer with good spectral properties except when using the "cm-dxsm"
+    integer with good spectral properties except when using the "dxsm"
     variant, in which case it is a 64-bit unsigned integer. The output of the
     LCG is the permuted using either an XOR and a random rotation (XSL-RR)
     or a function similar to an Xorshift (DXSM).
@@ -149,9 +149,9 @@ cdef class PCG64(BitGenerator):
 
             warnings.warn(
                 "The current default is xsl-rr, aka PCG64 1.0. This will"
-                "change to cm-dxsm, aka PCG64 2.0. starting in release 1.20."
+                "change to dxsm, aka PCG64 2.0. starting in release 1.20."
                 "Directly set variant to prevent a change when upgrading past"
-                " 1.19.",
+                " 1.19 or to silence this warning.",
                 FutureWarning
             )
         inc = None if seed is None else inc
@@ -168,11 +168,11 @@ cdef class PCG64(BitGenerator):
                     FutureWarning)
 
         variant = "xsl-rr" if variant is None else variant
-        if not isinstance(variant, str):
+        if not isinstance(variant, str) and variant not in (1,2):
             raise TypeError("variant must be a string")
-        orig_variant = variant
+        orig_variant = str(variant)
         variant = variant.lower().replace("-", "")
-        if variant not in ("xslrr", "1.0", "dxsm", "cm", "cmdxsm", "2.0"):
+        if variant not in ("xslrr", "1.0", "1", "dxsm", "dxsm128", "2.0", "2"):
             raise ValueError(f"variant {orig_variant} is not known.")
         self.variant = variant
         self._setup_rng_state()
@@ -182,11 +182,12 @@ cdef class PCG64(BitGenerator):
     def _setup_rng_state(self):
         self.use_dxsm = False
         self.cheap_multiplier = False
-        if self.variant == "dxsm":
+        if self.variant in ("dxsm", "2.0", "2"):
             self.use_dxsm = True
-        elif self.variant.startswith("cm") or self.variant == "2.0":
             self.cheap_multiplier = True
-            self.variant = "cm-dxsm"
+        elif self.variant in ("dxsm-128", "dxsm128"):
+            self.use_dxsm = True
+            self.variant = "dxsm-128"
         else:
             self.variant = "xsl-rr"
 
@@ -972,7 +973,7 @@ cdef class PCG64DXSM(PCG64):
 
     Container for the PCG-64 updated with a 64-bit mult using DXSM output func
 
-    Pre-configured alias for PCG64 with variant="cm-dxsm" and mode="sequence".
+    Pre-configured alias for PCG64 with variant="dxsm" and mode="sequence".
     This bit generator will likely become the default in NumPy in the near
     future ([3]_).
 
@@ -1066,7 +1067,7 @@ cdef class PCG64DXSM(PCG64):
     """
 
     def __init__(self, seed=None, inc=None):
-        PCG64.__init__(self, seed, inc, variant="cm-dxsm", mode="sequence")
+        PCG64.__init__(self, seed, inc, variant="dxsm", mode="sequence")
 
     @property
     def state(self):
@@ -1115,7 +1116,7 @@ cdef class PCG64DXSM(PCG64):
         state_vec[3] = inc % 2 ** 64
         has_uint32 = value["has_uint32"]
         uinteger = value["uinteger"]
-        self.variant = "cm-dxsm"
+        self.variant = "dxsm"
         self._setup_rng_state()
 
         # Default False for backward compat
@@ -1155,5 +1156,7 @@ cdef class PCG64DXSM(PCG64):
         return bit_generator
 
     def jump(self, np.npy_intp iter=1):
-        """Not implemented"""
-        raise NotImplementedError("jump is not available for PCG64DXSM")
+        """Not implemented. Use jumped."""
+        raise NotImplementedError(
+            "jump is not available for PCG64DXSM. Use jumped instead."
+        )

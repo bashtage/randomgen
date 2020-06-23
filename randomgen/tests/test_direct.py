@@ -1795,7 +1795,7 @@ class TestPCG64DXSM(Base):
     @classmethod
     def setup_class(cls):
         super().setup_class()
-        cls.bit_generator = partial(PCG64, mode="sequence", variant="dxsm")
+        cls.bit_generator = partial(PCG64, mode="sequence", variant="dxsm-128")
         cls.bits = 64
         cls.dtype = np.uint64
         cls.data1 = cls._read_csv(join(pwd, "./data/pcg64-dxsm-testset-1.csv"))
@@ -1817,7 +1817,7 @@ class TestPCG64CMDXSM(TestPCG64DXSM):
     @classmethod
     def setup_class(cls):
         super().setup_class()
-        cls.bit_generator = partial(PCG64, mode="sequence", variant="cm-dxsm")
+        cls.bit_generator = partial(PCG64, mode="sequence", variant="dxsm")
         cls.data1 = cls._read_csv(join(pwd, "./data/pcg64-cm-dxsm-testset-1.csv"))
         cls.data2 = cls._read_csv(join(pwd, "./data/pcg64-cm-dxsm-testset-2.csv"))
 

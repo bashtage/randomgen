@@ -1126,7 +1126,7 @@ class TestPCG64VariantDXSM(TestPCG64):
     @classmethod
     def setup_class(cls):
         super().setup_class()
-        cls.bit_generator = partial(PCG64, variant="dxsm")
+        cls.bit_generator = partial(PCG64, variant="dxsm-128")
         cls.rg = Generator(cls.bit_generator(*cls.seed, mode="legacy"))
         cls.initial_state = cls.rg.bit_generator.state
         cls._extra_setup()
@@ -1136,7 +1136,7 @@ class TestPCG64CMDXSM(TestPCG64):
     @classmethod
     def setup_class(cls):
         super().setup_class()
-        cls.bit_generator = partial(PCG64, variant="cm-dxsm")
+        cls.bit_generator = partial(PCG64, variant="dxsm")
         cls.rg = Generator(cls.bit_generator(*cls.seed, mode="legacy"))
         cls.initial_state = cls.rg.bit_generator.state
         cls._extra_setup()

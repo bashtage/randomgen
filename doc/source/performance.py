@@ -6,13 +6,16 @@ import pandas as pd
 
 from randomgen import (
     DSFMT,
+    EFIIX64,
     HC128,
     JSF,
     LXM,
     MT64,
     MT19937,
     PCG64,
+    PCG64DXSM,
     RDRAND,
+    SFC64,
     SFMT,
     SPECK128,
     AESCounter,
@@ -25,6 +28,8 @@ from randomgen import (
 
 
 class ChaCha8(ChaCha):
+    canonical_repr = "ChaCha(rounds=8)"
+
     def __init__(self, *args, **kwargs):
         if "rounds" in kwargs:
             del kwargs["rounds"]
@@ -39,6 +44,8 @@ class JSF32(JSF):
 
 
 class Philox4x32(Philox):
+    canonical_repr = "Philox(n=4, w=32)"
+
     def __init__(self, *args, **kwargs):
         if "width" in kwargs:
             del kwargs["width"]
@@ -46,6 +53,8 @@ class Philox4x32(Philox):
 
 
 class Philox2x64(Philox):
+    canonical_repr = "Philox(n=2, w=64)"
+
     def __init__(self, *args, **kwargs):
         if "number" in kwargs:
             del kwargs["number"]
@@ -53,6 +62,8 @@ class Philox2x64(Philox):
 
 
 class ThreeFry4x32(ThreeFry):
+    canonical_repr = "ThreeFry(n=4, w=32)"
+
     def __init__(self, *args, **kwargs):
         if "width" in kwargs:
             del kwargs["width"]
@@ -60,24 +71,21 @@ class ThreeFry4x32(ThreeFry):
 
 
 class ThreeFry2x64(ThreeFry):
+    canonical_repr = "ThreeFry(n=2, w=64)"
+
     def __init__(self, *args, **kwargs):
         if "number" in kwargs:
             del kwargs["number"]
         super().__init__(*args, number=2, **kwargs)
 
 
-class PCG64DXSM(PCG64):
+class PCG64DXSM128(PCG64):
+    canonical_repr = 'PCG64(variant="dxsm-128")'
+
     def __init__(self, *args, **kwargs):
         if "variant" in kwargs:
             del kwargs["variant"]
-        super().__init__(*args, variant="dxsm", **kwargs)
-
-
-class PCG64CMDXSM(PCG64):
-    def __init__(self, *args, **kwargs):
-        if "variant" in kwargs:
-            del kwargs["variant"]
-        super().__init__(*args, variant="cm-dxsm", **kwargs)
+        super().__init__(*args, variant="dxsm-128", **kwargs)
 
 
 try:
@@ -100,8 +108,8 @@ PRNGS = [
     MT64,
     MT19937,
     PCG64,
+    PCG64DXSM128,
     PCG64DXSM,
-    PCG64CMDXSM,
     LXM,
     SFMT,
     AESCounter,
@@ -113,6 +121,8 @@ PRNGS = [
     JSF,
     HC128,
     SPECK128,
+    SFC64,
+    EFIIX64,
 ]
 
 if HAS_RDRND:
@@ -150,7 +160,10 @@ for prng in PRNGS:
         col[key] = 1000 * min(t)
     print("\n" * 2)
     col = pd.Series(col)
-    table[prng().__class__.__name__] = col
+    class_name = type(prng()).__name__
+    if hasattr(prng, "canonical_repr"):
+        class_name = prng.canonical_repr
+    table[class_name] = col
 
 npfuncs = OrderedDict()
 npfuncs.update(funcs)
