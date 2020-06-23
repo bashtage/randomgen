@@ -5,99 +5,99 @@ Performance
 
 Recommendation
 **************
-The recommended generator for single use is
-:class:`~randomgen.pcg64.PCG64` with the keyword argument ``variant="cm-dxsm"``.
-An excellent alternative is :class:`~randomgen.xoshiro256.Xoshiro256`
-where the `jump` method is used to advance the state. For very large scale
-applications -- requiring 1,000+ independent streams,
-:class:`~randomgen.pcg64.PCG64` or one of the cryptographic-based generators
-(:class:`~randomgen.aes.AESCounter` if you have hardware acceleration or
-:class:`~randomgen.speck128.SPECK128`, :class:`~randomgen.philox.Philox`, or
-:class:`~randomgen.threefry.ThreeFry` if you do not) are the best choices.
+The recommended generator for single use is :class:`~randomgen.pcg64.PCG64DXSM`
+although :class:`~randomgen.sfc64.SFC64` and :class:`~randomgen.xoshiro256.Xoshiro256`
+are both excellent alternatives.
+
+For very large scale
+applications -- requiring 1,000+ streams,
+:class:`~randomgen.pcg64.PCG64DXSM`, :class:`~randomgen.sfc64.SFC64`
+using distinct Weyl increments (``k``), or one of the cryptography-based generators
+:class:`~randomgen.aes.AESCounter` (if you have hardware acceleration),
+:class:`~randomgen.effix64.EFFIC64`, :class:`~randomgen.speck128.SPECK128`,
+:class:`~randomgen.philox.Philox`, or :class:`~randomgen.hc128.HC128` if you do not)
+are all excellent choices.
+
+Unless you need backward compatibilyt, there are no longer good reasons to any
+of the Mersenne Twister PRNGS: :class:`~randomgen.mt19937.MT19937`, :class:`~randomgen.mt64.MT64`,
+:class:`~randomgen.sfmt.SFMT`, and :class:`~randomgen.dsfmt.DSFMT`.
 
 Timings
 *******
 
 The timings below are the time in ns to produce 1 random value from a
-specific distribution. :class:`~randomgen.xoshiro256.Xoshiro256` is the
-fastest, followed by :class:`~randomgen.jsf.JSF`,
-:class:`~randomgen.sfmt.SFMT`, and :class:`~randomgen.pcg64.PCG64`. The original
-:class:`~randomgen.mt19937.MT19937` generator is slower since it requires 2 32-bit values
-to equal the output of the faster generators.
-
-Integer performance has a similar ordering although `dSFMT` is slower since
-it generates 53-bit floating point values rather than integer values. On the
-other hand, it is very fast for uniforms, although slower than `xoroshiro128+`.
-
-The pattern is similar for other, more complex generators. The normal
-performance of NumPy's MT19937 is much lower than the other since it
-uses the Box-Muller transformation rather than the Ziggurat generator. The
-performance gap for Exponentials is also large due replacement of the use of the
-log function to invert the CDF with a Ziggurat-based generator.
+specific distribution. :class:`~randomgen.sfc64.SFC64` is the fastest,
+followed closely by  :class:`~randomgen.xoshiro256.Xoshiro256`,
+:class:`~randomgen.pcg64.PCG64DXSM`, :class:`~randomgen.jsf.JSF`,
+and :class:`~randomgen.effix64.EFFIX64`. The original
+NumPy :class:`~randomgen.mt19937.MT19937` generator is slower since
+it requires 2 32-bit values to equal the output of the faster generators.
 
 .. csv-table::
    :header: Bit Gen,Uint32,Uint64,Uniform,Expon,Normal,Gamma
    :widths: 30,10,10,10,10,10,10
 
-   Xoshiro256,2.3,2.7,2.6,4.7,8.8,20.7
-   JSF,2.3,3.1,3.0,5.4,9.1,20.4
-   PCG64CMDXSM,2.5,3.0,3.1,4.9,10.2,21.2
-   SFMT,2.8,3.0,3.0,5.2,9.8,20.9
-   PCG64,2.3,3.2,3.1,5.0,10.2,21.8
-   Xoshiro512,2.7,3.6,3.3,5.4,9.3,20.6
-   PCG64DXSM,2.9,3.4,3.4,5.4,11.5,22.8
-   LXM,2.6,4.1,3.5,6.3,11.1,22.6
-   DSFMT,2.9,4.5,2.6,6.9,11.4,22.4
-   MT64,2.9,4.0,3.8,6.3,12.0,23.7
-   JSF32,3.0,4.4,4.3,6.8,10.8,23.2
-   Philox2x64,3.4,5.0,5.1,7.8,14.1,27.6
-   Philox,3.9,6.0,6.0,8.0,12.9,27.6
-   AESCounter,4.1,6.2,6.4,8.7,13.9,28.2
-   ThreeFry2x64,4.2,6.6,6.9,9.3,15.3,30.1
-   MT19937,4.0,6.7,7.8,9.3,14.6,29.9
-   HC128,4.1,7.3,7.5,9.8,15.8,32.2
-   Philox4x32,4.3,7.7,8.5,10.4,15.8,33.5
-   NumPy,3.0,5.0,5.7,20.1,25.2,40.2
-   SPECK128,5.4,8.2,9.6,10.6,16.1,33.9
-   ThreeFry,5.9,9.9,9.2,11.8,16.3,35.7
-   ChaCha8,6.6,10.2,10.2,12.9,18.0,36.5
-   ChaCha,9.7,16.4,16.3,19.2,24.2,49.0
-   ThreeFry4x32,9.1,16.5,17.7,20.4,23.7,53.7
-   RDRAND,131.3,131.5,131.2,138.1,139.9,293.9
+    SFC64,2.3,2.5,2.4,5.1,10.6,18.7
+    Xoshiro256,2.5,2.5,2.5,5.2,9.7,19.1
+    PCG64DXSM,2.3,2.8,3.0,5.3,11.0,20.7
+    JSF,2.3,3.0,3.0,5.7,10.2,20.0
+    EFIIX64,2.5,3.0,3.0,5.5,10.7,20.8
+    PCG64,2.3,3.1,3.1,5.8,11.2,21.4
+    Xoshiro512,2.6,3.5,3.3,5.8,10.3,20.3
+    SFMT,2.9,3.3,3.1,6.3,10.9,20.8
+    LXM,2.6,3.5,3.5,6.3,11.3,21.9
+    PCG64(variant="dxsm-128"),2.8,3.3,3.5,6.1,12.5,24.3
+    DSFMT,3.0,4.2,2.7,7.0,12.1,21.6
+    MT64,2.8,4.0,4.2,6.8,12.8,23.7
+    JSF32,3.0,4.3,4.3,6.9,11.2,22.9
+    "Philox(n=2, w=64)",3.3,4.7,5.1,8.1,14.7,27.4
+    Philox,3.9,5.9,6.0,8.8,13.6,26.9
+    AESCounter,4.4,6.0,5.9,9.1,14.5,27.4
+    MT19937,3.8,6.2,7.2,9.2,14.8,28.7
+    "ThreeFry(n=2, w=64)",4.1,6.5,6.9,9.4,15.7,29.8
+    NumPy,3.0,4.7,5.8,16.7,20.8,40.2
+    HC128,4.1,7.2,7.2,10.5,16.6,31.6
+    "Philox(n=4, w=32)",4.2,7.6,8.5,10.7,16.5,32.6
+    SPECK128,5.4,8.1,9.6,11.3,17.0,33.3
+    ThreeFry,5.8,9.1,9.3,12.0,16.7,34.9
+    ChaCha(rounds=8),6.7,10.2,10.2,13.2,18.0,36.4
+    ChaCha,9.6,16.4,16.4,19.6,24.3,48.9
+    "ThreeFry(n=4, w=32)",9.0,16.3,17.6,20.7,24.4,53.4
+    RDRAND,129.9,133.1,130.7,139.0,140.8,298.6
 
-
-
-The next table presents the performance relative to NumPy's 1.16 `RandomState` in
+The next table presents the performance relative to NumPy's ``RandomState`` in
 percentage. The overall performance is computed using a geometric mean.
 
 .. csv-table::
    :header: Bit Gen,Uint32,Uint64,Uniform,Expon,Normal,Gamma,Overall
    :widths: 30,10,10,10,10,10,10,10
 
-   Xoshiro256,130,186,222,431,285,194,224
-   JSF,128,163,192,373,275,198,208
-   PCG64CMDXSM,120,168,188,407,247,190,204
-   SFMT,108,164,194,389,258,193,201
-   PCG64,128,155,183,402,246,184,201
-   Xoshiro512,112,140,175,370,269,196,194
-   PCG64DXSM,102,147,171,370,218,176,182
-   LXM,116,123,164,318,227,178,176
-   DSFMT,105,112,219,291,220,179,176
-   MT64,105,125,153,321,210,170,168
-   JSF32,98,113,133,294,232,174,161
-   Philox2x64,87,101,114,257,178,146,137
-   Philox,76,83,96,251,195,146,128
-   AESCounter,74,80,90,231,182,143,121
-   ThreeFry2x64,71,75,83,216,165,133,113
-   MT19937,75,74,74,217,173,134,113
-   HC128,72,68,77,205,159,125,107
-   Philox4x32,70,65,68,193,159,120,102
-   SPECK128,56,61,60,190,156,119,95
-   ThreeFry,51,50,63,171,155,113,88
-   ChaCha8,45,49,56,155,140,110,82
-   ChaCha,31,30,35,105,104,82,56
-   ThreeFry4x32,33,30,33,98,106,75,54
-   RDRAND,2,4,4,15,18,14,7
+    SFC64,128,190,246,283,210,211,205
+    Xoshiro256,120,186,229,280,206,207,198
+    JSF,126,155,193,251,197,198,183
+    EFIIX64,120,154,193,265,191,194,181
+    PCG64DXSM,128,163,191,248,164,192,177
+    PCG64,129,149,185,247,179,185,175
+    Xoshiro512,111,132,177,251,195,195,171
+    SFMT,104,142,186,229,183,190,167
+    LXM,114,135,165,228,177,181,163
+    PCG64(variant="dxsm-128"),105,139,165,235,161,172,158
+    DSFMT,100,110,214,207,166,184,157
+    JSF32,99,108,134,209,179,173,145
+    MT64,105,117,137,211,157,167,145
+    "Philox(n=2, w=64)",89,98,114,177,137,145,123
+    Philox,75,79,95,165,148,147,112
+    AESCounter,67,77,102,159,139,144,109
+    MT19937,77,74,80,157,135,138,105
+    "ThreeFry(n=2, w=64)",72,71,84,153,128,133,102
+    HC128,72,65,80,137,121,125,96
+    "Philox(n=4, w=32)",71,61,68,134,122,122,92
+    SPECK128,55,57,60,127,118,119,83
+    ThreeFry,51,53,63,120,120,114,81
+    ChaCha(rounds=8),45,46,56,109,111,109,73
+    ChaCha,31,28,35,74,83,81,50
+    "ThreeFry(n=4, w=32)",33,28,33,70,83,76,49
+    RDRAND,2,3,4,10,14,13,6
 
 .. note::
 
