@@ -10,15 +10,15 @@ although :class:`~randomgen.sfc64.SFC64` and :class:`~randomgen.xoshiro256.Xoshi
 are both excellent alternatives.
 
 For very large scale
-applications -- requiring 1,000+ streams,
-:class:`~randomgen.pcg64.PCG64DXSM`, :class:`~randomgen.sfc64.SFC64`
-using distinct Weyl increments (``k``), or one of the cryptography-based generators
-:class:`~randomgen.aes.AESCounter` (if you have hardware acceleration),
+applications -- requiring 1,000+ streams --
+:class:`~randomgen.pcg64.PCG64DXSM` combined with a :class:`~numpy.random.SeedSequence` and ``spawn``,
+:class:`~randomgen.sfc64.SFC64` initialized using distinct Weyl increments (``k``), or one of
+the cryptography-based generators :class:`~randomgen.aes.AESCounter` (if you have hardware acceleration),
 :class:`~randomgen.effix64.EFFIC64`, :class:`~randomgen.speck128.SPECK128`,
 :class:`~randomgen.philox.Philox`, or :class:`~randomgen.hc128.HC128` if you do not)
-are all excellent choices.
+initialized with distinct keys are all excellent choices.
 
-Unless you need backward compatibilyt, there are no longer good reasons to any
+Unless you need backward compatibility, there are no good reasons to use any
 of the Mersenne Twister PRNGS: :class:`~randomgen.mt19937.MT19937`, :class:`~randomgen.mt64.MT64`,
 :class:`~randomgen.sfmt.SFMT`, and :class:`~randomgen.dsfmt.DSFMT`.
 
