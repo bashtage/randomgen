@@ -4630,7 +4630,7 @@ cdef class ExtendedGenerator:
 
     def __init__(self, bit_generator=None):
         if bit_generator is None:
-            bit_generator = PCG64(mode="sequence", variant="cm-dxsm")
+            bit_generator = PCG64(mode="sequence", variant="dxsm")
         self._bit_generator = bit_generator
 
         capsule = bit_generator.capsule

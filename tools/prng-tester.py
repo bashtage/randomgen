@@ -56,7 +56,7 @@ SPECIALS = {
     JSF: {"seed_size": [1, 3]},
     SFC64: {"k": [1, 3394385948627484371, "weyl"]},
     LCG128Mix: {"output": ["upper"]},
-    PCG64: {"variant": ["cm-dxsm", "dxsm", "xsl-rr"]},
+    PCG64: {"variant": ["dxsm", "dxsm-128", "xsl-rr"]},
 }
 OUTPUT = defaultdict(lambda: 64)
 OUTPUT.update({MT19937: 32, DSFMT: 32})
@@ -318,7 +318,13 @@ if __name__ == "__main__":
         "-n",
         "--n-jobs",
         type=int,
-        help="The number of jobs to simultantouelys run when using --parallel",
+        help="The number of jobs to simultaneously run when using --parallel",
+    )
+    parser.add_argument(
+        "-mj",
+        "--max-jobs",
+        type=int,
+        help="The maximum number of jobs to execute before exiting",
     )
 
     args = parser.parse_args()
@@ -340,6 +346,8 @@ if __name__ == "__main__":
     if args.randomize:
         random.shuffle(configuration_keys)
         logger.info("Randomizing the execution order")
+    if args.max_jobs:
+        configuration_keys = configuration_keys[: args.max_jobs]
     if args.parallel:
         test_args = []
         for key in configuration_keys:

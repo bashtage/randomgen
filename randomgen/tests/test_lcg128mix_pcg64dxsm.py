@@ -35,7 +35,7 @@ def test_pcg64_1():
 
 
 def test_pcg64_dxsm():
-    pcg = PCG64(SeedSequence(12345678909876543321), variant="dxsm")
+    pcg = PCG64(SeedSequence(12345678909876543321), variant="dxsm-128")
     cpcg = LCG128Mix(output="dxsm")
     st = cpcg.state
     st["state"]["state"] = pcg.state["state"]["state"]
@@ -47,7 +47,7 @@ def test_pcg64_dxsm():
 
 
 def test_pcg64_cm_dxsm():
-    pcg = PCG64(SeedSequence(12345678909876543321), variant="cm-dxsm")
+    pcg = PCG64(SeedSequence(12345678909876543321), variant="dxsm")
     cpcg = LCG128Mix(output="dxsm", post=False, multiplier=DEFAULT_DXSM_MULTIPLIER)
     st = cpcg.state
     st["state"]["state"] = pcg.state["state"]["state"]
@@ -202,7 +202,7 @@ def test_exceptions():
 @pytest.mark.parametrize("seed", [0, sum([2 ** i for i in range(1, 128, 2)])])
 @pytest.mark.parametrize("inc", [0, sum([2 ** i for i in range(0, 128, 3)])])
 def test_equivalence_pcg64dxsm(seed, inc):
-    a = PCG64(seed, inc, mode="sequence", variant="cm-dxsm")
+    a = PCG64(seed, inc, mode="sequence", variant="dxsm")
     b = PCG64DXSM(seed, inc)
     assert np.all((a.random_raw(10000) - b.random_raw(10000)) == 0)
     assert np.all((a.random_raw(13) - b.random_raw(13)) == 0)

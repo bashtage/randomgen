@@ -18,7 +18,7 @@ def parse_key(key):
     else:
         base = key
         method = n = ""
-    base = base.replace("xsl-rr", "xsl_rr").replace("cm-dxsm", "cm_dxsm")
+    base = base.replace("xsl-rr", "xsl_rr").replace("dxsm-128", "dxsm_128")
     parts = base.split("-")
     base = parts[0]
     for i in range(1, len(parts), 2):
@@ -89,7 +89,7 @@ replacements = {
     "SFC64(k=weyl)": "SFC64(k=weyl)³",
     "SFMT": "SFMT⁴",
     "PCG64(variant=xsl-rr)": "PCG64(variant=xsl-rr)⁵",
-    "PCG64(variant=cm-dxsm)": "PCG64(variant=cm-dxsm)²",
+    "PCG64(variant=dxsm)": "PCG64DXSM²",
     "JSF(seed-size=1)": "JSF(seed_size=1)",
     "JSF(seed-size=3)": "JSF(seed_size=3)",
 }
@@ -108,7 +108,7 @@ new_table = df[keys]
 columns = new_table.columns
 header = ["Bit Generator", "", "4", "8196", "4", "8196"]
 widths = list(map(lambda s: 2 + len(s), header))
-widths[0] = max(widths[0], max(map(lambda s: 2 + len(s), new_table.index)))
+widths[0] = max(widths[0], max(map(lambda s: 2 + len(s), new_table.index)) + 1)
 widths = [max(w, 11) for w in widths]
 
 first = "| Method"

@@ -342,4 +342,4 @@ def test_invalid_capsule():
 def test_default_pcg64():
     eg = ExtendedGenerator()
     assert isinstance(eg.bit_generator, PCG64)
-    assert eg.bit_generator.variant == "cm-dxsm"
+    assert eg.bit_generator.variant == "dxsm"
