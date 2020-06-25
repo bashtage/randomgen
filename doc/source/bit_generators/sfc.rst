@@ -30,3 +30,11 @@ Testing
    :toctree: generated/
 
    ~SFC64.random_raw
+
+
+Parallelization
+===============
+.. autosummary::
+   :toctree: generated/
+
+   ~SFC64.weyl_increments
