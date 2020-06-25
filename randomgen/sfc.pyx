@@ -71,28 +71,12 @@ cdef class SFC64(BitGenerator):
     >>> import numpy as np
     >>> from randomgen import SFC64, SeedSequence
     >>> NUM_STREAMS = 8196
-
-    A vectorized rejection sampler is used to find odd, bit-sparse 64 bit
-    values. This example uses ``SFC64`` to generate the Weyl increments.
-
-    >>> weyl_inc = set()
-    >>> remaining = NUM_STREAMS
-    >>> seed_seq = SeedSequence()
+    >>> seed_seq = SeedSequence(325874985469)
     >>> bit_gen = SFC64(seed_seq)
-    >>> while remaining:
-    ...     # Generate odd 64 bit numbers
-    ...     candidates = bit_gen.random_raw(remaining) | np.uint64(0x1)
-    ...     candidates = np.atleast_2d(candidates).T
-    ...     keep = np.unpackbits(candidates.view(np.uint8), axis=1).sum(1) <= 32
-    ...     candidates = candidates[keep]
-    ...     weyl_inc.update(candidates.ravel().tolist())
-    ...     remaining = NUM_STREAMS - len(weyl_inc)
-
-    These are then used to initialize the bit generators
-
+    >>> weyl_inc = bit_gen.weyl_increments(NUM_STREAMS)
     >>> streams = [SFC64(seed_seq, k=k) for k in list(weyl_inc)]
     >>> [stream.random_raw() for stream in streams[:3]]
-    [10438109557552856751, 10703016917516023849, 689096938042951518]
+    [13020151409549081939, 8062752282355435850, 13933250373249421220]
 
     References
     ----------
@@ -153,8 +137,8 @@ cdef class SFC64(BitGenerator):
         Returns
         -------
         ndarray
-            A distinct set of increments with max_bits non-zero if exact is
-            True or at most max_bits non-zero otherwise.
+            An array containg distinct odd integers with between min_bits
+            and max_bits non-zero bits.
 
         Examples
         --------
@@ -170,26 +154,30 @@ cdef class SFC64(BitGenerator):
         this method may be very slow. For example, if n is 1000 and
         max_bits=2, so that there are at most 2080 distinct values possible,
         then the simpler rejections sampler used will waste many draws. In
-        practice, this is only likely to be an issue when max_bits is
-        small (<=3) or, if exact is also true, large (> 61).
+        practice, this is only likely to be an issue when max_bits - min_bits is
+        small (<=3) and max_bits is close to either 0 or 64.
 
         The values produced are chosen by first uniformly sampling the number
         of non-zero bits (nz_bits) in [min_bits, max_bits] and then sampling
         nz_bits from {0,1,2,...,63} without replacement. Finally, if the value
         generated has been previously generated, this value is rejected.
         """
-        cdef Py_ssize_t i, j, bit_well_loc, fill_size
-        cdef uint64_t value, candidate
-        cdef int8_t *bit_well_arr
+        cdef Py_ssize_t i, j, loc, buffer_loc, out_loc
+        cdef uint64_t candidate, buffer
+        cdef uint64_t *out_arr
+        cdef uint8_t nbits_candidate, mask, next_bit
         cdef int8_t *nbits_arr
-        cdef int8_t bits_to_fill
-        cdef uint64_t *candidates_arr
+        cdef int8_t bits_to_fill, rng, lower
         cdef int bits_filled
-        cdef bint inverse
+        cdef bint inverse, not_done
+        cdef set values = set()
 
         def choosek(k):
+            k = k - 1
+            if k > 32:
+                k = 63 - k
             num = 1
-            for _i in range(64, 64-k, -1):
+            for _i in range(63, 63-k, -1):
                 num *= _i
             denom = 1
             for _i in range(1, k+1):
@@ -206,12 +194,12 @@ cdef class SFC64(BitGenerator):
         available = 0
         for i in range(min_bits, max_bits+1):
             available += choosek(i)
-        if n >= available:
+        if n > available:
             raise ValueError(
                 f"The number of draws required ({n}) is larger than the number "
                 f"available ({available})."
             )
-        elif n >= (0.50 * available):
+        elif n >= (0.50 * available) and n > 1:
             import warnings
             warnings.warn(
                 f"The number of values required ({n}) is more than 5% of the "
@@ -220,52 +208,72 @@ cdef class SFC64(BitGenerator):
                 "fraction of available values is large.",
                 RuntimeWarning
             )
-
-        try:
-            from numpy.random import Generator
-        except ImportError:
-            from randomgen.generator import Generator
-        gen = Generator(self)
-
-        values = set()
-        nbits = gen.integers(min_bits, max_bits, endpoint=True, dtype=np.int8, size=n)
+        rng = <int8_t>max_bits - min_bits
+        lower = <int8_t>min_bits
+        nbits = np.full(n, max_bits, dtype=np.int8)
         nbits_arr = <int8_t*>np.PyArray_DATA(nbits)
+        mask = 2
+        if rng > 0:
+            while mask < rng:
+                mask <<= 1
+            mask -= 1
+            not_done = True
+            loc = 0
+            buffer_loc = 8
+            while not_done:
+                if buffer_loc == 8:
+                    buffer = sfc_next64(&self.rng_state)
+                    buffer_loc = 0
 
-        fill_size = nbits.sum()
-        bit_well = gen.integers(0, 64, dtype=np.int8, size=fill_size)
-        print(bit_well)
-        bit_well_arr = <int8_t*>np.PyArray_DATA(bit_well)
-        bit_well_loc = 0
-
+                nbits_candidate = buffer & mask
+                buffer >>= 8
+                buffer_loc += 1
+                if nbits_candidate <= rng:
+                    nbits_arr[loc] = nbits_candidate + lower
+                    loc += 1
+                not_done = loc < n
+        buffer_loc = 8
         remaining = n - len(values)
+        out = np.empty(n, dtype=np.uint64)
+        out_arr = <uint64_t*>np.PyArray_DATA(out)
+        out_loc = 0
         while remaining:
             for j in range(remaining):
-                bits_filled = 0
-                candidate = 0
+                # Must be odd, always start with 1
+                bits_filled = 1
+                candidate = 1ULL
                 if nbits_arr[j] <= 32:
                     bits_to_fill = nbits_arr[j]
                     inverse = False
                 else:
-                    bits_to_fill = 64 - nbits_arr[j]
+                    # Fill one more since we will inverse then add one back
+                    # E.g., to fill 48, we first fill 17 incl 0, then inverse
+                    # so there are 47 but then flip 0 to be odd
+                    bits_to_fill = 64 - nbits_arr[j] + 1
                     inverse = True
                 while bits_filled < bits_to_fill:
-                    if bit_well_loc == fill_size:
-                        bit_well_loc = 0
-                        bit_well = gen.integers(0, 64, dtype=np.int8, size=fill_size)
-                        bit_well_arr = <int8_t*>np.PyArray_DATA(bit_well)
-                    if (candidate >> bit_well_arr[bit_well_loc]) & 0x1ULL:
+                    if buffer_loc == 8:
+                        buffer_loc = 0
+                        buffer = sfc_next64(&self.rng_state)
+                    next_bit = <uint8_t>(buffer & 0x3FULL)
+                    buffer >>= 8
+                    if (candidate >> next_bit) & 0x1ULL:
                         # Already set
-                        bit_well_loc += 1
+                        buffer_loc += 1
                         continue
-                    candidate |= 1ULL << bit_well_arr[bit_well_loc]
-                    bit_well_loc += 1
+                    candidate |= 1ULL << next_bit
+                    buffer_loc += 1
                     bits_filled += 1
                 if inverse:
-                    candidate = ~candidate
-                values.add(candidate)
-            remaining = n - len(values)
+                    # Inverse but ensure bit 0 is 1
+                    candidate = (~candidate) | 0x1ULL
+                if candidate not in values:
+                    out_arr[out_loc] = candidate
+                    out_loc += 1
+                    values.add(candidate)
+            remaining = n - out_loc
 
-        return np.array([v for v in values], dtype=np.uint64)
+        return out
 
     def seed(self, seed=None):
         """

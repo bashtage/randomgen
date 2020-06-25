@@ -9,11 +9,16 @@ Change Log
 
       <p class="admonition-title"> Deprecated </p>
 
-  :class:`~randomgen.generator.Generator` and :class:`~randomgen.mtrand.RandomState` are **DEPRECATED**.
-  You should be using :class:`numpy.random.Generator` or ``numpy.random.RandomState`` which are better
-  maintained. These will be maintained until after NumPy 1.21 (or 2 releases after NumPy 1.19) for
-  users who cannot update NumPy.
+  :class:`~randomgen.generator.Generator` and :class:`~randomgen.mtrand.RandomState`
+  are **DEPRECATED**. You should be using :class:`numpy.random.Generator` or
+  :class:`numpy.random.RandomState` which are better maintained. These will be
+  maintained until after NumPy 1.21 (or 2 releases after NumPy 1.19) for users who
+  cannot update NumPy.
 
+Since v1.19.0
+=============
+- Added :func:`~randomgen.sfc.SFC64.weyl_increments` to simplify generating increments for
+  use in parallel applications of :class:`~randomgen.sfc.SFC64`.
 
 v1.19.0
 =======
