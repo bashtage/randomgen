@@ -267,3 +267,5 @@ zipf
 φ
 EFIIX
 efiix
+nz
+weyl

@@ -346,14 +346,18 @@ if __name__ == "__main__":
     if args.randomize:
         random.shuffle(configuration_keys)
         logger.info("Randomizing the execution order")
+    final_configuration_keys = []
+    for key in configuration_keys:
+        if key in results and args.size in results[key]:
+            logger.info(f"Skipping {key} with size {args.size}")
+            continue
+        final_configuration_keys.append(key)
+    configuration_keys = final_configuration_keys
     if args.max_jobs:
         configuration_keys = configuration_keys[: args.max_jobs]
     if args.parallel:
         test_args = []
         for key in configuration_keys:
-            if key in results and args.size in results[key]:
-                logger.info(f"Skipping {key} with size {args.size}")
-                continue
             test_args.append(
                 [
                     key,
@@ -380,24 +384,20 @@ if __name__ == "__main__":
     else:
         logger.info("Running in series")
         for key in configuration_keys:
-            if key in results and args.size in results[key]:
-                logger.info(f"Skipping {key} with size {args.size}")
-                continue
-            else:
-                result = test_single(
-                    key,
-                    configurations,
-                    size=args.size,
-                    multithreaded=args.multithreaded,
-                    run_tests=args.run_tests,
-                    lock=lock,
-                )
-                if args.run_tests:
-                    key = result[0]
-                    size = result[1]
-                    value = result[2]
-                    results[key][size] = value
-                    with open("results.json", "w", encoding="utf8") as rf:
-                        json.dump(results, rf, indent=4, sort_keys=True)
+            result = test_single(
+                key,
+                configurations,
+                size=args.size,
+                multithreaded=args.multithreaded,
+                run_tests=args.run_tests,
+                lock=lock,
+            )
+            if args.run_tests:
+                key = result[0]
+                size = result[1]
+                value = result[2]
+                results[key][size] = value
+                with open("results.json", "w", encoding="utf8") as rf:
+                    json.dump(results, rf, indent=4, sort_keys=True)
     with open("results.json", "w", encoding="utf8") as rf:
         json.dump(results, rf, indent=4, sort_keys=True)

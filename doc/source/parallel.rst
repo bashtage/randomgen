@@ -201,16 +201,11 @@ or fewer non-zero bits perform best.
 
    NUM_STREAMS = 8196
 
-   # This is a basic rejection sampler that finds distinct odd 64-bit
-   # values with fewer than 32 non-zero bits. It is simple but somewhat slow
-   # It is easy to vectorize if performance is an issue
-   weyl_inc = set()
-   while len(weyl_inc) < NUM_STREAMS:
-       candidate = random_entropy(2).view(np.uint64) | np.uint64(0x1)
-       if np.unpackbits(candidate.view(np.uint8)).sum() <= 32:
-           weyl_inc.add(candidate[0])
 
    seed_seq = SeedSequence()
+   # Helper function to generate values with 32 non-zero bits
+   # The number of non-zero bits is configurable
+   weyl_inc = SFC64(seed_seq).weyl_increments(1000)
    streams = [SFC64(seed_seq, k=k) for k in weyl_inc]
 
 .. _non-reproducible-sequences:

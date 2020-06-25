@@ -85,12 +85,12 @@ replacements = {
     "DSFMT": "DSFMT⁴",
     "MT19937": "MT19937⁴,⁵",
     "Philox": "Philox⁵",
-    "SFC64(k=1)": "SFC64(k=1)⁵",
-    "SFC64(k=weyl)": "SFC64(k=weyl)³",
+    "SFC64(k=1)": "SFC64⁵",
+    "SFC64(k=weyl)": "SFC64(k=Weyl)³",
     "SFMT": "SFMT⁴",
-    "PCG64(variant=xsl-rr)": "PCG64(variant=xsl-rr)⁵",
+    "PCG64(variant=xsl-rr)": "PCG64⁵",
     "PCG64(variant=dxsm)": "PCG64DXSM²",
-    "JSF(seed-size=1)": "JSF(seed_size=1)",
+    "JSF(seed-size=1)": "JSF",
     "JSF(seed-size=3)": "JSF(seed_size=3)",
 }
 df.index = [replacements.get(key, key) for key in df.index]
