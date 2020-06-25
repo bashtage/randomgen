@@ -1,5 +1,8 @@
+import warnings
+
 import numpy as np
 cimport numpy as np
+cimport cython
 
 from randomgen.common cimport *
 from randomgen.entropy import random_entropy, seed_by_array
@@ -14,6 +17,21 @@ cdef uint32_t sfc_uint32(void *st) nogil:
 
 cdef double sfc_double(void* st) nogil:
     return uint64_to_double(sfc_next64(<sfc_state_t *>st))
+
+
+@cython.cdivision(True)
+cdef uint64_t choosek(uint64_t k):
+    cdef uint64_t _i, out, cnt
+    k = k - 1
+    if k > 32:
+        k = 63 - k
+    out = 1
+    cnt = 1
+    for _i in range(63, 63-k, -1):
+        out *= _i
+        out /= cnt
+        cnt += 1
+    return  out
 
 cdef class SFC64(BitGenerator):
     """
@@ -118,6 +136,43 @@ cdef class SFC64(BitGenerator):
         sfc_seed(&self.rng_state, state_arr, w, k)
         self._reset_state_variables()
 
+    cdef uint64_t generate_bits(self, int8_t bits):
+        """Generate a random integer with ``bits`` non-zero bits"""
+        cdef int bits_filled, buffer_cnt
+        cdef uint64_t candidate, buffer
+        cdef uint64_t next_bit
+
+        bits_filled = 1
+        candidate = 1ULL
+        if bits <= 32:
+            bits_to_fill = bits
+            inverse = False
+        else:
+            # Fill one more since we will inverse then add one back
+            # E.g., to fill 48, we first fill 17 incl 0, then inverse
+            # so there are 47 but then flip 0 to be odd
+            bits_to_fill = 64 - bits + 1
+            inverse = True
+        buffer_cnt = 0
+        while bits_filled < bits_to_fill:
+            if buffer_cnt == 0:
+                buffer_cnt = 8
+                with self.lock:
+                    buffer = sfc_next64(&self.rng_state)
+            next_bit = <uint8_t>(buffer & 0x3FULL)
+            buffer >>= 8
+            if (candidate >> next_bit) & 0x1ULL:
+                # Already set
+                buffer_cnt -= 1
+                continue
+            candidate |= 1ULL << next_bit
+            buffer_cnt -= 1
+            bits_filled += 1
+        if inverse:
+            # Inverse but ensure bit 0 is 1
+            candidate = (~candidate) | 0x1ULL
+        return candidate
+
     def weyl_increments(self, np.npy_intp n, int max_bits=32, min_bits=None):
         """
         weyl_increments(n, max_bits=32, min_bits=None)
@@ -162,27 +217,15 @@ cdef class SFC64(BitGenerator):
         nz_bits from {0,1,2,...,63} without replacement. Finally, if the value
         generated has been previously generated, this value is rejected.
         """
-        cdef Py_ssize_t i, j, loc, buffer_loc, out_loc
-        cdef uint64_t candidate, buffer
+        cdef Py_ssize_t i, j, nbits
+        cdef uint64_t candidate, val
         cdef uint64_t *out_arr
-        cdef uint8_t nbits_candidate, mask, next_bit
-        cdef int8_t *nbits_arr
-        cdef int8_t bits_to_fill, rng, lower
-        cdef int bits_filled
-        cdef bint inverse, not_done
+        cdef uint64_t *cum_count_arr
+        cdef int8_t *bits_arr
+        cdef int8_t nonzero_bits
+        cdef int _min_bits
+        cdef bint inverse
         cdef set values = set()
-
-        def choosek(k):
-            k = k - 1
-            if k > 32:
-                k = 63 - k
-            num = 1
-            for _i in range(63, 63-k, -1):
-                num *= _i
-            denom = 1
-            for _i in range(1, k+1):
-                denom *= _i
-            return  num // denom
 
         min_bits = min_bits if min_bits is not None else max_bits
         if n < 1:
@@ -200,7 +243,6 @@ cdef class SFC64(BitGenerator):
                 f"available ({available})."
             )
         elif n >= (0.50 * available) and n > 1:
-            import warnings
             warnings.warn(
                 f"The number of values required ({n}) is more than 5% of the "
                 f"total available ({available}). The values are generated using "
@@ -208,71 +250,41 @@ cdef class SFC64(BitGenerator):
                 "fraction of available values is large.",
                 RuntimeWarning
             )
-        rng = <int8_t>max_bits - min_bits
-        lower = <int8_t>min_bits
-        nbits = np.full(n, max_bits, dtype=np.int8)
-        nbits_arr = <int8_t*>np.PyArray_DATA(nbits)
-        mask = 2
-        if rng > 0:
-            while mask < rng:
-                mask <<= 1
-            mask -= 1
-            not_done = True
-            loc = 0
-            buffer_loc = 8
-            while not_done:
-                if buffer_loc == 8:
-                    buffer = sfc_next64(&self.rng_state)
-                    buffer_loc = 0
+        _min_bits = min_bits
+        nbits = max_bits - _min_bits + 1
+        table = np.zeros((nbits, 2), dtype=np.uint64)
+        bits = np.arange(_min_bits, max_bits+1, dtype=np.int8)
+        bits_arr = <int8_t *>np.PyArray_DATA(bits)
+        cum_count = np.zeros(nbits, dtype=np.uint64)
+        cum_count_arr = <uint64_t *>np.PyArray_DATA(cum_count)
+        for i in range(_min_bits, max_bits + 1):
+            cum_count_arr[i-_min_bits] = choosek(i)
+            if i > _min_bits:
+                cum_count_arr[i-_min_bits] += cum_count_arr[i-_min_bits-1]
+        total = cum_count_arr[nbits-1]
 
-                nbits_candidate = buffer & mask
-                buffer >>= 8
-                buffer_loc += 1
-                if nbits_candidate <= rng:
-                    nbits_arr[loc] = nbits_candidate + lower
-                    loc += 1
-                not_done = loc < n
-        buffer_loc = 8
-        remaining = n - len(values)
+        from randomgen.generator import Generator
+        with warnings.catch_warnings():
+            warnings.filterwarnings("ignore", category=FutureWarning)
+            gen = Generator(self)
+
         out = np.empty(n, dtype=np.uint64)
-        out_arr = <uint64_t*>np.PyArray_DATA(out)
-        out_loc = 0
-        while remaining:
-            for j in range(remaining):
-                # Must be odd, always start with 1
-                bits_filled = 1
-                candidate = 1ULL
-                if nbits_arr[j] <= 32:
-                    bits_to_fill = nbits_arr[j]
-                    inverse = False
-                else:
-                    # Fill one more since we will inverse then add one back
-                    # E.g., to fill 48, we first fill 17 incl 0, then inverse
-                    # so there are 47 but then flip 0 to be odd
-                    bits_to_fill = 64 - nbits_arr[j] + 1
-                    inverse = True
-                while bits_filled < bits_to_fill:
-                    if buffer_loc == 8:
-                        buffer_loc = 0
-                        buffer = sfc_next64(&self.rng_state)
-                    next_bit = <uint8_t>(buffer & 0x3FULL)
-                    buffer >>= 8
-                    if (candidate >> next_bit) & 0x1ULL:
-                        # Already set
-                        buffer_loc += 1
-                        continue
-                    candidate |= 1ULL << next_bit
-                    buffer_loc += 1
-                    bits_filled += 1
-                if inverse:
-                    # Inverse but ensure bit 0 is 1
-                    candidate = (~candidate) | 0x1ULL
+        out_arr = <uint64_t *>np.PyArray_DATA(out)
+        for i in range(n):
+            val = <uint64_t>gen.integers(0, total, endpoint=True, dtype=np.uint64)
+            nonzero_bits = 0
+            for j in range(nbits):
+                if val < cum_count_arr[j] and nonzero_bits == 0:
+                    nonzero_bits = bits_arr[j]
+                if nonzero_bits > 0:
+                    cum_count_arr[j] -= 1
+            total = cum_count_arr[nbits - 1]
+            while True:
+                candidate = self.generate_bits(nonzero_bits)
                 if candidate not in values:
-                    out_arr[out_loc] = candidate
-                    out_loc += 1
+                    out_arr[i] = candidate
                     values.add(candidate)
-            remaining = n - out_loc
-
+                    break
         return out
 
     def seed(self, seed=None):

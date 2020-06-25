@@ -23,3 +23,4 @@ cdef class SFC64(BitGenerator):
     cdef object k, w
     cdef sfc_state_t rng_state
     cdef _reset_state_variables(self)
+    cdef uint64_t generate_bits(self, int8_t bits)
