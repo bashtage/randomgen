@@ -109,6 +109,7 @@ devel/_sources/bit_generators/generated/randomgen.sfc.SFC64.ctypes.rst.txt
 devel/_sources/bit_generators/generated/randomgen.sfc.SFC64.random_raw.rst.txt
 devel/_sources/bit_generators/generated/randomgen.sfc.SFC64.seed.rst.txt
 devel/_sources/bit_generators/generated/randomgen.sfc.SFC64.state.rst.txt
+devel/_sources/bit_generators/generated/randomgen.sfc.SFC64.weyl_increments.rst.txt
 devel/_sources/bit_generators/generated/randomgen.sfmt.SFMT.cffi.rst.txt
 devel/_sources/bit_generators/generated/randomgen.sfmt.SFMT.ctypes.rst.txt
 devel/_sources/bit_generators/generated/randomgen.sfmt.SFMT.jump.rst.txt
@@ -477,6 +478,7 @@ devel/bit_generators/generated/randomgen.sfc.SFC64.ctypes.html
 devel/bit_generators/generated/randomgen.sfc.SFC64.random_raw.html
 devel/bit_generators/generated/randomgen.sfc.SFC64.seed.html
 devel/bit_generators/generated/randomgen.sfc.SFC64.state.html
+devel/bit_generators/generated/randomgen.sfc.SFC64.weyl_increments.html
 devel/bit_generators/generated/randomgen.sfmt.SFMT.cffi.html
 devel/bit_generators/generated/randomgen.sfmt.SFMT.ctypes.html
 devel/bit_generators/generated/randomgen.sfmt.SFMT.jump.html
