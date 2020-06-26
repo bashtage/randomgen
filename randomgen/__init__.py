@@ -17,6 +17,7 @@ from randomgen.pcg32 import PCG32
 from randomgen.pcg64 import PCG64, PCG64DXSM, LCG128Mix
 from randomgen.philox import Philox
 from randomgen.rdrand import RDRAND
+from randomgen.romu import Romu
 from randomgen.seed_sequence import SeedlessSeedSequence, SeedSequence
 from randomgen.sfc import SFC64
 from randomgen.sfmt import SFMT
@@ -51,6 +52,7 @@ __all__ = [
     "PCG64DXSM",
     "Philox",
     "RDRAND",
+    "Romu",
     "RandomState",
     "SFC64",
     "SFMT",

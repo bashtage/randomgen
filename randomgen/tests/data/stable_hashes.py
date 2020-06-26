@@ -455,6 +455,21 @@ known_hashes = {
         "initial_state_hash": "18d238f9d0a154027cdbd76d13e73d0bb8b5ab3954f832b43e533f6167038ff7",
         "final_state_hash": "b30abf205c56e50ee2bf51867139502b71c3b183a3069dbc7dcf939b74530b4d",
     },
+    ("Romu", "seed"): {
+        "random_values": "391e78ea9d1c7ffc22a2e9fbad142c5a68e54f047d2f4305431e911f49c58ddc",
+        "initial_state_hash": "e92f48b29446435148b7507c8c2c89a68211e280addbaea53c862a3fb9d9a83c",
+        "final_state_hash": "ff7ed444442c98b03d04f4922d8507f1d81956d14804a7c64300caa3737b4642",
+    },
+    ("Romu", "seed", "variant", "quad"): {
+        "random_values": "391e78ea9d1c7ffc22a2e9fbad142c5a68e54f047d2f4305431e911f49c58ddc",
+        "initial_state_hash": "e92f48b29446435148b7507c8c2c89a68211e280addbaea53c862a3fb9d9a83c",
+        "final_state_hash": "ff7ed444442c98b03d04f4922d8507f1d81956d14804a7c64300caa3737b4642",
+    },
+    ("Romu", "seed", "variant", "trio"): {
+        "random_values": "023061069f1705d3ab1ae16215fcd91f4ea8914107406620ead2be5e44ce2cfa",
+        "initial_state_hash": "7e791460df316124a938692059628ea9535a6cf2458356f97b40033c2fc0a814",
+        "final_state_hash": "e90d55a406e6f1f564b3e0aff522fee8d7b20dbdffc4e77192d154d0a06de481",
+    },
     ("ThreeFry", "seed"): {
         "random_values": "6a0ce1a57c1d7fdc91efcc519176b7f8fb7553d684ff07038a659862fbb877e9",
         "initial_state_hash": "f0f91d48d6dadb538169345970a6f46004ee595c046d49a2db77e58b4316266f",

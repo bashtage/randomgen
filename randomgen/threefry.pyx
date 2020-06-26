@@ -206,7 +206,7 @@ cdef class ThreeFry(BitGenerator):
     def __repr__(self):
         out = object.__repr__(self)
         out = out.replace("ThreeFry",
-                          "ThreeFry (" + str(self.n) + "x" + str(self.w) + ")")
+                          "ThreeFry(" + str(self.n) + "x" + str(self.w) + ")")
         return out
 
     cdef _reset_state_variables(self):

@@ -30,6 +30,7 @@ from randomgen import (
     Generator,
     Philox,
     RandomState,
+    Romu,
     ThreeFry,
     Xoroshiro128,
     Xorshift1024,
@@ -1831,6 +1832,50 @@ class TestEFIIX64(TestLXM):
         cls.dtype = np.uint64
         cls.data1 = cls._read_csv(join(pwd, "./data/efiix64-testset-1.csv"))
         cls.data2 = cls._read_csv(join(pwd, "./data/efiix64-testset-2.csv"))
+        cls.seed_error_type = TypeError
+        cls.invalid_seed_types = [(2 + 3j,), (3.1,)]
+        cls.invalid_seed_values = [(-2,), ([-2],)]
+        if NP_SEED_SEQ:
+            cls.invalid_seed_types += [("apple",)]
+        else:
+            cls.invalid_seed_values += [("apple",)]
+        cls.seed_sequence_only = True
+
+
+class TestRomuQuad(TestLXM):
+    @classmethod
+    def setup_class(cls):
+        super().setup_class()
+        cls.bit_generator = Romu
+        cls.bits = 64
+        cls.dtype = np.uint64
+        cls.data1 = cls._read_csv(join(pwd, "./data/romuquad-testset-1.csv"))
+        cls.data2 = cls._read_csv(join(pwd, "./data/romuquad-testset-2.csv"))
+        cls.seed_error_type = TypeError
+        cls.invalid_seed_types = [(2 + 3j,), (3.1,)]
+        cls.invalid_seed_values = [(-2,), ([-2],)]
+        if NP_SEED_SEQ:
+            cls.invalid_seed_types += [("apple",)]
+        else:
+            cls.invalid_seed_values += [("apple",)]
+        cls.seed_sequence_only = True
+
+    def test_bad_varainte(self):
+        with pytest.raises(TypeError):
+            self.bit_generator(variant=3)
+        with pytest.raises(ValueError):
+            self.bit_generator(variant="both")
+
+
+class TestRomuTrio(TestLXM):
+    @classmethod
+    def setup_class(cls):
+        super().setup_class()
+        cls.bit_generator = partial(Romu, variant="trio")
+        cls.bits = 64
+        cls.dtype = np.uint64
+        cls.data1 = cls._read_csv(join(pwd, "./data/romutrio-testset-1.csv"))
+        cls.data2 = cls._read_csv(join(pwd, "./data/romutrio-testset-2.csv"))
         cls.seed_error_type = TypeError
         cls.invalid_seed_types = [(2 + 3j,), (3.1,)]
         cls.invalid_seed_values = [(-2,), ([-2],)]

@@ -32,6 +32,7 @@ These RNGs will be included in future releases.
    128-bit LCG with output mixing <lcg128mix>
    Philox <philox>
    RDRAND <rdrand>
+   Romu <romu>
    SFC64 <sfc>
    SFMT <sfmt>
    SPECK128 <speck128>

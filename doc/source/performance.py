@@ -21,6 +21,7 @@ from randomgen import (
     AESCounter,
     ChaCha,
     Philox,
+    Romu,
     ThreeFry,
     Xoshiro256,
     Xoshiro512,
@@ -59,6 +60,15 @@ class Philox2x64(Philox):
         if "number" in kwargs:
             del kwargs["number"]
         super().__init__(*args, number=2, **kwargs)
+
+
+class RomuTrio(Romu):
+    canonical_repr = 'Romu(variant="trio")'
+
+    def __init__(self, *args, **kwargs):
+        if "variant" in kwargs:
+            del kwargs["variant"]
+        super().__init__(*args, variant="trio")
 
 
 class ThreeFry4x32(ThreeFry):
@@ -119,6 +129,8 @@ PRNGS = [
     Xoshiro256,
     Xoshiro512,
     JSF,
+    Romu,
+    RomuTrio,
     HC128,
     SPECK128,
     SFC64,

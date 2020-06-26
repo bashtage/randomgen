@@ -971,7 +971,7 @@ cdef class PCG64DXSM(PCG64):
     u"""
     PCG64DXSM(seed=None, inc=None)
 
-    Container for the PCG-64 updated with a 64-bit mult using DXSM output func
+    Container for the PCG-64 updated with a 64-bit mult using DXSM output func.
 
     Pre-configured alias for PCG64 with variant="dxsm" and mode="sequence".
     This bit generator will likely become the default in NumPy in the near
@@ -1011,7 +1011,8 @@ cdef class PCG64DXSM(PCG64):
     where :math:`s` is the state of the generator, :math:`m` is the multipler
     and :math:`i` is the increment. The multipler is a 64-bit unsigned
     integer with good spectral properties. The output of the
-    LCG is the permuted using a function similar to an Xorshift (DXSM).
+    LCG is the permuted using the DXSM ouput function which is similar to an
+    Xorshift ([1]_, [2]_).
 
     ``PCG64DXSM`` provides a capsule containing function pointers that produce
     doubles, and unsigned 32 and 64- bit integers. These are not

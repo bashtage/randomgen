@@ -192,7 +192,7 @@ cdef class SFC64(BitGenerator):
         Returns
         -------
         ndarray
-            An array containg distinct odd integers with between min_bits
+            An array containing distinct odd integers with between min_bits
             and max_bits non-zero bits.
 
         Examples
