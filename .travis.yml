@@ -28,7 +28,7 @@ matrix:
     - os: linux
       arch: ppc64le
       python: 3.6
-      env: [PYPI=true, PPC64_LE=1, COVERAGE=true]
+      env: [PYPI=true, PPC64_LE=1, COVERAGE=true, EXTRA_PYTEST_OPTIONS="-v -s"]
     - os: linux
       arch: s390x
       python: 3.6
@@ -57,7 +57,7 @@ matrix:
     - os: linux
       arch: ppc64le
       python: 3.6
-      env: [PYPI=true, PPC64_LE=1, COVERAGE=true]
+      env: [PYPI=true, PPC64_LE=1, COVERAGE=true, EXTRA_PYTEST_OPTIONS="-v -s"]
     - os: linux
       arch: s390x
       python: 3.6
@@ -78,7 +78,7 @@ before_install:
   - clang --version || true
   - export SRCDIR="$PWD"
   - if [[ -z "$RANDOMGEN_CYTHON_COVERAGE" ]]; then export RANDOMGEN_CYTHON_COVERAGE="$COVERAGE"; fi
-  - if [[ "$RANDOMGEN_CYTHON_COVERAGE" == true ]]; then EXTRA_PYTEST_OPTIONS="--skip-slow"; fi
+  - if [[ "$RANDOMGEN_CYTHON_COVERAGE" == true ]]; then export EXTRA_PYTEST_OPTIONS="${EXTRA_PYTEST_OPTIONS} --skip-slow"; fi
   - if [[ "$COVERAGE" == true ]]; then export COVERAGE_OPTIONS="--cov-config .coveragerc --cov=randomgen"; fi
 
 install:
@@ -90,7 +90,6 @@ install:
     fi
 
 script:
-  - set -e
   - |
     if [[ -n ${TEST_INSTALL} && ${TEST_INSTALL} == true ]]; then
         mkdir test_run
@@ -98,8 +97,8 @@ script:
         python -c 'import randomgen; randomgen.test(extra_args=["--skip-slow", "-n=2"])'
         cd ..
     else
-        echo pytest -r a ${COVERAGE_OPTIONS} ${EXTRA_PYTEST_OPTIONS} randomgen
-        pytest -r a ${COVERAGE_OPTIONS} ${EXTRA_PYTEST_OPTIONS} randomgen
+        echo pytest -r a ${COVERAGE_OPTIONS} ${EXTRA_PYTEST_OPTIONS} randomgen/tests/
+        pytest -r a ${COVERAGE_OPTIONS} ${EXTRA_PYTEST_OPTIONS} randomgen/tests/
     fi
   - |
     if [[ ${DOCBUILD} == true ]]; then
