@@ -10,7 +10,6 @@ import sys
 import time
 
 from joblib import Parallel, cpu_count, delayed
-
 from randomgen import (
     DSFMT,
     EFIIX64,

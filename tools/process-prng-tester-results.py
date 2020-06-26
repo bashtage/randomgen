@@ -1,4 +1,5 @@
 import json
+import os
 
 import pandas as pd
 
@@ -94,9 +95,11 @@ replacements = {
     "JSF(seed-size=3)": "JSF(seed_size=3)",
 }
 df.index = [replacements.get(key, key) for key in df.index]
-
+columns = df.columns.to_list()
+columns[columns.index(("", ""))] = ("Seed Sequence", "1")
+df.columns = pd.MultiIndex.from_tuples(columns)
 keys = [
-    ("", ""),
+    ("Seed Sequence", "1"),
     ("Seed Sequence", "4"),
     ("Seed Sequence", "8196"),
     ("Jumped", "4"),
@@ -106,7 +109,7 @@ new_table = df[keys]
 
 
 columns = new_table.columns
-header = ["Bit Generator", "", "4", "8196", "4", "8196"]
+header = ["Bit Generator", "1", "4", "8196", "4", "8196"]
 widths = list(map(lambda s: 2 + len(s), header))
 widths[0] = max(widths[0], max(map(lambda s: 2 + len(s), new_table.index)) + 1)
 widths = [max(w, 11) for w in widths]
@@ -179,4 +182,10 @@ for i in range(len(rows)):
 # Fix header setp
 out[4] = out[4].replace("-", "=")
 
-print("\n".join(out))
+final = "\n".join(out)
+cur_dir = os.path.dirname(__file__)
+output = os.path.join(cur_dir, "..", "doc", "source", "test-results.txt")
+output = os.path.abspath(output)
+with open(output, "wb") as of:
+    of.write(final.encode("utf8"))
+print(final)
