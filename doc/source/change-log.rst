@@ -17,6 +17,7 @@ Change Log
 
 Since v1.19.0
 =============
+- Added :class:`randomgen.romu.Romu` which is among the fastest available bit generators.
 - Added :func:`~randomgen.sfc.SFC64.weyl_increments` to simplify generating increments for
   use in parallel applications of :class:`~randomgen.sfc.SFC64`.
 

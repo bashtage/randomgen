@@ -15,6 +15,7 @@ from randomgen.pcg32 import PCG32
 from randomgen.pcg64 import PCG64, PCG64DXSM, LCG128Mix
 from randomgen.philox import Philox
 from randomgen.rdrand import RDRAND
+from randomgen.romu import Romu
 from randomgen.sfc import SFC64
 from randomgen.sfmt import SFMT
 from randomgen.speck128 import SPECK128
@@ -39,6 +40,7 @@ BitGenerators = {
     "PCG64": PCG64,
     "PCG64DXSM": PCG64DXSM,
     "Philox": Philox,
+    "Romu": Romu,
     "ThreeFry": ThreeFry,
     "Xorshift1024": Xorshift1024,
     "Xoroshiro128": Xoroshiro128,

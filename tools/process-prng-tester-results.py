@@ -93,6 +93,7 @@ replacements = {
     "PCG64(variant=dxsm)": "PCG64DXSM²",
     "JSF(seed-size=1)": "JSF",
     "JSF(seed-size=3)": "JSF(seed_size=3)",
+    "Romu(variant=quad)": "Romu",
 }
 df.index = [replacements.get(key, key) for key in df.index]
 columns = df.columns.to_list()

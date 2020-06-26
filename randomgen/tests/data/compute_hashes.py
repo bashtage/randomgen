@@ -23,6 +23,7 @@ from randomgen import (
     ChaCha,
     LCG128Mix,
     Philox,
+    Romu,
     ThreeFry,
     Xoroshiro128,
     Xorshift1024,
@@ -166,6 +167,7 @@ configs = {
         "BLOCKED": (("seed", "key"),),
         "REQUIRED": ("seed", "key"),
     },
+    "Romu": {"seed": seed_seq(), "variant": ["quad", "trio"]},
     "ThreeFry": {
         "seed": seed_seq(),
         "number": [2, 4],
@@ -200,6 +202,7 @@ BIT_GEN = {
     "MT19937": MT19937,
     "DSFMT": DSFMT,
     "SFMT": SFMT,
+    "Romu": Romu,
     "SPECK128": SPECK128,
     "PCG32": PCG32,
     "PCG64": PCG64,

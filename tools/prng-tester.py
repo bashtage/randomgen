@@ -25,6 +25,7 @@ from randomgen import (
     ChaCha,
     LCG128Mix,
     Philox,
+    Romu,
     ThreeFry,
     Xoshiro256,
     Xoshiro512,
@@ -48,6 +49,7 @@ ALL_BIT_GENS = [
     ThreeFry,
     Xoshiro256,
     Xoshiro512,
+    Romu,
 ]
 JUMPABLE = [bg for bg in ALL_BIT_GENS if hasattr(bg, "jumped")]
 
@@ -57,6 +59,7 @@ SPECIALS = {
     SFC64: {"k": [1, 3394385948627484371, "weyl"]},
     LCG128Mix: {"output": ["upper"]},
     PCG64: {"variant": ["dxsm", "dxsm-128", "xsl-rr"]},
+    Romu: {"variant": ["quad", "trio"]},
 }
 OUTPUT = defaultdict(lambda: 64)
 OUTPUT.update({MT19937: 32, DSFMT: 32})
@@ -215,7 +218,14 @@ def setup_configuration_files(entropy=DEFAULT_ENTOPY):
 
 
 def test_single(
-    key, configurations, size="1GB", multithreaded=True, run_tests=False, lock=None
+    key,
+    configurations,
+    size="1GB",
+    multithreaded=True,
+    folding=2,
+    expanded=True,
+    run_tests=False,
+    lock=None,
 ):
     file_name = os.path.join(os.path.dirname(__file__), f"{key.lower()}.py")
     file_name = os.path.abspath(file_name)
@@ -237,6 +247,10 @@ def test_single(
         input_format,
         "-tlmax",
         size,
+        "-te",
+        "1" if expanded else "0",
+        "-tf",
+        str(folding),
     ]
     if multithreaded:
         cmd += ["-multithreaded"]
@@ -326,8 +340,20 @@ if __name__ == "__main__":
         type=int,
         help="The maximum number of jobs to execute before exiting",
     )
+    parser.add_argument(
+        "-f",
+        "--folding",
+        type=int,
+        default=0,
+        help="The number of folds to use: 0, 1 or 2.",
+    )
+    parser.add_argument(
+        "-e", "--expanded", action="store_true", help="Use the expanded test suite",
+    )
 
     args = parser.parse_args()
+
+    assert args.folding in (0, 1, 2)
 
     configurations = setup_configuration_files(entropy=args.entropy)
     if args.run_tests:
@@ -364,6 +390,8 @@ if __name__ == "__main__":
                     configurations,
                     args.size,
                     args.multithreaded,
+                    args.folding,
+                    args.expanded,
                     args.run_tests,
                     lock,
                 ]

@@ -57,7 +57,7 @@ cdef class MT64(BitGenerator):
     Notes
     -----
     ``MT64`` provides a capsule containing function pointers that produce
-    doubles, and unsigned 32 and 64- bit integers [1]_. These are not
+    doubles, and unsigned 32 and 64- bit integers ([1]_, [2]_). These are not
     directly consumable in Python and must be consumed by a ``Generator``
     or similar object that supports low-level access.
 
