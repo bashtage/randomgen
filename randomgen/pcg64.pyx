@@ -1011,7 +1011,7 @@ cdef class PCG64DXSM(PCG64):
     where :math:`s` is the state of the generator, :math:`m` is the multipler
     and :math:`i` is the increment. The multipler is a 64-bit unsigned
     integer with good spectral properties. The output of the
-    LCG is the permuted using the DXSM ouput function which is similar to an
+    LCG is the permuted using the DXSM output function which is similar to an
     Xorshift ([1]_, [2]_).
 
     ``PCG64DXSM`` provides a capsule containing function pointers that produce

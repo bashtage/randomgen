@@ -25,6 +25,9 @@
  * below.
  */
 
+#ifndef _RANDOMDGEN__ROMU_H_
+#define _RANDOMDGEN__ROMU_H_
+
 #include "../common/randomgen_config.h"
 
 struct ROMU_STATE_T {
@@ -98,3 +101,5 @@ static INLINE uint32_t romutrio_next32(romu_state_t *state) {
 
 void romu_seed(romu_state_t *state, uint64_t w, uint64_t x, uint64_t y,
                uint64_t z, int quad);
+
+#endif /* _RANDOMDGEN__ROMU_H_ */

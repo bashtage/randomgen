@@ -9,6 +9,8 @@ import subprocess
 import sys
 import time
 
+import jinja2
+
 from joblib import Parallel, cpu_count, delayed
 from randomgen import (
     DSFMT,
@@ -63,6 +65,8 @@ SPECIALS = {
 }
 OUTPUT = defaultdict(lambda: 64)
 OUTPUT.update({MT19937: 32, DSFMT: 32})
+with open("configuration.jinja") as tmpl:
+    TEMPLATE = jinja2.Template(tmpl.read())
 
 DSFMT_WRAPPER = """\
 
@@ -81,73 +85,35 @@ class Wrapper32:
 DEFAULT_ENTOPY = (
     86316980830225721106033794313786972513572058861498566720023788662568817403978
 )
-BASE = """\
-import numpy as np
-
-import randomgen as rg
-
-ENTROPY = {entropy}
-seed_seq = np.random.SeedSequence(ENTROPY)
-
-"""
-
-BASE += DSFMT_WRAPPER
-
-
-def configure_sfc64_weyl(streams, entropy):
-    block = f"""\
-
-base = rg.SFC64(seed_seq)
-
-weyl = list(set(list(base.random_raw(10*{streams}) | np.uint64(0x1))))
-retain = []
-for val in weyl:
-    if sum([v=="1" for v in bin(val)]) <= 32:
-        retain.append(val)
-    if len(retain) == {streams}:
-        break
-assert len(retain) == {streams}
-bitgens = [rg.SFC64(seed_seq, k=k) for k in retain]
-output = 64
-"""
-    return BASE.format(entropy=entropy) + block
 
 
 def configure_stream(
     bit_gen, kwargs=None, jumped=False, streams=8196, entropy=DEFAULT_ENTOPY
 ):
+    bit_generator = bit_gen.__name__
+    extra_code = extra_initialization = ""
     if bit_gen == SFC64 and kwargs["k"] == "weyl":
-        return configure_sfc64_weyl(streams, entropy=entropy)
-    kwargs_fmt = ""
-    if kwargs:
-        kwargs_repr = str(kwargs)
-        kwargs_fmt = f", **{kwargs_repr}"
-    name = bit_gen.__name__
-    if streams == 1:
-        contents = [f"bitgens = [rg.{name}(seed_seq{kwargs_fmt})]"]
-        if bit_gen == DSFMT:
-            contents = ["bitgens = [Wrapper32(rg.DSFMT(seed_seq))]"]
-    elif jumped:
-        base = f"rg.{name}(seed_seq)"
-        if bit_gen == DSFMT:
-            base = "Wrapper32(rg.DSFMT(seed_seq))"
-        contents = [
-            f"""
-last = {base}
-bitgens = [last]
-for i in range({streams}-1):
-    last = last.jumped()
-    bitgens.append(last)
-"""
-        ]
-    else:
-        single = f"rg.{name}(child{kwargs_fmt})"
-        if bit_gen == DSFMT:
-            single = "Wrapper32(rg.DSFMT(child))"
-        contents = [f"bitgens = [{single} for child in seed_seq.spawn({streams})]"]
-    contents.append(f"output = {OUTPUT[bit_gen]}")
-
-    return BASE.format(entropy=entropy) + "\n" + "\n".join(contents) + "\n"
+        extra_code = f"""\
+base = rg.SFC64(seed_seq)
+weyl = base.weyl_increments({streams})
+bitgens = [rg.SFC64(seed_seq, k=k) for k in retain]
+        """
+    elif bit_gen == DSFMT:
+        bit_generator = "Wrapper32"
+        extra_initialization = DSFMT_WRAPPER
+        # return configure_dsfmt(streams, entropy=entropy)
+    kwargs = {} if kwargs is None else kwargs
+    kwargs_repr = str(kwargs)
+    return TEMPLATE.render(
+        bit_generator=bit_generator,
+        entropy=entropy,
+        jumped=jumped,
+        streams=streams,
+        kwargs=kwargs_repr,
+        output=OUTPUT[bit_gen],
+        extra_initialization=extra_initialization,
+        extra_code=extra_code,
+    )
 
 
 def get_logger(name=None):
@@ -344,11 +310,14 @@ if __name__ == "__main__":
         "-f",
         "--folding",
         type=int,
-        default=0,
+        default=1,
         help="The number of folds to use: 0, 1 or 2.",
     )
     parser.add_argument(
-        "-e", "--expanded", action="store_true", help="Use the expanded test suite",
+        "-ex", "--expanded", action="store_true", help="Use the expanded test suite",
+    )
+    parser.add_argument(
+        "--force", action="store_true", help="Force re-run even if result exists",
     )
 
     args = parser.parse_args()
@@ -374,7 +343,7 @@ if __name__ == "__main__":
         logger.info("Randomizing the execution order")
     final_configuration_keys = []
     for key in configuration_keys:
-        if key in results and args.size in results[key]:
+        if key in results and args.size in results[key] and not args.force:
             logger.info(f"Skipping {key} with size {args.size}")
             continue
         final_configuration_keys.append(key)

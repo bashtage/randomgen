@@ -32,18 +32,21 @@ def parse_key(key):
 
 
 def to_bytes(s):
-    if "GB" in s:
+    if "MB" in s:
+        return int(s[:-2].strip()) * 2 ** 20
+    elif "GB" in s:
         return int(s[:-2].strip()) * 2 ** 30
     elif "TB" in s:
         return int(s[:-2].strip()) * 2 ** 40
 
 
 def from_bytes(b):
-    b = b >> 30
-    if b >= 2 ** 10:
-        return f"{b>>10}TB"
-    else:
-        return f"{b}GB"
+    b = b >> 20
+    if b >= 2 ** 20:
+        return f"{b>>20}TB"
+    elif b >= 2 ** 10:
+        return f"{b>>10}GB"
+    return f"{b}MB"
 
 
 series_data = {}
@@ -58,26 +61,19 @@ for key in results:
     if "FAIL" not in result[0][1]:
         series_data[parsed_key] = from_bytes(result[0][0])
     else:
-        lines = result[0][1].split("\n")
+        failed_result = result[0][1]
+        for res in result:
+            if "FAIL" in res[1]:
+                failed_result = res[1]
+        lines = failed_result.split("\n")
         lines = lines[::-1]
-        max_pass = None
-        for i in range(len(lines) - 1):
-            if "no anomalies" in lines[i]:
-                max_line = lines[i + 1]
-                max_pass = "".join(max_line.split(" ")[1:3])
-                max_pass = (
-                    max_pass.replace("giga", "G")
-                    .replace("bytes", "B")
-                    .replace("tera", "T")
-                )
-                # ❌
-                if max_pass == "256GB":
-                    max_pass = "FAIL¹"
-                else:
-                    raise NotImplementedError("need to add footnote")
-
+        for line in lines:
+            if "length=" in line:
+                line = line.split("(")[0].split("=")[-1].strip()
                 break
-        series_data[parsed_key] = max_pass
+        failed_at = line.replace("giga", "G").replace("tera", "T").replace("bytes", "B")
+        failed_at = f"FAIL at {failed_at}¹"
+        series_data[parsed_key] = failed_at
 series = pd.Series(series_data)
 df = series.unstack([1, 2]).fillna("--")
 df.index = [val.replace("_", "-") for val in df.index]
@@ -113,7 +109,7 @@ columns = new_table.columns
 header = ["Bit Generator", "1", "4", "8196", "4", "8196"]
 widths = list(map(lambda s: 2 + len(s), header))
 widths[0] = max(widths[0], max(map(lambda s: 2 + len(s), new_table.index)) + 1)
-widths = [max(w, 11) for w in widths]
+widths = [max(w, 15) for w in widths]
 
 first = "| Method"
 first += " " * (widths[0] - len(first))
