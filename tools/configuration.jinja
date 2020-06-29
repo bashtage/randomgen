@@ -12,15 +12,15 @@ SEED_SEQ = np.random.SeedSequence(ENTROPY)
 {{ extra_initialization }}
 BASE_GEN = rg.{{ bit_generator }}(SEED_SEQ, **BIT_GENERATOR_KWARGS)
 if STREAMS == 1:
-    bit_gens = [BASE_GEN]
+    bitgens = [BASE_GEN]
 elif JUMPED:
-    bit_gens = [BASE_GEN]
+    bitgens = [BASE_GEN]
     for _ in range(STREAMS - 1):
-        bit_gens.append(bit_gens[-1].jumped())
+        bitgens.append(bitgens[-1].jumped())
 else:
-    bit_gens = []
+    bitgens = []
     for child in SEED_SEQ.spawn(STREAMS):
-        bit_gens.append(rg.{{ bit_generator }}(child, **BIT_GENERATOR_KWARGS))
+        bitgens.append(rg.{{ bit_generator }}(child, **BIT_GENERATOR_KWARGS))
 output = {{ output }}
 
 {{ extra_code }}

@@ -1,0 +1,16 @@
+import numpy as np
+
+import randomgen as rg
+
+STREAMS = {{ streams }}
+BIT_GENERATOR_KWARGS = {{ kwargs }}
+
+{{ extra_initialization }}
+
+bitgens = []
+for i in range(STREAMS):
+    seed_seq = rg.SeedSequence(2**i)
+    bitgens = [rg.{{ bit_generator }}(seed_seq, **BIT_GENERATOR_KWARGS)]
+output = {{ output }}
+
+{{ extra_code }}
