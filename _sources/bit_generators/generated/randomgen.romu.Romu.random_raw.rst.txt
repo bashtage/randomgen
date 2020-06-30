@@ -1,0 +1,6 @@
+randomgen.romu.Romu.random\_raw
+===============================
+
+.. currentmodule:: randomgen.romu
+
+.. automethod:: Romu.random_raw

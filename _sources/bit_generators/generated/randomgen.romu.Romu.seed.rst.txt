@@ -1,0 +1,6 @@
+randomgen.romu.Romu.seed
+========================
+
+.. currentmodule:: randomgen.romu
+
+.. automethod:: Romu.seed

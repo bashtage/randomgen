@@ -1,0 +1,6 @@
+randomgen.romu.Romu.state
+=========================
+
+.. currentmodule:: randomgen.romu
+
+.. autoattribute:: Romu.state
