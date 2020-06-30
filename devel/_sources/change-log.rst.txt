@@ -20,7 +20,7 @@ v1.19.1
 - Added :class:`randomgen.romu.Romu` which is among the fastest available bit generators.
 - Added :func:`~randomgen.sfc.SFC64.weyl_increments` to simplify generating increments for
   use in parallel applications of :class:`~randomgen.sfc.SFC64`.
-- Completed * :ref:`quality-assurance` of all bit generators to at least 4GB.
+- Completed * :ref:`quality-assurance` of all bit generators to at least 4TB.
 
 v1.19.0
 =======
