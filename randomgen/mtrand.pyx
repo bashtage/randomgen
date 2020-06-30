@@ -813,7 +813,7 @@ warnings.filterwarnings("ignore", "RandomState", FutureWarning)
                 raise ValueError("Cannot take a larger sample than "
                                  "population when replace=False")
             elif size < 0:
-                raise ValueError("negative dimensions are not allowed")
+                raise ValueError("Negative dimensions are not allowed")
 
             if p is not None:
                 if np.count_nonzero(p > 0) < size:
@@ -3703,7 +3703,7 @@ warnings.filterwarnings("ignore", "RandomState", FutureWarning)
         [True, True] # random
 
         """
-        from numpy.dual import svd
+        from numpy.linalg import svd
 
         # Check preconditions on arguments
         mean = np.array(mean)

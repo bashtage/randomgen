@@ -3,7 +3,7 @@ import os
 
 import pandas as pd
 
-with open("results.json") as res:
+with open("results/results.json") as res:
     results = json.load(res)
 
 

@@ -1,90 +1,28 @@
+"""
+The main test program for quality assurance in randomgen
+"""
 from collections import defaultdict
 import itertools
 import json
-import logging
 from multiprocessing import Manager
 import os
 import random
-import subprocess
-import sys
 import time
 
-import jinja2
-
+from configuration import (
+    ALL_BIT_GENS,
+    DEFAULT_ENTOPY,
+    DSFMT_WRAPPER,
+    JUMPABLE,
+    OUTPUT,
+    SPECIALS,
+    TEMPLATE,
+)
 from joblib import Parallel, cpu_count, delayed
-from randomgen import (
-    DSFMT,
-    EFIIX64,
-    HC128,
-    JSF,
-    LXM,
-    MT19937,
-    PCG64,
-    SFC64,
-    SFMT,
-    SPECK128,
-    AESCounter,
-    ChaCha,
-    LCG128Mix,
-    Philox,
-    Romu,
-    ThreeFry,
-    Xoshiro256,
-    Xoshiro512,
-)
+from randomgen import DSFMT, SFC64
+from shared import get_logger, test_single
 
-ALL_BIT_GENS = [
-    AESCounter,
-    ChaCha,
-    DSFMT,
-    EFIIX64,
-    HC128,
-    JSF,
-    LXM,
-    PCG64,
-    LCG128Mix,
-    MT19937,
-    Philox,
-    SFC64,
-    SFMT,
-    SPECK128,
-    ThreeFry,
-    Xoshiro256,
-    Xoshiro512,
-    Romu,
-]
-JUMPABLE = [bg for bg in ALL_BIT_GENS if hasattr(bg, "jumped")]
-
-SPECIALS = {
-    ChaCha: {"rounds": [8, 20]},
-    JSF: {"seed_size": [1, 3]},
-    SFC64: {"k": [1, 3394385948627484371, "weyl"]},
-    LCG128Mix: {"output": ["upper"]},
-    PCG64: {"variant": ["dxsm", "dxsm-128", "xsl-rr"]},
-    Romu: {"variant": ["quad", "trio"]},
-}
-OUTPUT = defaultdict(lambda: 64)
-OUTPUT.update({MT19937: 32, DSFMT: 32})
-with open("configuration.jinja") as tmpl:
-    TEMPLATE = jinja2.Template(tmpl.read())
-
-DSFMT_WRAPPER = """\
-
-class Wrapper32:
-    def __init__(self, dsfmt):
-        self._bit_gen = dsfmt
-
-    def random_raw(self, n=None):
-        return self._bit_gen.random_raw(n).astype("u4")
-
-    def jumped(self):
-        return Wrapper32(self._bit_gen.jumped())
-"""
-# Specials
-# SFC64
-DEFAULT_ENTOPY = (
-    86316980830225721106033794313786972513572058861498566720023788662568817403978
-)
+DEFAULT_STREAMS = (4, 8196)
 
 
 def configure_stream(
@@ -116,43 +54,27 @@ bitgens = [rg.SFC64(seed_seq, k=k) for k in retain]
     )
 
 
-def get_logger(name=None):
-    if name is None:
-        logger = logging.getLogger(__name__)
-    else:
-        logger = logging.getLogger(name)
-    logger.setLevel(logging.DEBUG)
-    formatter = logging.Formatter(
-        "%(name)s - %(asctime)s - %(levelname)s: %(message)s "
-    )
-    handler = logging.StreamHandler(sys.stdout)
-    handler.setFormatter(formatter)
-    logger.addHandler(handler)
-    return logger
-
-
-def setup_configuration_files(entropy=DEFAULT_ENTOPY):
+def setup_configuration_files(
+    entropy=DEFAULT_ENTOPY, skip_single=False, num_streams=DEFAULT_STREAMS
+):
     streams = {}
     for bitgen in ALL_BIT_GENS:
         name = bitgen.__name__
         if bitgen not in SPECIALS:
-            streams[name] = configure_stream(bitgen, entropy=entropy)
-            streams[name + "-streams-4"] = configure_stream(
-                bitgen, streams=4, entropy=entropy
-            )
-            streams[name + "-streams-8196"] = configure_stream(
-                bitgen, streams=8196, entropy=entropy
-            )
+            if not skip_single:
+                streams[name] = configure_stream(bitgen, entropy=entropy)
+            for num_stream in num_streams:
+                key = name + f"-streams-{num_stream}"
+                streams[key] = configure_stream(
+                    bitgen, streams=num_stream, entropy=entropy
+                )
             if bitgen not in JUMPABLE:
                 continue
-            key = name + "-jumped-streams-4"
-            streams[key] = configure_stream(
-                bitgen, streams=4, jumped=True, entropy=entropy
-            )
-            key = name + "-jumped-streams-8196"
-            streams[key] = configure_stream(
-                bitgen, streams=8196, jumped=True, entropy=entropy
-            )
+            for num_stream in num_streams:
+                key = name + f"-jumped-streams-{num_stream}"
+                streams[key] = configure_stream(
+                    bitgen, streams=num_stream, jumped=True, entropy=entropy
+                )
         else:
             config = SPECIALS[bitgen]
             args = [value for value in config.values()]
@@ -161,89 +83,27 @@ def setup_configuration_files(entropy=DEFAULT_ENTOPY):
                 key = "-".join(
                     [name] + [f"{key}-{value}" for key, value in kwargs.items()]
                 )
-                streams[key] = configure_stream(bitgen, kwargs=kwargs, entropy=entropy)
-                full_key = key + "-streams-4"
-                streams[full_key] = configure_stream(
-                    bitgen, kwargs=kwargs, streams=4, entropy=entropy
-                )
-                full_key = key + "-streams-8196"
-                streams[full_key] = configure_stream(
-                    bitgen, kwargs=kwargs, streams=8196, entropy=entropy
-                )
+                if not skip_single:
+                    streams[key] = configure_stream(
+                        bitgen, kwargs=kwargs, entropy=entropy
+                    )
+                for num_stream in num_streams:
+                    full_key = key + f"-streams-{num_stream}"
+                    streams[full_key] = configure_stream(
+                        bitgen, kwargs=kwargs, streams=num_stream, entropy=entropy
+                    )
                 if bitgen not in JUMPABLE:
                     continue
-                full_key = key + "-jumped-streams-4"
-                streams[full_key] = configure_stream(
-                    bitgen, kwargs=kwargs, streams=4, jumped=True, entropy=entropy
-                )
-                full_key = key + "-jumped-streams-8196"
-                streams[full_key] = configure_stream(
-                    bitgen, kwargs=kwargs, streams=8196, jumped=True, entropy=entropy
-                )
+                for num_stream in num_streams:
+                    full_key = key + f"-jumped-streams-{num_stream}"
+                    streams[full_key] = configure_stream(
+                        bitgen,
+                        kwargs=kwargs,
+                        streams=num_stream,
+                        jumped=True,
+                        entropy=entropy,
+                    )
     return {k: streams[k] for k in sorted(streams.keys())}
-
-
-def test_single(
-    key,
-    configurations,
-    size="1GB",
-    multithreaded=True,
-    folding=2,
-    expanded=True,
-    run_tests=False,
-    lock=None,
-):
-    file_name = os.path.join(os.path.dirname(__file__), f"{key.lower()}.py")
-    file_name = os.path.abspath(file_name)
-    logger = get_logger(key)
-    with open(file_name, "w") as of:
-        of.write(configurations[key])
-
-    input_format = "stdin32" if "output = 32" in configurations[key] else "stdin64"
-    if not run_tests:
-        return
-
-    cmd = [
-        "python",
-        "practrand-driver.py",
-        "-if",
-        file_name,
-        "|",
-        "RNG_test",
-        input_format,
-        "-tlmax",
-        size,
-        "-te",
-        "1" if expanded else "0",
-        "-tf",
-        str(folding),
-    ]
-    if multithreaded:
-        cmd += ["-multithreaded"]
-    logger.info("Executing " + " ".join(cmd))
-
-    ps = subprocess.Popen(
-        " ".join(cmd), shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT,
-    )
-    output = ps.communicate()[0]
-    try:
-        os.unlink(file_name)
-    except Exception:
-        logger.warning(f"Unable to unlink {file_name}")
-    if lock is not None:
-        with lock:
-            with open("results.json", "r") as results_file:
-                results = json.load(results_file)
-            if key not in results:
-                results[key] = {}
-            results[key][size] = output.decode("utf8")
-            with open("results.json", "w") as results_file:
-                json.dump(results, results_file, indent=4, sort_keys=True)
-    if "FAIL" in output.decode("utf8"):
-        logger.warning("FAIL " + " ".join(cmd))
-    else:
-        logger.info("Completed " + " ".join(cmd))
-    return key, size, output.decode("utf8")
 
 
 if __name__ == "__main__":
@@ -319,21 +179,42 @@ if __name__ == "__main__":
     parser.add_argument(
         "--force", action="store_true", help="Force re-run even if result exists",
     )
+    parser.add_argument(
+        "-ss",
+        "--skip-single",
+        action="store_true",
+        help="Skip single bit-generator configuration.",
+    )
+    default_streams = ",".join([str(s) for s in DEFAULT_STREAMS])
+    parser.add_argument(
+        "--streams",
+        default=default_streams,
+        help="Comma separated list of streams to test, e.g, 4,8,16,32,64.",
+    )
+    parser.add_argument(
+        "-rf",
+        "--results-file",
+        default="results.json",
+        help="Name of the file in which to store results",
+    )
 
     args = parser.parse_args()
 
     assert args.folding in (0, 1, 2)
+    streams = [int(s) for s in args.streams.split(",")]
 
-    configurations = setup_configuration_files(entropy=args.entropy)
+    configurations = setup_configuration_files(
+        entropy=args.entropy, skip_single=args.skip_single, num_streams=streams
+    )
     if args.run_tests:
         print("Running tests...")
 
         time.sleep(0.5)
 
     results = defaultdict(dict)
-
-    if os.path.exists("results.json"):
-        with open("results.json", "r", encoding="utf8") as existing:
+    results_file = args.results_file
+    if os.path.exists(results_file):
+        with open(results_file, "r", encoding="utf8") as existing:
             results.update(json.load(existing))
     manager = Manager()
     lock = manager.Lock()
@@ -363,21 +244,18 @@ if __name__ == "__main__":
                     args.expanded,
                     args.run_tests,
                     lock,
+                    results_file,
                 ]
             )
 
-        n_jobs = args.n_jobs if args.n_jobs else cpu_count() // 2 - 1
+        cpu_per_job = 2 + args.multithreaded + args.expanded + (args.folding - 1)
+        n_jobs = args.n_jobs if args.n_jobs else (cpu_count() - 1) // cpu_per_job
         n_jobs = max(n_jobs, 1)
         logger.info(f"Running in parallel with {n_jobs}.")
         logger.info(f"{len(test_args)} configurations to test")
         parallel_results = Parallel(n_jobs, verbose=50)(
             delayed(test_single)(*ta) for ta in test_args
         )
-        for result in parallel_results:
-            key = result[0]
-            size = result[1]
-            value = result[2]
-            results[key][size] = value
     else:
         logger.info("Running in series")
         for key in configuration_keys:
@@ -389,12 +267,3 @@ if __name__ == "__main__":
                 run_tests=args.run_tests,
                 lock=lock,
             )
-            if args.run_tests:
-                key = result[0]
-                size = result[1]
-                value = result[2]
-                results[key][size] = value
-                with open("results.json", "w", encoding="utf8") as rf:
-                    json.dump(results, rf, indent=4, sort_keys=True)
-    with open("results.json", "w", encoding="utf8") as rf:
-        json.dump(results, rf, indent=4, sort_keys=True)

@@ -40,6 +40,8 @@ import numpy as np
 
 import randomgen as rg
 
+BUFFER_SIZE = 256 * 2 ** 20
+
 DESCRIPTION = """
 A driver that simplifies testing bit generators using PractRand.
 """
@@ -55,6 +57,14 @@ CONFIG = {
     rg.SFC64: {"output": 64, "seed": 128, "seed_size": 32},
     rg.AESCounter: {"output": 64, "seed": 128, "seed_size": 32},
 }
+
+
+def reorder_bytes(a):
+    dtype = a.dtype
+    assert dtype in (np.uint32, np.uint64)
+    cols = 8 if dtype == np.uint64 else 4
+    a = a.view(np.uint8).reshape((-1, cols))
+    return a.ravel("F").view(dtype)
 
 
 def pack_bits(a, bits):
@@ -92,8 +102,11 @@ def pack_bits(a, bits):
     return block[:, :bits].ravel()
 
 
-def gen_interleaved_bytes(bitgens, n_per_gen=1024, output=32):
+def gen_interleaved_bytes(
+    bitgens, buffer_size=BUFFER_SIZE, output=32, interleave_bytes=False
+):
     astype = np.uint32 if output == 32 else np.uint64
+    n_per_gen = buffer_size // 8 // len(bitgens)
     # Reduce if bits even divisible into 64
     n_per_gen = 64 * (n_per_gen // 64)
     view = np.uint64
@@ -102,6 +115,8 @@ def gen_interleaved_bytes(bitgens, n_per_gen=1024, output=32):
         interleaved = np.column_stack(draws).ravel()
         if output not in (32, 64):
             interleaved = pack_bits(interleaved, output)
+        if interleave_bytes:
+            interleaved = reorder_bytes(interleaved)
         bytes_chunk = bytes(interleaved.data)
         yield bytes_chunk
 
@@ -253,7 +268,7 @@ def main():
     )
     parser.add_argument(
         "-if",
-        "--import_file",
+        "--import-file",
         type=str,
         default="",
         help="""\
@@ -263,12 +278,25 @@ generators and the variable output that describes the
 number of bits output (either 64 or 32).
 """,
     )
+    parser.add_argument(
+        "-ib",
+        "--interleave-bytes",
+        action="store_true",
+        help="""\
+Interleave generators byte-by-byte rather than output-by-output (i.e., in 8-bytes
+ blocks when the output size is 64 bits).
+""",
+    )
 
     args = parser.parse_args()
     filename = args.filename
     output = None
     if not filename:
-        filename = args.bit_generator.lower() + ".json"
+        if args.import_file:
+            filename = os.path.split(args.import_file)[-1]
+            filename = f"{os.path.splitext(filename)[0]}.json"
+        else:
+            filename = args.bit_generator.lower() + ".json"
         logging.log(logging.INFO, "Default filename is " + filename)
     if args.load:
         logging.log(logging.INFO, "Loading bit generator config from " + filename)
@@ -307,7 +335,9 @@ number of bits output (either 64 or 32).
     if output is None:
         output = CONFIG[bitgens[0].__class__]["output"]
     logging.log(logging.INFO, "Output bit size is {0}".format(output))
-    for chunk in gen_interleaved_bytes(bitgens, output=output):
+    for chunk in gen_interleaved_bytes(
+        bitgens, output=output, interleave_bytes=args.interleave_bytes
+    ):
         sys.stdout.buffer.write(chunk)
 
 
