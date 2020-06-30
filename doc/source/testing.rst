@@ -1,3 +1,5 @@
+.. _quality-assurance:
+
 =================
 Quality Assurance
 =================
@@ -92,7 +94,32 @@ members of the Mersenne Twister family which commonly fail ``BRank`` tests.
 
 Sequential Seeds
 ~~~~~~~~~~~~~~~~
-It is common
+The recommended practice for constructing multiple :class:`~numpy.random.Generator`s
+is to use :class:`~numpy.random.SeedSequence`'s :func:`~numpy.random.SeedSequence.spawn`
+method.
+
+::
+
+    from numpy.random import default_rng, Generator, SeedSequence
+    from randomgen import Romu
+
+    NUM_STREAMS = 2**15
+    seed_seq = SeedSequence(5897100938578919857511)
+    # To use the default bit generator, which is not guaranteed to be stable
+    generators = [default_rng(child) for child in seed_seq.spawn(NUM_STREAMS)]
+
+    # To use a specific bit generator
+    generators = [Generator(Romu(child)) for child in seed_seq.spawn(NUM_STREAMS)]
+
+It is common to see examples that use sequential seed that resemble:
+
+::
+
+    generators = [default_rng(i) for i in range(NUM_STREAMS)]
+
+This practice was examined with all bit generators using 8,196 streams
+seeded using 0, 1, 2, ..., 8,195 by intertwining the output of the
+generators. **None** of the generators failed these tests.
 
 Zero (0) Seeding
 ~~~~~~~~~~~~~~~~

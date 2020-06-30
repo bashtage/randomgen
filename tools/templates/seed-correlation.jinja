@@ -1,0 +1,20 @@
+import numpy as np
+
+import randomgen as rg
+
+STREAMS = {{ streams }}
+BIT_GENERATOR_KWARGS = {{ kwargs }}
+SEQUENTIAL = {{ sequential }}
+
+{{ extra_initialization }}
+
+bitgens = []
+for i in range(STREAMS):
+    if SEQUENTIAL:
+        seed_seq = np.random.SeedSequence(i)
+    else:
+        seed_seq = np.random.SeedSequence(2**i)
+    bitgens.append(rg.{{ bit_generator }}(seed_seq, **BIT_GENERATOR_KWARGS))
+output = {{ output }}
+
+{{ extra_code }}

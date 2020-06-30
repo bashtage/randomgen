@@ -55,13 +55,13 @@ SPECIALS = {
 }
 OUTPUT = defaultdict(lambda: 64)
 OUTPUT.update({MT19937: 32, DSFMT: 32})
-with open("configuration.jinja") as tmpl:
+with open("templates/configuration.jinja") as tmpl:
     TEMPLATE = jinja2.Template(tmpl.read())
 
 DSFMT_WRAPPER = """\
 
 class Wrapper32:
-    def __init__(self, seed):
+    def __init__(self, seed, **kwargs):
         if isinstance(seed, rg.DSFMT):
             self._bit_gen = seed
         else:

@@ -15,11 +15,12 @@ Change Log
   maintained until after NumPy 1.21 (or 2 releases after NumPy 1.19) for users who
   cannot update NumPy.
 
-Since v1.19.0
-=============
+v1.19.1
+=======
 - Added :class:`randomgen.romu.Romu` which is among the fastest available bit generators.
 - Added :func:`~randomgen.sfc.SFC64.weyl_increments` to simplify generating increments for
   use in parallel applications of :class:`~randomgen.sfc.SFC64`.
+- Completed * :ref:`quality-assurance` of all bit generators to at least 4GB.
 
 v1.19.0
 =======

@@ -17,11 +17,11 @@ from joblib import Parallel, cpu_count, delayed
 from randomgen import DSFMT
 from shared import get_logger, test_single
 
-with open("seed-correlation.jinja") as tmpl:
+with open("templates/seed-correlation.jinja") as tmpl:
     TEMPLATE = jinja2.Template(tmpl.read())
 
 
-def setup_configuration_files():
+def setup_configuration_files(num_streams=8, sequential=False):
     streams = {}
     parameters = {}
     for bitgen in ALL_BIT_GENS:
@@ -39,26 +39,28 @@ def setup_configuration_files():
         else:
             parameters[key] = (bitgen, {})
     for key in parameters:
-        extra_initializiation = ""
+        extra_initialization = ""
         bitgen, kwargs = parameters[key]
         bit_generator = bitgen.__name__
         kwargs_repr = repr(kwargs)
         if bitgen == DSFMT:
-            extra_initializiation = DSFMT_WRAPPER
+            extra_initialization = DSFMT_WRAPPER
+            bit_generator = "Wrapper32"
         streams[key] = TEMPLATE.render(
-            streams=8,
+            streams=num_streams,
             kwargs=kwargs_repr,
             bit_generator=bit_generator,
             output=OUTPUT[bitgen],
-            extra_initializiation=extra_initializiation,
+            extra_initialization=extra_initialization,
+            sequential=sequential,
         )
     return streams
 
 
 if __name__ == "__main__":
-    logger = get_logger("prng-tester")
-
     import argparse
+
+    logger = get_logger("prng-tester")
 
     parser = argparse.ArgumentParser(
         description="Test alternative with bad seed values",
@@ -102,18 +104,37 @@ if __name__ == "__main__":
     parser.add_argument(
         "--force", action="store_true", help="Force re-run even if result exists",
     )
-
+    parser.add_argument(
+        "-rf",
+        "--results_file",
+        default="results/results-seed-correlation.json",
+        help="Relative path of results file",
+    )
+    parser.add_argument(
+        "--sequential",
+        action="store_true",
+        help="Use sequential seeds (0,1,2,...) rather than powers "
+        "of 2 (i.e., 2**0, 2**1, 2**2)",
+    )
+    parser.add_argument(
+        "--num_streams", type=int, default=8, help="The number of streams to test",
+    )
     args = parser.parse_args()
 
     assert args.folding in (0, 1, 2)
 
-    results_file = "results-seed-correlation.json"
-    configurations = setup_configuration_files()
-
+    results_file = args.results_file
+    configurations = setup_configuration_files(
+        num_streams=args.num_streams, sequential=args.sequential
+    )
+    logger.info(f"Storing results to {results_file}")
     results = defaultdict(dict)
-    if os.path.exists(results_file):
-        with open(results_file, "r", encoding="utf8") as existing:
-            results.update(json.load(existing))
+    if not os.path.exists(results_file):
+        with open(results_file, "w", encoding="utf8") as create:
+            json.dump({}, create)
+    with open(results_file, "r", encoding="utf8") as existing:
+        results.update(json.load(existing))
+
     manager = Manager()
     lock = manager.Lock()
     configuration_keys = list(configurations.keys())
