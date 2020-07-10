@@ -5,7 +5,7 @@ from numpy.compat import long
 from numpy.testing import assert_, assert_array_equal, assert_raises
 import pytest
 
-import randomgen.mtrand as random
+from randomgen import mtrand as random
 
 HAS_32BIT_CLONG = np.iinfo("l").max < 2 ** 32
 

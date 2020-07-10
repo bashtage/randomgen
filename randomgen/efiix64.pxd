@@ -14,8 +14,8 @@ cdef extern from "src/efiix64/efiix64.h":
 
     ctypedef EFIIX64_STATE_T efiix64_state_t
 
-    uint64_t efiix64_next64(efiix64_state_t *state)  nogil
-    uint32_t efiix64_next32(efiix64_state_t *state)  nogil
+    uint64_t efiix64_next64(efiix64_state_t *state) nogil
+    uint32_t efiix64_next32(efiix64_state_t *state) nogil
     void efiix64_seed(efiix64_state_t *state, uint64_t seed[4])
 
 

@@ -15,6 +15,16 @@ Change Log
   maintained until after NumPy 1.21 (or 2 releases after NumPy 1.19) for users who
   cannot update NumPy.
 
+v1.19.2
+=======
+- Corrected :class:`~randomgen.rdrand.RDRAND` to retry on failures with pause
+  between retries. Add a parameter ``retry`` which allows the number of retries
+  to be set. It defaults to the Intel recommended value of 10. Also sets an
+  exception when the number of retries has been exhausted (very unlikely). See
+  the :class:`~randomgen.rdrand.RDRAND` docstring with unique considerations
+  when using :class:`~randomgen.rdrand.RDRAND` that do not occur with deterministic
+  PRNGs.
+
 v1.19.1
 =======
 - Added :class:`randomgen.romu.Romu` which is among the fastest available bit generators.

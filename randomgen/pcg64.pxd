@@ -15,8 +15,8 @@ cdef extern from "src/pcg64/pcg64-v2.h":
 
     ctypedef PCG64_STATE_T pcg64_state_t
 
-    uint64_t pcg64_next64(pcg64_state_t *state)  nogil
-    uint32_t pcg64_next32(pcg64_state_t *state)  nogil
+    uint64_t pcg64_next64(pcg64_state_t *state) nogil
+    uint32_t pcg64_next32(pcg64_state_t *state) nogil
     uint64_t pcg64_cm_dxsm_next64(pcg64_state_t *state) nogil
     uint32_t pcg64_cm_dxsm_next32(pcg64_state_t *state) nogil
 

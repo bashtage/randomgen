@@ -15,6 +15,7 @@ Seeding and State
 
    ~RDRAND.seed
    ~RDRAND.state
+   ~RDRAND.success
 
 Parallel generation
 ===================
@@ -37,3 +38,9 @@ Testing
    :toctree: generated/
 
    ~RDRAND.random_raw
+   ~RDRAND.checked_raw
+
+Custom Lock
+===========
+
+.. autoclass:: RaisingLock

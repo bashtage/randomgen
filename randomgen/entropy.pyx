@@ -8,7 +8,7 @@ __all__ = ["random_entropy", "seed_by_array"]
 np.import_array()
 
 cdef extern from "src/splitmix64/splitmix64.h":
-    cdef uint64_t splitmix64_next(uint64_t *state)  nogil
+    cdef uint64_t splitmix64_next(uint64_t *state) nogil
 
 cdef extern from "src/entropy/entropy.h":
     cdef bint entropy_getbytes(void* dest, size_t size)

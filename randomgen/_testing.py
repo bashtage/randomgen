@@ -45,9 +45,9 @@ except ImportError:
                 )
             )
 
+    from functools import wraps
     import re
     import warnings
-    from functools import wraps
 
     class suppress_warnings(object):
         """
