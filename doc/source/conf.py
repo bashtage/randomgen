@@ -133,8 +133,8 @@ html_theme_options = {
     "css_minify": True,
     "master_doc": False,
     "heroes": {
-        "index": "Additional bit generators and distribution for NumPy "
-        "1.17's Generator"
+        "index": "Additional bit generators and distribution for NumPy's "
+        "Generator"
     },
     "logo_icon": "casino",
     "version_dropdown": True,
