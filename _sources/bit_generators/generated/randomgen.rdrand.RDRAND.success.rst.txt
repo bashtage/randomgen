@@ -1,0 +1,6 @@
+randomgen.rdrand.RDRAND.success
+===============================
+
+.. currentmodule:: randomgen.rdrand
+
+.. autoattribute:: RDRAND.success

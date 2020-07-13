@@ -104,6 +104,7 @@
 ./_sources/bit_generators/generated/randomgen.rdrand.RDRAND.random_raw.rst.txt
 ./_sources/bit_generators/generated/randomgen.rdrand.RDRAND.seed.rst.txt
 ./_sources/bit_generators/generated/randomgen.rdrand.RDRAND.state.rst.txt
+./_sources/bit_generators/generated/randomgen.rdrand.RDRAND.success.rst.txt
 ./_sources/bit_generators/generated/randomgen.romu.Romu.cffi.rst.txt
 ./_sources/bit_generators/generated/randomgen.romu.Romu.ctypes.rst.txt
 ./_sources/bit_generators/generated/randomgen.romu.Romu.random_raw.rst.txt
@@ -479,6 +480,7 @@
 ./bit_generators/generated/randomgen.rdrand.RDRAND.random_raw.html
 ./bit_generators/generated/randomgen.rdrand.RDRAND.seed.html
 ./bit_generators/generated/randomgen.rdrand.RDRAND.state.html
+./bit_generators/generated/randomgen.rdrand.RDRAND.success.html
 ./bit_generators/generated/randomgen.romu.Romu.cffi.html
 ./bit_generators/generated/randomgen.romu.Romu.ctypes.html
 ./bit_generators/generated/randomgen.romu.Romu.random_raw.html
