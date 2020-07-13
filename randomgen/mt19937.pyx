@@ -129,7 +129,7 @@ cdef class MT19937(BitGenerator):
         """
         seed(seed=None)
 
-        Seed the generator.
+        Seed the generator
 
         Parameters
         ----------

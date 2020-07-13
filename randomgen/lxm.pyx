@@ -159,10 +159,10 @@ cdef class LXM(BitGenerator):
         """
         seed(seed=None)
 
-        Seed the generator.
+        Seed the generator
 
         This method is called when ``LXM`` is initialized. It can be
-        called again to re-seed the generator. For details, see
+        called again to re-Seed the generator For details, see
         ``LXM``.
 
         Parameters

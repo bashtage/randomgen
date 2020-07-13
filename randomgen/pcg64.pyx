@@ -50,7 +50,7 @@ cdef class PCG64(BitGenerator):
         Random seed initializing the pseudo-random number generator.
         Can be an integer in [0, 2**128), a SeedSequence instance or None
         (the default). If `seed` is None, then ``PCG64`` will used a
-        SeedSequence initialized with system entropy to seed the generator.
+        SeedSequence initialized with system entropy to Seed the generator
     inc : {None, int}, optional
         The increment in the LCG. Can be an integer in [0, 2**128) or None.
         If inc is None, then it is initialized using entropy. The default is None
@@ -237,10 +237,10 @@ cdef class PCG64(BitGenerator):
         """
         seed(seed=None, inc=0)
 
-        Seed the generator.
+        Seed the generator
 
         This method is called at initialization. It can be called again to
-        re-seed the generator.
+        re-Seed the generator
 
         Parameters
         ----------
@@ -753,10 +753,10 @@ cdef class LCG128Mix(BitGenerator):
         """
         seed(seed=None, inc=None)
 
-        Seed the generator.
+        Seed the generator
 
         This method is called at initialization. It can be called again to
-        re-seed the generator. seed and inc must both be set for a sequence
+        re-Seed the generator seed and inc must both be set for a sequence
         to be reproducible.
 
         Parameters
@@ -983,7 +983,7 @@ cdef class PCG64DXSM(PCG64):
         Random seed initializing the pseudo-random number generator.
         Can be an integer in [0, 2**128), a SeedSequence instance or None
         (the default). If `seed` is None, then ``PCG64DXSM`` will used a
-        SeedSequence initialized with system entropy to seed the generator.
+        SeedSequence initialized with system entropy to Seed the generator
     inc : {None, int}, optional
         The increment in the LCG. Can be an integer in [0, 2**128) or None.
         If inc is None, then it is initialized using the same SeedSeuqnce used

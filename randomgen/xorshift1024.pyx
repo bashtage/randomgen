@@ -141,10 +141,10 @@ cdef class Xorshift1024(BitGenerator):
         """
         seed(seed=None)
 
-        Seed the generator.
+        Seed the generator
 
         This method is called when ``Xorshift1024`` is initialized. It can be
-        called again to re-seed the generator. For details, see
+        called again to re-Seed the generator For details, see
         ``Xorshift1024``.
 
         Parameters

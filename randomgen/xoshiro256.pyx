@@ -140,10 +140,10 @@ cdef class Xoshiro256(BitGenerator):
         """
         seed(seed=None)
 
-        Seed the generator.
+        Seed the generator
 
         This method is called at initialization. It can be called again to
-        re-seed the generator.
+        re-Seed the generator
 
         Parameters
         ----------

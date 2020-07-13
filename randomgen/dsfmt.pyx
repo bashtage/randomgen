@@ -148,7 +148,7 @@ cdef class DSFMT(BitGenerator):
         """
         seed(seed=None)
 
-        Seed the generator.
+        Seed the generator
 
         Parameters
         ----------

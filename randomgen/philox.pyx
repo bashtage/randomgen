@@ -230,10 +230,10 @@ cdef class Philox(BitGenerator):
         """
         seed(seed=None, counter=None, key=None)
 
-        Seed the generator.
+        Seed the generator
 
         This method is called when ``Philox`` is initialized. It can be
-        called again to re-seed the generator. For details, see
+        called again to re-Seed the generator For details, see
         ``Philox``.
 
         Parameters

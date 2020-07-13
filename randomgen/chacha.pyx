@@ -187,10 +187,10 @@ cdef class ChaCha(BitGenerator):
         """
         seed(seed=None, counter=None, key=None)
 
-        Seed the generator.
+        Seed the generator
 
         This method is called when ``ChaCha`` is initialized. It can be
-        called again to re-seed the generator. For details, see
+        called again to re-Seed the generator For details, see
         ``ChaCha``.
 
         seed : {None, int, array_like[uint64], SeedSequence}, optional

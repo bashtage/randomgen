@@ -284,6 +284,8 @@ cdef class RDRAND(BitGenerator):
         """
         seed(seed=None)
 
+        Compatibility function. Not used.
+
         Parameters
         ----------
         seed : None

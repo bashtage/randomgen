@@ -121,10 +121,10 @@ cdef class PCG32(BitGenerator):
         """
         seed(seed=None, inc=0)
 
-        Seed the generator.
+        Seed the generator
 
         This method is called when ``PCG32`` is initialized. It can be
-        called again to re-seed the generator. For details, see
+        called again to re-Seed the generator For details, see
         ``PCG32``.
 
         Parameters

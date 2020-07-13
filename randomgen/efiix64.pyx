@@ -68,7 +68,7 @@ cdef class EFIIX64(BitGenerator):
     ``EFIIX64`` is seeded using an integer, a sequence of integer or a
     SeedSequence.  If the seed is not SeedSequence, the seed values are
     passed to a SeedSequence which is then used to produce 4 64-bit unsigned
-    integer values which are used to seed the generator.
+    integer values which are used to Seed the generator
 
     **Compatibility Guarantee**
 
@@ -128,10 +128,10 @@ cdef class EFIIX64(BitGenerator):
         """
         seed(seed=None)
 
-        Seed the generator.
+        Seed the generator
 
         This method is called at initialization. It can be called again to
-        re-seed the generator.
+        re-Seed the generator
 
         Parameters
         ----------
