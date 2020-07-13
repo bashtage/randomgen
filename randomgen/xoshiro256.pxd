@@ -10,8 +10,8 @@ cdef extern from "src/xoshiro256/xoshiro256.h":
 
     ctypedef XOSHIRO256_STATE_T xoshiro256_state_t
 
-    uint64_t xoshiro256_next64(xoshiro256_state_t *state)  nogil
-    uint32_t xoshiro256_next32(xoshiro256_state_t *state)  nogil
+    uint64_t xoshiro256_next64(xoshiro256_state_t *state) nogil
+    uint32_t xoshiro256_next32(xoshiro256_state_t *state) nogil
     void xoshiro256_jump(xoshiro256_state_t *state)
 
 

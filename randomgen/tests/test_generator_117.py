@@ -8,8 +8,7 @@ import pytest
 from randomgen import Generator
 
 try:
-    from numpy.random import Generator as NPGenerator
-    from numpy.random import PCG64
+    from numpy.random import PCG64, Generator as NPGenerator
 
     pcg = PCG64()
     initial_state = pcg.state

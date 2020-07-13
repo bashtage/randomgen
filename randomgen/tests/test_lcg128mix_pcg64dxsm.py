@@ -5,7 +5,7 @@ from randomgen import PCG64, PCG64DXSM, LCG128Mix, SeedSequence
 from randomgen.pcg64 import DEFAULT_DXSM_MULTIPLIER, DEFAULT_MULTIPLIER
 
 try:
-    from numba import types, cfunc
+    from numba import cfunc, types
 
     MISSING_NUMBA = False
 except ImportError:
@@ -113,8 +113,8 @@ def test_ouput_ctypes():
 
 def test_ctypes():
     import ctypes
-    import subprocess
     import os
+    import subprocess
 
     base = os.path.split(os.path.abspath(__file__))[0]
 

@@ -1368,6 +1368,67 @@ class TestRDRAND(Base):
     def setup_bitgenerator(self, seed, mode=None):
         return self.bit_generator(*seed)
 
+    def test_initialization(self):
+        bit_generator = self.bit_generator()
+        state = bit_generator.state
+        assert state["buffer_loc"] == 256
+        assert state["buffer"].shape == (256,)
+        assert (state["buffer"] == np.iinfo(np.uint64).max).all()
+        assert state["retries"] == 10
+        assert state["status"] == 1
+        gen = Generator(bit_generator)
+        gen.integers(0, 2 ** 64, dtype=np.uint64, size=10)
+        state = bit_generator.state
+        # Incredibly conservative test
+        assert (state["buffer"] == np.iinfo(np.uint64).max).sum() < 10
+        assert state["status"] == 1
+
+        bit_generator = RDRAND(retries=1000)
+        state = bit_generator.state
+        assert state["retries"] == 1000
+
+    def test_generator_raises(self):
+        bit_generator = self.bit_generator()
+
+        state = bit_generator.state
+        state["retries"] = -1
+        bit_generator.state = state
+        gen = Generator(bit_generator)
+        with pytest.raises(RuntimeError):
+            gen.integers(0, 2 ** 64, dtype=np.uint64, size=10)
+        assert bit_generator.state["status"] == 0
+        bit_generator._reset()
+        state = bit_generator.state
+        assert state["status"] == 1
+        assert state["buffer_loc"] == 256
+        assert bit_generator.success is True
+
+    def test_exception(self):
+        with pytest.raises(ValueError):
+            RDRAND(retries=-1)
+
+    def test_runtimerror(self):
+        bit_generator = RDRAND()
+        state = bit_generator.state
+        state["retries"] = -1
+        bit_generator.state = state
+        with pytest.raises(RuntimeError):
+            bit_generator.random_raw()
+        with pytest.raises(RuntimeError):
+            bit_generator.random_raw(10)
+        with pytest.raises(RuntimeError):
+            bit_generator.random_raw(output=False)
+        with pytest.raises(RuntimeError):
+            bit_generator.random_raw(10, output=False)
+
+    def test_checked_raw(self):
+        bit_generator = RDRAND()
+        assert isinstance(bit_generator.random_raw(), int)
+
+    def test_checked_raw_vector(self):
+        bit_generator = RDRAND()
+        assert isinstance(bit_generator.random_raw(10), np.ndarray)
+
     def test_raw(self):
         bit_generator = self.bit_generator()
         raw = bit_generator.random_raw(1000)

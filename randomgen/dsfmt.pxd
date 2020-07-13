@@ -27,10 +27,10 @@ cdef extern from "src/dsfmt/dsfmt.h":
 
     ctypedef DSFMT_STATE_T dsfmt_state_t
 
-    double dsfmt_next_double(dsfmt_state_t *state)  nogil
-    uint64_t dsfmt_next64(dsfmt_state_t *state)  nogil
-    uint32_t dsfmt_next32(dsfmt_state_t *state)  nogil
-    uint64_t dsfmt_next_raw(dsfmt_state_t *state)  nogil
+    double dsfmt_next_double(dsfmt_state_t *state) nogil
+    uint64_t dsfmt_next64(dsfmt_state_t *state) nogil
+    uint32_t dsfmt_next32(dsfmt_state_t *state) nogil
+    uint64_t dsfmt_next_raw(dsfmt_state_t *state) nogil
 
     void dsfmt_init_gen_rand(dsfmt_t *dsfmt, uint32_t seed)
     void dsfmt_init_by_array(dsfmt_t *dsfmt, uint32_t init_key[], int key_length)

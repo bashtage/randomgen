@@ -10,12 +10,12 @@ import json
 from multiprocessing import Manager
 import os
 
-import jinja2
-
 from configuration import ALL_BIT_GENS, DSFMT_WRAPPER, OUTPUT, SPECIALS
+import jinja2
 from joblib import Parallel, cpu_count, delayed
-from randomgen import DSFMT
 from shared import get_logger, test_single
+
+from randomgen import DSFMT
 
 with open("templates/seed-correlation.jinja") as tmpl:
     TEMPLATE = jinja2.Template(tmpl.read())

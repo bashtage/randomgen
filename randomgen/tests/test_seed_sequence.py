@@ -1,5 +1,5 @@
 import numpy as np
-from numpy.testing import assert_array_equal, assert_array_compare
+from numpy.testing import assert_array_compare, assert_array_equal
 import pytest
 
 from randomgen._seed_sequence import SeedlessSeedSequence, SeedSequence

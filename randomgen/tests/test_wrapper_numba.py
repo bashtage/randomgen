@@ -8,7 +8,7 @@ from randomgen.wrapper import UserBitGenerator
 
 HAS_NUMBA = False
 try:
-    from numba import cfunc, types, carray, jit
+    from numba import carray, cfunc, jit, types
 
     HAS_NUMBA = True
 except ImportError:

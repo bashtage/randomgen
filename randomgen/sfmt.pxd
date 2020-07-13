@@ -28,8 +28,8 @@ cdef extern from "src/sfmt/sfmt.h":
 
     ctypedef SFMT_STATE_T sfmt_state_t
 
-    uint64_t sfmt_next64(sfmt_state_t *state)  nogil
-    uint32_t sfmt_next32(sfmt_state_t *state)  nogil
+    uint64_t sfmt_next64(sfmt_state_t *state) nogil
+    uint32_t sfmt_next32(sfmt_state_t *state) nogil
 
     void sfmt_init_gen_rand(sfmt_t * sfmt, uint32_t seed)
     void sfmt_init_by_array(sfmt_t * sfmt, uint32_t *init_key, int key_length)

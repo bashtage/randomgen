@@ -16,7 +16,7 @@ from setuptools.extension import Extension
 import versioneer
 
 try:
-    import Cython.Tempita as tempita
+    from Cython import Tempita as tempita
 except ImportError:
     try:
         import tempita

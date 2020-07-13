@@ -28,7 +28,7 @@ EXECUTED = {}
 def configuration(request):
     key = request.param
     if key in EXECUTED:
-        return EXECUTED[key]
+        return key, EXECUTED[key]
     EXECUTED[key] = hash_configuration(final_configurations[key])
     return key, EXECUTED[key]
 
