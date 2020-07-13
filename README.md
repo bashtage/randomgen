@@ -19,7 +19,7 @@ This package contains additional bit generators for NumPy's
 **Latest Release**
 
 [![PyPI version](https://badge.fury.io/py/randomgen.svg)](https://pypi.org/project/randomgen/)
-[![Anacnoda Cloud](https://anaconda.org/bashtage/randomgen/badges/version.svg)](https://anaconda.org/bashtage/randomgen)
+[![Anacnoda Cloud](https://anaconda.org/conda-forge/randomgen/badges/version.svg)](https://anaconda.org/conda-forge/randomgen)
 
 **License**
 
@@ -167,6 +167,12 @@ or from a cloned repo,
 
 ```bash
 python setup.py install
+```
+
+If you use conda, you can install using conda forge
+
+```bash
+conda install -c conda-forge randomgen
 ```
 
 ### SSE2
