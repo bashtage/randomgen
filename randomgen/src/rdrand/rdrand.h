@@ -6,6 +6,9 @@
 
 #define BUFFER_SIZE 256
 
+/* Golden ratio phi - 1 when divided by 2 ** 64 */
+#define PHI_M_1 11400714819323198485ULL
+
 typedef struct s_rdrand_state {
   uint64_t buffer[BUFFER_SIZE];
   int buffer_loc;
@@ -60,8 +63,20 @@ static INLINE int rdrand_fill_buffer(rdrand_state *state) {
     }
     state->status &= status;
     if (status == 0) {
-      /* This is dont to attempt to let rejection samplers exit */
-      state->buffer[i] = state->weyl_seq += 11400714819323198485ULL;
+      /* This is done to ensure that rejection samplers always exit.
+       * This scenario could happen if RDRAND was being used in a
+       * NumPy generator with any rejection-based sampler. If RDRAND
+       * fails then this will use a naive PRNG which will provide enough
+       * randomness for the rejection sampler to complete. More importantly,
+       * status and state->status are both 0 which will be returned when
+       * the final set of draws completes even if RDRAND starts operating
+       * again. This allows the code to raise RuntimeError in Python.
+       */
+      if (i > 0) {
+        state->buffer[i] = state->buffer[i - 1] + PHI_M_1;
+      } else {
+        state->buffer[i] = PHI_M_1;
+      }
     }
   }
   /* Reset only on success */
