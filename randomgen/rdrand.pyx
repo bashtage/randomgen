@@ -59,7 +59,7 @@ cdef class RaisingLock:
     """
     A Lock that wraps threading.Lock can can raise errors.
 
-    Raises the last set exception that occurrect while the loc was held,
+    Raises the last exception set while the lock was held,
     if any. It clears the error when the lock is acquired.
 
     Notes
@@ -178,19 +178,38 @@ cdef class RDRAND(BitGenerator):
 
     To see the exception you will generatr, you can run this invalid code
 
+    >>> from numpy.random import Generator
     >>> from randomgen import RDRAND
     >>> bitgen = RDRAND()
     >>> state = bitgen.state
     >>> state["retries"] = -1  # Ensure always fails
     >>> bitgen.state = state
+    >>> gen = Generator(bitgen)
 
     The next command will always raise RuntimeError.
+
+    >>> gen.standard_normal(size=10)
+
+    The RDRAND-provided function ``random_raw`` also checks for success
+    and will raise if not able to use RDRAND
 
     >>> bitgen.random_raw()
 
     Note that ``random_raw`` has been customized for the needs to RDRAND
     and does not rely on the Lock to raise.  Instead it checks the status
     directly and raises if the status is invalid.
+
+    Finally, you can directly check if there have been any errors by
+    inspecting the ``success`` property
+
+    >>> bitgen = RDRAND()
+    >>> assert bitgen.success  # True
+    >>> bitgen.random_raw(10)
+    >>> assert bitgen.success  # Still true
+
+    You will only ever see an AssertionError if the RDRAND has failed.
+    Since you will first see a RuntimeError, the second assert will not
+    execute without some manual intervention.
 
     **No Compatibility Guarantee**
 
@@ -337,6 +356,7 @@ cdef class RDRAND(BitGenerator):
             with self.lock, nogil:
                 for i in range(n):
                     status &= rdrand_next64(&self.rng_state, &value)
+            self.rng_state.status &= status
             if status == 0:
                 raise RuntimeError(ERROR_MSG.format(retries=self.rng_state.retries))
             return
@@ -345,6 +365,7 @@ cdef class RDRAND(BitGenerator):
             with self.lock:
                 status = rdrand_next64(&self.rng_state, &value)
                 if status == 0:
+                    self.rng_state.status = 0
                     raise RuntimeError(ERROR_MSG.format(retries=self.rng_state.retries))
             return value
 
@@ -356,6 +377,7 @@ cdef class RDRAND(BitGenerator):
         with self.lock, nogil:
             for i in range(n):
                 status &= rdrand_next64(&self.rng_state, &randoms_data[i])
+        self.rng_state.status &= status
         if status == 0:
             raise RuntimeError(ERROR_MSG.format(retries=self.rng_state.retries))
 
