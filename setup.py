@@ -1,3 +1,6 @@
+from setuptools import Distribution, find_packages, setup
+from setuptools.extension import Extension
+
 from distutils.version import LooseVersion
 import glob
 import io
@@ -10,8 +13,6 @@ import sys
 from Cython.Build import cythonize
 import Cython.Compiler.Options
 import numpy as np
-from setuptools import Distribution, find_packages, setup
-from setuptools.extension import Extension
 
 import versioneer
 
