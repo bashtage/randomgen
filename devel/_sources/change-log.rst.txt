@@ -15,6 +15,11 @@ Change Log
   maintained until after NumPy 1.21 (or 2 releases after NumPy 1.19) for users who
   cannot update NumPy.
 
+v1.19.3
+=======
+- Future proofed setup against ``setuptools`` and ``distutils`` changes.
+- Enhanced documentation for :class:`~randomgen.rdrand.RDRAND`.
+
 v1.19.2
 =======
 - Corrected :class:`~randomgen.rdrand.RDRAND` to retry on failures with pause
