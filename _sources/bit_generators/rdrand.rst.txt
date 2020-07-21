@@ -38,7 +38,6 @@ Testing
    :toctree: generated/
 
    ~RDRAND.random_raw
-   ~RDRAND.checked_raw
 
 Custom Lock
 ===========
