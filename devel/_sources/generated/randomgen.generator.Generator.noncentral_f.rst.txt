@@ -1,4 +1,4 @@
-randomgen.generator.Generator.noncentral\_f
+﻿randomgen.generator.Generator.noncentral\_f
 ===========================================
 
 .. currentmodule:: randomgen.generator

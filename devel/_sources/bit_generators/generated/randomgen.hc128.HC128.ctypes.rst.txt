@@ -1,4 +1,4 @@
-randomgen.hc128.HC128.ctypes
+﻿randomgen.hc128.HC128.ctypes
 ============================
 
 .. currentmodule:: randomgen.hc128

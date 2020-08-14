@@ -1,4 +1,4 @@
-randomgen.mtrand.RandomState.logistic
+﻿randomgen.mtrand.RandomState.logistic
 =====================================
 
 .. currentmodule:: randomgen.mtrand

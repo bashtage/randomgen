@@ -1,4 +1,4 @@
-randomgen.generator.Generator.chisquare
+﻿randomgen.generator.Generator.chisquare
 =======================================
 
 .. currentmodule:: randomgen.generator

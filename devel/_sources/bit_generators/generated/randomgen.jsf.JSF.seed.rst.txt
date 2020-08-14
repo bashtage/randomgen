@@ -1,4 +1,4 @@
-randomgen.jsf.JSF.seed
+﻿randomgen.jsf.JSF.seed
 ======================
 
 .. currentmodule:: randomgen.jsf

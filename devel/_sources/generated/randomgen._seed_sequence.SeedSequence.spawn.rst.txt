@@ -1,4 +1,4 @@
-randomgen.\_seed\_sequence.SeedSequence.spawn
+﻿randomgen.\_seed\_sequence.SeedSequence.spawn
 =============================================
 
 .. currentmodule:: randomgen._seed_sequence

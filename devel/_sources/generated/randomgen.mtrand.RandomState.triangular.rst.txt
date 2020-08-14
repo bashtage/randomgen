@@ -1,4 +1,4 @@
-randomgen.mtrand.RandomState.triangular
+﻿randomgen.mtrand.RandomState.triangular
 =======================================
 
 .. currentmodule:: randomgen.mtrand

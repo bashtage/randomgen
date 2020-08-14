@@ -1,4 +1,4 @@
-randomgen.sfc.SFC64.state
+﻿randomgen.sfc.SFC64.state
 =========================
 
 .. currentmodule:: randomgen.sfc

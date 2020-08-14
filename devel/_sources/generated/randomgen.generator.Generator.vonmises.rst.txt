@@ -1,4 +1,4 @@
-randomgen.generator.Generator.vonmises
+﻿randomgen.generator.Generator.vonmises
 ======================================
 
 .. currentmodule:: randomgen.generator

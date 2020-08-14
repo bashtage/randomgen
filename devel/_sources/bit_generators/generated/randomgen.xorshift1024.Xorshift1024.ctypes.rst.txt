@@ -1,4 +1,4 @@
-randomgen.xorshift1024.Xorshift1024.ctypes
+﻿randomgen.xorshift1024.Xorshift1024.ctypes
 ==========================================
 
 .. currentmodule:: randomgen.xorshift1024

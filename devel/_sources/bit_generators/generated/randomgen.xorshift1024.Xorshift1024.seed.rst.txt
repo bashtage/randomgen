@@ -1,4 +1,4 @@
-randomgen.xorshift1024.Xorshift1024.seed
+﻿randomgen.xorshift1024.Xorshift1024.seed
 ========================================
 
 .. currentmodule:: randomgen.xorshift1024

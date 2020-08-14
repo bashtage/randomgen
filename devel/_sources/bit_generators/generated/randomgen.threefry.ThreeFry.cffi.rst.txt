@@ -1,4 +1,4 @@
-randomgen.threefry.ThreeFry.cffi
+﻿randomgen.threefry.ThreeFry.cffi
 ================================
 
 .. currentmodule:: randomgen.threefry

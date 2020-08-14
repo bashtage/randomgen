@@ -1,4 +1,4 @@
-randomgen.lxm.LXM.seed
+﻿randomgen.lxm.LXM.seed
 ======================
 
 .. currentmodule:: randomgen.lxm

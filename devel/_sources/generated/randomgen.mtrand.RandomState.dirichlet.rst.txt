@@ -1,4 +1,4 @@
-randomgen.mtrand.RandomState.dirichlet
+﻿randomgen.mtrand.RandomState.dirichlet
 ======================================
 
 .. currentmodule:: randomgen.mtrand

@@ -1,4 +1,4 @@
-randomgen.rdrand.RDRAND.random\_raw
+﻿randomgen.rdrand.RDRAND.random\_raw
 ===================================
 
 .. currentmodule:: randomgen.rdrand

@@ -1,4 +1,4 @@
-randomgen.mtrand.RandomState.chisquare
+﻿randomgen.mtrand.RandomState.chisquare
 ======================================
 
 .. currentmodule:: randomgen.mtrand

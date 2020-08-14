@@ -1,4 +1,4 @@
-randomgen.generator.Generator.laplace
+﻿randomgen.generator.Generator.laplace
 =====================================
 
 .. currentmodule:: randomgen.generator

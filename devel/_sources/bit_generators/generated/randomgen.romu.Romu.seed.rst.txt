@@ -1,4 +1,4 @@
-randomgen.romu.Romu.seed
+﻿randomgen.romu.Romu.seed
 ========================
 
 .. currentmodule:: randomgen.romu

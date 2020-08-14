@@ -1,4 +1,4 @@
-randomgen.mtrand.RandomState.get\_state
+﻿randomgen.mtrand.RandomState.get\_state
 =======================================
 
 .. currentmodule:: randomgen.mtrand

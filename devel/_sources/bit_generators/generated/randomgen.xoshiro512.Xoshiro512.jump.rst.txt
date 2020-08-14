@@ -1,4 +1,4 @@
-randomgen.xoshiro512.Xoshiro512.jump
+﻿randomgen.xoshiro512.Xoshiro512.jump
 ====================================
 
 .. currentmodule:: randomgen.xoshiro512

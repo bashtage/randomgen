@@ -1,4 +1,4 @@
-randomgen.wrapper.UserBitGenerator.cffi
+﻿randomgen.wrapper.UserBitGenerator.cffi
 =======================================
 
 .. currentmodule:: randomgen.wrapper

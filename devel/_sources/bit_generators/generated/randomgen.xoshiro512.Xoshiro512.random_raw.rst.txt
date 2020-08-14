@@ -1,4 +1,4 @@
-randomgen.xoshiro512.Xoshiro512.random\_raw
+﻿randomgen.xoshiro512.Xoshiro512.random\_raw
 ===========================================
 
 .. currentmodule:: randomgen.xoshiro512

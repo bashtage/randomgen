@@ -1,4 +1,4 @@
-randomgen.generator.Generator.multivariate\_normal
+﻿randomgen.generator.Generator.multivariate\_normal
 ==================================================
 
 .. currentmodule:: randomgen.generator

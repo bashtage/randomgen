@@ -1,4 +1,4 @@
-randomgen.xoshiro512.Xoshiro512.cffi
+﻿randomgen.xoshiro512.Xoshiro512.cffi
 ====================================
 
 .. currentmodule:: randomgen.xoshiro512

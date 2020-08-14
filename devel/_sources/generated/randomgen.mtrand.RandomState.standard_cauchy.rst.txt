@@ -1,4 +1,4 @@
-randomgen.mtrand.RandomState.standard\_cauchy
+﻿randomgen.mtrand.RandomState.standard\_cauchy
 =============================================
 
 .. currentmodule:: randomgen.mtrand

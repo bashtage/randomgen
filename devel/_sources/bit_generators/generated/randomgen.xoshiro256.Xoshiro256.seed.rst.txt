@@ -1,4 +1,4 @@
-randomgen.xoshiro256.Xoshiro256.seed
+﻿randomgen.xoshiro256.Xoshiro256.seed
 ====================================
 
 .. currentmodule:: randomgen.xoshiro256

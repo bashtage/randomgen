@@ -1,4 +1,4 @@
-randomgen.generator.Generator.noncentral\_chisquare
+﻿randomgen.generator.Generator.noncentral\_chisquare
 ===================================================
 
 .. currentmodule:: randomgen.generator

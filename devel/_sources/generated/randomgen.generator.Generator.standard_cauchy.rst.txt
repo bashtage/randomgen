@@ -1,4 +1,4 @@
-randomgen.generator.Generator.standard\_cauchy
+﻿randomgen.generator.Generator.standard\_cauchy
 ==============================================
 
 .. currentmodule:: randomgen.generator

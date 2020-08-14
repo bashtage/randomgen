@@ -1,4 +1,4 @@
-randomgen.wrapper.UserBitGenerator.ctypes
+﻿randomgen.wrapper.UserBitGenerator.ctypes
 =========================================
 
 .. currentmodule:: randomgen.wrapper

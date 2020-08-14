@@ -1,4 +1,4 @@
-randomgen.dsfmt.DSFMT.state
+﻿randomgen.dsfmt.DSFMT.state
 ===========================
 
 .. currentmodule:: randomgen.dsfmt

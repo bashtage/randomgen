@@ -1,4 +1,4 @@
-randomgen.mtrand.RandomState.binomial
+﻿randomgen.mtrand.RandomState.binomial
 =====================================
 
 .. currentmodule:: randomgen.mtrand

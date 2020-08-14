@@ -1,4 +1,4 @@
-randomgen.sfmt.SFMT.jumped
+﻿randomgen.sfmt.SFMT.jumped
 ==========================
 
 .. currentmodule:: randomgen.sfmt
