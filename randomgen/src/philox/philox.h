@@ -329,6 +329,19 @@ R123_CUDA_DEVICE R123_STATIC_INLINE philox##N##x##W##_key_t philox##N##x##W##key
 R123_CUDA_DEVICE R123_STATIC_INLINE R123_FORCE_INLINE(philox##N##x##W##_ctr_t philox##N##x##W##_R(unsigned int R, philox##N##x##W##_ctr_t ctr, philox##N##x##W##_key_t key)); \
 R123_CUDA_DEVICE R123_STATIC_INLINE philox##N##x##W##_ctr_t philox##N##x##W##_R(unsigned int R, philox##N##x##W##_ctr_t ctr, philox##N##x##W##_key_t key) { \
     R123_ASSERT(R<=16);                                                 \
+    if(R==10){                                                          \
+                                            ctr = _philox##N##x##W##round(ctr, key); \
+      key = _philox##N##x##W##bumpkey(key); ctr = _philox##N##x##W##round(ctr, key); \
+      key = _philox##N##x##W##bumpkey(key); ctr = _philox##N##x##W##round(ctr, key); \
+      key = _philox##N##x##W##bumpkey(key); ctr = _philox##N##x##W##round(ctr, key); \
+      key = _philox##N##x##W##bumpkey(key); ctr = _philox##N##x##W##round(ctr, key); \
+      key = _philox##N##x##W##bumpkey(key); ctr = _philox##N##x##W##round(ctr, key); \
+      key = _philox##N##x##W##bumpkey(key); ctr = _philox##N##x##W##round(ctr, key); \
+      key = _philox##N##x##W##bumpkey(key); ctr = _philox##N##x##W##round(ctr, key); \
+      key = _philox##N##x##W##bumpkey(key); ctr = _philox##N##x##W##round(ctr, key); \
+      key = _philox##N##x##W##bumpkey(key); ctr = _philox##N##x##W##round(ctr, key); \
+      return ctr;                                                       \
+    }                                                                   \
     if(R>0){                                       ctr = _philox##N##x##W##round(ctr, key); } \
     if(R>1){ key = _philox##N##x##W##bumpkey(key); ctr = _philox##N##x##W##round(ctr, key); } \
     if(R>2){ key = _philox##N##x##W##bumpkey(key); ctr = _philox##N##x##W##round(ctr, key); } \

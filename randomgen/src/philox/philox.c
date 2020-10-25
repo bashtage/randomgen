@@ -4,7 +4,7 @@
 /* TODO: removed once the old method is deprecated */
 #define _philoxNxW_advance_tpl(N, W)                                         \
 void philox##N##x##W##_advance(philox_all_t *state, uint##W##_t *step, int use_carry) {   \
-  /* step has N+1 elements */                                                             \
+  /* step has N elements */                                                               \
   int i, next_buffer_pos;                                                                 \
   uint##W##_t last, carry, rem, adj_step;                                                 \
   philox##N##x##W##_ctr_t ct;                                                             \
@@ -17,7 +17,8 @@ void philox##N##x##W##_advance(philox_all_t *state, uint##W##_t *step, int use_c
       adj_step = step[i] / N;                                                             \
       /* Add in the lower bits from the next step size */                                 \
       /* The N/2 is really log2(N) but ok here since N is 2 or 4  */                      \
-      adj_step += (step[i + 1] % N) << (W - (N / 2));                                     \
+      if (i + 1 < N)                                                                      \
+          adj_step += (step[(i + 1) % N]) << (W - (N / 2));                               \
       last = state->state.state##N##x##W.ctr.v[i];                                        \
       state->state.state##N##x##W.ctr.v[i] += adj_step + carry;                           \
       carry = (last > state->state.state##N##x##W.ctr.v[i] ||                             \
@@ -26,7 +27,7 @@ void philox##N##x##W##_advance(philox_all_t *state, uint##W##_t *step, int use_c
   /* Always regenerate the buffer at the current counter */                               \
   ct = philox##N##x##W(state->state.state##N##x##W.ctr, state->state.state##N##x##W.key); \
   for (i = 0; i < N; i++) {                                                               \
-	  state->buffer[i].u##W = ct.v[i];                                                      \
+	  state->buffer[i].u##W = ct.v[i];                                                \
   }                                                                                       \
 }
 
