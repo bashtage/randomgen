@@ -1,5 +1,6 @@
 from randomgen.common cimport *
 
+
 cdef extern from "src/chacha/chacha.h":
 
     int RANDOMGEN_USE_SIMD

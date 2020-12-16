@@ -1,5 +1,6 @@
 from randomgen.common cimport *
 
+
 cdef extern from "src/jsf/jsf.h":
 
     union JSF_UINT_T:

@@ -1,5 +1,6 @@
 from randomgen.common cimport *
 
+
 cdef extern from "src/pcg64/pcg64-common.h":
     ctypedef uint64_t (* pcg_output_func_t)(uint64_t high, uint64_t low) nogil
 

@@ -1,5 +1,6 @@
 from randomgen.common cimport *
 
+
 cdef extern from "src/mt64/mt64.h":
 
     struct MT64_STATE_T:

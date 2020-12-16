@@ -1,10 +1,11 @@
 # python setup.py build_ext -i
+from setuptools.extension import Extension
+
 from distutils.core import setup
 from os.path import join
 
 from Cython.Build import cythonize
 import numpy as np
-from setuptools.extension import Extension
 
 extending = Extension(
     "extending", sources=["extending.pyx"], include_dirs=[np.get_include()]

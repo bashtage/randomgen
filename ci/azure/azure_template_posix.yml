@@ -74,11 +74,18 @@ jobs:
     displayName: 'List Configuration'
 
   - script: |
-      python -m pip install -e . -v --no-build-isolation
+      pip install -e . --no-build-isolation
     displayName: 'Install randomgen'
 
   - script: |
-      pytest randomgen --junitxml=junit/test-results.xml -n auto --durations=25
+      if [[ ${RANDOMGEN_CYTHON_COVERAGE} == "true" ]]; then
+        export RANDOMGEN_CYTHON_COVERAGE="$COVERAGE"
+      fi
+      if [[ "$COVERAGE" == true ]]; then
+        export COVERAGE_OPTIONS="--cov-config .coveragerc --cov=randomgen"
+      fi
+      echo pytest -r a --junitxml=junit/test-results.xml -n auto --durations=25 ${COVERAGE_OPTIONS} randomgen/tests/
+      pytest -r a --junitxml=junit/test-results.xml -n auto --durations=25 ${COVERAGE_OPTIONS} randomgen/tests/
     displayName: 'pytest'
 
   - task: PublishTestResults@2

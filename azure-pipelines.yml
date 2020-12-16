@@ -6,6 +6,8 @@ trigger:
 variables:
   PYTHONHASHSEED: 12345678
   SETUPTOOLS_USE_DISTUTILS: "stdlib"
+  COVERAGE: true
+  RANDOMGEN_CYTHON_COVERAGE: true
 
 jobs:
 - template: ci/azure/azure_template_posix.yml
