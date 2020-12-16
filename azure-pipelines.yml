@@ -1,0 +1,24 @@
+# https://docs.microsoft.com/en-us/azure/devops/pipelines/process/templates?view=azure-devops#passing-parameters
+
+trigger:
+- master
+
+variables:
+  PYTHONHASHSEED: 12345678
+  SETUPTOOLS_USE_DISTUTILS: "stdlib"
+
+jobs:
+- template: ci/azure/posix.yml
+  parameters:
+    name: macOS
+    vmImage: macOS-10.15
+    
+- template: ci/azure/azure_template_posix.yml
+  parameters:
+    name: Linux
+    vmImage: ubuntu-20.04
+
+- template: ci/azure/azure_template_windows.yml
+  parameters:
+    name: Windows
+    vmImage: windows-2019
