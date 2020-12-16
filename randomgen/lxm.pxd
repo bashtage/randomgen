@@ -1,5 +1,6 @@
 from randomgen.common cimport *
 
+
 cdef extern from "src/lxm/lxm.h":
 
     struct LXM_STATE_T:

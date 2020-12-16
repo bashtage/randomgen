@@ -1,5 +1,6 @@
 from randomgen.common cimport *
 
+
 cdef extern from "src/mt19937/mt19937.h":
 
     struct MT19937_STATE_T:

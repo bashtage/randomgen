@@ -1,12 +1,22 @@
 #cython: language_level=3
 
-from libc.stdint cimport (uint8_t, uint16_t, uint32_t, uint64_t,
-                          int8_t, int16_t, int32_t, int64_t, intptr_t)
+from libc.stdint cimport (
+    int8_t,
+    int16_t,
+    int32_t,
+    int64_t,
+    intptr_t,
+    uint8_t,
+    uint16_t,
+    uint32_t,
+    uint64_t,
+)
 
 import numpy as np
+
 cimport numpy as np
 
-from randomgen.distributions cimport bitgen_t, binomial_t
+from randomgen.distributions cimport binomial_t, bitgen_t
 
 
 cdef extern from "../src/legacy/legacy-distributions.h":

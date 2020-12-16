@@ -1,5 +1,6 @@
 from randomgen.common cimport *
 
+
 cdef extern from "src/pcg32/pcg32.h":
 
     cdef struct pcg_state_setseq_64:

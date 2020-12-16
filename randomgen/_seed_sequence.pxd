@@ -1,5 +1,6 @@
 cimport numpy as np
 
+
 cdef class SeedSequence(object):
     cdef readonly object entropy
     cdef readonly tuple spawn_key

@@ -19,7 +19,7 @@ except (ImportError, AttributeError):
 
 
 def test_reference_data():
-    """ Check that SeedSequence generates data the same as the C++ reference.
+    """Check that SeedSequence generates data the same as the C++ reference.
 
     https://gist.github.com/imneme/540829265469e673d045
     """
@@ -208,8 +208,7 @@ def test_against_numpy_spawn():
 
 
 def test_zero_padding():
-    """ Ensure that the implicit zero-padding does not cause problems.
-    """
+    """Ensure that the implicit zero-padding does not cause problems."""
     # Ensure that large integers are inserted in little-endian fashion to avoid
     # trailing 0s.
     ss0 = SeedSequence(42)
