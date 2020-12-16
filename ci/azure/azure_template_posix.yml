@@ -1,0 +1,88 @@
+# Python package
+# Create and test a Python package on multiple Python versions.
+# Add steps that analyze code, save the dist with the build record, publish to a PyPI-compatible index, and more:
+# https://docs.microsoft.com/azure/devops/pipelines/languages/python
+
+parameters:
+  # defaults for any parameters that are not specified
+  name: ''
+  vmImage: ''
+
+
+jobs:
+
+- job: ${{ parameters.name }}Test
+  pool:
+    vmImage: ${{ parameters.vmImage }}
+  strategy:
+    matrix:
+      ${{ if eq(parameters.name, 'Linux') }}:
+        python37_legacy:
+          python.version: '3.7'
+          RANDOMGEN_DEBUG: false
+          CC: clang
+          NUMPY: 1.17.5
+        python38_legacy:
+          python.version: '3.8'
+          PYPI: true
+          COVERAGE: true
+          NUMPY: 1.16.6
+        python39_latest:
+          python.version: '3.9'
+        python38_mid:
+          python.version: '3.8'
+          PYPI: true
+          NUMPY: 1.18.5
+          CYTHON: 0.29.21
+        python_38_coverage:
+          python.version: '3.8'
+          PYPI: true
+          COVERAGE: true
+          RANDOMGEN_CYTHON_COVERAGE: false
+          RANDOMGEN_DEBUG: false
+        python_37_legacy:
+          python.version: '3.7'
+          PYPI: true
+          COVERAGE: false
+          NUMPY: 1.17.5
+          TEST_INSTALL: true
+      ${{ if eq(parameters.name, 'macOS') }}:
+        python39_latest_macos:
+          python.version: '3.9'
+
+    maxParallel: 10
+
+  steps:
+  - task: UsePythonVersion@0
+    inputs:
+      versionSpec: '$(python.version)'
+      architecture: 'x64'
+    displayName: 'Use Python $(python.version)'
+
+  - script: |
+      source ci/azure/install-posix.sh
+    displayName: 'Install dependencies'
+
+  - script: |
+     flake8 randomgen
+     black --check randomgen
+     isort --check randomgen
+    displayName: 'Check style and formatting'
+
+  - script: |
+      python -m pip list
+    displayName: 'List Configuration'
+
+  - script: |
+      python -m pip install -e . -v --no-build-isolation
+    displayName: 'Install randomgen'
+
+  - script: |
+      pytest randomgen --junitxml=junit/test-results.xml -n auto --durations=25
+    displayName: 'pytest'
+
+  - task: PublishTestResults@2
+    inputs:
+      testResultsFiles: '**/test-results.xml'
+      testRunTitle: 'Python $(python.version)'
+    condition: succeededOrFailed()
