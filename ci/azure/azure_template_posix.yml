@@ -24,14 +24,13 @@ jobs:
           NUMPY: 1.17.5
         python38_legacy:
           python.version: '3.8'
-          PYPI: true
           COVERAGE: true
           NUMPY: 1.16.6
         python39_latest:
           python.version: '3.9'
-        python38_mid:
+        python38_mid_conda:
           python.version: '3.8'
-          PYPI: true
+          USE_CONDA: true
           NUMPY: 1.18.5
           CYTHON: 0.29.21
         python_38_coverage:
@@ -40,11 +39,11 @@ jobs:
           COVERAGE: true
           RANDOMGEN_CYTHON_COVERAGE: false
           RANDOMGEN_DEBUG: false
-        python_37_legacy:
+        python_37_legacy_conda:
           python.version: '3.7'
-          PYPI: true
+          USE_CONDA: true
           COVERAGE: false
-          NUMPY: 1.17.5
+          NUMPY: 1.17.4
           TEST_INSTALL: true
       ${{ if eq(parameters.name, 'macOS') }}:
         python39_latest_macos:
@@ -59,25 +58,35 @@ jobs:
       architecture: 'x64'
     displayName: 'Use Python $(python.version)'
 
+  - bash: |
+      if [[ ${USE_CONDA} == "true" ]]; then
+        echo "##vso[task.prependpath]$CONDA/bin"
+      fi
+    displayName: 'Add conda to PATH if needed'
+
   - script: |
       source ci/azure/install-posix.sh
     displayName: 'Install dependencies'
 
   - script: |
+     source ci/azure/update_path.sh
      flake8 randomgen
      black --check randomgen
      isort --check randomgen
     displayName: 'Check style and formatting'
 
   - script: |
+      source ci/azure/update_path.sh
       python -m pip list
     displayName: 'List Configuration'
 
   - script: |
+      source ci/azure/update_path.sh
       pip install -e . --no-build-isolation
     displayName: 'Install randomgen'
 
   - script: |
+      source ci/azure/update_path.sh
       if [[ ${RANDOMGEN_CYTHON_COVERAGE} == "true" ]]; then
         export RANDOMGEN_CYTHON_COVERAGE="$COVERAGE"
       fi
