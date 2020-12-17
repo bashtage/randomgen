@@ -1,9 +1,22 @@
 #!/usr/bin/env bash
 
-python -m pip install setuptools wheel pip --upgrade
-EXTRA="pytest pytest-xdist coverage pytest-cov black==20.8b1 isort flake8"
+if [[ ${USE_CONDA} == "true" ]]; then
+  conda config --set always_yes true
+  conda update --all --quiet
+  conda create -n randomgen-test python=${PYTHON_VERSION} -y
+  conda init
+  source activate randomgen-test
+  which python
+  CMD="conda install numpy"
+else
+  CMD="python -m pip install numpy"
+fi
 
-CMD="python -m pip install numpy"
+# Not all available in conda
+python -m pip install setuptools wheel pip black==20.8b1 isort flake8 --upgrade
+
+EXTRA="pytest pytest-xdist coverage pytest-cov"
+
 if [[ -n ${NUMPY} ]]; then CMD="$CMD==${NUMPY}"; fi;
 CMD="$CMD cython"
 if [[ -n ${CYTHON} ]]; then CMD="$CMD==${CYTHON}"; fi;
