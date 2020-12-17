@@ -1,4 +1,12 @@
 # https://docs.microsoft.com/en-us/azure/devops/pipelines/process/templates?view=azure-devops#passing-parameters
+schedules:
+- cron: "27 3 * * 0"
+  # 3:27am UTC every Sunday
+  displayName: Weekly build
+  branches:
+    include:
+    - master
+  always: true
 
 trigger:
 - master
