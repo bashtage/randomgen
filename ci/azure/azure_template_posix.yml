@@ -30,19 +30,19 @@ jobs:
           python.version: '3.9'
         python38_mid_conda:
           python.version: '3.8'
-          USE_CONDA: true
+          use.conda: true
           NUMPY: 1.18.5
           CYTHON: 0.29.21
         python_38_coverage:
           python.version: '3.8'
           PYPI: true
-          COVERAGE: true
           RANDOMGEN_CYTHON_COVERAGE: false
           RANDOMGEN_DEBUG: false
+          test.install: true
         python_37_legacy_conda:
           python.version: '3.7'
-          USE_CONDA: true
-          COVERAGE: false
+          use.conda: true
+          coverage: false
           NUMPY: 1.17.4
           TEST_INSTALL: true
       ${{ if eq(parameters.name, 'macOS') }}:
@@ -59,46 +59,82 @@ jobs:
     displayName: 'Use Python $(python.version)'
 
   - bash: |
-      if [[ ${USE_CONDA} == "true" ]]; then
-        echo "##vso[task.prependpath]$CONDA/bin"
-      fi
-    displayName: 'Add conda to PATH if needed'
+      echo "##vso[task.prependpath]$CONDA/bin"
+      echo "##vso[task.prependpath]$CONDA/envs/randomgen-test"
+      echo "##vso[task.prependpath]$CONDA/envs/randomgen-test/condabin"
+      echo "##vso[task.prependpath]$CONDA/envs/randomgen-test/bin"
+    displayName: 'Add conda and env to PATH'
+    condition: eq(variables['use.conda'], 'true')
 
   - script: |
       source ci/azure/install-posix.sh
     displayName: 'Install dependencies'
 
   - script: |
-     source ci/azure/update_path.sh
      flake8 randomgen
      black --check randomgen
      isort --check randomgen
     displayName: 'Check style and formatting'
 
-  - script: |
-      source ci/azure/update_path.sh
-      python -m pip list
-    displayName: 'List Configuration'
+  - script: python -m pip list
+    displayName: 'List Configuration (PyPI)'
+    condition: ne(variables['use.conda'], 'true')
+
+  - script: conda list
+    displayName: 'List Configuration (conda)'
+    condition: eq(variables['use.conda'], 'true')
 
   - script: |
-      source ci/azure/update_path.sh
-      pip install -e . --no-build-isolation
-    displayName: 'Install randomgen'
+      echo "Installing to site packages"
+      python setup.py bdist_wheel
+      WHL=$(ls -t dist)
+      pip install ./dist/${WHL}
+    displayName: 'Install randomgen (site-packages)'
+    condition: eq(variables['test.install'], 'true')
 
   - script: |
-      source ci/azure/update_path.sh
-      if [[ ${RANDOMGEN_CYTHON_COVERAGE} == "true" ]]; then
-        export RANDOMGEN_CYTHON_COVERAGE="$COVERAGE"
+      python -m pip install -e . -v --no-build-isolation
+    displayName: 'Install randomgen (editable)'
+    condition: ne(variables['test.install'], 'true')
+
+  - script: |
+      echo "Testing site packages"
+      mkdir test_run_dir
+      pushd test_run_dir
+      python -c "import randomgen; randomgen.test(['-n', 'auto', '--junitxml=../junit/test-results.xml'])"
+      popd
+    displayName: 'Run tests (site-packages)'
+    condition: eq(variables['test.install'], 'true')
+
+  - script: |
+      echo "Testing editable install"
+      if [[ ${COVERAGE} == "true" ]]; then
+        export COVERAGE_OPTS="--cov-config .coveragerc --cov=randomgen --cov-report xml:coverage.xml --cov-report term"
       fi
-      if [[ "$COVERAGE" == true ]]; then
-        export COVERAGE_OPTIONS="--cov-config .coveragerc --cov=randomgen"
-      fi
-      echo pytest -r a --junitxml=junit/test-results.xml -n auto --durations=25 ${COVERAGE_OPTIONS} randomgen/tests/
-      pytest -r a --junitxml=junit/test-results.xml -n auto --durations=25 ${COVERAGE_OPTIONS} randomgen/tests/
-    displayName: 'pytest'
+      echo pytest -m "${PYTEST_PATTERN}" --junitxml=junit/test-results.xml -n auto --durations=25 ${COVERAGE_OPTS} randomgen/tests
+      pytest -m "${PYTEST_PATTERN}" --junitxml=junit/test-results.xml -n auto --durations=25 ${COVERAGE_OPTS} randomgen/tests
+    displayName: 'Run tests (editable)'
+    condition: ne(variables['test.install'], 'true')
 
   - task: PublishTestResults@2
     inputs:
       testResultsFiles: '**/test-results.xml'
       testRunTitle: 'Python $(python.version)'
     condition: succeededOrFailed()
+
+  - task: PublishCodeCoverageResults@1
+    inputs:
+      codeCoverageTool: Cobertura
+      summaryFileLocation: '$(System.DefaultWorkingDirectory)/**/coverage.xml'
+    condition: and(eq(variables['coverage'], 'true'), ne(variables['test.install'], 'true'))
+
+  - bash: bash <(curl -s https://codecov.io/bash)
+    displayName: 'CodeCov upload'
+    condition: and(eq(variables['coverage'], 'true'), ne(variables['test.install'], 'true'))
+
+  - script: |
+      coveralls
+    env:
+      COVERALLS_REPO_TOKEN: $(coveralls.repo.key)
+    displayName: 'coveralls upload'
+    condition: and(eq(variables['coverage'], 'true'), ne(variables['test.install'], 'true'))
