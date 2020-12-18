@@ -14,7 +14,7 @@ trigger:
 variables:
   PYTHONHASHSEED: 12345678
   SETUPTOOLS_USE_DISTUTILS: "stdlib"
-  COVERAGE: true
+  coverage: true
   RANDOMGEN_CYTHON_COVERAGE: true
 
 jobs:
