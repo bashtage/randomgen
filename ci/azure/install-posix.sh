@@ -13,7 +13,7 @@ else
 fi
 
 # Not all available in conda
-python -m pip install setuptools wheel pip black==20.8b1 isort flake8 coveralls --upgrade
+python -m pip install setuptools wheel pip black==20.8b1 isort flake8 --upgrade
 
 EXTRA="pytest pytest-xdist coverage pytest-cov"
 
