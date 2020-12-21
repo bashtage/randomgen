@@ -13,7 +13,6 @@ This package contains additional bit generators for NumPy's
 
 **Coverage**
 
-[![Coverage Status](https://coveralls.io/repos/github/bashtage/randomgen/badge.svg)](https://coveralls.io/github/bashtage/randomgen)
 [![codecov](https://codecov.io/gh/bashtage/randomgen/branch/master/graph/badge.svg)](https://codecov.io/gh/bashtage/randomgen)
 
 **Latest Release**

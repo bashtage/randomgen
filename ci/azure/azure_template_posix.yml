@@ -24,7 +24,7 @@ jobs:
           NUMPY: 1.17.5
         python38_legacy:
           python.version: '3.8'
-          COVERAGE: true
+          coverage: true
           NUMPY: 1.16.6
         python39_latest:
           python.version: '3.9'
@@ -36,8 +36,9 @@ jobs:
         python_38_coverage:
           python.version: '3.8'
           PYPI: true
+          coverage: false
           RANDOMGEN_CYTHON_COVERAGE: false
-          RANDOMGEN_DEBUG: false
+          RANDOMGEN_DEBUG: true
           test.install: true
         python_37_legacy_conda:
           python.version: '3.7'
@@ -130,11 +131,4 @@ jobs:
 
   - bash: bash <(curl -s https://codecov.io/bash)
     displayName: 'CodeCov upload'
-    condition: and(eq(variables['coverage'], 'true'), ne(variables['test.install'], 'true'))
-
-  - script: |
-      coveralls
-    env:
-      COVERALLS_REPO_TOKEN: $(coveralls.repo.key)
-    displayName: 'coveralls upload'
     condition: and(eq(variables['coverage'], 'true'), ne(variables['test.install'], 'true'))
