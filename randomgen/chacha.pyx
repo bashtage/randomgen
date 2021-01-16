@@ -65,7 +65,7 @@ cdef class ChaCha(BitGenerator):
     ChaCha is a 64-bit PRNG that uses a counter-based design based on
     the ChaCha cipher [1]_. Instances using different values
     of the key produce distinct sequences. ``ChaCha`` has a period
-    of :math:`2^{128}` and supports arbitrary advancing and
+    of :math:`2^{128} - 1` and supports arbitrary advancing and
     jumping the sequence in increments of :math:`2^{64}`. These features allow
     multiple non-overlapping sequences to be generated.
 

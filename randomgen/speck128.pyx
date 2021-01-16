@@ -66,7 +66,7 @@ cdef class SPECK128(BitGenerator):
     SPECK128 is a 64-bit PRNG that uses a counter-based design based on
     the SPECK-128 cryptographic function [1]_. Instances using different values
     of the key produce distinct sequences. ``SPECK128`` has a large period
-    :math:`2^{129}` and supports arbitrary advancing and
+    :math:`2^{129} - 1` and supports arbitrary advancing and
     jumping the sequence in increments of :math:`2^{64}`. These features allow
     multiple non-overlapping sequences to be generated.
 
