@@ -245,7 +245,7 @@ cdef class AESCounter(BitGenerator):
         _counter = np.empty(8, dtype=np.uint64)
         counter = 0 if counter is None else counter
         for i in range(4):
-            _counter[2*i:2*i+2] = int_to_array(counter+i, "counter", 128, 64)
+            _counter[2*i:2*i+2] = int_to_array((counter + i) % (2**128), "counter", 128, 64)
         aesctr_set_counter(self.rng_state,
                            <uint64_t*>np.PyArray_DATA(_counter))
         self._reset_state_variables()
