@@ -46,7 +46,7 @@ bit_generator = xffi.bit_generator
 random_gauss_zig = lib.random_gauss_zig
 
 
-def normals(n, bit_generator):
+def normals(n: int, bit_generator: int) -> np.ndarray:
     out = np.empty(n)
     for i in range(n):
         out[i] = random_gauss_zig(bit_generator)

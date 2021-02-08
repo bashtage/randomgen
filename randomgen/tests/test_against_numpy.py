@@ -2,12 +2,16 @@ from distutils.version import LooseVersion
 
 import numpy as np
 import numpy.random
-from numpy.testing import assert_allclose, assert_array_equal, assert_equal
+from numpy.testing import (
+    assert_allclose,
+    assert_array_equal,
+    assert_equal,
+    suppress_warnings,
+)
 import pytest
 
 import randomgen
 from randomgen import MT19937, Generator
-from randomgen._testing import suppress_warnings
 import randomgen.generator
 from randomgen.mtrand import RandomState
 

@@ -5,7 +5,13 @@ import sys
 import time
 
 import numpy as np
-from numpy.testing import assert_, assert_almost_equal, assert_array_equal, assert_equal
+from numpy.testing import (
+    assert_,
+    assert_almost_equal,
+    assert_array_equal,
+    assert_equal,
+    suppress_warnings,
+)
 import pytest
 
 from randomgen import (
@@ -34,13 +40,12 @@ from randomgen import (
     Xoshiro512,
     entropy,
 )
-from randomgen._testing import suppress_warnings
 
 
 @pytest.fixture(
     scope="module",
     params=(
-        np.bool,
+        bool,
         np.int8,
         np.int16,
         np.int32,

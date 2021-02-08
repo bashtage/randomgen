@@ -1,6 +1,8 @@
 import numpy as np
 cimport numpy as np
 
+from threading import Lock
+
 from randomgen.common cimport *
 from cpython cimport PyObject
 from cpython.exc cimport PyErr_SetString, PyErr_Occurred, PyErr_Clear, PyErr_Print, PyErr_Fetch, PyErr_SetObject
@@ -450,5 +452,3 @@ cdef class RDRAND(BitGenerator):
             raise ValueError("state must be for a {0} "
                              "PRNG".format(type(self).__name__))
         self.rng_state.retries = value["retries"]
-
-from threading import Lock

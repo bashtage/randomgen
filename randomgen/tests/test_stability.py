@@ -1,3 +1,5 @@
+from typing import Dict, Tuple
+
 import numpy as np
 from numpy.testing import assert_allclose, assert_equal
 import pytest
@@ -21,7 +23,7 @@ for key, test_id in zip(all_keys, all_ids):
         minimal_keys.append(key)
         minimal_ids.append(test_id)
 
-EXECUTED = {}
+EXECUTED: Dict[Tuple[str, str], Dict[str, str]] = {}
 
 
 @pytest.fixture(params=all_keys, ids=all_ids, scope="module")

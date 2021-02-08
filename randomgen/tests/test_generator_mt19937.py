@@ -13,11 +13,11 @@ from numpy.testing import (
     assert_no_warnings,
     assert_raises,
     assert_warns,
+    suppress_warnings,
 )
 import pytest
 
 from randomgen import MT19937, Generator
-from randomgen._testing import suppress_warnings
 from randomgen.tests.test_direct import assert_state_equal
 
 random = Generator(MT19937(mode="legacy"))

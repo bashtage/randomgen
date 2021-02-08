@@ -11,7 +11,7 @@ s = x.ctypes.state
 
 
 @nb.jit(nopython=True)
-def bounded_uint(lb, ub, state):
+def bounded_uint(lb: int, ub: int, state: int) -> int:
     mask = delta = ub - lb
     mask |= mask >> 1
     mask |= mask >> 2
@@ -30,7 +30,7 @@ print(bounded_uint(323, 2394691, s.value))
 
 
 @nb.jit(nopython=True)
-def bounded_uints(lb, ub, n, state):
+def bounded_uints(lb: int, ub: int, n: int, state: int) -> None:
     out = np.empty(n, dtype=np.uint32)
     for i in range(n):
         out[i] = bounded_uint(lb, ub, state)
@@ -43,7 +43,7 @@ cffi_state = x.cffi.state
 state_addr = x.cffi.state_address
 
 
-def normals(n, state):
+def normals(n: int, state: int) -> np.ndarray:
     out = np.empty(n)
     for i in range((n + 1) // 2):
         x1 = 2.0 * g(state) - 1.0

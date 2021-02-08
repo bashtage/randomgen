@@ -10,11 +10,11 @@ from numpy.testing import (
     assert_no_warnings,
     assert_raises,
     assert_warns,
+    suppress_warnings,
 )
 import pytest
 
 from randomgen import MT19937, PCG64, ExtendedGenerator
-from randomgen._testing import suppress_warnings
 
 SEED = 1234567890
 MV_SEED = 123456789

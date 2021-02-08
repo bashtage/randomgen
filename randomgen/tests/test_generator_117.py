@@ -272,7 +272,6 @@ def test_choice(replace):
 
 
 configs = integers()
-ids = [list(map(str, c)) for c in configs]
 
 
 @pytest.mark.skipif(NP_LT_1174, reason="Changes to lemire generators")

@@ -18,6 +18,7 @@ import platform
 import pprint
 import shutil
 import subprocess
+from typing import Dict, List, Tuple, Union
 
 import black
 import numpy as np
@@ -34,7 +35,7 @@ else:
     EXECUTABLE = "./jump_mt19937.exe"
 
 
-def save_state(bit_gen, file_name):
+def save_state(bit_gen: MT19937, file_name: str) -> None:
     state = bit_gen.state
     key = state["state"]["key"]
     pos = state["state"]["pos"]
@@ -44,7 +45,7 @@ def save_state(bit_gen, file_name):
         f.write(f"{pos}\n")
 
 
-def parse_output(text):
+def parse_output(text: str) -> Tuple[List[Dict[str, Union[List, int]]], List[int]]:
     lines = text.split("\n")
 
     state = {"key": [], "pos": -1}
@@ -65,7 +66,7 @@ def parse_output(text):
     return states[:-1], pf
 
 
-values = {}
+values: Dict[Tuple[str, Tuple[int, ...], int], Dict] = {}
 for poly in ("poly-128", "clist_mt19937"):
     shutil.copy(f"{poly}.txt", "jump-poly.txt")
     fn = "_jump_tester" if poly == "clist_mt19937" else "jumped"

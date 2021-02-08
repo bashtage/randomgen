@@ -1,7 +1,9 @@
+from typing import Dict, Type, Union
 import warnings
 
 from randomgen.aes import AESCounter
 from randomgen.chacha import ChaCha
+from randomgen.common import BitGenerator
 from randomgen.dsfmt import DSFMT
 from randomgen.efiix64 import EFIIX64
 from randomgen.generator import ExtendedGenerator, Generator
@@ -25,7 +27,7 @@ from randomgen.xorshift1024 import Xorshift1024
 from randomgen.xoshiro256 import Xoshiro256
 from randomgen.xoshiro512 import Xoshiro512
 
-BitGenerators = {
+BitGenerators: Dict[str, Type[BitGenerator]] = {
     "AESCounter": AESCounter,
     "ChaCha": ChaCha,
     "LCG128Mix": LCG128Mix,
@@ -53,7 +55,7 @@ BitGenerators = {
 }
 
 
-def _get_bitgenerator(bit_generator_name):
+def _get_bitgenerator(bit_generator_name: str) -> Type[BitGenerator]:
     """
     Bit generator look-up with user-friendly errors
     """
@@ -66,7 +68,14 @@ def _get_bitgenerator(bit_generator_name):
     return bit_generator
 
 
-def __generator_ctor(bit_generator_name="MT19937"):
+def _decode(name: Union[str, bytes]) -> str:
+    if isinstance(name, str):
+        return name
+    assert isinstance(name, bytes)
+    return name.decode("ascii")
+
+
+def __generator_ctor(bit_generator_name: Union[bytes, str] = "MT19937") -> Generator:
     """
     Pickling helper function that returns a Generator object
 
@@ -80,10 +89,8 @@ def __generator_ctor(bit_generator_name="MT19937"):
     rg: Generator
         Generator using the named core BitGenerator
     """
-    try:
-        bit_generator_name = bit_generator_name.decode("ascii")
-    except AttributeError:
-        pass
+    bit_generator_name = _decode(bit_generator_name)
+    assert isinstance(bit_generator_name, str)
     bit_generator = _get_bitgenerator(bit_generator_name)
     with warnings.catch_warnings():
         warnings.filterwarnings("ignore", category=FutureWarning)
@@ -91,7 +98,9 @@ def __generator_ctor(bit_generator_name="MT19937"):
     return Generator(bit_gen)
 
 
-def __extended_generator_ctor(bit_generator_name="MT19937"):
+def __extended_generator_ctor(
+    bit_generator_name: Union[str, bytes] = "MT19937"
+) -> ExtendedGenerator:
     """
     Pickling helper function that returns a Generator object
 
@@ -105,10 +114,8 @@ def __extended_generator_ctor(bit_generator_name="MT19937"):
     rg: Generator
         Generator using the named core BitGenerator
     """
-    try:
-        bit_generator_name = bit_generator_name.decode("ascii")
-    except AttributeError:
-        pass
+    bit_generator_name = _decode(bit_generator_name)
+    assert isinstance(bit_generator_name, str)
     bit_generator = _get_bitgenerator(bit_generator_name)
     with warnings.catch_warnings():
         warnings.filterwarnings("ignore", category=FutureWarning)
@@ -116,7 +123,9 @@ def __extended_generator_ctor(bit_generator_name="MT19937"):
     return ExtendedGenerator(bit_gen)
 
 
-def __bit_generator_ctor(bit_generator_name="MT19937"):
+def __bit_generator_ctor(
+    bit_generator_name: Union[str, bytes] = "MT19937"
+) -> BitGenerator:
     """
     Pickling helper function that returns a bit generator object
 
@@ -130,10 +139,8 @@ def __bit_generator_ctor(bit_generator_name="MT19937"):
     bit_generator: BitGenerator
         Bit generator instance
     """
-    try:
-        bit_generator_name = bit_generator_name.decode("ascii")
-    except AttributeError:
-        pass
+    bit_generator_name = _decode(bit_generator_name)
+    assert isinstance(bit_generator_name, str)
     bit_generator = _get_bitgenerator(bit_generator_name)
     with warnings.catch_warnings():
         warnings.filterwarnings("ignore", category=FutureWarning)
@@ -141,7 +148,9 @@ def __bit_generator_ctor(bit_generator_name="MT19937"):
     return bit_gen
 
 
-def __randomstate_ctor(bit_generator_name="MT19937"):
+def __randomstate_ctor(
+    bit_generator_name: Union[str, bytes] = "MT19937"
+) -> RandomState:
     """
     Pickling helper function that returns a legacy RandomState-like object
 
@@ -155,10 +164,8 @@ def __randomstate_ctor(bit_generator_name="MT19937"):
     rs: RandomState
         Legacy RandomState using the named core BitGenerator
     """
-    try:
-        bit_generator_name = bit_generator_name.decode("ascii")
-    except AttributeError:
-        pass
+    bit_generator_name = _decode(bit_generator_name)
+    assert isinstance(bit_generator_name, str)
     bit_generator = _get_bitgenerator(bit_generator_name)
     with warnings.catch_warnings():
         warnings.filterwarnings("ignore", category=FutureWarning)
