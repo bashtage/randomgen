@@ -241,7 +241,7 @@ class TestSetState(object):
         new_state = ("Unknown",) + state[1:]
         assert_raises(ValueError, self.random_state.set_state, new_state)
         assert_raises(
-            TypeError, self.random_state.set_state, np.array(new_state, dtype=np.object)
+            TypeError, self.random_state.set_state, np.array(new_state, dtype=object)
         )
         state = self.random_state.get_state(legacy=False)
         del state["bit_generator"]
@@ -408,7 +408,7 @@ class TestRandint(object):
             sample = self.rfunc(lbnd, ubnd, dtype=dt)
             assert_equal(sample.dtype, np.dtype(dt))
 
-        for dt in (bool, int, np.long):
+        for dt in (bool, int):
             lbnd = 0 if dt is bool else np.iinfo(dt).min
             ubnd = 2 if dt is bool else np.iinfo(dt).max + 1
 
@@ -485,7 +485,7 @@ class TestRandomDist(object):
         random.seed(self.seed)
         rs = random.RandomState(self.seed)
         actual = rs.tomaxint(size=(3, 2))
-        if np.iinfo(np.int).max == 2147483647:
+        if np.iinfo(int).max == 2147483647:
             desired = np.array(
                 [
                     [1328851649, 731237375],

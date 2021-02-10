@@ -1053,7 +1053,6 @@ class TestAESCounter(TestPhilox):
         print(2 ** 128 - 2)
         bg = self.bit_generator(counter=2 ** 128 - 2, mode="sequence")
         state = bg.state
-        print(state)
         assert_equal(
             state["s"]["counter"][-4:], np.array([0, 0, 1, 0], dtype=np.uint64)
         )

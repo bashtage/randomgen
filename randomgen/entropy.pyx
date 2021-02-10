@@ -65,7 +65,7 @@ def seed_by_array(object seed, Py_ssize_t n):
         seed_array = np.array([int_seed], dtype=np.uint64)
     else:
         err_msg = "Seed values must be integers between 0 and 2**64 - 1"
-        obj = np.asarray(seed).astype(np.object)
+        obj = np.asarray(seed).astype(object)
         if obj.ndim != 1:
             raise ValueError("Array-valued seeds must be 1-dimensional")
         if not np.isreal(obj).all():

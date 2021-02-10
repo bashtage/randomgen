@@ -511,7 +511,7 @@ warnings.filterwarnings("ignore", "Generator", FutureWarning)
         tomaxint(size=None)
 
         Return a sample of uniformly distributed random integers in the interval
-        [0, ``np.iinfo(np.int).max``]. The np.int type translates to the C long
+        [0, ``np.iinfo(int).max``]. The int type translates to the C long
         integer type and its precision is platform dependent.
 
         Parameters
@@ -539,7 +539,7 @@ warnings.filterwarnings("ignore", "Generator", FutureWarning)
                 [ 739731006, 1947757578]],
                [[1871712945,  752307660],
                 [1601631370, 1479324245]]])
-        >>> rg.tomaxint((2,2,2)) < np.iinfo(np.int).max
+        >>> rg.tomaxint((2,2,2)) < np.iinfo(int).max
         array([[[ True,  True],
                 [ True,  True]],
                [[ True,  True],
@@ -549,7 +549,7 @@ warnings.filterwarnings("ignore", "Generator", FutureWarning)
         warnings.warn("tomaxint is deprecated. Use integers.",
                       DeprecationWarning)
 
-        return self.integers(0, np.iinfo(np.int).max + 1, dtype=np.int, size=size)
+        return self.integers(0, np.iinfo(int).max + 1, dtype=int, size=size)
 
     def randint(self, *args, **kwargs):
         """
@@ -594,7 +594,7 @@ warnings.filterwarnings("ignore", "Generator", FutureWarning)
             Desired dtype of the result. All dtypes are determined by their
             name, i.e., 'int64', 'int', etc, so byteorder is not available
             and a specific precision may have different C types depending
-            on the platform. The default value is 'np.int'.
+            on the platform. The default value is 'int'.
 
             .. versionadded:: 1.11.0
 
@@ -699,7 +699,7 @@ warnings.filterwarnings("ignore", "Generator", FutureWarning)
         elif key == "bool":
             ret = _rand_bool(low, high, size, _use_masked, endpoint, &self._bitgen, self.lock)
 
-        if size is None and dtype in (np.bool, np.int, np.long):
+        if size is None and dtype in (bool, int):
             if np.array(ret).shape == ():
                 return dtype(ret)
         return ret
@@ -886,7 +886,8 @@ warnings.filterwarnings("ignore", "Generator", FutureWarning)
                     raise ValueError("Fewer non-zero entries in p than size")
                 n_uniq = 0
                 p = p.copy()
-                found = np.zeros(shape, dtype=np.int64)
+                _shape = () if shape is None else shape
+                found = np.zeros(_shape, dtype=np.int64)
                 flat_found = found.ravel()
                 while n_uniq < size:
                     x = self.random((size - n_uniq,))
@@ -1197,11 +1198,11 @@ warnings.filterwarnings("ignore", "Generator", FutureWarning)
         """
         random_integers(low, high=None, size=None)
 
-        Random integers of type np.int between `low` and `high`, inclusive.
+        Random integers of type int between `low` and `high`, inclusive.
 
-        Return random integers of type np.int from the "discrete uniform"
+        Return random integers of type int from the "discrete uniform"
         distribution in the closed interval [`low`, `high`]. If `high` is
-        None (the default), then results are from [1, `low`]. The np.int
+        None (the default), then results are from [1, `low`]. The int
         type translates to the C long integer type and its precision
         is platform dependent.
 

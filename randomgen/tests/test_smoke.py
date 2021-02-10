@@ -856,7 +856,7 @@ class RNG(object):
             rg.standard_gamma(1.0, out=existing[::3])
 
     def test_integers_broadcast(self, dtype):
-        if dtype == np.bool:
+        if dtype == bool:
             upper = 2
             lower = 0
         else:
@@ -874,7 +874,7 @@ class RNG(object):
         self._reset_state()
         d = self.rg.integers(
             np.array([lower] * 10),
-            np.array([upper], dtype=np.object),
+            np.array([upper], dtype=object),
             size=10,
             dtype=dtype,
         )
@@ -905,7 +905,7 @@ class RNG(object):
         assert out.shape == (1,)
 
     def test_integers_broadcast_errors(self, dtype):
-        if dtype == np.bool:
+        if dtype == bool:
             upper = 2
             lower = 0
         else:

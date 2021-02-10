@@ -468,7 +468,7 @@ cdef np.ndarray int_to_array(object value, object name, object bits, object uint
         arr[i] = (value >> (uint_size*i)) % 2**uint_size
     """
     req_len = bits // uint_size if bits is not None else None
-    value = np.asarray(value, dtype=np.object)
+    value = np.asarray(value, dtype=object)
     if uint_size == 32:
         dtype = np.uint32
     elif uint_size == 64:

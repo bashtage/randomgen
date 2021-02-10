@@ -83,7 +83,7 @@ cdef object _legacy_rand_{{nptype}}(object low, object high, object size,
 
     if size is not None:
         if (np.prod(size) == 0):
-            return np.empty(size, dtype=np.{{nptype}})
+            return np.empty(size, dtype=np.{{otype}})
 
     low_arr = <np.ndarray>np.array(low, copy=False)
     high_arr = <np.ndarray>np.array(high, copy=False)
@@ -113,7 +113,7 @@ cdef object _legacy_rand_{{nptype}}(object low, object high, object size,
             legacy_random_bounded_{{utype}}_fill(aug_state, off, rng, 1, &out_val)
         return np.{{otype}}(<{{nptype}}_t>out_val)
     else:
-        out_arr = <np.ndarray>np.empty(size, np.{{nptype}})
+        out_arr = <np.ndarray>np.empty(size, np.{{otype}})
         cnt = np.PyArray_SIZE(out_arr)
         out_data = <{{utype}}_t *>np.PyArray_DATA(out_arr)
         with lock, nogil:

@@ -459,8 +459,8 @@ class TestIntegers(object):
 
     def test_repeatability_broadcasting(self, endpoint):
         for dt in self.itype:
-            lbnd = 0 if dt in (np.bool, bool, np.bool_) else np.iinfo(dt).min
-            ubnd = 2 if dt in (np.bool, bool, np.bool_) else np.iinfo(dt).max + 1
+            lbnd = 0 if dt in (bool, np.bool_) else np.iinfo(dt).min
+            ubnd = 2 if dt in (bool, np.bool_) else np.iinfo(dt).max + 1
             ubnd = ubnd - 1 if endpoint else ubnd
 
             # view as little endian for hash
@@ -529,8 +529,8 @@ class TestIntegers(object):
                     dtype=dtype,
                 )
 
-                low_o = np.array([[low] * 10], dtype=np.object)
-                high_o = np.array([high] * 10, dtype=np.object)
+                low_o = np.array([[low] * 10], dtype=object)
+                high_o = np.array([high] * 10, dtype=object)
                 assert_raises(
                     ValueError,
                     random.integers,
@@ -590,7 +590,7 @@ class TestIntegers(object):
             sample = self.rfunc(lbnd, ubnd, endpoint=endpoint, dtype=dt)
             assert_equal(sample.dtype, dt)
 
-        for dt in (bool, int, np.long):
+        for dt in (bool, int):
             lbnd = 0 if dt is bool else np.iinfo(dt).min
             ubnd = 2 if dt is bool else np.iinfo(dt).max + 1
             ubnd = ubnd - 1 if endpoint else ubnd
@@ -2577,7 +2577,7 @@ class TestSingleEltArrayInput(object):
 
     def test_integers(self, endpoint):
         itype = [
-            np.bool,
+            bool,
             np.int8,
             np.uint8,
             np.int16,
