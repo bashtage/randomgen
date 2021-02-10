@@ -115,5 +115,4 @@ def test_32():
     gen = Generator(bg)
     assert gen.integers(0, 2 ** 64, dtype=np.uint64) == np.iinfo(np.uint64).max
     np.testing.assert_allclose(gen.random(), (2 ** 53 - 1) / (2 ** 53), rtol=1e-14)
-    print(repr(bg))
     assert "UserBitGenerator(Python)" in repr(bg)

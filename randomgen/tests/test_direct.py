@@ -1,6 +1,7 @@
 from functools import partial
 import os
 from os.path import join
+from typing import Any, Dict, Tuple, Union
 
 import numpy as np
 from numpy.testing import (
@@ -75,7 +76,7 @@ try:
 except ImportError:
     MISSING_CTYPES = False
 
-ISEED_SEQUENCES = (ISeedSequence,)
+ISEED_SEQUENCES: Tuple[Any, ...] = (ISeedSequence,)
 # NumPy 1.17
 try:
     ISEED_SEQUENCES += (np.random.bit_generator.ISeedSequence,)
@@ -198,7 +199,8 @@ def gauss_from_uint(x, n, bits):
 
 class Base(object):
     dtype = np.uint64
-    data2 = data1 = {}
+    data2: Dict[str, Union[int, np.ndarray]] = {}
+    data1: Dict[str, Union[int, np.ndarray]] = {}
 
     @classmethod
     def setup_class(cls):
@@ -1047,10 +1049,11 @@ class TestAESCounter(TestPhilox):
 
     def test_large_counter(self):
         # GH 267
-        bg = self.bit_generator(counter=2**128 - 2, mode="sequence")
+        bg = self.bit_generator(counter=2 ** 128 - 2, mode="sequence")
         state = bg.state
-        print(state)
-        assert_equal(state["s"]["counter"][-4:], np.array([0, 0, 1, 0], dtype=np.uint64))
+        assert_equal(
+            state["s"]["counter"][-4:], np.array([0, 0, 1, 0], dtype=np.uint64)
+        )
 
 
 class TestMT19937(Base):

@@ -2,12 +2,16 @@ from distutils.version import LooseVersion
 
 import numpy as np
 import numpy.random
-from numpy.testing import assert_allclose, assert_array_equal, assert_equal
+from numpy.testing import (
+    assert_allclose,
+    assert_array_equal,
+    assert_equal,
+    suppress_warnings,
+)
 import pytest
 
 import randomgen
 from randomgen import MT19937, Generator
-from randomgen._testing import suppress_warnings
 import randomgen.generator
 from randomgen.mtrand import RandomState
 
@@ -47,7 +51,7 @@ def compare_1_input(f1, f2, is_small=False):
 def compare_2_input(f1, f2, is_np=False, is_scalar=False):
     if is_np:
         a, b = 10, 0.3
-        dtype = np.int
+        dtype = int
     else:
         a, b = 2, 3
         dtype = np.double
@@ -91,17 +95,17 @@ def compare_3_input(f1, f2, is_np=False):
         ((a, np.array([b] * 10), c), {"size": 10}),
         (
             (
-                np.ones((1, 37), dtype=np.int) * a,
-                np.ones((23, 1), dtype=np.int) * [b],
-                c * np.ones((7, 1, 1), dtype=np.int),
+                np.ones((1, 37), dtype=int) * a,
+                np.ones((23, 1), dtype=int) * [b],
+                c * np.ones((7, 1, 1), dtype=int),
             ),
             {},
         ),
         (
             (
-                np.ones((1, 37), dtype=np.int) * a,
-                np.ones((23, 1), dtype=np.int) * [b],
-                c * np.ones((7, 1, 1), dtype=np.int),
+                np.ones((1, 37), dtype=int) * a,
+                np.ones((23, 1), dtype=int) * [b],
+                c * np.ones((7, 1, 1), dtype=int),
             ),
             {"size": (7, 23, 37)},
         ),

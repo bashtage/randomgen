@@ -66,10 +66,10 @@ class TestRegression(object):
             [(1, 1), 2, 3, None],
         ]:
             random.seed(12345)
-            shuffled = np.array(list(t), dtype=np.object)
+            shuffled = np.array(list(t), dtype=object)
             random.shuffle(shuffled)
             assert_array_equal(
-                shuffled, np.array([t[0], t[3], t[1], t[2]], dtype=np.object)
+                shuffled, np.array([t[0], t[3], t[1], t[2]], dtype=object)
             )
 
     def test_call_within_randomstate(self):
@@ -131,7 +131,7 @@ class TestRegression(object):
         # a segfault on garbage collection.
         # See gh-7719
         random.seed(1234)
-        a = np.array([np.arange(1), np.arange(4)], dtype=np.object)
+        a = np.array([np.arange(1), np.arange(4)], dtype=object)
 
         for _ in range(1000):
             random.shuffle(a)

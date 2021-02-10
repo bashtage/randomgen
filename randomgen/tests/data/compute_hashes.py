@@ -31,7 +31,7 @@ from randomgen import (
     Xoshiro512,
 )
 
-warnings.filterwarnings("error", "THe default value of inc")
+warnings.filterwarnings("error", "The default value of inc")
 
 try:
     from numpy.random import SeedSequence
@@ -216,7 +216,6 @@ BIT_GEN = {
     "LCG128Mix": LCG128Mix,
 }
 
-computed_hashes = {}
 final_configurations = {}
 for gen in configs:
     args = configs[gen]
@@ -225,7 +224,6 @@ for gen in configs:
     required = args.get("REQUIRED", ("seed",))
     exclude_keys = args.get("EXCLUDE_KEYS", ())
     keys = [k for k in args if k not in ("BLOCKED", "REQUIRED", "EXCLUDE_KEYS")]
-    bit_gen_configs = []
 
     for i in range(1, len(keys) + 1):
         for comb in itertools.combinations(keys, i):

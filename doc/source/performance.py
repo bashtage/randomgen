@@ -225,7 +225,7 @@ rel.pop("NumPy")
 rel = rel.T
 rel["Overall"] = np.exp(np.log(rel).mean(1))
 rel *= 100
-rel = np.round(rel).astype(np.int)
+rel = np.round(rel).astype(int)
 rel.index.name = "Bit Gen"
 print(rel.to_csv(float_format="%0d"))
 

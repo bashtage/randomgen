@@ -1,0 +1,9 @@
+from typing import Literal
+
+import numpy as np
+
+def view_little_endian_shim(arr: np.ndarray, dtype: str) -> np.ndarray: ...
+def int_to_array_shim(
+    value: int, name: str, bits: int, uint_size: Literal[32, 64]
+) -> np.ndarray: ...
+def byteswap_little_endian_shim(arr: np.ndarray) -> np.ndarray: ...

@@ -157,7 +157,7 @@ cdef class MT64(BitGenerator):
             obj = np.asarray(seed)
             if obj.size == 0:
                 raise ValueError("Seed must be non-empty")
-            obj = obj.astype(np.object, casting="safe")
+            obj = obj.astype(object, casting="safe")
             if np.PyArray_NDIM(obj) != 1:
                 raise ValueError("Seed array must be 1-d")
             if ((obj > int(2**64 - 1)) | (obj < 0)).any():

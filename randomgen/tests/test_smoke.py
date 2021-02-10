@@ -5,7 +5,13 @@ import sys
 import time
 
 import numpy as np
-from numpy.testing import assert_, assert_almost_equal, assert_array_equal, assert_equal
+from numpy.testing import (
+    assert_,
+    assert_almost_equal,
+    assert_array_equal,
+    assert_equal,
+    suppress_warnings,
+)
 import pytest
 
 from randomgen import (
@@ -34,13 +40,12 @@ from randomgen import (
     Xoshiro512,
     entropy,
 )
-from randomgen._testing import suppress_warnings
 
 
 @pytest.fixture(
     scope="module",
     params=(
-        np.bool,
+        bool,
         np.int8,
         np.int16,
         np.int32,
@@ -851,7 +856,7 @@ class RNG(object):
             rg.standard_gamma(1.0, out=existing[::3])
 
     def test_integers_broadcast(self, dtype):
-        if dtype == np.bool:
+        if dtype == bool:
             upper = 2
             lower = 0
         else:
@@ -869,7 +874,7 @@ class RNG(object):
         self._reset_state()
         d = self.rg.integers(
             np.array([lower] * 10),
-            np.array([upper], dtype=np.object),
+            np.array([upper], dtype=object),
             size=10,
             dtype=dtype,
         )
@@ -900,7 +905,7 @@ class RNG(object):
         assert out.shape == (1,)
 
     def test_integers_broadcast_errors(self, dtype):
-        if dtype == np.bool:
+        if dtype == bool:
             upper = 2
             lower = 0
         else:

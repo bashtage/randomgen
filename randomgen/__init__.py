@@ -1,5 +1,6 @@
 import os
 import sys
+from typing import List, Union
 
 from randomgen.aes import AESCounter
 from randomgen.chacha import ChaCha
@@ -72,7 +73,7 @@ __version__ = get_versions()["version"]
 del get_versions
 
 
-def test(extra_args=None):
+def test(extra_args: Union[str, List[str]] = None) -> None:
     try:
         import pytest
     except ImportError as err:
@@ -81,6 +82,7 @@ def test(extra_args=None):
     if extra_args:
         if not isinstance(extra_args, list):
             extra_args = [extra_args]
+        assert isinstance(extra_args, list)
         cmd = extra_args
     cmd += [PKG_TESTS]
     joined = " ".join(cmd)
