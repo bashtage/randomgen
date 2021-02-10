@@ -22,5 +22,6 @@ CMD="$CMD cython"
 if [[ -n ${CYTHON} ]]; then CMD="$CMD==${CYTHON}"; fi;
 CMD="$CMD pandas"
 CMD="$CMD $EXTRA"
+if [[ ${USE_CONDA} == "true" ]]; then CMD="$CMD numba"; fi;
 echo $CMD
 eval $CMD

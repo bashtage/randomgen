@@ -1049,8 +1049,6 @@ class TestAESCounter(TestPhilox):
 
     def test_large_counter(self):
         # GH 267
-        print(self.bit_generator)
-        print(2 ** 128 - 2)
         bg = self.bit_generator(counter=2 ** 128 - 2, mode="sequence")
         state = bg.state
         assert_equal(

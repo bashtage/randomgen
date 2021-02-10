@@ -130,6 +130,8 @@ def test_ctypes():
         cmd = ["gcc", "-shared", "-o", so_loc, o_loc]
         print(" ".join(cmd))
         subprocess.call(cmd)
+        if not os.path.exists(so_loc):
+            raise FileNotFoundError(f"{so_loc} does not exist")
     except Exception as exc:
         pytest.skip(
             "GCC unavailable or other error compiling the test library" + str(exc)
