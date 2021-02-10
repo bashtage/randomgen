@@ -83,7 +83,7 @@ Differences from NumPy 1.17+
   * :func:`~randomgen.generator.Generator.random_sample`\, :func:`~randomgen.generator.Generator.rand` → :func:`~randomgen.generator.Generator.random`
   * :func:`~randomgen.generator.Generator.random_integers`\, :func:`~randomgen.generator.Generator.randint` → :func:`~randomgen.generator.Generator.integers`
   * :func:`~randomgen.generator.Generator.randn` → :func:`~randomgen.generator.Generator.standard_normal`
-  * :func:`~randomgen.generator.Generator.tomaxint` → :func:`~randomgen.generator.Generator.integers` with ``dtype`` set to ``np.long``
+  * :func:`~randomgen.generator.Generator.tomaxint` → :func:`~randomgen.generator.Generator.integers` with ``dtype`` set to ``int``
 
 * randomgen's bit generators remain seedable and the convenience function
   :func:`~randomgen.generator.Generator.seed` is exposed as part of
@@ -202,7 +202,7 @@ Differences from NumPy before 1.17
 
   rg.seed(1234)
   lower = np.zeros((2, 1), dtype=np.uint64)
-  upper = np.array([10, np.iinfo(np.uint64).max+1], dtype=np.object)
+  upper = np.array([10, np.iinfo(np.uint64).max+1], dtype=object)
   upper
   rg.integers(lower, upper, dtype=np.uint64)
   rg.seed(1234)
