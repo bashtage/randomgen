@@ -6,14 +6,14 @@ This package contains additional bit generators for NumPy's
 
 **Continuous Integration**
 
-[![Build Status](https://dev.azure.com/kevinksheppard0207/kevinksheppard/_apis/build/status/bashtage.randomgen?branchName=master)](https://dev.azure.com/kevinksheppard0207/kevinksheppard/_build/latest?definitionId=2&branchName=master)
-[![Appveyor Build Status](https://ci.appveyor.com/api/projects/status/odc5c4ukhru5xicl/branch/master?svg=true)](https://ci.appveyor.com/project/bashtage/randomgen/branch/master)
+[![Build Status](https://dev.azure.com/kevinksheppard0207/kevinksheppard/_apis/build/status/bashtage.randomgen?branchName=main)](https://dev.azure.com/kevinksheppard0207/kevinksheppard/_build/latest?definitionId=2&branchName=main)
+[![Appveyor Build Status](https://ci.appveyor.com/api/projects/status/odc5c4ukhru5xicl/branch/main?svg=true)](https://ci.appveyor.com/project/bashtage/randomgen/branch/main)
 [![Build Status](https://cloud.drone.io/api/badges/bashtage/randomgen/status.svg)](https://cloud.drone.io/bashtage/randomgen)
 [![FreeBSD Status on Cirrus](https://api.cirrus-ci.com/github/bashtage/randomgen.svg)](https://cirrus-ci.com/github/bashtage/randomgen)
 
 **Coverage**
 
-[![codecov](https://codecov.io/gh/bashtage/randomgen/branch/master/graph/badge.svg)](https://codecov.io/gh/bashtage/randomgen)
+[![codecov](https://codecov.io/gh/bashtage/randomgen/branch/main/graph/badge.svg)](https://codecov.io/gh/bashtage/randomgen)
 
 **Latest Release**
 
@@ -86,7 +86,7 @@ number generators in addition to the MT19937 that is included in NumPy.
 The RNGs include:
 
 * Cryptographic cipher-based random number generator based on AES, ChaCha20, HC128 and Speck128.
-* [MT19937](https://github.com/numpy/numpy/blob/master/numpy/random/mtrand/),
+* [MT19937](https://github.com/numpy/numpy/blob/main/numpy/random/mtrand/),
  the NumPy rng
 * [dSFMT](http://www.math.sci.hiroshima-u.ac.jp/~m-mat/MT/SFMT/) a
   SSE2-aware version of the MT19937 generator that is especially fast at
