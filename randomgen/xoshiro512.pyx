@@ -106,7 +106,7 @@ cdef class Xoshiro512(BitGenerator):
     References
     ----------
     .. [1] "xoroshiro+ / xorshift* / xorshift+ generators and the PRNG shootout",
-           http://xorshift.di.unimi.it/
+           https://prng.di.unimi.it/
     """
     def __init__(self, seed=None, *, mode=None):
         BitGenerator.__init__(self, seed, mode)

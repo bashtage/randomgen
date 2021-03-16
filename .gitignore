@@ -18,3 +18,5 @@ randomgen/tests/*.c
 randomgen/legacy/bounded_integers.c
 randomgen/legacy/bounded_integers.pyx
 randomgen/legacy/bounded_integers.pxd
+doc/build
+doc/**/generated

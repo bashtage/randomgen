@@ -100,7 +100,7 @@ cdef class SFC64(BitGenerator):
     ----------
     .. [1] "PractRand". http://pracrand.sourceforge.net/RNG_engines.txt.
     .. [2] "Random Invertible Mapping Statistics".
-       http://www.pcg-random.org/posts/random-invertible-mapping-statistics.html.
+       https://www.pcg-random.org/posts/random-invertible-mapping-statistics.html.
     """
     _seed_seq_len = 4
     _seed_seq_dtype = np.uint64

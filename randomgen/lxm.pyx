@@ -117,7 +117,7 @@ cdef class LXM(BitGenerator):
     .. [2] Marsaglia, George. "Xorshift RNGs." Journal of Statistical Software
            [Online], 8.14, pp. 1 - 6, 2003.
     .. [3] "xorshift*/xorshift+ generators and the PRNG shootout",
-           http://xorshift.di.unimi.it/.
+           https://prng.di.unimi.it/.
     .. [4] David Stafford (2011, September 28). Better Bit Mixing - Improving
            on MurmurHash3's 64-bit Finalizer.  Retrieved June 01, 2020, from
            https://zimbry.blogspot.com/2011/09/better-bit-mixing-improving-on.html.

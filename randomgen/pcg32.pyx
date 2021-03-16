@@ -94,7 +94,7 @@ cdef class PCG32(BitGenerator):
     References
     ----------
     .. [1] "PCG, A Family of Better Random Number Generators",
-           http://www.pcg-random.org/
+           https://www.pcg-random.org/
     .. [2] O'Neill, Melissa E. "PCG: A Family of Simple Fast Space-Efficient
            Statistically Good Algorithms for Random Number Generation"
     """

@@ -4,7 +4,7 @@
 #
 # This file does only contain a selection of the most common options. For a
 # full list see the documentation:
-# http://www.sphinx-doc.org/en/stable/config
+# https://www.sphinx-doc.org/en/stable/config
 
 # -- Path setup --------------------------------------------------------------
 
@@ -44,7 +44,7 @@ release = randomgen.__version__
 # extensions coming with Sphinx (named 'sphinx.ext.*') or your custom
 # ones.
 extensions = [
-    "sphinx.ext.napoleon",
+    "numpydoc",
     "sphinx.ext.autodoc",
     "sphinx.ext.extlinks",
     "sphinx.ext.todo",
@@ -118,7 +118,7 @@ html_theme = "sphinx_material"
 
 # sphinx_material theme options (see theme.conf for more information)
 html_theme_options = {
-    "base_url": "http://bashtage.github.io/randomgen/",
+    "base_url": "https://bashtage.github.io/randomgen/",
     "repo_url": "https://github.com/bashtage/randomgen/",
     "repo_name": "randomgen",
     # Set the name of the project to appear in the sidebar

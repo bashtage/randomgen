@@ -39,6 +39,7 @@ jobs:
       run: |
         pushd doc
         make html
+        make html
         popd
     - name: Deploy documentation
       run: source ci/github-actions/push-docs-gh-pages.sh

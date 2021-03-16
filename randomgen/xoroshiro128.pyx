@@ -122,7 +122,7 @@ cdef class Xoroshiro128(BitGenerator):
     References
     ----------
     .. [1] "xoroshiro+ / xorshift* / xorshift+ generators and the PRNG shootout",
-           http://xorshift.di.unimi.it/
+           https://prng.di.unimi.it/
     """
     def __init__(self, seed=None, *, mode=None, plusplus=False):
         BitGenerator.__init__(self, seed, mode)

@@ -113,7 +113,7 @@ R123_STATIC_INLINE Word mulhilo##W(Word ax, Word b, Word *hip){      \
 /*
 // A template for mulhilo using MSVC-style intrinsics
 // For example,_umul128 is an msvc intrinsic, c.f.
-// http://msdn.microsoft.com/en-us/library/3dayytw9.aspx
+// https://msdn.microsoft.com/en-us/library/3dayytw9.aspx
 */
 #define _mulhilo_msvc_intrin_tpl(W, Word, INTRIN)               \
 R123_STATIC_INLINE Word mulhilo##W(Word a, Word b, Word* hip){       \

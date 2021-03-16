@@ -107,7 +107,7 @@ cdef class Xoshiro256(BitGenerator):
     References
     ----------
     .. [1] "xoroshiro+ / xorshift* / xorshift+ generators and the PRNG shootout",
-           http://xorshift.di.unimi.it/
+           https://prng.di.unimi.it/
     """
     _seed_seq_len = 4
     _seed_seq_dtype = np.uint64

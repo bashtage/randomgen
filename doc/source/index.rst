@@ -114,8 +114,8 @@ generators, 'in addition' to the standard PRNG in NumPy.  The included PRNGs are
 
 .. _`NumPy's documentation`: https://docs.scipy.org/doc/numpy/reference/routines.random.html
 .. _`dSFMT authors' page`: http://www.math.sci.hiroshima-u.ac.jp/~m-mat/MT/SFMT/
-.. _`xorshift, xoroshiro and xoshiro authors' page`:  http://xoroshiro.di.unimi.it/
-.. _`PCG author's page`: http://www.pcg-random.org/
+.. _`xorshift, xoroshiro and xoshiro authors' page`:  https://prng.di.unimi.it/
+.. _`PCG author's page`: https://www.pcg-random.org/
 .. _`Random123`: https://www.deshawresearch.com/resources_random123.html
 
 Random Generator

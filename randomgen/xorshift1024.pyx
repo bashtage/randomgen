@@ -105,7 +105,7 @@ cdef class Xorshift1024(BitGenerator):
     References
     ----------
     .. [1] "xorshift*/xorshift+ generators and the PRNG shootout",
-           http://xorshift.di.unimi.it/
+           https://prng.di.unimi.it/
     .. [2] Marsaglia, George. "Xorshift RNGs." Journal of Statistical Software
            [Online], 8.14, pp. 1 - 6, 2003.
     .. [3] Sebastiano Vigna. "An experimental exploration of Marsaglia's xorshift

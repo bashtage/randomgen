@@ -20,7 +20,7 @@ struct LXM_STATE_T {
 typedef struct LXM_STATE_T lxm_state_t;
 
 static inline uint64_t rotl(const uint64_t x, int k) {
-  /* http://prng.di.unimi.it/xoshiro256plus.c */
+  /* https://prng.di.unimi.it/xoshiro256plus.c */
   return (x << k) | (x >> (64 - k));
 }
 
@@ -29,14 +29,14 @@ static inline uint64_t rotl(const uint64_t x, int k) {
  */
 
 static inline uint64_t murmur_hash3(uint64_t key) {
-  /* http://prng.di.unimi.it/splitmix64.c */
+  /* https://prng.di.unimi.it/splitmix64.c */
   key = (key ^ (key >> 30)) * 0xbf58476d1ce4e5b9;
   key = (key ^ (key >> 27)) * 0x94d049bb133111eb;
   return key ^ (key >> 31);
 }
 
 static inline void xorshift(lxm_state_t *state) {
-  /* http://prng.di.unimi.it/xoshiro256plus.c */
+  /* https://prng.di.unimi.it/xoshiro256plus.c */
   const uint64_t t = state->x[1] << 17;
 
   state->x[2] ^= state->x[0];
