@@ -7,7 +7,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ *     https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -18,7 +18,7 @@
  * ------------------------------------------------------------------------------------------------
  *
  * Website: romu-random.org
- * Paper:   http://arxiv.org/abs/2002.11331
+ * Paper:   https://arxiv.org/abs/2002.11331
  *
  * Copy and paste the generator you want from those below.
  * To compile, you will need to #include <stdint.h> and use the ROTL definition

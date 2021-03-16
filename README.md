@@ -91,11 +91,11 @@ The RNGs include:
 * [dSFMT](http://www.math.sci.hiroshima-u.ac.jp/~m-mat/MT/SFMT/) a
   SSE2-aware version of the MT19937 generator that is especially fast at
   generating doubles
-* [xoroshiro128+](http://xoroshiro.di.unimi.it/),
-  [xorshift1024*φ](http://xorshift.di.unimi.it/),
-  [xoshiro256**](http://xorshift.di.unimi.it/),
-  and [xoshiro512**](http://xorshift.di.unimi.it/)
-* [PCG64](http://www.pcg-random.org/)
+* [xoroshiro128+](https://prng.di.unimi.it/),
+  [xorshift1024*φ](https://prng.di.unimi.it/),
+  [xoshiro256**](https://prng.di.unimi.it/),
+  and [xoshiro512**](https://prng.di.unimi.it/)
+* [PCG64](https://www.pcg-random.org/)
 * ThreeFry and Philox from [Random123](https://www.deshawresearch.com/resources_random123.html)
 * Other cryptographic-based generators: `AESCounter`, `SPECK128`, `ChaCha`, and `HC128`.
 * Hardware (non-reproducible) random number generator on AMD64 using `RDRAND`.
@@ -120,9 +120,9 @@ The package version matches the latest version of NumPy where
 ## Documentation
 
 Documentation for the latest release is available on
-[my GitHub pages](http://bashtage.github.io/randomgen/). Documentation for
+[my GitHub pages](https://bashtage.github.io/randomgen/). Documentation for
 the latest commit (unreleased) is available under
-[devel](http://bashtage.github.io/randomgen/devel/).
+[devel](https://bashtage.github.io/randomgen/devel/).
 
 
 ## Requirements

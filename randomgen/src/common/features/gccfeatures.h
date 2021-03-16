@@ -75,7 +75,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 /* According to the C++0x standard, we should be able to test the numeric
    value of __cplusplus == 199701L for C++98, __cplusplus == 201103L for C++11
-   But gcc has had an open bug  http://gcc.gnu.org/bugzilla/show_bug.cgi?id=1773
+   But gcc has had an open bug  https://gcc.gnu.org/bugzilla/show_bug.cgi?id=1773
    since early 2001, which was finally fixed in 4.7 (early 2012).  For
    earlier versions, the only way  to detect whether --std=c++0x was requested
    on the command line is to look at the __GCC_EXPERIMENTAL_CXX0X__ pp-symbol.

@@ -3,3 +3,4 @@ nbsphinx
 sphinx-material
 sphinx>=3
 ipython>=5
+numpydoc

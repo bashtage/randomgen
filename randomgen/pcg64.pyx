@@ -137,7 +137,7 @@ cdef class PCG64(BitGenerator):
     References
     ----------
     .. [1] "PCG, A Family of Better Random Number Generators",
-           http://www.pcg-random.org/
+           https://www.pcg-random.org/
     .. [2] O'Neill, Melissa E. "PCG: A Family of Simple Fast Space-Efficient
            Statistically Good Algorithms for Random Number Generation"
     """
@@ -635,7 +635,7 @@ cdef class LCG128Mix(BitGenerator):
     References
     ----------
     .. [1] "PCG, A Family of Better Random Number Generators",
-           http://www.pcg-random.org/
+           https://www.pcg-random.org/
     .. [2] O'Neill, Melissa E. "PCG: A Family of Simple Fast Space-Efficient
            Statistically Good Algorithms for Random Number Generation"
     .. [3] L’ecuyer, P. (1999). Tables of linear congruential generators of
@@ -1057,7 +1057,7 @@ cdef class PCG64DXSM(PCG64):
     References
     ----------
     .. [1] "PCG, A Family of Better Random Number Generators",
-           http://www.pcg-random.org/
+           https://www.pcg-random.org/
     .. [2] O'Neill, Melissa E. "PCG: A Family of Simple Fast Space-Efficient
            Statistically Good Algorithms for Random Number Generation"
     .. [3] NumPy GitHub Repository. 2020. The PCG Implementation Provided By

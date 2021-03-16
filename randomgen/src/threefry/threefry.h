@@ -43,7 +43,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
       Skein_FinalRnd/ReferenceImplementation/skein.h
       Skein_FinalRnd/ReferenceImplementation/skein_block.c
 
-   in http://csrc.nist.gov/groups/ST/hash/sha-3/Round3/documents/Skein_FinalRnd.zip
+   in https://csrc.nist.gov/groups/ST/hash/sha-3/Round3/documents/Skein_FinalRnd.zip
 
    This file has been modified so that it may no longer perform its originally
    intended function.  If you're looking for a Skein or Threefish source code,

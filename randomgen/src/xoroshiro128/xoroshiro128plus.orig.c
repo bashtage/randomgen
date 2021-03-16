@@ -4,7 +4,7 @@ To the extent possible under law, the author has dedicated all copyright
 and related and neighboring rights to this software to the public domain
 worldwide. This software is distributed without any warranty.
 
-See <http://creativecommons.org/publicdomain/zero/1.0/>. */
+See <https://creativecommons.org/publicdomain/zero/1.0/>. */
 
 #include <stdint.h>
 
@@ -16,7 +16,7 @@ See <http://creativecommons.org/publicdomain/zero/1.0/>. */
    low linear complexity is not considered an issue (as it is usually the
    case) it can be used to generate 64-bit outputs, too; moreover, this
    generator has a very mild Hamming-weight dependency making our test
-   (http://prng.di.unimi.it/hwd.php) fail after 5 TB of output; we believe
+   (https://prng.di.unimi.it/hwd.php) fail after 5 TB of output; we believe
    this slight bias cannot affect any application. If you are concerned,
    use xoroshiro128** or xoshiro256+.
 
