@@ -1,4 +1,4 @@
-randomgen.generator.Generator.poisson
+﻿randomgen.generator.Generator.poisson
 =====================================
 
 .. currentmodule:: randomgen.generator

@@ -1,4 +1,4 @@
-randomgen.aes.AESCounter.state
+﻿randomgen.aes.AESCounter.state
 ==============================
 
 .. currentmodule:: randomgen.aes

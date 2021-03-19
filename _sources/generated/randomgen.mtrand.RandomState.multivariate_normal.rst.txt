@@ -1,4 +1,4 @@
-randomgen.mtrand.RandomState.multivariate\_normal
+﻿randomgen.mtrand.RandomState.multivariate\_normal
 =================================================
 
 .. currentmodule:: randomgen.mtrand

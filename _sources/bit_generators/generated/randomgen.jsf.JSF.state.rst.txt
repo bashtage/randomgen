@@ -1,4 +1,4 @@
-randomgen.jsf.JSF.state
+﻿randomgen.jsf.JSF.state
 =======================
 
 .. currentmodule:: randomgen.jsf

@@ -1,4 +1,4 @@
-randomgen.mtrand.RandomState.laplace
+﻿randomgen.mtrand.RandomState.laplace
 ====================================
 
 .. currentmodule:: randomgen.mtrand

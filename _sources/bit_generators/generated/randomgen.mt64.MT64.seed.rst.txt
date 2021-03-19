@@ -1,4 +1,4 @@
-randomgen.mt64.MT64.seed
+﻿randomgen.mt64.MT64.seed
 ========================
 
 .. currentmodule:: randomgen.mt64

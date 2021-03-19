@@ -1,4 +1,4 @@
-randomgen.hc128.HC128.random\_raw
+﻿randomgen.hc128.HC128.random\_raw
 =================================
 
 .. currentmodule:: randomgen.hc128

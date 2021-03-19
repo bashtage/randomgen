@@ -1,4 +1,4 @@
-randomgen.sfmt.SFMT.seed
+﻿randomgen.sfmt.SFMT.seed
 ========================
 
 .. currentmodule:: randomgen.sfmt

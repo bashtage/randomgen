@@ -1,4 +1,4 @@
-randomgen.xoshiro512.Xoshiro512.ctypes
+﻿randomgen.xoshiro512.Xoshiro512.ctypes
 ======================================
 
 .. currentmodule:: randomgen.xoshiro512

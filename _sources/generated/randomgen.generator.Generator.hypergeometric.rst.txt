@@ -1,4 +1,4 @@
-randomgen.generator.Generator.hypergeometric
+﻿randomgen.generator.Generator.hypergeometric
 ============================================
 
 .. currentmodule:: randomgen.generator

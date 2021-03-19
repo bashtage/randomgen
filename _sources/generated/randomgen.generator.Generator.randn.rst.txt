@@ -1,4 +1,4 @@
-randomgen.generator.Generator.randn
+﻿randomgen.generator.Generator.randn
 ===================================
 
 .. currentmodule:: randomgen.generator

@@ -1,4 +1,4 @@
-randomgen.threefry.ThreeFry.random\_raw
+﻿randomgen.threefry.ThreeFry.random\_raw
 =======================================
 
 .. currentmodule:: randomgen.threefry

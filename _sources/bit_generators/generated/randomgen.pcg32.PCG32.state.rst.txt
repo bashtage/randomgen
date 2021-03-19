@@ -1,4 +1,4 @@
-randomgen.pcg32.PCG32.state
+﻿randomgen.pcg32.PCG32.state
 ===========================
 
 .. currentmodule:: randomgen.pcg32

@@ -1,4 +1,4 @@
-randomgen.rdrand.RDRAND.cffi
+﻿randomgen.rdrand.RDRAND.cffi
 ============================
 
 .. currentmodule:: randomgen.rdrand

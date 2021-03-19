@@ -1,4 +1,4 @@
-randomgen.xoroshiro128.Xoroshiro128.jumped
+﻿randomgen.xoroshiro128.Xoroshiro128.jumped
 ==========================================
 
 .. currentmodule:: randomgen.xoroshiro128

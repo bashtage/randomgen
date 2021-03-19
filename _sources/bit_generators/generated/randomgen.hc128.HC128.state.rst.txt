@@ -1,4 +1,4 @@
-randomgen.hc128.HC128.state
+﻿randomgen.hc128.HC128.state
 ===========================
 
 .. currentmodule:: randomgen.hc128

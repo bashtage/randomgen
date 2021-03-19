@@ -1,4 +1,4 @@
-randomgen.aes.AESCounter.advance
+﻿randomgen.aes.AESCounter.advance
 ================================
 
 .. currentmodule:: randomgen.aes

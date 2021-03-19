@@ -1,4 +1,4 @@
-randomgen.pcg32.PCG32.random\_raw
+﻿randomgen.pcg32.PCG32.random\_raw
 =================================
 
 .. currentmodule:: randomgen.pcg32

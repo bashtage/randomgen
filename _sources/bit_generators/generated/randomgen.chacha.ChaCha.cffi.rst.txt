@@ -1,4 +1,4 @@
-randomgen.chacha.ChaCha.cffi
+﻿randomgen.chacha.ChaCha.cffi
 ============================
 
 .. currentmodule:: randomgen.chacha

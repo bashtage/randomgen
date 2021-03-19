@@ -1,4 +1,4 @@
-randomgen.mtrand.RandomState.noncentral\_chisquare
+﻿randomgen.mtrand.RandomState.noncentral\_chisquare
 ==================================================
 
 .. currentmodule:: randomgen.mtrand

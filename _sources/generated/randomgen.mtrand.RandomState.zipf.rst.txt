@@ -1,4 +1,4 @@
-randomgen.mtrand.RandomState.zipf
+﻿randomgen.mtrand.RandomState.zipf
 =================================
 
 .. currentmodule:: randomgen.mtrand

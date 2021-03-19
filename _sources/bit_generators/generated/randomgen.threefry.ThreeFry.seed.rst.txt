@@ -1,4 +1,4 @@
-randomgen.threefry.ThreeFry.seed
+﻿randomgen.threefry.ThreeFry.seed
 ================================
 
 .. currentmodule:: randomgen.threefry

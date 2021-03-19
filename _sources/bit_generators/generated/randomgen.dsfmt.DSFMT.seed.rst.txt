@@ -1,4 +1,4 @@
-randomgen.dsfmt.DSFMT.seed
+﻿randomgen.dsfmt.DSFMT.seed
 ==========================
 
 .. currentmodule:: randomgen.dsfmt

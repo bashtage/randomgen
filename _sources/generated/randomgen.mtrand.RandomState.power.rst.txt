@@ -1,4 +1,4 @@
-randomgen.mtrand.RandomState.power
+﻿randomgen.mtrand.RandomState.power
 ==================================
 
 .. currentmodule:: randomgen.mtrand

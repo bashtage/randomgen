@@ -1,4 +1,4 @@
-randomgen.mtrand.RandomState.weibull
+﻿randomgen.mtrand.RandomState.weibull
 ====================================
 
 .. currentmodule:: randomgen.mtrand

@@ -1,4 +1,4 @@
-randomgen.wrapper.UserBitGenerator.state
+﻿randomgen.wrapper.UserBitGenerator.state
 ========================================
 
 .. currentmodule:: randomgen.wrapper

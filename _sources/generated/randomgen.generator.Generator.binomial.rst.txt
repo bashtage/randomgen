@@ -1,4 +1,4 @@
-randomgen.generator.Generator.binomial
+﻿randomgen.generator.Generator.binomial
 ======================================
 
 .. currentmodule:: randomgen.generator

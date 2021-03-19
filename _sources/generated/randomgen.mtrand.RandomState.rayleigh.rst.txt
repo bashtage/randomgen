@@ -1,4 +1,4 @@
-randomgen.mtrand.RandomState.rayleigh
+﻿randomgen.mtrand.RandomState.rayleigh
 =====================================
 
 .. currentmodule:: randomgen.mtrand

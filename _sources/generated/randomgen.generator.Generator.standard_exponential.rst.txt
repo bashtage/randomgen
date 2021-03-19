@@ -1,4 +1,4 @@
-randomgen.generator.Generator.standard\_exponential
+﻿randomgen.generator.Generator.standard\_exponential
 ===================================================
 
 .. currentmodule:: randomgen.generator

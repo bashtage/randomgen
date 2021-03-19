@@ -1,4 +1,4 @@
-randomgen.wrapper.UserBitGenerator.from\_cfunc
+﻿randomgen.wrapper.UserBitGenerator.from\_cfunc
 ==============================================
 
 .. currentmodule:: randomgen.wrapper

@@ -1,4 +1,4 @@
-randomgen.generator.Generator.rayleigh
+﻿randomgen.generator.Generator.rayleigh
 ======================================
 
 .. currentmodule:: randomgen.generator

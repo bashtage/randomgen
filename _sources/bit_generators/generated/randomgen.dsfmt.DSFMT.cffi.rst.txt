@@ -1,4 +1,4 @@
-randomgen.dsfmt.DSFMT.cffi
+﻿randomgen.dsfmt.DSFMT.cffi
 ==========================
 
 .. currentmodule:: randomgen.dsfmt

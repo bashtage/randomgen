@@ -1,4 +1,4 @@
-randomgen.xoroshiro128.Xoroshiro128.state
+﻿randomgen.xoroshiro128.Xoroshiro128.state
 =========================================
 
 .. currentmodule:: randomgen.xoroshiro128

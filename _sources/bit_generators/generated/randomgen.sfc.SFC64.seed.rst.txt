@@ -1,4 +1,4 @@
-randomgen.sfc.SFC64.seed
+﻿randomgen.sfc.SFC64.seed
 ========================
 
 .. currentmodule:: randomgen.sfc

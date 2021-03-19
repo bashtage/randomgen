@@ -1,4 +1,4 @@
-randomgen.xoroshiro128.Xoroshiro128.cffi
+﻿randomgen.xoroshiro128.Xoroshiro128.cffi
 ========================================
 
 .. currentmodule:: randomgen.xoroshiro128

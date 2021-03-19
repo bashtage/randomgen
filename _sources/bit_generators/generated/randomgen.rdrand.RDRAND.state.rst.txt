@@ -1,4 +1,4 @@
-randomgen.rdrand.RDRAND.state
+﻿randomgen.rdrand.RDRAND.state
 =============================
 
 .. currentmodule:: randomgen.rdrand

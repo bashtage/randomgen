@@ -1,4 +1,4 @@
-randomgen.generator.Generator.zipf
+﻿randomgen.generator.Generator.zipf
 ==================================
 
 .. currentmodule:: randomgen.generator

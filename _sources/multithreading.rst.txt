@@ -39,7 +39,7 @@ that the same seed will produce the same outputs.
             self.n = n
             self.executor = concurrent.futures.ThreadPoolExecutor(threads)
             self.values = np.zeros(n)
-            self.step = np.ceil(n / threads).astype(np.int)
+            self.step = np.ceil(n / threads).astype(int)
 
         def fill(self):
             def _fill(random_state, out, first, last):

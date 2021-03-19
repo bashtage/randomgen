@@ -1,4 +1,4 @@
-randomgen.threefry.ThreeFry.state
+﻿randomgen.threefry.ThreeFry.state
 =================================
 
 .. currentmodule:: randomgen.threefry

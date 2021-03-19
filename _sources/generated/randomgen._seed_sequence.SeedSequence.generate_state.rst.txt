@@ -1,4 +1,4 @@
-randomgen.\_seed\_sequence.SeedSequence.generate\_state
+﻿randomgen.\_seed\_sequence.SeedSequence.generate\_state
 =======================================================
 
 .. currentmodule:: randomgen._seed_sequence

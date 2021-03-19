@@ -1,4 +1,4 @@
-randomgen.pcg64.LCG128Mix.jumped
+﻿randomgen.pcg64.LCG128Mix.jumped
 ================================
 
 .. currentmodule:: randomgen.pcg64

@@ -1,4 +1,4 @@
-randomgen.generator.Generator.dirichlet
+﻿randomgen.generator.Generator.dirichlet
 =======================================
 
 .. currentmodule:: randomgen.generator

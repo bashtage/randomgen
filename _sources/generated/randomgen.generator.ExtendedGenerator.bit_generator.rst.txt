@@ -1,4 +1,4 @@
-randomgen.generator.ExtendedGenerator.bit\_generator
+﻿randomgen.generator.ExtendedGenerator.bit\_generator
 ====================================================
 
 .. currentmodule:: randomgen.generator

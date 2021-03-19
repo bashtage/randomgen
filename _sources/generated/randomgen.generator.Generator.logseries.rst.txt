@@ -1,4 +1,4 @@
-randomgen.generator.Generator.logseries
+﻿randomgen.generator.Generator.logseries
 =======================================
 
 .. currentmodule:: randomgen.generator

@@ -1,4 +1,4 @@
-randomgen.generator.Generator.pareto
+﻿randomgen.generator.Generator.pareto
 ====================================
 
 .. currentmodule:: randomgen.generator
