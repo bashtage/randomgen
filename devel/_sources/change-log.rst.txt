@@ -15,6 +15,15 @@ Change Log
   maintained until after NumPy 1.21 (or 2 releases after NumPy 1.19) for users who
   cannot update NumPy.
 
+v1.20.0
+=======
+- Sync upstream changes from NumPy
+- Added typing information
+- Corrected a buffer access in :class:`~randomgen.threefry.ThreeFry` and
+  :class:`~randomgen.philox.Philox`.
+- Fixed a bug in :class:`~randomgen.aes.AESCounter` that prevented a small
+  number of counter values from being directly set.
+
 v1.19.3
 =======
 - Future proofed setup against ``setuptools`` and ``distutils`` changes.
