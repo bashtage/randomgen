@@ -146,6 +146,12 @@ class TestMultinomial(object):
         assert_(np.all(-5 <= x))
         assert_(np.all(x < -1))
 
+    def test_multidimensional_pvals(self):
+        assert_raises(ValueError, random.multinomial, 10, [[0, 1]])
+        assert_raises(ValueError, random.multinomial, 10, [[0], [1]])
+        assert_raises(ValueError, random.multinomial, 10, [[[0], [1]], [[1], [0]]])
+        assert_raises(ValueError, random.multinomial, 10, np.array([[0, 1], [1, 0]]))
+
     def test_size(self):
         # gh-3173
         p = [0.5, 0.5]
@@ -813,6 +819,11 @@ class TestRandomDist(object):
         # gh-2089
         alpha = np.array([5.4e-01, -1.0e-16])
         assert_raises(ValueError, random.dirichlet, alpha)
+
+        assert_raises(ValueError, random.dirichlet, [[5, 1]])
+        assert_raises(ValueError, random.dirichlet, [[5], [1]])
+        assert_raises(ValueError, random.dirichlet, [[[5], [1]], [[1], [5]]])
+        assert_raises(ValueError, random.dirichlet, np.array([[5, 1], [1, 5]]))
 
     def test_dirichlet_non_contiguous_alpha(self):
         a = np.array([51.72840233779265162, -1.0, 39.74494232180943953])
@@ -2102,6 +2113,16 @@ def test_integer_repeat(int_func):
         val = val.byteswap()
     res = hashlib.md5(val.view(np.int8)).hexdigest()
     assert_(res == md5)
+
+
+def test_broadcast_size_error():
+    # GH-16833
+    with pytest.raises(ValueError):
+        random.binomial(1, [0.3, 0.7], size=(2, 1))
+    with pytest.raises(ValueError):
+        random.binomial([1, 2], 0.3, size=(2, 1))
+    with pytest.raises(ValueError):
+        random.binomial([1, 2], [0.3, 0.7], size=(2, 1))
 
 
 def test_aliases():

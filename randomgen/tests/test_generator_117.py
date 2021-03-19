@@ -93,10 +93,11 @@ def uniform():
     low = positive_param()
     high = positive_param()
     scale = positive_param()
-    return [
-        (lo / lo + hi + sc, (lo + hi) / (lo + hi + sc))
-        for lo, hi, sc in zip(low, high, scale)
-    ]
+    out = []
+    for lo, hi, sc in zip(low, high, scale):
+        out.append((lo, lo + hi + sc))
+        assert np.all(out[-1][1] >= out[-1][0])
+    return out
 
 
 def integers():

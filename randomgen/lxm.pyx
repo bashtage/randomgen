@@ -16,7 +16,7 @@ cdef double lxm_double(void* st) nogil:
     return uint64_to_double(lxm_next64(<lxm_state_t *>st))
 
 cdef class LXM(BitGenerator):
-    u"""
+    """
     LXM(seed=None, *, b=3037000493)
 
     Container for the LXM pseudo-random number generator.

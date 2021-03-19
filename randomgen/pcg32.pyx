@@ -20,7 +20,7 @@ cdef uint64_t pcg32_raw(void* st) nogil:
 
 
 cdef class PCG32(BitGenerator):
-    u"""
+    """
     PCG32(seed=None, inc=0, *, mode=None)
 
     Container for the PCG-32 pseudo-random number generator.

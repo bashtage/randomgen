@@ -148,7 +148,7 @@ cdef class BitGenerator:
         """
         return random_raw(&self._bitgen, self.lock, size, output)
 
-    def _benchmark(self, Py_ssize_t cnt, method=u"uint64"):
+    def _benchmark(self, Py_ssize_t cnt, method="uint64"):
         return benchmark(&self._bitgen, self.lock, cnt, method)
 
     @property
@@ -207,11 +207,11 @@ cdef class BitGenerator:
 cdef object benchmark(bitgen_t *bitgen, object lock, Py_ssize_t cnt, object method):
     """Benchmark command used by BitGenerator"""
     cdef Py_ssize_t i
-    if method==u"uint64":
+    if method=="uint64":
         with lock, nogil:
             for i in range(cnt):
                 bitgen.next_uint64(bitgen.state)
-    elif method==u"double":
+    elif method=="double":
         with lock, nogil:
             for i in range(cnt):
                 bitgen.next_double(bitgen.state)
@@ -520,7 +520,7 @@ cdef byteswap_little_endian(arr):
     return arr.byteswap()
 
 cdef validate_output_shape(iter_shape, np.ndarray output):
-    cdef np.npy_intp *shape
+    cdef np.npy_intp *dims
     cdef np.npy_intp ndim, i
     cdef bint error
     dims = np.PyArray_DIMS(output)

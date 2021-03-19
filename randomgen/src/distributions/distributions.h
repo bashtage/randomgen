@@ -1,6 +1,9 @@
 #ifndef _RANDOMDGEN__DISTRIBUTIONS_H_
 #define _RANDOMDGEN__DISTRIBUTIONS_H_
 
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 #include "../common/randomgen_config_numpy.h"
 #include "../common/randomgen_config.h"
@@ -337,5 +340,9 @@ DECLDIR void random_bounded_bool_fill(bitgen_t *bitgen_state, npy_bool off,
 DECLDIR void random_multinomial(bitgen_t *bitgen_state, RAND_INT_TYPE n,
                                 RAND_INT_TYPE *mnix, double *pix, npy_intp d,
                                 binomial_t *binomial);
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif
