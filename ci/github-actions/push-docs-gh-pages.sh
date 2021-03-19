@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
 
+export GIT_REPO_DIR=${PWD}
 echo "Set git email and name"
 git config user.email "kevin.k.sheppard@gmail.com"
 git config user.name "Kevin Sheppard"
@@ -11,22 +12,24 @@ rm -rf devel
 echo "Make a new devel"
 mkdir devel
 echo "Checking for tag"
-GIT_TAG=$(git name-rev --name-only --tags HEAD)
-if [[ ${GIT_TAG} == "undefined" ]]; then
-  echo "Tag is ${GIT_TAG}. Not updating main documents"
-else
+if [[ -n "${GIT_TAG}" ]]; then
   echo "Tag ${GIT_TAG} is defined"
   echo "Copy docs to root"
   echo cp -r ${PWD}/doc/build/html/* ${PWD}/
   cp -r ${PWD}/doc/build/html/* ${PWD}
-  git add Documentation/\*.html
-  git add Documentation/\*.css
-  git add Documentation/\*.js
+else
+  echo "Tag is ${GIT_TAG}. Not updating main documents"
 fi
 echo "Copy docs to devel"
 echo cp -r ${PWD}/doc/build/html/* ${PWD}/devel/
 cp -r ${PWD}/doc/build/html/* ${PWD}/devel/
-echo "Add devel"
+echo "Clean up docs"
+cd ${GIT_REPO_DIR}/doc
+make clean && git clean -xfd
+echo "Add files"
+cd ${GIT_REPO_DIR}
+git add .
+# Ensure key files are added
 git add devel/**/* || true
 git add **/*.html || true
 git add **/*.ipynb || true
