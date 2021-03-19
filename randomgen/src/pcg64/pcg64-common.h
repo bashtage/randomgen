@@ -9,7 +9,7 @@
 #pragma intrinsic(_umul128)
 #endif
 
-#if __GNUC_GNU_INLINE__ && !defined(__cplusplus)
+#if defined(__GNUC_GNU_INLINE__) && !defined(__cplusplus)
 #error Nonstandard GNU inlining semantics. Compile with -std=c99 or better.
 #endif
 

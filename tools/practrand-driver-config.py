@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 """
 This file contains an exampls of a configuration file
 that can be used by practrand-driver.

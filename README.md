@@ -7,7 +7,7 @@ This package contains additional bit generators for NumPy's
 **Continuous Integration**
 
 [![Build Status](https://dev.azure.com/kevinksheppard0207/kevinksheppard/_apis/build/status/bashtage.randomgen?branchName=main)](https://dev.azure.com/kevinksheppard0207/kevinksheppard/_build/latest?definitionId=2&branchName=main)
-[![Appveyor Build Status](https://ci.appveyor.com/api/projects/status/odc5c4ukhru5xicl/branch/main?svg=true)](https://ci.appveyor.com/project/bashtage/randomgen/branch/main)
+[![Appveyor Build Status](https://ci.appveyor.com/api/projects/status/46r9xsmuwi8bxsbj/branch/main?svg=true)](https://ci.appveyor.com/project/bashtage/randomgen/branch/main)
 [![Build Status](https://cloud.drone.io/api/badges/bashtage/randomgen/status.svg)](https://cloud.drone.io/bashtage/randomgen)
 [![FreeBSD Status on Cirrus](https://api.cirrus-ci.com/github/bashtage/randomgen.svg)](https://cirrus-ci.com/github/bashtage/randomgen)
 
@@ -128,12 +128,12 @@ the latest commit (unreleased) is available under
 ## Requirements
 Building requires:
 
-* Python (3.6, 3.7, 3.8)
+* Python (3.6, 3.7, 3.8, 3.9)
 * NumPy (1.14, 1.15, 1.16, 1.17, 1.18, 1.19)
 * Cython (0.29+)
 * tempita (0.5+), if not provided by Cython
 
-Testing requires pytest (5.0.1+).
+Testing requires pytest (6+).
 
 **Note:** it might work with other versions but only tested with these
 versions.

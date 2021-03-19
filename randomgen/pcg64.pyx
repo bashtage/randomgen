@@ -39,7 +39,7 @@ cdef double lcg128mix_double(void* st) nogil:
 
 
 cdef class PCG64(BitGenerator):
-    u"""
+    """
     PCG64(seed=None, inc=0, *, variant="xsl-rr", mode=None)
 
     Container for the PCG-64 pseudo-random number generator.
@@ -507,7 +507,7 @@ cdef class PCG64(BitGenerator):
         return bit_generator
 
 cdef class LCG128Mix(BitGenerator):
-    u"""
+    """
     LCG128Mix(seed=None, inc=None, *, multiplier=47026247687942121848144207491837523525, output="xsl-rr", dxsm_multiplier=15750249268501108917, post=True)
 
     Customizable 128-bit LCG bit generator with output mixing
@@ -968,7 +968,7 @@ cdef class LCG128Mix(BitGenerator):
 
 
 cdef class PCG64DXSM(PCG64):
-    u"""
+    """
     PCG64DXSM(seed=None, inc=None)
 
     Container for the PCG-64 updated with a 64-bit mult using DXSM output func.

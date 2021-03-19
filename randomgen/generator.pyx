@@ -2,6 +2,7 @@
 #cython: wraparound=False, nonecheck=False, boundscheck=False, cdivision=True, language_level=3
 import operator
 import warnings
+from typing import MutableSequence
 
 import numpy as np
 
@@ -453,7 +454,7 @@ warnings.filterwarnings("ignore", "Generator", FutureWarning)
                     0.0, "", CONS_NONE,
                     None)
 
-    def standard_exponential(self, size=None, dtype=np.float64, method=u"zig", out=None):
+    def standard_exponential(self, size=None, dtype=np.float64, method="zig", out=None):
         """
         standard_exponential(size=None, dtype='d', method='zig', out=None)
 
@@ -494,12 +495,12 @@ warnings.filterwarnings("ignore", "Generator", FutureWarning)
         """
         key = np.dtype(dtype).name
         if key == "float64":
-            if method == u"zig":
+            if method == "zig":
                 return double_fill(&random_standard_exponential_zig_fill, &self._bitgen, size, self.lock, out)
             else:
                 return double_fill(&random_standard_exponential_fill, &self._bitgen, size, self.lock, out)
         elif key == "float32":
-            if method == u"zig":
+            if method == "zig":
                 return float_fill(&random_standard_exponential_zig_f, &self._bitgen, size, self.lock, out)
             else:
                 return float_fill(&random_standard_exponential_f, &self._bitgen, size, self.lock, out)
@@ -717,13 +718,13 @@ warnings.filterwarnings("ignore", "Generator", FutureWarning)
 
         Returns
         -------
-        out : str
+        out : bytes
             String of length `length`.
 
         Examples
         --------
         >>> randomgen.generator.bytes(10)
-        ' eh\\x85\\x022SZ\\xbf\\xa4' #random
+        b' eh\\x85\\x022SZ\\xbf\\xa4' # random
 
         """
         cdef Py_ssize_t n_uint32 = ((length - 1) // 4 + 1)
@@ -821,19 +822,23 @@ warnings.filterwarnings("ignore", "Generator", FutureWarning)
         cdef uint64_t set_size, mask
         cdef uint64_t[::1] hash_set
         # Format and Verify input
+        a_original = a
         a = np.array(a, copy=False)
         if a.ndim == 0:
             try:
                 # __index__ must return an integer by python rules.
                 pop_size = operator.index(a.item())
-            except TypeError:
-                raise ValueError("`a` must an array or an integer")
+            except TypeError as exc:
+                raise ValueError("a must be a sequence or an integer, "
+                                 f"not {type(a_original)}") from exc
             if pop_size <= 0 and np.prod(size) != 0:
-                raise ValueError("`a` must be greater than 0 unless no samples are taken")
+                raise ValueError("a must be a positive integer unless no "
+                                 "samples are taken")
         else:
             pop_size = a.shape[axis]
             if pop_size == 0 and np.prod(size) != 0:
-                raise ValueError("`a` cannot be empty unless no samples are taken")
+                raise ValueError("a cannot be empty unless no samples are "
+                                 "taken")
 
         if p is not None:
             d = len(p)
@@ -879,7 +884,7 @@ warnings.filterwarnings("ignore", "Generator", FutureWarning)
                 raise ValueError("Cannot take a larger sample than "
                                  "population when replace=False")
             elif size < 0:
-                raise ValueError("negative dimensions are not allowed")
+                raise ValueError("Negative dimensions are not allowed")
 
             if p is not None:
                 if np.count_nonzero(p > 0) < size:
@@ -988,8 +993,9 @@ warnings.filterwarnings("ignore", "Generator", FutureWarning)
             Lower boundary of the output interval. All values generated will be
             greater than or equal to low. The default value is 0.
         high : float or array_like of floats
-            Upper boundary of the output interval. All values generated will be
-            less than high. The default value is 1.0.
+            Upper boundary of the output interval.  All values generated will be
+            less than or equal to high.  The default value is 1.0. high - low must be
+            non-negative.
         size : int or tuple of ints, optional
             Output shape. If the given shape is, e.g., ``(m, n, k)``, then
             ``m * n * k`` samples are drawn. If size is ``None`` (default),
@@ -1018,7 +1024,13 @@ warnings.filterwarnings("ignore", "Generator", FutureWarning)
         If ``high`` < ``low``, the results are officially undefined
         and may eventually raise an error, i.e. do not rely on this
         function to behave when passed arguments satisfying that
-        inequality condition.
+        inequality condition. The ``high`` limit may be included in the
+        returned array of floats due to floating-point rounding in the
+        equation ``low + (high-low) * random_sample()``. For example:
+
+        >>> x = np.float32(5*0.99999999)
+        >>> x
+        5.0
 
         Examples
         --------
@@ -1044,7 +1056,7 @@ warnings.filterwarnings("ignore", "Generator", FutureWarning)
         """
         cdef bint is_scalar = True
         cdef np.ndarray alow, ahigh, arange
-        cdef double _low, _high, range
+        cdef double _low, _high, rng
         cdef object temp
 
         alow = <np.ndarray>np.PyArray_FROM_OTF(low, np.NPY_DOUBLE, api.NPY_ARRAY_ALIGNED)
@@ -1053,13 +1065,13 @@ warnings.filterwarnings("ignore", "Generator", FutureWarning)
         if np.PyArray_NDIM(alow) == np.PyArray_NDIM(ahigh) == 0:
             _low = PyFloat_AsDouble(low)
             _high = PyFloat_AsDouble(high)
-            range = _high - _low
-            if not np.isfinite(range):
-                raise OverflowError("Range exceeds valid bounds")
+            rng = _high - _low
+            if not np.isfinite(rng):
+                raise OverflowError('High - low range exceeds valid bounds')
 
             return cont(&random_uniform, &self._bitgen, size, self.lock, 2,
                         _low, "", CONS_NONE,
-                        range, "", CONS_NONE,
+                        rng, 'high - low', CONS_NON_NEGATIVE,
                         0.0, "", CONS_NONE,
                         None)
 
@@ -1073,7 +1085,7 @@ warnings.filterwarnings("ignore", "Generator", FutureWarning)
             raise OverflowError("Range exceeds valid bounds")
         return cont(&random_uniform, &self._bitgen, size, self.lock, 2,
                     alow, "", CONS_NONE,
-                    arange, "", CONS_NONE,
+                    arange, 'high - low', CONS_NON_NEGATIVE,
                     0.0, "", CONS_NONE,
                     None)
 
@@ -1115,9 +1127,9 @@ warnings.filterwarnings("ignore", "Generator", FutureWarning)
         Examples
         --------
         >>> randomgen.generator.rand(3,2)
-        array([[ 0.14022471,  0.96360618],  #random
-               [ 0.37601032,  0.25528411],  #random
-               [ 0.49313049,  0.94909878]]) #random
+        array([[ 0.14022471,  0.96360618],  # random
+               [ 0.37601032,  0.25528411],  # random
+               [ 0.49313049,  0.94909878]]) # random
 
         """
         msg = _rand_dep_message("rand", "random", args, dtype)
@@ -1333,7 +1345,7 @@ warnings.filterwarnings("ignore", "Generator", FutureWarning)
         Examples
         --------
         >>> randomgen.generator.standard_normal()
-        2.1923875335537315 #random
+        2.1923875335537315 # random
 
         >>> s = randomgen.generator.standard_normal(8000)
         >>> s
@@ -2069,33 +2081,45 @@ warnings.filterwarnings("ignore", "Generator", FutureWarning)
         ...                    7515, 8230, 8770])
 
         Does their energy intake deviate systematically from the recommended
-        value of 7725 kJ?
+        value of 7725 kJ? Our null hypothesis will be the absence of deviation,
+        and the alternate hypothesis will be the presence of an effect that could be
+        either positive or negative, hence making our test 2-tailed.
 
-        We have 10 degrees of freedom, so is the sample mean within 95% of the
-        recommended value?
+        Because we are estimating the mean and we have N=11 values in our sample,
+        we have N-1=10 degrees of freedom. We set our significance level to 95% and
+        compute the t statistic using the empirical mean and empirical standard
+        deviation of our intake. We use a ddof of 1 to base the computation of our
+        empirical standard deviation on an unbiased estimate of the variance (note:
+        the final estimate is not unbiased due to the concave nature of the square
+        root).
 
-        >>> s = randomgen.generator.standard_t(10, size=100000)
         >>> np.mean(intake)
         6753.636363636364
         >>> intake.std(ddof=1)
         1142.1232221373727
-
-        Calculate the t statistic, setting the ddof parameter to the unbiased
-        value so the divisor in the standard deviation will be degrees of
-        freedom, N-1.
-
         >>> t = (np.mean(intake)-7725)/(intake.std(ddof=1)/np.sqrt(len(intake)))
+        >>> t
+        -2.8207540608310198
+
+        We draw 1000000 samples from Student's t distribution with the adequate
+        degrees of freedom.
+
         >>> import matplotlib.pyplot as plt
+        >>> s = np.random.default_rng().standard_t(10, size=1000000)
         >>> h = plt.hist(s, bins=100, density=True)
 
-        For a one-sided t-test, how far out in the distribution does the t
-        statistic appear?
+        Does our t statistic land in one of the two critical regions found at
+        both tails of the distribution?
 
-        >>> np.sum(s<t) / float(len(s))
-        0.0090699999999999999  #random
+        >>> np.sum(np.abs(t) < np.abs(s)) / float(len(s))
+        0.018318  #random < 0.05, statistic is in critical region
 
-        So the p-value is about 0.009, which says the null hypothesis has a
-        probability of about 99% of being true.
+        The probability value for this 2-tailed test is about 1.83%, which is
+        lower than the 5% pre-determined significance threshold.
+
+        Therefore, the probability of observing values as extreme as our intake
+        conditionally on the null hypothesis being true is too low, and we reject
+        the null hypothesis of no deviation.
 
         """
         return cont(&random_standard_t, &self._bitgen, size, self.lock, 1,
@@ -3193,7 +3217,7 @@ warnings.filterwarnings("ignore", "Generator", FutureWarning)
         generate zero positive results.
 
         >>> sum(randomgen.generator.binomial(9, 0.1, 20000) == 0)/20000.
-        # answer = 0.38885, or 38%.
+        # answer = 0.38885, or 39%.
 
         """
 
@@ -3270,7 +3294,7 @@ warnings.filterwarnings("ignore", "Generator", FutureWarning)
         n : float or array_like of floats
             Parameter of the distribution, > 0.
         p : float or array_like of floats
-            Parameter of the distribution, >= 0 and <=1.
+            Parameter of the distribution. Must satisfy 0 < p <= 1.
         size : int or tuple of ints, optional
             Output shape. If the given shape is, e.g., ``(m, n, k)``, then
             ``m * n * k`` samples are drawn. If size is ``None`` (default),
@@ -3525,7 +3549,7 @@ warnings.filterwarnings("ignore", "Generator", FutureWarning)
         How many trials succeeded after a single run?
 
         >>> (z == 1).sum() / 10000.
-        0.34889999999999999 #random
+        0.34889999999999999 # random
 
         """
         return disc(&random_geometric, &self._bitgen, size, self.lock, 1, 0,
@@ -3947,58 +3971,70 @@ warnings.filterwarnings("ignore", "Generator", FutureWarning)
         Draw samples from a multinomial distribution.
 
         The multinomial distribution is a multivariate generalization of the
-        binomial distribution. Take an experiment with one of ``p``
-        possible outcomes. An example of such an experiment is throwing a dice,
-        where the outcome can be 1 through 6. Each sample drawn from the
-        distribution represents `n` such experiments. Its values,
+        binomial distribution.  Take an experiment with one of ``p``
+        possible outcomes.  An example of such an experiment is throwing a dice,
+        where the outcome can be 1 through 6.  Each sample drawn from the
+        distribution represents `n` such experiments.  Its values,
         ``X_i = [X_0, X_1, ..., X_p]``, represent the number of times the
         outcome was ``i``.
 
         Parameters
         ----------
-        n : {int, array_like[int]}
+        n : int or array-like of ints
             Number of experiments.
-        pvals : sequence of floats, length p
-            Probabilities of each of the ``p`` different outcomes. These
-            must sum to 1 (however, the last element is always assumed to
-            account for the remaining probability, as long as
-            ``sum(pvals[:-1]) <= 1)``.
+        pvals : array-like of floats
+            Probabilities of each of the ``p`` different outcomes with shape
+            ``(k0, k1, ..., kn, p)``. Each element ``pvals[i,j,...,:]`` must
+            sum to 1 (however, the last element is always assumed to account
+            for the remaining probability, as long as
+            ``sum(pvals[..., :-1], axis=-1) <= 1.0``. Must have at least 1
+            dimension where pvals.shape[-1] > 0.
         size : int or tuple of ints, optional
-            Output shape. If the given shape is, e.g., ``(m, n, k)``, then
-            ``m * n * k`` samples are drawn. Default is None, in which case a
-            single value is returned.
+            Output shape.  If the given shape is, e.g., ``(m, n, k)``, then
+            ``m * n * k`` samples are drawn each with ``p`` elements. Default
+            is None where the output size is determined by the broadcast shape
+            of ``n`` and all by the final dimension of ``pvals``, which is
+            denoted as ``b=(b0, b1, ..., bq)`` be this size. If size is not None,
+            then it must be compatible with the broadcast shape ``b``.
+            Specifically, size must have ``q`` or more elements and
+            size[-(q-j):] must equal ``bj``.
 
         Returns
         -------
         out : ndarray
-            The drawn samples, of shape *size*, if that was provided. If not,
-            the shape is ``(N,)``.
+            The drawn samples, of shape size, if provided. When size is
+            provided, the output shape is size + (p,)  If not specified,
+            the shape is determined by the broadcast shape of ``n`` and
+            ``pvals``, ``(b0, b1, ..., bq)`` augmented with the dimension of
+            the multinomial, ``p``, so that that output shape is
+            ``(b0, b1, ..., bq, p)``.
 
-            In other words, each entry ``out[i,j,...,:]`` is an N-dimensional
-            value drawn from the distribution.
+            Each entry ``out[i,j,...,:]`` is a ``p``-dimensional value drawn
+            from the distribution.
 
         Examples
         --------
         Throw a dice 20 times:
 
-        >>> randomgen.generator.multinomial(20, [1/6.]*6, size=1)
+        >>> rng = np.random.default_rng()
+        >>> rng.multinomial(20, [1/6.]*6, size=1)
         array([[4, 1, 7, 5, 2, 1]])  # random
 
         It landed 4 times on 1, once on 2, etc.
 
         Now, throw the dice 20 times, and 20 times again:
 
-        >>> randomgen.generator.multinomial(20, [1/6.]*6, size=2)
+        >>> rng.multinomial(20, [1/6.]*6, size=2)
         array([[3, 4, 3, 3, 4, 3],
                [2, 4, 3, 4, 0, 7]])  # random
 
-        For the first run, we threw 3 times 1, 4 times 2, etc. For the second,
+        For the first run, we threw 3 times 1, 4 times 2, etc.  For the second,
         we threw 2 times 1, 4 times 2, etc.
 
         Now, do one experiment throwing the dice 10 time, and 10 times again,
         and another throwing the dice 20 times, and 20 times again:
 
-        >>> randomgen.generator.multinomial([[10], [20]], [1/6.]*6, size=2)
+        >>> rng.multinomial([[10], [20]], [1/6.]*6, size=(2, 2))
         array([[[2, 4, 0, 1, 2, 1],
                 [1, 3, 0, 3, 1, 2]],
                [[1, 4, 4, 4, 4, 3],
@@ -4009,8 +4045,40 @@ warnings.filterwarnings("ignore", "Generator", FutureWarning)
 
         A loaded die is more likely to land on number 6:
 
-        >>> randomgen.generator.multinomial(100, [1/7.]*5 + [2/7.])
+        >>> rng.multinomial(100, [1/7.]*5 + [2/7.])
         array([11, 16, 14, 17, 16, 26])  # random
+
+        Simulate 10 throws of a 4-sided die and 20 throws of a 6-sided die
+
+        >>> rng.multinomial([10, 20],[[1/4]*4 + [0]*2, [1/6]*6])
+        array([[2, 1, 4, 3, 0, 0],
+               [3, 3, 3, 6, 1, 4]], dtype=int64)  # random
+
+        Generate categorical random variates from two categories where the
+        first has 3 outcomes and the second has 2.
+
+        >>> rng.multinomial(1, [[.1, .5, .4 ], [.3, .7, .0]])
+        array([[0, 0, 1],
+               [0, 1, 0]], dtype=int64)  # random
+
+        ``argmax(axis=-1)`` is then used to return the categories.
+
+        >>> pvals = [[.1, .5, .4 ], [.3, .7, .0]]
+        >>> rvs = rng.multinomial(1, pvals, size=(4,2))
+        >>> rvs.argmax(axis=-1)
+        array([[0, 1],
+               [2, 0],
+               [2, 1],
+               [2, 0]], dtype=int64)  # random
+
+        The same output dimension can be produced using broadcasting.
+
+        >>> rvs = rng.multinomial([[1]] * 4, pvals)
+        >>> rvs.argmax(axis=-1)
+        array([[0, 1],
+               [2, 0],
+               [2, 1],
+               [2, 0]], dtype=int64)  # random
 
         The probability inputs should be normalized. As an implementation
         detail, the value of the last entry is ignored and assumed to take
@@ -4018,44 +4086,77 @@ warnings.filterwarnings("ignore", "Generator", FutureWarning)
         A biased coin which has twice as much weight on one side as on the
         other should be sampled like so:
 
-        >>> randomgen.generator.multinomial(100, [1.0 / 3, 2.0 / 3])  # RIGHT
+        >>> rng.multinomial(100, [1.0 / 3, 2.0 / 3])  # RIGHT
         array([38, 62])  # random
 
         not like:
 
-        >>> randomgen.generator.multinomial(100, [1.0, 2.0])  # WRONG
+        >>> rng.multinomial(100, [1.0, 2.0])  # WRONG
         Traceback (most recent call last):
         ValueError: pvals < 0, pvals > 1 or pvals contains NaNs
-
         """
 
-        cdef np.npy_intp d, i, sz, offset
+        cdef np.npy_intp d, i, sz, offset, pi
         cdef np.ndarray parr, mnarr, on, temp_arr
         cdef double *pix
+        cdef int ndim
         cdef int64_t *mnix
         cdef int64_t ni
         cdef np.broadcast it
+        on = <np.ndarray>np.PyArray_FROM_OTF(n,
+                                             np.NPY_INT64,
+                                             np.NPY_ARRAY_ALIGNED |
+                                             np.NPY_ARRAY_C_CONTIGUOUS)
+        parr = <np.ndarray>np.PyArray_FROM_OTF(pvals,
+                                               np.NPY_DOUBLE,
+                                               np.NPY_ARRAY_ALIGNED |
+                                               np.NPY_ARRAY_C_CONTIGUOUS)
+        ndim = np.PyArray_NDIM(parr)
+        d = np.PyArray_DIMS(parr)[ndim - 1] if ndim >= 1 else 0
+        if d == 0:
+            raise ValueError("pvals must have at least 1 dimension with shape[-1] > 0.")
 
-        if np.ndim(pvals) != 1:
-            raise ValueError("pvals must be 1d array")
-
-        d = len(pvals)
-        on = <np.ndarray>np.PyArray_FROM_OTF(n, np.NPY_INT64, api.NPY_ARRAY_ALIGNED)
-        parr = <np.ndarray>np.PyArray_FROM_OTF(pvals, np.NPY_DOUBLE, api.NPY_ARRAY_ALIGNED | api.NPY_ARRAY_C_CONTIGUOUS)
-        check_array_constraint(parr, "pvals", CONS_BOUNDED_0_1)
+        check_array_constraint(parr, 'pvals', CONS_BOUNDED_0_1)
         pix = <double*>np.PyArray_DATA(parr)
-        if kahan_sum(pix, d-1) > (1.0 + 1e-12):
-            raise ValueError("sum(pvals[:-1]) > 1.0")
+        sz = np.PyArray_SIZE(parr)
+        # Cython 0.29.20 would not correctly translate the range-based for
+        # loop to a C for loop
+        # for offset in range(<np.npy_intp>0, sz, d):
+        offset = 0
+        while offset < sz:
+            if kahan_sum(pix + offset, d-1) > (1.0 + 1e-12):
+                if ndim == 1:
+                    msg = "sum(pvals[:-1]) > 1.0"
+                else:
+                    msg = "At least one element of sum(pvals[..., :-1], axis=-1) > 1.0"
+                raise ValueError(msg)
+            offset += d
 
-        if np.PyArray_NDIM(on) != 0:  # vector
-            check_array_constraint(on, "n", CONS_NON_NEGATIVE)
+        if np.PyArray_NDIM(on) != 0 or ndim > 1: # vector
+            check_array_constraint(on, 'n', CONS_NON_NEGATIVE)
+            # This provides the offsets to use in the C-contig parr when
+            # broadcasting
+            offsets = <np.ndarray>np.arange(
+                0, np.PyArray_SIZE(parr), d, dtype=np.intp
+            ).reshape((<object>parr).shape[:ndim - 1])
             if size is None:
-                it = np.PyArray_MultiIterNew1(on)
+                it = np.PyArray_MultiIterNew2(on, offsets)
             else:
                 temp = np.empty(size, dtype=np.int8)
                 temp_arr = <np.ndarray>temp
-                it = np.PyArray_MultiIterNew2(on, temp_arr)
-                validate_output_shape(it.shape, temp_arr)
+                it = np.PyArray_MultiIterNew3(on, offsets, temp_arr)
+                # Validate size and the broadcast shape
+                try:
+                    size = (operator.index(size),)
+                except:
+                    size = tuple(size)
+                # This test verifies that an axis with dim 1 in size has not
+                # been increased by broadcasting with the input
+                if it.shape != size:
+                    raise ValueError(
+                        f"Output size {size} is not compatible with "
+                        f"broadcast dimensions of inputs {it.shape}."
+                    )
             shape = it.shape + (d,)
             multin = np.zeros(shape, dtype=np.int64)
             mnarr = <np.ndarray>multin
@@ -4065,7 +4166,8 @@ warnings.filterwarnings("ignore", "Generator", FutureWarning)
             with self.lock, nogil:
                 for i in range(sz):
                     ni = (<int64_t*>np.PyArray_MultiIter_DATA(it, 0))[0]
-                    random_multinomial(&self._bitgen, ni, &mnix[offset], pix, d, &self._binomial)
+                    pi = (<np.npy_intp*>np.PyArray_MultiIter_DATA(it, 1))[0]
+                    random_multinomial(&self._bitgen, ni, &mnix[offset], &pix[pi], d, &self._binomial)
                     offset += d
                     np.PyArray_MultiIter_NEXT(it)
             return multin
@@ -4075,7 +4177,7 @@ warnings.filterwarnings("ignore", "Generator", FutureWarning)
         else:
             try:
                 shape = (operator.index(size), d)
-            except TypeError:
+            except:
                 shape = tuple(size) + (d,)
 
         multin = np.zeros(shape, dtype=np.int64)
@@ -4083,7 +4185,7 @@ warnings.filterwarnings("ignore", "Generator", FutureWarning)
         mnix = <int64_t*>np.PyArray_DATA(mnarr)
         sz = np.PyArray_SIZE(mnarr)
         ni = n
-        check_constraint(<double>ni, "n", CONS_NON_NEGATIVE)
+        check_constraint(ni, 'n', CONS_NON_NEGATIVE)
         offset = 0
         with self.lock, nogil:
             for i in range(sz // d):
@@ -4120,7 +4222,7 @@ warnings.filterwarnings("ignore", "Generator", FutureWarning)
             The drawn samples, of shape ``(size, k)``.
 
         Raises
-        -------
+        ------
         ValueError
             If any value in ``alpha`` is less than or equal to zero.
 
@@ -4215,17 +4317,74 @@ warnings.filterwarnings("ignore", "Generator", FutureWarning)
 
         i = 0
         totsize = np.PyArray_SIZE(val_arr)
-        with self.lock, nogil:
-            while i < totsize:
-                acc = 0.0
-                for j in range(k):
-                    val_data[i+j] = random_standard_gamma_zig(&self._bitgen,
-                                                              alpha_data[j])
-                    acc = acc + val_data[i + j]
-                invacc = 1/acc
-                for j in range(k):
-                    val_data[i + j] = val_data[i + j] * invacc
-                i = i + k
+
+        # Select one of the following two algorithms for the generation
+        #  of Dirichlet random variates (RVs)
+        #
+        # A) Small alpha case: Use the stick-breaking approach with beta
+        #    random variates (RVs).
+        # B) Standard case: Perform unit normalisation of a vector
+        #    of gamma random variates
+        #
+        # A) prevents NaNs resulting from 0/0 that may occur in B)
+        # when all values in the vector ':math:\\alpha' are smaller
+        # than 1, then there is a nonzero probability that all
+        # generated gamma RVs will be 0. When that happens, the
+        # normalization process ends up computing 0/0, giving nan. A)
+        # does not use divisions, so that a situation in which 0/0 has
+        # to be computed cannot occur. A) is slower than B) as
+        # generation of beta RVs is slower than generation of gamma
+        # RVs. A) is selected whenever `alpha.max() < t`, where `t <
+        # 1` is a threshold that controls the probability of
+        # generating a NaN value when B) is used. For a given
+        # threshold `t` this probability can be bounded by
+        # `gammainc(t, d)` where `gammainc` is the regularized
+        # incomplete gamma function and `d` is the smallest positive
+        # floating point number that can be represented with a given
+        # precision. For the chosen threshold `t=0.1` this probability
+        # is smaller than `1.8e-31` for double precision floating
+        # point numbers.
+
+        if (k > 0) and (alpha_arr.max() < 0.1):
+            # Small alpha case: Use stick-breaking approach with beta
+            # random variates (RVs).
+            # alpha_csum_data will hold the cumulative sum, right to
+            # left, of alpha_arr.
+            # Use a numpy array for memory management only.  We could just as
+            # well have malloc'd alpha_csum_data.  alpha_arr is a C-contiguous
+            # double array, therefore so is alpha_csum_arr.
+            alpha_csum_arr = np.empty_like(alpha_arr)
+            alpha_csum_data = <double*>np.PyArray_DATA(alpha_csum_arr)
+            csum = 0.0
+            for j in range(k - 1, -1, -1):
+                csum += alpha_data[j]
+                alpha_csum_data[j] = csum
+
+            with self.lock, nogil:
+                while i < totsize:
+                    acc = 1.
+                    for j in range(k - 1):
+                        v = random_beta(&self._bitgen, alpha_data[j],
+                                        alpha_csum_data[j + 1])
+                        val_data[i + j] = acc * v
+                        acc *= (1. - v)
+                    val_data[i + k - 1] = acc
+                    i = i + k
+
+        else:
+            # Standard case: Unit normalisation of a vector of gamma random
+            # variates
+            with self.lock, nogil:
+                while i < totsize:
+                    acc = 0.
+                    for j in range(k):
+                        val_data[i + j] = random_standard_gamma_zig(&self._bitgen,
+                                                                    alpha_data[j])
+                        acc = acc + val_data[i + j]
+                    invacc = 1. / acc
+                    for j in range(k):
+                        val_data[i + j] = val_data[i + j] * invacc
+                    i = i + k
 
         return diric
 
@@ -4234,7 +4393,7 @@ warnings.filterwarnings("ignore", "Generator", FutureWarning)
         """
         shuffle(x)
 
-        Modify a sequence in-place by shuffling its contents.
+        Modify an array or a mutable sequence in-place by shuffling its contents.
 
         This function only shuffles the array along the first axis of a
         multi-dimensional array. The order of sub-arrays is changed but
@@ -4242,8 +4401,8 @@ warnings.filterwarnings("ignore", "Generator", FutureWarning)
 
         Parameters
         ----------
-        x : array_like
-            The array or list to be shuffled.
+        x : ndarray or MutableSequence
+            The array, list or mutable sequence to be shuffled.
 
         Returns
         -------
@@ -4300,11 +4459,19 @@ warnings.filterwarnings("ignore", "Generator", FutureWarning)
                     if i == j:
                         # i == j is not needed and memcpy is undefined.
                         continue
-                    buf[...] = x[j]
-                    x[j] = x[i]
-                    x[i] = buf
+                    buf[...] = x[j, ...]
+                    x[j, ...] = x[i, ...]
+                    x[i, ...] = buf
         else:
             # Untyped path.
+            if not isinstance(x, (np.ndarray, MutableSequence)):
+                # See gh-18206. We may decide to deprecate here in the future.
+                warnings.warn(
+                    "`x` isn't a recognized object; `shuffle` is not guaranteed "
+                    "to behave correctly. E.g., non-numpy array/tensor objects "
+                    "with view semantics may contain duplicates after shuffling."
+                )
+
             with self.lock:
                 for i in reversed(range(1, n)):
                     j = random_interval(&self._bitgen, i)

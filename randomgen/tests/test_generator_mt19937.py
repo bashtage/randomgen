@@ -7,6 +7,7 @@ import numpy as np
 from numpy.linalg import LinAlgError
 from numpy.testing import (
     assert_,
+    assert_allclose,
     assert_array_almost_equal,
     assert_array_equal,
     assert_equal,
@@ -478,6 +479,43 @@ class TestIntegers(object):
             )
 
             assert_array_equal(val, val_bc)
+
+    def test_repeatability_32bit_boundary_broadcasting(self):
+        desired = np.array(
+            [
+                [
+                    [4184714646, 2953452547, 3636115811],
+                    [3137091686, 500004980, 1758274813],
+                    [827841543, 2071399968, 2653935293],
+                ],
+                [
+                    [1980473914, 2331635770, 643122924],
+                    [806373568, 3436742405, 3326492796],
+                    [819438482, 2041859381, 1972373725],
+                ],
+                [
+                    [2973988042, 1073437830, 395026719],
+                    [2154927168, 964445294, 449660552],
+                    [4126967444, 1410100955, 3481829584],
+                ],
+                [
+                    [136169376, 332583752, 1486552164],
+                    [2199706765, 2840948792, 1367639842],
+                    [3733647586, 810727718, 3455450384],
+                ],
+                [
+                    [2374161015, 433367801, 3216002152],
+                    [595355362, 342429046, 2159480359],
+                    [3577969687, 2369902420, 764825175],
+                ],
+            ]
+        )
+        for size in [None, (5, 3, 3)]:
+            random = Generator(MT19937(12345, mode="sequence"))
+            x = random.integers(
+                [[-1], [0], [1]], [2 ** 32 - 1, 2 ** 32, 2 ** 32 + 1], size=size
+            )
+            assert_array_equal(x, desired if size is not None else desired[0])
 
     def test_int64_uint64_broadcast_exceptions(self, endpoint):
         configs = {
@@ -1076,6 +1114,11 @@ class TestRandomDist(object):
         alpha = np.array([5.4e-01, -1.0e-16])
         assert_raises(ValueError, random.dirichlet, alpha)
 
+        assert_raises(ValueError, random.dirichlet, [[5, 1]])
+        assert_raises(ValueError, random.dirichlet, [[5], [1]])
+        assert_raises(ValueError, random.dirichlet, [[[5], [1]], [[1], [5]]])
+        assert_raises(ValueError, random.dirichlet, np.array([[5, 1], [1, 5]]))
+
     def test_dirichlet_non_contiguous_alpha(self):
         a = np.array([51.72840233779265162, -1.0, 39.74494232180943953])
         alpha = a[::2]
@@ -1084,6 +1127,30 @@ class TestRandomDist(object):
         random.bit_generator.seed(self.seed)
         contig = random.dirichlet(np.ascontiguousarray(alpha), size=(3, 2))
         assert_array_almost_equal(contig, non_contig)
+
+    def test_dirichlet_small_alpha(self):
+        eps = 1.0e-9  # 1.0e-10 -> runtime x 10; 1e-11 -> runtime x 200, etc.
+        alpha = eps * np.array([1.0, 1.0e-3])
+        random = Generator(MT19937(self.seed, mode="sequence"))
+        actual = random.dirichlet(alpha, size=(3, 2))
+        expected = np.array(
+            [
+                [[1.0, 0.0], [1.0, 0.0]],
+                [[1.0, 0.0], [1.0, 0.0]],
+                [[1.0, 0.0], [1.0, 0.0]],
+            ]
+        )
+        assert_array_almost_equal(actual, expected, decimal=15)
+
+    @pytest.mark.slow
+    def test_dirichlet_moderately_small_alpha(self):
+        # Use alpha.max() < 0.1 to trigger stick breaking code path
+        alpha = np.array([0.02, 0.04, 0.03])
+        exact_mean = alpha / alpha.sum()
+        random = Generator(MT19937(self.seed, mode="sequence"))
+        sample = random.dirichlet(alpha, size=20000000)
+        sample_mean = sample.mean(axis=0)
+        assert_allclose(sample_mean, exact_mean, rtol=1e-3)
 
     def test_exponential(self):
         random.bit_generator.seed(self.seed)
@@ -1240,16 +1307,73 @@ class TestRandomDist(object):
             assert_raises(ValueError, random.logseries, [np.nan] * 10)
 
     def test_multinomial(self):
-        random.bit_generator.seed(self.seed)
+        random = Generator(MT19937(self.seed, mode="sequence"))
         actual = random.multinomial(20, [1 / 6.0] * 6, size=(3, 2))
         desired = np.array(
             [
-                [[4, 3, 5, 4, 2, 2], [5, 2, 8, 2, 2, 1]],
-                [[3, 4, 3, 6, 0, 4], [2, 1, 4, 3, 6, 4]],
-                [[4, 4, 2, 5, 2, 3], [4, 3, 4, 2, 3, 4]],
+                [[4, 4, 3, 2, 5, 2], [2, 8, 4, 0, 2, 4]],
+                [[4, 4, 5, 1, 3, 3], [2, 4, 1, 5, 2, 6]],
+                [[1, 2, 7, 5, 2, 3], [5, 4, 4, 2, 3, 2]],
             ]
         )
         assert_array_equal(actual, desired)
+
+        random = Generator(MT19937(self.seed, mode="sequence"))
+        actual = random.multinomial([5, 20], [1 / 6.0] * 6)
+        desired = np.array([[1, 1, 1, 0, 2, 0], [2, 8, 4, 0, 2, 4]], dtype=np.int64)
+        assert_array_equal(actual, desired)
+
+        random = Generator(MT19937(self.seed, mode="sequence"))
+        actual = random.multinomial([5, 20], [[1 / 6.0] * 6] * 2)
+        desired = np.array([[1, 1, 1, 0, 2, 0], [2, 8, 4, 0, 2, 4]], dtype=np.int64)
+        assert_array_equal(actual, desired)
+
+        random = Generator(MT19937(self.seed, mode="sequence"))
+        actual = random.multinomial([[5], [20]], [[1 / 6.0] * 6] * 2)
+        desired = np.array(
+            [
+                [[1, 1, 1, 0, 2, 0], [0, 4, 1, 0, 0, 0]],
+                [[1, 2, 5, 5, 5, 2], [2, 3, 3, 4, 2, 6]],
+            ],
+            dtype=np.int64,
+        )
+        assert_array_equal(actual, desired)
+
+    @pytest.mark.parametrize("n", [10, np.array([10, 10]), np.array([[[10]], [[10]]])])
+    def test_multinomial_pval_broadcast(self, n):
+        random = Generator(MT19937(self.seed, mode="sequence"))
+        pvals = np.array([1 / 4] * 4)
+        actual = random.multinomial(n, pvals)
+        assert actual.shape == np.broadcast(n, 1).shape + (4,)
+        pvals = np.vstack([pvals, pvals])
+        actual = random.multinomial(n, pvals)
+        assert actual.shape == np.broadcast(n, np.ones(2)).shape + (4,)
+
+        pvals = np.vstack([[pvals], [pvals]])
+        actual = random.multinomial(n, pvals)
+        expected_shape = np.broadcast(n, np.ones((2, 2))).shape
+        assert actual.shape == expected_shape + (4,)
+        actual = random.multinomial(n, pvals, size=(3, 2) + expected_shape)
+        assert actual.shape == (3, 2) + expected_shape + (4,)
+
+        with pytest.raises(ValueError):
+            # Ensure that size is not broadcast
+            actual = random.multinomial(n, pvals, size=(1,) * 6)
+
+    def test_invalid_pvals_broadcast(self):
+        random = Generator(MT19937(self.seed, mode="sequence"))
+        pvals = [[1 / 6] * 6, [1 / 4] * 6]
+        assert_raises(ValueError, random.multinomial, 1, pvals)
+        assert_raises(ValueError, random.multinomial, 6, 0.5)
+
+    def test_empty_outputs(self):
+        random = Generator(MT19937(self.seed, mode="sequence"))
+        actual = random.multinomial(np.empty((10, 0, 6), "i8"), [1 / 6] * 6)
+        assert actual.shape == (10, 0, 6, 6)
+        actual = random.multinomial(12, np.empty((10, 0, 10)))
+        assert actual.shape == (10, 0, 10)
+        actual = random.multinomial(np.empty((3, 0, 7), "i8"), np.empty((3, 0, 7, 4)))
+        assert actual.shape == (3, 0, 7, 4)
 
     @pytest.mark.skipif(NP_LT_118, reason="Can only test with NumPy >= 1.18")
     @pytest.mark.parametrize("method", ["svd", "eigh", "cholesky"])
@@ -1721,6 +1845,12 @@ class TestRandomDist(object):
         # account for i386 extended precision DBL_MAX / 1e17 + DBL_MAX >
         # DBL_MAX by increasing fmin a bit
         random.uniform(low=np.nextafter(fmin, 1), high=fmax / 1e17)
+
+    def test_uniform_neg_range(self):
+        func = random.uniform
+        assert_raises(ValueError, func, 2, 1)
+        assert_raises(ValueError, func, [1, 2], [1, 1])
+        assert_raises(ValueError, func, [[0, 1], [2, 3]], 2)
 
     def test_scalar_exception_propagation(self):
         # Tests that exceptions are correctly propagated in distributions
@@ -2680,6 +2810,16 @@ def test_broadcast_size_error():
     out = np.empty(size)
     with pytest.raises(ValueError):
         random.standard_gamma(shape, out=out)
+
+    # 2 arg
+    with pytest.raises(ValueError):
+        random.binomial(1, [0.3, 0.7], size=(2, 1))
+    with pytest.raises(ValueError):
+        random.binomial([1, 2], 0.3, size=(2, 1))
+    with pytest.raises(ValueError):
+        random.binomial([1, 2], [0.3, 0.7], size=(2, 1))
+    with pytest.raises(ValueError):
+        random.multinomial([2, 2], [0.3, 0.7], size=(2, 1))
 
     # 3 arg
     a = random.chisquare(5, size=3)

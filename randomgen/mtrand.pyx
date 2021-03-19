@@ -2,6 +2,7 @@
 #cython: wraparound=False, nonecheck=False, boundscheck=False, cdivision=True, language_level=3
 import operator
 import warnings
+from typing import MutableSequence
 
 import numpy as np
 
@@ -662,13 +663,13 @@ warnings.filterwarnings("ignore", "RandomState", FutureWarning)
 
         Returns
         -------
-        out : str
+        out : bytes
             String of length `length`.
 
         Examples
         --------
         >>> np.random.bytes(10)
-        ' eh\\x85\\x022SZ\\xbf\\xa4' #random
+        b' eh\\x85\\x022SZ\\xbf\\xa4' # random
 
         """
         cdef Py_ssize_t n_uint32 = ((length - 1) // 4 + 1)
@@ -681,7 +682,7 @@ warnings.filterwarnings("ignore", "RandomState", FutureWarning)
         """
         choice(a, size=None, replace=True, p=None)
 
-        Generates a random sample from a given 1-D array
+        Generates a random sample from a given array
 
                 .. versionadded:: 1.7.0
 
@@ -1006,9 +1007,9 @@ warnings.filterwarnings("ignore", "RandomState", FutureWarning)
         Examples
         --------
         >>> np.random.rand(3,2)
-        array([[ 0.14022471,  0.96360618],  #random
-               [ 0.37601032,  0.25528411],  #random
-               [ 0.49313049,  0.94909878]]) #random
+        array([[ 0.14022471,  0.96360618],  # random
+               [ 0.37601032,  0.25528411],  # random
+               [ 0.49313049,  0.94909878]]) # random
 
         """
         if len(args) == 0:
@@ -1206,7 +1207,7 @@ warnings.filterwarnings("ignore", "RandomState", FutureWarning)
         Examples
         --------
         >>> np.random.standard_normal()
-        2.1923875335537315 #random
+        2.1923875335537315 # random
 
         >>> s = np.random.standard_normal(8000)
         >>> s
@@ -1922,33 +1923,45 @@ warnings.filterwarnings("ignore", "RandomState", FutureWarning)
         ...                    7515, 8230, 8770])
 
         Does their energy intake deviate systematically from the recommended
-        value of 7725 kJ?
+        value of 7725 kJ? Our null hypothesis will be the absence of deviation,
+        and the alternate hypothesis will be the presence of an effect that could be
+        either positive or negative, hence making our test 2-tailed.
 
-        We have 10 degrees of freedom, so is the sample mean within 95% of the
-        recommended value?
+        Because we are estimating the mean and we have N=11 values in our sample,
+        we have N-1=10 degrees of freedom. We set our significance level to 95% and
+        compute the t statistic using the empirical mean and empirical standard
+        deviation of our intake. We use a ddof of 1 to base the computation of our
+        empirical standard deviation on an unbiased estimate of the variance (note:
+        the final estimate is not unbiased due to the concave nature of the square
+        root).
 
-        >>> s = np.random.standard_t(10, size=100000)
         >>> np.mean(intake)
         6753.636363636364
         >>> intake.std(ddof=1)
         1142.1232221373727
-
-        Calculate the t statistic, setting the ddof parameter to the unbiased
-        value so the divisor in the standard deviation will be degrees of
-        freedom, N-1.
-
         >>> t = (np.mean(intake)-7725)/(intake.std(ddof=1)/np.sqrt(len(intake)))
+        >>> t
+        -2.8207540608310198
+
+        We draw 1000000 samples from Student's t distribution with the adequate
+        degrees of freedom.
+
         >>> import matplotlib.pyplot as plt
+        >>> s = np.random.standard_t(10, size=1000000)
         >>> h = plt.hist(s, bins=100, density=True)
 
-        For a one-sided t-test, how far out in the distribution does the t
-        statistic appear?
+        Does our t statistic land in one of the two critical regions found at
+        both tails of the distribution?
 
-        >>> np.sum(s<t) / float(len(s))
-        0.0090699999999999999  #random
+        >>> np.sum(np.abs(t) < np.abs(s)) / float(len(s))
+        0.018318  #random < 0.05, statistic is in critical region
 
-        So the p-value is about 0.009, which says the null hypothesis has a
-        probability of about 99% of being true.
+        The probability value for this 2-tailed test is about 1.83%, which is
+        lower than the 5% pre-determined significance threshold.
+
+        Therefore, the probability of observing values as extreme as our intake
+        conditionally on the null hypothesis being true is too low, and we reject
+        the null hypothesis of no deviation.
 
         """
         return cont(&legacy_standard_t, &self._aug_state, size, self.lock, 1,
@@ -3046,7 +3059,7 @@ warnings.filterwarnings("ignore", "RandomState", FutureWarning)
         generate zero positive results.
 
         >>> sum(np.random.binomial(9, 0.1, 20000) == 0)/20000.
-        # answer = 0.38885, or 38%.
+        # answer = 0.38885, or 39%.
 
         """
 
@@ -3077,6 +3090,7 @@ warnings.filterwarnings("ignore", "RandomState", FutureWarning)
             cnt = np.PyArray_SIZE(randoms)
 
             it = np.PyArray_MultiIterNew3(randoms, p_arr, n_arr)
+            validate_output_shape(it.shape, randoms)
             with self.lock, nogil:
                 for i in range(cnt):
                     _dp = (<double*>np.PyArray_MultiIter_DATA(it, 1))[0]
@@ -3382,7 +3396,7 @@ warnings.filterwarnings("ignore", "RandomState", FutureWarning)
         How many trials succeeded after a single run?
 
         >>> (z == 1).sum() / 10000.
-        0.34889999999999999 #random
+        0.34889999999999999 # random
 
         """
         out = disc(&legacy_random_geometric, &self._bitgen, size, self.lock, 1, 0,
@@ -3850,11 +3864,10 @@ warnings.filterwarnings("ignore", "RandomState", FutureWarning)
         cdef long *mnix
         cdef long ni
 
-        if np.ndim(pvals) != 1:
-            raise ValueError("pvals must be 1d array")
-
         d = len(pvals)
-        parr = <np.ndarray>np.PyArray_FROM_OTF(pvals, np.NPY_DOUBLE, api.NPY_ARRAY_ALIGNED | api.NPY_ARRAY_C_CONTIGUOUS)
+        parr = <np.ndarray> np.PyArray_FROMANY(
+            pvals, np.NPY_DOUBLE, 1, 1, np.NPY_ARRAY_ALIGNED | np.NPY_ARRAY_C_CONTIGUOUS
+        )
         check_array_constraint(parr, "pvals", CONS_BOUNDED_0_1)
         pix = <double*>np.PyArray_DATA(parr)
         if kahan_sum(pix, d-1) > (1.0 + 1e-12):
@@ -3910,7 +3923,7 @@ warnings.filterwarnings("ignore", "RandomState", FutureWarning)
             The drawn samples, of shape ``(size, k)``.
 
         Raises
-        -------
+        ------
         ValueError
             If any value in ``alpha`` is less than or equal to zero.
 
@@ -4032,8 +4045,8 @@ warnings.filterwarnings("ignore", "RandomState", FutureWarning)
 
         Parameters
         ----------
-        x : array_like
-            The array or list to be shuffled.
+        x : ndarray or MutableSequence
+            The array, list or mutable sequence to be shuffled.
 
         Returns
         -------
@@ -4089,11 +4102,18 @@ warnings.filterwarnings("ignore", "RandomState", FutureWarning)
                     j = random_interval(&self._bitgen, i)
                     if i == j:
                         continue  # i == j is not needed and memcpy is undefined.
-                    buf[...] = x[j]
-                    x[j] = x[i]
-                    x[i] = buf
+                    buf[...] = x[j, ...]
+                    x[j, ...] = x[i, ...]
+                    x[i, ...] = buf
         else:
             # Untyped path.
+            if not isinstance(x, (np.ndarray, MutableSequence)):
+                # See gh-18206. We may decide to deprecate here in the future.
+                warnings.warn(
+                    "`x` isn't a recognized object; `shuffle` is not guaranteed "
+                    "to behave correctly. E.g., non-numpy array/tensor objects "
+                    "with view semantics may contain duplicates after shuffling."
+                )
             with self.lock:
                 for i in reversed(range(1, n)):
                     j = random_interval(&self._bitgen, i)

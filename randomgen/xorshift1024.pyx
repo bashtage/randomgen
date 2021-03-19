@@ -17,7 +17,7 @@ cdef double xorshift1024_double(void* st) nogil:
     return uint64_to_double(xorshift1024_next64(<xorshift1024_state_t *>st))
 
 cdef class Xorshift1024(BitGenerator):
-    u"""
+    """
     Xorshift1024(seed=None, *, mode=None)
 
     Container for the xorshift1024*φ pseudo-random number generator.

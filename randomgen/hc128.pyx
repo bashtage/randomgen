@@ -18,7 +18,7 @@ cdef double hc128_double(void* st) nogil:
 
 
 cdef class HC128(BitGenerator):
-    u"""
+    """
     HC128(seed=None, *, mode=None)
 
     Container for the HC-128 cipher-based pseudo-random number generator
