@@ -15,6 +15,12 @@ Change Log
   maintained until after NumPy 1.21 (or 2 releases after NumPy 1.19) for users who
   cannot update NumPy.
 
+
+Since v1.20.0
+=============
+- Added :func:`~randomgen.generator.ExtendedGenerator.standard_wishart` and
+  :func:`~randomgen.generator.ExtendedGenerator.wishart` variate generators.
+
 v1.20.0
 =======
 - Sync upstream changes from NumPy

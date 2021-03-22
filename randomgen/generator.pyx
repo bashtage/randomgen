@@ -1,5 +1,6 @@
 #!python
 #cython: wraparound=False, nonecheck=False, boundscheck=False, cdivision=True, language_level=3
+import itertools
 import operator
 import warnings
 from typing import MutableSequence
@@ -36,6 +37,59 @@ __all__ = ["Generator", "beta", "binomial", "bytes", "chisquare", "choice",
 
 np.import_array()
 
+def _factorize(cov, meth, check_valid, tol, rank):
+    if meth == "svd":
+        from numpy.linalg import svd
+
+        (u, s, vh) = svd(cov)
+        if rank < cov.shape[0]:
+            locs = np.argsort(s)
+            s[locs[:s.shape[0]-rank]] = 0.0
+        psd = np.allclose(np.dot(vh.T * s, vh), cov, rtol=tol, atol=tol)
+        _factor = (u * np.sqrt(s)).T
+    elif meth == "factor":
+        return cov
+    elif meth == "eigh":
+        from numpy.linalg import eigh
+
+        # could call linalg.svd(hermitian=True), but that calculates a
+        # vh we don't need
+        (s, u) = eigh(cov)
+        if rank < cov.shape[0]:
+            locs = np.argsort(s)
+            s[locs[:s.shape[0]-rank]] = 0.0
+        psd = not np.any(s < -tol)
+        _factor = (u * np.sqrt(abs(s))).T
+    else:
+        if rank == cov.shape[0]:
+            from numpy.linalg import cholesky
+
+            _factor = cholesky(cov).T
+            psd = True
+        else:
+            try:
+                from scipy.linalg import get_lapack_funcs
+            except ImportError:
+                raise ImportError(
+                    "SciPy is required when using Cholesky factorization with "
+                    "reduced rank covariance."
+                )
+
+            func = get_lapack_funcs("pstrf")
+            _factor, _, rank_c, _ = func(cov)
+            _factor = np.triu(_factor)
+            psd = rank_c >= rank
+
+    if not psd and check_valid != "ignore":
+        if rank < cov.shape[0]:
+            msg = f"The {rank} is less than the minimum required rank."
+        else:
+            msg = "The covariance is not positive-semidefinite."
+        if check_valid == "warn":
+            warnings.warn(msg, RuntimeWarning)
+        else:
+            raise ValueError(msg)
+    return _factor
 
 # TODO: Remove after deprecation
 def _rand_dep_message(old, new, args, dtype):
@@ -918,7 +972,7 @@ warnings.filterwarnings("ignore", "Generator", FutureWarning)
 
                 if pop_size_i > 10000 and (size_i > (pop_size_i // cutoff)):
                     # Tail shuffle size elements
-                    idx = np.PyArray_Arange(0, pop_size_i, 1, np.NPY_INT64)
+                    idx = np.arange(0, pop_size_i, dtype=np.int64)
                     idx_data = <int64_t*>np.PyArray_DATA(<np.ndarray>idx)
                     with self.lock, nogil:
                         self._shuffle_int(pop_size_i, max(pop_size_i - size_i, 1),
@@ -3793,12 +3847,12 @@ warnings.filterwarnings("ignore", "Generator", FutureWarning)
             generated, and packed in an `m`-by-`n`-by-`k` arrangement.  Because
             each sample is `N`-dimensional, the output shape is ``(m,n,k,N)``.
             If no shape is specified, a single (`N`-D) sample is returned.
-        check_valid : { 'warn', 'raise', 'ignore' }, optional
+        check_valid : {'warn', 'raise', 'ignore' }, optional
             Behavior when the covariance matrix is not positive semidefinite.
         tol : float, optional
             Tolerance when checking the singular values in covariance matrix.
             cov is cast to double before the check.
-        method : { 'svd', 'eigh', 'cholesky'}, optional
+        method : {'svd', 'eigh', 'cholesky'}, optional
             The cov input is used to compute a factor matrix A such that
             ``A @ A.T = cov``. This argument is used to select the method
             used to compute the factor matrix A. The default method 'svd' is
@@ -3899,36 +3953,6 @@ warnings.filterwarnings("ignore", "Generator", FutureWarning)
                 f"the final dimension of mean ({n}). mean must be 1 dimensional"
             )
 
-        def _factorize(cov, meth, check_valid):
-            if meth == "svd":
-                from numpy.linalg import svd
-
-                (u, s, vh) = svd(cov)
-                psd = np.allclose(np.dot(vh.T * s, vh), cov, rtol=tol, atol=tol)
-                _factor = (u * np.sqrt(s)).T
-            elif meth == "eigh":
-                from numpy.linalg import eigh
-
-                # could call linalg.svd(hermitian=True), but that calculates a
-                # vh we don't need
-                (s, u) = eigh(cov)
-                psd = not np.any(s < -tol)
-                _factor = (u * np.sqrt(abs(s))).T
-            else:
-                from numpy.linalg import cholesky
-
-                _factor = cholesky(cov).T
-                psd = True
-
-            if not psd and check_valid != "ignore":
-                if check_valid == "warn":
-                    warnings.warn(
-                        "covariance is not positive-semidefinite.", RuntimeWarning
-                    )
-                else:
-                    raise ValueError("covariance is not positive-semidefinite.")
-            return _factor
-
         drop_dims = (mean.ndim == 1) and (cov.ndim == 2)
         if mean.ndim == 1:
             mean = mean.reshape((1, n))
@@ -3937,7 +3961,7 @@ warnings.filterwarnings("ignore", "Generator", FutureWarning)
 
         _factors = np.empty_like(cov)
         for loc in np.ndindex(*cov.shape[:len(cov.shape)-2]):
-            _factors[loc] = _factorize(cov[loc], method, check_valid)
+            _factors[loc] = _factorize(cov[loc], method, check_valid, tol, n)
 
         out_shape = np.broadcast(mean[..., 0], cov[..., 0, 0]).shape
         if size is not None:
@@ -4185,7 +4209,7 @@ warnings.filterwarnings("ignore", "Generator", FutureWarning)
         mnix = <int64_t*>np.PyArray_DATA(mnarr)
         sz = np.PyArray_SIZE(mnarr)
         ni = n
-        check_constraint(ni, 'n', CONS_NON_NEGATIVE)
+        check_constraint(<double>ni, 'n', CONS_NON_NEGATIVE)
         offset = 0
         with self.lock, nogil:
             for i in range(sz // d):
@@ -4363,7 +4387,7 @@ warnings.filterwarnings("ignore", "Generator", FutureWarning)
             with self.lock, nogil:
                 while i < totsize:
                     acc = 1.
-                    for j in range(k - 1):
+                    for j in range(<np.npy_intp>(k - 1)):
                         v = random_beta(&self._bitgen, alpha_data[j],
                                         alpha_csum_data[j + 1])
                         val_data[i + j] = acc * v
@@ -4959,12 +4983,12 @@ cdef class ExtendedGenerator:
             generated, and packed in an `m`-by-`n`-by-`k` arrangement.  Because
             each sample is `N`-dimensional, the output shape is ``(m,n,k,N)``.
             If no shape is specified, a single (`N`-D) sample is returned.
-        check_valid : { 'warn', 'raise', 'ignore' }, optional
+        check_valid : {'warn', 'raise', 'ignore' }, optional
             Behavior when the covariance matrix is not positive semidefinite.
         tol : float, optional
             Tolerance when checking the singular values in covariance matrix.
             cov is cast to double before the check.
-        method : { 'svd', 'eigh', 'cholesky'}, optional
+        method : {'svd', 'eigh', 'cholesky'}, optional
             The cov input is used to compute a factor matrix A such that
             ``A @ A.T = cov``. This argument is used to select the method
             used to compute the factor matrix A. The default method 'svd' is
@@ -5065,36 +5089,6 @@ cdef class ExtendedGenerator:
                 f"the final dimension of mean ({n}). mean must be 1 dimensional"
             )
 
-        def _factorize(cov, meth, check_valid):
-            if meth == "svd":
-                from numpy.linalg import svd
-
-                (u, s, vh) = svd(cov)
-                psd = np.allclose(np.dot(vh.T * s, vh), cov, rtol=tol, atol=tol)
-                _factor = (u * np.sqrt(s)).T
-            elif meth == "eigh":
-                from numpy.linalg import eigh
-
-                # could call linalg.svd(hermitian=True), but that calculates a
-                # vh we don't need
-                (s, u) = eigh(cov)
-                psd = not np.any(s < -tol)
-                _factor = (u * np.sqrt(abs(s))).T
-            else:
-                from numpy.linalg import cholesky
-
-                _factor = cholesky(cov).T
-                psd = True
-
-            if not psd and check_valid != "ignore":
-                if check_valid == "warn":
-                    warnings.warn(
-                        "covariance is not positive-semidefinite.", RuntimeWarning
-                    )
-                else:
-                    raise ValueError("covariance is not positive-semidefinite.")
-            return _factor
-
         drop_dims = (mean.ndim == 1) and (cov.ndim == 2)
         if mean.ndim == 1:
             mean = mean.reshape((1, n))
@@ -5103,7 +5097,7 @@ cdef class ExtendedGenerator:
 
         _factors = np.empty_like(cov)
         for loc in np.ndindex(*cov.shape[:len(cov.shape)-2]):
-            _factors[loc] = _factorize(cov[loc], method, check_valid)
+            _factors[loc] = _factorize(cov[loc], method, check_valid, tol, n)
 
         out_shape = np.broadcast(mean[..., 0], cov[..., 0, 0]).shape
         if size is not None:
@@ -5293,6 +5287,270 @@ cdef class ExtendedGenerator:
                 np.PyArray_MultiIter_NEXT(it)
 
         return randoms
+
+    cdef object random_wishart_small_df(self, int64_t df, np.npy_intp dim, np.npy_intp num, object n):
+        double_fill(&random_gauss_zig_fill, &self._bitgen, None, self.lock, n)
+        return np.matmul(np.transpose(n,(0, 2, 1)),n)
+
+    def standard_wishart(self, int64_t df, np.npy_intp dim, size=None, rescale=True):
+        """
+        standard_wishart(df, dim, size=None)
+
+        Draw samples from the Standard Wishart and Pseudo-Wishart distributions
+
+        Parameters
+        ----------
+        df : int
+            The degree-of-freedom for the simulated Wishart variates.
+        dim : int
+            The dimension of the simulated Wishart variates.
+        size : int or tuple of ints, optional
+            Output shape, excluding trailing dims. If the given shape is, e.g.,
+            ``(m, n, k)``, then ``m * n * k`` samples are drawn, each with
+            shape ``(dim, dim)``. The output then has shape
+            ``(m, n, k, dim, dim)``. Default is None, in which case a single
+            value with shape ``(dim, dim)`` is returned.
+        rescale : bool, optional
+            Flag indicating whether to rescale the outputs to have expectation
+            identity. The default is True. If ``rescale`` is False, then the
+            expected value of the generated variates is `df` * eye(`dim`).
+
+        Returns
+        -------
+        ndarray
+            The generated variates from the standard wishart distribution.
+
+        See Also
+        --------
+        wishart
+            Generate variates with a non-identify scale. Also support array
+            inputs for `df`.
+
+        Notes
+        -----
+        Uses the method of Odell and Fieveson [1]_ when `df` >= `dim`.
+        Otherwise variates are directly generated as the inner product
+        of `df` by `dim` arrays of standard normal random variates.
+
+        References
+        ----------
+        .. [1] Odell, P. L. , and A. H. Feiveson (1966) A numerical procedure
+           to generate a sample covariance matrix. Jour. Amer. Stat. Assoc.
+           61, 199–203
+        .. [2] Uhlig, H. (1994). "On Singular Wishart and Singular Multivariate
+           Beta Distributions". The Annals of Statistics. 22: 395–405
+        .. [3] Dıaz-Garcıa, J. A., Jáimez, R. G., & Mardia, K. V. (1997). Wishart
+           and Pseudo-Wishart distributions and some applications to shape theory.
+           Journal of Multivariate Analysis, 63(1), 73-87.
+        """
+        cdef np.npy_intp num
+        cdef np.ndarray n, w
+        cdef double *n_data
+        cdef double *out_data
+
+        if size is None or size == ():
+            sz = 1
+        elif np.isscalar(size):
+            sz = (int(size),)
+        else:
+            sz = tuple(size)
+        num = np.prod(sz)
+        if df < dim:
+            n = <np.ndarray> np.empty((num, df, dim))
+            out = self.random_wishart_small_df(df, dim, num, n)
+        else:
+            out = <np.ndarray>np.empty((num, dim, dim))
+            out_data = <double *>np.PyArray_DATA(out)
+            n = <np.ndarray> np.empty((dim, dim))
+            n_data = <double *> np.PyArray_DATA(n)
+            with self.lock, nogil:
+                random_wishart_large_df(&self._bitgen, df, dim, num, out_data, n_data)
+        if size is None or size == ():
+            out.shape = (dim, dim)
+        else:
+            out.shape = sz + (dim, dim)
+        if rescale:
+            out /= df
+        return out
+
+    def wishart(self, df, scale=None, size=None, *, check_valid="warn",
+                tol=1e-8, rank=None, method="svd"):
+        """
+        wishart(df, scale, size=None, *, check_valid="warn", tol=None, rank=None, method="svd")
+
+        Draw samples from the Wishart and psuedo-Wishart distributions.
+
+        Parameters
+        ----------
+        df : {int, array_like[int]}
+            Degree-of-freedom values. In array-like must boradcast with all
+            but the final two dimensions of ``shape``.
+        scale : array_like
+            Shape matrix of the distribution. It must be symmetric and
+            positive-semidefinite for sampling. Must have shape
+            (c1, c2, ..., cj, N, N) where (c1, c2, ..., cj) broadcasts
+            with the degree of freedom shape (d1, d2, ..., dk).
+        size : int or sequence[int], optional
+            Given a shape of, for example, ``(m,n,k)``, ``m*n*k`` samples are
+            generated, and packed in an `m`-by-`n`-by-`k` arrangement.  Because
+            each sample is `N` by `N`, the output shape is ``(m,n,k,N,N)``.
+            If no shape is specified, a single (`N` by `N`) sample is returned.
+        check_valid : {'warn', 'raise', 'ignore' }, optional
+            Behavior when the covariance matrix has rank less than ``rank``.
+        tol : float, optional
+            Tolerance when checking the rank of ``shape``. ``shape`` is cast
+            to double before the check. If None, then the tolerance is
+            automatically determined as a function of `N` and the limit of
+            floating point precision.
+        rank : int, optional
+            The rank of shape when generating from the Singular Wishart
+            distribution. If None, then ``rank`` is set of `N` so that the
+            draws from the standard Wishart or pseudo-Wishart are generated.
+        method : {'svd', 'eigh', 'cholesky', 'factor'}, optional
+            The cov input is used to compute a factor matrix A such that
+            ``A @ A.T = cov``. This argument is used to select the method
+            used to compute the factor matrix A. The default method 'svd' is
+            the slowest, while 'cholesky' is the fastest but less robust than
+            the slowest method. The method `eigh` uses eigen
+            decomposition to compute A and is faster than svd but slower than
+            cholesky. When ``rank`` is less than `N`, then the `N` largest
+            eigenvalues and their associated eigenvalues are used when method
+            is `svd` or `eigh`. When method is 'cholesky, then the Cholesky
+            of the upper ``rank`` by ``rank`` block is used. `factor` assumes
+            that scale has been pre-factored so that no transformation is
+            applied. When using `factor`, no check is performed on the rank.
+
+        Returns
+        -------
+        ndarray
+            The generated variates from the Wishart distribution.
+
+        See Also
+        --------
+        standard_wishart
+            Generate variates with an identify scale.
+
+        Notes
+        -----
+        Uses the method of Odell and Fieveson [1]_ when `df` >= `dim`.
+        Otherwise variates are directly generated as the inner product
+        of `df` by `dim` arrays of standard normal random variates.
+
+        References
+        ----------
+        .. [1] Odell, P. L. , and A. H. Feiveson (1966) A numerical procedure
+           to generate a sample covariance matrix. Jour. Amer. Stat. Assoc.
+           61, 199–203
+        .. [2] Uhlig, H. (1994). "On Singular Wishart and Singular Multivariate
+           Beta Distributions". The Annals of Statistics. 22: 395–405
+        .. [3] Dıaz-Garcıa, J. A., Jáimez, R. G., & Mardia, K. V. (1997). Wishart
+           and Pseudo-Wishart distributions and some applications to shape theory.
+           Journal of Multivariate Analysis, 63(1), 73-87.
+        """
+        cdef np.broadcast it
+        cdef np.npy_intp block_size, dim, cnt
+        cdef long shape_nd
+        cdef int64_t df_i, shape_loc, last_small_df
+        cdef double *lwork_data
+        cdef double *large_value_data
+        cdef np.ndarray df_arr, shape_arr
+
+        # 1. Validate inputs
+        df_arr = <np.ndarray>np.asarray(df, dtype=np.int64, order="C")
+        if df_arr.size == 0:
+            raise ValueError("At least one value is required for df")
+        if not np.all(df_arr > 0):
+            raise ValueError("df must contain strictly positive integer values.")
+        shape_arr = <np.ndarray>np.asarray(scale, dtype=np.float64, order="C")
+        shape_nd = np.PyArray_NDIM(shape_arr)
+        msg = (
+            "scale must have at least 2 dimensions. The final two dimensions "
+            "must be the same so that scale's shape is (...,N,N)."
+        )
+        if shape_nd < 2:
+            raise ValueError(msg)
+        dim = np.shape(shape_arr)[shape_nd-1]
+        rank_val = dim if rank is None else int(rank)
+        if  np.shape(shape_arr)[shape_nd-2] != dim:
+            raise ValueError(msg)
+        shape_size = np.shape(shape_arr)[:shape_nd-2]
+        df_size = np.shape(df_arr)
+        if not df_size and not shape_size:
+            df_i = df_arr.item()
+            out = self.standard_wishart(df_i, dim, size, False)
+            factor = _factorize(shape_arr, method, check_valid, tol, rank_val)
+            np.matmul(factor, out, out=out)
+            np.matmul(out, factor.T, out=out)
+            return out
+
+        if not shape_size:
+            shape_dummy = np.zeros(1, dtype=np.int64)
+        else:
+            shape_dummy = np.arange(np.prod(shape_size), dtype=np.int64).reshape(shape_size)
+        if not df_size:
+            df_dummy = np.zeros(1, dtype=np.int64)
+        else:
+            df_dummy = np.arange(np.prod(df_size), dtype=np.int64).reshape(df_size)
+        it = np.PyArray_MultiIterNew2(df_arr, shape_dummy)
+        it_shape = it.shape
+        cnt = int(it.size)
+
+        if size is None:
+            out = np.empty(it_shape + (dim, dim))
+            block_size = 1
+        else:
+            if isinstance(size, (int, np.integer)):
+                size = (int(size),)
+            if len(size) < len(it_shape) or size[len(size)-len(it_shape):] != it_shape:
+                err_msg = (
+f"""size {size} is not compatible with the broadcast shape of `df` and `scale`
+{it.shape}. size must have at least as many values as the broadcasting shape
+and the trailing dimensions must match exactly so that
+{size[len(size) - len(it_shape):]} == {it_shape}"""
+                )
+                raise ValueError(err_msg)
+            out = np.empty(size + (dim, dim))
+            if size == it_shape:
+                block_size = 1
+            else:
+                block_size = int(np.prod(size[:(len(size)-len(it_shape))]))
+        out_shape = out.shape
+        out = out.reshape((-1, np.prod(it_shape), dim, dim))
+        temp_shape = np.shape(out[..., 0, :, :])
+        _factors = np.empty_like(scale)
+        for loc in np.ndindex(*scale.shape[:len(scale.shape) - 2]):
+            _factors[loc] = _factorize(scale[loc], method, check_valid, tol, rank_val)
+        _factors = _factors.reshape((-1,dim,dim))
+
+        large_values = np.empty((block_size, dim, dim), dtype=np.float64)
+        large_value_data = <double *>np.PyArray_DATA(large_values)
+        large_work = np.empty((dim, dim), dtype=np.float64)
+        lwork_data = <double *>np.PyArray_DATA(large_work)
+        last_small_df = -1
+        for i in range(cnt):
+            df_i = (<int64_t *> np.PyArray_MultiIter_DATA(it, 0))[0]
+            shape_loc = (<int64_t *> np.PyArray_MultiIter_DATA(it, 1))[0]
+            if df_i < dim:
+                if df_i != last_small_df:
+                    last_small_df = df_i
+                    small_work = np.empty((block_size, df_i, dim), dtype=np.float64)
+                temp = self.random_wishart_small_df(df_i, dim, block_size, small_work)
+            else:
+                with self.lock, nogil:
+                    random_wishart_large_df(&self._bitgen,
+                                            df_i,
+                                            <np.npy_intp>dim,
+                                            <np.npy_intp>block_size,
+                                            large_value_data,
+                                            lwork_data)
+                temp = large_values
+            factor = _factors[shape_loc]
+            np.matmul(factor, temp, out=temp)
+            np.matmul(temp, factor.T, out=temp)
+            out[...,i,:,:] = temp.reshape(temp_shape)
+
+            np.PyArray_MultiIter_NEXT(it)
+        return out.reshape(out_shape)
 
 
 with warnings.catch_warnings():

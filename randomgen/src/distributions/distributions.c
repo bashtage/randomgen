@@ -2,6 +2,7 @@
 #include "loggam.h"
 #include "ziggurat.h"
 #include "ziggurat_constants.h"
+#include <stdio.h>
 
 #if defined(_MSC_VER) && defined(_WIN64)
 #include <intrin.h>
@@ -652,7 +653,7 @@ static RAND_INT_TYPE random_poisson_ptrs(bitgen_t *bitgen_state, double lam) {
     /* log(V) == log(0.0) ok here */
     /* if U==0.0 so that us==0.0, log is ok since always returns */
     if ((log(V) + log(invalpha) - log(a / (us * us) + b)) <=
-        (-lam + k * loglam - loggam(k + 1))) {
+        (-lam + k * loglam - loggam(k + 1.0))) {
       return k;
     }
   }
@@ -788,10 +789,10 @@ Step52:
   if (A > (t + rho))
     goto Step10;
 
-  x1 = y + 1;
-  f1 = m + 1;
-  z = n + 1 - m;
-  w = n - y + 1;
+  x1 = y + 1.0;
+  f1 = m + 1.0;
+  z = n + 1.0 - m;
+  w = n - y + 1.0;
   x2 = x1 * x1;
   f2 = f1 * f1;
   z2 = z * z;
@@ -1635,6 +1636,34 @@ void random_multinomial(bitgen_t *bitgen_state, RAND_INT_TYPE n,
     remaining_p -= pix[j];
   }
   if (dn > 0) {
-      mnix[d - 1] = dn;
+    mnix[d - 1] = dn;
+  }
+}
+
+void random_wishart_large_df(bitgen_t *bitgen_state, int64_t df, npy_intp dim,
+                             npy_intp num, double *w, double *n) {
+  /*
+   * Odell, P. L. , and A. H. Feiveson (1966) A numerical procedure to
+   * generate a sample covariance matrix. Jour. Amer. Stat. Assoc. 61, 199–203
+   */
+  const npy_intp dim2 = dim * dim;
+  npy_intp i, j, k, r;
+  double vi;
+  for (k = 0; k < num; k++) {
+    for (i = 0; i < dim; i++) {
+      vi = random_chisquare(bitgen_state, (double)(df-i));
+      for (j = i; j < dim; j++) {
+        if (i == j) {
+          *(w + k * dim2 + i * dim + j) = vi;
+        } else {
+          *(n + dim * i + j) = next_gauss_zig(bitgen_state);
+          *(w + k * dim2 + i * dim + j) = *(n + dim * i + j) * sqrt(vi);
+        }
+        for (r = 0; r < i; r++) {
+          *(w + k * dim2 + i * dim + j) += *(n + dim * r + i) * *(n + dim * r + j);
+        }
+        *(w + k * dim2 + j * dim + i) = *(w + k * dim2 + i * dim + j);
+      }
+    }
   }
 }

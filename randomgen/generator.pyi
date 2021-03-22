@@ -147,17 +147,35 @@ class ExtendedGenerator:
     # Multivariate distributions:
     def multivariate_normal(
         self,
-        mean,
-        cov,
-        size: Size = None,
-        check_valid="warn",
-        tol=1e-8,
+        mean: ndarray,
+        cov: ndarray,
+        size: Size = ...,
+        check_valid: str = ...,
+        tol: float = ...,
         *,
-        method="svd"
+        method: str = ...
     ) -> ndarray: ...
     def complex_normal(
-        self, loc=0.0, gamma=1.0, relation=0.0, size: Size = None
+        self,
+        loc: complex = ...,
+        gamma: complex = ...,
+        relation: complex = ...,
+        size: Size = ...,
     ) -> Union[complex, ndarray]: ...
+    def standard_wishart(
+        self, df: int, dim: int, size: Size = ..., *, rescale: bool = ...
+    ) -> ndarray: ...
+    def wishart(
+        self,
+        df: Union[int, ndarray],
+        scale: ndarray,
+        size: Size = ...,
+        *,
+        check_valid: str = ...,
+        tol: float = ...,
+        rank: Optional[int] = ...,
+        method: str = ...
+    ) -> ndarray: ...
 
 _random_generator: Generator
 

@@ -5,6 +5,7 @@ import pickle
 import numpy as np
 from numpy.linalg import LinAlgError
 from numpy.testing import (
+    assert_allclose,
     assert_array_almost_equal,
     assert_equal,
     assert_no_warnings,
@@ -15,6 +16,18 @@ from numpy.testing import (
 import pytest
 
 from randomgen import MT19937, PCG64, ExtendedGenerator
+
+try:
+    from numpy.random import Generator
+except ImportError:
+    from randomgen import Generator
+
+try:
+    from scipy import linalg  # noqa: F401
+
+    HAS_SCIPY = True
+except ImportError:
+    HAS_SCIPY = False
 
 SEED = 1234567890
 MV_SEED = 123456789
@@ -28,6 +41,12 @@ def seed():
 @pytest.fixture(scope="module")
 def mv_seed():
     return MV_SEED
+
+
+@pytest.fixture(scope="function")
+def extended_gen():
+    pcg = PCG64(0, mode="sequence")
+    return ExtendedGenerator(pcg)
 
 
 _mt19937 = MT19937(SEED, mode="legacy")
@@ -343,3 +362,191 @@ def test_default_pcg64():
     eg = ExtendedGenerator()
     assert isinstance(eg.bit_generator, PCG64)
     assert eg.bit_generator.variant == "dxsm"
+
+
+@pytest.mark.parametrize("df", [2, 5, 10])
+@pytest.mark.parametrize("dim", [2, 5, 10])
+@pytest.mark.parametrize("size", [None, 5, (3, 7)])
+def test_standard_wishart_reproduce(df, dim, size):
+    pcg = PCG64(0, mode="sequence")
+    eg = ExtendedGenerator(pcg)
+    w = eg.standard_wishart(df, dim, size)
+    if size is not None:
+        sz = size if isinstance(size, tuple) else (size,)
+        assert w.shape[:-2] == sz
+    else:
+        assert w.ndim == 2
+    assert w.shape[-2:] == (dim, dim)
+
+    pcg = PCG64(0, mode="sequence")
+    eg = ExtendedGenerator(pcg)
+    w2 = eg.standard_wishart(df, dim, size)
+    assert_allclose(w, w2)
+
+
+@pytest.mark.parametrize("scale_dim", [0, 1, 2])
+@pytest.mark.parametrize("df", [8, [10], [[5], [6]]])
+def test_wishart_broadcast(df, scale_dim):
+    dim = 5
+    pcg = PCG64(0, mode="sequence")
+    eg = ExtendedGenerator(pcg)
+    scale = np.eye(dim)
+    for i in range(scale_dim):
+        scale = np.array([scale, scale])
+    w = eg.wishart(df, scale)
+    assert w.shape[-2:] == (dim, dim)
+    if np.isscalar(df) and scale_dim == 0:
+        assert w.ndim == 2
+    elif scale_dim > 0:
+        z = np.zeros(scale.shape[:-2])
+        assert w.shape[:-2] == np.broadcast(df, z).shape
+
+    size = w.shape[:-2]
+    pcg = PCG64(0, mode="sequence")
+    eg = ExtendedGenerator(pcg)
+    w2 = eg.wishart(df, scale, size=size)
+    assert_allclose(w, w2)
+
+
+METHODS = ["svd", "eigh"]
+if HAS_SCIPY:
+    METHODS += ["cholesky"]
+
+
+@pytest.mark.parametrize("method", METHODS)
+def test_wishart_reduced_rank(method):
+    scale = np.eye(3)
+    scale[0, 1] = scale[1, 0] = 1.0
+    pcg = PCG64(0, mode="sequence")
+    eg = ExtendedGenerator(pcg)
+    w = eg.wishart(10, scale, method=method, rank=2)
+    assert w.shape == (3, 3)
+    assert np.linalg.matrix_rank(w) == 2
+
+
+@pytest.mark.skipif(HAS_SCIPY, reason="Cannot test with SciPy")
+def test_missing_scipy_exception():
+    scale = np.eye(3)
+    scale[0, 1] = scale[1, 0] = 1.0
+    pcg = PCG64(0, mode="sequence")
+    eg = ExtendedGenerator(pcg)
+    with pytest.raises(ImportError):
+        eg.wishart(10, scale, method="cholesky", rank=2)
+
+
+def test_wishart_exceptions():
+    eg = ExtendedGenerator()
+    with pytest.raises(ValueError, match="scale must have at"):
+        eg.wishart(10, [10])
+    with pytest.raises(ValueError, match="scale must have at"):
+        eg.wishart(10, 10)
+    with pytest.raises(ValueError, match="scale must have at"):
+        eg.wishart(10, np.array([[1, 2]]))
+    with pytest.raises(ValueError, match="At least one"):
+        eg.wishart([], np.eye(2))
+    with pytest.raises(ValueError, match="df must contain strictly"):
+        eg.wishart(-1, np.eye(2))
+    with pytest.raises(ValueError, match="df must contain strictly"):
+        df = np.ones((3, 4, 5))
+        df[-1, -1, -1] = -1
+        eg.wishart(df, np.eye(2))
+    with pytest.raises(ValueError, match="cannot convert float"):
+        eg.wishart(np.nan, np.eye(2))
+    with pytest.raises(ValueError, match=r"size \(3,\) is not compatible"):
+        eg.wishart([[10, 9, 8], [10, 9, 8]], np.eye(2), size=3)
+
+
+@pytest.mark.parametrize("size", [None, 10, (10,), (10, 10)])
+@pytest.mark.parametrize("df", [100, [100] * 10, [[100] * 10] * 10])
+@pytest.mark.parametrize("tile", [None, (10,), (10, 10)])
+def test_wishart_size(size, df, tile):
+    eg = ExtendedGenerator()
+    scale = np.eye(3)
+    if tile:
+        scale = np.tile(scale, tile + (1, 1))
+
+    expected_shape = base_shape = (3, 3)
+    sz = (size,) if isinstance(size, int) else size
+    if np.asarray(df).ndim or tile:
+        tile_shape = () if tile is None else tile
+        shape = np.broadcast(np.asarray(df), np.ones(tile_shape)).shape
+        expected_shape = shape + base_shape
+        if size:
+            if len(sz) < len(shape):
+                with pytest.raises(ValueError, match=""):
+                    eg.wishart(df, scale, size=size)
+                return
+    if size:
+        expected_shape = sz + base_shape
+
+    w = eg.wishart(df, scale, size=size)
+    assert w.shape == expected_shape
+
+
+def test_broadcast_both_paths():
+    eg = ExtendedGenerator()
+    w = eg.wishart([3, 5], np.eye(4), size=(100, 2))
+    assert w.shape == (100, 2, 4, 4)
+
+
+def test_factor_wishart():
+    pcg = PCG64(0, mode="sequence")
+    eg = ExtendedGenerator(pcg)
+    w = eg.wishart([3, 5], 2 * np.eye(4), size=(10000, 2), method="factor")
+    assert_allclose(np.diag((w[:, 0] / 3).mean(0)).mean(), 4, rtol=1e-2)
+    assert_allclose(np.diag((w[:, 1] / 5).mean(0)).mean(), 4, rtol=1e-2)
+
+
+def test_wishart_chi2(extended_gen):
+    state = extended_gen.state
+    w = extended_gen.standard_wishart(10, 1, 10, rescale=False)
+    extended_gen.state = state
+    bg = extended_gen.bit_generator
+    c = Generator(bg).chisquare(10, size=10)
+    assert_allclose(np.squeeze(w), c)
+
+
+@pytest.mark.parametrize("df", [3, 5])
+def test_standard_vs_full_wishart(extended_gen, df):
+    state = extended_gen.state
+    sw = extended_gen.standard_wishart(df, 4, size=(3, 4, 5), rescale=False)
+    extended_gen.state = state
+    w = extended_gen.wishart(df, np.eye(4), size=(3, 4, 5))
+    assert_allclose(sw, w)
+
+
+def test_standard_wishart_direct_small(extended_gen):
+    bg = extended_gen.bit_generator
+    state = bg.state
+    w = extended_gen.standard_wishart(3, 4, 2, rescale=False)
+
+    bg.state = state
+    gen = Generator(bg)
+    for i in range(2):
+        n = gen.standard_normal((3, 4))
+        direct = n.T @ n
+        assert_allclose(direct, w[i])
+
+
+def test_standard_wishart_direct_large(extended_gen):
+    bg = extended_gen.bit_generator
+    state = bg.state
+    w = extended_gen.standard_wishart(3, 2, 2, rescale=False)
+    bg.state = state
+    gen = Generator(bg)
+    direct = np.zeros((2, 2))
+    for i in range(2):
+        v11 = gen.chisquare(3)
+        n = gen.standard_normal()
+        v22 = gen.chisquare(2)
+        direct[0, 0] = v11
+        direct[1, 1] = n ** 2 + v22
+        direct[1, 0] = direct[0, 1] = n * np.sqrt(v11)
+        assert_allclose(direct, w[i])
+
+        upper = np.zeros((2, 2))
+        upper[0, 0] = np.sqrt(v11)
+        upper[0, 1] = n
+        upper[1, 1] = np.sqrt(v22)
+        direct2 = upper.T @ upper
+        assert_allclose(direct2, w[i])

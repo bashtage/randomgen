@@ -340,6 +340,9 @@ DECLDIR void random_bounded_bool_fill(bitgen_t *bitgen_state, npy_bool off,
 DECLDIR void random_multinomial(bitgen_t *bitgen_state, RAND_INT_TYPE n,
                                 RAND_INT_TYPE *mnix, double *pix, npy_intp d,
                                 binomial_t *binomial);
+DECLDIR void random_wishart_large_df(bitgen_t *bitgen_state, int64_t df,
+                                     npy_intp dim, npy_intp num, double *w,
+                                     double *n);
 
 #ifdef __cplusplus
 }

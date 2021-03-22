@@ -1,2 +1,3 @@
 pytest>=6
 pytest-cov
+scipy>=1.3.2
