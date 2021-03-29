@@ -1,4 +1,4 @@
-from typing import TYPE_CHECKING, Any, Optional, Sequence, Tuple, Union
+from typing import TYPE_CHECKING, Any, Optional, Sequence, Union
 
 if TYPE_CHECKING:
     from typing import Literal
@@ -13,5 +13,5 @@ __all__ = ["IntegerSequenceSeed", "SeedMode", "Size"]
 
 IntegerSequenceSeed = Union[int, Sequence[int], SeedSequence]
 
-
-Size = Optional[Union[int, Tuple[int, ...]]]
+RequiredSize = Union[int, Sequence[int]]
+Size = Optional[RequiredSize]

@@ -550,3 +550,49 @@ def test_standard_wishart_direct_large(extended_gen):
         upper[1, 1] = np.sqrt(v22)
         direct2 = upper.T @ upper
         assert_allclose(direct2, w[i])
+
+
+@pytest.mark.parametrize("ex_gamma", [True, False])
+@pytest.mark.parametrize("ex_rel", [True, False])
+@pytest.mark.parametrize("ex_loc", [True, False])
+@pytest.mark.parametrize("size", [None, (5, 4, 3, 2)])
+def test_mv_complex_normal(extended_gen, ex_gamma, ex_rel, ex_loc, size):
+    gamma = np.array([[2, 0 + 1.0j], [-0 - 1.0j, 2]])
+    if ex_gamma:
+        gamma = np.tile(gamma, (2, 1, 1))
+    rel = np.array([[0.22, 0 + 0.1j], [+0 + 0.1j, 0.22]])
+    if ex_rel:
+        rel = np.tile(rel, (3, 1, 1, 1))
+    loc = np.zeros(2)
+    if ex_loc:
+        loc = np.tile(loc, (4, 1, 1, 1))
+    extended_gen.multivariate_complex_normal(np.zeros(2), size=size)
+    extended_gen.multivariate_complex_normal(np.zeros(2), size=size)
+    extended_gen.multivariate_complex_normal(np.zeros(2), gamma, size=size)
+    extended_gen.multivariate_complex_normal(np.zeros(2), gamma, rel, size=size)
+    extended_gen.multivariate_complex_normal(np.zeros(2), gamma, rel, size=size)
+
+
+def test_mv_complex_normal_exceptions(extended_gen):
+    with pytest.raises(ValueError, match="loc"):
+        extended_gen.multivariate_complex_normal(0.0)
+    with pytest.raises(ValueError, match="gamma"):
+        extended_gen.multivariate_complex_normal([0.0], 1.0)
+    with pytest.raises(ValueError, match="gamma"):
+        extended_gen.multivariate_complex_normal([0.0], [1.0])
+    with pytest.raises(ValueError, match="gamma"):
+        extended_gen.multivariate_complex_normal([0.0], np.ones((2, 3, 2)))
+    with pytest.raises(ValueError, match="relation"):
+        extended_gen.multivariate_complex_normal([0.0, 0.0], np.eye(2), 0.0)
+    with pytest.raises(ValueError, match="relation"):
+        extended_gen.multivariate_complex_normal([0.0, 0.0], np.eye(2), 0.0)
+    with pytest.raises(ValueError, match="relation"):
+        extended_gen.multivariate_complex_normal([0.0, 0.0], relation=0.0)
+    with pytest.raises(ValueError, match="The covariance matrix implied"):
+        extended_gen.multivariate_complex_normal(
+            [0.0, 0.0], np.array([[1.0, 0 + 1.0j], [0 + 1.0j, 1]])
+        )
+    with pytest.raises(ValueError, match="The leading dimensions"):
+        extended_gen.multivariate_complex_normal(
+            [0.0, 0.0], np.ones((4, 1, 3, 2, 2)), np.ones((1, 1, 2, 2, 2))
+        )
