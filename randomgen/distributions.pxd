@@ -162,3 +162,4 @@ cdef extern from "src/distributions/distributions.h":
 
     void random_multinomial(bitgen_t *bitgen_state, int64_t n, int64_t *mnix,
                             double *pix, np.npy_intp d, binomial_t *binomial) nogil
+    void random_wishart_large_df(bitgen_t *bitgen_state, int64_t df, np.npy_intp dim, np.npy_intp num, double *w, double *n) nogil

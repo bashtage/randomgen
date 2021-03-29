@@ -32,7 +32,9 @@ jobs:
           python.version: '3.8'
           use.conda: true
           NUMPY: 1.18.5
-          CYTHON: 0.29.21
+          CYTHON: 0.29.22
+          USE_SCIPY: "true"
+          USE_NUMBA: "true"
         python_38_coverage:
           python.version: '3.8'
           PYPI: true

@@ -34,7 +34,7 @@ steps:
     - uname -a
     - apt-get update
     - export DEBIAN_FRONTEND=noninteractive
-    - apt-get install libatlas-base-dev build-essential libxml2-dev libxslt-dev -y
+    - apt-get install libatlas-base-dev build-essential libxml2-dev libxslt-dev gfortran -y
     - python3 -m pip install --upgrade pip
     - pip3 install -r requirements.txt --upgrade
     - pip3 install -r requirements-dev.txt
