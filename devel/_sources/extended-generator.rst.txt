@@ -30,3 +30,5 @@ Distributions
    ~ExtendedGenerator.complex_normal
    ~ExtendedGenerator.multivariate_normal
    ~ExtendedGenerator.uintegers
+   ~ExtendedGenerator.standard_wishart
+   ~ExtendedGenerator.wishart
