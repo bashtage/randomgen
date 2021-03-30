@@ -5,7 +5,7 @@ import numpy as np
 from numpy import ndarray
 
 from randomgen.common import BitGenerator
-from randomgen.typing import Size
+from randomgen.typing import RequiredSize, Size
 
 class Generator:
     _bit_generator: BitGenerator
@@ -141,8 +141,9 @@ class ExtendedGenerator:
     def state(self) -> Dict[str, Any]: ...
     @state.setter
     def state(self, value: Dict[str, Any]) -> None: ...
+    def uintegers(self, size: None, bits: Literal[32, 64] = 64) -> int: ...
     def uintegers(
-        self, size: Size = None, bits: Literal[32, 64] = 64
+        self, size: RequiredSize, bits: Literal[32, 64] = 64
     ) -> Union[int, ndarray]: ...
     # Multivariate distributions:
     def multivariate_normal(
@@ -150,18 +151,34 @@ class ExtendedGenerator:
         mean: ndarray,
         cov: ndarray,
         size: Size = ...,
-        check_valid: str = ...,
+        check_valid: Literal["raise", "ignore", "warn"] = ...,
         tol: float = ...,
         *,
-        method: str = ...
+        method: Literal["svd", "eigh", "cholesky", "factor"] = ...
     ) -> ndarray: ...
+    @overload
     def complex_normal(
         self,
         loc: complex = ...,
         gamma: complex = ...,
         relation: complex = ...,
+    ) -> complex: ...
+    @overload
+    def complex_normal(
+        self,
+        loc: complex = ...,
+        gamma: complex = ...,
+        relation: complex = ...,
+        size: RequiredSize = ...,
+    ) -> ndarray: ...
+    @overload
+    def complex_normal(
+        self,
+        loc: Union[complex, ndarray] = ...,
+        gamma: Union[complex, ndarray] = ...,
+        relation: Union[complex, ndarray] = ...,
         size: Size = ...,
-    ) -> Union[complex, ndarray]: ...
+    ) -> ndarray: ...
     def standard_wishart(
         self, df: int, dim: int, size: Size = ..., *, rescale: bool = ...
     ) -> ndarray: ...
@@ -171,10 +188,21 @@ class ExtendedGenerator:
         scale: ndarray,
         size: Size = ...,
         *,
-        check_valid: str = ...,
+        check_valid: Literal["raise", "ignore", "warn"] = ...,
         tol: float = ...,
         rank: Optional[int] = ...,
-        method: str = ...
+        method: Literal["svd", "eigh", "cholesky", "factor"] = ...
+    ) -> ndarray: ...
+    def multivariate_complex_normal(
+        self,
+        loc: ndarray,
+        gamma: Optional[ndarray] = ...,
+        relation: Optional[ndarray] = ...,
+        size: Size = ...,
+        *,
+        check_valid: Literal["raise", "ignore", "warn"] = ...,
+        tol: float = ...,
+        method: Literal["svd", "eigh", "cholesky", "factor"] = ...
     ) -> ndarray: ...
 
 _random_generator: Generator

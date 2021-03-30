@@ -970,7 +970,19 @@ class TestRandomDist(object):
         if sys.byteorder != "little":
             actual = actual.byteswap()
         res = hashlib.md5(actual.view(np.int8)).hexdigest()
-        assert_(choice_hash == res)
+        assert choice_hash == res
+
+    def test_choice_very_large_sample(self):
+        import hashlib
+
+        choice_hash = "c1adc3c51a477b4ca642a5643e3dcad85e10a74c600b5299c64f5257bb060155"
+        random.bit_generator.seed(self.seed)
+        actual = random.choice(25000, 12500, replace=False)
+        assert actual.shape == (12500,)
+        if sys.byteorder != "little":
+            actual = actual.byteswap()
+        res = hashlib.sha256(actual.view(np.int8)).hexdigest()
+        assert choice_hash == res
 
     def test_bytes(self):
         random.bit_generator.seed(self.seed)

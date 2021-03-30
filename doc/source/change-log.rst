@@ -18,6 +18,7 @@ Change Log
 
 Since v1.20.0
 =============
+- Added :func:`~randomgen.generator.ExtendedGenerator.multivariate_complex_normal`.
 - Added :func:`~randomgen.generator.ExtendedGenerator.standard_wishart` and
   :func:`~randomgen.generator.ExtendedGenerator.wishart` variate generators.
 

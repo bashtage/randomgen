@@ -37,7 +37,32 @@ __all__ = ["Generator", "beta", "binomial", "bytes", "chisquare", "choice",
 
 np.import_array()
 
-def _factorize(cov, meth, check_valid, tol, rank):
+cdef object broadcast_shape(tuple x, tuple y, bint strict):
+    cdef bint cond, bcast=True
+    if x == () or y == ():
+        if len(x) > len(y):
+            return True, x
+        return True, y
+    lx = len(x)
+    ly = len(y)
+    if lx > ly:
+        shape = list(x[:lx-ly])
+        x = x[lx-ly:]
+    else:
+        shape = list(y[:ly-lx])
+        y = y[ly-lx:]
+    for xs, ys in zip(x, y):
+        cond = xs == ys
+        if not strict:
+            cond |= min(xs, ys) == 1
+        bcast &= cond
+        if not bcast:
+            break
+        shape.append(max(xs, ys))
+    return bcast, tuple(shape)
+
+
+cdef _factorize(cov, meth, check_valid, tol, rank):
     if meth == "svd":
         from numpy.linalg import svd
 
@@ -4988,13 +5013,15 @@ cdef class ExtendedGenerator:
         tol : float, optional
             Tolerance when checking the singular values in covariance matrix.
             cov is cast to double before the check.
-        method : {'svd', 'eigh', 'cholesky'}, optional
+        method : {'svd', 'eigh', 'cholesky', 'factor'}, optional
             The cov input is used to compute a factor matrix A such that
             ``A @ A.T = cov``. This argument is used to select the method
             used to compute the factor matrix A. The default method 'svd' is
             the slowest, while 'cholesky' is the fastest but less robust than
             the slowest method. The method `eigh` uses eigen decomposition to
-            compute A and is faster than svd but slower than cholesky.
+            compute A and is faster than svd but slower than cholesky. `factor`
+            assumes that cov has been pre-factored so that no transformation is
+            applied.
 
         Returns
         -------
@@ -5552,6 +5579,242 @@ and the trailing dimensions must match exactly so that
             np.PyArray_MultiIter_NEXT(it)
         return out.reshape(out_shape)
 
+
+    def multivariate_complex_normal(self, loc, gamma=None, relation=None, size=None, *,
+                                    check_valid="warn", tol=1e-8, method="svd"):
+        r"""
+        multivariate_complex_normal(loc, gamma=None, relation=None, size=None, *, check_valid="warn", tol=1e-8, method="svd")
+
+        Draw random samples from a multivariate complex normal (Gaussian) distribution.
+
+        Parameters
+        ----------
+        loc : array_like of complex
+            Mean of the distribution.  Must have shape (m1, m2, ..., mk, N) where
+            (m1, m2, ..., mk) would broadcast with (g1, g2, ..., gj) and
+            (r1, r2, ..., rq).
+        gamma : array_like of float or complex, optional
+            Covariance of the real component of the distribution.  Must have shape
+            (g1, g2, ..., gj, N, N) where (g1, g2, ..., gj) would broadcast
+            with (m1, m2, ..., mk) and (r1, r2, ..., rq). If not provided,
+            an identity matrix is used which produces the circularly-symmetric
+            complex normal when relation is an array of 0.
+        relation : array_like of float or complex, optional
+            Relation between the two component normals. (r1, r2, ..., rq, N, N)
+            where (r1, r2, ..., rq, N, N) would broadcast with (m1, m2, ..., mk)
+            and (g1, g2, ..., gj). If not provided, set to zero which produces
+            the circularly-symmetric complex normal when gamma is an identify matrix.
+        size : int or tuple of ints, optional
+            Given a shape of, for example, ``(m,n,k)``, ``m*n*k`` samples are
+            generated, and packed in an `m`-by-`n`-by-`k` arrangement.  Because
+            each sample is `N`-dimensional, the output shape is ``(m,n,k,N)``.
+            If no shape is specified, a single (`N`-D) sample is returned.
+        check_valid : {'warn', 'raise', 'ignore' }, optional
+            Behavior when the covariance matrix implied by `gamma` and `relation`
+            is not positive semidefinite.
+        tol : float, optional
+            Tolerance when checking the singular values in the covariance matrix
+            implied by `gamma` and `relation`.
+        method : {'svd', 'eigh', 'cholesky'}, optional
+            The cov input is used to compute a factor matrix A such that
+            ``A @ A.T = cov``. This argument is used to select the method
+            used to compute the factor matrix A for the covariance implied by
+            `gamma` and `relation`. The default method 'svd' is
+            the slowest, while 'cholesky' is the fastest but less robust than
+            the slowest method. The method `eigh` uses eigen decomposition to
+            compute A and is faster than svd but slower than cholesky.
+
+        Returns
+        -------
+        out : ndarray
+            Drawn samples from the parameterized complex normal distributions.
+
+        See Also
+        --------
+        numpy.random.Generator.normal : random values from a real-valued
+            normal distribution
+        randomgen.generator.ExtendedGenerator.complex_normal : random values from a
+           scalar complex-valued normal distribution
+        randomgen.generator.ExtendedGenerator.multivariate_normal : random values from a
+           scalar complex-valued normal distribution
+
+        Notes
+        -----
+        Complex normals are generated from a multivariate normal where the
+        covariance matrix of the real and imaginary components is
+
+        .. math::
+
+           \begin{array}{c}
+           X\\
+           Y
+           \end{array}\sim N\left(\left[\begin{array}{c}
+           \mathrm{Re\left[\mu\right]}\\
+           \mathrm{Im\left[\mu\right]}
+           \end{array}\right],\frac{1}{2}\left[\begin{array}{cc}
+           \mathrm{Re}\left[\Gamma+C\right] & \mathrm{Im}\left[C-\Gamma\right]\\
+           \mathrm{Im}\left[\Gamma+C\right] & \mathrm{Re}\left[\Gamma-C\right]
+           \end{array}\right]\right)
+
+        The complex normals are then
+
+        .. math::
+
+           Z = X + iY
+
+        If the implied covariance matrix is not positive semi-definite a warning
+        or exception may be raised depending on the value `check_valid`.
+
+        References
+        ----------
+        .. [1] Wikipedia, "Complex normal distribution",
+               https://en.wikipedia.org/wiki/Complex_normal_distribution
+        .. [2] Leigh J. Halliwell, "Complex Random Variables" in "Casualty
+               Actuarial Society E-Forum", Fall 2015.
+
+        Examples
+        --------
+        Draw samples from the standard multivariate complex normal
+
+        >>> from randomgen import ExtendedGenerator
+        >>> eg = ExtendedGenerator()
+        >>> loc = np.zeros(3)
+        >>> eg.multivariate_complex_normal(loc, size=2)
+        array([[ 0.42551611+0.44163456j,
+                -0.18366146+0.88380663j,
+                -0.3035725 -1.19754723j],
+               [-0.86649667-0.88447445j,
+                -0.04913229-0.04674949j,
+                -0.28145563+1.04682163j]])
+
+        Draw samples a trivariate centered circularly symmetric complex normal
+
+        >>> rho = 0.7
+        >>> gamma = rho * np.eye(3) + (1-rho) * np.diag(np.ones(3))
+        >>> eg.multivariate_complex_normal(loc, gamma, size=3)
+        array([[ 0.32699266-0.57787275j,  0.46716898-0.06687298j,
+                -0.31483301+0.17233599j],
+               [ 0.28036548-0.56994348j,  0.18011468-0.50539209j,
+                 0.35185607-0.15184288j],
+               [-0.1866397 +1.2701576j , -0.18419364-0.06912343j,
+                -0.66462037+0.73939778j]])
+
+        Draw samples from a bivariate distribution with
+        correlation between the real and imaginary components
+
+        >>> loc = np.array([3-7j, 2+4j])
+        >>> gamma = np.array([[2, 0 + 1.0j], [-0 - 1.0j, 2]])
+        >>> rel = np.array([[-1.8, 0 + 0.1j], [0 + 0.1j, -1.8]])
+        >>> eg.multivariate_complex_normal(loc, gamma, size=3)
+        array([[2.97279918-5.64185732j, 2.32361134+3.23587346j],
+               [1.91476019-7.91802901j, 1.76788821+3.84832672j],
+               [4.44740101-7.93782402j, 1.59809459+1.35360097j]])
+        """
+        cdef np.ndarray garr, rarr, larr
+        cdef np.npy_intp *gshape
+        cdef np.npy_intp *rshape
+        cdef int gdim, rdim, dim, ldim
+
+        larr = <np.ndarray>np.PyArray_FROM_OTF(loc,
+                                               np.NPY_CDOUBLE,
+                                               np.NPY_ARRAY_ALIGNED |
+                                               np.NPY_ARRAY_C_CONTIGUOUS)
+        ldim = np.PyArray_NDIM(larr)
+        if ldim < 1:
+            raise ValueError("loc must be at least 1-dimensional")
+        dim = np.PyArray_DIMS(larr)[ldim - 1]
+
+        if gamma is None:
+            garr = <np.ndarray>np.eye(dim, dtype=complex)
+        else:
+            garr = <np.ndarray>np.PyArray_FROM_OTF(gamma,
+                                                   np.NPY_CDOUBLE,
+                                                   np.NPY_ARRAY_ALIGNED |
+                                                   np.NPY_ARRAY_C_CONTIGUOUS)
+
+        gdim = np.PyArray_NDIM(garr)
+        gshape = np.PyArray_DIMS(garr)
+        if gdim < 2 or gshape[gdim - 2] != gshape[gdim - 1] or gshape[gdim - 1] != dim:
+            raise ValueError(
+                "gamma must be at least 2-dimensional and the final two dimensions "
+                f"must match the final dimension of loc, {dim}."
+            )
+        if relation is None:
+            rarr = <np.ndarray>np.zeros((dim,dim), dtype=complex)
+        else:
+            rarr = <np.ndarray>np.PyArray_FROM_OTF(relation,
+                                                   np.NPY_CDOUBLE,
+                                                   np.NPY_ARRAY_ALIGNED |
+                                                   np.NPY_ARRAY_C_CONTIGUOUS)
+        rdim = np.PyArray_NDIM(rarr)
+        rshape = np.PyArray_DIMS(rarr)
+        if rdim < 2 or rshape[rdim - 2] != rshape[rdim - 1] or rshape[rdim - 1] != dim:
+            raise ValueError(
+                "relation must be at least 2-dimensional and the final two dimensions "
+                f"must match the final dimension of loc, {dim}."
+            )
+        can_bcast, cov_shape = broadcast_shape(np.shape(garr), np.shape(rarr), False)
+        if not can_bcast:
+            raise ValueError(
+                f"The leading dimensions of gamma {np.shape(garr)[:gdim-2]} "
+                "must broadcast with the leading dimension of relation "
+                f"{np.shape(rarr)[:rdim-2]}.")
+        common_shape = cov_shape[: len(cov_shape) - 2]
+        l_shape = np.shape(larr)
+        l_common = l_shape[: len(l_shape) - 1]
+        can_bcast, bcast_shape = broadcast_shape(l_common, common_shape, False)
+        if size is not None:
+            if isinstance(size, (int, np.integer)):
+                size = (size, )
+            can_bcast, bcast_shape = broadcast_shape(tuple(size), common_shape, True)
+        temp = np.empty((2 * dim, 2 * dim))
+        p = np.arange(2 * dim).reshape((2, -1))
+        p = p.T.ravel()
+        ix = np.ix_(p, p)
+
+        if gdim == 2:
+            gidx = np.array([0])
+            garr = np.reshape(garr, (1,) + np.shape(garr))
+        else:
+            _shape = np.shape(garr)[: gdim - 2]
+            gidx = np.arange(np.prod(_shape)).reshape(_shape)
+        if rdim == 2:
+            ridx = np.array([0])
+            rarr = np.reshape(rarr, (1,) + np.shape(rarr))
+        else:
+            _shape = np.shape(rarr)[: rdim - 2]
+            ridx = np.arange(np.prod(_shape)).reshape(_shape)
+
+        factors = np.empty(common_shape + (2 * dim, 2 * dim)).reshape(
+            (-1, 2 * dim, 2 * dim)
+        )
+        fidx = 0
+
+        for i, j, in np.broadcast(gidx, ridx):
+            g = garr[i]
+            r = rarr[j]
+            gpr = 0.5 * (g + r)
+            gmr = 0.5 * (g - r)
+            temp[:dim, :dim] = gpr.real
+            temp[:dim, dim:] = -gmr.imag
+            temp[dim:, :dim] = gpr.imag
+            temp[dim:, dim:] = gmr.real
+            if not np.allclose(temp, temp.T, rtol=tol):
+                raise ValueError(
+                    "The covariance matrix implied by gamma and relation is "
+                    "not symmetric.  Each component in gamma must be positive "
+                    "semi-definite Hermetian and each component in relation "
+                    "must be symmetric."
+                )
+            factors[fidx] = _factorize(
+                temp[ix], meth=method, check_valid=check_valid, tol=tol, rank=2 * dim
+            )
+            fidx += 1
+        factors = factors.reshape(common_shape + (2 * dim, 2 * dim))
+        out = self.multivariate_normal(
+            larr.view(np.float64), factors, size=size, method="factor"
+        )
+        return out.view(complex)
 
 with warnings.catch_warnings():
     warnings.simplefilter("ignore")
