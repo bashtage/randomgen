@@ -105,7 +105,7 @@ generators, 'in addition' to the standard PRNG in NumPy.  The included PRNGs are
   :meth:`~randomgen.xoroshiro128.Xoroshiro128.jumped` for details.
   More information about this PRNG is available at the
   `xorshift, xoroshiro and xoshiro authors' page`_.
-* XorShift1024*φ - Fast fast generator based on the XSadd
+* XorShift1024*φ - Fast generator based on the XSadd
   generator. Supports ``jump`` and so can be used in
   parallel applications. See the documentation for
   :meth:`~randomgen.xorshift1024.Xorshift1024.jumped` for details. More information

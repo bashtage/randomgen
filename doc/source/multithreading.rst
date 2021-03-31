@@ -94,7 +94,7 @@ The single threaded call directly uses the PRNG.
 
     66.5 ms ± 171 µs per loop (mean ± std. dev. of 7 runs, 10 loops each)
 
-The gains are substantial and the scaling is reasonable even for large that
+The gains are substantial and the scaling is reasonable even for arrays that
 are only moderately large.  The gains are even larger when compared to a call
 that does not use an existing array due to array creation overhead.
 
