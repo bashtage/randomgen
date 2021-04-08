@@ -178,7 +178,7 @@ cdef class RDRAND(BitGenerator):
     state structure, or use PyErr_Occurred to see if an error occurred
     during generation.
 
-    To see the exception you will generatr, you can run this invalid code
+    To see the exception you will generate, you can run this invalid code
 
     >>> from numpy.random import Generator
     >>> from randomgen import RDRAND
