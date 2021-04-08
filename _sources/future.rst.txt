@@ -11,7 +11,7 @@ The future plans for randomgen are:
 * Remove :class:`~randomgen.generator.Generator` and :class:`~randomgen.mtrand.RandomState`. These
   duplicate NumPy and will diverge over time.  The versions in NumPy are authoritative. These
   have been deprecated as of version 1.19 and will be removed in 1.21.
-* The novel methods of :class:`~randomgen.generator.Generator` in a
+* Put the novel methods of :class:`~randomgen.generator.Generator` in a
   :class:`~randomgen.generator.ExtendedGenerator`. :class:`~randomgen.generator.ExtendedGenerator`
   will be maintained, although it is possible that some of the methods may
   migrate to NumPy.

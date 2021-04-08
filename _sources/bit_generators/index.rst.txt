@@ -4,7 +4,7 @@ Bit Generators
 The random values produced by :class:`numpy.random.Generator`
 (and also  :class:`~randomgen.generator.Generator`)
 are produced by a bit generator.  These bit generators do not directly provide
-random numbers and only contains methods used for seeding, getting or
+random numbers and only contain methods used for seeding, getting or
 setting the state, jumping or advancing the state, and for accessing
 low-level wrappers for consumption by code that can efficiently
 access the functions provided, e.g., `numba <https://numba.pydata.org>`_.

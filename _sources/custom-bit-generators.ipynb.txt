@@ -19,7 +19,7 @@
     "bit generators in pure Python or, if performance is an issue, using Cython or by\n",
     "accessing functions in a compiled library (e.g., a DLL).\n",
     "\n",
-    "Here we look examine the steps needed to write a pure Python bit\n",
+    "Here we examine the steps needed to write a pure Python bit\n",
     "generator and higher-performance generator using Cython."
    ]
   },
@@ -33,7 +33,7 @@
    "source": [
     "## Using Python\n",
     "\n",
-    "The example here beings by writing a class that implements the PCG64\n",
+    "The example here begins by writing a class that implements the PCG64\n",
     "bit generator using the XSL-RR output transformation. While this is not\n",
     "a complete implementation (it does not support `advance` or `seed`),\n",
     "it is simple. The key to understanding PCG is that the underlying state\n",
@@ -253,7 +253,7 @@
     "wire up this function by setting `state_setter` and `state_getter` in `UserBitGenerator`.\n",
     "These both take callable functions.\n",
     "\n",
-    "This time the `state_getter` and `state_setter` are used to that the state can be read\n",
+    "This time the `state_getter` and `state_setter` are used so that the state can be read\n",
     "and set through the bit generator."
    ]
   },

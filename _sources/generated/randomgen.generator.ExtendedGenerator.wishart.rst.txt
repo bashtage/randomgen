@@ -1,0 +1,6 @@
+﻿randomgen.generator.ExtendedGenerator.wishart
+=============================================
+
+.. currentmodule:: randomgen.generator
+
+.. automethod:: ExtendedGenerator.wishart

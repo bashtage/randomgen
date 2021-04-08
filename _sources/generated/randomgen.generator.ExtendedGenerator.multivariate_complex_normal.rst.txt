@@ -1,0 +1,6 @@
+﻿randomgen.generator.ExtendedGenerator.multivariate\_complex\_normal
+===================================================================
+
+.. currentmodule:: randomgen.generator
+
+.. automethod:: ExtendedGenerator.multivariate_complex_normal
