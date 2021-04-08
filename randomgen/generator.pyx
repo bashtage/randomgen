@@ -5355,7 +5355,7 @@ cdef class ExtendedGenerator:
 
         Notes
         -----
-        Uses the method of Odell and Fieveson [1]_ when `df` >= `dim`.
+        Uses the method of Odell and Feiveson [1]_ when `df` >= `dim`.
         Otherwise variates are directly generated as the inner product
         of `df` by `dim` arrays of standard normal random variates.
 
@@ -5405,12 +5405,12 @@ cdef class ExtendedGenerator:
         """
         wishart(df, scale, size=None, *, check_valid="warn", tol=None, rank=None, method="svd")
 
-        Draw samples from the Wishart and psuedo-Wishart distributions.
+        Draw samples from the Wishart and pseudo-Wishart distributions.
 
         Parameters
         ----------
         df : {int, array_like[int]}
-            Degree-of-freedom values. In array-like must boradcast with all
+            Degree-of-freedom values. In array-like must broadcast with all
             but the final two dimensions of ``shape``.
         scale : array_like
             Shape matrix of the distribution. It must be symmetric and
@@ -5459,7 +5459,7 @@ cdef class ExtendedGenerator:
 
         Notes
         -----
-        Uses the method of Odell and Fieveson [1]_ when `df` >= `dim`.
+        Uses the method of Odell and Feiveson [1]_ when `df` >= `dim`.
         Otherwise variates are directly generated as the inner product
         of `df` by `dim` arrays of standard normal random variates.
 
@@ -5491,10 +5491,10 @@ cdef class ExtendedGenerator:
         shape_arr = <np.ndarray>np.asarray(scale, dtype=np.float64, order="C")
         shape_nd = np.PyArray_NDIM(shape_arr)
         msg = (
-            "scale must have at least 2 dimensions. The final two dimensions "
-            "must be the same so that scale's shape is (...,N,N)."
+            "scale must be non-empty and have at least 2 dimensions. The final "
+            "two dimensions must be the same so that scale's shape is (...,N,N)."
         )
-        if shape_nd < 2:
+        if shape_nd < 2 or shape_arr.size == 0:
             raise ValueError(msg)
         dim = np.shape(shape_arr)[shape_nd-1]
         rank_val = dim if rank is None else int(rank)
@@ -5720,8 +5720,8 @@ and the trailing dimensions must match exactly so that
                                                np.NPY_ARRAY_ALIGNED |
                                                np.NPY_ARRAY_C_CONTIGUOUS)
         ldim = np.PyArray_NDIM(larr)
-        if ldim < 1:
-            raise ValueError("loc must be at least 1-dimensional")
+        if ldim < 1 or larr.size == 0:
+            raise ValueError("loc must be non-empty and at least 1-dimensional")
         dim = np.PyArray_DIMS(larr)[ldim - 1]
 
         if gamma is None:
@@ -5734,10 +5734,16 @@ and the trailing dimensions must match exactly so that
 
         gdim = np.PyArray_NDIM(garr)
         gshape = np.PyArray_DIMS(garr)
-        if gdim < 2 or gshape[gdim - 2] != gshape[gdim - 1] or gshape[gdim - 1] != dim:
+        if (
+                gdim < 2 or
+                gshape[gdim - 2] != gshape[gdim - 1] or
+                gshape[gdim - 1] != dim or
+                garr.size == 0
+        ):
             raise ValueError(
-                "gamma must be at least 2-dimensional and the final two dimensions "
-                f"must match the final dimension of loc, {dim}."
+                "gamma must be non-empty with at least 2-dimensional and the "
+                "final two dimensions must match the final dimension of loc,"
+                f" {dim}."
             )
         if relation is None:
             rarr = <np.ndarray>np.zeros((dim,dim), dtype=complex)
@@ -5748,10 +5754,16 @@ and the trailing dimensions must match exactly so that
                                                    np.NPY_ARRAY_C_CONTIGUOUS)
         rdim = np.PyArray_NDIM(rarr)
         rshape = np.PyArray_DIMS(rarr)
-        if rdim < 2 or rshape[rdim - 2] != rshape[rdim - 1] or rshape[rdim - 1] != dim:
+        if (
+                rdim < 2 or
+                rshape[rdim - 2] != rshape[rdim - 1] or
+                rshape[rdim - 1] != dim or
+                rarr.size == 0
+        ):
             raise ValueError(
-                "relation must be at least 2-dimensional and the final two dimensions "
-                f"must match the final dimension of loc, {dim}."
+                "relation must be non-empty with at least 2-dimensional and the "
+                "final two dimensions must match the final dimension of loc,"
+                f" {dim}."
             )
         can_bcast, cov_shape = broadcast_shape(np.shape(garr), np.shape(rarr), False)
         if not can_bcast:

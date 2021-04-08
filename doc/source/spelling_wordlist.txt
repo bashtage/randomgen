@@ -279,3 +279,8 @@ Intrinsics
 precomputed
 args
 kwargs
+Wishart
+wishart
+Fortran
+loc
+trivariate

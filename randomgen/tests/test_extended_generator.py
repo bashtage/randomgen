@@ -436,11 +436,11 @@ def test_missing_scipy_exception():
 
 def test_wishart_exceptions():
     eg = ExtendedGenerator()
-    with pytest.raises(ValueError, match="scale must have at"):
+    with pytest.raises(ValueError, match="scale must be non-empty"):
         eg.wishart(10, [10])
-    with pytest.raises(ValueError, match="scale must have at"):
+    with pytest.raises(ValueError, match="scale must be non-empty"):
         eg.wishart(10, 10)
-    with pytest.raises(ValueError, match="scale must have at"):
+    with pytest.raises(ValueError, match="scale must be non-empty"):
         eg.wishart(10, np.array([[1, 2]]))
     with pytest.raises(ValueError, match="At least one"):
         eg.wishart([], np.eye(2))
@@ -596,3 +596,23 @@ def test_mv_complex_normal_exceptions(extended_gen):
         extended_gen.multivariate_complex_normal(
             [0.0, 0.0], np.ones((4, 1, 3, 2, 2)), np.ones((1, 1, 2, 2, 2))
         )
+
+
+def test_wishart_edge(extended_gen):
+    with pytest.raises(ValueError, match="scale must be non-empty"):
+        extended_gen.wishart(5, np.empty((0, 0)))
+    with pytest.raises(ValueError, match="scale must be non-empty"):
+        extended_gen.wishart(5, np.empty((0, 2, 2)))
+    with pytest.raises(ValueError, match="scale must be non-empty"):
+        extended_gen.wishart(5, [[]])
+    with pytest.raises(ValueError, match="At least one value is required"):
+        extended_gen.wishart(np.empty((0, 2, 3)), np.eye(2))
+
+
+def test_mv_complex_normal_edge(extended_gen):
+    with pytest.raises(ValueError, match="loc must be non-empty and at least"):
+        extended_gen.multivariate_complex_normal(np.empty((0, 2)))
+    with pytest.raises(ValueError, match="gamma must be non-empty"):
+        extended_gen.multivariate_complex_normal([0, 0], np.empty((0, 2, 2)))
+    with pytest.raises(ValueError, match="relation must be non-empty"):
+        extended_gen.multivariate_complex_normal([0, 0], np.eye(2), np.empty((0, 2, 2)))

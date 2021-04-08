@@ -16,8 +16,10 @@ Change Log
   cannot update NumPy.
 
 
-Since v1.20.0
-=============
+v1.20.1
+=======
+- Fixed a bug that affects :func:`~randomgen.generator.Generator.standard_gamma` when
+  used with ``out`` and a Fortran contiguous array.
 - Added :func:`~randomgen.generator.ExtendedGenerator.multivariate_complex_normal`.
 - Added :func:`~randomgen.generator.ExtendedGenerator.standard_wishart` and
   :func:`~randomgen.generator.ExtendedGenerator.wishart` variate generators.
