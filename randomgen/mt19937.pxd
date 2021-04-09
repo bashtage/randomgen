@@ -18,6 +18,9 @@ cdef extern from "src/mt19937/mt19937.h":
     void mt19937_jump_default(mt19937_state_t *state)
     void mt19937_jump_n(mt19937_state_t *state, int count)
 
+    enum:
+        RK_STATE_LEN
+
 cdef class MT19937(BitGenerator):
 
     cdef mt19937_state_t rng_state
