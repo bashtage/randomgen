@@ -785,7 +785,7 @@ class TestThreeFry(Random123):
         )
 
 
-class TestPCG64(Base):
+class TestPCG64XSLRR(Base):
     @classmethod
     def setup_class(cls):
         super().setup_class()
@@ -800,6 +800,9 @@ class TestPCG64(Base):
             (-2,),
             (2 ** 129 + 1,),
         ]
+
+    def setup_bitgenerator(self, seed, mode="legacy", inc=0):
+        return self.bit_generator(*seed, mode=mode, variant="xsl-rr", inc=inc)
 
     def test_seed_float_array(self):
         rs = Generator(self.setup_bitgenerator(self.data1["seed"]))
@@ -835,10 +838,10 @@ class TestPCG64(Base):
         assert val_big == val_pos
 
     def test_inc_none(self):
-        bg = self.setup_bitgenerator([0, None])
+        bg = self.setup_bitgenerator([0], inc=None)
         assert isinstance(bg.random_raw(), int)
 
-        bg = self.setup_bitgenerator([0, None], mode="sequence")
+        bg = self.setup_bitgenerator([0], inc=None, mode="sequence")
         assert isinstance(bg.random_raw(), int)
 
 
@@ -1298,7 +1301,7 @@ class TestThreeFry4x32(Random123):
         assert_state_equal(bit_generator.state, keyed.state)
 
 
-class TestPCG32(TestPCG64):
+class TestPCG32(TestPCG64XSLRR):
     @classmethod
     def setup_class(cls):
         super().setup_class()
@@ -1315,6 +1318,9 @@ class TestPCG32(TestPCG64):
             (None, -1),
             (None, 2 ** 129 + 1),
         ]
+
+    def setup_bitgenerator(self, seed, mode="legacy", inc=0):
+        return self.bit_generator(*seed, mode=mode, inc=0)
 
     def test_advance_symmetry(self):
         rs = Generator(self.setup_bitgenerator(self.data1["seed"]))
@@ -1812,9 +1818,7 @@ class TestSPECK128(TestHC128):
 
 
 def test_mode():
-    with pytest.warns(FutureWarning, match="mode is None which currently"):
-        mt19937 = MT19937(0)
-    assert mt19937.seed_seq is None
+    mt19937 = MT19937(0)
     with pytest.raises(ValueError, match="mode must be one of None"):
         MT19937(mode="unknown")
 
@@ -1881,8 +1885,8 @@ class TestPCG64DXSM(Base):
             cls.invalid_seed_values += [("apple",)]
         cls.seed_sequence_only = True
 
-    def setup_bitgenerator(self, seed, mode=None):
-        return self.bit_generator(*seed)
+    def setup_bitgenerator(self, seed, mode=None, inc=0):
+        return self.bit_generator(*seed, inc=inc)
 
 
 class TestPCG64CMDXSM(TestPCG64DXSM):
