@@ -1818,7 +1818,6 @@ class TestSPECK128(TestHC128):
 
 
 def test_mode():
-    mt19937 = MT19937(0)
     with pytest.raises(ValueError, match="mode must be one of None"):
         MT19937(mode="unknown")
 

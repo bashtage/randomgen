@@ -9,13 +9,13 @@ class UserBitGenerator(BitGenerator):
     def __init__(
         self,
         next_raw: Optional[Callable[[int], int]],
-        bits: Literal[32, 64] = 64,
-        next_64: Optional[Callable[[int], int]] = None,
-        next_32: Optional[Callable[[int], int]] = None,
-        next_double: Optional[Callable[[int], float]] = None,
-        state: Optional[int] = None,
-        state_getter: Optional[Callable[[], Any]] = None,
-        state_setter: Optional[Callable[[Any], None]] = None,
+        bits: Literal[32, 64] = ...,
+        next_64: Optional[Callable[[int], int]] = ...,
+        next_32: Optional[Callable[[int], int]] = ...,
+        next_double: Optional[Callable[[int], float]] = ...,
+        state: Optional[int] = ...,
+        state_getter: Optional[Callable[[], Any]] = ...,
+        state_setter: Optional[Callable[[Any], None]] = ...,
     ): ...
     @property
     def state(self) -> Any: ...
@@ -29,8 +29,8 @@ class UserBitGenerator(BitGenerator):
         next_32: CFunc,
         next_double: CFunc,
         state: int,
-        state_getter: Optional[Callable[[], Any]] = None,
-        state_setter: Optional[Callable[[Any], None]] = None,
+        state_getter: Optional[Callable[[], Any]] = ...,
+        state_setter: Optional[Callable[[Any], None]] = ...,
     ) -> UserBitGenerator: ...
     @classmethod
     def from_ctypes(
@@ -40,6 +40,6 @@ class UserBitGenerator(BitGenerator):
         next_32: Any,
         next_double: Any,
         state: c_void_p,
-        state_getter: Optional[Callable[[], Any]] = None,
-        state_setter: Optional[Callable[[Any], None]] = None,
+        state_getter: Optional[Callable[[], Any]] = ...,
+        state_setter: Optional[Callable[[Any], None]] = ...,
     ) -> UserBitGenerator: ...

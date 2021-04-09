@@ -8,15 +8,15 @@ from randomgen.typing import IntegerSequenceSeed, SeedMode
 class HC128(BitGenerator):
     def __init__(
         self,
-        seed: Optional[IntegerSequenceSeed] = None,
+        seed: Optional[IntegerSequenceSeed] = ...,
         *,
-        key: Optional[Union[int, Sequence[int]]] = None,
-        mode: SeedMode = None
+        key: Optional[Union[int, Sequence[int]]] = ...,
+        mode: SeedMode = ...
     ) -> None: ...
     def seed(
         self,
-        seed: Optional[IntegerSequenceSeed] = None,
-        key: Optional[Union[int, Sequence[int]]] = None,
+        seed: Optional[IntegerSequenceSeed] = ...,
+        key: Optional[Union[int, Sequence[int]]] = ...,
     ) -> None: ...
     @property
     def state(self) -> Dict[str, Union[str, Dict[str, Union[int, np.ndarray]]]]: ...
