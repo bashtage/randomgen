@@ -148,9 +148,9 @@ cdef class PCG64(BitGenerator):
         inc = None if seed is None else inc
 
         variant = "dxsm" if variant is None else variant
-        if not isinstance(variant, str) and variant not in (1,2):
+        if not (isinstance(variant, (str,int, np.integer))):
             raise TypeError("variant must be a string")
-        orig_variant = str(variant)
+        orig_variant = variant = str(variant)
         variant = variant.lower().replace("-", "")
         if variant not in ("xslrr", "1.0", "1", "dxsm", "dxsm128", "2.0", "2"):
             raise ValueError(f"variant {orig_variant} is not known.")

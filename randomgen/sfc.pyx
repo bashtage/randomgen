@@ -111,7 +111,7 @@ cdef class SFC64(BitGenerator):
 
     def __init__(self, seed=None, w=1, k=1, *, mode="sequence"):
         BitGenerator.__init__(self, seed, mode)
-        self.w = k
+        self.w = w
         self.k = k
         self.seed(seed)
 
@@ -143,7 +143,7 @@ cdef class SFC64(BitGenerator):
         sfc_seed(&self.rng_state, state_arr, w, k)
         self._reset_state_variables()
 
-    def _seed_from_seq_numpy_compat(self, inc=None):
+    def _seed_from_seq_numpy_compat(self):
         if self.w != 1 or self.k != 1:
             raise ValueError("w and k must both be 1 when using mode='numpy'")
         return self._seed_from_seq()

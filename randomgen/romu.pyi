@@ -7,7 +7,7 @@ class Romu(BitGenerator):
     def __init__(
         self,
         seed: Optional[IntegerSequenceSeed] = ...,
-        variant: Literal["trio", "quad"] = "quad",
+        variant: Literal["trio", "quad"] = ...,
     ) -> None: ...
     def seed(self, seed: Optional[IntegerSequenceSeed] = ...) -> None: ...
     @property

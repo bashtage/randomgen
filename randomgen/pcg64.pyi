@@ -15,7 +15,7 @@ class PCG64(BitGenerator):
         *,
         variant: Literal[
             "xsl-rr", "1.0", 1, "dxsm", "cm-dxsm", 2, "2.0", "dxsm-128"
-        ] = "xsl-rr",
+        ] = ...,
         mode: Optional[SeedMode] = ...
     ) -> None: ...
     def seed(
