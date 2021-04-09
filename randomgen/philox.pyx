@@ -73,11 +73,14 @@ cdef class Philox(BitGenerator):
     width : {32, 64}, optional
         Bit width the values produced. Maps to W in the Philox variant naming
         scheme PhiloxNxW.
-    mode : {None, "sequence", "legacy"}, optional
+    mode : {None, "sequence", "legacy", "numpy"}, optional
         The seeding mode to use. "legacy" uses the legacy
         SplitMix64-based initialization. "sequence" uses a SeedSequence
         to transforms the seed into an initial state. None defaults to "legacy"
         and warns that the default after 1.19 will change to "sequence".
+        Using "numpy" ensures that the generator is configurated using the
+        same parameters required to produce the same sequence that is realized
+        in NumPy, for a given ``SeedSequence``.
 
     Attributes
     ----------
@@ -217,6 +220,9 @@ cdef class Philox(BitGenerator):
         for i in range(PHILOX_BUFFER_SIZE):
             self.rng_state.buffer[i].u64 = 0
 
+    def _supported_modes(self):
+        return "legacy", "sequence", "numpy"
+
     def _seed_from_seq(self, counter=None):
         seed_seq_size = max(self.n * self.w // 128, 1)
         state = self.seed_seq.generate_state(seed_seq_size, np.uint64)
@@ -225,6 +231,12 @@ cdef class Philox(BitGenerator):
             state %= np.uint64(2**32)
         self.seed(key=state, counter=counter)
         self._reset_state_variables()
+
+    def _seed_from_seq_numpy_compat(self, counter=None):
+        if self.n != 4 or self.w != 64:
+            raise ValueError("n must be 4 and w must br 64 when using mode='numpy'")
+        return self._seed_from_seq()
+
 
     def seed(self, seed=None, counter=None, key=None):
         """

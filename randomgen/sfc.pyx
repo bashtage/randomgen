@@ -35,7 +35,7 @@ cdef uint64_t choosek(uint64_t k):
 
 cdef class SFC64(BitGenerator):
     """
-    SFC64(seed=None, k=None)
+    SFC64(seed=None, w=1, k=1, *, mode="sequence")
 
     Chris Doty-Humphrey's Small Fast Chaotic PRNG with optional Weyl Sequence
 
@@ -53,6 +53,10 @@ cdef class SFC64(BitGenerator):
     k : {uint64, None}, default 1
         The increment to the Weyl sequence. Must be odd, and if even, 1 is added.
         If None, then `k` `is generated from the `SeedSequence`.
+    mode : {"sequence", "numpy"}
+        The default uses a seed sequence to initialize all unspecified values.
+        When using "numpy" uses the seed sequence to initialize three values
+        and checks that both w and k are 1.
 
     Notes
     -----
