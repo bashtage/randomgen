@@ -105,8 +105,8 @@ cdef class SFC64(BitGenerator):
     _seed_seq_len = 4
     _seed_seq_dtype = np.uint64
 
-    def __init__(self, seed=None, w=1, k=1):
-        BitGenerator.__init__(self, seed, "sequence")
+    def __init__(self, seed=None, w=1, k=1, *, mode="sequence"):
+        BitGenerator.__init__(self, seed, mode)
         self.w = k
         self.k = k
         self.seed(seed)
@@ -122,6 +122,9 @@ cdef class SFC64(BitGenerator):
         self.rng_state.has_uint32 = 0
         self.rng_state.uinteger = 0
 
+    def _supported_modes(self):
+        return "sequence", "numpy"
+
     def _seed_from_seq(self):
         cdef int i, loc, cnt
         cdef uint64_t *state_arr
@@ -135,6 +138,11 @@ cdef class SFC64(BitGenerator):
         k = self.k if self.k is not None else (<uint64_t>state[loc] | 0x1)
         sfc_seed(&self.rng_state, state_arr, w, k)
         self._reset_state_variables()
+
+    def _seed_from_seq_numpy_compat(self, inc=None):
+        if self.w != 1 or self.k != 1:
+            raise ValueError("w and k must both be 1 when using mode='numpy'")
+        return self._seed_from_seq()
 
     cdef uint64_t generate_bits(self, int8_t bits):
         """Generate a random integer with ``bits`` non-zero bits"""

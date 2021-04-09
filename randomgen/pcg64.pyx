@@ -68,8 +68,8 @@ cdef class PCG64(BitGenerator):
         SplitMix64-based initialization. "sequence" uses a SeedSequence
         to transforms the seed into an initial state. "numpy" also uses a
         SeedSequence but seeds the generator in a way that is identical to NumPy.
-        None defaults to "legacy" and warns that the default after 1.19 will
-        change to "sequence".
+        When using "numpy", ``inc`` must be ``None``. Additionally, to match NumPy,
+        variant must be ``xsl-rr`` (this is not checked). None defaults to "sequence".
 
     Attributes
     ----------

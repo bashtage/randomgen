@@ -75,19 +75,19 @@ known_hashes = {
         "final_state_hash": "abc45003a8f310a45bd1a0e20b94932635614f7fb9b7754b796355bc8cea6f51",
     },
     ("SFC64", "seed"): {
-        "random_values": "a74ce7f815c8e47a191d2710c6ec882a1b8ef84ae45217be353434693f802d7c",
-        "initial_state_hash": "2b59e5d1f70e235c15a22fc029a206c2a5d3d0dce77c32463e4305d06022ccce",
-        "final_state_hash": "9361e056dece1c9d752755b9e228ef7f145354fbbe3b80b924ba562f35a42ee9",
+        "random_values": "7dc92d0a1ab9348a26c8f9ee7e057f533b2b9a3343fbde12c0664e900ed9eb84",
+        "initial_state_hash": "b6df29635bf448c80384f97af3b3d2664ad65d84043093a0d0fb8453d91013d3",
+        "final_state_hash": "9dd127ae1c4e58ee17cefe44a0c51b1c9ee9d94adf36d38f97c20b6be76fa7be",
     },
     ("SFC64", "seed", "k", 1): {
-        "random_values": "a74ce7f815c8e47a191d2710c6ec882a1b8ef84ae45217be353434693f802d7c",
-        "initial_state_hash": "2b59e5d1f70e235c15a22fc029a206c2a5d3d0dce77c32463e4305d06022ccce",
-        "final_state_hash": "9361e056dece1c9d752755b9e228ef7f145354fbbe3b80b924ba562f35a42ee9",
+        "random_values": "7dc92d0a1ab9348a26c8f9ee7e057f533b2b9a3343fbde12c0664e900ed9eb84",
+        "initial_state_hash": "b6df29635bf448c80384f97af3b3d2664ad65d84043093a0d0fb8453d91013d3",
+        "final_state_hash": "9dd127ae1c4e58ee17cefe44a0c51b1c9ee9d94adf36d38f97c20b6be76fa7be",
     },
     ("SFC64", "seed", "k", 10998731014437268875): {
-        "random_values": "d1f90196160e1ffabd66857e4ac9f6ea8679b18600ac55fa77dffe6e2fce914f",
-        "initial_state_hash": "737c98b18f6335b74d686685985eeb10f8a18f70606f6dcc3e4f006e0d3e58fc",
-        "final_state_hash": "f15e8b25ff504bdfc5430b3a6630a8df3bce41d507fa075311150934da24a56c",
+        "random_values": "b6ec0f9fcb709d7358febb4925ac3f67aa58f4534e0b405e3e10895459993f76",
+        "initial_state_hash": "5424fd06606c02e66b1d913daf10959668d28e774f0429e8f4b94ed77128ce38",
+        "final_state_hash": "44f76f178c85096096ff531afa41e27463ee298500189b126df6bb7586129505",
     },
     ("SFMT", "seed"): {
         "random_values": "57a9772542955f750bc5e08946712b14b7efdb0e0d9dd6ca9015db02b0feb5c2",

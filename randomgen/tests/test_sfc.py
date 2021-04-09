@@ -7,10 +7,10 @@ from randomgen import SFC64, SeedSequence
 def test_known():
     sfc = SFC64(SeedSequence(0))
     weyl = sfc.weyl_increments(2)
-    expected = np.array([5845759012341742215, 356244423464966547], dtype=np.uint64)
+    expected = np.array([6524879303493105881, 12838133130686035807], dtype=np.uint64)
     np.testing.assert_equal(weyl, expected)
     weyl = sfc.weyl_increments(2, 48, 16)
-    expected = np.array([9441331234404776033, 9420841337319291955], dtype=np.uint64)
+    expected = np.array([8826510519078708777, 232634225573672851], dtype=np.uint64)
     np.testing.assert_equal(weyl, expected)
 
 
