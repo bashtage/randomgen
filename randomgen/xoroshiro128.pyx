@@ -42,8 +42,8 @@ cdef class Xoroshiro128(BitGenerator):
     mode : {None, "sequence", "legacy"}
         The seeding mode to use. "legacy" uses the legacy
         SplitMix64-based initialization. "sequence" uses a SeedSequence
-        to transforms the seed into an initial state. None defaults to "legacy"
-        and warns that the default after 1.19 will change to "sequence".
+        to transforms the seed into an initial state.  None defaults to
+        "sequence".
     plusplus : bool, default False
         Whether to use the ++ version (xoroshiro128++). The default is False
         which uses the xoroshiro128+ PRNG which

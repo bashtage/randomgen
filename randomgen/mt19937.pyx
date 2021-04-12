@@ -37,11 +37,11 @@ cdef class MT19937(BitGenerator):
         unsigned integers are read from ``/dev/urandom`` (or the Windows
         analog) if available. If unavailable, a hash of the time and process
         ID is used.
-    mode : {None, "sequence", "legacy"}, optional
+    mode : {None, "sequence", "legacy", "numpy"}, optional
         The seeding mode to use. "legacy" uses the legacy
         SplitMix64-based initialization. "sequence" uses a SeedSequence
-        to transforms the seed into an initial state. None defaults to "legacy"
-        and warns that the default after 1.19 will change to "sequence".
+        to transforms the seed into an initial state. None defaults to "sequence".
+        "numpy" uses the same seeding mechanism as NumPy and so matches exactly.
 
     Attributes
     ----------
@@ -119,11 +119,23 @@ cdef class MT19937(BitGenerator):
         self._bitgen.next_double = &mt19937_double
         self._bitgen.next_raw = &mt19937_raw
 
+    def _supported_modes(self):
+        return "legacy", "sequence", "numpy"
+
     def _seed_from_seq(self):
-        state = self.seed_seq.generate_state(624, np.uint32)
+        state = self.seed_seq.generate_state(RK_STATE_LEN, np.uint32)
         mt19937_init_by_array(&self.rng_state,
                               <uint32_t*>np.PyArray_DATA(state),
-                              624)
+                              RK_STATE_LEN)
+
+    def _seed_from_seq_numpy_compat(self, inc=None):
+        # MSB is 1; assuring non-zero initial array
+        val = self.seed_seq.generate_state(RK_STATE_LEN, np.uint32)
+        # MSB is 1; assuring non-zero initial array
+        self.rng_state.key[0] = 0x80000000UL
+        for i in range(1, RK_STATE_LEN):
+            self.rng_state.key[i] = val[i]
+        self.rng_state.pos = i
 
     def seed(self, seed=None):
         """
@@ -155,10 +167,10 @@ cdef class MT19937(BitGenerator):
 
         try:
             if seed is None:
-                seed = random_entropy(624, "auto")
+                seed = random_entropy(RK_STATE_LEN, "auto")
                 mt19937_init_by_array(&self.rng_state,
                                       <uint32_t*>np.PyArray_DATA(seed),
-                                      624)
+                                      RK_STATE_LEN)
             else:
                 if hasattr(seed, "squeeze"):
                     seed = seed.squeeze()
@@ -296,8 +308,8 @@ cdef class MT19937(BitGenerator):
             Dictionary containing the information required to describe the
             state of the PRNG
         """
-        key = np.zeros(624, dtype=np.uint32)
-        for i in range(624):
+        key = np.zeros(RK_STATE_LEN, dtype=np.uint32)
+        for i in range(RK_STATE_LEN):
             key[i] = self.rng_state.key[i]
 
         return {"bit_generator": type(self).__name__,
@@ -317,7 +329,7 @@ cdef class MT19937(BitGenerator):
         if bitgen != type(self).__name__:
             raise ValueError("state must be for a {0} "
                              "PRNG".format(type(self).__name__))
-        key = check_state_array(value["state"]["key"], 624, 32, "key")
-        for i in range(624):
+        key = check_state_array(value["state"]["key"], RK_STATE_LEN, 32, "key")
+        for i in range(RK_STATE_LEN):
             self.rng_state.key[i] = key[i]
         self.rng_state.pos = value["state"]["pos"]

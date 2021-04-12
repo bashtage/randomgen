@@ -40,8 +40,8 @@ cdef class PCG32(BitGenerator):
     mode : {None, "sequence", "legacy"}, optional
         The seeding mode to use. "legacy" uses the legacy
         SplitMix64-based initialization. "sequence" uses a SeedSequence
-        to transforms the seed into an initial state. None defaults to "legacy"
-        and warns that the default after 1.19 will change to "sequence".
+        to transforms the seed into an initial state.  None defaults to
+        "sequence".
 
     Attributes
     ----------
@@ -98,7 +98,7 @@ cdef class PCG32(BitGenerator):
     .. [2] O'Neill, Melissa E. "PCG: A Family of Simple Fast Space-Efficient
            Statistically Good Algorithms for Random Number Generation"
     """
-    def __init__(self, seed=None, inc=0, *, mode=None):
+    def __init__(self, seed=None, inc=None, *, mode=None):
         BitGenerator.__init__(self, seed, mode)
         self.seed(seed, inc)
         self._bitgen.state = <void *>&self.rng_state
@@ -117,9 +117,9 @@ cdef class PCG32(BitGenerator):
             _inc = <uint64_t>inc
         pcg32_set_seed(&self.rng_state, <uint64_t>state[0], _inc)
 
-    def seed(self, seed=None, inc=0):
+    def seed(self, seed=None, inc=None):
         """
-        seed(seed=None, inc=0)
+        seed(seed=None, inc=None)
 
         Seed the generator
 
@@ -130,9 +130,11 @@ cdef class PCG32(BitGenerator):
         Parameters
         ----------
         seed : int, optional
-            Seed for ``PCG64``. Integer between 0 and 2**64-1.
+            Seed for ``PCG64``. Integer between 0 and 2**64-1. If None,
+            seeded with entropy.
         inc : int, optional
-            The increment in the LCG. Integer between 0 and 2**64-1.
+            The increment in the LCG. Integer between 0 and 2**64-1. If None,
+            seeded with entropy.
 
         Raises
         ------

@@ -45,24 +45,17 @@ cdef class BitGenerator:
     Abstract class for all BitGenerators
     """
     def __init__(self, seed, mode=None):
-        if mode is not None and (not isinstance(mode, str) or mode.lower() not in ("legacy", "sequence")):
+        if mode is not None and (not isinstance(mode, str) or mode.lower() not in self._supported_modes()):
             raise ValueError("mode must be one of None, \"legacy\" or \"sequence\".")
         if isinstance(seed, ISEED_SEQUENCES):
             if mode == "legacy":
                 raise ValueError("seed is a SeedSequence instance but mode is "
                                  "\"legacy\". Using a SeedSequence implies "
                                  "mode=\"sequence\".")
-            mode = "sequence"
+                mode = "sequence"
         elif mode is None and seed is not None:
-            import warnings
-            warnings.warn("mode is None which currently defaults to "
-                          "\"legacy\". After 1.19 this will change to "
-                          "\"sequence\". To silence this warning, set mode to "
-                          "\"legacy\" to use legacy seeding or \"sequence\" "
-                          "to defer seeding to NumPy's SeedSequence.",
-                          FutureWarning)
-            mode="legacy"
-        self.mode = mode
+            mode="sequence"
+        self.mode = mode.lower() if mode is not None else "sequence"
         self.lock = Lock()
         self._ctypes = None
         self._cffi = None
@@ -72,6 +65,9 @@ cdef class BitGenerator:
         if type(self) is BitGenerator:
             raise NotImplementedError("BitGenerator cannot be instantized")
         self.seed_seq = None
+
+    def _supported_modes(self):
+        return "legacy", "sequence"
 
     # Pickling support:
     def __getstate__(self):
@@ -85,6 +81,9 @@ cdef class BitGenerator:
         return __bit_generator_ctor, (self.state["bit_generator"],), self.state
 
     def _seed_from_seq(self):
+        raise NotImplementedError("Subclass must override")
+
+    def _seed_from_seq_numpy_compat(self):
         raise NotImplementedError("Subclass must override")
 
     def _seed_with_seed_sequence(self, seed, **kwargs):
@@ -101,12 +100,15 @@ cdef class BitGenerator:
                                    "This is immutable and SeedSequences cannot"
                                    " be used".format(bg=bg))
             self.seed_seq = seed
-        elif self.mode == "sequence":
+        elif self.mode in ("sequence", "numpy"):
             self.seed_seq = DefaultSeedSequence(seed)
         else:
             self.seed_seq = None
         if self.seed_seq is not None:
-            self._seed_from_seq(**kwargs)
+            if self.mode == "sequence":
+                self._seed_from_seq(**kwargs)
+            else:  # numpy
+                self._seed_from_seq_numpy_compat(**kwargs)
         return
 
     @property

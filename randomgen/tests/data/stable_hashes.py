@@ -75,19 +75,19 @@ known_hashes = {
         "final_state_hash": "abc45003a8f310a45bd1a0e20b94932635614f7fb9b7754b796355bc8cea6f51",
     },
     ("SFC64", "seed"): {
-        "random_values": "a74ce7f815c8e47a191d2710c6ec882a1b8ef84ae45217be353434693f802d7c",
-        "initial_state_hash": "2b59e5d1f70e235c15a22fc029a206c2a5d3d0dce77c32463e4305d06022ccce",
-        "final_state_hash": "9361e056dece1c9d752755b9e228ef7f145354fbbe3b80b924ba562f35a42ee9",
+        "random_values": "7dc92d0a1ab9348a26c8f9ee7e057f533b2b9a3343fbde12c0664e900ed9eb84",
+        "initial_state_hash": "b6df29635bf448c80384f97af3b3d2664ad65d84043093a0d0fb8453d91013d3",
+        "final_state_hash": "9dd127ae1c4e58ee17cefe44a0c51b1c9ee9d94adf36d38f97c20b6be76fa7be",
     },
     ("SFC64", "seed", "k", 1): {
-        "random_values": "a74ce7f815c8e47a191d2710c6ec882a1b8ef84ae45217be353434693f802d7c",
-        "initial_state_hash": "2b59e5d1f70e235c15a22fc029a206c2a5d3d0dce77c32463e4305d06022ccce",
-        "final_state_hash": "9361e056dece1c9d752755b9e228ef7f145354fbbe3b80b924ba562f35a42ee9",
+        "random_values": "7dc92d0a1ab9348a26c8f9ee7e057f533b2b9a3343fbde12c0664e900ed9eb84",
+        "initial_state_hash": "b6df29635bf448c80384f97af3b3d2664ad65d84043093a0d0fb8453d91013d3",
+        "final_state_hash": "9dd127ae1c4e58ee17cefe44a0c51b1c9ee9d94adf36d38f97c20b6be76fa7be",
     },
     ("SFC64", "seed", "k", 10998731014437268875): {
-        "random_values": "d1f90196160e1ffabd66857e4ac9f6ea8679b18600ac55fa77dffe6e2fce914f",
-        "initial_state_hash": "737c98b18f6335b74d686685985eeb10f8a18f70606f6dcc3e4f006e0d3e58fc",
-        "final_state_hash": "f15e8b25ff504bdfc5430b3a6630a8df3bce41d507fa075311150934da24a56c",
+        "random_values": "51f5f6960004fd3efd0ece422d46040e97a0d558af17d3cbc428960fd1e993a1",
+        "initial_state_hash": "48d052873fd8877566e9b194e1856952b5873c4708e8299ba094d4e7934ae037",
+        "final_state_hash": "05feec2e5bc065320805ca3cb6e4ba2f2a90a5ac211fd77c3cb16d78b6ef7195",
     },
     ("SFMT", "seed"): {
         "random_values": "57a9772542955f750bc5e08946712b14b7efdb0e0d9dd6ca9015db02b0feb5c2",
@@ -115,9 +115,9 @@ known_hashes = {
         "final_state_hash": "78826431a76ffc95f68af869cbd38bd35be8fd7c08e43a8761110d72fba73b22",
     },
     ("PCG32", "seed"): {
-        "random_values": "961142eb8786582f48a942bec78e8b059c7e0feed6019638ec804d2a0ad7e23f",
-        "initial_state_hash": "246358a9ecc83746473c8be8d25de59e4426be050c553f71b76fc17c6f2448d4",
-        "final_state_hash": "ce7621b9f707df3f2b9b42c324e532634703ea16ad6421f632030166f6df97fd",
+        "random_values": "d8fb8502809e520360f08047eea40d2de883fb47ca831fbeeb70f43770d53504",
+        "initial_state_hash": "08e6ed272e7ac825ae13cfa620c506f1ee173b5e94ab47158558949fbb090e94",
+        "final_state_hash": "029aeecd192e6770568c75ae8ac4859404365e9e15c4b106a34eb02e6c15708e",
     },
     ("PCG32", "seed", "inc"): {
         "random_values": "03d397920cbdccc03ebc5b6a49fdf749150a08a4e36ddd2f0cf4557b48338b7f",
@@ -125,14 +125,14 @@ known_hashes = {
         "final_state_hash": "d1b7623dfdb1084149c34472f63f65b2ae59b5013c5e72d47160597a0fe855a4",
     },
     ("PCG64", "seed", "inc", None): {
-        "random_values": "fa32239f519b4b8323747a7f426d3443185fd225d1d60dfdca5f631757ecd8d0",
-        "initial_state_hash": "dd151441354e39ac64f2bef8c34ed11dd4940240093d25288b4a690a89929ba2",
-        "final_state_hash": "6103e5b139a764c46bfc9b605c08e801911a7c03b540bfc1648e6fece54b9cf7",
+        "random_values": "3503f203529319943b529243a3dec39baf6ea30b0acd50a24af7adb52d7772ad",
+        "initial_state_hash": "5c3b0db91c3e5afc10f017ff323fc7a2e7223fdf5eec6e062a3b71e2aa24e4a4",
+        "final_state_hash": "6833266c64dac01522c5efa67360ccfec309452e19131ad238ff754fdc19003d",
     },
     ("PCG64", "seed", "inc", 332357023390495415282511736547623555666): {
-        "random_values": "63fd3334317fb8902e5fdc9baf11b01ed5d098b3cdb7333e0da529edb8e09ae0",
-        "initial_state_hash": "f2c4eba60d5c1dc2818987ad19994cce76fdfa1fc2680e3bd3be2012e32fd0d4",
-        "final_state_hash": "e93bed1d80626ae63762c5d64ab099e321c838beaa7ee24006ad50981a0a65ed",
+        "random_values": "eb406352a02f182cc65c5443d028e6ddd7af9260d6fccb9edda7b824d009e1df",
+        "initial_state_hash": "73cf476d2aeb333f5f81a1095c2fba66f4e42223e4f32a36390aa83c91104b1e",
+        "final_state_hash": "9cd88b41a398af2d2a98d1c0cdafce1181c42cbd0ca3e8ed2595d5b17733d217",
     },
     ("PCG64", "seed", "inc", None, "variant", "xsl-rr"): {
         "random_values": "fa32239f519b4b8323747a7f426d3443185fd225d1d60dfdca5f631757ecd8d0",

@@ -8,11 +8,11 @@ from randomgen.typing import IntegerSequenceSeed, SeedMode
 class MT64(BitGenerator):
     def __init__(
         self,
-        seed: Optional[IntegerSequenceSeed] = None,
+        seed: Optional[IntegerSequenceSeed] = ...,
         *,
-        mode: Optional[SeedMode] = None
+        mode: Optional[SeedMode] = ...
     ) -> None: ...
-    def seed(self, seed: Optional[IntegerSequenceSeed] = None) -> None: ...
+    def seed(self, seed: Optional[IntegerSequenceSeed] = ...) -> None: ...
     @property
     def state(
         self,
