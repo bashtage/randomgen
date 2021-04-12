@@ -35,7 +35,7 @@ cdef uint64_t choosek(uint64_t k):
 
 cdef class SFC64(BitGenerator):
     """
-    SFC64(seed=None, k=None)
+    SFC64(seed=None, w=1, k=1, *, mode="sequence")
 
     Chris Doty-Humphrey's Small Fast Chaotic PRNG with optional Weyl Sequence
 
@@ -53,6 +53,10 @@ cdef class SFC64(BitGenerator):
     k : {uint64, None}, default 1
         The increment to the Weyl sequence. Must be odd, and if even, 1 is added.
         If None, then `k` `is generated from the `SeedSequence`.
+    mode : {"sequence", "numpy"}
+        The default uses a seed sequence to initialize all unspecified values.
+        When using "numpy" uses the seed sequence to initialize three values
+        and checks that both w and k are 1.
 
     Notes
     -----
@@ -105,9 +109,9 @@ cdef class SFC64(BitGenerator):
     _seed_seq_len = 4
     _seed_seq_dtype = np.uint64
 
-    def __init__(self, seed=None, w=1, k=1):
-        BitGenerator.__init__(self, seed, "sequence")
-        self.w = k
+    def __init__(self, seed=None, w=1, k=1, *, mode="sequence"):
+        BitGenerator.__init__(self, seed, mode)
+        self.w = w
         self.k = k
         self.seed(seed)
 
@@ -122,6 +126,9 @@ cdef class SFC64(BitGenerator):
         self.rng_state.has_uint32 = 0
         self.rng_state.uinteger = 0
 
+    def _supported_modes(self):
+        return "sequence", "numpy"
+
     def _seed_from_seq(self):
         cdef int i, loc, cnt
         cdef uint64_t *state_arr
@@ -135,6 +142,11 @@ cdef class SFC64(BitGenerator):
         k = self.k if self.k is not None else (<uint64_t>state[loc] | 0x1)
         sfc_seed(&self.rng_state, state_arr, w, k)
         self._reset_state_variables()
+
+    def _seed_from_seq_numpy_compat(self):
+        if self.w != 1 or self.k != 1:
+            raise ValueError("w and k must both be 1 when using mode='numpy'")
+        return self._seed_from_seq()
 
     cdef uint64_t generate_bits(self, int8_t bits):
         """Generate a random integer with ``bits`` non-zero bits"""

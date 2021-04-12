@@ -15,6 +15,18 @@ Change Log
   maintained until after NumPy 1.21 (or 2 releases after NumPy 1.19) for users who
   cannot update NumPy.
 
+Since v1.20.1
+=============
+- Fixed a bug in :class:`~randomgen.sfc.SFC64` the used the wrong value from the Weyl
+  sequence. In the original implmentation, the current value is added to the next random
+  integer and then incremented. The buggy version was incrementing then adding, and so
+  was shifted by one value.
+- Added ``mode="numpy"`` support to :class:`~randomgen.pcg64.PCG64`,
+  :class:`~randomgen.mt19937.MT19937`, :class:`~randomgen.philox.Philox`, and
+  :class:`~randomgen.sfc.SFC64`. When using this mode, the sequence generated is
+  guaranteed to match the sequence produced using the NumPy implementations as long as
+  a :class:`~randomgen.seed_sequence.SeedSequence` or :class:`numpy.random.SeedSequence`
+  is used with the same initial seed values.
 
 v1.20.1
 =======

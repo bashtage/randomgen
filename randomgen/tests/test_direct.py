@@ -1,7 +1,7 @@
 from functools import partial
 import os
 from os.path import join
-from typing import Any, Dict, Tuple, Union
+from typing import Any, Dict, Optional, Tuple, Union
 
 import numpy as np
 from numpy.testing import (
@@ -785,7 +785,7 @@ class TestThreeFry(Random123):
         )
 
 
-class TestPCG64(Base):
+class TestPCG64XSLRR(Base):
     @classmethod
     def setup_class(cls):
         super().setup_class()
@@ -800,6 +800,9 @@ class TestPCG64(Base):
             (-2,),
             (2 ** 129 + 1,),
         ]
+
+    def setup_bitgenerator(self, seed, mode="legacy", inc: Optional[int] = 0):
+        return self.bit_generator(*seed, mode=mode, variant="xsl-rr", inc=inc)
 
     def test_seed_float_array(self):
         rs = Generator(self.setup_bitgenerator(self.data1["seed"]))
@@ -835,11 +838,26 @@ class TestPCG64(Base):
         assert val_big == val_pos
 
     def test_inc_none(self):
-        bg = self.setup_bitgenerator([0, None])
+        bg = self.setup_bitgenerator([0], inc=None)
         assert isinstance(bg.random_raw(), int)
 
-        bg = self.setup_bitgenerator([0, None], mode="sequence")
+        bg = self.setup_bitgenerator([0], inc=None, mode="sequence")
         assert isinstance(bg.random_raw(), int)
+
+    def test_inc_alt(self):
+        ss = SeedSequence(0)
+        bg = self.setup_bitgenerator([ss], inc=0, mode="sequence")
+        ss2 = SeedSequence(0)
+        bg2 = self.setup_bitgenerator([ss2], inc=None, mode="sequence")
+        assert bg.state["state"]["inc"] == 1
+        # Prob 1 in 2**127 of failure
+        assert bg2.state["state"]["inc"] != 1
+
+    def test_unknown_variant(self):
+        with pytest.raises(ValueError):
+            PCG64(0, variant="unknown")
+        with pytest.raises(ValueError):
+            PCG64(0, variant=3)
 
 
 class TestPhilox(Random123):
@@ -869,6 +887,16 @@ class TestPhilox(Random123):
             counter=state["state"]["counter"], key=state["state"]["key"], mode="legacy"
         )
         assert_state_equal(bit_generator.state, keyed.state)
+
+    def test_numpy_mode(self):
+        ss = SeedSequence(0)
+        bg = self.setup_bitgenerator([ss], mode="numpy")
+        assert isinstance(bg, Philox)
+
+    def test_seed_key(self):
+        bg = self.setup_bitgenerator([0])
+        with pytest.raises(ValueError, match="seed and key"):
+            bg.seed(seed=0, key=0)
 
 
 class TestPhilox4x32(Random123):
@@ -911,6 +939,11 @@ class TestPhilox4x32(Random123):
         ss = SeedSequence(1)
         bg = self.bit_generator_base(ss, number=self.number, width=self.width)
         assert bg.seed_seq.entropy == 1
+
+    def test_numpy_mode(self):
+        ss = SeedSequence(0)
+        with pytest.raises(ValueError, match="n must be 4"):
+            self.setup_bitgenerator([ss], mode="numpy")
 
 
 class TestAESCounter(TestPhilox):
@@ -1032,6 +1065,10 @@ class TestAESCounter(TestPhilox):
         bg.advance(step)
         state = bg.state
         assert_state_equal(state0, state)
+
+    @pytest.mark.skip(reason="Not applicable to AESCounter")
+    def test_numpy_mode(self):
+        pass
 
     @pytest.mark.skip(reason="Not applicable to AESCounter")
     def test_advance_deprecated(self):
@@ -1298,7 +1335,7 @@ class TestThreeFry4x32(Random123):
         assert_state_equal(bit_generator.state, keyed.state)
 
 
-class TestPCG32(TestPCG64):
+class TestPCG32(TestPCG64XSLRR):
     @classmethod
     def setup_class(cls):
         super().setup_class()
@@ -1315,6 +1352,9 @@ class TestPCG32(TestPCG64):
             (None, -1),
             (None, 2 ** 129 + 1),
         ]
+
+    def setup_bitgenerator(self, seed, mode="legacy", inc=0):
+        return self.bit_generator(*seed, mode=mode, inc=inc)
 
     def test_advance_symmetry(self):
         rs = Generator(self.setup_bitgenerator(self.data1["seed"]))
@@ -1812,9 +1852,6 @@ class TestSPECK128(TestHC128):
 
 
 def test_mode():
-    with pytest.warns(FutureWarning, match="mode is None which currently"):
-        mt19937 = MT19937(0)
-    assert mt19937.seed_seq is None
     with pytest.raises(ValueError, match="mode must be one of None"):
         MT19937(mode="unknown")
 
@@ -1837,11 +1874,34 @@ class TestLXM(Base):
             cls.invalid_seed_values += [("apple",)]
         cls.seed_sequence_only = True
 
-    def setup_bitgenerator(self, seed, mode=None):
-        return self.bit_generator(*seed)
+    def setup_bitgenerator(self, seed, **kwargs):
+        return self.bit_generator(*seed, **kwargs)
 
     def test_seed_sequence_error(self):
         pass
+
+    def test_default_sequence(self):
+        bg = self.setup_bitgenerator([None])
+        val = bg.random_raw()
+        assert isinstance(val, int)
+        assert isinstance(bg.seed_seq, ISEED_SEQUENCES)
+
+    def test_seed_sequence(self):
+        bg = self.setup_bitgenerator([None])
+        typ = (
+            self.bit_generator.func
+            if isinstance(self.bit_generator, partial)
+            else self.bit_generator
+        )
+        assert isinstance(bg, typ)
+        assert isinstance(bg.seed_seq, SeedSequence)
+
+        bg = self.setup_bitgenerator([0])
+        assert bg.seed_seq.entropy == 0
+
+        ss = SeedSequence(0)
+        bg = self.bit_generator(ss)
+        assert bg.seed_seq.entropy == 0
 
 
 class TestSFC64(TestLXM):
@@ -1862,6 +1922,12 @@ class TestSFC64(TestLXM):
             cls.invalid_seed_values += [("apple",)]
         cls.seed_sequence_only = True
 
+    def test_numpy_mode(self):
+        with pytest.raises(ValueError, match="w and k"):
+            self.setup_bitgenerator([0], mode="numpy", k=3)
+        with pytest.raises(ValueError, match="w and k"):
+            self.setup_bitgenerator([0], mode="numpy", w=3)
+
 
 class TestPCG64DXSM(Base):
     @classmethod
@@ -1881,8 +1947,8 @@ class TestPCG64DXSM(Base):
             cls.invalid_seed_values += [("apple",)]
         cls.seed_sequence_only = True
 
-    def setup_bitgenerator(self, seed, mode=None):
-        return self.bit_generator(*seed)
+    def setup_bitgenerator(self, seed, mode=None, inc=0):
+        return self.bit_generator(*seed, inc=inc)
 
 
 class TestPCG64CMDXSM(TestPCG64DXSM):

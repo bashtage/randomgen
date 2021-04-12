@@ -61,7 +61,8 @@ static INLINE uint32_t rotate32(uint32_t x, int k) {
 
 static INLINE uint64_t next64(sfc_state_t *state) {
     enum {LROT = 24, RSHIFT = 11, LSHIFT = 3};
-    const uint64_t out = state->a + state->b + (state->w += state->k);
+    const uint64_t out = state->a + state->b + state->w;
+    state->w += state->k;
     state->a = state->b ^ (state->b >> RSHIFT);
     state->b = state->c + (state->c << LSHIFT);
     state->c = ((state->c << LROT) | (state->c >> (64 - LROT))) + out;

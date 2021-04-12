@@ -23,7 +23,7 @@ uint64_t output_upper(uint64_t a, uint64_t b) {
 
 
 def test_pcg64_1():
-    pcg = PCG64(SeedSequence(12345678909876543321))
+    pcg = PCG64(SeedSequence(12345678909876543321), variant="xsl-rr")
     cpcg = LCG128Mix()
     st = cpcg.state
     st["state"]["state"] = pcg.state["state"]["state"]
@@ -158,8 +158,6 @@ def test_ctypes():
 
 
 def test_pcg_warnings_and_errors():
-    with pytest.warns(FutureWarning, match="The current default"):
-        PCG64(0, mode="sequence", variant=None)
     with pytest.raises(ValueError, match="variant unknown is not known"):
         PCG64(0, mode="sequence", variant="unknown")
 

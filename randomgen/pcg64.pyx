@@ -53,8 +53,7 @@ cdef class PCG64(BitGenerator):
         SeedSequence initialized with system entropy to Seed the generator
     inc : {None, int}, optional
         The increment in the LCG. Can be an integer in [0, 2**128) or None.
-        If inc is None, then it is initialized using entropy. The default is None
-        if seed is None, else 0. After 1.20, the default inc will change to None.
+        If inc is None, then it is initialized using entropy. The default is None.
     variant : {None, "xsl-rr", "1.0", 1, "dxsm", "cm-dxsm", 2, "2.0", "dxsm-128"}, optional
         Name of PCG64 variant to use. "xsl-rr" corresponds to the original
         PCG64 (1.0). 1 and "1.0" are aliases for "xsl-rr". "dxsm-128" is
@@ -64,11 +63,13 @@ cdef class PCG64(BitGenerator):
         returns the value before advancing the state. This variant is
         PCG64 2.0. "cm-dxsm" (cheap multiplier-dxsm), 2 and "2.0" are aliases
         for "dxsm". None trusts randomgen to chose the variant.
-    mode : {None, "sequence", "legacy"}, optional
+    mode : {None, "sequence", "legacy", "numpy"}, optional
         The seeding mode to use. "legacy" uses the legacy
         SplitMix64-based initialization. "sequence" uses a SeedSequence
-        to transforms the seed into an initial state. None defaults to "legacy"
-        and warns that the default after 1.19 will change to "sequence".
+        to transforms the seed into an initial state. "numpy" also uses a
+        SeedSequence but seeds the generator in a way that is identical to NumPy.
+        When using "numpy", ``inc`` must be ``None``. Additionally, to match NumPy,
+        variant must be ``xsl-rr`` (this is not checked). None defaults to "sequence".
 
     Attributes
     ----------
@@ -141,36 +142,15 @@ cdef class PCG64(BitGenerator):
     .. [2] O'Neill, Melissa E. "PCG: A Family of Simple Fast Space-Efficient
            Statistically Good Algorithms for Random Number Generation"
     """
-    def __init__(self, seed=None, inc=-999999, *, variant="xsl-rr", mode=None):
+    def __init__(self, seed=None, inc=None, *, variant="dxsm", mode=None):
         BitGenerator.__init__(self, seed, mode)
         self.rng_state.pcg_state = <pcg64_random_t *>PyArray_malloc_aligned(sizeof(pcg64_random_t))
-        if variant is None:
-            import warnings
-
-            warnings.warn(
-                "The current default is xsl-rr, aka PCG64 1.0. This will"
-                "change to dxsm, aka PCG64 2.0. starting in release 1.20."
-                "Directly set variant to prevent a change when upgrading past"
-                " 1.19 or to silence this warning.",
-                FutureWarning
-            )
         inc = None if seed is None else inc
-        if inc == -999999:
-            inc = 0
-            from randomgen import SeedSequence
-            if self.mode == "sequence" or isinstance(seed, SeedSequence):
-                import warnings
-                warnings.warn(
-                    "The default value of inc of 0 will change to "
-                    "None in 1.20. To continue using inc=0 explicitly set "
-                    "this value. To use the new default behavior, set "
-                    "inc=None.",
-                    FutureWarning)
 
-        variant = "xsl-rr" if variant is None else variant
-        if not isinstance(variant, str) and variant not in (1,2):
+        variant = "dxsm" if variant is None else variant
+        if not (isinstance(variant, (str,int, np.integer))):
             raise TypeError("variant must be a string")
-        orig_variant = str(variant)
+        orig_variant = variant = str(variant)
         variant = variant.lower().replace("-", "")
         if variant not in ("xslrr", "1.0", "1", "dxsm", "dxsm128", "2.0", "2"):
             raise ValueError(f"variant {orig_variant} is not known.")
@@ -201,6 +181,9 @@ cdef class PCG64(BitGenerator):
             self._bitgen.next_uint32 = &pcg64_cm_dxsm_uint32
             self._bitgen.next_double = &pcg64_cm_dxsm_double
             self._bitgen.next_raw = &pcg64_cm_dxsm_uint64
+
+    def _supported_modes(self):
+        return "legacy", "sequence", "numpy"
 
     def __repr__(self):
         out = object.__repr__(self)
@@ -233,7 +216,12 @@ cdef class PCG64(BitGenerator):
                        self.cheap_multiplier)
         self._reset_state_variables()
 
-    def seed(self, seed=None, inc=-999999):
+    def _seed_from_seq_numpy_compat(self, inc=None):
+        if inc is not None:
+            raise ValueError("inc must be None when mode='numpy'")
+        return self._seed_from_seq(inc=inc)
+
+    def seed(self, seed=None, inc=None):
         """
         seed(seed=None, inc=0)
 
@@ -254,8 +242,7 @@ cdef class PCG64(BitGenerator):
         inc : {None, int}, optional
             The increment in the LCG. Can be an integer in [0, 2**128) or
             None. If inc is None, then it is initialized using entropy. The
-            default is None if seed is None, else 0. After 1.20, the default
-            inc will change to None.
+            default is None if seed is None, else 0.
 
         Raises
         ------
@@ -265,18 +252,7 @@ cdef class PCG64(BitGenerator):
         cdef np.ndarray _seed, _inc
         ub = 2 ** 128
         inc = None if seed is None else inc
-        if inc == -999999:
-            inc = 0
-            from randomgen import SeedSequence
-            if self.mode == "sequence" or isinstance(seed, SeedSequence):
-                import warnings
-                warnings.warn(
-                    "The default value of inc of 0 will change to "
-                    "None in 1.20. To continue using inc=0 explicitly set "
-                    "this value. To use the new default behavior, set "
-                    "inc=None.",
-                    FutureWarning)
-        elif inc is not None:
+        if inc is not None:
             err_msg = "inc must be a scalar integer between 0 and " \
                       "{ub}".format(ub=ub)
             if inc < 0 or inc > ub or int(inc) != inc:

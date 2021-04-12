@@ -10,18 +10,18 @@ SPECK_MAX_ROUNDS: int
 class SPECK128(BitGenerator):
     def __init__(
         self,
-        seed: Optional[IntegerSequenceSeed] = None,
+        seed: Optional[IntegerSequenceSeed] = ...,
         *,
-        counter: Optional[Union[int, np.ndarray]] = None,
-        key: Optional[Union[int, np.ndarray]] = None,
-        rounds: int = SPECK_MAX_ROUNDS,
-        mode: Optional[SeedMode] = None
+        counter: Optional[Union[int, np.ndarray]] = ...,
+        key: Optional[Union[int, np.ndarray]] = ...,
+        rounds: int = ...,
+        mode: Optional[SeedMode] = ...
     ) -> None: ...
     def seed(
         self,
-        seed: Optional[IntegerSequenceSeed] = None,
-        counter: Optional[Union[int, np.ndarray]] = None,
-        key: Optional[Union[int, np.ndarray]] = None,
+        seed: Optional[IntegerSequenceSeed] = ...,
+        counter: Optional[Union[int, np.ndarray]] = ...,
+        key: Optional[Union[int, np.ndarray]] = ...,
     ) -> None: ...
     @property
     def use_sse41(self) -> bool: ...
@@ -35,6 +35,6 @@ class SPECK128(BitGenerator):
     def state(
         self, value: Dict[str, Union[str, int, Dict[str, Union[int, np.ndarray]]]]
     ) -> None: ...
-    def jump(self, iter: int = 1) -> SPECK128: ...
-    def jumped(self, iter: int = 1) -> SPECK128: ...
+    def jump(self, iter: int = ...) -> SPECK128: ...
+    def jumped(self, iter: int = ...) -> SPECK128: ...
     def advance(self, delta: int) -> SPECK128: ...
