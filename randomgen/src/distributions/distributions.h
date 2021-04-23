@@ -212,6 +212,10 @@ static NPY_INLINE npy_bool buffered_bounded_bool(bitgen_t *bitgen_state,
 
 DECLDIR float random_float(bitgen_t *bitgen_state);
 DECLDIR double random_double(bitgen_t *bitgen_state);
+DECLDIR int random_long_double_size(void);
+DECLDIR long double random_long_double(bitgen_t *bitgen_state);
+DECLDIR void random_long_double_fill(bitgen_t *bitgen_state, npy_intp cnt,
+                                     long double *out);
 DECLDIR void random_double_fill(bitgen_t *bitgen_state, npy_intp cnt,
                                 double *out);
 

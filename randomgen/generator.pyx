@@ -427,7 +427,6 @@ warnings.filterwarnings("ignore", "Generator", FutureWarning)
         array([[-3.99149989, -0.52338984], # random
                [-2.99091858, -0.79479508],
                [-1.23204345, -1.75224494]])
-
         """
         cdef double temp
         key = np.dtype(dtype).name
@@ -4977,6 +4976,88 @@ cdef class ExtendedGenerator:
             raise ValueError("Unknown value of bits. Must be either 32 or 64.")
 
         return array
+
+    def random(self, size=None, dtype=np.float64, out=None):
+        """
+        random(size=None, dtype='d', out=None)
+
+        Return random floats in the half-open interval [0.0, 1.0).
+
+        Results are from the "continuous uniform" distribution over the
+        stated interval. To sample :math:`Unif[a, b), b > a` multiply
+        the output of `random` by `(b-a)` and add `a`::
+
+          (b - a) * random() + a
+
+        Parameters
+        ----------
+        size : int or tuple of ints, optional
+            Output shape. If the given shape is, e.g., ``(m, n, k)``, then
+            ``m * n * k`` samples are drawn. Default is None, in which case a
+            single value is returned.
+        dtype : {str, dtype}, optional
+            Desired dtype of the result. One of 'd' ('float64' or np.float64), 'f'
+            ('float32' of np.float32), or 'longdouble' (np.longdouble). All dtypes
+            are determined by their name. The default value is 'd'.
+        out : ndarray, optional
+            Alternative output array in which to place the result. If size is not None,
+            it must have the same shape as the provided size and must match the type of
+            the output values.
+
+        Returns
+        -------
+        out : {float, longdouble or ndarray}
+            Array of random floats of shape `size` (unless ``size=None``, in which
+            case a single float is returned). If dtype is np.longdouble, then the
+            returned type is a scalar np.longdouble. Otherwise it is a float.
+
+        Examples
+        --------
+        >>> randomgen.generator.random()
+        0.47108547995356098 # random
+        >>> type(randomgen.generator.random())
+        <class 'float'>
+        >>> randomgen.generator.random((5,))
+        array([ 0.30220482,  0.86820401,  0.1654503 ,  0.11659149,  0.54323428]) # random
+
+        Three-by-two array of random numbers from [-5, 0):
+
+        >>> 5 * randomgen.generator.random((3, 2)) - 5
+        array([[-3.99149989, -0.52338984], # random
+               [-2.99091858, -0.79479508],
+               [-1.23204345, -1.75224494]])
+        """
+        cdef np.ndarray out_arr
+        cdef long double *out_data
+        cdef np.npy_intp out_size
+
+        key = np.dtype(dtype).name
+        if key == "float64":
+            return double_fill(&random_double_fill, &self._bitgen, size, self.lock, out)
+        elif key == "float32":
+            return float_fill(&random_float, &self._bitgen, size, self.lock, out)
+        elif key == np.dtype("longdouble").name:
+            if np.longdouble(1).nbytes != random_long_double_size():
+                raise RuntimeError(
+                    "The platform and compiler long double size does not "
+                    "match the size provided by NumPy longdouble. These "
+                    "must match to generate random long doubles."
+                )
+            sz = 1 if size is None else size
+            if out is not None:
+                check_output(out, np.longdouble, size, False)
+                out_array = <np.ndarray>out
+            else:
+                out_array = <np.ndarray>np.empty(sz, np.longdouble)
+            out_data = <long double*>np.PyArray_DATA(out_array)
+            out_size = out_array.size
+            with self.lock, nogil:
+                random_long_double_fill(&self._bitgen, out_size, out_data)
+            if out is None and size is None:
+                return out_array[0]
+            return out_array
+        else:
+            raise TypeError("Unsupported dtype \"{key}\" for random".format(key=key))
 
     # Multivariate distributions:
     def multivariate_normal(self, mean, cov, size=None, check_valid="warn",
