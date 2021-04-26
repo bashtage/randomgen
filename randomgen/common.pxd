@@ -110,6 +110,8 @@ cdef byteswap_little_endian(arr)
 
 cdef validate_output_shape(iter_shape, np.ndarray output)
 
+cdef check_output(object out, object dtype, object size, bint require_c_array)
+
 cdef object cont(void *func, void *state, object size, object lock, int narg,
                  object a, object a_name, constraint_type a_constraint,
                  object b, object b_name, constraint_type b_constraint,

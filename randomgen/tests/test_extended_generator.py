@@ -49,6 +49,11 @@ def extended_gen():
     return ExtendedGenerator(pcg)
 
 
+@pytest.fixture(scope="function")
+def extended_gen_legacy():
+    return ExtendedGenerator(MT19937(mode="legacy"))
+
+
 _mt19937 = MT19937(SEED, mode="legacy")
 random = ExtendedGenerator(_mt19937)
 
@@ -616,3 +621,66 @@ def test_mv_complex_normal_edge(extended_gen):
         extended_gen.multivariate_complex_normal([0, 0], np.empty((0, 2, 2)))
     with pytest.raises(ValueError, match="relation must be non-empty"):
         extended_gen.multivariate_complex_normal([0, 0], np.eye(2), np.empty((0, 2, 2)))
+
+
+def test_random_long_double(extended_gen):
+    out = extended_gen.random(dtype="longdouble")
+    types_equiv = np.empty(1, np.longdouble).dtype == np.empty(1, np.double).dtype
+    expected_type = float if types_equiv else np.longdouble
+    assert isinstance(out, expected_type)
+    out = extended_gen.random(dtype=np.longdouble)
+    assert isinstance(out, expected_type)
+    out = extended_gen.random(size=10, dtype=np.longdouble)
+    expected_type = np.double if types_equiv else np.longdouble
+    assert out.dtype == expected_type
+
+
+def test_random_long_double_out(extended_gen):
+    state = extended_gen.state
+    out = np.empty((10, 10), dtype=np.longdouble)
+    ret = extended_gen.random(out=out, dtype=np.longdouble)
+    assert ret is out
+    extended_gen.state = state
+    alt = extended_gen.random(size=(10, 10), dtype=np.longdouble)
+    assert_allclose(out, alt)
+
+
+def test_random_other_type(extended_gen):
+    with pytest.raises(TypeError, match="Unsupported dtype"):
+        extended_gen.random(dtype=np.int)
+    f16 = getattr(np, "float16", np.uint32)
+    with pytest.raises(TypeError, match="Unsupported dtype"):
+        extended_gen.random(dtype=f16)
+
+
+def test_random(extended_gen_legacy):
+    extended_gen_legacy.bit_generator.seed(SEED)
+    actual = extended_gen_legacy.random((3, 2))
+    desired = np.array(
+        [
+            [0.61879477158567997, 0.59162362775974664],
+            [0.88868358904449662, 0.89165480011560816],
+            [0.4575674820298663, 0.7781880808593471],
+        ]
+    )
+    assert_array_almost_equal(actual, desired, decimal=15)
+
+    extended_gen_legacy.bit_generator.seed(SEED)
+    actual = extended_gen_legacy.random()
+    assert_array_almost_equal(actual, desired[0, 0], decimal=15)
+
+
+def test_random_float(extended_gen_legacy):
+    extended_gen_legacy.bit_generator.seed(SEED)
+    actual = extended_gen_legacy.random((3, 2))
+    desired = np.array(
+        [[0.6187948, 0.5916236], [0.8886836, 0.8916548], [0.4575675, 0.7781881]]
+    )
+    assert_array_almost_equal(actual, desired, decimal=7)
+
+
+def test_random_float_scalar(extended_gen_legacy):
+    extended_gen_legacy.bit_generator.seed(SEED)
+    actual = extended_gen_legacy.random(dtype=np.float32)
+    desired = 0.6187948
+    assert_array_almost_equal(actual, desired, decimal=7)

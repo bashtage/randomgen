@@ -27,6 +27,8 @@ Since v1.20.1
   guaranteed to match the sequence produced using the NumPy implementations as long as
   a :class:`~randomgen.seed_sequence.SeedSequence` or :class:`numpy.random.SeedSequence`
   is used with the same initial seed values.
+- Added :func:`~randomgen.generator.ExtendedGenerator.random` with support for
+  ``dtype="longdouble"`` to produce extended precision random floats.
 
 v1.20.1
 =======

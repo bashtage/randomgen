@@ -2,6 +2,7 @@
 #include "loggam.h"
 #include "ziggurat.h"
 #include "ziggurat_constants.h"
+#include <float.h>
 #include <stdio.h>
 
 #if defined(_MSC_VER) && defined(_WIN64)
@@ -33,6 +34,43 @@ void random_standard_exponential_fill(bitgen_t *bitgen_state, npy_intp cnt,
 
 float random_standard_exponential_f(bitgen_t *bitgen_state) {
   return -logf(1.0f - next_float(bitgen_state));
+}
+
+int random_long_double_size() {
+    return (int)sizeof(long double);
+}
+
+static inline long double next_long_double(bitgen_t *bitgen_state) {
+#if ((LDBL_MANT_DIG+0) == 53) && ((LDBL_MAX_EXP+0) == 1024)
+   /* C double/IEEE 754 binary64  */
+   return next_double(bitgen_state);
+#elif ((LDBL_MANT_DIG+0) == 64) && ((LDBL_MAX_EXP+0) == 16384)
+   /* x87 extended */
+   /* Constant is 2**64 */
+   return next_uint64(bitgen_state) * (1.0L / 18446744073709551616.0L);
+#elif ((LDBL_MANT_DIG+0) == 106) && ((LDBL_MAX_EXP+0) == 1024)
+   /* IBM extended double */
+   int64_t a = next_uint64(bitgen_state) >> 11, b = next_uint64(bitgen_state) >> 11;
+   /* Constants are 2^53 and 2^106 */
+   return (a * 9007199254740992.0L + b) / 81129638414606681695789005144064.0L;
+#elif ((LDBL_MANT_DIG+0) == 113) && ((LDBL_MAX_EXP+0) == 16384)
+    /* IEEE 754-2008 binary128 */
+    int64_t a = next_uint64(bitgen_state) >> 7, b = next_uint64(bitgen_state) >> 8;
+    /* Constants are 2^56 and 2^113 */
+    return (a * 72057594037927936.0L + b) / 10384593717069655257060992658440192.0L;
+#else
+#error("Unknown value for LDBL_MANT_DIG")
+#endif
+}
+
+long double random_long_double(bitgen_t *bitgen_state){
+    return next_long_double(bitgen_state);
+}
+
+void random_long_double_fill(bitgen_t *bitgen_state, npy_intp cnt, long double *out){
+   for (int i=0; i < cnt; i++){
+      out[i] = next_long_double(bitgen_state);
+   }
 }
 
 void random_double_fill(bitgen_t *bitgen_state, npy_intp cnt, double *out) {
