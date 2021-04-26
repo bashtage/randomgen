@@ -175,10 +175,15 @@ if __name__ == "__main__":
         help="The number of folds to use: 0, 1 or 2.",
     )
     parser.add_argument(
-        "-ex", "--expanded", action="store_true", help="Use the expanded test suite",
+        "-ex",
+        "--expanded",
+        action="store_true",
+        help="Use the expanded test suite",
     )
     parser.add_argument(
-        "--force", action="store_true", help="Force re-run even if result exists",
+        "--force",
+        action="store_true",
+        help="Force re-run even if result exists",
     )
     parser.add_argument(
         "-ss",

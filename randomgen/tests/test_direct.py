@@ -1402,7 +1402,7 @@ class TestMT64(Base):
             self.bit_generator(np.array([], dtype=np.uint64), mode="legacy")
 
 
-@pytest.mark.skipif(MISSING_RDRAND, reason="RDRAND is not availble")
+@pytest.mark.skipif(MISSING_RDRAND, reason="RDRAND is not available")
 class TestRDRAND(Base):
     @classmethod
     def setup_class(cls):

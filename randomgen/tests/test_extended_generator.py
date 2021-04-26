@@ -684,3 +684,39 @@ def test_random_float_scalar(extended_gen_legacy):
     actual = extended_gen_legacy.random(dtype=np.float32)
     desired = 0.6187948
     assert_array_almost_equal(actual, desired, decimal=7)
+
+
+def test_random_long_double_direct(extended_gen):
+    state = extended_gen.state
+    actual = extended_gen.random(10, dtype=np.longdouble)
+    extended_gen.state = state
+    nmant = np.finfo(np.longdouble).nmant
+    denom = np.longdouble(str(2 ** (nmant + 1)))
+    c = np.longdouble(1.0) / denom
+
+    def twopart(u1, u2, a, b, c):
+        v = int(u1) >> a
+        if b:
+            v = (v << (64 - b)) + (int(u2) >> b)
+        return np.longdouble(str(v)) * c
+
+    if nmant == 52:
+        a, b = 11, 0
+    elif nmant == 63:
+        a, b = 0, 0
+    elif nmant == 105:
+        a, b = 11, 11
+    elif nmant == 112:
+        a, b = 7, 8
+    else:
+        raise NotImplementedError(f"No test for {nmant} bits")
+    direct = np.empty(10, dtype=np.longdouble)
+    u = extended_gen.bit_generator.random_raw(10 * (1 + (b > 0)))
+    for i in range(10):
+        if b:
+            u1, u2 = u[2 * i : 2 * i + 2]
+        else:
+            u1, u2 = u[i], None
+        direct[i] = twopart(u1, u2, a, b, c)
+
+    assert_allclose(actual, direct)
