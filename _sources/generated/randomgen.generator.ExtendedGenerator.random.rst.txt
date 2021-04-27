@@ -1,0 +1,6 @@
+﻿randomgen.generator.ExtendedGenerator.random
+============================================
+
+.. currentmodule:: randomgen.generator
+
+.. automethod:: ExtendedGenerator.random

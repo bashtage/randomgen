@@ -15,12 +15,13 @@ Change Log
   maintained until after NumPy 1.21 (or 2 releases after NumPy 1.19) for users who
   cannot update NumPy.
 
-Since v1.20.1
-=============
+v1.20.2
+=======
 - Fixed a bug in :class:`~randomgen.sfc.SFC64` the used the wrong value from the Weyl
-  sequence. In the original implmentation, the current value is added to the next random
+  sequence. In the original implementation, the current value is added to the next random
   integer and then incremented. The buggy version was incrementing then adding, and so
-  was shifted by one value.
+  was shifted by one value. This sequence should be similarly random in appearance, but it
+  does not match the original specification and so has been changed.
 - Added ``mode="numpy"`` support to :class:`~randomgen.pcg64.PCG64`,
   :class:`~randomgen.mt19937.MT19937`, :class:`~randomgen.philox.Philox`, and
   :class:`~randomgen.sfc.SFC64`. When using this mode, the sequence generated is
@@ -29,6 +30,17 @@ Since v1.20.1
   is used with the same initial seed values.
 - Added :func:`~randomgen.generator.ExtendedGenerator.random` with support for
   ``dtype="longdouble"`` to produce extended precision random floats.
+
+.. ipython::
+
+   In [1]: import numpy as np
+
+   In [2]: from randomgen import ExtendedGenerator, PCG64
+
+   In [3]: eg = ExtendedGenerator(PCG64(20210501))
+
+   In [4]: eg.random(5, dtype=np.longdouble)
+
 
 v1.20.1
 =======
