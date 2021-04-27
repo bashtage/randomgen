@@ -1,5 +1,3 @@
-from __future__ import annotations
-
 from distutils.version import LooseVersion
 from typing import cast
 
