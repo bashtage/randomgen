@@ -10,7 +10,7 @@ if __name__ == "__main__":
 
     import black
 
-    fm = black.FileMode(black.PY36_VERSIONS)
+    fm = black.FileMode({black.TargetVersion.PY37, black.TargetVersion.PY38})
     out = black.format_file_contents(
         "known_hashes = " + str(dict(computed_hashes)), fast=True, mode=fm
     )

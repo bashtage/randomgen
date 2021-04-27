@@ -301,8 +301,8 @@ cdef object prepare_cffi(bitgen_t *bitgen):
     """
     try:
         import cffi
-    except ImportError:
-        raise ImportError("cffi cannot be imported.")
+    except ImportError as exc:
+        raise ImportError("cffi cannot be imported.") from exc
 
     ffi = cffi.FFI()
     _cffi = interface(<uintptr_t>bitgen.state,

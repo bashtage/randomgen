@@ -1,7 +1,7 @@
 from functools import partial
 import os
 from os.path import join
-from typing import Any, Dict, Optional, Tuple, Union
+from typing import Any, Dict, Optional, Tuple, Type, Union
 
 import numpy as np
 from numpy.testing import (
@@ -786,6 +786,8 @@ class TestThreeFry(Random123):
 
 
 class TestPCG64XSLRR(Base):
+    bit_generator: Type[PCG64]
+
     @classmethod
     def setup_class(cls):
         super().setup_class()
@@ -802,7 +804,7 @@ class TestPCG64XSLRR(Base):
         ]
 
     def setup_bitgenerator(self, seed, mode="legacy", inc: Optional[int] = 0):
-        return self.bit_generator(*seed, mode=mode, variant="xsl-rr", inc=inc)
+        return self.bit_generator(*seed, mode=mode, variant="xsl-rr", inc=inc)  # type: ignore
 
     def test_seed_float_array(self):
         rs = Generator(self.setup_bitgenerator(self.data1["seed"]))

@@ -256,3 +256,5 @@ def show(*args, **kwargs):
 
 matplotlib.pyplot.show = show
 """
+
+numpydoc_show_class_members = False

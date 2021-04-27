@@ -1,17 +1,13 @@
+from __future__ import annotations
+
 from distutils.version import LooseVersion
-import warnings
+from typing import cast
 
 import numpy as np
 from numpy.testing import assert_equal
 import pytest
 
 from randomgen import Generator
-
-try:
-    from numpy.random import MT19937
-except ImportError:
-    from randomgen import MT19937
-
 
 v119 = LooseVersion("1.19")
 NP_LT_119 = LooseVersion(np.__version__) < v119
@@ -21,9 +17,13 @@ pytestmark = pytest.mark.skipif(NP_LT_119, reason="Only test NumPy 1.19+")
 
 
 # Catch when using internal MT19937
-with warnings.catch_warnings():
-    warnings.simplefilter("ignore")
-    random = Generator(MT19937(1234))
+
+
+@pytest.fixture(scope="function")
+def random():
+    import randomgen.common
+
+    return Generator(cast(randomgen.common.BitGenerator, np.random.MT19937(1234)))
 
 
 @pytest.mark.parametrize(
@@ -73,14 +73,15 @@ with warnings.catch_warnings():
         ),
     ],
 )
-def test_repeatability_32bit_boundary(bound, expected):
+def test_repeatability_32bit_boundary(random, bound, expected):
+    state = random.state
     for size in [None, len(expected)]:
-        random = Generator(MT19937(1234))
+        random.state = state
         x = random.integers(bound, size=size, use_masked=False)
         assert_equal(x, expected if size is not None else expected[0])
 
 
-def test_dirichelet_alpha():
+def test_dirichelet_alpha(random):
     # numpy/numpy#15951
     with pytest.raises(ValueError):
         random.dirichlet([[5, 1]])
@@ -92,16 +93,15 @@ def test_dirichelet_alpha():
         random.dirichlet(np.array([[5, 1], [1, 5]]))
 
 
-def test_negative_binomial_p0_exception():
+def test_negative_binomial_p0_exception(random):
     # numpy/numpy#15913
     # Verify that p=0 raises an exception.
     with pytest.raises(ValueError):
         random.negative_binomial(1, 0)
 
 
-def test_multivariate_normal_basic_stats():
+def test_multivariate_normal_basic_stats(random):
     # numpy/numpy#15871
-    random = Generator(MT19937(12345))
     n_s = 1000
     mean = np.array([1, 2])
     cov = np.array([[2, 1], [1, 2]])
@@ -123,7 +123,7 @@ def test_multivariate_normal_basic_stats():
         (50000000, 5000, np.uint16, 6500.0),  # p-value ~3.5e-25
     ],
 )
-def test_integers_small_dtype_chisquared(sample_size, high, dtype, chi2max):
+def test_integers_small_dtype_chisquared(random, sample_size, high, dtype, chi2max):
     # Regression test for gh-14774.
     samples = random.integers(high, size=sample_size, dtype=dtype)
 
@@ -133,7 +133,7 @@ def test_integers_small_dtype_chisquared(sample_size, high, dtype, chi2max):
     assert chi2 < chi2max
 
 
-def test_bad_permuation():
+def test_bad_permuation(random):
     bad_x_str = "abcd"
     with pytest.raises(IndexError):
         random.permutation(bad_x_str)

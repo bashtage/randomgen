@@ -696,11 +696,12 @@ warnings.filterwarnings("ignore", "RandomState", FutureWarning)
             ``m * n * k`` samples are drawn. Default is None, in which case a
             single value is returned.
         replace : boolean, optional
-            Whether the sample is with or without replacement
+            Whether the sample is with or without replacement. Default is True,
+            meaning that a value of ``a`` can be selected multiple times.
         p : 1-D array-like, optional
-            The probabilities associated with each entry in a.
-            If not given the sample assumes a uniform distribution over all
-            entries in a.
+            The probabilities associated with each entry in a. If not given,
+            the sample assumes a uniform distribution over all entries in
+            ``a``.
 
         Returns
         -------

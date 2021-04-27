@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 from typing import Optional
 import warnings
 
@@ -6,7 +8,7 @@ from randomgen.xoshiro256 import Xoshiro256
 
 
 def Xoshiro256StarStar(
-    seed: Optional[IntegerSequenceSeed] = None, *, mode: SeedMode = None
+    seed: Optional[IntegerSequenceSeed] = None, *, mode: SeedMode = "sequence"
 ) -> Xoshiro256:
     """
     This is a deprecation shim.  Use Xoshiro256
