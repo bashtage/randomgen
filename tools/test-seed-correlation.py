@@ -99,10 +99,15 @@ if __name__ == "__main__":
         help="The number of folds to use: 0, 1 or 2.",
     )
     parser.add_argument(
-        "-ex", "--expanded", action="store_true", help="Use the expanded test suite",
+        "-ex",
+        "--expanded",
+        action="store_true",
+        help="Use the expanded test suite",
     )
     parser.add_argument(
-        "--force", action="store_true", help="Force re-run even if result exists",
+        "--force",
+        action="store_true",
+        help="Force re-run even if result exists",
     )
     parser.add_argument(
         "-rf",
@@ -117,7 +122,10 @@ if __name__ == "__main__":
         "of 2 (i.e., 2**0, 2**1, 2**2)",
     )
     parser.add_argument(
-        "--num_streams", type=int, default=8, help="The number of streams to test",
+        "--num_streams",
+        type=int,
+        default=8,
+        help="The number of streams to test",
     )
     args = parser.parse_args()
 

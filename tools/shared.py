@@ -61,7 +61,10 @@ def test_single(
     logger.info("Executing " + " ".join(cmd))
 
     ps = subprocess.Popen(
-        " ".join(cmd), shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT,
+        " ".join(cmd),
+        shell=True,
+        stdout=subprocess.PIPE,
+        stderr=subprocess.STDOUT,
     )
     output = ps.communicate()[0]
     try:

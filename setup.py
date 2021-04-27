@@ -385,5 +385,5 @@ setup(
     ],
     zip_safe=False,
     install_requires=required,
-    python_requires='>=3.6',
+    python_requires=">=3.6",
 )
