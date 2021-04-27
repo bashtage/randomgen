@@ -22,7 +22,6 @@ from typing import Dict, List, Tuple, Union
 
 import black
 import numpy as np
-from numpy.random import MT19937 as NP19937
 
 from randomgen import MT19937
 
@@ -74,7 +73,7 @@ for poly in ("poly-128", "clist_mt19937"):
         seed_tpl = (seed,) if isinstance(seed, int) else tuple(seed)
         key = (fn, seed_tpl, step)
         values[key] = {}
-        np_mt19937 = NP19937(seed)
+        np_mt19937 = np.random.MT19937(seed)
         mt19937 = MT19937(mode="sequence")
         mt19937.state = np_mt19937.state
         mt19937.random_raw(step)
@@ -103,6 +102,8 @@ for poly in ("poly-128", "clist_mt19937"):
         assert values[key]["jumped"] == {"key_md5": hash.hexdigest(), "pos": pos}
 
 txt = "JUMP_TEST_DATA=" + pprint.pformat(values)
-fm = black.FileMode(target_versions=black.PY36_VERSIONS)
+fm = black.FileMode(
+    target_versions={black.TargetVersion.PY37, black.TargetVersion.PY38}
+)
 with open("jump-test-values.txt", "w") as jt:
     jt.write(black.format_file_contents(txt, fast=False, mode=fm))

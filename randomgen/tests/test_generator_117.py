@@ -1,11 +1,13 @@
 from distutils.version import LooseVersion
 from itertools import product
+from typing import cast
 
 import numpy as np
 from numpy.testing import assert_allclose, assert_array_equal
 import pytest
 
 from randomgen import Generator
+import randomgen.common
 
 try:
     from numpy.random import PCG64, Generator as NPGenerator
@@ -13,18 +15,17 @@ try:
     pcg = PCG64()
     initial_state = pcg.state
     np_gen = NPGenerator(pcg)
-    gen = Generator(pcg)
+    gen = Generator(cast(randomgen.common.BitGenerator, pcg))
 except ImportError:
-    pytestmark = pytest.mark.skip
-    from randomgen import PCG64
+    from randomgen import PCG64  # type: ignore[misc]
 
 
-v1174 = LooseVersion("1.17.4")
-v118 = LooseVersion("1.18")
-NP_LT_1174 = LooseVersion(np.__version__) < v1174
-NP_LT_1174_OR_GT_118 = NP_LT_1174 or LooseVersion(np.__version__) > v118
+NP_LT_1174 = LooseVersion(np.__version__) < LooseVersion("1.17.4")
+NP_GTE_118 = LooseVersion(np.__version__) >= LooseVersion("1.18")
+NP_GTE_120 = LooseVersion(np.__version__) >= LooseVersion("1.20")
+NP_GTE_121 = LooseVersion(np.__version__) >= LooseVersion("1.21")
 
-pytestmark = pytest.mark.skipif(NP_LT_1174, reason="Only test 1.17.4 to 1.18.x")
+pytestmark = pytest.mark.skipif(NP_LT_1174, reason="Only test 1.17.4+")
 
 
 def positive_param():
@@ -169,7 +170,6 @@ distributions = {
     "exponential": positive(1),
     "f": positive(2),
     "gamma": positive(2),
-    "geometric": prob,
     "gumbel": positive(2),
     "laplace": loc_scale,
     "logistic": loc_scale,
@@ -185,7 +185,6 @@ distributions = {
     "poisson": positive(1),
     "power": positive(1),
     "random": input_0,
-    "rayleigh": positive(1),
     "standard_cauchy": input_0,
     "standard_exponential": input_0,
     "standard_gamma": positive(1),
@@ -198,6 +197,10 @@ distributions = {
     "weibull": positive(1),
     "zipf": above_1,
 }
+
+
+if not NP_GTE_121:
+    distributions.update({"geometric": prob, "rayleigh": positive(1)})
 
 tests = []
 ids = []
@@ -294,3 +297,29 @@ def test_hypergeometric(args):
     gen.bit_generator.state = initial_state
     result = gen.hypergeometric(*args)
     assert_allclose(result, expected)
+
+
+def test_missing():
+    KNOWN_SPECIAL_CASES = [
+        "bit_generator",
+        "choice",
+        "hypergeometric",
+        "integers",
+        "permutation",
+        "shuffle",
+    ]
+    if NP_GTE_121:
+        KNOWN_SPECIAL_CASES += ["geometric", "rayleigh"]
+    missing = [
+        f
+        for f in dir(np_gen)
+        if not f.startswith("_")
+        and f not in distributions
+        and f not in KNOWN_SPECIAL_CASES
+    ]
+    missing_funcs = []
+    if NP_GTE_118:
+        missing_funcs += ["multivariate_hypergeometric"]
+    if NP_GTE_120:
+        missing_funcs += ["permuted"]
+    assert missing == missing_funcs

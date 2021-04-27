@@ -20,7 +20,7 @@ from randomgen import MT19937, PCG64, ExtendedGenerator
 try:
     from numpy.random import Generator
 except ImportError:
-    from randomgen import Generator
+    from randomgen import Generator  # type: ignore[misc]
 
 try:
     from scipy import linalg  # noqa: F401
@@ -647,7 +647,7 @@ def test_random_long_double_out(extended_gen):
 
 def test_random_other_type(extended_gen):
     with pytest.raises(TypeError, match="Unsupported dtype"):
-        extended_gen.random(dtype=np.int)
+        extended_gen.random(dtype=int)
     f16 = getattr(np, "float16", np.uint32)
     with pytest.raises(TypeError, match="Unsupported dtype"):
         extended_gen.random(dtype=f16)

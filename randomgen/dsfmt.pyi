@@ -5,9 +5,7 @@ import numpy as np
 from randomgen.common import BitGenerator
 from randomgen.typing import IntegerSequenceSeed, SeedMode
 
-DSFMTState: Dict[
-    str, Union[str, int, np.ndarray, Dict[str, Union[int, np.ndarray]]]
-] = ...
+DSFMTState = Dict[str, Union[str, int, np.ndarray, Dict[str, Union[int, np.ndarray]]]]
 
 class DSFMT(BitGenerator):
     def __init__(
