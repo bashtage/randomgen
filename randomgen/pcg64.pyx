@@ -142,7 +142,7 @@ cdef class PCG64(BitGenerator):
     .. [2] O'Neill, Melissa E. "PCG: A Family of Simple Fast Space-Efficient
            Statistically Good Algorithms for Random Number Generation"
     """
-    def __init__(self, seed=None, inc=None, *, variant="dxsm", mode=None):
+    def __init__(self, seed=None, inc=None, *, variant="xsl-rr", mode=None):
         BitGenerator.__init__(self, seed, mode)
         self.rng_state.pcg_state = <pcg64_random_t *>PyArray_malloc_aligned(sizeof(pcg64_random_t))
         inc = None if seed is None else inc
@@ -152,7 +152,7 @@ cdef class PCG64(BitGenerator):
             raise TypeError("variant must be a string")
         orig_variant = variant = str(variant)
         variant = variant.lower().replace("-", "")
-        if variant not in ("xslrr", "1.0", "1", "dxsm", "dxsm128", "2.0", "2"):
+        if variant not in ("xslrr", "1.0", "1", "cmdxsm", "dxsm", "dxsm128", "2.0", "2"):
             raise ValueError(f"variant {orig_variant} is not known.")
         self.variant = variant
         self._setup_rng_state()
@@ -162,9 +162,10 @@ cdef class PCG64(BitGenerator):
     def _setup_rng_state(self):
         self.use_dxsm = False
         self.cheap_multiplier = False
-        if self.variant in ("dxsm", "2.0", "2"):
+        if self.variant in ("dxsm", "2.0", "2", "cm-dxsm", "cmdxsm"):
             self.use_dxsm = True
             self.cheap_multiplier = True
+            self.variant = "dxsm"
         elif self.variant in ("dxsm-128", "dxsm128"):
             self.use_dxsm = True
             self.variant = "dxsm-128"
