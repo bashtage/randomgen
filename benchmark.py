@@ -30,6 +30,7 @@ else:
 PRNGS = [
     "DSFMT",
     "PCG64",
+    "PCG64DXSM",
     "PCG32",
     "MT19937",
     "MT64",
@@ -46,7 +47,15 @@ PRNGS = [
     "HC128",
     "SPECK128",
     "JSF",
+    "SFC64",
+    "Romu",
+    "LXM",
+    "LCG128Mix",
+    "EFIIX64",
+    "MT64",
 ]
+
+PRNGS = sorted(set(PRNGS))
 
 
 def timer(code, setup):
