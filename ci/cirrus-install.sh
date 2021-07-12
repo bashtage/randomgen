@@ -1,4 +1,4 @@
 #!/usr/bin/env bash
 
-pkg install -y python37 py37-pip py37-numpy py37-cython py37-pytest
-python3.7 setup.py develop
+pkg install -y python38 py38-pip py38-numpy py38-cython py38-pytest
+python3.8 setup.py develop

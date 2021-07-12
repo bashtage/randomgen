@@ -23,7 +23,7 @@ cdef class EFIIX64(BitGenerator):
     """
     EFIIX64(seed=None)
 
-    Container for the EFIIX64x48 pseudo-random number generator.
+    Container for the EFIIX64x384 pseudo-random number generator.
 
     Parameters
     ----------
@@ -49,7 +49,7 @@ cdef class EFIIX64(BitGenerator):
 
     Notes
     -----
-    ``EFIIX64`` (also known as efiix64x48) is written by Chris Doty-Humphrey.
+    ``EFIIX64`` (also known as efiix64x384) is written by Chris Doty-Humphrey.
     It is a 64-bit PRNG that uses a set of tables generate random values.
     This produces a fast PRNG with statistical quality similar to cryptographic
     generators but faster [1]_.

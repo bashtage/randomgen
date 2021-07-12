@@ -94,7 +94,7 @@ cdef class ThreeFry(BitGenerator):
     -----
     ThreeFry is a 32 or 64-bit PRNG that uses a counter-based design based on
     weaker (and faster) versions of cryptographic functions [1]_. Instances
-    using different values of the key produce distinct sequences. ``Philox``
+    using different values of the key produce distinct sequences. ``ThreeFry``
     has a period of :math:`N*2^{N*W}` and supports arbitrary advancing and
     jumping the sequence in increments of :math:`2^{N*W//2}`. These features
     allow multiple non-overlapping sequences to be generated.
@@ -114,7 +114,7 @@ cdef class ThreeFry(BitGenerator):
     randoms produced. The second is a key which determines the sequence
     produced. Using different keys produces distinct sequences.
 
-    When mode is "legacy", ``Philox`` is seeded using either a single 64-bit
+    When mode is "legacy", ``ThreeFry`` is seeded using either a single 64-bit
     unsigned integer or a vector of 64-bit unsigned integers. In either case,
     the seed is used as an input for a second random number generator,
     SplitMix64, and the output of this PRNG function is used as the initial state.
