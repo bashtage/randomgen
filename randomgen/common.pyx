@@ -50,9 +50,8 @@ cdef class BitGenerator:
         if isinstance(seed, ISEED_SEQUENCES):
             if mode == "legacy":
                 raise ValueError("seed is a SeedSequence instance but mode is "
-                                 "\"legacy\". Using a SeedSequence implies "
+                                 "\"legacy\". Using a SeedSequence requires "
                                  "mode=\"sequence\".")
-                mode = "sequence"
         elif mode is None and seed is not None:
             mode="sequence"
         self.mode = mode.lower() if mode is not None else "sequence"

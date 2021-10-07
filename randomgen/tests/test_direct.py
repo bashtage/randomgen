@@ -802,6 +802,8 @@ class TestPCG64XSLRR(Base):
             (-2,),
             (2 ** 129 + 1,),
         ]
+        cls.large_advance_initial = 141078743063826365544432622475512570578
+        cls.large_advance_final = 32639015182640331666105117402520879107
 
     def setup_bitgenerator(self, seed, mode="legacy", inc: Optional[int] = 0):
         return self.bit_generator(*seed, mode=mode, variant="xsl-rr", inc=inc)  # type: ignore
@@ -860,6 +862,14 @@ class TestPCG64XSLRR(Base):
             PCG64(0, variant="unknown")
         with pytest.raises(ValueError):
             PCG64(0, variant=3)
+
+    def test_large_advance(self):
+        bg = self.setup_bitgenerator([0], inc=1)
+        state = bg.state["state"]
+        assert state["state"] == self.large_advance_initial
+        bg.advance(sum(2 ** i for i in range(96)))
+        state = bg.state["state"]
+        assert state["state"] == self.large_advance_final
 
 
 class TestPhilox(Random123):
@@ -1354,6 +1364,8 @@ class TestPCG32(TestPCG64XSLRR):
             (None, -1),
             (None, 2 ** 129 + 1),
         ]
+        cls.large_advance_initial = 645664597830827402
+        cls.large_advance_final = 3
 
     def setup_bitgenerator(self, seed, mode="legacy", inc=0):
         return self.bit_generator(*seed, mode=mode, inc=inc)
@@ -1948,9 +1960,19 @@ class TestPCG64DXSM(Base):
         else:
             cls.invalid_seed_values += [("apple",)]
         cls.seed_sequence_only = True
+        cls.large_advance_initial = 262626489767919729675955844831248137855
+        cls.large_advance_final = 326675794918500479020985263602132957772
 
     def setup_bitgenerator(self, seed, mode=None, inc=0):
         return self.bit_generator(*seed, inc=inc)
+
+    def test_large_advance(self):
+        bg = self.setup_bitgenerator([0], inc=1)
+        state = bg.state["state"]
+        assert state["state"] == self.large_advance_initial
+        bg.advance(sum(2 ** i for i in range(96)))
+        state = bg.state["state"]
+        assert state["state"] == self.large_advance_final
 
 
 class TestPCG64CMDXSM(TestPCG64DXSM):
@@ -1960,6 +1982,8 @@ class TestPCG64CMDXSM(TestPCG64DXSM):
         cls.bit_generator = partial(PCG64, mode="sequence", variant="dxsm")
         cls.data1 = cls._read_csv(join(pwd, "./data/pcg64-cm-dxsm-testset-1.csv"))
         cls.data2 = cls._read_csv(join(pwd, "./data/pcg64-cm-dxsm-testset-2.csv"))
+        cls.large_advance_initial = 159934576226003702342121456273047082943
+        cls.large_advance_final = 43406923282132296644520456716700203596
 
 
 class TestEFIIX64(TestLXM):
