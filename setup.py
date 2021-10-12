@@ -25,7 +25,8 @@ except ImportError:
         raise ImportError("tempita required to install, use pip install tempita")
 
 with open("requirements.txt") as f:
-    required = f.read().splitlines()
+    setup_required = f.read().splitlines()
+install_required = [pkg for pkg in setup_required if "numpy" in pkg]
 
 CYTHON_COVERAGE = os.environ.get("RANDOMGEN_CYTHON_COVERAGE", "0") in (
     "true",
@@ -384,6 +385,7 @@ setup(
         "RDRAND",
     ],
     zip_safe=False,
-    install_requires=required,
+    install_requires=install_required,
+    setup_requires=setup_required,
     python_requires=">=3.6",
 )
