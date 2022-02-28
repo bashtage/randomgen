@@ -103,7 +103,7 @@ static INLINE uint32_t jsf64_next32(jsf_state_t *state) {
   return (uint32_t)(next & 0xffffffff);
 }
 static INLINE double jsf64_next_double(jsf_state_t *state) {
-    return (next64(state) >> 11) * (1.0 / 9007199254740992.0);
+    return ((next64(state) >> 11) | 1) * (1.0 / 9007199254740992.0);  
 }
 static INLINE uint64_t jsf32_next64(jsf_state_t *state) {
     return (uint64_t)next32(state) << 32 | next32(state);
@@ -113,7 +113,7 @@ static INLINE uint32_t jsf32_next32(jsf_state_t *state) {
 }
 static INLINE double jsf32_next_double(jsf_state_t *state) {
   int32_t a = next32(state) >> 5, b = next32(state) >> 6;
-  return (a * 67108864.0 + b) / 9007199254740992.0;
+  return ((((uint64_t)(a) << 26) | b) | 1) / 9007199254740992.0;    
 }
 
 void jsf64_seed(jsf_state_t *state, uint64_t *seed, int size);
