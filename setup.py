@@ -352,7 +352,7 @@ setup(
     packages=find_packages(),
     package_dir={"randomgen": "./randomgen"},
     package_data={
-        "": ["*.h", "*.pxi", "*.pyx", "*.pxd", "*.in"],
+        "": ["*.h", "*.pxi", "*.pyx", "*.pxd", "*.in", "py.typed"],
         "randomgen.tests.data": ["*.csv"],
     },
     include_package_data=True,
