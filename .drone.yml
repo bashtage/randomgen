@@ -10,7 +10,7 @@ platform:
 
 steps:
 - name: test
-  image: ubuntu:latest
+  image: ubuntu:focal
   commands:
     - uname -a
     - apt-get install gnupg2
