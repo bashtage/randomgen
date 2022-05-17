@@ -95,7 +95,7 @@ jobs:
       echo "Installing to site packages"
       python -m pip wheel . -w wheelhouse/
       WHL=$(ls -t wheelhouse/randomgen-*.whl | head -n1)
-      pip install ./wheelhouse/${WHL}
+      pip install ${WHL}
     displayName: 'Install randomgen (site-packages)'
     condition: eq(variables['test.install'], 'true')
 
