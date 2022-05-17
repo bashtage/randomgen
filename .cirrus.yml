@@ -3,4 +3,4 @@ freebsd_instance:
 
 task:
   install_script: . ./ci/cirrus-install.sh
-  script: pytest-3.8 randomgen
+  script: python3.9 -m pytest randomgen
