@@ -50,7 +50,7 @@ jobs:
           python.version: '3.7'
           use.conda: true
           coverage: false
-          TEST_INSTALL: true
+          test.install: true
       ${{ if eq(parameters.name, 'macOS') }}:
         python39_latest_macos:
           python.version: '3.9'
