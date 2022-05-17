@@ -6,6 +6,7 @@ python3.9 -m ensurepip --upgrade
 # wget https://bootstrap.pypa.io/get-pip.py
 # python get-pip.py
 python3.9 -m pip install pytest wheel
-python3.9 -m pip wheel . -w wheelhouse/
+python3.9 -m pip wheel . -w wheelhouse/ --no-build-isolation
+ls -t wheelhouse/*
 WHL=$(ls -t wheelhouse/randomgen-*.whl | head -n1)
 python3.9 -m pip install install ${WHL}
