@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 
-pkg install -y python39  py39-numpy py39-cython wget
+pkg install -y python39  py39-numpy py39-cython wget git
 python3.9 -m ensurepip --upgrade
 # wget https://bootstrap.pypa.io/get-pip.py
 # python get-pip.py
