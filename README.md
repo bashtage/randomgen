@@ -153,19 +153,19 @@ test suite where still relevant.
 Either install from PyPi using
 
 ```bash
-pip install randomgen
+python -m pip install randomgen
 ```
 
 or, if you want the latest version,
 
 ```bash
-pip install git+https://github.com/bashtage/randomgen.git
+python -m pip install git+https://github.com/bashtage/randomgen.git
 ```
 
 or from a cloned repo,
 
 ```bash
-python setup.py install
+python -m pip install .
 ```
 
 If you use conda, you can install using conda forge
@@ -180,7 +180,8 @@ conda install -c conda-forge randomgen
 or are building on non-x86, you can install using:
 
 ```bash
-python setup.py install --no-sse2
+export RANDOMGEN_NO_SSE2=1
+python -m pip install . 
 ```
 
 ### Windows

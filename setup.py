@@ -54,8 +54,11 @@ if ARM_LIKE:
     print("Processor appears to be ARM")
 USE_SSE2 = INTEL_LIKE
 print("Building with SSE?: {0}".format(USE_SSE2))
-if "--no-sse2" in sys.argv:
+NO_SSE2 = os.environ.get("RANDOMGEN_NO_SSE2", False) in (1, "1", "True", "true")
+NO_SSE2 = NO_SSE2 or "--no-sse2" in sys.argv
+if NO_SSE2:
     USE_SSE2 = False
+if "--no-sse2" in sys.argv:
     sys.argv.remove("--no-sse2")
 
 MOD_DIR = "./randomgen"

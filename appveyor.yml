@@ -23,7 +23,7 @@ build_script:
   - conda update conda --quiet
   - conda install numpy cython nose pandas pytest scipy --quiet
   - conda install -c numba numba --quiet
-  - python setup.py develop
+  - python -m pip install -e .
   - set "GIT_DIR=%cd%"
 
 test_script:
