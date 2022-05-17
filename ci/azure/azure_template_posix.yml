@@ -50,7 +50,6 @@ jobs:
           python.version: '3.7'
           use.conda: true
           coverage: false
-          NUMPY: 1.17.4
           TEST_INSTALL: true
       ${{ if eq(parameters.name, 'macOS') }}:
         python39_latest_macos:
