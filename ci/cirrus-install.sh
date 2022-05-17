@@ -6,4 +6,4 @@ python3.9 -m ensurepip --upgrade
 # wget https://bootstrap.pypa.io/get-pip.py
 # python get-pip.py
 python3.9 -m pip install pytest wheel --user
-python3.9 -m pip install -e . --no-build-isolation --user
+python3.9 -m pip install -e . --user
