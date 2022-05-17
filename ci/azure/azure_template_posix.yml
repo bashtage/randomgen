@@ -36,7 +36,7 @@ jobs:
           python.version: '3.8'
           use.conda: true
           NUMPY: 1.18.5
-          CYTHON: 0.29.22
+          CYTHON: 0.29.24
           USE_SCIPY: "true"
           USE_NUMBA: "true"
         python_38_coverage:
@@ -93,9 +93,9 @@ jobs:
 
   - script: |
       echo "Installing to site packages"
-      python -m pip wheel .
-      WHL=$(ls -t dist)
-      pip install ./dist/${WHL}
+      python -m pip wheel . -w wheelhouse/
+      WHL=$(ls -t wheelhouse/randomgen-*.whl | head -n1)
+      pip install ./wheelhouse/${WHL}
     displayName: 'Install randomgen (site-packages)'
     condition: eq(variables['test.install'], 'true')
 
