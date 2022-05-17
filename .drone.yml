@@ -1,6 +1,6 @@
 ---
 kind: pipeline
-type: exec
+type: docker
 name: test-on-arm64
 
 platform:
