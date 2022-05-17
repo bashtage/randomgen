@@ -6,7 +6,7 @@ import pytest
 
 from randomgen import mtrand as random
 
-HAS_32BIT_CLONG = np.iinfo("l").max < 2 ** 32
+HAS_32BIT_CLONG = np.iinfo("l").max < 2**32
 
 
 class TestRegression(object):
@@ -24,12 +24,12 @@ class TestRegression(object):
 
         # Test for ticket #5623
         args = [
-            (2 ** 20 - 2, 2 ** 20 - 2, 2 ** 20 - 2),  # Check for 32-bit systems
+            (2**20 - 2, 2**20 - 2, 2**20 - 2),  # Check for 32-bit systems
         ]
-        is_64bits = sys.maxsize > 2 ** 32
+        is_64bits = sys.maxsize > 2**32
         if is_64bits and sys.platform != "win32":
             # Check for 64-bit systems
-            args.append((2 ** 40 - 2, 2 ** 40 - 2, 2 ** 40 - 2))
+            args.append((2**40 - 2, 2**40 - 2, 2**40 - 2))
         for arg in args:
             assert_(random.hypergeometric(*arg) > 0)
 
@@ -178,5 +178,5 @@ class TestRegression(object):
             ],
             dtype="int64",
         )
-        actual = random.randint(2 ** 32, size=10)
+        actual = random.randint(2**32, size=10)
         assert_array_equal(actual, expected)

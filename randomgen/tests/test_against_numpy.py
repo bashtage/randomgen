@@ -122,7 +122,7 @@ class TestAgainstNumPy(object):
     def setup_class(cls):
         cls.np = numpy.random
         cls.bit_generator = MT19937
-        cls.seed = [2 ** 21 + 2 ** 16 + 2 ** 5 + 1]
+        cls.seed = [2**21 + 2**16 + 2**5 + 1]
         cls.rg = Generator(cls.bit_generator(*cls.seed, mode="legacy"))
         cls.rs = RandomState(cls.bit_generator(*cls.seed, mode="legacy"))
         cls.nprs = cls.np.RandomState(*cls.seed)

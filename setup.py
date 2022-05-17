@@ -14,8 +14,6 @@ from Cython.Build import cythonize
 import Cython.Compiler.Options
 import numpy as np
 
-import versioneer
-
 try:
     from Cython import Tempita as tempita
 except ImportError:
@@ -340,9 +338,7 @@ class BinaryDistribution(Distribution):
 
 setup(
     name="randomgen",
-    version=versioneer.get_version(),
     classifiers=classifiers,
-    cmdclass=versioneer.get_cmdclass(),
     ext_modules=cythonize(
         extensions,
         compiler_directives={"language_level": "3", "linetrace": CYTHON_COVERAGE},

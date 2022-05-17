@@ -33,7 +33,7 @@ INT_FUNCS = {
     "zipf": (2,),
 }
 
-if np.iinfo(int).max < 2 ** 32:
+if np.iinfo(int).max < 2**32:
     # Windows and some 32-bit platforms, e.g., ARM
     INT_FUNC_HASHES = {
         "binomial": "670e1c04223ffdbab27e08fbbad7bdba",
@@ -339,11 +339,11 @@ class TestRandint(object):
 
         for dt in self.itype[1:]:
             for ubnd in [4, 8, 16]:
-                vals = self.rfunc(2, ubnd, size=2 ** 16, dtype=dt)
+                vals = self.rfunc(2, ubnd, size=2**16, dtype=dt)
                 assert_(vals.max() < ubnd)
                 assert_(vals.min() >= 2)
 
-        vals = self.rfunc(0, 2, size=2 ** 16, dtype=np.bool_)
+        vals = self.rfunc(0, 2, size=2**16, dtype=np.bool_)
 
         assert_(vals.max() < 2)
         assert_(vals.min() >= 0)
@@ -1349,7 +1349,7 @@ class TestRandomDist(object):
     def test_vonmises_small(self):
         # check infinite loop, gh-4720
         random.seed(self.seed)
-        r = random.vonmises(mu=0.0, kappa=1.1e-8, size=10 ** 6)
+        r = random.vonmises(mu=0.0, kappa=1.1e-8, size=10**6)
         assert_(np.isfinite(r).all())
 
     def test_vonmises_nan(self):

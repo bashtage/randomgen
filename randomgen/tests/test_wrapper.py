@@ -14,7 +14,7 @@ def rotr_64(value, rot):
 
 class _PCG64:
     PCG_DEFAULT_MULTIPLIER = (2549297995355413924 << 64) + 4865540595714422341
-    MODULUS = 2 ** 128
+    MODULUS = 2**128
 
     def __init__(self, state, inc):
         self._state = state
@@ -77,8 +77,8 @@ def test_smoke(python_pcg):
     gen = Generator(bg)
     assert isinstance(gen.random(), float)
     assert isinstance(gen.standard_normal(dtype=np.float32), float)
-    assert isinstance(gen.integers(0, 2 ** 32, dtype=np.uint32), np.integer)
-    assert isinstance(gen.integers(0, 2 ** 64, dtype=np.uint64), np.integer)
+    assert isinstance(gen.integers(0, 2**32, dtype=np.uint32), np.integer)
+    assert isinstance(gen.integers(0, 2**64, dtype=np.uint64), np.integer)
 
 
 def test_random_raw(pcg_python, pcg_native):
@@ -94,10 +94,10 @@ def test_random_raw(pcg_python, pcg_native):
         lambda bg: bg.standard_normal(size=(20, 3)),
         lambda bg: bg.standard_normal(dtype=np.float32),
         lambda bg: bg.standard_normal(size=(20, 3), dtype=np.float32),
-        lambda bg: bg.integers(0, 2 ** 32, dtype=np.uint32),
-        lambda bg: bg.integers(0, 2 ** 32, dtype=np.uint32, size=(7, 5, 3, 2)),
-        lambda bg: bg.integers(0, 2 ** 64, dtype=np.uint64),
-        lambda bg: bg.integers(0, 2 ** 32, dtype=np.uint64, size=(7, 5, 3, 2)),
+        lambda bg: bg.integers(0, 2**32, dtype=np.uint32),
+        lambda bg: bg.integers(0, 2**32, dtype=np.uint32, size=(7, 5, 3, 2)),
+        lambda bg: bg.integers(0, 2**64, dtype=np.uint64),
+        lambda bg: bg.integers(0, 2**32, dtype=np.uint64, size=(7, 5, 3, 2)),
     ],
 )
 def test_against_ref(func, pcg_python, pcg_native):
@@ -113,6 +113,6 @@ def test_32():
     bg = UserBitGenerator(next_raw, 32)
     assert bg.random_raw() == np.iinfo(np.uint32).max
     gen = Generator(bg)
-    assert gen.integers(0, 2 ** 64, dtype=np.uint64) == np.iinfo(np.uint64).max
-    np.testing.assert_allclose(gen.random(), (2 ** 53 - 1) / (2 ** 53), rtol=1e-14)
+    assert gen.integers(0, 2**64, dtype=np.uint64) == np.iinfo(np.uint64).max
+    np.testing.assert_allclose(gen.random(), (2**53 - 1) / (2**53), rtol=1e-14)
     assert "UserBitGenerator(Python)" in repr(bg)

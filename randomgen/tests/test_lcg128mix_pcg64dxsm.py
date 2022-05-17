@@ -199,8 +199,8 @@ def test_exceptions():
         LCG128Mix(SEED, post=3)
 
 
-@pytest.mark.parametrize("seed", [0, sum([2 ** i for i in range(1, 128, 2)])])
-@pytest.mark.parametrize("inc", [0, sum([2 ** i for i in range(0, 128, 3)])])
+@pytest.mark.parametrize("seed", [0, sum([2**i for i in range(1, 128, 2)])])
+@pytest.mark.parametrize("inc", [0, sum([2**i for i in range(0, 128, 3)])])
 def test_equivalence_pcg64dxsm(seed, inc):
     a = PCG64(seed, inc, mode="sequence", variant="dxsm")
     b = PCG64DXSM(seed, inc)

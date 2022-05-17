@@ -30,7 +30,7 @@ from randomgen.xorshift1024 import Xorshift1024
 from randomgen.xoshiro256 import Xoshiro256
 from randomgen.xoshiro512 import Xoshiro512
 
-from ._version import get_versions
+from ._version import version as __version__, version_tuple as __version_info__
 
 PKG_TESTS = os.path.join(os.path.dirname(__file__), "tests")
 
@@ -68,9 +68,6 @@ __all__ = [
     "Xoshiro512",
     "random_entropy",
 ]
-
-__version__ = get_versions()["version"]
-del get_versions
 
 
 def test(extra_args: Union[str, List[str]] = None) -> None:

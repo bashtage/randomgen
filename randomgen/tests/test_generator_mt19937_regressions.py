@@ -21,7 +21,7 @@ class TestRegression(object):
         assert_(np.all(mt19937.hypergeometric(18, 3, 11, size=10) > 0))
 
         # Test for ticket #5623
-        args = (2 ** 20 - 2, 2 ** 20 - 2, 2 ** 20 - 2)  # Check for 32-bit systems
+        args = (2**20 - 2, 2**20 - 2, 2**20 - 2)  # Check for 32-bit systems
         assert_(mt19937.hypergeometric(*args) > 0)
 
     def test_logseries_convergence(self):

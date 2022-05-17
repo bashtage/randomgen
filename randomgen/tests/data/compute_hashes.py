@@ -71,7 +71,7 @@ def fix_random_123(name, kwargs):
 def int_to_array(int_val):
     arr_data = []
     while int_val > 0:
-        arr_data.append(int_val % (2 ** 24))
+        arr_data.append(int_val % (2**24))
         int_val >>= 64
     return np.array(arr_data, dtype=np.uint64)
 
