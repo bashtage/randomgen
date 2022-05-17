@@ -1,10 +1,12 @@
 ---
 kind: pipeline
+type: exec
 name: test-on-arm64
 
 platform:
   os: linux
   arch: arm64
+
 
 steps:
 - name: test
