@@ -67,6 +67,8 @@ __all__ = [
     "Xoshiro256",
     "Xoshiro512",
     "random_entropy",
+    "__version__",
+    "__version_info__",
 ]
 
 

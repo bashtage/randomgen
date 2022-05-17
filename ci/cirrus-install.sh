@@ -1,4 +1,8 @@
 #!/usr/bin/env bash
 
-pkg install -y python38 py38-pip py38-numpy py38-cython py38-pytest
-python3.8 setup.py develop
+freebsd-update fetch
+freebsd-update install
+
+pkg install -y python39 py39-pip py39-numpy py39-cython py39-pytest
+python3.9 -m pip install -e . --no-build-isolation
+
