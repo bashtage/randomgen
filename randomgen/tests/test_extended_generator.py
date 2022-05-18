@@ -545,7 +545,7 @@ def test_standard_wishart_direct_large(extended_gen):
         n = gen.standard_normal()
         v22 = gen.chisquare(2)
         direct[0, 0] = v11
-        direct[1, 1] = n ** 2 + v22
+        direct[1, 1] = n**2 + v22
         direct[1, 0] = direct[0, 1] = n * np.sqrt(v11)
         assert_allclose(direct, w[i])
 

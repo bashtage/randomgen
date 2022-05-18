@@ -1,4 +1,10 @@
 #!/usr/bin/env bash
 
-pkg install -y python38 py38-pip py38-numpy py38-cython py38-pytest
-python3.8 setup.py develop
+
+pkg install -y python39  py39-numpy py39-cython wget git
+python3.9 -m ensurepip --upgrade
+python3.9 -m pip install wheel setuptools_scm[toml] pytest
+python3.9 -m pip list
+git fetch --tags
+python3.9 -m pip install . --no-build-isolation
+

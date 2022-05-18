@@ -1,21 +1,25 @@
 ---
 kind: pipeline
+type: docker
 name: test-on-arm64
 
 platform:
   os: linux
   arch: arm64
 
+
 steps:
 - name: test
-  image: ubuntu:latest
+  image: ubuntu:focal
   commands:
     - uname -a
+    - ln -s /usr/bin/gpgv /usr/bin/gnupg2
+    # - apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 871920D1991BC93C
     - apt-get update
     - export DEBIAN_FRONTEND=noninteractive
-    - apt-get install libatlas-base-dev build-essential cython3 python3-numpy python3 python3-dev python3-pip libxml2-dev libxslt-dev python3-lxml -y
+    - apt-get install libatlas-base-dev build-essential cython3 python3-numpy python3 python3-dev python3-pip libxml2-dev libxslt-dev python3-lxml git -y
     - gcc tools/long_double_sizes.c -o long_double_sizes && ./long_double_sizes
-    - pip3 install -r requirements.txt --upgrade
-    - pip3 install -r requirements-dev.txt
-    - pip3 install -e . --no-build-isolation
+    - python3 -m pip install -r requirements.txt --upgrade
+    - python3 -m pip install -r requirements-dev.txt
+    - python3 -m pip install -e . --no-build-isolation
     - pytest -r a randomgen

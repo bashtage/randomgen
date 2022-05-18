@@ -28,13 +28,15 @@ jobs:
           NUMPY: 1.16.6
         python39_latest:
           python.version: '3.9'
+        python310_latest:
+          python.version: '3.10'
         python36_latest:
           python.version: '3.6'
         python38_mid_conda:
           python.version: '3.8'
           use.conda: true
           NUMPY: 1.18.5
-          CYTHON: 0.29.22
+          CYTHON: 0.29.24
           USE_SCIPY: "true"
           USE_NUMBA: "true"
         python_38_coverage:
@@ -48,8 +50,7 @@ jobs:
           python.version: '3.7'
           use.conda: true
           coverage: false
-          NUMPY: 1.17.4
-          TEST_INSTALL: true
+          test.install: true
       ${{ if eq(parameters.name, 'macOS') }}:
         python39_latest_macos:
           python.version: '3.9'
@@ -91,9 +92,9 @@ jobs:
 
   - script: |
       echo "Installing to site packages"
-      python setup.py bdist_wheel
-      WHL=$(ls -t dist)
-      pip install ./dist/${WHL}
+      python -m pip wheel . -w wheelhouse/
+      WHL=$(ls -t wheelhouse/randomgen-*.whl | head -n1)
+      pip install ${WHL}
     displayName: 'Install randomgen (site-packages)'
     condition: eq(variables['test.install'], 'true')
 

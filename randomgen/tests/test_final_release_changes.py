@@ -80,6 +80,6 @@ def test_integers_use_masked():
 
 def test_integers_large_negative_value():
     with pytest.raises(ValueError):
-        random_gen.integers(0, -(2 ** 65), endpoint=endpoint)
+        random_gen.integers(0, -(2**65), endpoint=endpoint)
     with pytest.raises(ValueError):
-        random_gen.integers(0, [-(2 ** 65)], endpoint=endpoint)
+        random_gen.integers(0, [-(2**65)], endpoint=endpoint)

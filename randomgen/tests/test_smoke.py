@@ -131,8 +131,8 @@ def warmup(rg, n=None):
     rg.standard_normal(n)
     rg.standard_normal(n, dtype=np.float32)
     rg.standard_normal(n, dtype=np.float32)
-    rg.integers(0, 2 ** 24, n, dtype=np.uint64)
-    rg.integers(0, 2 ** 48, n, dtype=np.uint64)
+    rg.integers(0, 2**24, n, dtype=np.uint64)
+    rg.integers(0, 2**48, n, dtype=np.uint64)
     rg.standard_gamma(11.0, n)
     rg.standard_gamma(11.0, n, dtype=np.float32)
     rg.random(n, dtype=np.float64)
@@ -325,9 +325,9 @@ class RNG(object):
 
     def test_reset_state(self):
         state = self.rg.bit_generator.state
-        int_1 = self.rg.integers(2 ** 31)
+        int_1 = self.rg.integers(2**31)
         self.rg.bit_generator.state = state
-        int_2 = self.rg.integers(2 ** 31)
+        int_2 = self.rg.integers(2**31)
         assert_(int_1 == int_2)
         with pytest.raises(TypeError):
             self.rg.bit_generator.state = [(k, v) for k, v in state.items()]
@@ -361,12 +361,12 @@ class RNG(object):
 
     def test_reset_state_uint32(self):
         rg = self.init_generator(seed=self.seed, mode="legacy")
-        rg.integers(0, 2 ** 24, 120, dtype=np.uint32)
+        rg.integers(0, 2**24, 120, dtype=np.uint32)
         state = rg.bit_generator.state
-        n1 = rg.integers(0, 2 ** 24, 10, dtype=np.uint32)
+        n1 = rg.integers(0, 2**24, 10, dtype=np.uint32)
         rg2 = self.init_generator()
         rg2.bit_generator.state = state
-        n2 = rg2.integers(0, 2 ** 24, 10, dtype=np.uint32)
+        n2 = rg2.integers(0, 2**24, 10, dtype=np.uint32)
         assert_array_equal(n1, n2)
 
     def test_reset_state_float(self):
@@ -394,16 +394,16 @@ class RNG(object):
             vals = self.rg.tomaxint(size=100000)
         maxsize = 0
         if os.name == "nt":
-            maxsize = 2 ** 31 - 1
+            maxsize = 2**31 - 1
         else:
             try:
                 maxsize = sys.maxint
             except AttributeError:
                 maxsize = sys.maxsize
-        if maxsize < 2 ** 32:
+        if maxsize < 2**32:
             assert_((vals < sys.maxsize).all())
         else:
-            assert_((vals >= 2 ** 32).any())
+            assert_((vals >= 2**32).any())
 
     def test_beta(self):
         vals = self.rg.beta(2.0, 2.0, 10)
@@ -662,9 +662,9 @@ class RNG(object):
 
     def test_seed_array_error(self):
         if self.seed_vector_bits == 32:
-            out_of_bounds = 2 ** 32
+            out_of_bounds = 2**32
         else:
-            out_of_bounds = 2 ** 64
+            out_of_bounds = 2**64
 
         seed = -1
         with pytest.raises(ValueError):
@@ -946,7 +946,7 @@ class RNG(object):
         v_imag = 2.5
         rho = cov / np.sqrt(v_real * v_imag)
         imag = 7 + np.sqrt(v_imag) * (
-            rho * norms[:, 0] + np.sqrt(1 - rho ** 2) * norms[:, 1]
+            rho * norms[:, 0] + np.sqrt(1 - rho**2) * norms[:, 1]
         )
         real = 2 + np.sqrt(v_real) * norms[:, 0]
         vals4 = [re + im * (0 + 1.0j) for re, im in zip(real, imag)]
@@ -1029,7 +1029,7 @@ class TestMT19937(RNG):
         super().setup_class()
         cls.bit_generator = MT19937
         cls.advance = None
-        cls.seed = [2 ** 21 + 2 ** 16 + 2 ** 5 + 1]
+        cls.seed = [2**21 + 2**16 + 2**5 + 1]
         cls.rg = Generator(cls.bit_generator(*cls.seed, mode="legacy"))
         cls.initial_state = cls.rg.bit_generator.state
         cls.seed_vector_bits = 32
@@ -1052,7 +1052,7 @@ class TestMT64(RNG):
         super().setup_class()
         cls.bit_generator = MT64
         cls.advance = None
-        cls.seed = [2 ** 43 + 2 ** 21 + 2 ** 16 + 2 ** 5 + 1]
+        cls.seed = [2**43 + 2**21 + 2**16 + 2**5 + 1]
         cls.rg = Generator(cls.bit_generator(*cls.seed, mode="legacy"))
         cls.initial_state = cls.rg.bit_generator.state
         cls.seed_vector_bits = 64
@@ -1091,10 +1091,10 @@ class TestPCG64(RNG):
     def setup_class(cls):
         super().setup_class()
         cls.bit_generator = PCG64
-        cls.advance = 2 ** 96 + 2 ** 48 + 2 ** 21 + 2 ** 16 + 2 ** 5 + 1
+        cls.advance = 2**96 + 2**48 + 2**21 + 2**16 + 2**5 + 1
         cls.seed = [
-            2 ** 96 + 2 ** 48 + 2 ** 21 + 2 ** 16 + 2 ** 5 + 1,
-            2 ** 21 + 2 ** 16 + 2 ** 5 + 1,
+            2**96 + 2**48 + 2**21 + 2**16 + 2**5 + 1,
+            2**21 + 2**16 + 2**5 + 1,
         ]
         cls.rg = Generator(cls.bit_generator(*cls.seed, mode="legacy"))
         cls.initial_state = cls.rg.bit_generator.state
@@ -1104,9 +1104,9 @@ class TestPCG64(RNG):
     def test_seed_array_error(self):
         # GH #82 for error type changes
         if self.seed_vector_bits == 32:
-            out_of_bounds = 2 ** 32
+            out_of_bounds = 2**32
         else:
-            out_of_bounds = 2 ** 64
+            out_of_bounds = 2**64
 
         seed = -1
         with pytest.raises(ValueError):
@@ -1157,7 +1157,7 @@ class TestPhilox4x64(RNG):
         cls.width = 64
         cls.bit_generator_base = Philox
         cls.bit_generator = partial(Philox, number=cls.number, width=cls.width)
-        cls.advance = 2 ** 63 + 2 ** 31 + 2 ** 15 + 1
+        cls.advance = 2**63 + 2**31 + 2**15 + 1
         cls.seed = [12345]
         cls.rg = Generator(cls.bit_generator(*cls.seed, mode="legacy"))
         cls.initial_state = cls.rg.bit_generator.state
@@ -1183,7 +1183,7 @@ class TestPhilox2x64(TestPhilox4x64):
         cls.number = 2
         cls.width = 64
         cls.bit_generator = partial(Philox, number=cls.number, width=cls.width)
-        cls.advance = 2 ** 63 + 2 ** 31 + 2 ** 15 + 1
+        cls.advance = 2**63 + 2**31 + 2**15 + 1
         cls.seed = [12345]
         cls.rg = Generator(cls.bit_generator(*cls.seed, mode="legacy"))
         cls.initial_state = cls.rg.bit_generator.state
@@ -1199,7 +1199,7 @@ class TestPhilox2x32(TestPhilox4x64):
         cls.number = 2
         cls.width = 32
         cls.bit_generator = partial(Philox, number=cls.number, width=cls.width)
-        cls.advance = 2 ** 63 + 2 ** 31 + 2 ** 15 + 1
+        cls.advance = 2**63 + 2**31 + 2**15 + 1
         cls.seed = [12345]
         cls.rg = Generator(cls.bit_generator(*cls.seed, mode="legacy"))
         cls.initial_state = cls.rg.bit_generator.state
@@ -1214,7 +1214,7 @@ class TestPhilox4x32(TestPhilox4x64):
         cls.number = 4
         cls.width = 32
         cls.bit_generator = partial(Philox, number=cls.number, width=cls.width)
-        cls.advance = 2 ** 63 + 2 ** 31 + 2 ** 15 + 1
+        cls.advance = 2**63 + 2**31 + 2**15 + 1
         cls.seed = [12345]
         cls.rg = Generator(cls.bit_generator(*cls.seed, mode="legacy"))
         cls.initial_state = cls.rg.bit_generator.state
@@ -1230,7 +1230,7 @@ class TestThreeFry4x64(TestPhilox4x64):
         cls.width = 64
         cls.bit_generator_base = ThreeFry
         cls.bit_generator = partial(ThreeFry, number=cls.number, width=cls.width)
-        cls.advance = 2 ** 63 + 2 ** 31 + 2 ** 15 + 1
+        cls.advance = 2**63 + 2**31 + 2**15 + 1
         cls.seed = [12345]
         cls.rg = Generator(cls.bit_generator(*cls.seed, mode="legacy"))
         cls.initial_state = cls.rg.bit_generator.state
@@ -1245,7 +1245,7 @@ class TestThreeFry2x64(TestPhilox4x64):
         cls.number = 2
         cls.width = 64
         cls.bit_generator = partial(ThreeFry, number=cls.number, width=cls.width)
-        cls.advance = 2 ** 63 + 2 ** 31 + 2 ** 15 + 1
+        cls.advance = 2**63 + 2**31 + 2**15 + 1
         cls.seed = [12345]
         cls.rg = Generator(cls.bit_generator(*cls.seed, mode="legacy"))
         cls.initial_state = cls.rg.bit_generator.state
@@ -1260,7 +1260,7 @@ class TestThreeFry2x32(TestPhilox4x64):
         cls.number = 2
         cls.width = 32
         cls.bit_generator = partial(ThreeFry, number=cls.number, width=cls.width)
-        cls.advance = 2 ** 63 + 2 ** 31 + 2 ** 15 + 1
+        cls.advance = 2**63 + 2**31 + 2**15 + 1
         cls.seed = [12345]
         cls.rg = Generator(cls.bit_generator(*cls.seed, mode="legacy"))
         cls.initial_state = cls.rg.bit_generator.state
@@ -1275,7 +1275,7 @@ class TestThreeFry4x32(TestPhilox4x64):
         cls.number = 4
         cls.width = 32
         cls.bit_generator = partial(ThreeFry, number=cls.number, width=cls.width)
-        cls.advance = 2 ** 63 + 2 ** 31 + 2 ** 15 + 1
+        cls.advance = 2**63 + 2**31 + 2**15 + 1
         cls.seed = [12345]
         cls.rg = Generator(cls.bit_generator(*cls.seed, mode="legacy"))
         cls.initial_state = cls.rg.bit_generator.state
@@ -1395,10 +1395,10 @@ class TestPCG32(TestPCG64):
     def setup_class(cls):
         super().setup_class()
         cls.bit_generator = PCG32
-        cls.advance = 2 ** 48 + 2 ** 21 + 2 ** 16 + 2 ** 5 + 1
+        cls.advance = 2**48 + 2**21 + 2**16 + 2**5 + 1
         cls.seed = [
-            2 ** 48 + 2 ** 21 + 2 ** 16 + 2 ** 5 + 1,
-            2 ** 21 + 2 ** 16 + 2 ** 5 + 1,
+            2**48 + 2**21 + 2**16 + 2**5 + 1,
+            2**21 + 2**16 + 2**5 + 1,
         ]
         cls.rg = Generator(cls.bit_generator(*cls.seed, mode="legacy"))
         cls.initial_state = cls.rg.bit_generator.state
@@ -1411,8 +1411,8 @@ class TestAESCounter(RNG):
     def setup_class(cls):
         super().setup_class()
         cls.bit_generator = AESCounter
-        cls.advance = 2 ** 63 + 2 ** 31 + 2 ** 15 + 1
-        cls.seed = [2 ** 21 + 2 ** 16 + 2 ** 5 + 1]
+        cls.advance = 2**63 + 2**31 + 2**15 + 1
+        cls.seed = [2**21 + 2**16 + 2**5 + 1]
         cls.rg = Generator(cls.bit_generator(*cls.seed, mode="legacy"))
         cls.initial_state = cls.rg.bit_generator.state
         cls.seed_vector_bits = 64
@@ -1426,8 +1426,8 @@ class TestChaCha(RNG):
     def setup_class(cls):
         super().setup_class()
         cls.bit_generator = ChaCha
-        cls.advance = 2 ** 63 + 2 ** 31 + 2 ** 15 + 1
-        cls.seed = [2 ** 21 + 2 ** 16 + 2 ** 5 + 1]
+        cls.advance = 2**63 + 2**31 + 2**15 + 1
+        cls.seed = [2**21 + 2**16 + 2**5 + 1]
         cls.rg = Generator(cls.bit_generator(*cls.seed, mode="legacy"))
         cls.initial_state = cls.rg.bit_generator.state
         cls.seed_vector_bits = 64
@@ -1440,7 +1440,7 @@ class TestHC128(RNG):
     def setup_class(cls):
         super().setup_class()
         cls.bit_generator = HC128
-        cls.seed = [2 ** 231 + 2 ** 21 + 2 ** 16 + 2 ** 5 + 1]
+        cls.seed = [2**231 + 2**21 + 2**16 + 2**5 + 1]
         cls.rg = Generator(cls.bit_generator(*cls.seed, mode="legacy"))
         cls.initial_state = cls.rg.bit_generator.state
         cls.seed_vector_bits = 64
@@ -1453,9 +1453,9 @@ class TestSPECK128(RNG):
     def setup_class(cls):
         super().setup_class()
         cls.bit_generator = SPECK128
-        cls.seed = [2 ** 231 + 2 ** 21 + 2 ** 16 + 2 ** 5 + 1]
+        cls.seed = [2**231 + 2**21 + 2**16 + 2**5 + 1]
         cls.rg = Generator(cls.bit_generator(*cls.seed, mode="legacy"))
-        cls.advance = 2 ** 63 + 2 ** 31 + 2 ** 15 + 1
+        cls.advance = 2**63 + 2**31 + 2**15 + 1
         cls.initial_state = cls.rg.bit_generator.state
         cls.seed_vector_bits = 64
         cls._extra_setup()
@@ -1467,14 +1467,14 @@ class TestLXM(RNG):
     def setup_class(cls):
         super().setup_class()
         cls.bit_generator = LXM
-        cls.seed = [2 ** 231 + 2 ** 21 + 2 ** 16 + 2 ** 5 + 1]
+        cls.seed = [2**231 + 2**21 + 2**16 + 2**5 + 1]
         cls.rg = Generator(cls.bit_generator(*cls.seed))
-        cls.advance = 2 ** 63 + 2 ** 31 + 2 ** 15 + 1
+        cls.advance = 2**63 + 2**31 + 2**15 + 1
         cls.initial_state = cls.rg.bit_generator.state
         cls.seed_vector_bits = 64
         cls._extra_setup()
         cls.seed_error = ValueError
-        cls.out_of_bounds = 2 ** 192 + 1
+        cls.out_of_bounds = 2**192 + 1
 
     def init_generator(self, seed=None, mode="sequence"):
         return Generator(self.bit_generator(seed=seed))
@@ -1485,14 +1485,14 @@ class TestLCG128Mix(RNG):
     def setup_class(cls):
         super().setup_class()
         cls.bit_generator = LCG128Mix
-        cls.seed = [2 ** 231 + 2 ** 21 + 2 ** 16 + 2 ** 5 + 1]
+        cls.seed = [2**231 + 2**21 + 2**16 + 2**5 + 1]
         cls.rg = Generator(cls.bit_generator(*cls.seed))
-        cls.advance = 2 ** 63 + 2 ** 31 + 2 ** 15 + 1
+        cls.advance = 2**63 + 2**31 + 2**15 + 1
         cls.initial_state = cls.rg.bit_generator.state
         cls.seed_vector_bits = 64
         cls._extra_setup()
         cls.seed_error = ValueError
-        cls.out_of_bounds = 2 ** 192 + 1
+        cls.out_of_bounds = 2**192 + 1
 
     def init_generator(self, seed=None, mode="sequence"):
         return Generator(self.bit_generator(seed=seed))
@@ -1503,14 +1503,14 @@ class TestPCG64DXSM(TestLCG128Mix):
     def setup_class(cls):
         super().setup_class()
         cls.bit_generator = PCG64DXSM
-        cls.seed = [2 ** 231 + 2 ** 21 + 2 ** 16 + 2 ** 5 + 1]
+        cls.seed = [2**231 + 2**21 + 2**16 + 2**5 + 1]
         cls.rg = Generator(cls.bit_generator(*cls.seed))
-        cls.advance = 2 ** 63 + 2 ** 31 + 2 ** 15 + 1
+        cls.advance = 2**63 + 2**31 + 2**15 + 1
         cls.initial_state = cls.rg.bit_generator.state
         cls.seed_vector_bits = 64
         cls._extra_setup()
         cls.seed_error = ValueError
-        cls.out_of_bounds = 2 ** 192 + 1
+        cls.out_of_bounds = 2**192 + 1
 
 
 class TestEFIIX64(TestLCG128Mix):
@@ -1518,14 +1518,14 @@ class TestEFIIX64(TestLCG128Mix):
     def setup_class(cls):
         super().setup_class()
         cls.bit_generator = EFIIX64
-        cls.seed = [2 ** 231 + 2 ** 21 + 2 ** 16 + 2 ** 5 + 1]
+        cls.seed = [2**231 + 2**21 + 2**16 + 2**5 + 1]
         cls.rg = Generator(cls.bit_generator(*cls.seed))
-        cls.advance = 2 ** 63 + 2 ** 31 + 2 ** 15 + 1
+        cls.advance = 2**63 + 2**31 + 2**15 + 1
         cls.initial_state = cls.rg.bit_generator.state
         cls.seed_vector_bits = 64
         cls._extra_setup()
         cls.seed_error = ValueError
-        cls.out_of_bounds = 2 ** 192 + 1
+        cls.out_of_bounds = 2**192 + 1
 
 
 class TestRomu(TestLCG128Mix):
@@ -1533,11 +1533,11 @@ class TestRomu(TestLCG128Mix):
     def setup_class(cls):
         super().setup_class()
         cls.bit_generator = Romu
-        cls.seed = [2 ** 231 + 2 ** 21 + 2 ** 16 + 2 ** 5 + 1]
+        cls.seed = [2**231 + 2**21 + 2**16 + 2**5 + 1]
         cls.rg = Generator(cls.bit_generator(*cls.seed))
-        cls.advance = 2 ** 63 + 2 ** 31 + 2 ** 15 + 1
+        cls.advance = 2**63 + 2**31 + 2**15 + 1
         cls.initial_state = cls.rg.bit_generator.state
         cls.seed_vector_bits = 64
         cls._extra_setup()
         cls.seed_error = ValueError
-        cls.out_of_bounds = 2 ** 192 + 1
+        cls.out_of_bounds = 2**192 + 1

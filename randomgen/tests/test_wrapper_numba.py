@@ -33,7 +33,7 @@ if HAS_NUMBA:
 
 class NumbaSplitMix64:
     def __init__(self, state):
-        if not isinstance(state, (int, np.integer)) or not (0 <= state < 2 ** 64):
+        if not isinstance(state, (int, np.integer)) or not (0 <= state < 2**64):
             raise ValueError("state must be a valid uint64")
         # state[0] is the splitmix64 state
         # state[1] contains both the has_uint flag in bit 0
@@ -152,7 +152,7 @@ def test_ctypes_smoke(split_mix):
     assert bgf.state == split_mix.state_getter()
     gen.standard_normal(dtype=np.float32)
     assert bgf.state == split_mix.state_getter()
-    gen.integers(0, 2 ** 63, dtype=np.uint64, size=10)
+    gen.integers(0, 2**63, dtype=np.uint64, size=10)
     assert bgf.state == split_mix.state_getter()
     old_state = bgf.state.copy()
     old_state["state"] = 1
@@ -175,7 +175,7 @@ def test_cfunc_smoke(split_mix):
     assert bgf.state == split_mix.state_getter()
     gen.standard_normal(dtype=np.float32)
     assert bgf.state == split_mix.state_getter()
-    gen.integers(0, 2 ** 63, dtype=np.uint64, size=10)
+    gen.integers(0, 2**63, dtype=np.uint64, size=10)
     assert bgf.state == split_mix.state_getter()
     old_state = bgf.state.copy()
     old_state["state"] = 1
@@ -194,7 +194,7 @@ def test_no_setter_getter(split_mix):
     gen = Generator(bgf)
     gen.standard_normal(size=10)
     gen.standard_normal(size=10, dtype=np.float32)
-    gen.integers(0, 2 ** 63, dtype=np.uint64, size=10)
+    gen.integers(0, 2**63, dtype=np.uint64, size=10)
     with pytest.raises(NotImplementedError):
         bgf.state
     with pytest.raises(NotImplementedError):

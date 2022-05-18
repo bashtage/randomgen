@@ -13,7 +13,7 @@ else
 fi
 
 # Not all available in conda
-python -m pip install setuptools wheel pip black==20.8b1 isort flake8 --upgrade
+python -m pip install setuptools "setuptools_scm[toml]<7" "oldest-supported-numpy" wheel pip black==22.3.0 isort flake8 --upgrade
 
 EXTRA="pytest pytest-xdist coverage pytest-cov"
 

@@ -385,12 +385,12 @@ class TestIntegers(object):
         for dt in self.itype[1:]:
             for ubnd in [4, 8, 16]:
                 vals = self.rfunc(
-                    2, ubnd - endpoint, size=2 ** 16, endpoint=endpoint, dtype=dt
+                    2, ubnd - endpoint, size=2**16, endpoint=endpoint, dtype=dt
                 )
                 assert_(vals.max() < ubnd)
                 assert_(vals.min() >= 2)
 
-        vals = self.rfunc(0, 2 - endpoint, size=2 ** 16, endpoint=endpoint, dtype=bool)
+        vals = self.rfunc(0, 2 - endpoint, size=2**16, endpoint=endpoint, dtype=bool)
         assert_(vals.max() < 2)
         assert_(vals.min() >= 0)
 
@@ -513,19 +513,19 @@ class TestIntegers(object):
         for size in [None, (5, 3, 3)]:
             random = Generator(MT19937(12345, mode="sequence"))
             x = random.integers(
-                [[-1], [0], [1]], [2 ** 32 - 1, 2 ** 32, 2 ** 32 + 1], size=size
+                [[-1], [0], [1]], [2**32 - 1, 2**32, 2**32 + 1], size=size
             )
             assert_array_equal(x, desired if size is not None else desired[0])
 
     def test_int64_uint64_broadcast_exceptions(self, endpoint):
         configs = {
-            np.uint64: ((0, 2 ** 65), (-1, 2 ** 62), (10, 9), (0, 0)),
+            np.uint64: ((0, 2**65), (-1, 2**62), (10, 9), (0, 0)),
             np.int64: (
-                (0, 2 ** 64),
-                (-(2 ** 64), 2 ** 62),
+                (0, 2**64),
+                (-(2**64), 2**62),
                 (10, 9),
                 (0, 0),
-                (-(2 ** 63) - 1, -(2 ** 63) - 1),
+                (-(2**63) - 1, -(2**63) - 1),
             ),
         }
         for dtype in configs:
@@ -1900,7 +1900,7 @@ class TestRandomDist(object):
     def test_vonmises_small(self):
         # check infinite loop, gh-4720
         random.bit_generator.seed(self.seed)
-        r = random.vonmises(mu=0.0, kappa=1.1e-8, size=10 ** 6)
+        r = random.vonmises(mu=0.0, kappa=1.1e-8, size=10**6)
         assert_(np.isfinite(r).all())
 
     def test_vonmises_nan(self):
@@ -2534,9 +2534,9 @@ class TestBroadcast(object):
         assert_raises(ValueError, hypergeom, 10, 10, 25)
 
         # ValueError for arguments that are too big.
-        assert_raises(ValueError, hypergeom, 2 ** 30, 10, 20)
-        assert_raises(ValueError, hypergeom, 999, 2 ** 31, 50)
-        assert_raises(ValueError, hypergeom, 999, [2 ** 29, 2 ** 30], 1000)
+        assert_raises(ValueError, hypergeom, 2**30, 10, 20)
+        assert_raises(ValueError, hypergeom, 999, 2**31, 50)
+        assert_raises(ValueError, hypergeom, 999, [2**29, 2**30], 1000)
 
     def test_logseries(self):
         p = [0.5]

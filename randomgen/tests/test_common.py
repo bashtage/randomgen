@@ -10,7 +10,7 @@ from randomgen.tests._shims import (
 
 
 def test_view_little_endian():
-    a = np.uint64([2 ** 63])
+    a = np.uint64([2**63])
     b = view_little_endian_shim(a, np.uint32)
     expected = np.array([0, 2147483648], dtype=np.uint32)
     np.testing.assert_equal(b, expected)
@@ -20,13 +20,13 @@ def test_view_little_endian():
 
 
 def test_view_little_endian_err():
-    a = np.double([2 ** 51])
+    a = np.double([2**51])
     with pytest.raises(ValueError):
         view_little_endian_shim(a, np.uint32)
-    a = np.uint64([2 ** 63])
+    a = np.uint64([2**63])
     with pytest.raises(ValueError):
         view_little_endian_shim(a, np.uint16)
-    a = np.array([[2 ** 63]], np.uint64)
+    a = np.array([[2**63]], np.uint64)
     with pytest.raises(ValueError):
         view_little_endian_shim(a, np.uint32)
 
@@ -39,7 +39,7 @@ def test_int_to_array():
 
     seed = 0
     for pow in (255, 129, 93, 65, 63, 33, 1, 0):
-        seed += 2 ** pow
+        seed += 2**pow
     result = int_to_array_shim(seed, "seed", None, 64)
     expected = np.array(
         [9223372045444710403, 536870914, 2, 9223372036854775808], dtype=np.uint64
