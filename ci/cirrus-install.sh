@@ -6,4 +6,5 @@ python3.9 -m ensurepip --upgrade
 python3.9 -m pip install wheel setuptools_scm[toml] pytest
 python3.9 -m pip list
 git fetch --tags
-python3.9 -m pip install -e . --no-build-isolation
+python3.9 -m pip install . --no-build-isolation
+
