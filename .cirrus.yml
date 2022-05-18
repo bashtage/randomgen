@@ -3,4 +3,5 @@ freebsd_instance:
 
 task:
   install_script: . ./ci/cirrus-install.sh
-  script: python3.9 -m pytest randomgen/tests
+  script: echo $PWD && python -c "import randomgen; randomgen.test()"
+
