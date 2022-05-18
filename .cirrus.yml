@@ -3,6 +3,6 @@ freebsd_instance:
 
 task:
   install_script: . ./ci/cirrus-install.sh
-  script: mkdir test_dir && cd test_dir && echo $PWD && python -c "import randomgen; randomgen.test()"
+  script: mkdir test_dir && cd test_dir && echo $PWD && python3.9 -c "import randomgen; randomgen.test()"
 
 
