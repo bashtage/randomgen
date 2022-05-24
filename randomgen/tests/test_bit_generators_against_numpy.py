@@ -1,12 +1,11 @@
-from distutils.version import LooseVersion
-
 import numpy as np
+from packaging.version import parse
 import pytest
 
 import randomgen
 from randomgen import PCG64, SFC64, Philox, SeedSequence
 
-NP_LT_119 = LooseVersion(np.__version__) < LooseVersion("1.19.0")
+NP_LT_119 = parse(np.__version__) < parse("1.19.0")
 
 pytestmark = pytest.mark.skipif(NP_LT_119, reason="Only test Numpy 1.19+")
 

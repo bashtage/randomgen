@@ -1,9 +1,9 @@
-from distutils.version import LooseVersion
 from itertools import product
 from typing import cast
 
 import numpy as np
 from numpy.testing import assert_allclose, assert_array_equal
+from packaging.version import parse
 import pytest
 
 from randomgen import Generator
@@ -20,10 +20,10 @@ except ImportError:
     from randomgen import PCG64  # type: ignore[misc]
 
 
-NP_LT_1174 = LooseVersion(np.__version__) < LooseVersion("1.17.4")
-NP_GTE_118 = LooseVersion(np.__version__) >= LooseVersion("1.18")
-NP_GTE_120 = LooseVersion(np.__version__) >= LooseVersion("1.20")
-NP_GTE_121 = LooseVersion(np.__version__) >= LooseVersion("1.21")
+NP_LT_1174 = parse(np.__version__) < parse("1.17.4")
+NP_GTE_118 = parse(np.__version__) >= parse("1.18")
+NP_GTE_120 = parse(np.__version__) >= parse("1.20")
+NP_GTE_121 = parse(np.__version__) >= parse("1.21")
 
 pytestmark = pytest.mark.skipif(NP_LT_1174, reason="Only test 1.17.4+")
 

@@ -1,5 +1,3 @@
-from distutils.version import LooseVersion
-
 import numpy as np
 import numpy.random
 from numpy.testing import (
@@ -8,6 +6,7 @@ from numpy.testing import (
     assert_equal,
     suppress_warnings,
 )
+from packaging.version import parse
 import pytest
 
 import randomgen
@@ -15,8 +14,8 @@ from randomgen import MT19937, Generator
 import randomgen.generator
 from randomgen.mtrand import RandomState
 
-NP_VERSION = LooseVersion(np.__version__)
-NP_118 = LooseVersion("1.18") <= NP_VERSION < LooseVersion("1.19")
+NP_VERSION = parse(np.__version__)
+NP_118 = parse("1.18") <= NP_VERSION < parse("1.19")
 
 
 def compare_0_input(f1, f2):

@@ -1,7 +1,7 @@
 # python setup.py build_ext -i
+from setuptools import setup
 from setuptools.extension import Extension
 
-from distutils.core import setup
 from os.path import join
 
 from Cython.Build import cythonize
