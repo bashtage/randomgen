@@ -11,6 +11,7 @@ build/
 **/Random123
 settings.json
 *.so
+randomgen/_version.py
 randomgen/bounded_integers.pyx
 randomgen/bounded_integers.pxd
 randomgen/*.c

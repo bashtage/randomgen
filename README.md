@@ -9,7 +9,7 @@ This package contains additional bit generators for NumPy's
 [![Build Status](https://dev.azure.com/kevinksheppard0207/kevinksheppard/_apis/build/status/bashtage.randomgen?branchName=main)](https://dev.azure.com/kevinksheppard0207/kevinksheppard/_build/latest?definitionId=2&branchName=main)
 [![Appveyor Build Status](https://ci.appveyor.com/api/projects/status/46r9xsmuwi8bxsbj/branch/main?svg=true)](https://ci.appveyor.com/project/bashtage/randomgen/branch/main)
 [![Build Status](https://cloud.drone.io/api/badges/bashtage/randomgen/status.svg)](https://cloud.drone.io/bashtage/randomgen)
-[![FreeBSD Status on Cirrus](https://api.cirrus-ci.com/github/bashtage/randomgen.svg)](https://cirrus-ci.com/github/bashtage/randomgen)
+[![FreeBSD Status on Cirrus](https://api.cirrus-ci.com/github/bashtage/randomgen.svg?branch=main)](https://cirrus-ci.com/github/bashtage/randomgen)
 
 **Coverage**
 

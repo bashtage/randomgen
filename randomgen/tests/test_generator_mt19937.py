@@ -1,4 +1,3 @@
-from distutils.version import LooseVersion
 import hashlib
 import sys
 import warnings
@@ -16,6 +15,7 @@ from numpy.testing import (
     assert_warns,
     suppress_warnings,
 )
+from packaging.version import parse
 import pytest
 
 from randomgen import MT19937, Generator
@@ -23,7 +23,7 @@ from randomgen.tests.test_direct import assert_state_equal
 
 random = Generator(MT19937(mode="legacy"))
 
-NP_LT_118 = LooseVersion(np.__version__) < LooseVersion("1.18.0")
+NP_LT_118 = parse(np.__version__) < parse("1.18.0")
 
 JUMP_TEST_DATA = {
     ("_jump_tester", (0,), 10): {

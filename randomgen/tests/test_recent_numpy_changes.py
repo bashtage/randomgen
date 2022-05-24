@@ -1,14 +1,14 @@
-from distutils.version import LooseVersion
 from typing import cast
 
 import numpy as np
 from numpy.testing import assert_equal
+from packaging.version import parse
 import pytest
 
 from randomgen import Generator
 
-v119 = LooseVersion("1.19")
-NP_LT_119 = LooseVersion(np.__version__) < v119
+v119 = parse("1.19")
+NP_LT_119 = parse(np.__version__) < v119
 
 
 pytestmark = pytest.mark.skipif(NP_LT_119, reason="Only test NumPy 1.19+")

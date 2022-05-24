@@ -1,5 +1,4 @@
 import copy
-from distutils.version import LooseVersion
 import pickle
 
 import numpy as np
@@ -13,6 +12,7 @@ from numpy.testing import (
     assert_warns,
     suppress_warnings,
 )
+from packaging.version import parse
 import pytest
 
 from randomgen import MT19937, PCG64, ExtendedGenerator
@@ -57,7 +57,7 @@ def extended_gen_legacy():
 _mt19937 = MT19937(SEED, mode="legacy")
 random = ExtendedGenerator(_mt19937)
 
-NP_LT_118 = LooseVersion(np.__version__) < LooseVersion("1.18.0")
+NP_LT_118 = parse(np.__version__) < parse("1.18.0")
 
 
 @pytest.mark.skipif(NP_LT_118, reason="Can only test with NumPy >= 1.18")
