@@ -5,3 +5,4 @@ sphinx>=3
 ipython>=6
 numpydoc
 pygments>=2.7.4 # not directly required, pinned by Snyk to avoid a vulnerability
+mistune>=2.0.3 # not directly required, pinned by Snyk to avoid a vulnerability
