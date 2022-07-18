@@ -242,7 +242,7 @@ cdef class RDRAND(BitGenerator):
        <https://software.intel.com/sites/landingpage/IntrinsicsGuide/#text=_mm_pause&expand=4141>
        [Accessed 10 July 2020].
     .. [2] Intel. 2020. Intel® Digital Random Number Generator (DRNG) Software Implementation.
-       [online] Available at:
+       (online) Available at:
        <https://software.intel.com/content/www/us/en/develop/articles/intel-digital-random-number-generator-drng-software-implementation-guide.html>
        [Accessed 10 July 2020].
     """

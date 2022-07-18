@@ -1,4 +1,5 @@
 recursive-exclude randomgen  *.c
+include randomgen/py.typed
 include randomgen/_version.py
 include requirements.txt
 include README.md

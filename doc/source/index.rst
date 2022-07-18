@@ -1,5 +1,6 @@
 .. danger::
 
+    ``Generator`` and ``RandomState`` has been removed from randomgen in 1.23. 
     randomgen has been substantially merged into NumPy as of 1.17. :ref:`evolution`
     details how randomgen has changed since it was incorporated into NumPy.
 
@@ -123,10 +124,9 @@ Random Generator
 .. toctree::
    :maxdepth: 1
 
-   future
-   Random Generation <generator>
    extended-generator
-   legacy
+   new-or-different
+   future
 
 Bit Generators
 --------------
@@ -144,13 +144,21 @@ New Features
 
    Parallel Applications <parallel>
    Multithreaded Generation <multithreading>
-   new-or-different
    Quality Assurance <testing>
    Comparing Performance <performance>
    extending
    custom-bit-generators.ipynb
    Reading System Entropy <entropy>
    references
+
+Removed Features
+----------------
+.. toctree::
+   :maxdepth: 2
+
+   Random Generation <generator>
+   legacy
+
 
 Changes
 ~~~~~~~

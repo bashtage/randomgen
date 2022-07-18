@@ -285,7 +285,7 @@ cdef class MT19937(BitGenerator):
         ----------
         .. [1] Matsumoto, M, Generating multiple disjoint streams of
            pseudorandom number sequences.  Accessed on: May 6, 2020.
-           [Online]. Available:
+           (online). Available:
            http://www.math.sci.hiroshima-u.ac.jp/~m-mat/MT/JUMP/
 
         .. [2] Hiroshi Haramoto, Makoto Matsumoto, Takuji Nishimura, François

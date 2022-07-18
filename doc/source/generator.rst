@@ -5,10 +5,11 @@ Random Generator
 
   .. raw:: html
 
-      <p class="admonition-title"> Deprecated </p>
+      <p class="admonition-title"> Removed </p>
 
-  :class:`~randomgen.generator.Generator` has been **removed**. You should be using
-  :class:`numpy.random.Generator`.
+.. danger::
+
+   ``Generator`` has been **removed**. You should be using  :class:`numpy.random.Generator`.
 
 .. currentmodule:: randomgen.generator
 

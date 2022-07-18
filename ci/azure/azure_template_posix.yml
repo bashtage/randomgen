@@ -25,7 +25,7 @@ jobs:
         python38_legacy:
           python.version: '3.8'
           coverage: true
-          NUMPY: 1.16.6
+          NUMPY: 1.17.0
         python39_latest:
           python.version: '3.9'
         python310_latest:

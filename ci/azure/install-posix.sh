@@ -13,13 +13,13 @@ else
 fi
 
 # Not all available in conda
-python -m pip install setuptools "setuptools_scm[toml]<7" "oldest-supported-numpy" wheel pip black==22.3.0 isort flake8 --upgrade
+python -m pip install setuptools "setuptools_scm[toml]<7" "oldest-supported-numpy" wheel pip black==22.6.0 isort flake8 --upgrade
 
 EXTRA="pytest pytest-xdist coverage pytest-cov"
 
-if [[ -n ${NUMPY} ]]; then CMD="$CMD==${NUMPY}"; fi;
+if [[ -n ${NUMPY} ]]; then CMD="$CMD~=${NUMPY}"; fi;
 CMD="$CMD cython"
-if [[ -n ${CYTHON} ]]; then CMD="$CMD==${CYTHON}"; fi;
+if [[ -n ${CYTHON} ]]; then CMD="$CMD~=${CYTHON}"; fi;
 CMD="$CMD pandas"
 CMD="$CMD $EXTRA"
 if [[ ${USE_CONDA} == "true" ]]; then CMD="$CMD numba"; fi;
