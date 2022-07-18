@@ -3,12 +3,7 @@ import pickle
 import time
 
 import numpy as np
-from numpy.testing import (
-    assert_,
-    assert_array_equal,
-    assert_equal,
-    suppress_warnings,
-)
+from numpy.testing import assert_, assert_array_equal, assert_equal, suppress_warnings
 import pytest
 
 from randomgen import (
