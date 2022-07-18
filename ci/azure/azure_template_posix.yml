@@ -54,7 +54,6 @@ jobs:
       ${{ if eq(parameters.name, 'macOS') }}:
         python39_latest_macos:
           python.version: '3.9'
-          vmImage: macOS-latest
 
     maxParallel: 10
 
