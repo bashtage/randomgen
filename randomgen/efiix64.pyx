@@ -182,7 +182,7 @@ cdef class EFIIX64(BitGenerator):
                  "a": self.rng_state.a,
                  "b": self.rng_state.b,
                  "c": self.rng_state.c }
-        return {"bit_generator": type(self).__name__,
+        return {"bit_generator": fully_qualified_name(self),
                 "state": state,
                 "has_uint32": self.rng_state.has_uint32,
                 "uinteger": self.rng_state.uinteger}
@@ -195,7 +195,7 @@ cdef class EFIIX64(BitGenerator):
         if not isinstance(value, dict):
             raise TypeError("state must be a dict")
         bitgen = value.get("bit_generator", "")
-        if bitgen != type(self).__name__:
+        if bitgen not in (type(self).__name__, fully_qualified_name(self)):
             raise ValueError("state must be for a {0} "
                              "PRNG".format(type(self).__name__))
         state = value["state"]

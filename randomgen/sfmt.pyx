@@ -296,7 +296,7 @@ cdef class SFMT(BitGenerator):
         buffered_uint64 = np.empty(SFMT_N64, dtype=np.uint64)
         for i in range(SFMT_N64):
             buffered_uint64[i] = self.rng_state.buffered_uint64[i]
-        return {"bit_generator": type(self).__name__,
+        return {"bit_generator": fully_qualified_name(self),
                 "state": {"state": state_arr,
                           "idx": self.rng_state.state.idx},
                 "buffer_loc": self.rng_state.buffer_loc,
@@ -310,7 +310,7 @@ cdef class SFMT(BitGenerator):
         if not isinstance(value, dict):
             raise TypeError("state must be a dict")
         bitgen = value.get("bit_generator", "")
-        if bitgen != type(self).__name__:
+        if bitgen not in (type(self).__name__, fully_qualified_name(self)):
             raise ValueError("state must be for a {0} "
                              "PRNG".format(type(self).__name__))
         state = check_state_array(value["state"]["state"], 4 * SFMT_N, 32,

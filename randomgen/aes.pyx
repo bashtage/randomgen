@@ -277,7 +277,7 @@ cdef class AESCounter(BitGenerator):
         for i in range(16 * 4):
             state[i] = self.rng_state.state[i]
         offset = self.rng_state.offset
-        return {"bit_generator": type(self).__name__,
+        return {"bit_generator": fully_qualified_name(self),
                 "s": {"state": state, "seed": seed, "counter": counter,
                       "offset": offset},
                 "has_uint32": self.rng_state.has_uint32,
@@ -290,7 +290,7 @@ cdef class AESCounter(BitGenerator):
         if not isinstance(value, dict):
             raise TypeError("state must be a dict")
         bitgen = value.get("bit_generator", "")
-        if bitgen != type(self).__name__:
+        if bitgen not in (type(self).__name__, fully_qualified_name(self)):
             raise ValueError("state must be for a {0} "
                              "PRNG".format(type(self).__name__))
         state =value["s"]["state"]

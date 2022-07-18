@@ -542,7 +542,6 @@ class RNG(object):
         s = self.rg.dirichlet((10, 5, 3), 20)
         assert_(s.shape == (20, 3))
 
-    @pytest.mark.skip(reason="Doesn't work since can't register bit generators")
     def test_pickle(self):
         pick = pickle.dumps(self.rg)
         unpick = pickle.loads(pick)

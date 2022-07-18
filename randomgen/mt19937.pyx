@@ -316,7 +316,7 @@ cdef class MT19937(BitGenerator):
         for i in range(RK_STATE_LEN):
             key[i] = self.rng_state.key[i]
 
-        return {"bit_generator": type(self).__name__,
+        return {"bit_generator": fully_qualified_name(self),
                 "state": {"key": key, "pos": self.rng_state.pos}}
 
     @state.setter
@@ -330,7 +330,7 @@ cdef class MT19937(BitGenerator):
         if not isinstance(value, dict):
             raise TypeError("state must be a dict")
         bitgen = value.get("bit_generator", "")
-        if bitgen != type(self).__name__:
+        if bitgen not in (type(self).__name__, fully_qualified_name(self)):
             raise ValueError("state must be for a {0} "
                              "PRNG".format(type(self).__name__))
         key = check_state_array(value["state"]["key"], RK_STATE_LEN, 32, "key")

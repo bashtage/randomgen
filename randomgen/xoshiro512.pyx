@@ -259,7 +259,7 @@ cdef class Xoshiro512(BitGenerator):
         state = np.empty(8, dtype=np.uint64)
         for i in range(8):
             state[i] = self.rng_state.s[i]
-        return {"bit_generator": type(self).__name__,
+        return {"bit_generator": fully_qualified_name(self),
                 "s": state,
                 "has_uint32": self.rng_state.has_uint32,
                 "uinteger": self.rng_state.uinteger}
@@ -269,7 +269,7 @@ cdef class Xoshiro512(BitGenerator):
         if not isinstance(value, dict):
             raise TypeError("state must be a dict")
         bitgen = value.get("bit_generator", "")
-        if bitgen != type(self).__name__:
+        if bitgen not in (type(self).__name__, fully_qualified_name(self)):
             raise ValueError("state must be for a {0} "
                              "PRNG".format(type(self).__name__))
         state = check_state_array(value["s"], 8, 64, "s")

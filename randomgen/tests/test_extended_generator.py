@@ -392,7 +392,7 @@ def test_wishart_broadcast(df, scale_dim):
     pcg = PCG64(0, mode="sequence")
     eg = ExtendedGenerator(pcg)
     scale = np.eye(dim)
-    for i in range(scale_dim):
+    for _ in range(scale_dim):
         scale = np.array([scale, scale])
     w = eg.wishart(df, scale)
     assert w.shape[-2:] == (dim, dim)

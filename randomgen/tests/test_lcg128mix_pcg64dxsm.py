@@ -125,10 +125,8 @@ def test_ctypes():
     so_loc = os.path.join(base, "libctypes_testing.so")
     try:
         cmd = ["gcc", "-c", "-Wall", "-Werror", "-fpic", c_loc, "-o", o_loc]
-        print(" ".join(cmd))
         subprocess.call(cmd)
         cmd = ["gcc", "-shared", "-o", so_loc, o_loc]
-        print(" ".join(cmd))
         subprocess.call(cmd)
         if not os.path.exists(so_loc):
             raise FileNotFoundError(f"{so_loc} does not exist")

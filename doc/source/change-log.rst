@@ -13,6 +13,16 @@ Change Log
   You should be using :class:`numpy.random.Generator` or
   :class:`numpy.random.RandomState` which are maintained. 
 
+v1.23.1
+=======
+- Registered the bit generators included in ``randomgen`` with NumPy
+  so that NumPy :class:`~numpy.random.Generator` instances can be pickled
+  and unpickled when using a ``randomstate`` bit generator.
+- Changed the canonical name of the bit generators to be their fully qualified
+  name. For example, :class:`~randomgen.pcg64.PCG64` is not named ``"randomgen.pcg64.PCG64"``
+  instead of ``"PCG64"``.  This was done to avoid ambiguity with NumPy's supplied
+  bit generators with the same name.
+
 v1.23.0
 =======
 - Removed ``Generator`` and ``RandomState``.

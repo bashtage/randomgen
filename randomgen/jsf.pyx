@@ -301,7 +301,7 @@ cdef class JSF(BitGenerator):
             b = self.rng_state.b.u32
             c = self.rng_state.c.u32
             d = self.rng_state.d.u32
-        return {"bit_generator": type(self).__name__,
+        return {"bit_generator": fully_qualified_name(self),
                 "state": {"a": a, "b": b, "c": c, "d": d,
                           "p": self.rng_state.p,
                           "q": self.rng_state.q,
@@ -316,7 +316,7 @@ cdef class JSF(BitGenerator):
         if not isinstance(value, dict):
             raise TypeError("state must be a dict")
         bitgen = value.get("bit_generator", "")
-        if bitgen != type(self).__name__:
+        if bitgen not in (type(self).__name__, fully_qualified_name(self)):
             raise ValueError("state must be for a {0} "
                              "PRNG".format(type(self).__name__))
         self.size = value["size"]
