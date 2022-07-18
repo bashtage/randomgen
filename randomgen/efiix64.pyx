@@ -1,3 +1,5 @@
+#!python
+#cython: binding=True
 import numpy as np
 cimport numpy as np
 
@@ -77,7 +79,8 @@ cdef class EFIIX64(BitGenerator):
 
     Examples
     --------
-    >>> from randomgen import Generator, EFIIX64
+    >>> from numpy.random import Generator
+    >>> from randomgen import EFIIX64
     >>> rg = Generator(EFIIX64(1234))
     >>> rg.standard_normal()
     0.123  # random

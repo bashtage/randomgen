@@ -1,7 +1,8 @@
 from setuptools import Distribution, find_packages, setup
 from setuptools.extension import Extension
 
-from distutils.version import LooseVersion
+from packaging.version import parse
+
 import glob
 import io
 import os
@@ -22,9 +23,7 @@ except ImportError:
     except ImportError:
         raise ImportError("tempita required to install, use pip install tempita")
 
-with open("requirements.txt") as f:
-    setup_required = f.read().splitlines()
-install_required = [pkg for pkg in setup_required if "numpy" in pkg]
+install_required = ["numpy >= 1.17"]
 
 CYTHON_COVERAGE = os.environ.get("RANDOMGEN_CYTHON_COVERAGE", "0") in (
     "true",
@@ -93,7 +92,7 @@ elif DEBUG:
     EXTRA_LINK_ARGS += ["-g"]
     UNDEF_MACROS += ["NDEBUG"]
 
-if Cython.__version__ >= LooseVersion("0.29"):
+if parse(Cython.__version__) >= parse("0.29"):
     DEFS = [("NPY_NO_DEPRECATED_API", "NPY_1_7_API_VERSION")]
 else:
     DEFS = [("NPY_NO_DEPRECATED_API", "0")]
@@ -102,7 +101,7 @@ if CYTHON_COVERAGE:
     DEFS += [("CYTHON_TRACE", "1"), ("CYTHON_TRACE_NOGIL", "1")]
 
 PCG64_DEFS = DEFS[:]
-if sys.maxsize < 2 ** 32 or os.name == "nt":
+if sys.maxsize < 2**32 or os.name == "nt":
     # Force emulated mode here
     PCG64_DEFS += [("PCG_FORCE_EMULATED_128BIT_MATH", "1")]
 
@@ -385,6 +384,5 @@ setup(
     ],
     zip_safe=False,
     install_requires=install_required,
-    setup_requires=setup_required,
     python_requires=">=3.6",
 )

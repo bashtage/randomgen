@@ -1,3 +1,6 @@
+#!python
+#cython: binding=True
+
 import numpy as np
 cimport numpy as np
 
@@ -172,7 +175,8 @@ cdef class JSF(BitGenerator):
 
     Examples
     --------
-    >>> from randomgen import Generator, JSF
+    >>> from numpy.random import Generator
+    >>> from randomgen import JSF
     >>> rg = Generator(JSF(1234))
     >>> rg.standard_normal()
     0.123  # random

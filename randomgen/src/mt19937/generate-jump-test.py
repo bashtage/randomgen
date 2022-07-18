@@ -18,7 +18,7 @@ import platform
 import pprint
 import shutil
 import subprocess
-from typing import Dict, List, Tuple, Union
+from typing import Dict, List, Tuple, Union, cast
 
 import black
 import numpy as np
@@ -35,33 +35,33 @@ else:
 
 
 def save_state(bit_gen: MT19937, file_name: str) -> None:
-    state = bit_gen.state
-    key = state["state"]["key"]
-    pos = state["state"]["pos"]
+    bit_gen_state = cast(dict[str, Union[int, np.ndarray]], bit_gen.state["state"])
+    state_key = cast(np.ndarray, bit_gen_state["key"])
+    state_pos = bit_gen_state["pos"]
     with open(file_name, "w") as f:
-        for k in key:
+        for k in state_key:
             f.write(f"{k}\n")
-        f.write(f"{pos}\n")
+        f.write(f"{state_pos}\n")
 
 
 def parse_output(text: str) -> Tuple[List[Dict[str, Union[List, int]]], List[int]]:
     lines = text.split("\n")
-
-    state = {"key": [], "pos": -1}
-    states = [state]
+    key_list: list[int] = []
+    output_state = {"key": key_list, "pos": -1}
+    states = [output_state]
     pf = []
     for line in lines:
         parts = line.split(":")
         if "pf[" in parts[0]:
             pf.append(int(parts[1].strip()))
         elif "[" in parts[0]:
-            state["key"].append(int(parts[1].strip()))
+            output_state["key"].append(int(parts[1].strip()))
         elif ".ptr" in parts[0]:
-            state["pos"] = int(parts[1].strip())
+            output_state["pos"] = int(parts[1].strip())
         elif "=====" in line:
-            state["key"] = np.asarray(state["key"], dtype="uint32")
-            state = {"key": [], "pos": -1}
-            states.append(state)
+            output_state["key"] = np.asarray(output_state["key"], dtype="uint32")
+            output_state = {"key": [], "pos": -1}
+            states.append(output_state)
     return states[:-1], pf
 
 

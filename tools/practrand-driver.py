@@ -40,7 +40,7 @@ import numpy as np
 
 import randomgen as rg
 
-BUFFER_SIZE = 256 * 2 ** 20
+BUFFER_SIZE = 256 * 2**20
 
 DESCRIPTION = """
 A driver that simplifies testing bit generators using PractRand.
@@ -146,7 +146,7 @@ def jumped_state(bit_generator, n_streams=2, entropy=None):
             if config["seed"] == 64:
                 entropy = entropy[0]
         elif config["seed_size"] == 128:
-            entropy = int(entropy[0]) + int(entropy[1]) * 2 ** 64
+            entropy = int(entropy[0]) + int(entropy[1]) * 2**64
         elif config["seed_size"] == 256:
             base = int(0)
             for i in range(4):
@@ -159,13 +159,13 @@ def jumped_state(bit_generator, n_streams=2, entropy=None):
         if seed_size in (32, 64):
             _entropy = []
             while entropy > 0:
-                low = entropy % 2 ** seed_size
+                low = entropy % 2**seed_size
                 _entropy.append(low)
                 entropy = entropy >> seed_size
             dtype = np.uint32 if seed_size == 32 else np.uint64
             entropy = np.array(_entropy, dtype=dtype)
         elif seed_size in (128, 256):
-            entropy = entropy % 2 ** seed_size
+            entropy = entropy % 2**seed_size
         else:
             raise NotImplementedError
 

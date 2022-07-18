@@ -2,7 +2,7 @@ Extending
 ---------
 The bit generators have been designed to be extendable using standard tools for
 high-performance Python -- numba and Cython.
-The :class:`randomgen.generator.Generator` object can also be used with
+The :class:`numpy.random.Generator` object can also be used with
 user-provided bit generators as long as these export a small set of required
 functions.
 
@@ -135,7 +135,7 @@ examples folder.
 
 New Bit Generators
 ==================
-:class:`~randomgen.generator.Generator` can be used with other
+``Generator`` can be used with other
 user-provided bit generators.  The simplest way to write a new bit generator is to
 examine the pyx file of one of the existing bit generators. The key structure
 that must be provided is the ``capsule`` which contains a ``PyCapsule`` to a
@@ -156,7 +156,7 @@ used by the bit generator.  The next three are function pointers which return th
 next 64- and 32-bit unsigned integers, the next random double and the next
 raw value.  This final function is used for testing and so can be set to
 the next 64-bit unsigned integer function if not needed. Functions inside
-:class:`~randomgen.generator.Generator` use this structure as in
+``Generator`` use this structure as in
 
 .. code-block:: c
 
@@ -168,5 +168,5 @@ Python BitGenerators
 :class:`~randomgen.wrapper.UserBitGenerator` is a utility class that lets users
 write bit generators in Python. While these are inherently low performance, this
 interface allows users to rapidly prototype a bit generator and to pass this
-bit generator to a :class:`~randomgen.generator.Generator` to generate variates
+bit generator to a ``Generator`` to generate variates
 from the full spectrum of distributions.

@@ -1,3 +1,6 @@
+#!python
+#cython: binding=True
+
 import numpy as np
 cimport numpy as np
 
@@ -82,6 +85,8 @@ cdef class PCG32(BitGenerator):
     with a different value in  each instance to produce
     non-overlapping sequences.
 
+    >>> from numpy.random import Generator
+    >>> from randomgen import PCG32
     >>> rg = [Generator(PCG32(1234, i + 1)) for i in range(10)]
     >>> for i in range(10):
     ...     rg[i].bit_generator.advance(i * 2**32)

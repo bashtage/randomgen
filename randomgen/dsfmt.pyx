@@ -1,3 +1,5 @@
+#!python
+#cython: binding=True
 import operator
 
 import numpy as np
@@ -91,8 +93,9 @@ cdef class DSFMT(BitGenerator):
     generators should be initialized with the same seed to ensure that
     the segments come from the same sequence.
 
+    >>> from numpy.random import Generator
     >>> from randomgen.entropy import random_entropy
-    >>> from randomgen import Generator, DSFMT
+    >>> from randomgen import DSFMT
     >>> seed = random_entropy()
     >>> rs = [Generator(DSFMT(seed)) for _ in range(10)]
     # Advance each DSFMT instance by i jumps

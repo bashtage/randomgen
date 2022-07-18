@@ -1,3 +1,5 @@
+#!python
+#cython: binding=True
 import numpy as np
 
 from randomgen.common cimport *
@@ -102,7 +104,8 @@ cdef class ChaCha(BitGenerator):
     generators should be initialized with the same seed to ensure that the
     segments come from the same sequence.
 
-    >>> from randomgen import Generator, ChaCha
+    >>> from numpy.random import Generator
+    >>> from randomgen import ChaCha
     >>> rg = [Generator(ChaCha(1234)) for _ in range(10)]
     # Advance each ChaCha instances by i jumps
     >>> for i in range(10):
@@ -121,7 +124,8 @@ cdef class ChaCha(BitGenerator):
 
     Examples
     --------
-    >>> from randomgen import Generator, ChaCha
+    >>> from numpy.random import Generator
+    >>> from randomgen import ChaCha
     >>> rg = Generator(ChaCha(1234, rounds=8))
     >>> rg.standard_normal()
     0.123  # random

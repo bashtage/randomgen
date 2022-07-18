@@ -1,3 +1,6 @@
+#!python
+#cython: binding=True
+
 import numpy as np
 cimport numpy as np
 
@@ -131,6 +134,8 @@ cdef class PCG64(BitGenerator):
     ``PCG64`` can be used in parallel applications by calling ``advance`` with
     a different value on each instance to produce non-overlapping sequences.
 
+    >>> from numpy.random import Generator
+    >>> from randomgen import PCG64
     >>> rg = [Generator(PCG64(1234, i + 1)) for i in range(10)]
     >>> for i in range(10):
     ...     rg[i].bit_generator.advance(i * 2**64)
@@ -1026,7 +1031,8 @@ cdef class PCG64DXSM(PCG64):
     ``PCG64DXSM`` can be used in parallel applications by calling ``advance`` with
     a different value on each instance to produce non-overlapping sequences.
 
-    >>> from randomgen import Generator, PCG64DXSM
+    >>> from numpy.random import Generator
+    >>> from randomgen import PCG64DXSM
     >>> rg = [Generator(PCG64DXSM(1234, i + 1)) for i in range(10)]
     >>> for i in range(10):
     ...     rg[i].bit_generator.advance(i * 2**64)

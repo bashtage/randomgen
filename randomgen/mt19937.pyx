@@ -1,4 +1,7 @@
+#!python
+#cython: binding=True
 # coding=utf-8
+
 import operator
 
 import numpy as np
@@ -86,8 +89,9 @@ cdef class MT19937(BitGenerator):
     process. All generators should be initialized with the same seed to ensure
     that the segments come from the same sequence.
 
+    >>> from numpy.random import Generator
     >>> from randomgen.entropy import random_entropy
-    >>> from randomgen import Generator, MT19937
+    >>> from randomgen import MT19937
     >>> seed = random_entropy()
     >>> rs = [Generator(MT19937(seed)) for _ in range(10)]
     # Advance each MT19937 instance by i jumps
@@ -281,7 +285,7 @@ cdef class MT19937(BitGenerator):
         ----------
         .. [1] Matsumoto, M, Generating multiple disjoint streams of
            pseudorandom number sequences.  Accessed on: May 6, 2020.
-           [Online]. Available:
+           (online). Available:
            http://www.math.sci.hiroshima-u.ac.jp/~m-mat/MT/JUMP/
 
         .. [2] Hiroshi Haramoto, Makoto Matsumoto, Takuji Nishimura, François

@@ -1,3 +1,6 @@
+#!python
+#cython: binding=True
+
 import warnings
 
 import numpy as np
@@ -275,10 +278,8 @@ cdef class SFC64(BitGenerator):
                 cum_count_arr[i-_min_bits] += cum_count_arr[i-_min_bits-1]
         total = cum_count_arr[nbits-1]
 
-        from randomgen.generator import Generator
-        with warnings.catch_warnings():
-            warnings.filterwarnings("ignore", category=FutureWarning)
-            gen = Generator(self)
+        from numpy.random import Generator
+        gen = Generator(self)
 
         out = np.empty(n, dtype=np.uint64)
         out_arr = <uint64_t *>np.PyArray_DATA(out)

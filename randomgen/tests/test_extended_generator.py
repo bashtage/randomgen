@@ -3,6 +3,7 @@ import pickle
 
 import numpy as np
 from numpy.linalg import LinAlgError
+from numpy.random import Generator
 from numpy.testing import (
     assert_allclose,
     assert_array_almost_equal,
@@ -16,11 +17,6 @@ from packaging.version import parse
 import pytest
 
 from randomgen import MT19937, PCG64, ExtendedGenerator
-
-try:
-    from numpy.random import Generator
-except ImportError:
-    from randomgen import Generator  # type: ignore[misc]
 
 try:
     from scipy import linalg  # noqa: F401

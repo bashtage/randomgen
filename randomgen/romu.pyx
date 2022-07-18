@@ -1,3 +1,6 @@
+#!python
+#cython: binding=True
+
 import warnings
 
 import numpy as np

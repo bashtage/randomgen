@@ -15,7 +15,8 @@ if '{bitgen}' == 'numpy':
     rg = numpy.random.RandomState()
     rg.random_sample()
 else:
-    from randomgen import Generator, {bitgen}
+    from randomgen import {bitgen}
+    from numpy.random import Generator
     rg = Generator({bitgen}())
     rg.random()
 """

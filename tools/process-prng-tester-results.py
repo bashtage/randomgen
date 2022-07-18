@@ -33,18 +33,18 @@ def parse_key(key):
 
 def to_bytes(s):
     if "MB" in s:
-        return int(s[:-2].strip()) * 2 ** 20
+        return int(s[:-2].strip()) * 2**20
     elif "GB" in s:
-        return int(s[:-2].strip()) * 2 ** 30
+        return int(s[:-2].strip()) * 2**30
     elif "TB" in s:
-        return int(s[:-2].strip()) * 2 ** 40
+        return int(s[:-2].strip()) * 2**40
 
 
 def from_bytes(b):
     b = b >> 20
-    if b >= 2 ** 20:
+    if b >= 2**20:
         return f"{b>>20}TB"
-    elif b >= 2 ** 10:
+    elif b >= 2**10:
         return f"{b>>10}GB"
     return f"{b}MB"
 

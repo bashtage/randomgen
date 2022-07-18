@@ -1,7 +1,7 @@
 import numpy as np
+from numpy.random import Generator
 import pytest
 
-from randomgen.generator import Generator
 from randomgen.pcg64 import PCG64
 from randomgen.wrapper import UserBitGenerator
 

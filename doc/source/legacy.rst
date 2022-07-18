@@ -1,121 +1,19 @@
 Legacy Random Generation
 ------------------------
 
+
 .. container:: admonition danger
 
   .. raw:: html
 
-      <p class="admonition-title"> Deprecated </p>
+      <p class="admonition-title"> Removed </p>
 
-  :class:`~randomgen.mtrand.RandomState` is **deprecated**. You should be using
-  :class:`numpy.random.Generator`, or if you must have backward compatibility with
-  NumPy before 1.17, :class:`numpy.random.RandomState`.
+.. danger::
 
-The :class:`~randomgen.mtrand.RandomState` provides access to
-legacy generators.  These all depend on normals produced using a
-polar transformation or inverse CDF exponentials or gammas. This
-class should only be used  if it is essential to have randoms that
-are identical to what would have been produced by NumPy.
-
-:class:`~randomgen.mtrand.RandomState` add additional information
-to the state which is required when using Box-Muller normals since these
-are produced in pairs. It is important to use
-:attr:`~randomgen.mtrand.RandomState.get_state()`
-when accessing the state so that these extra values are saved.
-
-.. code-block:: python
-
-   from randomgen import MT19937
-   from randomgen.mtrand import RandomState
-   from numpy.random import RandomState
-      # Use same seed
-   rs = RandomState(12345)
-   mt19937 = MT19937(12345)
-   lg = RandomState(mt19937)
-
-   # Identical output
-   rs.standard_normal()
-   lg.standard_normal()
-
-   rs.random_sample()
-   lg.random_sample()
-
-   rs.standard_exponential()
-   lg.standard_exponential()
-
+   ``RandomState`` has been **removed**. You should be using :class:`numpy.random.Generator`,
+   or if you must have backward compatibility with NumPy before 1.17, :class:`numpy.random.RandomState`.
 
 .. currentmodule:: randomgen.mtrand
 
 .. autoclass::
    RandomState
-
-Seeding and State
-=================
-
-.. autosummary::
-   :toctree: generated/
-
-   ~RandomState.get_state
-   ~RandomState.set_state
-
-Simple random data
-==================
-.. autosummary::
-   :toctree: generated/
-
-   ~RandomState.rand
-   ~RandomState.randn
-   ~RandomState.randint
-   ~RandomState.random_integers
-   ~RandomState.random_sample
-   ~RandomState.choice
-   ~RandomState.bytes
-
-Permutations
-============
-.. autosummary::
-   :toctree: generated/
-
-   ~RandomState.shuffle
-   ~RandomState.permutation
-
-Distributions
-=============
-.. autosummary::
-   :toctree: generated/
-
-   ~RandomState.beta
-   ~RandomState.binomial
-   ~RandomState.chisquare
-   ~RandomState.dirichlet
-   ~RandomState.exponential
-   ~RandomState.f
-   ~RandomState.gamma
-   ~RandomState.geometric
-   ~RandomState.gumbel
-   ~RandomState.hypergeometric
-   ~RandomState.laplace
-   ~RandomState.logistic
-   ~RandomState.lognormal
-   ~RandomState.logseries
-   ~RandomState.multinomial
-   ~RandomState.multivariate_normal
-   ~RandomState.negative_binomial
-   ~RandomState.noncentral_chisquare
-   ~RandomState.noncentral_f
-   ~RandomState.normal
-   ~RandomState.pareto
-   ~RandomState.poisson
-   ~RandomState.power
-   ~RandomState.rayleigh
-   ~RandomState.standard_cauchy
-   ~RandomState.standard_exponential
-   ~RandomState.standard_gamma
-   ~RandomState.standard_normal
-   ~RandomState.standard_t
-   ~RandomState.triangular
-   ~RandomState.uniform
-   ~RandomState.vonmises
-   ~RandomState.wald
-   ~RandomState.weibull
-   ~RandomState.zipf

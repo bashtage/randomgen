@@ -37,9 +37,13 @@ or the [stable documentation](https://bashtage.github.io/randomgen/devel/change-
 
 # WARNINGS
 
-## Changes in v1.19
+## Changes in v1.24
 
-``Generator`` and ``RandomState`` have been officially deprecated, and will
+``Generator`` and ``RandomState`` have been **removed**.
+
+## Changes from 1.18 to 1.19
+
+``Generator`` and ``RandomState`` have been officially deprecated in 1.19, and will
 warn with a ``FutureWarning`` about their removal. They will also receive virtually
 no maintenance. It is now time to move to NumPy's ``np.random.Generator`` which has
 features not in ``randomstate.Generator`` and is maintained more actively.
@@ -54,8 +58,7 @@ to ``randomstate.ExtendedGenerator``:
 There are no plans to remove any of the bit generators, e.g., ``AESCounter``,
 ``ThreeFry``, or ``PCG64``. 
 
-## Changes in v1.18
-
+### Changes from 1.16 to 1.18
 There are many changes between v1.16.x and v1.18.x. These reflect API
 decision taken in conjunction with NumPy in preparation of the core
 of `randomgen` being used as the preferred random number generator in
@@ -66,16 +69,6 @@ bit generators (or `BigGenerator`s).
 
 ## Future Plans
 
-A substantial portion of randomgen has been merged into NumPy. Revamping NumPy's random
-number generation was always the goal of this project (and its predecessor
-[NextGen NumPy RandomState](https://github.com/bashtage/ng-numpy-randomstate>)),
-and so it has succeeded.
-
-While I have no immediate plans to remove anything, after a 1.19 release I will:
-
-* Remove `Generator` and `RandomState`. These duplicate NumPy and will diverge over time.
-  The versions in NumPy are authoritative. **Deprecated**
-* Preserve novel methods of `Generator` in a new class, `ExtendedGenerator`. **Done**
 * Add some distributions that are not supported in NumPy. _Ongoing_
 * Add any interesting bit generators I come across. _Recent additions include the DXSM and CM-DXSM variants of PCG64 and the LXM generator._
 
@@ -102,7 +95,6 @@ The RNGs include:
 * Chaotic PRNGS: Small-Fast Chaotic (`SFC64`) and Jenkin's Small-Fast (`JSF`).
 
   
-
 ## Status
 
 * Builds and passes all tests on:
@@ -114,8 +106,8 @@ The RNGs include:
 
 ## Version
 
-The package version matches the latest version of NumPy where
-`Generator(MT19937())` passes all NumPy test.
+The package version matches the latest version of NumPy when the package
+is released.
 
 ## Documentation
 
@@ -128,8 +120,8 @@ the latest commit (unreleased) is available under
 ## Requirements
 Building requires:
 
-* Python (3.6, 3.7, 3.8, 3.9)
-* NumPy (1.14, 1.15, 1.16, 1.17, 1.18, 1.19)
+* Python (3.6, 3.7, 3.8, 3.9, 3.10)
+* NumPy (1.17+)
 * Cython (0.29+)
 * tempita (0.5+), if not provided by Cython
 

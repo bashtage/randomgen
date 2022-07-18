@@ -11,7 +11,7 @@ class ISeedSequence(metaclass=ABCMeta):
         self, n_words: int, dtype: Type[unsignedinteger[Any]] = ...
     ) -> Sequence[int]: ...
 
-class ISpawnableSeedSequence(ISeedSequence):
+class ISpawnableSeedSequence(ISeedSequence, metaclass=ABCMeta):
     @abstractmethod
     def spawn(self, n_children: int) -> List["SeedSequence"]: ...
 
@@ -20,7 +20,7 @@ class SeedSequence(ISpawnableSeedSequence):
         self,
         entropy: Optional[Union[int, Sequence[int]]] = ...,
         *,
-        spawn_key: Sequence[int] = (),
+        spawn_key: Sequence[int] = ...,
         pool_size: int = ...,
         n_children_spawned: int = ...
     ) -> None: ...

@@ -1,3 +1,6 @@
+#!python
+#cython: binding=True
+
 import numpy as np
 
 from randomgen.common cimport *
@@ -130,7 +133,8 @@ cdef class ThreeFry(BitGenerator):
     generators should be initialized with the same seed to ensure that the
     segments come from the same sequence.
 
-    >>> from randomgen import Generator, ThreeFry
+    >>> from numpy.random import Generator
+    >>> from randomgen import ThreeFry
     >>> rg = [Generator(ThreeFry(1234)) for _ in range(10)]
     # Advance each ThreeFry instance by i jumps
     >>> for i in range(10):
@@ -149,7 +153,8 @@ cdef class ThreeFry(BitGenerator):
 
     Examples
     --------
-    >>> from randomgen import Generator, ThreeFry
+    >>> from numpy.random import Generator
+    >>> from randomgen import ThreeFry
     >>> rg = Generator(ThreeFry(1234))
     >>> rg.standard_normal()
     0.123  # random

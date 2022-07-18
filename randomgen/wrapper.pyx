@@ -1,3 +1,6 @@
+#!python
+#cython: binding=True
+
 from randomgen.common cimport *
 from randomgen.distributions cimport next_uint64_t, next_uint32_t, next_double_t
 import ctypes

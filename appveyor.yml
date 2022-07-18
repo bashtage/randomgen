@@ -28,7 +28,3 @@ build_script:
 
 test_script:
   - pytest randomgen
-
-on_success:
-  - cd %GIT_DIR%\
-  - python benchmark.py
