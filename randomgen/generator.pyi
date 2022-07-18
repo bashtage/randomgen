@@ -1,7 +1,6 @@
 from threading import Lock
 from typing import Any, Dict, Literal, Optional, Sequence, Tuple, Union, overload
 
-import numpy as np
 from numpy import ndarray
 
 from randomgen.common import BitGenerator
@@ -27,14 +26,13 @@ class ExtendedGenerator:
     @overload
     def uintegers(self, size: RequiredSize, bits: Literal[32, 64] = ...) -> ndarray: ...
     @overload
-    def random(self) -> float: ...  # type: ignore[misc]
+    def random(self) -> float: ...
     @overload
-    def random(self, size: None = ...) -> float: ...  # type: ignore[misc]
+    def random(self, size: None = ...) -> float: ...
     @overload
     def random(
         self, size: Size = ..., dtype: str = ..., out: Optional[ndarray] = ...
     ) -> ndarray: ...
-    # Multivariate distributions:
     def multivariate_normal(
         self,
         mean: ndarray,
@@ -46,14 +44,11 @@ class ExtendedGenerator:
         method: Literal["svd", "eigh", "cholesky", "factor"] = ...
     ) -> ndarray: ...
     @overload
-    def complex_normal(  # type: ignore[misc]
-        self,
-        loc: complex = ...,
-        gamma: complex = ...,
-        relation: complex = ...,
+    def complex_normal(
+        self, loc: complex = ..., gamma: complex = ..., relation: complex = ...
     ) -> complex: ...
     @overload
-    def complex_normal(  # type: ignore[misc]
+    def complex_normal(
         self,
         loc: complex = ...,
         gamma: complex = ...,
@@ -93,7 +88,6 @@ class ExtendedGenerator:
         tol: float = ...,
         method: Literal["svd", "eigh", "cholesky", "factor"] = ...
     ) -> ndarray: ...
-
 
 def _raises_not_implemented(*args: Any, **kwargs: Any) -> None: ...
 

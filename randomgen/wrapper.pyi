@@ -1,4 +1,4 @@
-from ctypes import CFUNCTYPE, c_void_p
+from ctypes import c_void_p
 from typing import Any, Callable, Literal, Optional
 
 from numba.core.ccallback import CFunc
@@ -16,7 +16,7 @@ class UserBitGenerator(BitGenerator):
         state: Optional[int] = ...,
         state_getter: Optional[Callable[[], Any]] = ...,
         state_setter: Optional[Callable[[Any], None]] = ...,
-    ): ...
+    ) -> None: ...
     @property
     def state(self) -> Any: ...
     @state.setter

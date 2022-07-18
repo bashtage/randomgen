@@ -46,7 +46,7 @@ def save_state(bit_gen: MT19937, file_name: str) -> None:
 
 def parse_output(text: str) -> Tuple[List[Dict[str, Union[List, int]]], List[int]]:
     lines = text.split("\n")
-    key_list : list[int] = []
+    key_list: list[int] = []
     output_state = {"key": key_list, "pos": -1}
     states = [output_state]
     pf = []
