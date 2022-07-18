@@ -1,13 +1,10 @@
 from functools import partial
-import os
 import pickle
-import sys
 import time
 
 import numpy as np
 from numpy.testing import (
     assert_,
-    assert_almost_equal,
     assert_array_equal,
     assert_equal,
     suppress_warnings,
