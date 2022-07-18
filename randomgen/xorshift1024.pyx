@@ -86,7 +86,8 @@ cdef class Xorshift1024(BitGenerator):
     generators should be initialized with the same seed to ensure that
     the segments come from the same sequence.
 
-    >>> from randomgen import Generator, Xorshift1024
+    >>> from numpy.random import Generator
+    >>> from randomgen import Xorshift1024
     >>> rg = [Generator(Xorshift1024(1234)) for _ in range(10)]
     # Advance each Xorshift1024 instance by i jumps
     >>> for i in range(10):
@@ -99,7 +100,8 @@ cdef class Xorshift1024(BitGenerator):
 
     Examples
     --------
-    >>> from randomgen import Generator, Xorshift1024
+    >>> from numpy.random import Generator
+    >>> from randomgen import Xorshift1024
     >>> rg = Generator(Xorshift1024(1234))
     >>> rg.standard_normal()
     0.123  # random

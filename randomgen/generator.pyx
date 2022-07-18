@@ -477,10 +477,10 @@ cdef class ExtendedGenerator:
 
         Diagonal covariance means that points are oriented along x or y-axis:
 
-        >>> from randomgen import Generator
-        >>> rg = Generator()
+        >>> from numpy.random import ExtendedGenerator
+        >>> erg = ExtendedGenerator()
         >>> import matplotlib.pyplot as plt
-        >>> x, y = rg.multivariate_normal(mean, cov, 5000).T
+        >>> x, y = erg.multivariate_normal(mean, cov, 5000).T
         >>> plt.plot(x, y, 'x')
         >>> plt.axis('equal')
         >>> plt.show()
@@ -498,11 +498,11 @@ cdef class ExtendedGenerator:
 
         Examples
         --------
-        >>> from randomgen import Generator
-        >>> rg = Generator()
+        >>> from randomgen import ExtendedGenerator
+        >>> erg = ExtendedGenerator()
         >>> mean = (1, 2)
         >>> cov = [[1, 0], [0, 1]]
-        >>> x = rg.multivariate_normal(mean, cov, (3, 3))
+        >>> x = erg.multivariate_normal(mean, cov, (3, 3))
         >>> x.shape
         (3, 3, 2)
 

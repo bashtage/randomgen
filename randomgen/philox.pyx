@@ -135,7 +135,8 @@ cdef class Philox(BitGenerator):
     generators should be initialized with the same seed to ensure that the
     segments come from the same sequence.
 
-    >>> from randomgen import Generator, Philox
+    >>> from numpy.random import Generator
+    >>> from randomgen import Philox
     >>> rg = [Generator(Philox(1234)) for _ in range(10)]
     # Advance each Philox instance by i jumps
     >>> for i in range(10):
@@ -154,7 +155,8 @@ cdef class Philox(BitGenerator):
 
     Examples
     --------
-    >>> from randomgen import Generator, Philox
+    >>> from numpy.random import Generator
+    >>> from randomgen import Philox
     >>> rg = Generator(Philox(1234))
     >>> rg.standard_normal()
     0.123  # random

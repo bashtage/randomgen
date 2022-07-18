@@ -158,7 +158,8 @@ cdef class RDRAND(BitGenerator):
 
     ``RDRAND`` is stateless and so multiple instances can be used in parallel.
 
-    >>> from randomgen import Generator, RDRAND
+    >>> from numpy.random import Generator
+    >>> from randomgen import RDRAND
     >>> rg = [Generator(RDRAND()) for _ in range(10)]
 
     **Exceptions**
@@ -228,7 +229,8 @@ cdef class RDRAND(BitGenerator):
 
     Examples
     --------
-    >>> from randomgen import Generator, RDRAND
+    >>> from numpy.random import Generator
+    >>> from randomgen import RDRAND
     >>> rg = Generator(RDRAND())
     >>> rg.standard_normal()
     0.123  # random

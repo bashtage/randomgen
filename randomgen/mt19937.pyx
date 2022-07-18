@@ -89,8 +89,9 @@ cdef class MT19937(BitGenerator):
     process. All generators should be initialized with the same seed to ensure
     that the segments come from the same sequence.
 
+    >>> from numpy.random import Generator
     >>> from randomgen.entropy import random_entropy
-    >>> from randomgen import Generator, MT19937
+    >>> from randomgen import MT19937
     >>> seed = random_entropy()
     >>> rs = [Generator(MT19937(seed)) for _ in range(10)]
     # Advance each MT19937 instance by i jumps

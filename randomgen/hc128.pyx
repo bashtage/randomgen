@@ -88,7 +88,8 @@ cdef class HC128(BitGenerator):
 
     ``HC128`` can be used in parallel applications by using distinct keys
 
-    >>> from randomgen import Generator, HC128
+    >>> from numpy.random import Generator
+    >>> from randomgen import HC128
     >>> rg = [Generator(HC128(key=1234 + i)) for i in range(10)]
 
     **Compatibility Guarantee**
@@ -98,7 +99,8 @@ cdef class HC128(BitGenerator):
 
     Examples
     --------
-    >>> from randomgen import Generator, HC128
+    >>> from numpy.random import Generator
+    >>> from randomgen import HC128
     >>> rg = Generator(HC128(1234))
     >>> rg.standard_normal()
     0.123  # random
