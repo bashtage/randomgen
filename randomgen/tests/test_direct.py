@@ -285,13 +285,13 @@ class Base(object):
         rs = np.random.Generator(self.setup_bitgenerator(self.data1["seed"]))
         vals = uniform32_from_uint(self.data1["data"], self.bits)
         uniforms = rs.random(len(vals), dtype=np.float32)
-        assert_allclose(uniforms, vals)
+        assert_allclose(uniforms, vals, atol=1e-7)
         assert_equal(uniforms.dtype, np.float32)
 
         rs = np.random.Generator(self.setup_bitgenerator(self.data2["seed"]))
         vals = uniform32_from_uint(self.data2["data"], self.bits)
         uniforms = rs.random(len(vals), dtype=np.float32)
-        assert_allclose(uniforms, vals)
+        assert_allclose(uniforms, vals, atol=1e-7)
         assert_equal(uniforms.dtype, np.float32)
 
     def test_seed_float(self):
@@ -1270,13 +1270,13 @@ class TestDSFMT(Base):
         rs = np.random.Generator(self.setup_bitgenerator(self.data1["seed"]))
         vals = uniform32_from_uint(self.data1["data"], self.bits)
         uniforms = rs.random(len(vals), dtype=np.float32)
-        assert_allclose(uniforms, vals)
+        assert_allclose(uniforms, vals, atol=1e-7)
         assert_equal(uniforms.dtype, np.float32)
 
         rs = np.random.Generator(self.setup_bitgenerator(self.data2["seed"]))
         vals = uniform32_from_uint(self.data2["data"], self.bits)
         uniforms = rs.random(len(vals), dtype=np.float32)
-        assert_allclose(uniforms, vals)
+        assert_allclose(uniforms, vals, atol=1e-7)
         assert_equal(uniforms.dtype, np.float32)
 
     def test_buffer_reset(self):
