@@ -120,19 +120,19 @@ def uniform32_from_uint64(x):
     lower = np.uint64(0xFFFFFFFF)
     lower = np.array(x & lower, dtype=np.uint32)
     joined = np.column_stack([lower, upper]).ravel()
-    out = (joined >> np.uint32(8)) * (1.0 / 2**24)
+    out = (joined >> np.uint32(8)) * (np.float32(1.0) / np.float32(2**24))
     return out.astype(np.float32)
 
 
 def uniform32_from_uint53(x):
     x = np.uint64(x) >> np.uint64(16)
     x = np.uint32(x & np.uint64(0xFFFFFFFF))
-    out = (x >> np.uint32(8)) * (1.0 / 2**24)
+    out = (x >> np.uint32(8)) * (np.float32(1.0) / np.float32(2**24))
     return out.astype(np.float32)
 
 
 def uniform32_from_uint32(x):
-    return (x >> np.uint32(8)) * (1.0 / 2**24)
+    return (x >> np.uint32(8)) * (np.float32(1.0) / np.float32(2**24))
 
 
 def uniform32_from_uint(x, bits):
