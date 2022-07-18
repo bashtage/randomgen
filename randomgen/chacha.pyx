@@ -1,3 +1,5 @@
+#!python
+#cython: binding=True
 import numpy as np
 
 from randomgen.common cimport *

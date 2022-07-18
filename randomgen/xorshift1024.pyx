@@ -1,4 +1,6 @@
-# coding=utf-8
+#!python
+#cython: binding=True
+
 import numpy as np
 cimport numpy as np
 

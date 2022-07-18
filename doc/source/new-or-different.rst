@@ -109,36 +109,6 @@ Differences from NumPy before 1.17
   :meth:`~randomgen.generator.Generator.standard_exponential` or
   :meth:`~randomgen.generator.Generator.standard_gamma`.
 
-.. ipython:: python
-   :suppress:
-   :okwarning:
-
-   import warnings
-   warnings.filterwarnings("ignore", "RandomState", FutureWarning)
-   warnings.filterwarnings("ignore", "Generator", FutureWarning)
-   from randomgen import Generator
-   Generator()
-
-.. ipython:: python
-   :okwarning:
-
-   from randomgen import Generator, Xoroshiro128
-   import numpy.random
-   rg = Generator(Xoroshiro128(mode="sequence"))
-   %timeit rg.standard_normal(100000)
-   %timeit numpy.random.standard_normal(100000)
-
-.. ipython:: python
-
-  %timeit rg.standard_exponential(100000)
-  %timeit numpy.random.standard_exponential(100000)
-
-.. ipython:: python
-
-  %timeit rg.standard_gamma(3.0, 100000)
-  %timeit numpy.random.standard_gamma(3.0, 100000)
-
-
 * The Box-Muller used to produce NumPy's normals is no longer available.
 * All bit generators functions to produce doubles, uint64s and
   uint32s via CTypes (:meth:`~randomgen.xoroshiro128.Xoroshiro128.ctypes`)
@@ -156,13 +126,6 @@ Differences from NumPy before 1.17
   * Standard Gammas (:meth:`~randomgen.generator.Generator.standard_gamma`)
   * Standard Exponentials (:meth:`~randomgen.generator.Generator.standard_exponential`)
 
-.. ipython:: python
-
-  rg.seed(0)
-  rg.random(3, dtype='d')
-  rg.seed(0)
-  rg.random(3, dtype='f')
-
 * Optional ``out`` argument that allows existing arrays to be filled for
   select core distributions
 
@@ -174,11 +137,6 @@ Differences from NumPy before 1.17
   This allows multithreading to fill large arrays in chunks using suitable
   PRNGs in parallel.
 
-.. ipython:: python
-
-  existing = np.zeros(4)
-  rg.random(out=existing[:2])
-  print(existing)
 
 * :meth:`~randomgen.generator.Generator.integers` supports broadcasting inputs.
 
@@ -188,60 +146,27 @@ Differences from NumPy before 1.17
   ``endpoint``. Closed intervals are simpler to use when the
   distribution may include the maximum value of a given integer type.
 
-.. ipython:: python
-
-  rg.seed(1234)
-  rg.integers(0, np.iinfo(np.int64).max+1)
-  rg.seed(1234)
-  rg.integers(0, np.iinfo(np.int64).max, endpoint=True)
 
 * The closed interval is particularly helpful when using arrays since
   it avoids object-dtype arrays when sampling from the full range.
 
-.. ipython:: python
-
-  rg.seed(1234)
-  lower = np.zeros((2, 1), dtype=np.uint64)
-  upper = np.array([10, np.iinfo(np.uint64).max+1], dtype=object)
-  upper
-  rg.integers(lower, upper, dtype=np.uint64)
-  rg.seed(1234)
-  upper = np.array([10, np.iinfo(np.uint64).max], dtype=np.uint64)
-  upper
-  rg.integers(lower, upper, endpoint=True, dtype=np.uint64)
 
 * Support for Lemire’s method of generating uniform integers on an
   arbitrary interval by setting ``use_masked=True`` in
   (:meth:`~randomgen.generator.Generator.integers`).
 
-.. ipython:: python
-  :okwarning:
-
-  %timeit rg.integers(0, 1535, size=100000, use_masked=False)
-  %timeit numpy.random.randint(0, 1535, size=100000)
 
 * :meth:`~randomgen.generator.Generator.multinomial`
   supports multidimensional values of ``n``
 
-.. ipython:: python
-
-  rg.multinomial([10, 100], np.ones(6) / 6.)
 
 * :meth:`~randomgen.generator.Generator.choice`
   is much faster when sampling small amounts from large arrays
 
-.. ipython:: python
-
-  x = np.arange(1000000)
-  %timeit rg.choice(x, 10)
 
 * :meth:`~randomgen.generator.Generator.choice`
   supports the ``axis`` keyword to work with multidimensional arrays.
 
-.. ipython:: python
-
-  x = np.reshape(np.arange(20), (2, 10))
-  rg.choice(x, 2, axis=1)
 
 * For changes since the previous release, see the :ref:`change-log`
 

@@ -1,3 +1,5 @@
+#!python
+#cython: binding=True
 import operator
 
 import numpy as np

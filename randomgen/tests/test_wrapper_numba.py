@@ -1,9 +1,9 @@
 import ctypes
 
 import numpy as np
+from numpy.random import Generator
 import pytest
 
-from randomgen.generator import Generator
 from randomgen.wrapper import UserBitGenerator
 
 HAS_NUMBA = False
