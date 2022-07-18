@@ -1,6 +1,0 @@
-﻿randomgen.mtrand.RandomState.weibull
-====================================
-
-.. currentmodule:: randomgen.mtrand
-
-.. automethod:: RandomState.weibull

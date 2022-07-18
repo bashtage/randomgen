@@ -1,6 +1,0 @@
-﻿randomgen.mtrand.RandomState.permutation
-========================================
-
-.. currentmodule:: randomgen.mtrand
-
-.. automethod:: RandomState.permutation

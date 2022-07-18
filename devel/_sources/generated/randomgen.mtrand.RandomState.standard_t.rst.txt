@@ -1,6 +1,0 @@
-﻿randomgen.mtrand.RandomState.standard\_t
-========================================
-
-.. currentmodule:: randomgen.mtrand
-
-.. automethod:: RandomState.standard_t

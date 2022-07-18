@@ -1,6 +1,0 @@
-﻿randomgen.generator.Generator.bit\_generator
-============================================
-
-.. currentmodule:: randomgen.generator
-
-.. autoattribute:: Generator.bit_generator

@@ -1,6 +1,0 @@
-﻿randomgen.mtrand.RandomState.bytes
-==================================
-
-.. currentmodule:: randomgen.mtrand
-
-.. automethod:: RandomState.bytes
