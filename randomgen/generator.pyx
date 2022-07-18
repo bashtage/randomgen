@@ -1244,7 +1244,7 @@ and the trailing dimensions must match exactly so that
         return out.view(complex)
 
 
-def _removed(name: str) -> Callable[[Any,...],None]:
+def _removed(name: str) -> Callable[[Any, Any],None]:
     def f(*args, **kwargs):
         raise NotImplementedError(
             f"{name} has been removed. Use NumPy's Generator"
