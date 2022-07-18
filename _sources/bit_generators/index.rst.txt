@@ -2,7 +2,7 @@ Bit Generators
 --------------
 
 The random values produced by :class:`numpy.random.Generator`
-(and also  :class:`~randomgen.generator.Generator`)
+(and also  ``Generator``)
 are produced by a bit generator.  These bit generators do not directly provide
 random numbers and only contain methods used for seeding, getting or
 setting the state, jumping or advancing the state, and for accessing
