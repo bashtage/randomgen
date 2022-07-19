@@ -202,7 +202,7 @@ cdef class HC128(BitGenerator):
         buf_arr = <uint32_t *>np.PyArray_DATA(buffer)
         for i in range(16):
             buf_arr[i] = self.rng_state.buffer[i]
-        return {"bit_generator": type(self).__name__,
+        return {"bit_generator": fully_qualified_name(self),
                 "state": {"p": p,
                           "q": q,
                           "hc_idx": self.rng_state.hc_idx,
@@ -220,7 +220,7 @@ cdef class HC128(BitGenerator):
         if not isinstance(value, dict):
             raise TypeError("state must be a dict")
         bitgen = value.get("bit_generator", "")
-        if bitgen != type(self).__name__:
+        if bitgen not in (type(self).__name__, fully_qualified_name(self)):
             raise ValueError("state must be for a {0} "
                              "PRNG".format(type(self).__name__))
         state = value["state"]

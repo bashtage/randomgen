@@ -26,12 +26,14 @@ jobs:
           python.version: '3.8'
           coverage: true
           NUMPY: 1.17.0
+        python37_latest:
+          python.version: '3.7'
+        python38_latest:
+          python.version: '3.8'
         python39_latest:
           python.version: '3.9'
         python310_latest:
           python.version: '3.10'
-        python36_latest:
-          python.version: '3.6'
         python38_mid_conda:
           python.version: '3.8'
           use.conda: true

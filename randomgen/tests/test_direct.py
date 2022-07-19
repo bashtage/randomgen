@@ -1154,7 +1154,9 @@ class TestMT19937(Base):
         bit_generator = rs.bit_generator
         state = bit_generator.state
         desired = rs.integers(2**16)
-        tup = (state["bit_generator"], state["state"]["key"], state["state"]["pos"])
+        # Due to changes
+        bg_name = state["bit_generator"].split(".")[-1]
+        tup = (bg_name, state["state"]["key"], state["state"]["pos"])
         bit_generator.state = tup
         actual = rs.integers(2**16)
         assert_equal(actual, desired)

@@ -1332,3 +1332,21 @@ cdef object cont_f(void *func, bitgen_t *state, object size, object lock,
         return randoms
     else:
         return out
+
+
+cdef object fully_qualified_name(instance):
+    """
+    Return the module and class name
+
+    Parameters
+    ----------
+    instance
+        A bit generator instance
+
+    Returns
+    -------
+    str
+        The fully qualified name
+    """
+    typ = type(instance)
+    return f"{typ.__module__}.{typ.__name__}"

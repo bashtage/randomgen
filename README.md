@@ -98,10 +98,10 @@ The RNGs include:
 ## Status
 
 * Builds and passes all tests on:
-  * Linux 32/64 bit, Python 2.7, 3.5, 3.6, 3.7
-  * Linux (ARM/ARM64), Python 3.7
-  * OSX 64-bit, Python 2.7, 3.5, 3.6, 3.7
-  * Windows 32/64 bit, Python 2.7, 3.5, 3.6, 3.7
+  * Linux 32/64 bit, Python 3.7, 3.8, 3.9, 3.10
+  * Linux (ARM/ARM64), Python 3.8
+  * OSX 64-bit, Python 3.9
+  * Windows 32/64 bit, Python 3.7, 3.8, 3.9, 3.10
   * FreeBSD 64-bit
 
 ## Version

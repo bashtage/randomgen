@@ -148,3 +148,6 @@ cdef inline void compute_complex(double *rv_r, double *rv_i, double loc_r,
 
     rv_i[0] = loc_i + scale_i * (rho * rv_r[0] + scale_c * rv_i[0])
     rv_r[0] = loc_r + scale_r * rv_r[0]
+
+
+cdef object fully_qualified_name(instance)

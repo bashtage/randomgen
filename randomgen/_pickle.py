@@ -6,13 +6,12 @@ from randomgen.chacha import ChaCha
 from randomgen.common import BitGenerator
 from randomgen.dsfmt import DSFMT
 from randomgen.efiix64 import EFIIX64
-from randomgen.generator import ExtendedGenerator, Generator
+from randomgen.generator import ExtendedGenerator
 from randomgen.hc128 import HC128
 from randomgen.jsf import JSF
 from randomgen.lxm import LXM
 from randomgen.mt64 import MT64
 from randomgen.mt19937 import MT19937
-from randomgen.mtrand import RandomState
 from randomgen.pcg32 import PCG32
 from randomgen.pcg64 import PCG64, PCG64DXSM, LCG128Mix
 from randomgen.philox import Philox
@@ -54,6 +53,10 @@ BitGenerators: Dict[str, Type[BitGenerator]] = {
     "RDRAND": RDRAND,
 }
 
+# Assign the fully qualified name for future proofness
+for value in list(BitGenerators.values()):
+    BitGenerators[f"{value.__module__}.{value.__name__}"] = value
+
 
 def _get_bitgenerator(bit_generator_name: str) -> Type[BitGenerator]:
     """
@@ -73,29 +76,6 @@ def _decode(name: Union[str, bytes]) -> str:
         return name
     assert isinstance(name, bytes)
     return name.decode("ascii")
-
-
-def __generator_ctor(bit_generator_name: Union[bytes, str] = "MT19937") -> Generator:
-    """
-    Pickling helper function that returns a Generator object
-
-    Parameters
-    ----------
-    bit_generator_name: str
-        String containing the core BitGenerator
-
-    Returns
-    -------
-    rg: Generator
-        Generator using the named core BitGenerator
-    """
-    bit_generator_name = _decode(bit_generator_name)
-    assert isinstance(bit_generator_name, str)
-    bit_generator = _get_bitgenerator(bit_generator_name)
-    with warnings.catch_warnings():
-        warnings.filterwarnings("ignore", category=FutureWarning)
-        bit_gen = bit_generator()
-    return Generator(bit_gen)
 
 
 def __extended_generator_ctor(
@@ -146,28 +126,3 @@ def __bit_generator_ctor(
         warnings.filterwarnings("ignore", category=FutureWarning)
         bit_gen = bit_generator()
     return bit_gen
-
-
-def __randomstate_ctor(
-    bit_generator_name: Union[str, bytes] = "MT19937"
-) -> RandomState:
-    """
-    Pickling helper function that returns a legacy RandomState-like object
-
-    Parameters
-    ----------
-    bit_generator_name: str
-        String containing the core BitGenerator
-
-    Returns
-    -------
-    rs: RandomState
-        Legacy RandomState using the named core BitGenerator
-    """
-    bit_generator_name = _decode(bit_generator_name)
-    assert isinstance(bit_generator_name, str)
-    bit_generator = _get_bitgenerator(bit_generator_name)
-    with warnings.catch_warnings():
-        warnings.filterwarnings("ignore", category=FutureWarning)
-        bit_gen = bit_generator()
-    return RandomState(bit_gen)

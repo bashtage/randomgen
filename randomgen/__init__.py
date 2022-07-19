@@ -2,6 +2,7 @@ import os
 import sys
 from typing import List, Union
 
+from randomgen._register import BitGenerators
 from randomgen.aes import AESCounter
 from randomgen.chacha import ChaCha
 from randomgen.dsfmt import DSFMT
@@ -37,6 +38,7 @@ PKG_TESTS = os.path.join(os.path.dirname(__file__), "tests")
 
 __all__ = [
     "AESCounter",
+    "BitGenerators",
     "ChaCha",
     "DSFMT",
     "EFIIX64",
