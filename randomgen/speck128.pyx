@@ -394,7 +394,7 @@ cdef class SPECK128(BitGenerator):
             New instance of generator jumped iter times
         """
         cdef SPECK128 bit_generator
-        bit_generator = self.__class__(mode=self.mode)
+        bit_generator = self.__class__(seed=self._copy_seed(), mode=self.mode)
         bit_generator.state = self.state
         bit_generator.jump_inplace(iter)
         return bit_generator

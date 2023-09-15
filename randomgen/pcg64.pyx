@@ -482,7 +482,7 @@ cdef class PCG64(BitGenerator):
         """
         cdef PCG64 bit_generator
 
-        bit_generator = self.__class__(mode=self.mode, variant=self.variant)
+        bit_generator = self.__class__(seed=self._copy_seed(), mode=self.mode, variant=self.variant)
         bit_generator.state = self.state
         bit_generator.jump_inplace(iter)
 
@@ -942,7 +942,7 @@ cdef class LCG128Mix(BitGenerator):
         """
         cdef LCG128Mix bit_generator
 
-        bit_generator = self.__class__()
+        bit_generator = self.__class__(seed=self._copy_seed())
         bit_generator.state = self.state
         bit_generator.jump_inplace(iter)
 
@@ -1133,7 +1133,7 @@ cdef class PCG64DXSM(PCG64):
         """
         cdef PCG64DXSM bit_generator
 
-        bit_generator = self.__class__()
+        bit_generator = self.__class__(seed=self._copy_seed())
         bit_generator.state = self.state
         bit_generator.jump_inplace(iter)
 

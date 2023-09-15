@@ -372,7 +372,7 @@ cdef class AESCounter(BitGenerator):
         """
         cdef AESCounter bit_generator
 
-        bit_generator = self.__class__(mode=self.mode)
+        bit_generator = self.__class__(seed=self._copy_seed(), mode=self.mode)
         bit_generator.state = self.state
         bit_generator.jump_inplace(iter)
 

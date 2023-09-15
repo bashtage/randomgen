@@ -50,6 +50,7 @@ cdef class BitGenerator:
     cdef object mode
     cdef readonly object lock
     cdef public object seed_seq
+    cdef object _copy_seed(self)
 
 cdef object benchmark(bitgen_t *bitgen, object lock, Py_ssize_t cnt, object method)
 cdef object random_raw(bitgen_t *bitgen, object lock, object size, object output)

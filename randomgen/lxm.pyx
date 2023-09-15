@@ -250,7 +250,7 @@ cdef class LXM(BitGenerator):
         """
         cdef LXM bit_generator
 
-        bit_generator = self.__class__()
+        bit_generator = self.__class__(seed=self._copy_seed())
         bit_generator.state = self.state
         bit_generator.jump_inplace(iter)
 
