@@ -1,5 +1,5 @@
 #!python
-#cython: binding=True
+
 
 import numpy as np
 cimport numpy as np
@@ -196,7 +196,13 @@ cdef class JSF(BitGenerator):
         if seed_size not in (1, 2, 3) or not isinstance(seed_size, INT_TYPES):
             raise ValueError("seed size must be one of 1, 2, or 3")
         for val, val_name in ((p, "p"), (q, "q"), (r, "r")):
-            if val is not None and not (0<= val <= size-1 and isinstance(val, INT_TYPES)):
+            if (
+                    val is not None and
+                    not (
+                            0<= val <= size-1 and
+                            isinstance(val, INT_TYPES)
+                    )
+            ):
                 raise ValueError("{0} must be an integer between 0 and"
                                  "{1}".format(val_name, size-1))
         self.size = size
@@ -265,7 +271,6 @@ cdef class JSF(BitGenerator):
         if self.seed_seq is not None:
             return
 
-        ub = 2 ** self.size
         if seed is None:
             state = random_entropy(3 * self.size // 32, "auto")
         else:

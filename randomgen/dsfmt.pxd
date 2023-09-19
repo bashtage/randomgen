@@ -1,3 +1,4 @@
+# cython: binding=True, language_level=3
 from randomgen.common cimport *
 
 DEF DSFMT_MEXP = 19937

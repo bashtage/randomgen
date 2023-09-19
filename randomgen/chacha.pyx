@@ -1,5 +1,4 @@
 #!python
-#cython: binding=True
 import numpy as np
 
 from randomgen.common cimport *
@@ -137,7 +136,9 @@ cdef class ChaCha(BitGenerator):
     """
     def __init__(self, seed=None, *, counter=None, key=None, rounds=20, mode=None):
         BitGenerator.__init__(self, seed, mode)
-        self.rng_state = <chacha_state_t *>PyArray_malloc_aligned(sizeof(chacha_state_t))
+        self.rng_state = <chacha_state_t *>PyArray_malloc_aligned(
+            sizeof(chacha_state_t)
+        )
         if rounds % 2 != 0 or rounds <= 0:
             raise ValueError("rounds must be even and >= 2")
         self.rng_state.rounds = rounds
@@ -186,8 +187,6 @@ cdef class ChaCha(BitGenerator):
             raise ValueError("CPU does not support SIMD implementation")
         chacha_use_simd(bool(value))
 
-
-
     def seed(self, seed=None, counter=None, key=None):
         """
         seed(seed=None, counter=None, key=None)
@@ -225,8 +224,6 @@ cdef class ChaCha(BitGenerator):
         The two representation of the counter and key are related through
         array[i] = (value // 2**(64*i)) % 2**64.
         """
-        cdef int i
-
         if seed is not None and key is not None:
             raise ValueError("seed and key cannot be both used")
         if key is None:

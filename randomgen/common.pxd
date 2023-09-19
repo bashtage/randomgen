@@ -1,4 +1,4 @@
-#cython: language_level=3
+# cython: wraparound=False, nonecheck=False, boundscheck=False, cdivision=True, language_level=3
 
 from cpython.pycapsule cimport PyCapsule_New
 from libc.math cimport sqrt
@@ -57,7 +57,9 @@ cdef object random_raw(bitgen_t *bitgen, object lock, object size, object output
 cdef object prepare_cffi(bitgen_t *bitgen)
 cdef object prepare_ctypes(bitgen_t *bitgen)
 cdef int check_constraint(double val, object name, constraint_type cons) except -1
-cdef int check_array_constraint(np.ndarray val, object name, constraint_type cons) except -1
+cdef int check_array_constraint(
+        np.ndarray val, object name, constraint_type cons
+) except -1
 cdef object wrap_int(object val, object bits)
 cdef object check_state_array(object arr, np.npy_intp required_len,
                               int required_bits, object name)
@@ -70,7 +72,9 @@ cdef extern from "src/aligned_malloc/aligned_malloc.h":
     cdef void *PyArray_calloc_aligned(size_t n, size_t s)
     cdef void PyArray_free_aligned(void *p)
 
-ctypedef double (*random_double_fill)(bitgen_t *state, np.npy_intp count, double* out) nogil
+ctypedef double (*random_double_fill)(
+        bitgen_t *state, np.npy_intp count, double* out
+) nogil
 ctypedef double (*random_double_0)(void *state) nogil
 ctypedef double (*random_double_1)(void *state, double a) nogil
 ctypedef double (*random_double_2)(void *state, double a, double b) nogil
@@ -97,13 +101,21 @@ cdef double kahan_sum(double *darr, np.npy_intp n)
 cdef inline double uint64_to_double(uint64_t rnd) nogil:
     return (rnd >> 11) * (1.0 / 9007199254740992.0)
 
-cdef object double_fill(void *func, bitgen_t *state, object size, object lock, object out)
+cdef object double_fill(
+        void *func, bitgen_t *state, object size, object lock, object out
+)
 
-cdef object float_fill(void *func, bitgen_t *state, object size, object lock, object out)
+cdef object float_fill(
+        void *func, bitgen_t *state, object size, object lock, object out
+)
 
-cdef object float_fill_from_double(void *func, bitgen_t *state, object size, object lock, object out)
+cdef object float_fill_from_double(
+        void *func, bitgen_t *state, object size, object lock, object out
+)
 
-cdef np.ndarray int_to_array(object value, object name, object bits, object uint_size)
+cdef np.ndarray int_to_array(
+        object value, object name, object bits, object uint_size
+)
 
 cdef view_little_endian(arr, dtype)
 
@@ -129,18 +141,40 @@ cdef object cont_f(void *func, bitgen_t *state, object size, object lock,
                    object a, object a_name, constraint_type a_constraint,
                    object out)
 
-cdef object cont_broadcast_3(void *func, void *state, object size, object lock,
-                             np.ndarray a_arr, object a_name, constraint_type a_constraint,
-                             np.ndarray b_arr, object b_name, constraint_type b_constraint,
-                             np.ndarray c_arr, object c_name, constraint_type c_constraint)
+cdef object cont_broadcast_3(void *func,
+                             void *state,
+                             object size, object lock,
+                             np.ndarray a_arr,
+                             object a_name,
+                             constraint_type a_constraint,
+                             np.ndarray b_arr,
+                             object b_name,
+                             constraint_type b_constraint,
+                             np.ndarray c_arr,
+                             object c_name,
+                             constraint_type c_constraint)
 
-cdef object discrete_broadcast_iii(void *func, void *state, object size, object lock,
-                                   np.ndarray a_arr, object a_name, constraint_type a_constraint,
-                                   np.ndarray b_arr, object b_name, constraint_type b_constraint,
-                                   np.ndarray c_arr, object c_name, constraint_type c_constraint)
+cdef object discrete_broadcast_iii(void *func,
+                                   void *state,
+                                   object size,
+                                   object lock,
+                                   np.ndarray a_arr,
+                                   object a_name,
+                                   constraint_type a_constraint,
+                                   np.ndarray b_arr,
+                                   object b_name,
+                                   constraint_type b_constraint,
+                                   np.ndarray c_arr,
+                                   object c_name,
+                                   constraint_type c_constraint)
 
-cdef inline void compute_complex(double *rv_r, double *rv_i, double loc_r,
-                                 double loc_i, double var_r, double var_i, double rho) nogil:
+cdef inline void compute_complex(double *rv_r,
+                                 double *rv_i,
+                                 double loc_r,
+                                 double loc_i,
+                                 double var_r,
+                                 double var_i,
+                                 double rho) nogil:
     cdef double scale_c, scale_i, scale_r
 
     scale_c = sqrt(1 - rho * rho)

@@ -1,5 +1,4 @@
 #!python
-#cython: wraparound=False, nonecheck=False, boundscheck=False, cdivision=True, language_level=3
 import sys
 from collections import namedtuple
 try:
