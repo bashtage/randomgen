@@ -13,7 +13,7 @@
     
     
       
-        <title>RandomGen v1.23.2 (+8)</title>
+        <title>RandomGen v1.23.2 (+14)</title>
       
     
     
@@ -80,7 +80,7 @@
 
 <header class="md-header" data-md-component="header">
   <nav class="md-header__inner md-grid" aria-label="Header">
-    <a href="#" title="RandomGen v1.23.2 (+8)" class="md-header__button md-logo" aria-label="RandomGen v1.23.2 (+8)" data-md-component="logo">
+    <a href="#" title="RandomGen v1.23.2 (+14)" class="md-header__button md-logo" aria-label="RandomGen v1.23.2 (+14)" data-md-component="logo">
       <img src="_static/casino.svg" alt="logo">
     </a>
     <label class="md-header__button md-icon" for="__drawer">
@@ -90,7 +90,7 @@
       <div class="md-header__ellipsis">
         <div class="md-header__topic">
           <span class="md-ellipsis">
-            RandomGen v1.23.2 (+8)
+            RandomGen v1.23.2 (+14)
           </span>
         </div>
         <div class="md-header__topic" data-md-component="header-topic">
@@ -177,10 +177,10 @@
 
 <nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
   <label class="md-nav__title" for="__drawer">
-    <a href="#" title="RandomGen v1.23.2 (+8)" class="md-nav__button md-logo" aria-label="RandomGen v1.23.2 (+8)" data-md-component="logo">
+    <a href="#" title="RandomGen v1.23.2 (+14)" class="md-nav__button md-logo" aria-label="RandomGen v1.23.2 (+14)" data-md-component="logo">
       <img src="_static/casino.svg" alt="logo">
     </a>
-    RandomGen v1.23.2 (+8)
+    RandomGen v1.23.2 (+14)
   </label>
   
     <div class="md-nav__source">
@@ -603,11 +603,11 @@
 randomgen has been substantially merged into NumPy as of 1.17. <a class="reference internal" href="evolution.html#evolution"><span class="std std-ref">Evolution of randomgen</span></a>
 details how randomgen has changed since it was incorporated into NumPy.</p>
 </div>
-<h1 id="randomgen">RandomGen<a class="headerlink" href="#randomgen" title="Permalink to this heading">¶</a></h1>
+<h1 id="randomgen">RandomGen<a class="headerlink" href="#randomgen" title="Link to this heading">¶</a></h1>
 <p>This package contains additional bit generators for NumPy’s
 <a class="reference external" href="https://numpy.org/doc/stable/reference/random/generator.html#numpy.random.Generator" title="(in NumPy v1.26)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Generator</span></code></a> and an <a class="reference internal" href="extended-generator.html#randomgen.generator.ExtendedGenerator" title="randomgen.generator.ExtendedGenerator (Python class) — Additional random value generator using a bit generator source."><code class="xref py py-class docutils literal notranslate"><span class="pre">ExtendedGenerator</span></code></a>
 exposing methods not in <a class="reference external" href="https://numpy.org/doc/stable/reference/random/generator.html#numpy.random.Generator" title="(in NumPy v1.26)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Generator</span></code></a>.</p>
-<h2 id="introduction">Introduction<a class="headerlink" href="#introduction" title="Permalink to this heading">¶</a></h2>
+<h2 id="introduction">Introduction<a class="headerlink" href="#introduction" title="Link to this heading">¶</a></h2>
 <p>randomgen supplies many bit generators that can be used with
 <a class="reference external" href="https://numpy.org/doc/stable/reference/random/generator.html#numpy.random.Generator" title="(in NumPy v1.26)"><code class="xref py py-class docutils literal notranslate"><span class="pre">numpy.random.Generator</span></code></a>.  It also supports additional variants
 of the bit generators included in NumPy.</p>
@@ -622,14 +622,14 @@ of the bit generators included in NumPy.</p>
 <span class="n">rg</span><span class="o">.</span><span class="n">random</span><span class="p">()</span>
 </code></pre></div>
 </div>
-<h2 id="history">History<a class="headerlink" href="#history" title="Permalink to this heading">¶</a></h2>
+<h2 id="history">History<a class="headerlink" href="#history" title="Link to this heading">¶</a></h2>
 <p>randomgen began as a project to modernize NumPy’s <a class="reference external" href="https://numpy.org/doc/stable/reference/random/legacy.html#numpy.random.RandomState" title="(in NumPy v1.26)"><code class="xref py py-class docutils literal notranslate"><span class="pre">RandomState</span></code></a>.
 It has succeed at this goal. Some of the components on randomgen were deemed too
 exotic to include with NumPy and so have been retained in randomgen.  Most of these
 are bit generators or extended features of bit generators included with NumPy. In addition
 <a class="reference internal" href="extended-generator.html#randomgen.generator.ExtendedGenerator" title="randomgen.generator.ExtendedGenerator (Python class) — Additional random value generator using a bit generator source."><code class="xref py py-class docutils literal notranslate"><span class="pre">randomgen.generator.ExtendedGenerator</span></code></a> exposes some methods that are not included in
 <a class="reference external" href="https://numpy.org/doc/stable/reference/random/generator.html#numpy.random.Generator" title="(in NumPy v1.26)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Generator</span></code></a>.</p>
-<h3 id="what-s-new-or-different">What’s New or Different<a class="headerlink" href="#what-s-new-or-different" title="Permalink to this heading">¶</a></h3>
+<h3 id="what-s-new-or-different">What’s New or Different<a class="headerlink" href="#what-s-new-or-different" title="Link to this heading">¶</a></h3>
 <ul class="simple">
 <li><p>An <a class="reference internal" href="extended-generator.html#randomgen.generator.ExtendedGenerator" title="randomgen.generator.ExtendedGenerator (Python class) — Additional random value generator using a bit generator source."><code class="xref py py-class docutils literal notranslate"><span class="pre">ExtendedGenerator</span></code></a> containing methods not in <a class="reference external" href="https://numpy.org/doc/stable/reference/random/generator.html#numpy.random.Generator" title="(in NumPy v1.26)"><code class="xref py py-class docutils literal notranslate"><span class="pre">numpy.random.Generator</span></code></a>
 that can be used alongside NumPy’s <a class="reference external" href="https://numpy.org/doc/stable/reference/random/generator.html#numpy.random.Generator" title="(in NumPy v1.26)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Generator</span></code></a>.</p></li>
@@ -643,7 +643,7 @@ that can be used as an input for <a class="reference external" href="https://num
 </ul>
 <p>See <a class="reference internal" href="new-or-different.html#new-or-different"><span class="std std-ref">What’s New or Different</span></a> for a complete list of improvements and
 differences.</p>
-<h3 id="parallel-generation">Parallel Generation<a class="headerlink" href="#parallel-generation" title="Permalink to this heading">¶</a></h3>
+<h3 id="parallel-generation">Parallel Generation<a class="headerlink" href="#parallel-generation" title="Link to this heading">¶</a></h3>
 <p>The included generators can be used in parallel, distributed applications in
 one of five ways:</p>
 <ul class="simple">
@@ -653,7 +653,7 @@ one of five ways:</p>
 <li><p><a class="reference internal" href="parallel.html#jumping"><span class="std std-ref">Jumping the PRNG state</span></a></p></li>
 <li><p><a class="reference internal" href="parallel.html#weyl-sequences"><span class="std std-ref">Weyl Sequences</span></a></p></li>
 </ul>
-<h2 id="supported-generators">Supported Generators<a class="headerlink" href="#supported-generators" title="Permalink to this heading">¶</a></h2>
+<h2 id="supported-generators">Supported Generators<a class="headerlink" href="#supported-generators" title="Link to this heading">¶</a></h2>
 <p>The main innovation is the inclusion of a number of alternative pseudo-random number
 generators, ‘in addition’ to the standard PRNG in NumPy.  The included PRNGs are:</p>
 <ul class="simple">
@@ -696,7 +696,7 @@ parallel applications. See the documentation for
 about these PRNGs is available at the
 <a class="reference external" href="https://prng.di.unimi.it/">xorshift, xoroshiro and xoshiro authors’ page</a>.</p></li>
 </ul>
-<h2 id="random-generator">Random Generator<a class="headerlink" href="#random-generator" title="Permalink to this heading">¶</a></h2>
+<h2 id="random-generator">Random Generator<a class="headerlink" href="#random-generator" title="Link to this heading">¶</a></h2>
 <div class="toctree-wrapper compound">
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="extended-generator.html">Extended Generator</a></li>
@@ -704,7 +704,7 @@ about these PRNGs is available at the
 <li class="toctree-l1"><a class="reference internal" href="future.html">Future Plans</a></li>
 </ul>
 </div>
-<h2 id="bit-generators">Bit Generators<a class="headerlink" href="#bit-generators" title="Permalink to this heading">¶</a></h2>
+<h2 id="bit-generators">Bit Generators<a class="headerlink" href="#bit-generators" title="Link to this heading">¶</a></h2>
 <div class="toctree-wrapper compound">
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="bit_generators/index.html">Bit Generators</a><ul>
@@ -762,7 +762,7 @@ about these PRNGs is available at the
 </li>
 </ul>
 </div>
-<h2 id="new-features">New Features<a class="headerlink" href="#new-features" title="Permalink to this heading">¶</a></h2>
+<h2 id="new-features">New Features<a class="headerlink" href="#new-features" title="Link to this heading">¶</a></h2>
 <div class="toctree-wrapper compound">
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="parallel.html">Parallel Applications</a><ul>
@@ -804,7 +804,7 @@ about these PRNGs is available at the
 <li class="toctree-l1"><a class="reference internal" href="references.html">References</a></li>
 </ul>
 </div>
-<h2 id="removed-features">Removed Features<a class="headerlink" href="#removed-features" title="Permalink to this heading">¶</a></h2>
+<h2 id="removed-features">Removed Features<a class="headerlink" href="#removed-features" title="Link to this heading">¶</a></h2>
 <div class="toctree-wrapper compound">
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="generator.html">Random Generation</a><ul>
@@ -817,7 +817,7 @@ about these PRNGs is available at the
 </li>
 </ul>
 </div>
-<h3 id="changes">Changes<a class="headerlink" href="#changes" title="Permalink to this heading">¶</a></h3>
+<h3 id="changes">Changes<a class="headerlink" href="#changes" title="Link to this heading">¶</a></h3>
 <div class="toctree-wrapper compound">
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="evolution.html">Evolution of randomgen</a><ul>
@@ -851,7 +851,7 @@ about these PRNGs is available at the
 </li>
 </ul>
 </div>
-<h3 id="indices-and-tables">Indices and tables<a class="headerlink" href="#indices-and-tables" title="Permalink to this heading">¶</a></h3>
+<h3 id="indices-and-tables">Indices and tables<a class="headerlink" href="#indices-and-tables" title="Link to this heading">¶</a></h3>
 <ul class="simple">
 <li><p><a class="reference internal" href="genindex.html"><span class="std std-ref">Index</span></a></p></li>
 <li><p><a class="reference internal" href="py-modindex.html"><span class="std std-ref">Module Index</span></a></p></li>
@@ -909,7 +909,7 @@ about these PRNGs is available at the
   
     Created using
     <a href="https://www.sphinx-doc.org/" target="_blank" rel="noopener">Sphinx</a>
-    7.1.2.
+    7.2.6.
      and
     <a href="https://github.com/jbms/sphinx-immaterial/" target="_blank" rel="noopener">Sphinx-Immaterial</a>
   

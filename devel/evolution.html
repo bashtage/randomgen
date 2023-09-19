@@ -13,7 +13,7 @@
     
     
       
-        <title>Evolution of randomgen - RandomGen v1.23.2 (+8)</title>
+        <title>Evolution of randomgen - RandomGen v1.23.2 (+14)</title>
       
     
     
@@ -80,7 +80,7 @@
 
 <header class="md-header" data-md-component="header">
   <nav class="md-header__inner md-grid" aria-label="Header">
-    <a href="index.html" title="RandomGen v1.23.2 (+8)" class="md-header__button md-logo" aria-label="RandomGen v1.23.2 (+8)" data-md-component="logo">
+    <a href="index.html" title="RandomGen v1.23.2 (+14)" class="md-header__button md-logo" aria-label="RandomGen v1.23.2 (+14)" data-md-component="logo">
       <img src="_static/casino.svg" alt="logo">
     </a>
     <label class="md-header__button md-icon" for="__drawer">
@@ -90,7 +90,7 @@
       <div class="md-header__ellipsis">
         <div class="md-header__topic">
           <span class="md-ellipsis">
-            RandomGen v1.23.2 (+8)
+            RandomGen v1.23.2 (+14)
           </span>
         </div>
         <div class="md-header__topic" data-md-component="header-topic">
@@ -177,10 +177,10 @@
 
 <nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
   <label class="md-nav__title" for="__drawer">
-    <a href="index.html" title="RandomGen v1.23.2 (+8)" class="md-nav__button md-logo" aria-label="RandomGen v1.23.2 (+8)" data-md-component="logo">
+    <a href="index.html" title="RandomGen v1.23.2 (+14)" class="md-nav__button md-logo" aria-label="RandomGen v1.23.2 (+14)" data-md-component="logo">
       <img src="_static/casino.svg" alt="logo">
     </a>
-    RandomGen v1.23.2 (+8)
+    RandomGen v1.23.2 (+14)
   </label>
   
     <div class="md-nav__source">
@@ -583,12 +583,12 @@
                   
 
 
-<h1 id="evolution-of-randomgen"><span id="evolution"></span>Evolution of randomgen<a class="headerlink" href="#evolution-of-randomgen" title="Permalink to this heading">¶</a></h1>
-<h2 id="changes-in-1-23">Changes in 1.23<a class="headerlink" href="#changes-in-1-23" title="Permalink to this heading">¶</a></h2>
+<h1 id="evolution-of-randomgen"><span id="evolution"></span>Evolution of randomgen<a class="headerlink" href="#evolution-of-randomgen" title="Link to this heading">¶</a></h1>
+<h2 id="changes-in-1-23">Changes in 1.23<a class="headerlink" href="#changes-in-1-23" title="Link to this heading">¶</a></h2>
 <p><code class="docutils literal notranslate"><span class="pre">Generator</span></code> and <code class="docutils literal notranslate"><span class="pre">RandomState</span></code> have been <strong>removed</strong>.</p>
 <p>Use <a class="reference external" href="https://numpy.org/doc/stable/reference/random/generator.html#numpy.random.Generator" title="(in NumPy v1.26)"><code class="xref py py-class docutils literal notranslate"><span class="pre">numpy.random.Generator</span></code></a> if possible, or <a class="reference external" href="https://numpy.org/doc/stable/reference/random/legacy.html#numpy.random.RandomState" title="(in NumPy v1.26)"><code class="xref py py-class docutils literal notranslate"><span class="pre">numpy.random.RandomState</span></code></a>
 if you face legacy constraints.</p>
-<h2 id="changes-in-1-19">Changes in 1.19<a class="headerlink" href="#changes-in-1-19" title="Permalink to this heading">¶</a></h2>
+<h2 id="changes-in-1-19">Changes in 1.19<a class="headerlink" href="#changes-in-1-19" title="Link to this heading">¶</a></h2>
 <p><code class="docutils literal notranslate"><span class="pre">Generator</span></code> and <code class="docutils literal notranslate"><span class="pre">RandomState</span></code> have been
 officially deprecated, and will warn with a <code class="docutils literal notranslate"><span class="pre">FutureWarning</span></code> about their removal. They will
 also receive virtually no maintenance. It is now time to move to NumPy’s <a class="reference external" href="https://numpy.org/doc/stable/reference/random/generator.html#numpy.random.Generator" title="(in NumPy v1.26)"><code class="xref py py-class docutils literal notranslate"><span class="pre">numpy.random.Generator</span></code></a>
@@ -602,7 +602,7 @@ to <a class="reference internal" href="extended-generator.html#randomgen.generat
 </ul>
 <p>There are no plans to remove any of the bit generators, e.g., <a class="reference internal" href="bit_generators/aesctr.html#randomgen.aes.AESCounter" title="randomgen.aes.AESCounter (Python class) — Container for the AES Counter pseudo-random number generator."><code class="xref py py-class docutils literal notranslate"><span class="pre">AESCounter</span></code></a>,
 <a class="reference internal" href="bit_generators/threefry.html#randomgen.threefry.ThreeFry" title="randomgen.threefry.ThreeFry (Python class) — Container for the ThreeFry family of pseudo-random number generators."><code class="xref py py-class docutils literal notranslate"><span class="pre">ThreeFry</span></code></a>, or <a class="reference internal" href="bit_generators/pcg64.html#randomgen.pcg64.PCG64" title="randomgen.pcg64.PCG64 (Python class) — Container for the PCG-64 pseudo-random number generator."><code class="xref py py-class docutils literal notranslate"><span class="pre">PCG64</span></code></a>.</p>
-<h2 id="changes-between-1-16-and-1-18">Changes between 1.16 and 1.18<a class="headerlink" href="#changes-between-1-16-and-1-18" title="Permalink to this heading">¶</a></h2>
+<h2 id="changes-between-1-16-and-1-18">Changes between 1.16 and 1.18<a class="headerlink" href="#changes-between-1-16-and-1-18" title="Link to this heading">¶</a></h2>
 <p>There are many changes between v1.16.x and v1.18.x. These reflect API
 decision taken in conjunction with NumPy in preparation of the core
 of <code class="docutils literal notranslate"><span class="pre">randomgen</span></code> being used as the preferred random number generator in
@@ -689,7 +689,7 @@ like <code class="docutils literal notranslate"><span class="pre">brng</span></c
   
     Created using
     <a href="https://www.sphinx-doc.org/" target="_blank" rel="noopener">Sphinx</a>
-    7.1.2.
+    7.2.6.
      and
     <a href="https://github.com/jbms/sphinx-immaterial/" target="_blank" rel="noopener">Sphinx-Immaterial</a>
   

@@ -13,7 +13,7 @@
     
     
       
-        <title>Writing a BitGenerator - RandomGen v1.23.2 (+8)</title>
+        <title>Writing a BitGenerator - RandomGen v1.23.2 (+14)</title>
       
     
     
@@ -81,7 +81,7 @@
 
 <header class="md-header" data-md-component="header">
   <nav class="md-header__inner md-grid" aria-label="Header">
-    <a href="index.html" title="RandomGen v1.23.2 (+8)" class="md-header__button md-logo" aria-label="RandomGen v1.23.2 (+8)" data-md-component="logo">
+    <a href="index.html" title="RandomGen v1.23.2 (+14)" class="md-header__button md-logo" aria-label="RandomGen v1.23.2 (+14)" data-md-component="logo">
       <img src="_static/casino.svg" alt="logo">
     </a>
     <label class="md-header__button md-icon" for="__drawer">
@@ -91,7 +91,7 @@
       <div class="md-header__ellipsis">
         <div class="md-header__topic">
           <span class="md-ellipsis">
-            RandomGen v1.23.2 (+8)
+            RandomGen v1.23.2 (+14)
           </span>
         </div>
         <div class="md-header__topic" data-md-component="header-topic">
@@ -178,10 +178,10 @@
 
 <nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
   <label class="md-nav__title" for="__drawer">
-    <a href="index.html" title="RandomGen v1.23.2 (+8)" class="md-nav__button md-logo" aria-label="RandomGen v1.23.2 (+8)" data-md-component="logo">
+    <a href="index.html" title="RandomGen v1.23.2 (+14)" class="md-nav__button md-logo" aria-label="RandomGen v1.23.2 (+14)" data-md-component="logo">
       <img src="_static/casino.svg" alt="logo">
     </a>
-    RandomGen v1.23.2 (+8)
+    RandomGen v1.23.2 (+14)
   </label>
   
     <div class="md-nav__source">
@@ -622,11 +622,11 @@
                   
 
 
-<h1 id="Writing-a-BitGenerator">Writing a BitGenerator<a class="headerlink" href="#Writing-a-BitGenerator" title="Permalink to this heading">¶</a></h1>
+<h1 id="Writing-a-BitGenerator">Writing a BitGenerator<a class="headerlink" href="#Writing-a-BitGenerator" title="Link to this heading">¶</a></h1>
 <p>The standard method to write a bit generator involves writing a Cython <code class="docutils literal notranslate"><span class="pre">pyx</span></code> file that wraps some C source code containing a high-performance implementation of a Pseudo RNG. This leads to best-case performance without creating any external dependencies.</p>
 <p><code class="docutils literal notranslate"><span class="pre">UserBitGenerator</span></code> provides a simple wrapper class that allows users to write bit generators in pure Python or, if performance is an issue, using Cython or by accessing functions in a compiled library (e.g., a DLL).</p>
 <p>Here we examine the steps needed to write a pure Python bit generator and higher-performance generator using Cython.</p>
-<h2 id="Using-Python">Using Python<a class="headerlink" href="#Using-Python" title="Permalink to this heading">¶</a></h2>
+<h2 id="Using-Python">Using Python<a class="headerlink" href="#Using-Python" title="Link to this heading">¶</a></h2>
 <p>The example here begins by writing a class that implements the PCG64 bit generator using the XSL-RR output transformation. While this is not a complete implementation (it does not support <code class="docutils literal notranslate"><span class="pre">advance</span></code> or <code class="docutils literal notranslate"><span class="pre">seed</span></code>), it is simple. The key to understanding PCG is that the underlying state is updated using a <a class="reference external" href="https://en.wikipedia.org/wiki/Linear_congruential_generator">Linear Congruential Generator (LCG)</a> that uses a 128-bit state, multiplier and increment. The state evolves according to</p>
 <div class="math notranslate nohighlight">
 \[s_{n+1} = m s_{n} + i\]</div>
@@ -810,7 +810,7 @@ After: 9405893610231781608176235507540826829
  &#39;inc&#39;: 87136372517582989555478159403783844777}
 </pre></div></div>
 </div>
-<h3 id="Performance">Performance<a class="headerlink" href="#Performance" title="Permalink to this heading">¶</a></h3>
+<h3 id="Performance">Performance<a class="headerlink" href="#Performance" title="Link to this heading">¶</a></h3>
 <p>We can time <code class="docutils literal notranslate"><span class="pre">random_raw</span></code> to see how fast (<strong>slow</strong>) the pure python version is. It is about 3 orders-of-magnitude (1000x) slower than the C implementation.</p>
 <div class="nbinput docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span><code>[5]:
@@ -830,7 +830,7 @@ After: 9405893610231781608176235507540826829
 4.55 µs ± 21.2 ns per loop (mean ± std. dev. of 7 runs, 100,000 loops each)
 </pre></div></div>
 </div>
-<h2 id="Using-numba">Using numba<a class="headerlink" href="#Using-numba" title="Permalink to this heading">¶</a></h2>
+<h2 id="Using-numba">Using numba<a class="headerlink" href="#Using-numba" title="Link to this heading">¶</a></h2>
 <p>A bit generator implemented in Numba can be used through the <code class="docutils literal notranslate"><span class="pre">UserBitGenerator.from_cfunc</span></code> interface. The block below implements the JSF generator using numba.</p>
 <p>The key outputs of the manager class are <code class="docutils literal notranslate"><span class="pre">next_64</span></code>, <code class="docutils literal notranslate"><span class="pre">next_32</span></code>, and <code class="docutils literal notranslate"><span class="pre">next_double</span></code>, which are all decorated using numba’s <code class="docutils literal notranslate"><span class="pre">&#64;cfunc</span></code>.</p>
 <div class="nbinput nblast docutils container">
@@ -1100,7 +1100,7 @@ Notice has_uint is now 1
  &#39;uinteger&#39;: 3315941531}
 </pre></div></div>
 </div>
-<h3 id="id1">Performance<a class="headerlink" href="#id1" title="Permalink to this heading">¶</a></h3>
+<h3 id="id1">Performance<a class="headerlink" href="#id1" title="Link to this heading">¶</a></h3>
 <p>We can use <code class="docutils literal notranslate"><span class="pre">random_raw</span></code> function to assess the performance and compare it to the C-implementation <code class="docutils literal notranslate"><span class="pre">JSF</span></code>. It is about 6% slower which is an impressive outcome.</p>
 <div class="nbinput docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span><code>[10]:
@@ -1299,7 +1299,7 @@ array([ 3814417803339974021, 15780814468893899944, 17400468283504521969,
   
     Created using
     <a href="https://www.sphinx-doc.org/" target="_blank" rel="noopener">Sphinx</a>
-    7.1.2.
+    7.2.6.
      and
     <a href="https://github.com/jbms/sphinx-immaterial/" target="_blank" rel="noopener">Sphinx-Immaterial</a>
   

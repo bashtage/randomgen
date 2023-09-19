@@ -13,7 +13,7 @@
     
     
       
-        <title>SPECK Counter-based RNG - RandomGen v1.23.2 (+8)</title>
+        <title>SPECK Counter-based RNG - RandomGen v1.23.2 (+14)</title>
       
     
     
@@ -80,7 +80,7 @@
 
 <header class="md-header" data-md-component="header">
   <nav class="md-header__inner md-grid" aria-label="Header">
-    <a href="../index.html" title="RandomGen v1.23.2 (+8)" class="md-header__button md-logo" aria-label="RandomGen v1.23.2 (+8)" data-md-component="logo">
+    <a href="../index.html" title="RandomGen v1.23.2 (+14)" class="md-header__button md-logo" aria-label="RandomGen v1.23.2 (+14)" data-md-component="logo">
       <img src="../_static/casino.svg" alt="logo">
     </a>
     <label class="md-header__button md-icon" for="__drawer">
@@ -90,7 +90,7 @@
       <div class="md-header__ellipsis">
         <div class="md-header__topic">
           <span class="md-ellipsis">
-            RandomGen v1.23.2 (+8)
+            RandomGen v1.23.2 (+14)
           </span>
         </div>
         <div class="md-header__topic" data-md-component="header-topic">
@@ -177,10 +177,10 @@
 
 <nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
   <label class="md-nav__title" for="__drawer">
-    <a href="../index.html" title="RandomGen v1.23.2 (+8)" class="md-nav__button md-logo" aria-label="RandomGen v1.23.2 (+8)" data-md-component="logo">
+    <a href="../index.html" title="RandomGen v1.23.2 (+14)" class="md-nav__button md-logo" aria-label="RandomGen v1.23.2 (+14)" data-md-component="logo">
       <img src="../_static/casino.svg" alt="logo">
     </a>
-    RandomGen v1.23.2 (+8)
+    RandomGen v1.23.2 (+14)
   </label>
   
     <div class="md-nav__source">
@@ -1621,10 +1621,10 @@
                   
 
 
-<h1 id="module-randomgen.speck128"><span id="speck-counter-based-rng"></span>SPECK Counter-based RNG<a class="headerlink" href="#module-randomgen.speck128" title="Permalink to this heading">¶</a></h1>
+<h1 id="module-randomgen.speck128"><span id="speck-counter-based-rng"></span>SPECK Counter-based RNG<a class="headerlink" href="#module-randomgen.speck128" title="Link to this heading">¶</a></h1>
 <dl class="py class objdesc">
 <dt class="sig sig-object highlight sig-wrap py" id="randomgen.speck128.SPECK128">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">randomgen.speck128.</span></span><span class="sig-name descname"><span class="pre">SPECK128</span></span><span class="sig-paren">(</span><span class="sig-param-decl"><em class="sig-param"><a class="n reference internal" href="#randomgen.speck128.SPECK128.__init__.seed" title="randomgen.speck128.SPECK128.__init__.seed (Python parameter) — Entropy initializing the pseudo-random number generator. Can be an integer in [0, 2**256), a SeedSequence instance or None (the default). If seed is None, then  data is read from /dev/urandom (or the Windows analog) if available. If unavailable, a hash of the time and process ID is used."><span class="n"><span class="pre">seed</span></span></a><span class="o"><span class="pre">=</span></span><code class="code python default_value docutils literal highlight highlight-python"><span class="kc">None</span></code></em>, </span><span class="sig-param-decl"><em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, </span><span class="sig-param-decl"><em class="sig-param"><a class="n reference internal" href="#randomgen.speck128.SPECK128.__init__.counter" title="randomgen.speck128.SPECK128.__init__.counter (Python parameter) — Counter to use in the SPECK128 state. Can be either a Python int in [0, 2**128) or a 2-element uint64 array. If not provided, the counter is initialized at 0."><span class="n"><span class="pre">counter</span></span></a><span class="o"><span class="pre">=</span></span><code class="code python default_value docutils literal highlight highlight-python"><span class="kc">None</span></code></em>, </span><span class="sig-param-decl"><em class="sig-param"><a class="n reference internal" href="#randomgen.speck128.SPECK128.__init__.key" title="randomgen.speck128.SPECK128.__init__.key (Python parameter) — Key to use in the SPECK128 state. Unlike seed, which is run through another RNG before use, the value in key is directly set. Can be either a Python int in [0, 2**256) or a 4-element uint64 array. key and seed cannot both be used."><span class="n"><span class="pre">key</span></span></a><span class="o"><span class="pre">=</span></span><code class="code python default_value docutils literal highlight highlight-python"><span class="kc">None</span></code></em>, </span><span class="sig-param-decl"><em class="sig-param"><a class="n reference internal" href="#randomgen.speck128.SPECK128.__init__.rounds" title="randomgen.speck128.SPECK128.__init__.rounds (Python parameter) — Number of rounds of the SPECK algorithm to run. The default value 34 is the official value used in encryption. Reduced-round variant might (untested) perform well statistically with improved performance."><span class="n"><span class="pre">rounds</span></span></a><span class="o"><span class="pre">=</span></span><code class="code python default_value docutils literal highlight highlight-python"><span class="mi">34</span></code></em>, </span><span class="sig-param-decl"><em class="sig-param"><a class="n reference internal" href="#randomgen.speck128.SPECK128.__init__.mode" title="randomgen.speck128.SPECK128.__init__.mode (Python parameter) — The seeding mode to use. &quot;legacy&quot; uses the legacy SplitMix64-based initialization. &quot;sequence&quot; uses a SeedSequence to transforms the seed into an initial state.  None defaults to &quot;sequence&quot;."><span class="n"><span class="pre">mode</span></span></a><span class="o"><span class="pre">=</span></span><code class="code python default_value docutils literal highlight highlight-python"><span class="kc">None</span></code></em></span><span class="sig-paren">)</span><a class="headerlink" href="#randomgen.speck128.SPECK128" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">randomgen.speck128.</span></span><span class="sig-name descname"><span class="pre">SPECK128</span></span><span class="sig-paren">(</span><span class="sig-param-decl"><em class="sig-param"><a class="n reference internal" href="#randomgen.speck128.SPECK128.__init__.seed" title="randomgen.speck128.SPECK128.__init__.seed (Python parameter) — Entropy initializing the pseudo-random number generator. Can be an integer in [0, 2**256), a SeedSequence instance or None (the default). If seed is None, then  data is read from /dev/urandom (or the Windows analog) if available. If unavailable, a hash of the time and process ID is used."><span class="n"><span class="pre">seed</span></span></a><span class="o"><span class="pre">=</span></span><code class="code python default_value docutils literal highlight highlight-python"><span class="kc">None</span></code></em>, </span><span class="sig-param-decl"><em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, </span><span class="sig-param-decl"><em class="sig-param"><a class="n reference internal" href="#randomgen.speck128.SPECK128.__init__.counter" title="randomgen.speck128.SPECK128.__init__.counter (Python parameter) — Counter to use in the SPECK128 state. Can be either a Python int in [0, 2**128) or a 2-element uint64 array. If not provided, the counter is initialized at 0."><span class="n"><span class="pre">counter</span></span></a><span class="o"><span class="pre">=</span></span><code class="code python default_value docutils literal highlight highlight-python"><span class="kc">None</span></code></em>, </span><span class="sig-param-decl"><em class="sig-param"><a class="n reference internal" href="#randomgen.speck128.SPECK128.__init__.key" title="randomgen.speck128.SPECK128.__init__.key (Python parameter) — Key to use in the SPECK128 state. Unlike seed, which is run through another RNG before use, the value in key is directly set. Can be either a Python int in [0, 2**256) or a 4-element uint64 array. key and seed cannot both be used."><span class="n"><span class="pre">key</span></span></a><span class="o"><span class="pre">=</span></span><code class="code python default_value docutils literal highlight highlight-python"><span class="kc">None</span></code></em>, </span><span class="sig-param-decl"><em class="sig-param"><a class="n reference internal" href="#randomgen.speck128.SPECK128.__init__.rounds" title="randomgen.speck128.SPECK128.__init__.rounds (Python parameter) — Number of rounds of the SPECK algorithm to run. The default value 34 is the official value used in encryption. Reduced-round variant might (untested) perform well statistically with improved performance."><span class="n"><span class="pre">rounds</span></span></a><span class="o"><span class="pre">=</span></span><code class="code python default_value docutils literal highlight highlight-python"><span class="mi">34</span></code></em>, </span><span class="sig-param-decl"><em class="sig-param"><a class="n reference internal" href="#randomgen.speck128.SPECK128.__init__.mode" title="randomgen.speck128.SPECK128.__init__.mode (Python parameter) — The seeding mode to use. &quot;legacy&quot; uses the legacy SplitMix64-based initialization. &quot;sequence&quot; uses a SeedSequence to transforms the seed into an initial state.  None defaults to &quot;sequence&quot;."><span class="n"><span class="pre">mode</span></span></a><span class="o"><span class="pre">=</span></span><code class="code python default_value docutils literal highlight highlight-python"><span class="kc">None</span></code></em></span><span class="sig-paren">)</span><a class="headerlink" href="#randomgen.speck128.SPECK128" title="Link to this definition">¶</a></dt>
 <dd><p>Container for the SPECK (128 x 256) pseudo-random number generator.</p>
 <dl class="field-list simple">
 <dt class="field-odd" id="randomgen.speck128.SPECK128-parameters">Parameters<span class="colon">:</span><a class="headerlink" href="#randomgen.speck128.SPECK128-parameters" title="Permalink to this headline">¶</a></dt>
@@ -1658,7 +1658,7 @@ to transforms the seed into an initial state.  None defaults to
 </dl>
 <dl class="py attribute objdesc">
 <dt class="sig sig-object highlight py" id="randomgen.speck128.SPECK128.lock">
-<span class="sig-name descname"><span class="pre">lock</span></span><a class="headerlink" href="#randomgen.speck128.SPECK128.lock" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">lock</span></span><a class="headerlink" href="#randomgen.speck128.SPECK128.lock" title="Link to this definition">¶</a></dt>
 <dd><p>Lock instance that is shared so that the same bit git generator can
 be used in multiple Generators without corrupting the state. Code that
 generates values from a bit generator should hold the bit generator’s
@@ -1672,7 +1672,7 @@ lock.</p>
 
 <dl class="py attribute objdesc">
 <dt class="sig sig-object highlight py" id="randomgen.speck128.SPECK128.seed_seq">
-<span class="sig-name descname"><span class="pre">seed_seq</span></span><a class="headerlink" href="#randomgen.speck128.SPECK128.seed_seq" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">seed_seq</span></span><a class="headerlink" href="#randomgen.speck128.SPECK128.seed_seq" title="Link to this definition">¶</a></dt>
 <dd><p>The SeedSequence instance used to initialize the generator if mode is
 “sequence” or is seed is a SeedSequence. None if mode is “legacy”.</p>
 <dl class="field-list simple">
@@ -1752,7 +1752,7 @@ National Security Agency. January 15, 2019. from
 </aside>
 </dd></dl>
 
-<h2 id="seeding-and-state">Seeding and State<a class="headerlink" href="#seeding-and-state" title="Permalink to this heading">¶</a></h2>
+<h2 id="seeding-and-state">Seeding and State<a class="headerlink" href="#seeding-and-state" title="Link to this heading">¶</a></h2>
 <table class="autosummary longtable docutils data align-default">
 <tbody>
 <tr class="row-odd"><td><p><a class="reference internal" href="generated/randomgen.speck128.SPECK128.seed.html#randomgen.speck128.SPECK128.seed" title="randomgen.speck128.SPECK128.seed (Python method) — Seed the generator"><code class="xref py py-obj docutils literal notranslate"><span class="pre">seed</span></code></a>([seed, counter, key])</p></td>
@@ -1763,7 +1763,7 @@ National Security Agency. January 15, 2019. from
 </tr>
 </tbody>
 </table>
-<h2 id="parallel-generation">Parallel generation<a class="headerlink" href="#parallel-generation" title="Permalink to this heading">¶</a></h2>
+<h2 id="parallel-generation">Parallel generation<a class="headerlink" href="#parallel-generation" title="Link to this heading">¶</a></h2>
 <table class="autosummary longtable docutils data align-default">
 <tbody>
 <tr class="row-odd"><td><p><a class="reference internal" href="generated/randomgen.speck128.SPECK128.advance.html#randomgen.speck128.SPECK128.advance" title="randomgen.speck128.SPECK128.advance (Python method) — Advance the underlying RNG as-if delta draws have occurred."><code class="xref py py-obj docutils literal notranslate"><span class="pre">advance</span></code></a>(delta)</p></td>
@@ -1777,7 +1777,7 @@ National Security Agency. January 15, 2019. from
 </tr>
 </tbody>
 </table>
-<h2 id="extending">Extending<a class="headerlink" href="#extending" title="Permalink to this heading">¶</a></h2>
+<h2 id="extending">Extending<a class="headerlink" href="#extending" title="Link to this heading">¶</a></h2>
 <table class="autosummary longtable docutils data align-default">
 <tbody>
 <tr class="row-odd"><td><p><a class="reference internal" href="generated/randomgen.speck128.SPECK128.cffi.html#randomgen.speck128.SPECK128.cffi" title="randomgen.speck128.SPECK128.cffi (Python attribute) — CFFI interface"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cffi</span></code></a></p></td>
@@ -1788,7 +1788,7 @@ National Security Agency. January 15, 2019. from
 </tr>
 </tbody>
 </table>
-<h2 id="testing">Testing<a class="headerlink" href="#testing" title="Permalink to this heading">¶</a></h2>
+<h2 id="testing">Testing<a class="headerlink" href="#testing" title="Link to this heading">¶</a></h2>
 <table class="autosummary longtable docutils data align-default">
 <tbody>
 <tr class="row-odd"><td><p><a class="reference internal" href="generated/randomgen.speck128.SPECK128.random_raw.html#randomgen.speck128.SPECK128.random_raw" title="randomgen.speck128.SPECK128.random_raw (Python method) — Return randoms as generated by the underlying BitGenerator"><code class="xref py py-obj docutils literal notranslate"><span class="pre">random_raw</span></code></a>([size, output])</p></td>
@@ -1863,7 +1863,7 @@ National Security Agency. January 15, 2019. from
   
     Created using
     <a href="https://www.sphinx-doc.org/" target="_blank" rel="noopener">Sphinx</a>
-    7.1.2.
+    7.2.6.
      and
     <a href="https://github.com/jbms/sphinx-immaterial/" target="_blank" rel="noopener">Sphinx-Immaterial</a>
   

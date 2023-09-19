@@ -13,7 +13,7 @@
     
     
       
-        <title>Jenkins Small Fast Generator - RandomGen v1.23.2 (+8)</title>
+        <title>Jenkins Small Fast Generator - RandomGen v1.23.2 (+14)</title>
       
     
     
@@ -80,7 +80,7 @@
 
 <header class="md-header" data-md-component="header">
   <nav class="md-header__inner md-grid" aria-label="Header">
-    <a href="../index.html" title="RandomGen v1.23.2 (+8)" class="md-header__button md-logo" aria-label="RandomGen v1.23.2 (+8)" data-md-component="logo">
+    <a href="../index.html" title="RandomGen v1.23.2 (+14)" class="md-header__button md-logo" aria-label="RandomGen v1.23.2 (+14)" data-md-component="logo">
       <img src="../_static/casino.svg" alt="logo">
     </a>
     <label class="md-header__button md-icon" for="__drawer">
@@ -90,7 +90,7 @@
       <div class="md-header__ellipsis">
         <div class="md-header__topic">
           <span class="md-ellipsis">
-            RandomGen v1.23.2 (+8)
+            RandomGen v1.23.2 (+14)
           </span>
         </div>
         <div class="md-header__topic" data-md-component="header-topic">
@@ -177,10 +177,10 @@
 
 <nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
   <label class="md-nav__title" for="__drawer">
-    <a href="../index.html" title="RandomGen v1.23.2 (+8)" class="md-nav__button md-logo" aria-label="RandomGen v1.23.2 (+8)" data-md-component="logo">
+    <a href="../index.html" title="RandomGen v1.23.2 (+14)" class="md-nav__button md-logo" aria-label="RandomGen v1.23.2 (+14)" data-md-component="logo">
       <img src="../_static/casino.svg" alt="logo">
     </a>
-    RandomGen v1.23.2 (+8)
+    RandomGen v1.23.2 (+14)
   </label>
   
     <div class="md-nav__source">
@@ -1525,10 +1525,10 @@
                   
 
 
-<h1 id="module-randomgen.jsf"><span id="jenkins-small-fast-generator"></span>Jenkins Small Fast Generator<a class="headerlink" href="#module-randomgen.jsf" title="Permalink to this heading">¶</a></h1>
+<h1 id="module-randomgen.jsf"><span id="jenkins-small-fast-generator"></span>Jenkins Small Fast Generator<a class="headerlink" href="#module-randomgen.jsf" title="Link to this heading">¶</a></h1>
 <dl class="py class objdesc">
 <dt class="sig sig-object highlight sig-wrap py" id="randomgen.jsf.JSF">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">randomgen.jsf.</span></span><span class="sig-name descname"><span class="pre">JSF</span></span><span class="sig-paren">(</span><span class="sig-param-decl"><em class="sig-param"><a class="n reference internal" href="#randomgen.jsf.JSF.__init__.seed" title="randomgen.jsf.JSF.__init__.seed (Python parameter) — Random seed initializing the pseudo-random number generator. Can be an integer in [0, 2**size), an array of integers in [0, 2**size), a SeedSequence or None (the default). If seed is None, then  data is read from /dev/urandom (or the Windows analog) if available. If unavailable, a hash of the time and process ID is used."><span class="n"><span class="pre">seed</span></span></a><span class="o"><span class="pre">=</span></span><code class="code python default_value docutils literal highlight highlight-python"><span class="kc">None</span></code></em>, </span><span class="sig-param-decl"><em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, </span><span class="sig-param-decl"><em class="sig-param"><a class="n reference internal" href="#randomgen.jsf.JSF.__init__.seed_size" title="randomgen.jsf.JSF.__init__.seed_size (Python parameter) — Number of distinct seed values used to initialize JSF. The original implementation uses 1 (default). Higher values increase the size of the seed space which is 2**(size*seed_size)."><span class="n"><span class="pre">seed_size</span></span></a><span class="o"><span class="pre">=</span></span><code class="code python default_value docutils literal highlight highlight-python"><span class="mi">1</span></code></em>, </span><span class="sig-param-decl"><em class="sig-param"><a class="n reference internal" href="#randomgen.jsf.JSF.__init__.size" title="randomgen.jsf.JSF.__init__.size (Python parameter) — Output size of a single iteration of JSF. 32 is better suited to 32-bit systems."><span class="n"><span class="pre">size</span></span></a><span class="o"><span class="pre">=</span></span><code class="code python default_value docutils literal highlight highlight-python"><span class="mi">64</span></code></em>, </span><span class="sig-param-decl"><em class="sig-param"><a class="n reference internal" href="#randomgen.jsf.JSF.__init__.p" title="randomgen.jsf.JSF.__init__.p (Python parameter) — One the the three parameters that defines JSF. See Notes. If not provided uses the default values for the selected size listed in Notes."><span class="n"><span class="pre">p</span></span></a><span class="o"><span class="pre">=</span></span><code class="code python default_value docutils literal highlight highlight-python"><span class="kc">None</span></code></em>, </span><span class="sig-param-decl"><em class="sig-param"><a class="n reference internal" href="#randomgen.jsf.JSF.__init__.q" title="randomgen.jsf.JSF.__init__.q (Python parameter) — One the the three parameters that defines JSF. See Notes. If not provided uses the default values for the selected size listed in Notes."><span class="n"><span class="pre">q</span></span></a><span class="o"><span class="pre">=</span></span><code class="code python default_value docutils literal highlight highlight-python"><span class="kc">None</span></code></em>, </span><span class="sig-param-decl"><em class="sig-param"><a class="n reference internal" href="#randomgen.jsf.JSF.__init__.r" title="randomgen.jsf.JSF.__init__.r (Python parameter) — One the the three parameters that defines JSF. See Notes. If not provided uses the default values for the selected size listed in Notes."><span class="n"><span class="pre">r</span></span></a><span class="o"><span class="pre">=</span></span><code class="code python default_value docutils literal highlight highlight-python"><span class="kc">None</span></code></em>, </span><span class="sig-param-decl"><em class="sig-param"><a class="n reference internal" href="#randomgen.jsf.JSF.__init__.mode" title="randomgen.jsf.JSF.__init__.mode (Python parameter) — The seeding mode to use. &quot;legacy&quot; uses the legacy SplitMix64-based initialization. &quot;sequence&quot; uses a SeedSequence to transforms the seed into an initial state.  None defaults to &quot;sequence&quot;."><span class="n"><span class="pre">mode</span></span></a><span class="o"><span class="pre">=</span></span><code class="code python default_value docutils literal highlight highlight-python"><span class="kc">None</span></code></em></span><span class="sig-paren">)</span><a class="headerlink" href="#randomgen.jsf.JSF" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">randomgen.jsf.</span></span><span class="sig-name descname"><span class="pre">JSF</span></span><span class="sig-paren">(</span><span class="sig-param-decl"><em class="sig-param"><a class="n reference internal" href="#randomgen.jsf.JSF.__init__.seed" title="randomgen.jsf.JSF.__init__.seed (Python parameter) — Random seed initializing the pseudo-random number generator. Can be an integer in [0, 2**size), an array of integers in [0, 2**size), a SeedSequence or None (the default). If seed is None, then  data is read from /dev/urandom (or the Windows analog) if available. If unavailable, a hash of the time and process ID is used."><span class="n"><span class="pre">seed</span></span></a><span class="o"><span class="pre">=</span></span><code class="code python default_value docutils literal highlight highlight-python"><span class="kc">None</span></code></em>, </span><span class="sig-param-decl"><em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, </span><span class="sig-param-decl"><em class="sig-param"><a class="n reference internal" href="#randomgen.jsf.JSF.__init__.seed_size" title="randomgen.jsf.JSF.__init__.seed_size (Python parameter) — Number of distinct seed values used to initialize JSF. The original implementation uses 1 (default). Higher values increase the size of the seed space which is 2**(size*seed_size)."><span class="n"><span class="pre">seed_size</span></span></a><span class="o"><span class="pre">=</span></span><code class="code python default_value docutils literal highlight highlight-python"><span class="mi">1</span></code></em>, </span><span class="sig-param-decl"><em class="sig-param"><a class="n reference internal" href="#randomgen.jsf.JSF.__init__.size" title="randomgen.jsf.JSF.__init__.size (Python parameter) — Output size of a single iteration of JSF. 32 is better suited to 32-bit systems."><span class="n"><span class="pre">size</span></span></a><span class="o"><span class="pre">=</span></span><code class="code python default_value docutils literal highlight highlight-python"><span class="mi">64</span></code></em>, </span><span class="sig-param-decl"><em class="sig-param"><a class="n reference internal" href="#randomgen.jsf.JSF.__init__.p" title="randomgen.jsf.JSF.__init__.p (Python parameter) — One the the three parameters that defines JSF. See Notes. If not provided uses the default values for the selected size listed in Notes."><span class="n"><span class="pre">p</span></span></a><span class="o"><span class="pre">=</span></span><code class="code python default_value docutils literal highlight highlight-python"><span class="kc">None</span></code></em>, </span><span class="sig-param-decl"><em class="sig-param"><a class="n reference internal" href="#randomgen.jsf.JSF.__init__.q" title="randomgen.jsf.JSF.__init__.q (Python parameter) — One the the three parameters that defines JSF. See Notes. If not provided uses the default values for the selected size listed in Notes."><span class="n"><span class="pre">q</span></span></a><span class="o"><span class="pre">=</span></span><code class="code python default_value docutils literal highlight highlight-python"><span class="kc">None</span></code></em>, </span><span class="sig-param-decl"><em class="sig-param"><a class="n reference internal" href="#randomgen.jsf.JSF.__init__.r" title="randomgen.jsf.JSF.__init__.r (Python parameter) — One the the three parameters that defines JSF. See Notes. If not provided uses the default values for the selected size listed in Notes."><span class="n"><span class="pre">r</span></span></a><span class="o"><span class="pre">=</span></span><code class="code python default_value docutils literal highlight highlight-python"><span class="kc">None</span></code></em>, </span><span class="sig-param-decl"><em class="sig-param"><a class="n reference internal" href="#randomgen.jsf.JSF.__init__.mode" title="randomgen.jsf.JSF.__init__.mode (Python parameter) — The seeding mode to use. &quot;legacy&quot; uses the legacy SplitMix64-based initialization. &quot;sequence&quot; uses a SeedSequence to transforms the seed into an initial state.  None defaults to &quot;sequence&quot;."><span class="n"><span class="pre">mode</span></span></a><span class="o"><span class="pre">=</span></span><code class="code python default_value docutils literal highlight highlight-python"><span class="kc">None</span></code></em></span><span class="sig-paren">)</span><a class="headerlink" href="#randomgen.jsf.JSF" title="Link to this definition">¶</a></dt>
 <dd><p>Container for Jenkins’s Fast Small (JSF) pseudo-random number generator</p>
 <dl class="field-list simple">
 <dt class="field-odd" id="randomgen.jsf.JSF-parameters">Parameters<span class="colon">:</span><a class="headerlink" href="#randomgen.jsf.JSF-parameters" title="Permalink to this headline">¶</a></dt>
@@ -1566,7 +1566,7 @@ to transforms the seed into an initial state.  None defaults to
 </dl>
 <dl class="py attribute objdesc">
 <dt class="sig sig-object highlight py" id="randomgen.jsf.JSF.lock">
-<span class="sig-name descname"><span class="pre">lock</span></span><a class="headerlink" href="#randomgen.jsf.JSF.lock" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">lock</span></span><a class="headerlink" href="#randomgen.jsf.JSF.lock" title="Link to this definition">¶</a></dt>
 <dd><p>Lock instance that is shared so that the same bit git generator can
 be used in multiple Generators without corrupting the state. Code that
 generates values from a bit generator should hold the bit generator’s
@@ -1580,7 +1580,7 @@ lock.</p>
 
 <dl class="py attribute objdesc">
 <dt class="sig sig-object highlight py" id="randomgen.jsf.JSF.seed_seq">
-<span class="sig-name descname"><span class="pre">seed_seq</span></span><a class="headerlink" href="#randomgen.jsf.JSF.seed_seq" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">seed_seq</span></span><a class="headerlink" href="#randomgen.jsf.JSF.seed_seq" title="Link to this definition">¶</a></dt>
 <dd><p>The SeedSequence instance used to initialize the generator if mode is
 “sequence” or is seed is a SeedSequence. None if mode is “legacy”.</p>
 <dl class="field-list simple">
@@ -1660,7 +1660,7 @@ random integer stream.</p>
 </aside>
 </dd></dl>
 
-<h2 id="seeding-and-state">Seeding and State<a class="headerlink" href="#seeding-and-state" title="Permalink to this heading">¶</a></h2>
+<h2 id="seeding-and-state">Seeding and State<a class="headerlink" href="#seeding-and-state" title="Link to this heading">¶</a></h2>
 <table class="autosummary longtable docutils data align-default">
 <tbody>
 <tr class="row-odd"><td><p><a class="reference internal" href="generated/randomgen.jsf.JSF.seed.html#randomgen.jsf.JSF.seed" title="randomgen.jsf.JSF.seed (Python method) — Seed the generator"><code class="xref py py-obj docutils literal notranslate"><span class="pre">seed</span></code></a>([seed])</p></td>
@@ -1671,7 +1671,7 @@ random integer stream.</p>
 </tr>
 </tbody>
 </table>
-<h2 id="extending">Extending<a class="headerlink" href="#extending" title="Permalink to this heading">¶</a></h2>
+<h2 id="extending">Extending<a class="headerlink" href="#extending" title="Link to this heading">¶</a></h2>
 <table class="autosummary longtable docutils data align-default">
 <tbody>
 <tr class="row-odd"><td><p><a class="reference internal" href="generated/randomgen.jsf.JSF.cffi.html#randomgen.jsf.JSF.cffi" title="randomgen.jsf.JSF.cffi (Python attribute) — CFFI interface"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cffi</span></code></a></p></td>
@@ -1682,7 +1682,7 @@ random integer stream.</p>
 </tr>
 </tbody>
 </table>
-<h2 id="testing">Testing<a class="headerlink" href="#testing" title="Permalink to this heading">¶</a></h2>
+<h2 id="testing">Testing<a class="headerlink" href="#testing" title="Link to this heading">¶</a></h2>
 <table class="autosummary longtable docutils data align-default">
 <tbody>
 <tr class="row-odd"><td><p><a class="reference internal" href="generated/randomgen.jsf.JSF.random_raw.html#randomgen.jsf.JSF.random_raw" title="randomgen.jsf.JSF.random_raw (Python method) — Return randoms as generated by the underlying BitGenerator"><code class="xref py py-obj docutils literal notranslate"><span class="pre">random_raw</span></code></a>([size, output])</p></td>
@@ -1757,7 +1757,7 @@ random integer stream.</p>
   
     Created using
     <a href="https://www.sphinx-doc.org/" target="_blank" rel="noopener">Sphinx</a>
-    7.1.2.
+    7.2.6.
      and
     <a href="https://github.com/jbms/sphinx-immaterial/" target="_blank" rel="noopener">Sphinx-Immaterial</a>
   

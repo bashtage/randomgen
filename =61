@@ -1,0 +1,18 @@
+Requirement already satisfied: pip in /opt/hostedtoolcache/Python/3.11.5/x64/lib/python3.11/site-packages (23.2.1)
+Collecting wheel
+  Obtaining dependency information for wheel from https://files.pythonhosted.org/packages/b8/8b/31273bf66016be6ad22bb7345c37ff350276cfd46e389a0c2ac5da9d9073/wheel-0.41.2-py3-none-any.whl.metadata
+  Downloading wheel-0.41.2-py3-none-any.whl.metadata (2.2 kB)
+Requirement already satisfied: setuptools in /opt/hostedtoolcache/Python/3.11.5/x64/lib/python3.11/site-packages (65.5.0)
+Collecting setuptools
+  Obtaining dependency information for setuptools from https://files.pythonhosted.org/packages/bb/26/7945080113158354380a12ce26873dd6c1ebd88d47f5bc24e2c5bb38c16a/setuptools-68.2.2-py3-none-any.whl.metadata
+  Downloading setuptools-68.2.2-py3-none-any.whl.metadata (6.3 kB)
+Downloading wheel-0.41.2-py3-none-any.whl (64 kB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 64.8/64.8 kB 3.8 MB/s eta 0:00:00
+Downloading setuptools-68.2.2-py3-none-any.whl (807 kB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 807.9/807.9 kB 9.2 MB/s eta 0:00:00
+Installing collected packages: wheel, setuptools
+  Attempting uninstall: setuptools
+    Found existing installation: setuptools 65.5.0
+    Uninstalling setuptools-65.5.0:
+      Successfully uninstalled setuptools-65.5.0
+Successfully installed setuptools-68.2.2 wheel-0.41.2

@@ -13,7 +13,7 @@
     
     
       
-        <title>Mersenne Twister (MT19937) - RandomGen v1.23.2 (+8)</title>
+        <title>Mersenne Twister (MT19937) - RandomGen v1.23.2 (+14)</title>
       
     
     
@@ -80,7 +80,7 @@
 
 <header class="md-header" data-md-component="header">
   <nav class="md-header__inner md-grid" aria-label="Header">
-    <a href="../index.html" title="RandomGen v1.23.2 (+8)" class="md-header__button md-logo" aria-label="RandomGen v1.23.2 (+8)" data-md-component="logo">
+    <a href="../index.html" title="RandomGen v1.23.2 (+14)" class="md-header__button md-logo" aria-label="RandomGen v1.23.2 (+14)" data-md-component="logo">
       <img src="../_static/casino.svg" alt="logo">
     </a>
     <label class="md-header__button md-icon" for="__drawer">
@@ -90,7 +90,7 @@
       <div class="md-header__ellipsis">
         <div class="md-header__topic">
           <span class="md-ellipsis">
-            RandomGen v1.23.2 (+8)
+            RandomGen v1.23.2 (+14)
           </span>
         </div>
         <div class="md-header__topic" data-md-component="header-topic">
@@ -177,10 +177,10 @@
 
 <nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
   <label class="md-nav__title" for="__drawer">
-    <a href="../index.html" title="RandomGen v1.23.2 (+8)" class="md-nav__button md-logo" aria-label="RandomGen v1.23.2 (+8)" data-md-component="logo">
+    <a href="../index.html" title="RandomGen v1.23.2 (+14)" class="md-nav__button md-logo" aria-label="RandomGen v1.23.2 (+14)" data-md-component="logo">
       <img src="../_static/casino.svg" alt="logo">
     </a>
-    RandomGen v1.23.2 (+8)
+    RandomGen v1.23.2 (+14)
   </label>
   
     <div class="md-nav__source">
@@ -1557,10 +1557,10 @@
                   
 
 
-<h1 id="module-randomgen.mt19937"><span id="mersenne-twister-mt19937"></span>Mersenne Twister (MT19937)<a class="headerlink" href="#module-randomgen.mt19937" title="Permalink to this heading">¶</a></h1>
+<h1 id="module-randomgen.mt19937"><span id="mersenne-twister-mt19937"></span>Mersenne Twister (MT19937)<a class="headerlink" href="#module-randomgen.mt19937" title="Link to this heading">¶</a></h1>
 <dl class="py class objdesc">
 <dt class="sig sig-object highlight py" id="randomgen.mt19937.MT19937">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">randomgen.mt19937.</span></span><span class="sig-name descname"><span class="pre">MT19937</span></span><span class="sig-paren">(</span><span class="sig-param-decl"><em class="sig-param"><a class="n reference internal" href="#randomgen.mt19937.MT19937.__init__.seed" title="randomgen.mt19937.MT19937.__init__.seed (Python parameter) — Random seed used to initialize the pseudo-random number generator. Can be any integer between 0 and 2**32 - 1 inclusive, an array (or other sequence) of unsigned 32-bit integers, a SeedSequence instance or None (the default). If seed is None, then 624 32-bit unsigned integers are read from /dev/urandom (or the Windows analog) if available. If unavailable, a hash of the time and process ID is used."><span class="n"><span class="pre">seed</span></span></a><span class="o"><span class="pre">=</span></span><code class="code python default_value docutils literal highlight highlight-python"><span class="kc">None</span></code></em>, </span><span class="sig-param-decl"><em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, </span><span class="sig-param-decl"><em class="sig-param"><a class="n reference internal" href="#randomgen.mt19937.MT19937.__init__.mode" title="randomgen.mt19937.MT19937.__init__.mode (Python parameter) — The seeding mode to use. &quot;legacy&quot; uses the legacy SplitMix64-based initialization. &quot;sequence&quot; uses a SeedSequence to transforms the seed into an initial state. None defaults to &quot;sequence&quot;. &quot;numpy&quot; uses the same seeding mechanism as NumPy and so matches exactly."><span class="n"><span class="pre">mode</span></span></a><span class="o"><span class="pre">=</span></span><code class="code python default_value docutils literal highlight highlight-python"><span class="kc">None</span></code></em></span><span class="sig-paren">)</span><a class="headerlink" href="#randomgen.mt19937.MT19937" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">randomgen.mt19937.</span></span><span class="sig-name descname"><span class="pre">MT19937</span></span><span class="sig-paren">(</span><span class="sig-param-decl"><em class="sig-param"><a class="n reference internal" href="#randomgen.mt19937.MT19937.__init__.seed" title="randomgen.mt19937.MT19937.__init__.seed (Python parameter) — Random seed used to initialize the pseudo-random number generator. Can be any integer between 0 and 2**32 - 1 inclusive, an array (or other sequence) of unsigned 32-bit integers, a SeedSequence instance or None (the default). If seed is None, then 624 32-bit unsigned integers are read from /dev/urandom (or the Windows analog) if available. If unavailable, a hash of the time and process ID is used."><span class="n"><span class="pre">seed</span></span></a><span class="o"><span class="pre">=</span></span><code class="code python default_value docutils literal highlight highlight-python"><span class="kc">None</span></code></em>, </span><span class="sig-param-decl"><em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, </span><span class="sig-param-decl"><em class="sig-param"><a class="n reference internal" href="#randomgen.mt19937.MT19937.__init__.mode" title="randomgen.mt19937.MT19937.__init__.mode (Python parameter) — The seeding mode to use. &quot;legacy&quot; uses the legacy SplitMix64-based initialization. &quot;sequence&quot; uses a SeedSequence to transforms the seed into an initial state. None defaults to &quot;sequence&quot;. &quot;numpy&quot; uses the same seeding mechanism as NumPy and so matches exactly."><span class="n"><span class="pre">mode</span></span></a><span class="o"><span class="pre">=</span></span><code class="code python default_value docutils literal highlight highlight-python"><span class="kc">None</span></code></em></span><span class="sig-paren">)</span><a class="headerlink" href="#randomgen.mt19937.MT19937" title="Link to this definition">¶</a></dt>
 <dd><p>Container for the Mersenne Twister pseudo-random number generator.</p>
 <dl class="field-list simple">
 <dt class="field-odd" id="randomgen.mt19937.MT19937-parameters">Parameters<span class="colon">:</span><a class="headerlink" href="#randomgen.mt19937.MT19937-parameters" title="Permalink to this headline">¶</a></dt>
@@ -1583,7 +1583,7 @@ to transforms the seed into an initial state. None defaults to “sequence”.
 </dl>
 <dl class="py attribute objdesc">
 <dt class="sig sig-object highlight py" id="randomgen.mt19937.MT19937.lock">
-<span class="sig-name descname"><span class="pre">lock</span></span><a class="headerlink" href="#randomgen.mt19937.MT19937.lock" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">lock</span></span><a class="headerlink" href="#randomgen.mt19937.MT19937.lock" title="Link to this definition">¶</a></dt>
 <dd><p>Lock instance that is shared so that the same bit git generator can
 be used in multiple Generators without corrupting the state. Code that
 generates values from a bit generator should hold the bit generator’s
@@ -1597,7 +1597,7 @@ lock.</p>
 
 <dl class="py attribute objdesc">
 <dt class="sig sig-object highlight py" id="randomgen.mt19937.MT19937.seed_seq">
-<span class="sig-name descname"><span class="pre">seed_seq</span></span><a class="headerlink" href="#randomgen.mt19937.MT19937.seed_seq" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">seed_seq</span></span><a class="headerlink" href="#randomgen.mt19937.MT19937.seed_seq" title="Link to this definition">¶</a></dt>
 <dd><p>The SeedSequence instance used to initialize the generator if mode is
 “sequence” or is seed is a SeedSequence. None if mode is “legacy”.</p>
 <dl class="field-list simple">
@@ -1663,7 +1663,7 @@ No. 3, Summer 2008, pp. 385-390.</p>
 </aside>
 </dd></dl>
 
-<h2 id="seeding-and-state">Seeding and State<a class="headerlink" href="#seeding-and-state" title="Permalink to this heading">¶</a></h2>
+<h2 id="seeding-and-state">Seeding and State<a class="headerlink" href="#seeding-and-state" title="Link to this heading">¶</a></h2>
 <table class="autosummary longtable docutils data align-default">
 <tbody>
 <tr class="row-odd"><td><p><a class="reference internal" href="generated/randomgen.mt19937.MT19937.seed.html#randomgen.mt19937.MT19937.seed" title="randomgen.mt19937.MT19937.seed (Python method) — Seed the generator"><code class="xref py py-obj docutils literal notranslate"><span class="pre">seed</span></code></a>([seed])</p></td>
@@ -1674,7 +1674,7 @@ No. 3, Summer 2008, pp. 385-390.</p>
 </tr>
 </tbody>
 </table>
-<h2 id="parallel-generation">Parallel generation<a class="headerlink" href="#parallel-generation" title="Permalink to this heading">¶</a></h2>
+<h2 id="parallel-generation">Parallel generation<a class="headerlink" href="#parallel-generation" title="Link to this heading">¶</a></h2>
 <table class="autosummary longtable docutils data align-default">
 <tbody>
 <tr class="row-odd"><td><p><a class="reference internal" href="generated/randomgen.mt19937.MT19937.jump.html#randomgen.mt19937.MT19937.jump" title="randomgen.mt19937.MT19937.jump (Python method) — Jumps the state as-if 2**128 random numbers have been generated."><code class="xref py py-obj docutils literal notranslate"><span class="pre">jump</span></code></a>([jumps])</p></td>
@@ -1685,7 +1685,7 @@ No. 3, Summer 2008, pp. 385-390.</p>
 </tr>
 </tbody>
 </table>
-<h2 id="extending">Extending<a class="headerlink" href="#extending" title="Permalink to this heading">¶</a></h2>
+<h2 id="extending">Extending<a class="headerlink" href="#extending" title="Link to this heading">¶</a></h2>
 <table class="autosummary longtable docutils data align-default">
 <tbody>
 <tr class="row-odd"><td><p><a class="reference internal" href="generated/randomgen.mt19937.MT19937.cffi.html#randomgen.mt19937.MT19937.cffi" title="randomgen.mt19937.MT19937.cffi (Python attribute) — CFFI interface"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cffi</span></code></a></p></td>
@@ -1696,7 +1696,7 @@ No. 3, Summer 2008, pp. 385-390.</p>
 </tr>
 </tbody>
 </table>
-<h2 id="testing">Testing<a class="headerlink" href="#testing" title="Permalink to this heading">¶</a></h2>
+<h2 id="testing">Testing<a class="headerlink" href="#testing" title="Link to this heading">¶</a></h2>
 <table class="autosummary longtable docutils data align-default">
 <tbody>
 <tr class="row-odd"><td><p><a class="reference internal" href="generated/randomgen.mt19937.MT19937.random_raw.html#randomgen.mt19937.MT19937.random_raw" title="randomgen.mt19937.MT19937.random_raw (Python method) — Return randoms as generated by the underlying BitGenerator"><code class="xref py py-obj docutils literal notranslate"><span class="pre">random_raw</span></code></a>([size, output])</p></td>
@@ -1771,7 +1771,7 @@ No. 3, Summer 2008, pp. 385-390.</p>
   
     Created using
     <a href="https://www.sphinx-doc.org/" target="_blank" rel="noopener">Sphinx</a>
-    7.1.2.
+    7.2.6.
      and
     <a href="https://github.com/jbms/sphinx-immaterial/" target="_blank" rel="noopener">Sphinx-Immaterial</a>
   

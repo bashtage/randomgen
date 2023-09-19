@@ -13,7 +13,7 @@
     
     
       
-        <title>Change Log - RandomGen v1.23.2 (+8)</title>
+        <title>Change Log - RandomGen v1.23.2 (+14)</title>
       
     
     
@@ -80,7 +80,7 @@
 
 <header class="md-header" data-md-component="header">
   <nav class="md-header__inner md-grid" aria-label="Header">
-    <a href="index.html" title="RandomGen v1.23.2 (+8)" class="md-header__button md-logo" aria-label="RandomGen v1.23.2 (+8)" data-md-component="logo">
+    <a href="index.html" title="RandomGen v1.23.2 (+14)" class="md-header__button md-logo" aria-label="RandomGen v1.23.2 (+14)" data-md-component="logo">
       <img src="_static/casino.svg" alt="logo">
     </a>
     <label class="md-header__button md-icon" for="__drawer">
@@ -90,7 +90,7 @@
       <div class="md-header__ellipsis">
         <div class="md-header__topic">
           <span class="md-ellipsis">
-            RandomGen v1.23.2 (+8)
+            RandomGen v1.23.2 (+14)
           </span>
         </div>
         <div class="md-header__topic" data-md-component="header-topic">
@@ -177,10 +177,10 @@
 
 <nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
   <label class="md-nav__title" for="__drawer">
-    <a href="index.html" title="RandomGen v1.23.2 (+8)" class="md-nav__button md-logo" aria-label="RandomGen v1.23.2 (+8)" data-md-component="logo">
+    <a href="index.html" title="RandomGen v1.23.2 (+14)" class="md-nav__button md-logo" aria-label="RandomGen v1.23.2 (+14)" data-md-component="logo">
       <img src="_static/casino.svg" alt="logo">
     </a>
-    RandomGen v1.23.2 (+8)
+    RandomGen v1.23.2 (+14)
   </label>
   
     <div class="md-nav__source">
@@ -821,13 +821,13 @@
                   
 
 
-<h1 id="change-log"><span id="id1"></span>Change Log<a class="headerlink" href="#change-log" title="Permalink to this heading">¶</a></h1>
+<h1 id="change-log"><span id="id1"></span>Change Log<a class="headerlink" href="#change-log" title="Link to this heading">¶</a></h1>
 <div class="admonition danger docutils container">
 <p class="admonition-title"> Deprecated </p><p><code class="docutils literal notranslate"><span class="pre">Generator</span></code> and <code class="docutils literal notranslate"><span class="pre">RandomState</span></code> have been <strong>REMOVED</strong> in 1.23.
 You should be using <a class="reference external" href="https://numpy.org/doc/stable/reference/random/generator.html#numpy.random.Generator" title="(in NumPy v1.26)"><code class="xref py py-class docutils literal notranslate"><span class="pre">numpy.random.Generator</span></code></a> or
 <a class="reference external" href="https://numpy.org/doc/stable/reference/random/legacy.html#numpy.random.RandomState" title="(in NumPy v1.26)"><code class="xref py py-class docutils literal notranslate"><span class="pre">numpy.random.RandomState</span></code></a> which are maintained.</p>
 </div>
-<h2 id="v1-23-1">v1.23.1<a class="headerlink" href="#v1-23-1" title="Permalink to this heading">¶</a></h2>
+<h2 id="v1-23-1">v1.23.1<a class="headerlink" href="#v1-23-1" title="Link to this heading">¶</a></h2>
 <ul class="simple">
 <li><p>Registered the bit generators included in <code class="docutils literal notranslate"><span class="pre">randomgen</span></code> with NumPy
 so that NumPy <a class="reference external" href="https://numpy.org/doc/stable/reference/random/generator.html#numpy.random.Generator" title="(in NumPy v1.26)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Generator</span></code></a> instances can be pickled
@@ -837,11 +837,11 @@ name. For example, <a class="reference internal" href="bit_generators/pcg64.html
 instead of <code class="docutils literal notranslate"><span class="pre">&quot;PCG64&quot;</span></code>.  This was done to avoid ambiguity with NumPy’s supplied
 bit generators with the same name.</p></li>
 </ul>
-<h2 id="v1-23-0">v1.23.0<a class="headerlink" href="#v1-23-0" title="Permalink to this heading">¶</a></h2>
+<h2 id="v1-23-0">v1.23.0<a class="headerlink" href="#v1-23-0" title="Link to this heading">¶</a></h2>
 <ul class="simple">
 <li><p>Removed <code class="docutils literal notranslate"><span class="pre">Generator</span></code> and <code class="docutils literal notranslate"><span class="pre">RandomState</span></code>.</p></li>
 </ul>
-<h2 id="v1-20-2">v1.20.2<a class="headerlink" href="#v1-20-2" title="Permalink to this heading">¶</a></h2>
+<h2 id="v1-20-2">v1.20.2<a class="headerlink" href="#v1-20-2" title="Link to this heading">¶</a></h2>
 <ul class="simple">
 <li><p>Fixed a bug in <a class="reference internal" href="bit_generators/sfc.html#randomgen.sfc.SFC64" title="randomgen.sfc.SFC64 (Python class) — Chris Doty-Humphrey's Small Fast Chaotic PRNG with optional Weyl Sequence"><code class="xref py py-class docutils literal notranslate"><span class="pre">SFC64</span></code></a> the used the wrong value from the Weyl
 sequence. In the original implementation, the current value is added to the next random
@@ -869,7 +869,7 @@ is used with the same initial seed values.</p></li>
 <span class="go">      dtype=float128)</span>
 </code></pre></div>
 </div>
-<h2 id="v1-20-1">v1.20.1<a class="headerlink" href="#v1-20-1" title="Permalink to this heading">¶</a></h2>
+<h2 id="v1-20-1">v1.20.1<a class="headerlink" href="#v1-20-1" title="Link to this heading">¶</a></h2>
 <ul class="simple">
 <li><p>Fixed a bug that affects <code class="docutils literal notranslate"><span class="pre">standard_gamma</span></code> when
 used with <code class="docutils literal notranslate"><span class="pre">out</span></code> and a Fortran contiguous array.</p></li>
@@ -877,7 +877,7 @@ used with <code class="docutils literal notranslate"><span class="pre">out</span
 <li><p>Added <a class="reference internal" href="generated/randomgen.generator.ExtendedGenerator.standard_wishart.html#randomgen.generator.ExtendedGenerator.standard_wishart" title="randomgen.generator.ExtendedGenerator.standard_wishart (Python method) — Draw samples from the Standard Wishart and Pseudo-Wishart distributions"><code class="xref py py-func docutils literal notranslate"><span class="pre">standard_wishart()</span></code></a> and
 <a class="reference internal" href="generated/randomgen.generator.ExtendedGenerator.wishart.html#randomgen.generator.ExtendedGenerator.wishart" title="randomgen.generator.ExtendedGenerator.wishart (Python method) — Draw samples from the Wishart and pseudo-Wishart distributions."><code class="xref py py-func docutils literal notranslate"><span class="pre">wishart()</span></code></a> variate generators.</p></li>
 </ul>
-<h2 id="v1-20-0">v1.20.0<a class="headerlink" href="#v1-20-0" title="Permalink to this heading">¶</a></h2>
+<h2 id="v1-20-0">v1.20.0<a class="headerlink" href="#v1-20-0" title="Link to this heading">¶</a></h2>
 <ul class="simple">
 <li><p>Sync upstream changes from NumPy</p></li>
 <li><p>Added typing information</p></li>
@@ -886,12 +886,12 @@ used with <code class="docutils literal notranslate"><span class="pre">out</span
 <li><p>Fixed a bug in <a class="reference internal" href="bit_generators/aesctr.html#randomgen.aes.AESCounter" title="randomgen.aes.AESCounter (Python class) — Container for the AES Counter pseudo-random number generator."><code class="xref py py-class docutils literal notranslate"><span class="pre">AESCounter</span></code></a> that prevented a small
 number of counter values from being directly set.</p></li>
 </ul>
-<h2 id="v1-19-3">v1.19.3<a class="headerlink" href="#v1-19-3" title="Permalink to this heading">¶</a></h2>
+<h2 id="v1-19-3">v1.19.3<a class="headerlink" href="#v1-19-3" title="Link to this heading">¶</a></h2>
 <ul class="simple">
 <li><p>Future proofed setup against <code class="docutils literal notranslate"><span class="pre">setuptools</span></code> and <code class="docutils literal notranslate"><span class="pre">distutils</span></code> changes.</p></li>
 <li><p>Enhanced documentation for <a class="reference internal" href="bit_generators/rdrand.html#randomgen.rdrand.RDRAND" title="randomgen.rdrand.RDRAND (Python class) — Container for the hardware RDRAND random number generator."><code class="xref py py-class docutils literal notranslate"><span class="pre">RDRAND</span></code></a>.</p></li>
 </ul>
-<h2 id="v1-19-2">v1.19.2<a class="headerlink" href="#v1-19-2" title="Permalink to this heading">¶</a></h2>
+<h2 id="v1-19-2">v1.19.2<a class="headerlink" href="#v1-19-2" title="Link to this heading">¶</a></h2>
 <ul class="simple">
 <li><p>Corrected <a class="reference internal" href="bit_generators/rdrand.html#randomgen.rdrand.RDRAND" title="randomgen.rdrand.RDRAND (Python class) — Container for the hardware RDRAND random number generator."><code class="xref py py-class docutils literal notranslate"><span class="pre">RDRAND</span></code></a> to retry on failures with pause
 between retries. Add a parameter <code class="docutils literal notranslate"><span class="pre">retry</span></code> which allows the number of retries
@@ -901,14 +901,14 @@ the <a class="reference internal" href="bit_generators/rdrand.html#randomgen.rdr
 when using <a class="reference internal" href="bit_generators/rdrand.html#randomgen.rdrand.RDRAND" title="randomgen.rdrand.RDRAND (Python class) — Container for the hardware RDRAND random number generator."><code class="xref py py-class docutils literal notranslate"><span class="pre">RDRAND</span></code></a> that do not occur with deterministic
 PRNGs.</p></li>
 </ul>
-<h2 id="v1-19-1">v1.19.1<a class="headerlink" href="#v1-19-1" title="Permalink to this heading">¶</a></h2>
+<h2 id="v1-19-1">v1.19.1<a class="headerlink" href="#v1-19-1" title="Link to this heading">¶</a></h2>
 <ul class="simple">
 <li><p>Added <a class="reference internal" href="bit_generators/romu.html#randomgen.romu.Romu" title="randomgen.romu.Romu (Python class) — Mark A. Overton's quad and trio rotate-multiply-based generators"><code class="xref py py-class docutils literal notranslate"><span class="pre">randomgen.romu.Romu</span></code></a> which is among the fastest available bit generators.</p></li>
 <li><p>Added <a class="reference internal" href="bit_generators/generated/randomgen.sfc.SFC64.weyl_increments.html#randomgen.sfc.SFC64.weyl_increments" title="randomgen.sfc.SFC64.weyl_increments (Python method) — Generate distinct Weyl increments to construct multiple streams"><code class="xref py py-func docutils literal notranslate"><span class="pre">weyl_increments()</span></code></a> to simplify generating increments for
 use in parallel applications of <a class="reference internal" href="bit_generators/sfc.html#randomgen.sfc.SFC64" title="randomgen.sfc.SFC64 (Python class) — Chris Doty-Humphrey's Small Fast Chaotic PRNG with optional Weyl Sequence"><code class="xref py py-class docutils literal notranslate"><span class="pre">SFC64</span></code></a>.</p></li>
 <li><p>Completed * <a class="reference internal" href="testing.html#quality-assurance"><span class="std std-ref">Quality Assurance</span></a> of all bit generators to at least 4TB.</p></li>
 </ul>
-<h2 id="v1-19-0">v1.19.0<a class="headerlink" href="#v1-19-0" title="Permalink to this heading">¶</a></h2>
+<h2 id="v1-19-0">v1.19.0<a class="headerlink" href="#v1-19-0" title="Link to this heading">¶</a></h2>
 <ul class="simple">
 <li><p>Tested all bit generators out to at least 1TB <a class="reference external" href="http://pracrand.sourceforge.net/">using PractRand</a>.</p></li>
 <li><p>Added <a class="reference internal" href="bit_generators/pcg64dxsm.html#randomgen.pcg64.PCG64DXSM" title="randomgen.pcg64.PCG64DXSM (Python class) — Container for the PCG-64 updated with a 64-bit mult using DXSM output func."><code class="xref py py-class docutils literal notranslate"><span class="pre">randomgen.pcg64.PCG64DXSM</span></code></a> which is an alias for <a class="reference internal" href="bit_generators/pcg64.html#randomgen.pcg64.PCG64" title="randomgen.pcg64.PCG64 (Python class) — Container for the PCG-64 pseudo-random number generator."><code class="xref py py-class docutils literal notranslate"><span class="pre">randomgen.pcg64.PCG64</span></code></a>
@@ -933,7 +933,7 @@ in Python or numba.</p></li>
 <li><p>Fixed a bug the produced incorrect results in <a class="reference internal" href="bit_generators/generated/randomgen.mt19937.MT19937.jumped.html#randomgen.mt19937.MT19937.jumped" title="randomgen.mt19937.MT19937.jumped (Python method) — Returns a new bit generator with the state jumped"><code class="xref py py-func docutils literal notranslate"><span class="pre">jumped()</span></code></a>.</p></li>
 <li><p>Fixed multiple bugs in <code class="docutils literal notranslate"><span class="pre">Generator</span></code> that were fixed in <a class="reference external" href="https://numpy.org/doc/stable/reference/random/generator.html#numpy.random.Generator" title="(in NumPy v1.26)"><code class="xref py py-class docutils literal notranslate"><span class="pre">numpy.random.Generator</span></code></a>.</p></li>
 </ul>
-<h2 id="v1-18-0">v1.18.0<a class="headerlink" href="#v1-18-0" title="Permalink to this heading">¶</a></h2>
+<h2 id="v1-18-0">v1.18.0<a class="headerlink" href="#v1-18-0" title="Link to this heading">¶</a></h2>
 <ul class="simple">
 <li><p><code class="docutils literal notranslate"><span class="pre">choice</span></code> pulled in upstream performance improvement that
 use a hash set when choosing without replacement and without user-provided probabilities.</p></li>
@@ -977,11 +977,11 @@ across the docs and references</p></li>
 <li><p>Renamed <cite>Xoshiro256StarStar</cite> to <a class="reference internal" href="bit_generators/xoshiro256.html#randomgen.xoshiro256.Xoshiro256" title="randomgen.xoshiro256.Xoshiro256 (Python class) — Container for the xoshiro256** pseudo-random number generator."><code class="xref py py-class docutils literal notranslate"><span class="pre">Xoshiro256</span></code></a>
 and <cite>Xoshiro512StarStar</cite> to <a class="reference internal" href="bit_generators/xoshiro512.html#randomgen.xoshiro512.Xoshiro512" title="randomgen.xoshiro512.Xoshiro512 (Python class) — Container for the xoshiro512** pseudo-random number generator."><code class="xref py py-class docutils literal notranslate"><span class="pre">Xoshiro512</span></code></a></p></li>
 </ul>
-<h2 id="v1-17-0">v1.17.0<a class="headerlink" href="#v1-17-0" title="Permalink to this heading">¶</a></h2>
+<h2 id="v1-17-0">v1.17.0<a class="headerlink" href="#v1-17-0" title="Link to this heading">¶</a></h2>
 <ul class="simple">
 <li><p>This release was skipped</p></li>
 </ul>
-<h2 id="v1-16-6">v1.16.6<a class="headerlink" href="#v1-16-6" title="Permalink to this heading">¶</a></h2>
+<h2 id="v1-16-6">v1.16.6<a class="headerlink" href="#v1-16-6" title="Link to this heading">¶</a></h2>
 <ul class="simple">
 <li><p>Changed the default jump step size to phi times the period of the generator for
 <a class="reference internal" href="bit_generators/pcg32.html#randomgen.pcg32.PCG32" title="randomgen.pcg32.PCG32 (Python class) — Container for the PCG-32 pseudo-random number generator."><code class="xref py py-class docutils literal notranslate"><span class="pre">PCG32</span></code></a> and <a class="reference internal" href="bit_generators/pcg64.html#randomgen.pcg64.PCG64" title="randomgen.pcg64.PCG64 (Python class) — Container for the PCG-64 pseudo-random number generator."><code class="xref py py-class docutils literal notranslate"><span class="pre">PCG64</span></code></a>.</p></li>
@@ -990,7 +990,7 @@ and <cite>Xoshiro512StarStar</cite> to <a class="reference internal" href="bit_g
 <a class="reference internal" href="bit_generators/generated/randomgen.dsfmt.DSFMT.jumped.html#randomgen.dsfmt.DSFMT.jumped" title="randomgen.dsfmt.DSFMT.jumped (Python method) — Returns a new bit generator with the state jumped"><code class="xref py py-func docutils literal notranslate"><span class="pre">jumped()</span></code></a>.</p></li>
 <li><p>Improves backward compatibility of <code class="docutils literal notranslate"><span class="pre">RandomState</span></code></p></li>
 </ul>
-<h2 id="v1-16-5">v1.16.5<a class="headerlink" href="#v1-16-5" title="Permalink to this heading">¶</a></h2>
+<h2 id="v1-16-5">v1.16.5<a class="headerlink" href="#v1-16-5" title="Link to this heading">¶</a></h2>
 <ul class="simple">
 <li><p>Fixed bugs in <code class="docutils literal notranslate"><span class="pre">laplace</span></code>, <code class="docutils literal notranslate"><span class="pre">gumbel</span></code>, <code class="docutils literal notranslate"><span class="pre">logseries</span></code>, <code class="docutils literal notranslate"><span class="pre">normal</span></code>,
 <code class="docutils literal notranslate"><span class="pre">standard_normal</span></code>, <code class="docutils literal notranslate"><span class="pre">standard_exponential</span></code>, <code class="docutils literal notranslate"><span class="pre">exponential</span></code>, and <code class="docutils literal notranslate"><span class="pre">logistic</span></code>
@@ -1001,7 +1001,7 @@ interval <code class="docutils literal notranslate"><span class="pre">[low,</spa
 <li><p>Fixed a bug in <code class="docutils literal notranslate"><span class="pre">random_integers</span></code> that
 could lead to valid values being treated as invalid.</p></li>
 </ul>
-<h2 id="v1-16-4">v1.16.4<a class="headerlink" href="#v1-16-4" title="Permalink to this heading">¶</a></h2>
+<h2 id="v1-16-4">v1.16.4<a class="headerlink" href="#v1-16-4" title="Link to this heading">¶</a></h2>
 <ul class="simple">
 <li><p>Add a fast path for broadcasting <code class="docutils literal notranslate"><span class="pre">randint</span></code>
 when using <code class="docutils literal notranslate"><span class="pre">uint64</span></code> or <code class="docutils literal notranslate"><span class="pre">int64</span></code>.</p></li>
@@ -1017,11 +1017,11 @@ the sample size is small.</p></li>
 <li><p>Add broadcasting to <code class="docutils literal notranslate"><span class="pre">multinomial</span></code> (see
 <a class="reference external" href="https://github.com/numpy/numpy/pull/9710">NumPy issue 9710</a>)</p></li>
 </ul>
-<h2 id="v1-16-3">v1.16.3<a class="headerlink" href="#v1-16-3" title="Permalink to this heading">¶</a></h2>
+<h2 id="v1-16-3">v1.16.3<a class="headerlink" href="#v1-16-3" title="Link to this heading">¶</a></h2>
 <ul class="simple">
 <li><p>Release fixing Python 2.7 issues</p></li>
 </ul>
-<h2 id="v1-16-2">v1.16.2<a class="headerlink" href="#v1-16-2" title="Permalink to this heading">¶</a></h2>
+<h2 id="v1-16-2">v1.16.2<a class="headerlink" href="#v1-16-2" title="Link to this heading">¶</a></h2>
 <ul class="simple">
 <li><p>Updated Xoroshiro120 to use Author’s latest parametrization</p></li>
 <li><p>Closely synchronized with the version of randomgen being integrated
@@ -1035,12 +1035,12 @@ into NumPy, including removing:</p>
 <li><p>Removed <code class="docutils literal notranslate"><span class="pre">LegacyGenerator</span></code> since this is no longer needed</p></li>
 <li><p>Fixed many small bugs, including in cffi and ctype interfaces</p></li>
 </ul>
-<h2 id="v1-16-1">v1.16.1<a class="headerlink" href="#v1-16-1" title="Permalink to this heading">¶</a></h2>
+<h2 id="v1-16-1">v1.16.1<a class="headerlink" href="#v1-16-1" title="Link to this heading">¶</a></h2>
 <ul class="simple">
 <li><p>Synchronized with upstream changes.</p></li>
 <li><p>Fixed a bug in gamma generation if the shape parameters is 0.0.</p></li>
 </ul>
-<h2 id="v1-16-0">v1.16.0<a class="headerlink" href="#v1-16-0" title="Permalink to this heading">¶</a></h2>
+<h2 id="v1-16-0">v1.16.0<a class="headerlink" href="#v1-16-0" title="Link to this heading">¶</a></h2>
 <ul class="simple">
 <li><p>Fixed a bug that affected <a class="reference internal" href="bit_generators/dsfmt.html#randomgen.dsfmt.DSFMT" title="randomgen.dsfmt.DSFMT (Python class) — Container for the SIMD-based Mersenne Twister pseudo RNG."><code class="xref py py-class docutils literal notranslate"><span class="pre">DSFMT</span></code></a> when calling
 <a class="reference internal" href="bit_generators/generated/randomgen.dsfmt.DSFMT.jump.html#randomgen.dsfmt.DSFMT.jump" title="randomgen.dsfmt.DSFMT.jump (Python method) — Jumps the state as-if 2**128 random numbers have been generated."><code class="xref py py-func docutils literal notranslate"><span class="pre">jump()</span></code></a> or <a class="reference internal" href="bit_generators/generated/randomgen.dsfmt.DSFMT.seed.html#randomgen.dsfmt.DSFMT.seed" title="randomgen.dsfmt.DSFMT.seed (Python method) — Seed the generator"><code class="xref py py-func docutils literal notranslate"><span class="pre">seed()</span></code></a>
@@ -1053,14 +1053,14 @@ encountered since this path is only encountered if the system random
 number generator fails.</p></li>
 <li><p>Synchronized with upstream changes.</p></li>
 </ul>
-<h2 id="v1-15-1">v1.15.1<a class="headerlink" href="#v1-15-1" title="Permalink to this heading">¶</a></h2>
+<h2 id="v1-15-1">v1.15.1<a class="headerlink" href="#v1-15-1" title="Link to this heading">¶</a></h2>
 <ul class="simple">
 <li><p>Added Xoshiro256** and Xoshiro512**, the preferred generators of this class.</p></li>
 <li><p>Fixed bug in <cite>jump</cite> method of Random123 generators which did not specify a default value.</p></li>
 <li><p>Added support for generating bounded uniform integers using Lemire’s method.</p></li>
 <li><p>Synchronized with upstream changes, which requires moving the minimum supported NumPy to 1.13.</p></li>
 </ul>
-<h2 id="v1-15">v1.15<a class="headerlink" href="#v1-15" title="Permalink to this heading">¶</a></h2>
+<h2 id="v1-15">v1.15<a class="headerlink" href="#v1-15" title="Link to this heading">¶</a></h2>
 <ul class="simple">
 <li><p>Synced empty choice changes</p></li>
 <li><p>Synced upstream docstring changes</p></li>
@@ -1125,7 +1125,7 @@ number generator fails.</p></li>
   
     Created using
     <a href="https://www.sphinx-doc.org/" target="_blank" rel="noopener">Sphinx</a>
-    7.1.2.
+    7.2.6.
      and
     <a href="https://github.com/jbms/sphinx-immaterial/" target="_blank" rel="noopener">Sphinx-Immaterial</a>
   

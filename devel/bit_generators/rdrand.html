@@ -13,7 +13,7 @@
     
     
       
-        <title>Hardware-based Random Number Generator (RDRAND) - RandomGen v1.23.2 (+8)</title>
+        <title>Hardware-based Random Number Generator (RDRAND) - RandomGen v1.23.2 (+14)</title>
       
     
     
@@ -80,7 +80,7 @@
 
 <header class="md-header" data-md-component="header">
   <nav class="md-header__inner md-grid" aria-label="Header">
-    <a href="../index.html" title="RandomGen v1.23.2 (+8)" class="md-header__button md-logo" aria-label="RandomGen v1.23.2 (+8)" data-md-component="logo">
+    <a href="../index.html" title="RandomGen v1.23.2 (+14)" class="md-header__button md-logo" aria-label="RandomGen v1.23.2 (+14)" data-md-component="logo">
       <img src="../_static/casino.svg" alt="logo">
     </a>
     <label class="md-header__button md-icon" for="__drawer">
@@ -90,7 +90,7 @@
       <div class="md-header__ellipsis">
         <div class="md-header__topic">
           <span class="md-ellipsis">
-            RandomGen v1.23.2 (+8)
+            RandomGen v1.23.2 (+14)
           </span>
         </div>
         <div class="md-header__topic" data-md-component="header-topic">
@@ -177,10 +177,10 @@
 
 <nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
   <label class="md-nav__title" for="__drawer">
-    <a href="../index.html" title="RandomGen v1.23.2 (+8)" class="md-nav__button md-logo" aria-label="RandomGen v1.23.2 (+8)" data-md-component="logo">
+    <a href="../index.html" title="RandomGen v1.23.2 (+14)" class="md-nav__button md-logo" aria-label="RandomGen v1.23.2 (+14)" data-md-component="logo">
       <img src="../_static/casino.svg" alt="logo">
     </a>
-    RandomGen v1.23.2 (+8)
+    RandomGen v1.23.2 (+14)
   </label>
   
     <div class="md-nav__source">
@@ -1611,10 +1611,10 @@
                   
 
 
-<h1 id="module-randomgen.rdrand"><span id="hardware-based-random-number-generator-rdrand"></span>Hardware-based Random Number Generator (RDRAND)<a class="headerlink" href="#module-randomgen.rdrand" title="Permalink to this heading">¶</a></h1>
+<h1 id="module-randomgen.rdrand"><span id="hardware-based-random-number-generator-rdrand"></span>Hardware-based Random Number Generator (RDRAND)<a class="headerlink" href="#module-randomgen.rdrand" title="Link to this heading">¶</a></h1>
 <dl class="py class objdesc">
 <dt class="sig sig-object highlight py" id="randomgen.rdrand.RDRAND">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">randomgen.rdrand.</span></span><span class="sig-name descname"><span class="pre">RDRAND</span></span><span class="sig-paren">(</span><span class="sig-param-decl"><em class="sig-param"><a class="n reference internal" href="#randomgen.rdrand.RDRAND.__init__.seed" title="randomgen.rdrand.RDRAND.__init__.seed (Python parameter) — Must be None. Raises if any other value is passed."><span class="n"><span class="pre">seed</span></span></a><span class="o"><span class="pre">=</span></span><code class="code python default_value docutils literal highlight highlight-python"><span class="kc">None</span></code></em>, </span><span class="sig-param-decl"><em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, </span><span class="sig-param-decl"><em class="sig-param"><a class="n reference internal" href="#randomgen.rdrand.RDRAND.__init__.retries" title="randomgen.rdrand.RDRAND.__init__.retries (Python parameter) — The number of times to retry. On CPUs with many cores it is possible for RDRAND to fail if heavily utilized. retries sets the number of retries before a RuntimeError is raised. Each retry issues a pause instruction which waits a CPU-specific number of cycles (140 on Skylake 1). The default value of 10 is recommended by Intel (2). You can set any value up-to the maximum integer size on your platform if you have issues with errors, although the practical maximum is less than 100. See Notes for more on the error state."><span class="n"><span class="pre">retries</span></span></a><span class="o"><span class="pre">=</span></span><code class="code python default_value docutils literal highlight highlight-python"><span class="mi">10</span></code></em></span><span class="sig-paren">)</span><a class="headerlink" href="#randomgen.rdrand.RDRAND" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">randomgen.rdrand.</span></span><span class="sig-name descname"><span class="pre">RDRAND</span></span><span class="sig-paren">(</span><span class="sig-param-decl"><em class="sig-param"><a class="n reference internal" href="#randomgen.rdrand.RDRAND.__init__.seed" title="randomgen.rdrand.RDRAND.__init__.seed (Python parameter) — Must be None. Raises if any other value is passed."><span class="n"><span class="pre">seed</span></span></a><span class="o"><span class="pre">=</span></span><code class="code python default_value docutils literal highlight highlight-python"><span class="kc">None</span></code></em>, </span><span class="sig-param-decl"><em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, </span><span class="sig-param-decl"><em class="sig-param"><a class="n reference internal" href="#randomgen.rdrand.RDRAND.__init__.retries" title="randomgen.rdrand.RDRAND.__init__.retries (Python parameter) — The number of times to retry. On CPUs with many cores it is possible for RDRAND to fail if heavily utilized. retries sets the number of retries before a RuntimeError is raised. Each retry issues a pause instruction which waits a CPU-specific number of cycles (140 on Skylake 1). The default value of 10 is recommended by Intel (2). You can set any value up-to the maximum integer size on your platform if you have issues with errors, although the practical maximum is less than 100. See Notes for more on the error state."><span class="n"><span class="pre">retries</span></span></a><span class="o"><span class="pre">=</span></span><code class="code python default_value docutils literal highlight highlight-python"><span class="mi">10</span></code></em></span><span class="sig-paren">)</span><a class="headerlink" href="#randomgen.rdrand.RDRAND" title="Link to this definition">¶</a></dt>
 <dd><p>Container for the hardware RDRAND random number generator.</p>
 <dl class="field-list simple">
 <dt class="field-odd" id="randomgen.rdrand.RDRAND-parameters">Parameters<span class="colon">:</span><a class="headerlink" href="#randomgen.rdrand.RDRAND-parameters" title="Permalink to this headline">¶</a></dt>
@@ -1635,7 +1635,7 @@ than 100. See Notes for more on the error state.</p>
 </dl>
 <dl class="py attribute objdesc">
 <dt class="sig sig-object highlight py" id="randomgen.rdrand.RDRAND.lock">
-<span class="sig-name descname"><span class="pre">lock</span></span><a class="headerlink" href="#randomgen.rdrand.RDRAND.lock" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">lock</span></span><a class="headerlink" href="#randomgen.rdrand.RDRAND.lock" title="Link to this definition">¶</a></dt>
 <dd><p>Lock instance that is shared so that the same bit git generator can
 be used in multiple Generators without corrupting the state. Code that
 generates values from a bit generator should hold the bit generator’s
@@ -1649,7 +1649,7 @@ lock.</p>
 
 <dl class="py attribute objdesc">
 <dt class="sig sig-object highlight py" id="randomgen.rdrand.RDRAND.seed_seq">
-<span class="sig-name descname"><span class="pre">seed_seq</span></span><a class="headerlink" href="#randomgen.rdrand.RDRAND.seed_seq" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">seed_seq</span></span><a class="headerlink" href="#randomgen.rdrand.RDRAND.seed_seq" title="Link to this definition">¶</a></dt>
 <dd><p>Always None since RDRAND cannot be seeded.</p>
 <dl class="field-list simple">
 <dt class="field-odd" id="randomgen.rdrand.RDRAND.seed_seq-type">Type<span class="colon">:</span><a class="headerlink" href="#randomgen.rdrand.RDRAND.seed_seq-type" title="Permalink to this headline">¶</a></dt>
@@ -1764,7 +1764,7 @@ Available at:
 </aside>
 </dd></dl>
 
-<h2 id="seeding-and-state">Seeding and State<a class="headerlink" href="#seeding-and-state" title="Permalink to this heading">¶</a></h2>
+<h2 id="seeding-and-state">Seeding and State<a class="headerlink" href="#seeding-and-state" title="Link to this heading">¶</a></h2>
 <table class="autosummary longtable docutils data align-default">
 <tbody>
 <tr class="row-odd"><td><p><a class="reference internal" href="generated/randomgen.rdrand.RDRAND.seed.html#randomgen.rdrand.RDRAND.seed" title="randomgen.rdrand.RDRAND.seed (Python method) — Compatibility function. Not used."><code class="xref py py-obj docutils literal notranslate"><span class="pre">seed</span></code></a>([seed])</p></td>
@@ -1778,7 +1778,7 @@ Available at:
 </tr>
 </tbody>
 </table>
-<h2 id="parallel-generation">Parallel generation<a class="headerlink" href="#parallel-generation" title="Permalink to this heading">¶</a></h2>
+<h2 id="parallel-generation">Parallel generation<a class="headerlink" href="#parallel-generation" title="Link to this heading">¶</a></h2>
 <table class="autosummary longtable docutils data align-default">
 <tbody>
 <tr class="row-odd"><td><p><a class="reference internal" href="generated/randomgen.rdrand.RDRAND.jumped.html#randomgen.rdrand.RDRAND.jumped" title="randomgen.rdrand.RDRAND.jumped (Python method) — Returns a new bit generator"><code class="xref py py-obj docutils literal notranslate"><span class="pre">jumped</span></code></a>([iter])</p></td>
@@ -1786,7 +1786,7 @@ Available at:
 </tr>
 </tbody>
 </table>
-<h2 id="extending">Extending<a class="headerlink" href="#extending" title="Permalink to this heading">¶</a></h2>
+<h2 id="extending">Extending<a class="headerlink" href="#extending" title="Link to this heading">¶</a></h2>
 <table class="autosummary longtable docutils data align-default">
 <tbody>
 <tr class="row-odd"><td><p><a class="reference internal" href="generated/randomgen.rdrand.RDRAND.cffi.html#randomgen.rdrand.RDRAND.cffi" title="randomgen.rdrand.RDRAND.cffi (Python attribute) — CFFI interface"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cffi</span></code></a></p></td>
@@ -1797,7 +1797,7 @@ Available at:
 </tr>
 </tbody>
 </table>
-<h2 id="testing">Testing<a class="headerlink" href="#testing" title="Permalink to this heading">¶</a></h2>
+<h2 id="testing">Testing<a class="headerlink" href="#testing" title="Link to this heading">¶</a></h2>
 <table class="autosummary longtable docutils data align-default">
 <tbody>
 <tr class="row-odd"><td><p><a class="reference internal" href="generated/randomgen.rdrand.RDRAND.random_raw.html#randomgen.rdrand.RDRAND.random_raw" title="randomgen.rdrand.RDRAND.random_raw (Python method) — Return randoms as generated by the underlying BitGenerator"><code class="xref py py-obj docutils literal notranslate"><span class="pre">random_raw</span></code></a>([size, output])</p></td>
@@ -1805,10 +1805,10 @@ Available at:
 </tr>
 </tbody>
 </table>
-<h2 id="custom-lock">Custom Lock<a class="headerlink" href="#custom-lock" title="Permalink to this heading">¶</a></h2>
+<h2 id="custom-lock">Custom Lock<a class="headerlink" href="#custom-lock" title="Link to this heading">¶</a></h2>
 <dl class="py class objdesc">
 <dt class="sig sig-object highlight py" id="randomgen.rdrand.RaisingLock">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">randomgen.rdrand.</span></span><span class="sig-name descname"><span class="pre">RaisingLock</span></span><a class="headerlink" href="#randomgen.rdrand.RaisingLock" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">randomgen.rdrand.</span></span><span class="sig-name descname"><span class="pre">RaisingLock</span></span><a class="headerlink" href="#randomgen.rdrand.RaisingLock" title="Link to this definition">¶</a></dt>
 <dd><p>A Lock that wraps threading.Lock can can raise errors.</p>
 <p>Raises the last exception set while the lock was held,
 if any. It clears the error when the lock is acquired.</p>
@@ -1883,7 +1883,7 @@ if any. It clears the error when the lock is acquired.</p>
   
     Created using
     <a href="https://www.sphinx-doc.org/" target="_blank" rel="noopener">Sphinx</a>
-    7.1.2.
+    7.2.6.
      and
     <a href="https://github.com/jbms/sphinx-immaterial/" target="_blank" rel="noopener">Sphinx-Immaterial</a>
   
