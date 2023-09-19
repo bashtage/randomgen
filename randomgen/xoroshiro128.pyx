@@ -214,9 +214,9 @@ cdef class Xoroshiro128(BitGenerator):
         cdef np.npy_intp i
         for i in range(iter):
             if self._plusplus:
-                xoroshiro128_jump(&self.rng_state)
-            else:
                 xoroshiro128plusplus_jump(&self.rng_state)
+            else:
+                xoroshiro128_jump(&self.rng_state)
         self._reset_state_variables()
 
     def jump(self, np.npy_intp iter=1):
