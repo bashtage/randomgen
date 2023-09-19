@@ -150,7 +150,7 @@ cdef class PCG32(BitGenerator):
         if inc is not None:
             err_msg = "inc must be a scalar integer between 0 and " \
                       "{ub}".format(ub=ub)
-            if inc < 0 or inc > ub or int(inc) != inc:
+            if inc < 0 or inc > ub or int(np.squeeze(inc)) != inc:
                 raise ValueError(err_msg)
             if not np.isscalar(inc):
                 raise TypeError(err_msg)

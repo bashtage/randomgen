@@ -434,8 +434,17 @@ class Base(object):
         if not hasattr(bg, "jumped"):
             pytest.skip("bit generator does not support jumping")
         g = np.random.Generator(bg)
+        seed_seq = bg.seed_seq
+
         g.integers(0, 2**32, dtype=np.uint32)
-        jumped = np.random.Generator(bg.jumped())
+        new_bg = bg.jumped()
+        jumped = np.random.Generator(new_bg)
+        new_seed_seq = new_bg.seed_seq
+        if seed_seq is None:
+            assert new_seed_seq is None
+        else:
+            assert_equal(seed_seq.entropy, new_seed_seq.entropy)
+
         if "has_uint32" in jumped.bit_generator.state:
             assert jumped.bit_generator.state["has_uint32"] == 0
             return
@@ -443,6 +452,32 @@ class Base(object):
         next_g = g.integers(0, 2**32, dtype=np.uint32)
         next_jumped = jumped.integers(0, 2**32, dtype=np.uint32)
         assert next_g != next_jumped
+
+    @pytest.mark.parametrize("mode", ["legacy", "sequence"])
+    def test_jumped_seed_seq_clone(self, mode):
+        try:
+            bg = self.setup_bitgenerator(self.data1["seed"], mode=mode)
+        except (TypeError, ValueError):
+            # Newer generators do not accept mode (TypeError)
+            # SFC64does not support "legacy", and raises ValueError
+            bg = self.setup_bitgenerator(self.data1["seed"])
+        if not hasattr(bg, "jumped"):
+            pytest.skip("bit generator does not support jumping")
+        if mode != "legacy" and self.bit_generator is not RDRAND:
+            orig_seed_seq = SeedSequence(self.data1["seed"])
+            orig_seed_seq.spawn(10)
+            bg.seed_seq = orig_seed_seq
+            assert orig_seed_seq is bg.seed_seq
+        seed_seq = bg.seed_seq
+        new_bg = bg.jumped()
+        new_seed_seq = new_bg.seed_seq
+        if seed_seq is None:
+            assert new_seed_seq is None
+        else:
+            assert_equal(seed_seq.entropy, new_seed_seq.entropy)
+            assert seed_seq.spawn_key == new_seed_seq.spawn_key
+            assert seed_seq.n_children_spawned == new_seed_seq.n_children_spawned
+        assert not np.all(new_bg.random_raw(10) == bg.random_raw(10))
 
     def test_uinteger_reset_advance(self):
         bg = self.setup_bitgenerator([None])

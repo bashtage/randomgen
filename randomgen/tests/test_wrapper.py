@@ -9,7 +9,8 @@ from randomgen.wrapper import UserBitGenerator
 def rotr_64(value, rot):
     value = np.uint64(value)
     rot = np.uint64(rot)
-    return int((value >> rot) | (value << ((-rot) & np.uint(63))))
+    with np.errstate(over="ignore"):
+        return int((value >> rot) | (value << ((-rot) & np.uint(63))))
 
 
 class _PCG64:

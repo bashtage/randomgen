@@ -1,8 +1,6 @@
 from setuptools import Distribution, find_packages, setup
 from setuptools.extension import Extension
 
-from packaging.version import parse
-
 import glob
 import io
 import os
@@ -14,6 +12,7 @@ import sys
 from Cython.Build import cythonize
 import Cython.Compiler.Options
 import numpy as np
+from packaging.version import parse
 
 try:
     from Cython import Tempita as tempita
