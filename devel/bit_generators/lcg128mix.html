@@ -13,7 +13,7 @@
     
     
       
-        <title>128-bit Linear Congruential Generator (LCG) with Output Mixing - RandomGen v1.23.2 (+12)</title>
+        <title>128-bit Linear Congruential Generator (LCG) with Output Mixing - RandomGen v1.23.2 (+8)</title>
       
     
     
@@ -80,7 +80,7 @@
 
 <header class="md-header" data-md-component="header">
   <nav class="md-header__inner md-grid" aria-label="Header">
-    <a href="../index.html" title="RandomGen v1.23.2 (+12)" class="md-header__button md-logo" aria-label="RandomGen v1.23.2 (+12)" data-md-component="logo">
+    <a href="../index.html" title="RandomGen v1.23.2 (+8)" class="md-header__button md-logo" aria-label="RandomGen v1.23.2 (+8)" data-md-component="logo">
       <img src="../_static/casino.svg" alt="logo">
     </a>
     <label class="md-header__button md-icon" for="__drawer">
@@ -90,7 +90,7 @@
       <div class="md-header__ellipsis">
         <div class="md-header__topic">
           <span class="md-ellipsis">
-            RandomGen v1.23.2 (+12)
+            RandomGen v1.23.2 (+8)
           </span>
         </div>
         <div class="md-header__topic" data-md-component="header-topic">
@@ -177,10 +177,10 @@
 
 <nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
   <label class="md-nav__title" for="__drawer">
-    <a href="../index.html" title="RandomGen v1.23.2 (+12)" class="md-nav__button md-logo" aria-label="RandomGen v1.23.2 (+12)" data-md-component="logo">
+    <a href="../index.html" title="RandomGen v1.23.2 (+8)" class="md-nav__button md-logo" aria-label="RandomGen v1.23.2 (+8)" data-md-component="logo">
       <img src="../_static/casino.svg" alt="logo">
     </a>
-    RandomGen v1.23.2 (+12)
+    RandomGen v1.23.2 (+8)
   </label>
   
     <div class="md-nav__source">
@@ -1613,10 +1613,10 @@
                   
 
 
-<h1 id="bit-linear-congruential-generator-lcg-with-output-mixing">128-bit Linear Congruential Generator (LCG) with Output Mixing<a class="headerlink" href="#bit-linear-congruential-generator-lcg-with-output-mixing" title="Link to this heading">¶</a></h1>
+<h1 id="bit-linear-congruential-generator-lcg-with-output-mixing">128-bit Linear Congruential Generator (LCG) with Output Mixing<a class="headerlink" href="#bit-linear-congruential-generator-lcg-with-output-mixing" title="Permalink to this heading">¶</a></h1>
 <dl class="py class objdesc">
 <dt class="sig sig-object highlight sig-wrap py" id="randomgen.pcg64.LCG128Mix">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">randomgen.pcg64.</span></span><span class="sig-name descname"><span class="pre">LCG128Mix</span></span><span class="sig-paren">(</span><span class="sig-param-decl"><em class="sig-param"><a class="n reference internal" href="#randomgen.pcg64.LCG128Mix.__init__.seed" title="randomgen.pcg64.LCG128Mix.__init__.seed (Python parameter) — Random seed initializing the pseudo-random number generator. Can be an integer, a sequence of integers, a SeedSequence instance or None (the default). If seed is None, then PCG64 use a SeedSequence initialized with system-provided entropy."><span class="n"><span class="pre">seed</span></span></a><span class="o"><span class="pre">=</span></span><code class="code python default_value docutils literal highlight highlight-python"><span class="kc">None</span></code></em>, </span><span class="sig-param-decl"><em class="sig-param"><a class="n reference internal" href="#randomgen.pcg64.LCG128Mix.__init__.inc" title="randomgen.pcg64.LCG128Mix.__init__.inc (Python parameter) — The increment in the LCG. Can be an integer in [0, 2**128) or None. If inc is None, then it is initialized using the same``SeedSequence`` used by seed."><span class="n"><span class="pre">inc</span></span></a><span class="o"><span class="pre">=</span></span><code class="code python default_value docutils literal highlight highlight-python"><span class="kc">None</span></code></em>, </span><span class="sig-param-decl"><em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, </span><span class="sig-param-decl"><em class="sig-param"><a class="n reference internal" href="#randomgen.pcg64.LCG128Mix.__init__.multiplier" title="randomgen.pcg64.LCG128Mix.__init__.multiplier (Python parameter) — The multipler to use in the LCG. Must be an odd integer in (0, 2**128)."><span class="n"><span class="pre">multiplier</span></span></a><span class="o"><span class="pre">=</span></span><code class="code python default_value docutils literal highlight highlight-python"><span class="mi">47026247687942121848144207491837523525</span></code></em>, </span><span class="sig-param-decl"><em class="sig-param"><a class="n reference internal" href="#randomgen.pcg64.LCG128Mix.__init__.output" title="randomgen.pcg64.LCG128Mix.__init__.output (Python parameter) — The name of the output function or a ctypes function or function pointer with a signature uint64(uint64, uint64). Supported options are:"><span class="n"><span class="pre">output</span></span></a><span class="o"><span class="pre">=</span></span><code class="code python default_value docutils literal highlight highlight-python"><span class="s1">&#39;xsl-rr&#39;</span></code></em>, </span><span class="sig-param-decl"><em class="sig-param"><a class="n reference internal" href="#randomgen.pcg64.LCG128Mix.__init__.dxsm_multiplier" title="randomgen.pcg64.LCG128Mix.__init__.dxsm_multiplier (Python parameter) — The multiplier to use in the DXSM output function. The default is the DXSM multipler in PCG 2.0."><span class="n"><span class="pre">dxsm_multiplier</span></span></a><span class="o"><span class="pre">=</span></span><code class="code python default_value docutils literal highlight highlight-python"><span class="mi">15750249268501108917</span></code></em>, </span><span class="sig-param-decl"><em class="sig-param"><a class="n reference internal" href="#randomgen.pcg64.LCG128Mix.__init__.post" title="randomgen.pcg64.LCG128Mix.__init__.post (Python parameter) — Whether the mix the output before or after the next increment of the LCG is computed. True updates the state and then mixes the updated state."><span class="n"><span class="pre">post</span></span></a><span class="o"><span class="pre">=</span></span><code class="code python default_value docutils literal highlight highlight-python"><span class="kc">True</span></code></em></span><span class="sig-paren">)</span><a class="headerlink" href="#randomgen.pcg64.LCG128Mix" title="Link to this definition">¶</a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">randomgen.pcg64.</span></span><span class="sig-name descname"><span class="pre">LCG128Mix</span></span><span class="sig-paren">(</span><span class="sig-param-decl"><em class="sig-param"><a class="n reference internal" href="#randomgen.pcg64.LCG128Mix.__init__.seed" title="randomgen.pcg64.LCG128Mix.__init__.seed (Python parameter) — Random seed initializing the pseudo-random number generator. Can be an integer, a sequence of integers, a SeedSequence instance or None (the default). If seed is None, then PCG64 use a SeedSequence initialized with system-provided entropy."><span class="n"><span class="pre">seed</span></span></a><span class="o"><span class="pre">=</span></span><code class="code python default_value docutils literal highlight highlight-python"><span class="kc">None</span></code></em>, </span><span class="sig-param-decl"><em class="sig-param"><a class="n reference internal" href="#randomgen.pcg64.LCG128Mix.__init__.inc" title="randomgen.pcg64.LCG128Mix.__init__.inc (Python parameter) — The increment in the LCG. Can be an integer in [0, 2**128) or None. If inc is None, then it is initialized using the same``SeedSequence`` used by seed."><span class="n"><span class="pre">inc</span></span></a><span class="o"><span class="pre">=</span></span><code class="code python default_value docutils literal highlight highlight-python"><span class="kc">None</span></code></em>, </span><span class="sig-param-decl"><em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, </span><span class="sig-param-decl"><em class="sig-param"><a class="n reference internal" href="#randomgen.pcg64.LCG128Mix.__init__.multiplier" title="randomgen.pcg64.LCG128Mix.__init__.multiplier (Python parameter) — The multipler to use in the LCG. Must be an odd integer in (0, 2**128)."><span class="n"><span class="pre">multiplier</span></span></a><span class="o"><span class="pre">=</span></span><code class="code python default_value docutils literal highlight highlight-python"><span class="mi">47026247687942121848144207491837523525</span></code></em>, </span><span class="sig-param-decl"><em class="sig-param"><a class="n reference internal" href="#randomgen.pcg64.LCG128Mix.__init__.output" title="randomgen.pcg64.LCG128Mix.__init__.output (Python parameter) — The name of the output function or a ctypes function or function pointer with a signature uint64(uint64, uint64). Supported options are:"><span class="n"><span class="pre">output</span></span></a><span class="o"><span class="pre">=</span></span><code class="code python default_value docutils literal highlight highlight-python"><span class="s1">&#39;xsl-rr&#39;</span></code></em>, </span><span class="sig-param-decl"><em class="sig-param"><a class="n reference internal" href="#randomgen.pcg64.LCG128Mix.__init__.dxsm_multiplier" title="randomgen.pcg64.LCG128Mix.__init__.dxsm_multiplier (Python parameter) — The multiplier to use in the DXSM output function. The default is the DXSM multipler in PCG 2.0."><span class="n"><span class="pre">dxsm_multiplier</span></span></a><span class="o"><span class="pre">=</span></span><code class="code python default_value docutils literal highlight highlight-python"><span class="mi">15750249268501108917</span></code></em>, </span><span class="sig-param-decl"><em class="sig-param"><a class="n reference internal" href="#randomgen.pcg64.LCG128Mix.__init__.post" title="randomgen.pcg64.LCG128Mix.__init__.post (Python parameter) — Whether the mix the output before or after the next increment of the LCG is computed. True updates the state and then mixes the updated state."><span class="n"><span class="pre">post</span></span></a><span class="o"><span class="pre">=</span></span><code class="code python default_value docutils literal highlight highlight-python"><span class="kc">True</span></code></em></span><span class="sig-paren">)</span><a class="headerlink" href="#randomgen.pcg64.LCG128Mix" title="Permalink to this definition">¶</a></dt>
 <dd><p>Customizable 128-bit LCG bit generator with output mixing</p>
 <p>Support changing the LCG’s multiplier and the output function,
 including support for user-defined output functions. This big generator
@@ -1661,7 +1661,7 @@ updated state.</p>
 </dl>
 <dl class="py attribute objdesc">
 <dt class="sig sig-object highlight py" id="randomgen.pcg64.LCG128Mix.lock">
-<span class="sig-name descname"><span class="pre">lock</span></span><a class="headerlink" href="#randomgen.pcg64.LCG128Mix.lock" title="Link to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">lock</span></span><a class="headerlink" href="#randomgen.pcg64.LCG128Mix.lock" title="Permalink to this definition">¶</a></dt>
 <dd><p>Lock instance that is shared so that the same bit git generator can
 be used in multiple Generators without corrupting the state. Code that
 generates values from a bit generator should hold the bit generator’s
@@ -1675,7 +1675,7 @@ lock.</p>
 
 <dl class="py attribute objdesc">
 <dt class="sig sig-object highlight py" id="randomgen.pcg64.LCG128Mix.seed_seq">
-<span class="sig-name descname"><span class="pre">seed_seq</span></span><a class="headerlink" href="#randomgen.pcg64.LCG128Mix.seed_seq" title="Link to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">seed_seq</span></span><a class="headerlink" href="#randomgen.pcg64.LCG128Mix.seed_seq" title="Permalink to this definition">¶</a></dt>
 <dd><p>The SeedSequence instance used to initialize the generator if mode is
 “sequence” or is seed is a SeedSequence. None if mode is “legacy”.</p>
 <dl class="field-list simple">
@@ -1773,7 +1773,7 @@ Available at: &lt;<a class="reference external" href="https://github.com/numpy/n
 </aside>
 </dd></dl>
 
-<h2 id="seeding-and-state">Seeding and State<a class="headerlink" href="#seeding-and-state" title="Link to this heading">¶</a></h2>
+<h2 id="seeding-and-state">Seeding and State<a class="headerlink" href="#seeding-and-state" title="Permalink to this heading">¶</a></h2>
 <table class="autosummary longtable docutils data align-default">
 <tbody>
 <tr class="row-odd"><td><p><a class="reference internal" href="generated/randomgen.pcg64.LCG128Mix.seed.html#randomgen.pcg64.LCG128Mix.seed" title="randomgen.pcg64.LCG128Mix.seed (Python method) — Seed the generator"><code class="xref py py-obj docutils literal notranslate"><span class="pre">seed</span></code></a>([seed, inc])</p></td>
@@ -1784,7 +1784,7 @@ Available at: &lt;<a class="reference external" href="https://github.com/numpy/n
 </tr>
 </tbody>
 </table>
-<h2 id="parallel-generation">Parallel generation<a class="headerlink" href="#parallel-generation" title="Link to this heading">¶</a></h2>
+<h2 id="parallel-generation">Parallel generation<a class="headerlink" href="#parallel-generation" title="Permalink to this heading">¶</a></h2>
 <table class="autosummary longtable docutils data align-default">
 <tbody>
 <tr class="row-odd"><td><p><a class="reference internal" href="generated/randomgen.pcg64.LCG128Mix.advance.html#randomgen.pcg64.LCG128Mix.advance" title="randomgen.pcg64.LCG128Mix.advance (Python method) — Advance the underlying RNG as-if delta draws have occurred."><code class="xref py py-obj docutils literal notranslate"><span class="pre">advance</span></code></a>(delta)</p></td>
@@ -1795,7 +1795,7 @@ Available at: &lt;<a class="reference external" href="https://github.com/numpy/n
 </tr>
 </tbody>
 </table>
-<h2 id="extending">Extending<a class="headerlink" href="#extending" title="Link to this heading">¶</a></h2>
+<h2 id="extending">Extending<a class="headerlink" href="#extending" title="Permalink to this heading">¶</a></h2>
 <table class="autosummary longtable docutils data align-default">
 <tbody>
 <tr class="row-odd"><td><p><a class="reference internal" href="generated/randomgen.pcg64.LCG128Mix.cffi.html#randomgen.pcg64.LCG128Mix.cffi" title="randomgen.pcg64.LCG128Mix.cffi (Python attribute) — CFFI interface"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cffi</span></code></a></p></td>
@@ -1806,7 +1806,7 @@ Available at: &lt;<a class="reference external" href="https://github.com/numpy/n
 </tr>
 </tbody>
 </table>
-<h2 id="testing">Testing<a class="headerlink" href="#testing" title="Link to this heading">¶</a></h2>
+<h2 id="testing">Testing<a class="headerlink" href="#testing" title="Permalink to this heading">¶</a></h2>
 <table class="autosummary longtable docutils data align-default">
 <tbody>
 <tr class="row-odd"><td><p><a class="reference internal" href="generated/randomgen.pcg64.LCG128Mix.random_raw.html#randomgen.pcg64.LCG128Mix.random_raw" title="randomgen.pcg64.LCG128Mix.random_raw (Python method) — Return randoms as generated by the underlying BitGenerator"><code class="xref py py-obj docutils literal notranslate"><span class="pre">random_raw</span></code></a>([size, output])</p></td>
@@ -1881,7 +1881,7 @@ Available at: &lt;<a class="reference external" href="https://github.com/numpy/n
   
     Created using
     <a href="https://www.sphinx-doc.org/" target="_blank" rel="noopener">Sphinx</a>
-    7.2.6.
+    7.1.2.
      and
     <a href="https://github.com/jbms/sphinx-immaterial/" target="_blank" rel="noopener">Sphinx-Immaterial</a>
   

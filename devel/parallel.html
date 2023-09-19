@@ -13,7 +13,7 @@
     
     
       
-        <title>Parallel Random Number Generation - RandomGen v1.23.2 (+12)</title>
+        <title>Parallel Random Number Generation - RandomGen v1.23.2 (+8)</title>
       
     
     
@@ -80,7 +80,7 @@
 
 <header class="md-header" data-md-component="header">
   <nav class="md-header__inner md-grid" aria-label="Header">
-    <a href="index.html" title="RandomGen v1.23.2 (+12)" class="md-header__button md-logo" aria-label="RandomGen v1.23.2 (+12)" data-md-component="logo">
+    <a href="index.html" title="RandomGen v1.23.2 (+8)" class="md-header__button md-logo" aria-label="RandomGen v1.23.2 (+8)" data-md-component="logo">
       <img src="_static/casino.svg" alt="logo">
     </a>
     <label class="md-header__button md-icon" for="__drawer">
@@ -90,7 +90,7 @@
       <div class="md-header__ellipsis">
         <div class="md-header__topic">
           <span class="md-ellipsis">
-            RandomGen v1.23.2 (+12)
+            RandomGen v1.23.2 (+8)
           </span>
         </div>
         <div class="md-header__topic" data-md-component="header-topic">
@@ -177,10 +177,10 @@
 
 <nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
   <label class="md-nav__title" for="__drawer">
-    <a href="index.html" title="RandomGen v1.23.2 (+12)" class="md-nav__button md-logo" aria-label="RandomGen v1.23.2 (+12)" data-md-component="logo">
+    <a href="index.html" title="RandomGen v1.23.2 (+8)" class="md-nav__button md-logo" aria-label="RandomGen v1.23.2 (+8)" data-md-component="logo">
       <img src="_static/casino.svg" alt="logo">
     </a>
-    RandomGen v1.23.2 (+12)
+    RandomGen v1.23.2 (+8)
   </label>
   
     <div class="md-nav__source">
@@ -625,7 +625,7 @@
                   
 
 
-<h1 id="parallel-random-number-generation">Parallel Random Number Generation<a class="headerlink" href="#parallel-random-number-generation" title="Link to this heading">¶</a></h1>
+<h1 id="parallel-random-number-generation">Parallel Random Number Generation<a class="headerlink" href="#parallel-random-number-generation" title="Permalink to this heading">¶</a></h1>
 <p>There are five strategies implemented that can be used to produce
 repeatable pseudo-random numbers across multiple processes (local
 or distributed). The final method is suitable for parallel
@@ -638,7 +638,7 @@ applications where reproducibility is not a concern.</p>
 <li><p><a class="reference internal" href="#weyl-sequences"><span class="std std-ref">Weyl Sequences</span></a></p></li>
 <li><p><a class="reference internal" href="#non-reproducible-sequences"><span class="std std-ref">Non-reproducible Sequences</span></a></p></li>
 </ul>
-<h2 id="using-a-seedsequence"><span id="using-seed-sequence"></span>Using a SeedSequence<a class="headerlink" href="#using-a-seedsequence" title="Link to this heading">¶</a></h2>
+<h2 id="using-a-seedsequence"><span id="using-seed-sequence"></span>Using a SeedSequence<a class="headerlink" href="#using-a-seedsequence" title="Permalink to this heading">¶</a></h2>
 <p>Using a <a class="reference external" href="https://numpy.org/doc/stable/reference/random/bit_generators/generated/numpy.random.SeedSequence.html#numpy.random.SeedSequence" title="(in NumPy v1.26)"><code class="xref py py-class docutils literal notranslate"><span class="pre">SeedSequence</span></code></a> is a universal way to initialize many streams.
 When using with a bit generator with a moderately large state (say 256-bits), the probability
 of a collision is negligible. This said, some generators can have difficult to detect
@@ -653,7 +653,7 @@ correlation when producing many streams in corner cases.</p>
 <span class="n">streams</span> <span class="o">=</span> <span class="p">[</span><span class="n">SFC64</span><span class="p">(</span><span class="n">child</span><span class="p">)</span> <span class="k">for</span> <span class="n">child</span> <span class="ow">in</span> <span class="n">children</span><span class="p">]</span>
 </code></pre></div>
 </div>
-<h2 id="distinct-keys-in-cryptographic-generators"><span id="distinct-cryptographic-keys"></span>Distinct Keys in Cryptographic Generators<a class="headerlink" href="#distinct-keys-in-cryptographic-generators" title="Link to this heading">¶</a></h2>
+<h2 id="distinct-keys-in-cryptographic-generators"><span id="distinct-cryptographic-keys"></span>Distinct Keys in Cryptographic Generators<a class="headerlink" href="#distinct-keys-in-cryptographic-generators" title="Permalink to this heading">¶</a></h2>
 <p>The cryptographic pseudo-random number generators (PRNGs) support using distinct
 keys to produce distinct sequence.
 Generators that support this form of parallelization include <a class="reference internal" href="bit_generators/aesctr.html#randomgen.aes.AESCounter" title="randomgen.aes.AESCounter (Python class) — Container for the AES Counter pseudo-random number generator."><code class="xref py py-class docutils literal notranslate"><span class="pre">AESCounter</span></code></a>,
@@ -678,7 +678,7 @@ values in the second input while using the same seed in the first.</p>
 <span class="n">streams</span> <span class="o">=</span> <span class="p">[</span><span class="n">AESCounter</span><span class="p">(</span><span class="n">key</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">key</span><span class="p">,</span><span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">uint64</span><span class="p">))</span> <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">keys</span><span class="p">]</span>
 </code></pre></div>
 </div>
-<h2 id="advancing-the-prng-s-state"><span id="advancing"></span>Advancing the PRNG’s state<a class="headerlink" href="#advancing-the-prng-s-state" title="Link to this heading">¶</a></h2>
+<h2 id="advancing-the-prng-s-state"><span id="advancing"></span>Advancing the PRNG’s state<a class="headerlink" href="#advancing-the-prng-s-state" title="Permalink to this heading">¶</a></h2>
 <p>Most of the cryptographic PRNGs are counter-based, and so support advancing
 which increments the counter. Advancing a PRNG updates the underlying PRNG
 state as if a given number of calls to the underlying PRNG have been made.
@@ -716,7 +716,7 @@ the PCG-based generators also support <code class="docutils literal notranslate"
 <a class="reference internal" href="bit_generators/lcg128mix.html#randomgen.pcg64.LCG128Mix" title="randomgen.pcg64.LCG128Mix (Python class) — Customizable 128-bit LCG bit generator with output mixing"><code class="xref py py-class docutils literal notranslate"><span class="pre">LCG128Mix</span></code></a>, and <a class="reference internal" href="bit_generators/pcg32.html#randomgen.pcg32.PCG32" title="randomgen.pcg32.PCG32 (Python class) — Container for the PCG-32 pseudo-random number generator."><code class="xref py py-class docutils literal notranslate"><span class="pre">PCG32</span></code></a>.
 Note that <a class="reference internal" href="bit_generators/hc128.html#randomgen.hc128.HC128" title="randomgen.hc128.HC128 (Python class) — Container for the HC-128 cipher-based pseudo-random number generator"><code class="xref py py-class docutils literal notranslate"><span class="pre">HC128</span></code></a> is based on a stream cipher and so
 does not support advancing a counter.</p>
-<h2 id="jumping-the-prng-state"><span id="jumping"></span>Jumping the PRNG state<a class="headerlink" href="#jumping-the-prng-state" title="Link to this heading">¶</a></h2>
+<h2 id="jumping-the-prng-state"><span id="jumping"></span>Jumping the PRNG state<a class="headerlink" href="#jumping-the-prng-state" title="Permalink to this heading">¶</a></h2>
 <p><code class="docutils literal notranslate"><span class="pre">jumped</span></code> advances the state of the PRNG as if a large number of random
 numbers have been drawn, and returns a new instance with this state.  Jumping
 is more universal than <code class="docutils literal notranslate"><span class="pre">advance</span></code> since the multiplier needed to jump some PRNGs
@@ -833,7 +833,7 @@ golden ratio, times the full period.</p>
     <span class="n">last_rng</span> <span class="o">=</span> <span class="n">last_rng</span><span class="o">.</span><span class="n">jumped</span><span class="p">()</span>
 </code></pre></div>
 </div>
-<h2 id="weyl-sequences"><span id="id1"></span>Weyl Sequences<a class="headerlink" href="#weyl-sequences" title="Link to this heading">¶</a></h2>
+<h2 id="weyl-sequences"><span id="id1"></span>Weyl Sequences<a class="headerlink" href="#weyl-sequences" title="Permalink to this heading">¶</a></h2>
 <p><a class="reference internal" href="bit_generators/sfc.html#randomgen.sfc.SFC64" title="randomgen.sfc.SFC64 (Python class) — Chris Doty-Humphrey's Small Fast Chaotic PRNG with optional Weyl Sequence"><code class="xref py py-class docutils literal notranslate"><span class="pre">SFC64</span></code></a> uniquely supports generating streams using distinct
 Weyl sequences. Distinct sequences are produced by setting unique values in <code class="docutils literal notranslate"><span class="pre">k`</span></code>
 when initializing <a class="reference internal" href="bit_generators/sfc.html#randomgen.sfc.SFC64" title="randomgen.sfc.SFC64 (Python class) — Chris Doty-Humphrey's Small Fast Chaotic PRNG with optional Weyl Sequence"><code class="xref py py-class docutils literal notranslate"><span class="pre">SFC64</span></code></a>. These increments must be odd.
@@ -853,7 +853,7 @@ or fewer non-zero bits perform best.</p>
 <span class="n">streams</span> <span class="o">=</span> <span class="p">[</span><span class="n">SFC64</span><span class="p">(</span><span class="n">seed_seq</span><span class="p">,</span> <span class="n">k</span><span class="o">=</span><span class="n">k</span><span class="p">)</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">weyl_inc</span><span class="p">]</span>
 </code></pre></div>
 </div>
-<h2 id="non-reproducible-sequences"><span id="id2"></span>Non-reproducible Sequences<a class="headerlink" href="#non-reproducible-sequences" title="Link to this heading">¶</a></h2>
+<h2 id="non-reproducible-sequences"><span id="id2"></span>Non-reproducible Sequences<a class="headerlink" href="#non-reproducible-sequences" title="Permalink to this heading">¶</a></h2>
 <p><a class="reference internal" href="bit_generators/rdrand.html#randomgen.rdrand.RDRAND" title="randomgen.rdrand.RDRAND (Python class) — Container for the hardware RDRAND random number generator."><code class="xref py py-class docutils literal notranslate"><span class="pre">randomgen.rdrand.RDRAND</span></code></a> uses a hardware based random number generator to
 produce non-reproducible sequences on random numbers. These can be used on any
 system that supports the <cite>RDRAND</cite> instruction, subject to the key limitation that
@@ -931,7 +931,7 @@ results cannot be reproduced without storing the values generated.</p>
   
     Created using
     <a href="https://www.sphinx-doc.org/" target="_blank" rel="noopener">Sphinx</a>
-    7.2.6.
+    7.1.2.
      and
     <a href="https://github.com/jbms/sphinx-immaterial/" target="_blank" rel="noopener">Sphinx-Immaterial</a>
   
