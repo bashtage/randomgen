@@ -17,7 +17,7 @@ except ImportError:
 if HAS_NUMBA:
     murmur_hash_3_sig = types.uint64(types.uint64)
 
-    @jit(signature_or_function=murmur_hash_3_sig, inline="always")
+    @jit(signature_or_function=murmur_hash_3_sig, inline="always", nopython=True)
     def murmur_hash_3(z):
         z = (z ^ (z >> np.uint64(30))) * np.uint64(0xBF58476D1CE4E5B9)
         z = (z ^ (z >> np.uint64(27))) * np.uint64(0x94D049BB133111EB)
@@ -25,7 +25,7 @@ if HAS_NUMBA:
 
     split_mix_next_sig = types.uint64(types.uint64[:])
 
-    @jit(signature_or_function=split_mix_next_sig, inline="always")
+    @jit(signature_or_function=split_mix_next_sig, inline="always", nopython=True)
     def splitmix_next(state):
         state[0] += 0x9E3779B97F4A7C15
         return murmur_hash_3(state[0])
