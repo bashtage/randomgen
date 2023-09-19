@@ -245,7 +245,7 @@ cdef class SeedlessSeedSequence(object):
 
 cdef class SeedSequence(object):
     """
-    SeedSequence(entropy=None, *, spawn_key=(), pool_size=4)
+    SeedSequence(entropy=None, *, spawn_key=(), pool_size=4, n_children_spawned=0)
 
     SeedSequence mixes sources of entropy in a reproducible way to set the
     initial state for independent and very probably non-overlapping

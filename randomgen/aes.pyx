@@ -17,7 +17,7 @@ cdef double aes_double(void* st) nogil:
 
 cdef class AESCounter(BitGenerator):
     """
-    AESCounter(, seed=None, *, counter=None, key=None, mode=None)
+    AESCounter(seed=None, *, counter=None, key=None, mode=None)
 
     Container for the AES Counter pseudo-random number generator.
 
