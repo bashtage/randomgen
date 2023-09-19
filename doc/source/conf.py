@@ -8,33 +8,32 @@
 
 # -- Path setup --------------------------------------------------------------
 
-import sphinx_material
-
 # If extensions (or modules to document with autodoc) are in another directory,
 # add these directories to sys.path here. If the directory is relative to the
 # documentation root, use os.path.abspath to make it absolute, like shown here.
 #
-# import os
-# import sys
-# sys.path.insert(0, os.path.abspath('.'))
+from packaging.version import parse
+
 import randomgen
 
 # -- Project information -----------------------------------------------------
 
 project = "RandomGen"
-copyright = "2018, Kevin Sheppard"
+copyright = "2023, Kevin Sheppard"
 author = "Kevin Sheppard"
 
-# The short X.Y version.
+# More warnings
+nitpicky = True
 
-version = randomgen.__version__
-if "+" in version:
-    version = version.split("+")
-    version = "".join((version[0], " (+", version[1].split(".")[0], ")"))
-# The full version, including alpha/beta/rc tags.
-release = randomgen.__version__
+# The short X.Y version
+full_version = parse(randomgen.__version__)
+short_version = version = randomgen.__version__
+if full_version.is_devrelease:
+    release = f"v{full_version.base_version} (+{full_version.dev})"
+else:
+    release = short_version
 
-# -- General configuration ---------------------------------------------------
+# -- General configuration ------------------------------------------------
 
 # If your documentation needs a minimal Sphinx version, state it here.
 #
@@ -44,19 +43,22 @@ release = randomgen.__version__
 # extensions coming with Sphinx (named 'sphinx.ext.*') or your custom
 # ones.
 extensions = [
-    "numpydoc",
+    "sphinx.ext.napoleon",
     "sphinx.ext.autodoc",
+    "sphinx.ext.autosummary",
     "sphinx.ext.extlinks",
     "sphinx.ext.todo",
     "sphinx.ext.doctest",
     "sphinx.ext.intersphinx",
-    "sphinx.ext.autosummary",
     "sphinx.ext.mathjax",
+    "sphinx.ext.viewcode",
+    "sphinx.ext.coverage",
+    "sphinx.ext.ifconfig",
     "sphinx.ext.githubpages",
     "IPython.sphinxext.ipython_console_highlighting",
     "IPython.sphinxext.ipython_directive",
-    "sphinx_material",
     "nbsphinx",
+    "sphinx_immaterial",
 ]
 
 try:
@@ -87,66 +89,76 @@ master_doc = "index"
 #
 # This is also used if you do content translation via gettext catalogs.
 # Usually you set "language" from the command line for these cases.
-language = None
+language = "en"
 
 # List of patterns, relative to source directory, that match files and
 # directories to ignore when looking for source files.
-# This pattern also affects html_static_path and html_extra_path .
-exclude_patterns = []
+# This pattern also affects html_static_path and html_extra_path.
+# exclude_patterns: list[str] = []
 
 # The name of the Pygments (syntax highlighting) style to use.
-pygments_style = "vs"
+pygments_style = "colorful"
 
+# If true, `todo` and `todoList` produce output, else they produce nothing.
+todo_include_todos = True
 
-# -- Options for HTML output -------------------------------------------------
+# -- Options for HTML output ----------------------------------------------
 
 # The theme to use for HTML and HTML Help pages.  See the documentation for
 # a list of builtin themes.
 #
-# html_theme = 'alabaster'
-# html_theme = 'sphinx_rtd_theme'
-# html_theme_path = ["_themes", ]
-# Theme options are theme-specific and customize the look and feel of a theme
-# further.  For a list of options available for each theme, see the
-# documentation.
-#
-# html_theme_options = {}
 
-html_theme_path = sphinx_material.html_theme_path()
-html_context = sphinx_material.get_html_context()
-html_theme = "sphinx_material"
+# Adds an HTML table visitor to apply Bootstrap table classes
+html_theme = "sphinx_immaterial"
+html_title = f"{project} {release}"
 
-# sphinx_material theme options (see theme.conf for more information)
+# sphinx_immaterial theme options
 html_theme_options = {
-    "base_url": "https://bashtage.github.io/randomgen/",
+    "icon": {"repo": "fontawesome/brands/github"},
+    "site_url": "https://bashtage.github.io/randomgen/",
     "repo_url": "https://github.com/bashtage/randomgen/",
     "repo_name": "randomgen",
-    # Set the name of the project to appear in the sidebar
-    "nav_title": project + " " + version,
-    "globaltoc_depth": 2,
+    "palette": {"primary": "deep-purple", "accent": "purple"},
     "globaltoc_collapse": True,
-    "globaltoc_includehidden": True,
-    "theme_color": "#2196f3",
-    "color_primary": "deep-purple",
-    "color_accent": "purple",
-    "html_minify": True,
-    "css_minify": True,
-    "master_doc": False,
-    "heroes": {
-        "index": "Additional bit generators and distribution for NumPy's " "Generator"
-    },
-    "logo_icon": "casino",
+    "toc_title": "Contents",
     "version_dropdown": True,
-    "version_info": {
-        "Release": "https://bashtage.github.io/randomgen/",
-        "Development": "https://bashtage.github.io/randomgen/devel/",
-    },
+    "version_info": [
+        {
+            "version": "https://bashtage.github.io/randomgen",
+            "title": "Release",
+            "aliases": [],
+        },
+        {
+            "version": "https://bashtage.github.io/randomgen/devel",
+            "title": "Development",
+            "aliases": [],
+        },
+    ],
+    "toc_title_is_page_title": True,
+    "social": [
+        {
+            "icon": "fontawesome/brands/github",
+            "link": "https://github.com/bashtage/randomgen",
+            "name": "Source on github.com",
+        },
+        {
+            "icon": "fontawesome/brands/python",
+            "link": "https://pypi.org/project/randomgen/",
+        },
+        {
+            "icon": "fontawesome/solid/quote-left",
+            "link": "https://doi.org/10.5281/zenodo.2591973",
+        },
+    ],
 }
+
+html_favicon = "images/favicon.ico"
+html_logo = "images/casino.svg"
+
 # Add any paths that contain custom static files (such as style sheets) here,
 # relative to this directory. They are copied after the builtin static files,
 # so a file named "default.css" will overwrite the builtin "default.css".
-html_static_path = ["_static"]
-html_favicon = "_static/images/favicon.ico"
+# html_static_path = ["_static"]
 # Custom sidebar templates, must be a dictionary that maps document names
 # to template names.
 #
@@ -167,25 +179,23 @@ html_domain_indices = True
 # -- Options for HTMLHelp output ---------------------------------------------
 
 # Output file base name for HTML help builder.
-htmlhelp_basename = "RandomGendoc"
-
+htmlhelp_basename = "randomgen"
 
 # -- Options for LaTeX output ------------------------------------------------
-
-latex_elements = {
-    # The paper size ('letterpaper' or 'a4paper').
-    #
-    # 'papersize': 'letterpaper',
-    # The font size ('10pt', '11pt' or '12pt').
-    #
-    # 'pointsize': '10pt',
-    # Additional stuff for the LaTeX preamble.
-    #
-    # 'preamble': '',
-    # Latex figure (float) alignment
-    #
-    # 'figure_align': 'htbp',
-}
+# latex_elements: dict[str, str] = {
+# The paper size ("letterpaper" or "a4paper").
+#
+# "papersize": "letterpaper",
+# The font size ("10pt", "11pt" or "12pt").
+#
+# "pointsize": "10pt",
+# Additional stuff for the LaTeX preamble.
+#
+# "preamble": '',
+# Latex figure (float) alignment
+#
+# "figure_align": "htbp",
+# }
 
 # Grouping the document tree into LaTeX files. List of tuples
 # (source start file, target name, title,
@@ -193,22 +203,20 @@ latex_elements = {
 latex_documents = [
     (
         master_doc,
-        "RandomGen.tex",
-        "RandomGen Documentation",
+        "randomgen.tex",
+        "randomgen Documentation",
         "Kevin Sheppard",
         "manual",
     ),
 ]
 
-
-# -- Options for manual page output ------------------------------------------
+# -- Options for manual page output ---------------------------------------
 
 # One entry per manual page. List of tuples
 # (source start file, name, description, authors, manual section).
-man_pages = [(master_doc, "RandomGen", "RandomGen Documentation", [author], 1)]
+man_pages = [(master_doc, "randomgen", "randomgen Documentation", [author], 1)]
 
-
-# -- Options for Texinfo output ----------------------------------------------
+# -- Options for Texinfo output -------------------------------------------
 
 # Grouping the document tree into Texinfo files. List of tuples
 # (source start file, target name, title, author,
@@ -216,33 +224,27 @@ man_pages = [(master_doc, "RandomGen", "RandomGen Documentation", [author], 1)]
 texinfo_documents = [
     (
         master_doc,
-        "RandomGen",
-        "RandomGen Documentation",
+        "randomgen",
+        "randomgen Documentation",
         author,
-        "RandomGen",
+        "randomgen",
         "Alternative random number generators for Python.",
         "Miscellaneous",
     ),
 ]
 
-
-# -- Extension configuration -------------------------------------------------
-
-# -- Options for intersphinx extension ---------------------------------------
-
 # Example configuration for intersphinx: refer to the Python standard library.
 intersphinx_mapping = {
     "statsmodels": ("https://www.statsmodels.org/dev/", None),
-    "matplotlib": ("https://matplotlib.org", None),
-    "scipy": ("https://docs.scipy.org/doc/scipy/reference/", None),
-    "python": ("https://docs.python.org/3", None),
-    "numpy": ("https://numpy.org/devdocs/", None),
-    "np": ("https://numpy.org/devdocs/", None),
+    "matplotlib": ("https://matplotlib.org/stable/", None),
+    "scipy": ("https://docs.scipy.org/doc/scipy/", None),
+    "python": ("https://docs.python.org/3/", None),
+    "numpy": ("https://numpy.org/doc/stable/", None),
+    "np": ("https://numpy.org/doc/stable/", None),
     "pandas": ("https://pandas.pydata.org/pandas-docs/stable/", None),
     "pd": ("https://pandas.pydata.org/pandas-docs/stable/", None),
 }
 
-autosummary_generate = True
 
 doctest_global_setup = """
 import numpy as np
@@ -258,3 +260,13 @@ matplotlib.pyplot.show = show
 """
 
 numpydoc_show_class_members = False
+
+
+napoleon_use_admonition_for_examples = False
+napoleon_use_admonition_for_notes = False
+napoleon_use_admonition_for_references = False
+napoleon_preprocess_types = True
+napoleon_use_param = True
+
+autosummary_generate = True
+autoclass_content = "class"

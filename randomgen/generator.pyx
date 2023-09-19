@@ -736,7 +736,7 @@ cdef class ExtendedGenerator:
 
     def standard_wishart(self, int64_t df, np.npy_intp dim, size=None, rescale=True):
         """
-        standard_wishart(df, dim, size=None)
+        standard_wishart(df, dim, size=None, rescale=True)
 
         Draw samples from the Standard Wishart and Pseudo-Wishart distributions
 

@@ -1,5 +1,4 @@
 #!python
-#cython: binding=True
 import numpy as np
 
 from randomgen.common cimport *
@@ -18,7 +17,7 @@ cdef double aes_double(void* st) nogil:
 
 cdef class AESCounter(BitGenerator):
     """
-    AESCounter(, seed=None, *, counter=None, key=None, mode=None)
+    AESCounter(seed=None, *, counter=None, key=None, mode=None)
 
     Container for the AES Counter pseudo-random number generator.
 
@@ -131,7 +130,9 @@ cdef class AESCounter(BitGenerator):
     def __init__(self, seed=None, *, counter=None, key=None, mode=None):
         BitGenerator.__init__(self, seed, mode)
         # Calloc since ctr needs to be 0
-        self.rng_state = <aesctr_state_t *>PyArray_calloc_aligned(sizeof(aesctr_state_t), 1)
+        self.rng_state = <aesctr_state_t *>PyArray_calloc_aligned(
+            sizeof(aesctr_state_t), 1
+        )
         self.seed(seed, counter, key)
 
         self._bitgen.state = <void *>self.rng_state
@@ -234,7 +235,6 @@ cdef class AESCounter(BitGenerator):
         counter = object_to_int(counter, 128, "counter")
         if seed is not None and key is not None:
             raise ValueError("seed and key cannot be both used")
-        ub = 2 ** 128
         if key is None:
             if seed is None:
                 _seed = random_entropy(4, "auto")
@@ -248,7 +248,9 @@ cdef class AESCounter(BitGenerator):
         _counter = np.empty(8, dtype=np.uint64)
         counter = 0 if counter is None else counter
         for i in range(4):
-            _counter[2*i:2*i+2] = int_to_array((counter + i) % (2**128), "counter", 128, 64)
+            _counter[2*i:2*i+2] = int_to_array(
+                (counter + i) % (2**128), "counter", 128, 64
+            )
         aesctr_set_counter(self.rng_state,
                            <uint64_t*>np.PyArray_DATA(_counter))
         self._reset_state_variables()
@@ -296,7 +298,6 @@ cdef class AESCounter(BitGenerator):
         state =value["s"]["state"]
         for i in range(16 * 4):
             self.rng_state.state[i] = state[i]
-        offset = self.rng_state.offset
         self.rng_state.offset = value["s"]["offset"]
         seed = np.ascontiguousarray(value["s"]["seed"], dtype=np.uint64)
         counter = np.ascontiguousarray(value["s"]["counter"], dtype=np.uint64)
@@ -372,7 +373,7 @@ cdef class AESCounter(BitGenerator):
         """
         cdef AESCounter bit_generator
 
-        bit_generator = self.__class__(mode=self.mode)
+        bit_generator = self.__class__(seed=self._copy_seed(), mode=self.mode)
         bit_generator.state = self.state
         bit_generator.jump_inplace(iter)
 

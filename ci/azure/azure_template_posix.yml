@@ -17,23 +17,18 @@ jobs:
   strategy:
     matrix:
       ${{ if eq(parameters.name, 'Linux') }}:
-        python37_legacy:
-          python.version: '3.7'
-          RANDOMGEN_DEBUG: false
-          CC: clang
-          NUMPY: 1.17.5
         python38_legacy:
           python.version: '3.8'
           coverage: true
           NUMPY: 1.17.0
-        python37_latest:
-          python.version: '3.7'
         python38_latest:
           python.version: '3.8'
         python39_latest:
           python.version: '3.9'
         python310_latest:
           python.version: '3.10'
+        python311_latest:
+          python.version: '3.11'
         python38_mid_conda:
           python.version: '3.8'
           use.conda: true
@@ -47,11 +42,6 @@ jobs:
           coverage: false
           RANDOMGEN_CYTHON_COVERAGE: false
           RANDOMGEN_DEBUG: true
-          test.install: true
-        python_37_legacy_conda:
-          python.version: '3.7'
-          use.conda: true
-          coverage: false
           test.install: true
       ${{ if eq(parameters.name, 'macOS') }}:
         python39_latest_macos:

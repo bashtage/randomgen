@@ -1,10 +1,8 @@
 #!python
-#cython: binding=True
 import numpy as np
 cimport numpy as np
 
 from randomgen.common cimport *
-from randomgen.entropy import random_entropy, seed_by_array
 
 DEF INDIRECTION_SIZE = 16
 DEF ITERATION_SIZE = 32
@@ -98,7 +96,8 @@ cdef class EFIIX64(BitGenerator):
     ----------
     .. [1] Random, P., 2020. Practically Random / Discussion / Open Discussion:
        Is Too Low A Chi-Squared Sum Really A Problem?. [online] Sourceforge.net.
-       Available at: https://sourceforge.net/p/pracrand/discussion/366935/thread/c73ddb7b/#d0fc
+       Available at:
+       https://sourceforge.net/p/pracrand/discussion/366935/thread/c73ddb7b/#d0fc
        [Accessed 22 June 2020].
     """
     _seed_seq_len = 4
@@ -119,7 +118,6 @@ cdef class EFIIX64(BitGenerator):
         self.rng_state.uinteger = 0
 
     def _seed_from_seq(self):
-        cdef int i
         cdef uint64_t *state_arr
 
         state = self.seed_seq.generate_state(4, np.uint64)
@@ -181,7 +179,7 @@ cdef class EFIIX64(BitGenerator):
                  "i": self.rng_state.i,
                  "a": self.rng_state.a,
                  "b": self.rng_state.b,
-                 "c": self.rng_state.c }
+                 "c": self.rng_state.c}
         return {"bit_generator": fully_qualified_name(self),
                 "state": state,
                 "has_uint32": self.rng_state.has_uint32,
@@ -207,7 +205,6 @@ cdef class EFIIX64(BitGenerator):
         arr = <np.uint64_t *>np.PyArray_DATA(indirection_table)
         for i in range(0, INDIRECTION_SIZE):
             self.rng_state.indirection_table[i] = arr[i]
-
 
         iteration_table = check_state_array(state["iteration_table"],
                                             ITERATION_SIZE,

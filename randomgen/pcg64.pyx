@@ -261,7 +261,7 @@ cdef class PCG64(BitGenerator):
         if inc is not None:
             err_msg = "inc must be a scalar integer between 0 and " \
                       "{ub}".format(ub=ub)
-            if inc < 0 or inc > ub or int(inc) != inc:
+            if inc < 0 or inc > ub or int(np.squeeze(inc)) != inc:
                 raise ValueError(err_msg)
             if not np.isscalar(inc):
                 raise TypeError(err_msg)
@@ -482,7 +482,7 @@ cdef class PCG64(BitGenerator):
         """
         cdef PCG64 bit_generator
 
-        bit_generator = self.__class__(mode=self.mode, variant=self.variant)
+        bit_generator = self.__class__(seed=self._copy_seed(), mode=self.mode, variant=self.variant)
         bit_generator.state = self.state
         bit_generator.jump_inplace(iter)
 
@@ -942,7 +942,7 @@ cdef class LCG128Mix(BitGenerator):
         """
         cdef LCG128Mix bit_generator
 
-        bit_generator = self.__class__()
+        bit_generator = self.__class__(seed=self._copy_seed())
         bit_generator.state = self.state
         bit_generator.jump_inplace(iter)
 
@@ -1133,7 +1133,7 @@ cdef class PCG64DXSM(PCG64):
         """
         cdef PCG64DXSM bit_generator
 
-        bit_generator = self.__class__()
+        bit_generator = self.__class__(seed=self._copy_seed())
         bit_generator.state = self.state
         bit_generator.jump_inplace(iter)
 

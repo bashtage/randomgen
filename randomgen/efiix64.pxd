@@ -1,3 +1,5 @@
+# cython: binding=True, language_level=3
+
 from randomgen.common cimport *
 
 DEF INDIRECTION_SIZE = 16

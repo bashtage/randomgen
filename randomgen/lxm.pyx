@@ -1,5 +1,4 @@
 #!python
-#cython: binding=True
 
 # coding=utf-8
 import numpy as np
@@ -19,7 +18,7 @@ cdef double lxm_double(void* st) nogil:
     return uint64_to_double(lxm_next64(<lxm_state_t *>st))
 
 cdef class LXM(BitGenerator):
-    """
+    r"""
     LXM(seed=None, *, b=3037000493)
 
     Container for the LXM pseudo-random number generator.
@@ -250,7 +249,7 @@ cdef class LXM(BitGenerator):
         """
         cdef LXM bit_generator
 
-        bit_generator = self.__class__()
+        bit_generator = self.__class__(seed=self._copy_seed())
         bit_generator.state = self.state
         bit_generator.jump_inplace(iter)
 

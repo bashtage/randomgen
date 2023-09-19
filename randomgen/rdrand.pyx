@@ -414,7 +414,7 @@ cdef class RDRAND(BitGenerator):
         Provided for API compatibility
         """
         cdef RDRAND bit_generator
-        bit_generator = self.__class__()
+        bit_generator = self.__class__(seed=self._copy_seed())
 
         return bit_generator
 

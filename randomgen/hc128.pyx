@@ -1,5 +1,4 @@
 #!python
-#cython: binding=True
 # coding=utf-8
 import numpy as np
 cimport numpy as np
@@ -21,7 +20,7 @@ cdef double hc128_double(void* st) nogil:
 
 cdef class HC128(BitGenerator):
     """
-    HC128(seed=None, *, mode=None)
+    HC128(seed=None, *, key=None, mode=None)
 
     Container for the HC-128 cipher-based pseudo-random number generator
 
@@ -129,7 +128,7 @@ cdef class HC128(BitGenerator):
 
     def seed(self, seed=None, key=None):
         """
-        seed(seed=None)
+        seed(seed=None, key=None)
 
         Seed the generator
 

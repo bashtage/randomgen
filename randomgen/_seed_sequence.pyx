@@ -1,5 +1,4 @@
 #!python
-#cython: binding=True
 """
 BitGenerator base class and SeedSequence used to seed the BitGenerators.
 
@@ -44,19 +43,10 @@ except ImportError:
     from random import SystemRandom
     randbits = SystemRandom().getrandbits
 
-try:
-    from threading import Lock
-except ImportError:
-    from dummy_threading import Lock
-
-from cpython.pycapsule cimport PyCapsule_New
-
 import numpy as np
 cimport numpy as np
 
 from libc.stdint cimport uint32_t
-from .common cimport (random_raw, benchmark, prepare_ctypes, prepare_cffi)
-from .distributions cimport bitgen_t
 
 __all__ = ["SeedSequence", "SeedlessSeedSequence", "ISeedSequence",
            "ISpawnableSeedSequence"]
@@ -255,7 +245,7 @@ cdef class SeedlessSeedSequence(object):
 
 cdef class SeedSequence(object):
     """
-    SeedSequence(entropy=None, *, spawn_key=(), pool_size=4)
+    SeedSequence(entropy=None, *, spawn_key=(), pool_size=4, n_children_spawned=0)
 
     SeedSequence mixes sources of entropy in a reproducible way to set the
     initial state for independent and very probably non-overlapping

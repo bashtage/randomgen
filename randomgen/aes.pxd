@@ -1,3 +1,4 @@
+# cython: binding=True, language_level=3
 from randomgen.common cimport *
 
 
@@ -21,8 +22,12 @@ cdef extern from "src/aesctr/aesctr.h":
     int RANDOMGEN_USE_AESNI
     void aesctr_use_aesni(int val)
     void aesctr_seed(aesctr_state_t *aesctr, uint64_t *seed)
-    void aesctr_set_seed_counter(aesctr_state_t *aesctr, uint64_t *seed, uint64_t *counter)
-    void aesctr_get_seed_counter(aesctr_state_t *aesctr, uint64_t *seed, uint64_t *counter)
+    void aesctr_set_seed_counter(
+            aesctr_state_t *aesctr, uint64_t *seed, uint64_t *counter
+    )
+    void aesctr_get_seed_counter(
+            aesctr_state_t *aesctr, uint64_t *seed, uint64_t *counter
+    )
     int aes_capable()
     void aesctr_advance(aesctr_state_t *aesctr, uint64_t *step)
     void aesctr_set_counter(aesctr_state_t *aesctr, uint64_t *counter)

@@ -29,7 +29,7 @@ cdef double xoroshiro128plusplus_double(void* st) nogil:
 
 cdef class Xoroshiro128(BitGenerator):
     """
-    Xoroshiro128(seed=None, *, method=None, plusplus=False)
+    Xoroshiro128(seed=None, *, mode=None, plusplus=False)
 
     Container for the xoroshiro128+/++ pseudo-random number generator.
 
@@ -267,7 +267,7 @@ cdef class Xoroshiro128(BitGenerator):
         """
         cdef Xoroshiro128 bit_generator
 
-        bit_generator = self.__class__(mode=self.mode)
+        bit_generator = self.__class__(seed=self._copy_seed(), mode=self.mode)
         bit_generator.state = self.state
         bit_generator.jump_inplace(iter)
 

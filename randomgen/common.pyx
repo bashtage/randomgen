@@ -1,5 +1,4 @@
 #!python
-#cython: wraparound=False, nonecheck=False, boundscheck=False, cdivision=True, language_level=3
 import sys
 from collections import namedtuple
 try:
@@ -84,6 +83,11 @@ cdef class BitGenerator:
 
     def _seed_from_seq_numpy_compat(self):
         raise NotImplementedError("Subclass must override")
+
+    cdef _copy_seed(self):
+        import copy
+
+        return copy.deepcopy(self.seed_seq)
 
     def _seed_with_seed_sequence(self, seed, **kwargs):
         from randomgen.seed_sequence import SeedSequence

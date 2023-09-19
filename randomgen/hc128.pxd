@@ -1,3 +1,5 @@
+# cython: binding=True, language_level=3
+# coding=utf-8
 from randomgen.common cimport *
 
 

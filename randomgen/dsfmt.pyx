@@ -1,5 +1,4 @@
 #!python
-#cython: binding=True
 import operator
 
 import numpy as np
@@ -120,7 +119,9 @@ cdef class DSFMT(BitGenerator):
     def __init__(self, seed=None, *, mode=None):
         BitGenerator.__init__(self, seed, mode)
         self.rng_state.state = <dsfmt_t *>PyArray_malloc_aligned(sizeof(dsfmt_t))
-        self.rng_state.buffered_uniforms = <double *>PyArray_calloc_aligned(DSFMT_N64, sizeof(double))
+        self.rng_state.buffered_uniforms = <double *>PyArray_calloc_aligned(
+            DSFMT_N64, sizeof(double)
+        )
         self.rng_state.buffer_loc = DSFMT_N64
         self.seed(seed)
 
@@ -260,7 +261,7 @@ cdef class DSFMT(BitGenerator):
         """
         cdef DSFMT bit_generator
 
-        bit_generator = self.__class__(mode=self.mode)
+        bit_generator = self.__class__(seed=self._copy_seed(), mode=self.mode)
         bit_generator.state = self.state
         bit_generator.jump_inplace(iter)
 
