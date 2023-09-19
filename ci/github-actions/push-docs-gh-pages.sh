@@ -5,6 +5,10 @@ echo "Set git email and name"
 git config user.email "kevin.k.sheppard@gmail.com"
 git config user.name "Kevin Sheppard"
 git config advice.addIgnoredFile false
+echo "Show untracked files"
+git ls-files --others --exclude-standard
+echo "Dry run for clean"
+git clean -dfn
 echo "Checkout pages"
 git checkout gh-pages
 echo "Remove devel"
