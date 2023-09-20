@@ -3,10 +3,10 @@ requires = [
     "packaging>=21.0",
     "setuptools",
     "wheel",
-    "Cython>=0.29.24,<3.0",
+    "Cython>=0.29.24,<4",
     "oldest-supported-numpy",
-    "numpy; python_version>='3.11'",
-    "setuptools_scm[toml]>=6.4.2,<7.0.0",
+    "numpy; python_version>='3.12'",
+    "setuptools_scm[toml]>=7.0.0,<8.0.0",
 ]
 build-backend = "setuptools.build_meta"
 
