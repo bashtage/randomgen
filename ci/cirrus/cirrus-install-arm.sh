@@ -8,5 +8,5 @@ python3 -m pip install -r requirements.txt
 python3 -m pip install -r requirements-dev.txt
 python3 -m pip list
 git fetch --tags
-python3 -m pip install . --no-build-isolation
+python3 -m pip install . --no-build-isolation -vv
 python3 -m pip list

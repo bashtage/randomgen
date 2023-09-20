@@ -7,5 +7,5 @@ python3.9 -m pip install --upgrade pip
 python3.9 -m pip install wheel "setuptools_scm[toml]>=7.1.0,<8.0.0" pytest packaging
 python3.9 -m pip list
 git fetch --tags
-python3.9 -m pip install . --no-build-isolation
+python3.9 -m pip install . --no-build-isolation -vv
 python3.9 -m pip list
