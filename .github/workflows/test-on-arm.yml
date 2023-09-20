@@ -54,6 +54,8 @@ jobs:
 
       - name: Build and test wheel
         run: |
-          python -m cibuildwheel --output-dir wheelhouse randomgen
+          echo $PWD
+          ls
+          python -m cibuildwheel --output-dir wheelhouse .
           echo "Show wheelhouse contents"
           ls ./wheelhouse
