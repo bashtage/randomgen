@@ -131,8 +131,7 @@ versions.
 ## Development and Testing
 
 All development has been on 64-bit Linux, and it is regularly tested on
-Travis-CI (Linux-AMD64, Linux-PPC-LE, Linus-S390X, and OSX), Appveyor (Windows 32/64),
-Cirrus (FreeBSD) and Drone.io (ARM/ARM64 Linux).
+Azure (Linux-AMD64, Window, and OSX) and Cirrus (FreeBSD and Linux-ARM).
 
 Tests are in place for all RNGs. The MT19937 is tested against
 NumPy's implementation for identical results. It also passes NumPy's
