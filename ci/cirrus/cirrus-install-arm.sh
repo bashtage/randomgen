@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 
+apt-get update
+apt-get install build-essential
 python3 -m ensurepip --upgrade
 python3 -m pip install --upgrade pip
 python3 -m pip install -r requirements.txt
