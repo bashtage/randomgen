@@ -1,4 +1,4 @@
-from setuptools import Distribution, find_packages, setup
+from setuptools import Distribution, find_namespace_packages, setup
 from setuptools.extension import Extension
 
 import glob
@@ -51,13 +51,13 @@ ARM_LIKE = any([machine_processor.startswith(name) for name in ("arm", "aarch")]
 if ARM_LIKE:
     print("Processor appears to be ARM")
 USE_SSE2 = INTEL_LIKE
-print("Building with SSE?: {0}".format(USE_SSE2))
 NO_SSE2 = os.environ.get("RANDOMGEN_NO_SSE2", False) in (1, "1", "True", "true")
 NO_SSE2 = NO_SSE2 or "--no-sse2" in sys.argv
 if NO_SSE2:
     USE_SSE2 = False
 if "--no-sse2" in sys.argv:
     sys.argv.remove("--no-sse2")
+print(f"Building with SSE?: {USE_SSE2}")
 
 MOD_DIR = "./randomgen"
 
@@ -346,7 +346,7 @@ setup(
         force=CYTHON_COVERAGE or DEBUG,
         gdb_debug=DEBUG,
     ),
-    packages=find_packages(),
+    packages=find_namespace_packages(include=["randomgen.*"]),
     package_dir={"randomgen": "./randomgen"},
     package_data={
         "": ["*.h", "*.pxi", "*.pyx", "*.pxd", "*.in", "py.typed"],

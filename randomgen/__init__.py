@@ -33,7 +33,7 @@ from randomgen.xoshiro512 import Xoshiro512
 
 from ._version import version as __version__, version_tuple as __version_info__
 
-PKG_TESTS = os.path.join(os.path.dirname(__file__), "tests")
+PKG = os.path.join(os.path.dirname(__file__))
 
 
 __all__ = [
@@ -85,7 +85,7 @@ def test(extra_args: Union[str, List[str]] = None) -> None:
             extra_args = [extra_args]
         assert isinstance(extra_args, list)
         cmd = extra_args
-    cmd += [PKG_TESTS]
+    cmd += [PKG]
     joined = " ".join(cmd)
     print(f"running: pytest {joined}")
     sys.exit(pytest.main(cmd))
