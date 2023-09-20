@@ -320,10 +320,10 @@ classifiers = [
     "Operating System :: Unix",
     "Programming Language :: C",
     "Programming Language :: Cython",
-    "Programming Language :: Python :: 3.7",
     "Programming Language :: Python :: 3.8",
     "Programming Language :: Python :: 3.9",
     "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
     "Topic :: Adaptive Technologies",
     "Topic :: Artistic Software",
     "Topic :: Office/Business :: Financial",
@@ -385,5 +385,5 @@ setup(
     ],
     zip_safe=False,
     install_requires=install_required,
-    python_requires=">=3.7",
+    python_requires=">=3.8",
 )
