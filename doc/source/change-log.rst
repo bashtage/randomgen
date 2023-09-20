@@ -13,6 +13,10 @@ Change Log
   You should be using :class:`numpy.random.Generator` or
   :class:`numpy.random.RandomState` which are maintained. 
 
+v1.26.0
+=======
+- This is place holder for the coming release.
+
 v1.23.1
 =======
 - Registered the bit generators included in ``randomgen`` with NumPy
