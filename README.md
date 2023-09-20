@@ -37,7 +37,7 @@ or the [stable documentation](https://bashtage.github.io/randomgen/devel/change-
 
 ## Changes in v1.24
 
-``Generator`` and ``RandomState`` have been **removed**.
+``Generator`` and ``RandomState`` were **removed** in 1.23.0.
 
 ## Changes from 1.18 to 1.19
 

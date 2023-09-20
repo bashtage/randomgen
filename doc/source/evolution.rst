@@ -5,7 +5,7 @@ Evolution of randomgen
 
 Changes in 1.23
 ---------------
-``Generator`` and ``RandomState`` have been **removed**.
+``Generator`` and ``RandomState`` were **removed** in 1.23.0.
 
 Use :class:`numpy.random.Generator` if possible, or :class:`numpy.random.RandomState`
 if you face legacy constraints.
