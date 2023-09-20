@@ -1,4 +1,4 @@
-from setuptools import Distribution, find_namespace_packages, setup
+from setuptools import Distribution, find_namespace_packages, find_packages, setup
 from setuptools.extension import Extension
 
 import glob
@@ -346,7 +346,9 @@ setup(
         force=CYTHON_COVERAGE or DEBUG,
         gdb_debug=DEBUG,
     ),
-    packages=find_namespace_packages(include=["randomgen.*"]),
+    packages=sorted(
+        set(find_packages() + find_namespace_packages(include=["randomgen.*"]))
+    ),
     package_dir={"randomgen": "./randomgen"},
     package_data={
         "": ["*.h", "*.pxi", "*.pyx", "*.pxd", "*.in", "py.typed"],

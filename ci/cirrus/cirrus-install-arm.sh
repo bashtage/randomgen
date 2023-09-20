@@ -3,7 +3,7 @@
 apt-get update -y
 apt-get install build-essential git -y
 python3 -m ensurepip --upgrade
-python3 -m pip install --upgrade pip
+python3 -m pip install --upgrade  --upgrade pip setuptools wheel pytest pytest-xdist packaging
 python3 -m pip install -r requirements.txt
 python3 -m pip install -r requirements-dev.txt
 python3 -m pip list
