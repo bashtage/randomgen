@@ -346,7 +346,7 @@ setup(
         force=CYTHON_COVERAGE or DEBUG,
         gdb_debug=DEBUG,
     ),
-    packages=find_namespace_packages(include=['randomgen.*']),
+    packages=find_namespace_packages(include=["randomgen.*"]),
     package_dir={"randomgen": "./randomgen"},
     package_data={
         "": ["*.h", "*.pxi", "*.pyx", "*.pxd", "*.in", "py.typed"],
