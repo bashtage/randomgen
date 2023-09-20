@@ -5,7 +5,7 @@ Evolution of randomgen
 
 Changes in 1.23
 ---------------
-``Generator`` and ``RandomState`` have been **removed**.
+``Generator`` and ``RandomState`` were **removed** in 1.23.0.
 
 Use :class:`numpy.random.Generator` if possible, or :class:`numpy.random.RandomState`
 if you face legacy constraints.
@@ -48,5 +48,5 @@ The main changes are
 * Change ``jump`` which operated in-place to ``jumped`` which returns a new ``BitGenerator``.
 * Rename Basic RNG to bit generator, which impacts the API in multiple places where names
   like ``brng`` and ``basic_rng`` have been replaced by ``bitgen`` or ``bit_generator``.
-* Support for :class:`~randomgen.seed_sequence.SeedSequences` (also support NumPy ``SeedSequence`` instances)
+* Support for :class:`~randomgen.seed_sequence.SeedSequence` (also support NumPy ``SeedSequence`` instances)
 * Removed support for Python 2.7

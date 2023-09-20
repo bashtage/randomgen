@@ -13,7 +13,7 @@
     
     
       
-        <title>Quality Assurance - RandomGen v1.23.2 (+49)</title>
+        <title>Quality Assurance - RandomGen v1.23.2 (+53)</title>
       
     
     
@@ -80,7 +80,7 @@
 
 <header class="md-header" data-md-component="header">
   <nav class="md-header__inner md-grid" aria-label="Header">
-    <a href="index.html" title="RandomGen v1.23.2 (+49)" class="md-header__button md-logo" aria-label="RandomGen v1.23.2 (+49)" data-md-component="logo">
+    <a href="index.html" title="RandomGen v1.23.2 (+53)" class="md-header__button md-logo" aria-label="RandomGen v1.23.2 (+53)" data-md-component="logo">
       <img src="_static/casino.svg" alt="logo">
     </a>
     <label class="md-header__button md-icon" for="__drawer">
@@ -90,7 +90,7 @@
       <div class="md-header__ellipsis">
         <div class="md-header__topic">
           <span class="md-ellipsis">
-            RandomGen v1.23.2 (+49)
+            RandomGen v1.23.2 (+53)
           </span>
         </div>
         <div class="md-header__topic" data-md-component="header-topic">
@@ -177,10 +177,10 @@
 
 <nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
   <label class="md-nav__title" for="__drawer">
-    <a href="index.html" title="RandomGen v1.23.2 (+49)" class="md-nav__button md-logo" aria-label="RandomGen v1.23.2 (+49)" data-md-component="logo">
+    <a href="index.html" title="RandomGen v1.23.2 (+53)" class="md-nav__button md-logo" aria-label="RandomGen v1.23.2 (+53)" data-md-component="logo">
       <img src="_static/casino.svg" alt="logo">
     </a>
-    RandomGen v1.23.2 (+49)
+    RandomGen v1.23.2 (+53)
   </label>
   
     <div class="md-nav__source">
@@ -926,8 +926,8 @@ i in 0, 1, …, 7. Only three bit generators failed this experiment: <a class="r
 <a class="reference internal" href="bit_generators/mt19937.html#randomgen.mt19937.MT19937" title="randomgen.mt19937.MT19937 (Python class) — Container for the Mersenne Twister pseudo-random number generator."><code class="xref py py-class docutils literal notranslate"><span class="pre">MT19937</span></code></a>, and <a class="reference internal" href="bit_generators/sfmt.html#randomgen.sfmt.SFMT" title="randomgen.sfmt.SFMT (Python class) — Container for the SIMD-based Mersenne Twister pseudo RNG."><code class="xref py py-class docutils literal notranslate"><span class="pre">SFMT</span></code></a>. These are all
 members of the Mersenne Twister family which commonly fail <code class="docutils literal notranslate"><span class="pre">BRank</span></code> tests.</p>
 <h3 id="sequential-seeds">Sequential Seeds<a class="headerlink" href="#sequential-seeds" title="Link to this heading">¶</a></h3>
-<p>The recommended practice for constructing multiple <code class="xref py py-class docutils literal notranslate"><span class="pre">SeedSequence</span></code>’s <code class="xref py py-func docutils literal notranslate"><span class="pre">spawn()</span></code>
-method.</p>
+<p>The recommended practice for constructing multiple <a class="reference external" href="https://numpy.org/doc/stable/reference/random/generator.html#numpy.random.Generator" title="(in NumPy v1.26)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Generator</span></code></a> objects
+is to use the <a class="reference external" href="https://numpy.org/doc/stable/reference/random/bit_generators/generated/numpy.random.SeedSequence.spawn.html#numpy.random.SeedSequence.spawn" title="(in NumPy v1.26)"><code class="xref py py-meth docutils literal notranslate"><span class="pre">spawn()</span></code></a> method of <a class="reference external" href="https://numpy.org/doc/stable/reference/random/bit_generators/generated/numpy.random.SeedSequence.html#numpy.random.SeedSequence" title="(in NumPy v1.26)"><code class="xref py py-class docutils literal notranslate"><span class="pre">SeedSequence</span></code></a>.</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><code><span class="kn">from</span> <span class="nn">numpy.random</span> <span class="kn">import</span> <span class="n">default_rng</span><span class="p">,</span> <span class="n">Generator</span><span class="p">,</span> <span class="n">SeedSequence</span>
 <span class="kn">from</span> <span class="nn">randomgen</span> <span class="kn">import</span> <span class="n">Romu</span>
 
