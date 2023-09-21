@@ -1,5 +1,5 @@
-HC-128 Cipher Generator
------------------------
+Entropy From Iteration, Indirection, Xor (EFIIX)  Generator
+-----------------------------------------------------------
 
 .. module:: randomgen.efiix64
 

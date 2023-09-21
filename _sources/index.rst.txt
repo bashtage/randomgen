@@ -1,3 +1,5 @@
+:hero: Additional bit generators and distributions for NumPy's Generator
+
 .. danger::
 
     ``Generator`` and ``RandomState`` has been removed from randomgen in 1.23. 

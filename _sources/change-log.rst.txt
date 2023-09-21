@@ -9,9 +9,21 @@ Change Log
 
       <p class="admonition-title"> Deprecated </p>
 
-  ``Generator`` and ``RandomState`` have been **REMOVED** in 1.23.
+  ``Generator`` and ``RandomState`` were **REMOVED** in 1.23.
   You should be using :class:`numpy.random.Generator` or
   :class:`numpy.random.RandomState` which are maintained. 
+
+v1.26.0
+=======
+- Fixed a bug that affected the :meth:`randomgen.xoroshiro128.Xoroshiro128.jumped`
+  method of :class:`randomgen.xoroshiro128.Xoroshiro128` where the ** version was
+  swapped with the standard version.
+- Fixed a bug where :class:`numpy.random.SeedSequence` was not copied when advancing
+  generators using ``jumped``.
+- Small compatibility fixes for change in NumPy.
+- Changes the documentation theme to `sphinx-immaterial <https://jbms.github.io/sphinx-immaterial/>`_.
+- Added builds for Python 3.11.
+- Increased the minimum Python to 3.8.
 
 v1.23.1
 =======

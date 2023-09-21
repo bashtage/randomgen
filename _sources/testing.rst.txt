@@ -94,9 +94,8 @@ members of the Mersenne Twister family which commonly fail ``BRank`` tests.
 
 Sequential Seeds
 ~~~~~~~~~~~~~~~~
-The recommended practice for constructing multiple :class:`~numpy.random.Generator`s
-is to use :class:`~numpy.random.SeedSequence`'s :func:`~numpy.random.SeedSequence.spawn`
-method.
+The recommended practice for constructing multiple :class:`~numpy.random.Generator` objects
+is to use the :meth:`~numpy.random.SeedSequence.spawn` method of :class:`~numpy.random.SeedSequence`.
 
 ::
 
