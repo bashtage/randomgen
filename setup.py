@@ -2,7 +2,6 @@ from setuptools import Distribution, find_namespace_packages, setup
 from setuptools.extension import Extension
 
 import glob
-import io
 import os
 from os.path import exists, join, splitext
 import platform
