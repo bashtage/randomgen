@@ -69,7 +69,7 @@ def print_legend(legend):
 
 def add_color(val):
     color = str(2) if val > 0 else str(1)
-    return "\33[38;5;" + color + "m" + "{0:0.1f}%".format(val) + "\33[0m"
+    return "\33[38;5;" + color + "m" + f"{val:0.1f}%" + "\33[0m"
 
 
 def run_timer(command, numpy_command=None, setup="", random_type=""):
@@ -83,12 +83,12 @@ def run_timer(command, numpy_command=None, setup="", random_type=""):
         res[bitgen] = timer(cmd, setup=setup.format(bitgen=bitgen))
 
     s = pd.Series(res).sort_index()
-    t = s.apply(lambda x: "{0:0.2f} ms".format(x))
+    t = s.apply(lambda x: f"{x:0.2f} ms")
     print_legend("Time to produce 1,000,000 " + random_type)
     print(t)
 
     p = 1000.0 / s
-    p = p.apply(lambda x: "{0:0.2f} million".format(x))
+    p = p.apply(lambda x: f"{x:0.2f} million")
     print_legend(random_type + " per second")
     print(p)
 

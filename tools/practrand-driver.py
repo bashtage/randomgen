@@ -1,5 +1,4 @@
 #!/usr/bin/env python3
-# -*- coding: utf-8 -*-
 """
 Example usage:
 
@@ -334,7 +333,7 @@ Interleave generators byte-by-byte rather than output-by-output (i.e., in 8-byte
             out.write(dumped)
     if output is None:
         output = CONFIG[bitgens[0].__class__]["output"]
-    logging.log(logging.INFO, "Output bit size is {0}".format(output))
+    logging.log(logging.INFO, f"Output bit size is {output}")
     for chunk in gen_interleaved_bytes(
         bitgens, output=output, interleave_bytes=args.interleave_bytes
     ):
@@ -344,7 +343,7 @@ Interleave generators byte-by-byte rather than output-by-output (i.e., in 8-byte
 if __name__ == "__main__":
     try:
         main()
-    except (BrokenPipeError, IOError):
+    except (BrokenPipeError, OSError):
         logging.log(logging.INFO, "Pipe broken, assuming complete")
 
     sys.stderr.close()

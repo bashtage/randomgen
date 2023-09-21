@@ -43,7 +43,7 @@ def endpoint(request):
     return request.param
 
 
-class TestSeed(object):
+class TestSeed:
     def test_invalid_scalar(self):
         # seed must be an unsigned 32 bit integer
         assert_raises(TypeError, MT19937, -0.5, mode="legacy")

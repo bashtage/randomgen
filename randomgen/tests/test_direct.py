@@ -195,7 +195,7 @@ def gauss_from_uint(x, n, bits):
     return gauss[:n]
 
 
-class Base(object):
+class Base:
     dtype = np.uint64
     data2: Dict[str, Union[int, np.ndarray]] = {}
     data1: Dict[str, Union[int, np.ndarray]] = {}
@@ -343,7 +343,7 @@ class Base(object):
         rs = np.random.Generator(self.setup_bitgenerator(self.data1["seed"]))
         assert "Generator" in str(rs)
         assert str(type(rs.bit_generator).__name__) in str(rs)
-        assert "{:#x}".format(id(rs)).upper().replace("X", "x")[2:] not in str(rs)
+        assert f"{id(rs):#x}".upper().replace("X", "x")[2:] not in str(rs)
 
     def test_generator(self):
         bit_generator = self.setup_bitgenerator(self.data1["seed"])
@@ -425,7 +425,7 @@ class Base(object):
         g.integers(0, 2**32, dtype=np.uint32)
         if "has_uint32" not in bg.state or bg.state["has_uint32"] == 0:
             name = bg.__class__.__name__
-            pytest.skip("bit generator does not cache 32-bit value ({0})".format(name))
+            pytest.skip(f"bit generator does not cache 32-bit value ({name})")
         bg.seed()
         assert bg.state["has_uint32"] == 0
 
@@ -1332,7 +1332,7 @@ class TestDSFMT(Base):
 class TestThreeFry4x32(Random123):
     @classmethod
     def setup_class(cls):
-        super(TestThreeFry4x32, cls).setup_class()
+        super().setup_class()
         cls.bit_generator_base = ThreeFry
         cls.bit_generator = partial(ThreeFry, number=4, width=32)
         cls.number = 4

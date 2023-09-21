@@ -2,7 +2,6 @@ from setuptools import Distribution, find_namespace_packages, setup
 from setuptools.extension import Extension
 
 import glob
-import io
 import os
 from os.path import exists, join, splitext
 import platform
@@ -35,7 +34,7 @@ if CYTHON_COVERAGE:
         "RANDOMGEN_CYTHON_COVERAGE=" + os.environ["RANDOMGEN_CYTHON_COVERAGE"]
     )
 
-LONG_DESCRIPTION = io.open("README.md", encoding="utf-8").read()
+LONG_DESCRIPTION = open("README.md", encoding="utf-8").read()
 Cython.Compiler.Options.annotate = True
 
 # Make a guess as to whether SSE2 is present for now, TODO: Improve
@@ -128,15 +127,15 @@ if USE_SSE2:
 files = glob.glob("./randomgen/*.in") + glob.glob("./randomgen/legacy/*.in")
 for templated_file in files:
     output_file_name = splitext(templated_file)[0]
-    with open(templated_file, "r") as source_file:
+    with open(templated_file) as source_file:
         template = tempita.Template(source_file.read())
     processed = template.substitute().replace("\r\n", "\n")
     contents = ""
     if exists(output_file_name):
-        with open(output_file_name, "r") as output_file:
+        with open(output_file_name) as output_file:
             contents = output_file.read()
     if contents != processed:
-        print("Processing {0} to {1}".format(templated_file, output_file_name))
+        print(f"Processing {templated_file} to {output_file_name}")
         with open(output_file_name, "w", newline="\n") as output_file:
             output_file.write(processed)
 
@@ -154,7 +153,7 @@ for name in (
     extra_macros = []
     extra_incl = []
 
-    source = ["randomgen/{0}.pyx".format(name.replace(".", "/"))]
+    source = ["randomgen/{}.pyx".format(name.replace(".", "/"))]
 
     legacy = name in ("legacy.bounded_integers", "mtrand")
     if name in ("bounded_integers", "generator") or legacy:
@@ -172,7 +171,7 @@ for name in (
         extra_incl = [src_join("entropy")]
 
     ext = Extension(
-        "randomgen.{0}".format(name),
+        f"randomgen.{name}",
         source + extra_source,
         libraries=EXTRA_LIBRARIES,
         include_dirs=EXTRA_INCLUDE_DIRS + extra_incl,
@@ -199,7 +198,7 @@ def bit_generator(
     c_name = name if c_name is None else c_name
     defs = DEFS if defs is None else defs
 
-    sources = ["randomgen/{0}.pyx".format(name), src_join(c_name, c_name + ".c")]
+    sources = [f"randomgen/{name}.pyx", src_join(c_name, c_name + ".c")]
     if cpu_features:
         sources += CPU_FEATURES
     if aligned:
@@ -209,7 +208,7 @@ def bit_generator(
     compile_args = EXTRA_COMPILE_ARGS if compile_args is None else compile_args
 
     ext = Extension(
-        "randomgen.{0}".format(name),
+        f"randomgen.{name}",
         sources,
         include_dirs=EXTRA_INCLUDE_DIRS,
         libraries=EXTRA_LIBRARIES,
