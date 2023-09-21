@@ -76,7 +76,7 @@ def test_single(
             if not os.path.exists(results_file):
                 with open(results_file, "w") as handle:
                     json.dump({}, handle)
-            with open(results_file, "r") as handle:
+            with open(results_file) as handle:
                 results = json.load(handle)
             if key not in results:
                 results[key] = {}

@@ -76,4 +76,4 @@ print(
 start = dt.datetime.now()
 np.random.standard_normal(1000000)
 ms = 1000 * (dt.datetime.now() - start).total_seconds()
-print("1,000,000 Polar-transform (NumPy) randoms in {ms:0.1f}ms".format(ms=ms))
+print(f"1,000,000 Polar-transform (NumPy) randoms in {ms:0.1f}ms")

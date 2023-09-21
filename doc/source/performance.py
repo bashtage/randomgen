@@ -214,7 +214,7 @@ print(table.to_csv(float_format="%0.1f"))
 try:
     from tabulate import tabulate
 
-    perf = table.applymap(lambda v: "{0:0.1f}".format(v))
+    perf = table.applymap(lambda v: f"{v:0.1f}")
     print(tabulate(perf, headers="keys", tablefmt="rst"))
 except ImportError:
     pass
@@ -232,7 +232,7 @@ print(rel.to_csv(float_format="%0d"))
 try:
     from tabulate import tabulate
 
-    rel_perf = rel.applymap(lambda v: "{0:d}".format(v))
+    rel_perf = rel.applymap(lambda v: f"{v:d}")
     print(tabulate(rel_perf, headers="keys", tablefmt="rst"))
 except ImportError:
     pass

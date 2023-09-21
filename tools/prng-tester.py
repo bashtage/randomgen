@@ -220,7 +220,7 @@ if __name__ == "__main__":
     results = defaultdict(dict)
     results_file = args.results_file
     if os.path.exists(results_file):
-        with open(results_file, "r", encoding="utf8") as existing:
+        with open(results_file, encoding="utf8") as existing:
             results.update(json.load(existing))
     manager = Manager()
     lock = manager.Lock()

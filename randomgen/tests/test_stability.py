@@ -71,7 +71,7 @@ def test_coverage():
         obj = getattr(rg, obj_name)
         if hasattr(obj, "random_raw"):
             required.append(obj_name)
-    covered = set(k[0] for k in known_hashes.keys())
+    covered = {k[0] for k in known_hashes.keys()}
     assert not set(required).difference(covered)
     assert not set(covered).difference(required)
 

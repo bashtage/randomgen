@@ -140,7 +140,7 @@ if __name__ == "__main__":
     if not os.path.exists(results_file):
         with open(results_file, "w", encoding="utf8") as create:
             json.dump({}, create)
-    with open(results_file, "r", encoding="utf8") as existing:
+    with open(results_file, encoding="utf8") as existing:
         results.update(json.load(existing))
 
     manager = Manager()
