@@ -163,7 +163,7 @@ cdef class BitGenerator:
 
         Returns
         -------
-        interface : namedtuple
+        interface : NamedTuple
             Named tuple containing ctypes wrapper
 
             * state_address - Memory address of the state struct
@@ -185,7 +185,7 @@ cdef class BitGenerator:
 
         Returns
         -------
-        interface : namedtuple
+        interface : NamedTuple
             Named tuple containing CFFI wrapper
 
             * state_address - Memory address of the state struct
@@ -292,7 +292,7 @@ cdef object prepare_cffi(bitgen_t *bitgen):
 
     Returns
     -------
-    interface : namedtuple
+    interface : NamedTuple
         The functions required to interface with the bit generator using cffi
 
         * state_address - Memory address of the state struct

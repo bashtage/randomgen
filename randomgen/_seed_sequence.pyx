@@ -191,6 +191,7 @@ class ISeedSequence(metaclass=abc.ABCMeta):
         Parameters
         ----------
         n_words : int
+            Number of 32- or 64-bit words to generate.
         dtype : np.uint32 or np.uint64, optional
             The size of each word. This should only be either `uint32` or
             `uint64`. Strings (`"uint32"`, `"uint64"`) are fine. Note that
@@ -200,12 +201,13 @@ class ISeedSequence(metaclass=abc.ABCMeta):
 
         Returns
         -------
-        state : uint32 or uint64 array, shape=(n_words,)
+        state : uint32 or uint64 array
+            Array with shape (n_words,)
         """
 
 
 class ISpawnableSeedSequence(ISeedSequence):
-    """
+    """w
     Abstract base class for seed sequences that can spawn.
     """
 

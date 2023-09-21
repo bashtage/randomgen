@@ -6,16 +6,16 @@ Performance
 Recommendation
 **************
 The recommended generator for single use is :class:`~randomgen.pcg64.PCG64DXSM`
-although :class:`~randomgen.sfc64.SFC64` and :class:`~randomgen.xoshiro256.Xoshiro256`
+although :class:`~randomgen.sfc.SFC64` and :class:`~randomgen.xoshiro256.Xoshiro256`
 are both excellent alternatives. :class:`~randomgen.romu.Romu` is a newer generator that
 is also very fast.
 
 For very large scale
 applications -- requiring 1,000+ streams --
 :class:`~randomgen.pcg64.PCG64DXSM` combined with a :class:`~numpy.random.SeedSequence` and ``spawn``,
-:class:`~randomgen.sfc64.SFC64` initialized using distinct Weyl increments (``k``), or one of
+:class:`~randomgen.sfc.SFC64` initialized using distinct Weyl increments (``k``), or one of
 the cryptography-based generators :class:`~randomgen.aes.AESCounter` (if you have hardware acceleration),
-:class:`~randomgen.effix64.EFFIC64`, :class:`~randomgen.speck128.SPECK128`,
+:class:`~randomgen.efiix64.EFIIX64`, :class:`~randomgen.speck128.SPECK128`,
 :class:`~randomgen.philox.Philox`, or :class:`~randomgen.hc128.HC128` if you do not)
 initialized with distinct keys are all excellent choices.
 
@@ -27,10 +27,10 @@ Timings
 *******
 
 The timings below are the time in ns to produce 1 random value from a
-specific distribution. :class:`~randomgen.sfc64.SFC64` is the fastest,
+specific distribution. :class:`~randomgen.sfc.SFC64` is the fastest,
 followed closely by  :class:`~randomgen.xoshiro256.Xoshiro256`,
 :class:`~randomgen.pcg64.PCG64DXSM`, :class:`~randomgen.jsf.JSF`,
-and :class:`~randomgen.effix64.EFFIX64`. The original
+and :class:`~randomgen.efiix64.EFIIX64`. The original
 NumPy :class:`~randomgen.mt19937.MT19937` generator is slower since
 it requires 2 32-bit values to equal the output of the faster generators.
 
