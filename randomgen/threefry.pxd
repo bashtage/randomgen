@@ -85,19 +85,19 @@ cdef extern from "src/threefry/threefry.h":
         int number
 
     ctypedef THREEFRY_ALL_T threefry_all_t
-    uint64_t threefry2x32_next64(threefry_all_t *state) nogil
-    uint32_t threefry2x32_next32(threefry_all_t *state) nogil
-    double threefry2x32_next_double(threefry_all_t *state) nogil
+    uint64_t threefry2x32_next64(threefry_all_t *state) noexcept nogil
+    uint32_t threefry2x32_next32(threefry_all_t *state) noexcept nogil
+    double threefry2x32_next_double(threefry_all_t *state) noexcept nogil
     void threefry2x32_advance(threefry_all_t *state, uint32_t *step, int use_carry)
-    uint64_t threefry4x32_next64(threefry_all_t *state) nogil
-    uint32_t threefry4x32_next32(threefry_all_t *state) nogil
-    double threefry4x32_next_double(threefry_all_t *state) nogil
+    uint64_t threefry4x32_next64(threefry_all_t *state) noexcept nogil
+    uint32_t threefry4x32_next32(threefry_all_t *state) noexcept nogil
+    double threefry4x32_next_double(threefry_all_t *state) noexcept nogil
     void threefry4x32_advance(threefry_all_t *state, uint32_t *step, int use_carry)
-    uint64_t threefry2x64_next64(threefry_all_t *state) nogil
-    uint32_t threefry2x64_next32(threefry_all_t *state) nogil
-    double threefry2x64_next_double(threefry_all_t *state) nogil
+    uint64_t threefry2x64_next64(threefry_all_t *state) noexcept nogil
+    uint32_t threefry2x64_next32(threefry_all_t *state) noexcept nogil
+    double threefry2x64_next_double(threefry_all_t *state) noexcept nogil
     void threefry2x64_advance(threefry_all_t *state, uint64_t *step, int use_carry)
-    uint64_t threefry4x64_next64(threefry_all_t *state) nogil
-    uint32_t threefry4x64_next32(threefry_all_t *state) nogil
-    double threefry4x64_next_double(threefry_all_t *state) nogil
+    uint64_t threefry4x64_next64(threefry_all_t *state) noexcept nogil
+    uint32_t threefry4x64_next32(threefry_all_t *state) noexcept nogil
+    double threefry4x64_next_double(threefry_all_t *state) noexcept nogil
     void threefry4x64_advance(threefry_all_t *state, uint64_t *step, int use_carry)

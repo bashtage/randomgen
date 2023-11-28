@@ -10,8 +10,8 @@ cdef extern from "src/xoshiro512/xoshiro512.h":
 
     ctypedef XOSHIRO512_STATE_T xoshiro512_state_t
 
-    uint64_t xoshiro512_next64(xoshiro512_state_t *state) nogil
-    uint32_t xoshiro512_next32(xoshiro512_state_t *state) nogil
+    uint64_t xoshiro512_next64(xoshiro512_state_t *state) noexcept nogil
+    uint32_t xoshiro512_next32(xoshiro512_state_t *state) noexcept nogil
     void xoshiro512_jump(xoshiro512_state_t *state)
 
 

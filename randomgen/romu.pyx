@@ -12,22 +12,22 @@ from randomgen.entropy import random_entropy, seed_by_array
 
 __all__ = ["Romu"]
 
-cdef uint64_t romuquad_uint64(void* st) nogil:
+cdef uint64_t romuquad_uint64(void* st) noexcept nogil:
     return romuquad_next64(<romu_state_t *>st)
 
-cdef uint32_t romuquad_uint32(void *st) nogil:
+cdef uint32_t romuquad_uint32(void *st) noexcept nogil:
     return romuquad_next32(<romu_state_t *> st)
 
-cdef double romuquad_double(void* st) nogil:
+cdef double romuquad_double(void* st) noexcept nogil:
     return uint64_to_double(romuquad_next64(<romu_state_t *>st))
 
-cdef uint64_t romutrio_uint64(void* st) nogil:
+cdef uint64_t romutrio_uint64(void* st) noexcept nogil:
     return romutrio_next64(<romu_state_t *>st)
 
-cdef uint32_t romutrio_uint32(void *st) nogil:
+cdef uint32_t romutrio_uint32(void *st) noexcept nogil:
     return romutrio_next32(<romu_state_t *> st)
 
-cdef double romutrio_double(void* st) nogil:
+cdef double romutrio_double(void* st) noexcept nogil:
     return uint64_to_double(romutrio_next64(<romu_state_t *>st))
 
 cdef class Romu(BitGenerator):

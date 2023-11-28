@@ -25,7 +25,7 @@ def parse_key(key):
     for i in range(1, len(parts), 2):
         if i == 1:
             base += "("
-        base += f"{parts[i]}={parts[i+1]}, "
+        base += f"{parts[i]}={parts[i + 1]}, "
     if "(" in base:
         base = f"{base[:-2]})"
     return base, method, n
@@ -43,9 +43,9 @@ def to_bytes(s):
 def from_bytes(b):
     b = b >> 20
     if b >= 2**20:
-        return f"{b>>20}TB"
+        return f"{b >> 20}TB"
     elif b >= 2**10:
-        return f"{b>>10}GB"
+        return f"{b >> 10}GB"
     return f"{b}MB"
 
 

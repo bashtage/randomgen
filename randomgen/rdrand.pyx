@@ -24,7 +24,7 @@ simultaneously so that its capacity is being constantly exceeded. You can
 increase the number of retries to slow down the generation on contested CPUs.
 """
 
-cdef uint64_t rdrand_uint64(void* st) nogil:
+cdef uint64_t rdrand_uint64(void* st) noexcept nogil:
     cdef PyObject *err
     cdef rdrand_state *state
     cdef int status, prev_status
@@ -52,11 +52,11 @@ cdef uint64_t rdrand_uint64(void* st) nogil:
     return val
 
 
-cdef uint32_t rdrand_uint32(void *st) nogil:
+cdef uint32_t rdrand_uint32(void *st) noexcept nogil:
     # TODO: This is lazy
     return <uint32_t>rdrand_uint64(st)
 
-cdef double rdrand_double(void* st) nogil:
+cdef double rdrand_double(void* st) noexcept nogil:
     return uint64_to_double(rdrand_uint64(st))
 
 

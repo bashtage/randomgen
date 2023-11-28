@@ -171,8 +171,8 @@ def test_repr():
     )
     cpcg_repr = repr(cpcg)
     assert "Output Function: dxsm" in cpcg_repr
-    assert f"Multiplier: {DEFAULT_MULTIPLIER+2}" in cpcg_repr
-    assert f"DXSM Multiplier: {DEFAULT_DXSM_MULTIPLIER+2}" in cpcg_repr
+    assert f"Multiplier: {DEFAULT_MULTIPLIER + 2}" in cpcg_repr
+    assert f"DXSM Multiplier: {DEFAULT_DXSM_MULTIPLIER + 2}" in cpcg_repr
     assert "Post: False" in cpcg_repr
 
 

@@ -11,36 +11,36 @@ __all__ = ["Philox"]
 DEF PHILOX_BUFFER_SIZE=4
 
 # Keeping these here makes a large difference (2x) to performance
-cdef uint64_t philox2x64_uint64(void*st) nogil:
+cdef uint64_t philox2x64_uint64(void*st) noexcept nogil:
     return philox2x64_next64(<philox_all_t *> st)
-cdef uint32_t philox2x64_uint32(void *st) nogil:
+cdef uint32_t philox2x64_uint32(void *st) noexcept nogil:
     return philox2x64_next32(<philox_all_t *> st)
-cdef double philox2x64_double(void*st) nogil:
+cdef double philox2x64_double(void*st) noexcept nogil:
     return philox2x64_next_double(<philox_all_t *> st)
 
-cdef uint64_t philox4x64_uint64(void*st) nogil:
+cdef uint64_t philox4x64_uint64(void*st) noexcept nogil:
     return philox4x64_next64(<philox_all_t *> st)
-cdef uint32_t philox4x64_uint32(void *st) nogil:
+cdef uint32_t philox4x64_uint32(void *st) noexcept nogil:
     return philox4x64_next32(<philox_all_t *> st)
-cdef double philox4x64_double(void*st) nogil:
+cdef double philox4x64_double(void*st) noexcept nogil:
     return philox4x64_next_double(<philox_all_t *> st)
 
-cdef uint64_t philox4x32_uint64(void*st) nogil:
+cdef uint64_t philox4x32_uint64(void*st) noexcept nogil:
     return philox4x32_next64(<philox_all_t *> st)
-cdef uint32_t philox4x32_uint32(void *st) nogil:
+cdef uint32_t philox4x32_uint32(void *st) noexcept nogil:
     return philox4x32_next32(<philox_all_t *> st)
-cdef double philox4x32_double(void*st) nogil:
+cdef double philox4x32_double(void*st) noexcept nogil:
     return philox4x32_next_double(<philox_all_t *> st)
-cdef uint64_t philox4x32_raw(void *st) nogil:
+cdef uint64_t philox4x32_raw(void *st) noexcept nogil:
     return <uint64_t>philox4x32_next32(<philox_all_t *> st)
 
-cdef uint64_t philox2x32_uint64(void*st) nogil:
+cdef uint64_t philox2x32_uint64(void*st) noexcept nogil:
     return philox2x32_next64(<philox_all_t *> st)
-cdef uint32_t philox2x32_uint32(void *st) nogil:
+cdef uint32_t philox2x32_uint32(void *st) noexcept nogil:
     return philox2x32_next32(<philox_all_t *> st)
-cdef double philox2x32_double(void*st) nogil:
+cdef double philox2x32_double(void*st) noexcept nogil:
     return philox2x32_next_double(<philox_all_t *> st)
-cdef uint64_t philox2x32_raw(void *st) nogil:
+cdef uint64_t philox2x32_raw(void *st) noexcept nogil:
     return <uint64_t>philox2x32_next32(<philox_all_t *> st)
 
 cdef class Philox(BitGenerator):

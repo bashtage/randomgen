@@ -13,31 +13,31 @@ DEFAULT_MULTIPLIER = 47026247687942121848144207491837523525
 DEFAULT_DXSM_MULTIPLIER = 0xDA942042E4DD58B5
 
 
-cdef uint64_t pcg64_uint64(void* st) nogil:
+cdef uint64_t pcg64_uint64(void* st) noexcept nogil:
     return pcg64_next64(<pcg64_state_t *>st)
 
-cdef uint32_t pcg64_uint32(void *st) nogil:
+cdef uint32_t pcg64_uint32(void *st) noexcept nogil:
     return pcg64_next32(<pcg64_state_t *> st)
 
-cdef double pcg64_double(void* st) nogil:
+cdef double pcg64_double(void* st) noexcept nogil:
     return uint64_to_double(pcg64_next64(<pcg64_state_t *>st))
 
-cdef uint64_t pcg64_cm_dxsm_uint64(void* st) nogil:
+cdef uint64_t pcg64_cm_dxsm_uint64(void* st) noexcept nogil:
     return pcg64_cm_dxsm_next64(<pcg64_state_t *>st)
 
-cdef uint32_t pcg64_cm_dxsm_uint32(void *st) nogil:
+cdef uint32_t pcg64_cm_dxsm_uint32(void *st) noexcept nogil:
     return pcg64_cm_dxsm_next32(<pcg64_state_t *> st)
 
-cdef double pcg64_cm_dxsm_double(void* st) nogil:
+cdef double pcg64_cm_dxsm_double(void* st) noexcept nogil:
     return uint64_to_double(pcg64_cm_dxsm_next64(<pcg64_state_t *>st))
 
-cdef uint64_t lcg128mix_uint64(void* st) nogil:
+cdef uint64_t lcg128mix_uint64(void* st) noexcept nogil:
     return lcg128mix_next64(<lcg128mix_state_t *>st)
 
-cdef uint32_t lcg128mix_uint32(void *st) nogil:
+cdef uint32_t lcg128mix_uint32(void *st) noexcept nogil:
     return lcg128mix_next32(<lcg128mix_state_t *> st)
 
-cdef double lcg128mix_double(void* st) nogil:
+cdef double lcg128mix_double(void* st) noexcept nogil:
     return uint64_to_double(lcg128mix_next64(<lcg128mix_state_t *>st))
 
 

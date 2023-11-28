@@ -22,8 +22,8 @@ cdef extern from "src/speck-128/speck-128.h":
 
     ctypedef SPECK_STATE_T speck_state_t
 
-    uint64_t speck_next64(speck_state_t *state) nogil
-    uint32_t speck_next32(speck_state_t *state) nogil
+    uint64_t speck_next64(speck_state_t *state) noexcept nogil
+    uint32_t speck_next32(speck_state_t *state) noexcept nogil
 
     int RANDOMGEN_USE_SSE41
     int speck_sse41_capable()

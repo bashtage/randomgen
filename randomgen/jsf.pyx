@@ -58,25 +58,25 @@ for p, q, r in JSF32_ALT_PARAMETERS:
 for p, q, r in JSF64_ALT_PARAMETERS:
     JSF_PARAMETERS[64].append({"p": p, "q": q, "r": r})
 
-cdef uint64_t jsf64_uint64(void* st) nogil:
+cdef uint64_t jsf64_uint64(void* st) noexcept nogil:
     return jsf64_next64(<jsf_state_t *>st)
 
-cdef uint32_t jsf64_uint32(void *st) nogil:
+cdef uint32_t jsf64_uint32(void *st) noexcept nogil:
     return jsf64_next32(<jsf_state_t *> st)
 
-cdef double jsf64_double(void* st) nogil:
+cdef double jsf64_double(void* st) noexcept nogil:
     return uint64_to_double(jsf64_next64(<jsf_state_t *>st))
 
-cdef uint64_t jsf32_uint64(void* st) nogil:
+cdef uint64_t jsf32_uint64(void* st) noexcept nogil:
     return jsf32_next64(<jsf_state_t *>st)
 
-cdef uint32_t jsf32_uint32(void *st) nogil:
+cdef uint32_t jsf32_uint32(void *st) noexcept nogil:
     return jsf32_next32(<jsf_state_t *> st)
 
-cdef double jsf32_double(void* st) nogil:
+cdef double jsf32_double(void* st) noexcept nogil:
     return uint64_to_double(jsf32_next64(<jsf_state_t *>st))
 
-cdef uint64_t jsf32_raw(void* st) nogil:
+cdef uint64_t jsf32_raw(void* st) noexcept nogil:
     return <uint64_t>jsf32_next32(<jsf_state_t *>st)
 
 cdef class JSF(BitGenerator):

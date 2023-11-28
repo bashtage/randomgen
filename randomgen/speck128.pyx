@@ -11,13 +11,13 @@ __all__ = ["SPECK128"]
 DEF SPECK_UNROLL = 12
 DEF SPECK_MAX_ROUNDS = 34
 
-cdef uint64_t speck_uint64(void* st) nogil:
+cdef uint64_t speck_uint64(void* st) noexcept nogil:
     return speck_next64(<speck_state_t *>st)
 
-cdef uint32_t speck_uint32(void *st) nogil:
+cdef uint32_t speck_uint32(void *st) noexcept nogil:
     return speck_next32(<speck_state_t *> st)
 
-cdef double speck_double(void* st) nogil:
+cdef double speck_double(void* st) noexcept nogil:
     return uint64_to_double(speck_next64(<speck_state_t *>st))
 
 cdef class SPECK128(BitGenerator):

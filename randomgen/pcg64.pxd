@@ -2,7 +2,7 @@ from randomgen.common cimport *
 
 
 cdef extern from "src/pcg64/pcg64-common.h":
-    ctypedef uint64_t (* pcg_output_func_t)(uint64_t high, uint64_t low) nogil
+    ctypedef uint64_t (* pcg_output_func_t)(uint64_t high, uint64_t low) noexcept nogil
 
 cdef extern from "src/pcg64/pcg64-v2.h":
     # Use int as generic type, actual type read from pcg64.h and is platform dependent
@@ -16,10 +16,10 @@ cdef extern from "src/pcg64/pcg64-v2.h":
 
     ctypedef PCG64_STATE_T pcg64_state_t
 
-    uint64_t pcg64_next64(pcg64_state_t *state) nogil
-    uint32_t pcg64_next32(pcg64_state_t *state) nogil
-    uint64_t pcg64_cm_dxsm_next64(pcg64_state_t *state) nogil
-    uint32_t pcg64_cm_dxsm_next32(pcg64_state_t *state) nogil
+    uint64_t pcg64_next64(pcg64_state_t *state) noexcept nogil
+    uint32_t pcg64_next32(pcg64_state_t *state) noexcept nogil
+    uint64_t pcg64_cm_dxsm_next64(pcg64_state_t *state) noexcept nogil
+    uint32_t pcg64_cm_dxsm_next32(pcg64_state_t *state) noexcept nogil
 
     void pcg64_advance(pcg64_state_t *state, uint64_t *step, int cheap_multiplier)
     void pcg64_set_seed(pcg64_state_t *state, uint64_t *seed, uint64_t *inc, int cheap_multiplier)
@@ -49,13 +49,13 @@ cdef extern from "src/pcg64/lcg128mix.h":
 
     ctypedef lcg128mix_STATE_T lcg128mix_state_t
 
-    uint64_t lcg128mix_next64(lcg128mix_state_t *state) nogil
-    uint64_t lcg128mix_next32(lcg128mix_state_t *state) nogil
+    uint64_t lcg128mix_next64(lcg128mix_state_t *state) noexcept nogil
+    uint64_t lcg128mix_next32(lcg128mix_state_t *state) noexcept nogil
 
-    void lcg128mix_set_state(lcg128mix_random_t *rng, uint64_t state[], uint64_t inc[], uint64_t multiplier[]) nogil
-    void lcg128mix_get_state(lcg128mix_random_t *rng, uint64_t state[], uint64_t inc[], uint64_t multiplier[]) nogil
-    void lcg128mix_seed(lcg128mix_random_t *rng, uint64_t state[], uint64_t inc[], uint64_t multiplier[]) nogil
-    void lcg128mix_advance(lcg128mix_state_t *rng, uint64_t step[]) nogil
+    void lcg128mix_set_state(lcg128mix_random_t *rng, uint64_t state[], uint64_t inc[], uint64_t multiplier[]) noexcept nogil
+    void lcg128mix_get_state(lcg128mix_random_t *rng, uint64_t state[], uint64_t inc[], uint64_t multiplier[]) noexcept nogil
+    void lcg128mix_seed(lcg128mix_random_t *rng, uint64_t state[], uint64_t inc[], uint64_t multiplier[]) noexcept nogil
+    void lcg128mix_advance(lcg128mix_state_t *rng, uint64_t step[]) noexcept nogil
 
 cdef class PCG64(BitGenerator):
 

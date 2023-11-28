@@ -12,13 +12,13 @@ from randomgen.entropy import random_entropy, seed_by_array
 
 __all__ = ["SFC64"]
 
-cdef uint64_t sfc_uint64(void* st) nogil:
+cdef uint64_t sfc_uint64(void* st) noexcept nogil:
     return sfc_next64(<sfc_state_t *>st)
 
-cdef uint32_t sfc_uint32(void *st) nogil:
+cdef uint32_t sfc_uint32(void *st) noexcept nogil:
     return sfc_next32(<sfc_state_t *> st)
 
-cdef double sfc_double(void* st) nogil:
+cdef double sfc_double(void* st) noexcept nogil:
     return uint64_to_double(sfc_next64(<sfc_state_t *>st))
 
 

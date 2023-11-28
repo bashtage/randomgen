@@ -6,13 +6,13 @@ from randomgen.entropy import random_entropy, seed_by_array
 
 __all__ = ["ChaCha"]
 
-cdef uint64_t chacha_uint64(void* st) nogil:
+cdef uint64_t chacha_uint64(void* st) noexcept nogil:
     return chacha_next64(<chacha_state_t *>st)
 
-cdef uint32_t chacha_uint32(void *st) nogil:
+cdef uint32_t chacha_uint32(void *st) noexcept nogil:
     return chacha_next32(<chacha_state_t *> st)
 
-cdef double chacha_double(void* st) nogil:
+cdef double chacha_double(void* st) noexcept nogil:
     return chacha_next_double(<chacha_state_t *>st)
 
 cdef class ChaCha(BitGenerator):

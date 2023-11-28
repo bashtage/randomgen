@@ -9,13 +9,13 @@ from randomgen.entropy import random_entropy, seed_by_array
 
 __all__ = ["Xorshift1024"]
 
-cdef uint64_t xorshift1024_uint64(void* st) nogil:
+cdef uint64_t xorshift1024_uint64(void* st) noexcept nogil:
     return xorshift1024_next64(<xorshift1024_state_t *>st)
 
-cdef uint32_t xorshift1024_uint32(void *st) nogil:
+cdef uint32_t xorshift1024_uint32(void *st) noexcept nogil:
     return xorshift1024_next32(<xorshift1024_state_t *> st)
 
-cdef double xorshift1024_double(void* st) nogil:
+cdef double xorshift1024_double(void* st) noexcept nogil:
     return uint64_to_double(xorshift1024_next64(<xorshift1024_state_t *>st))
 
 cdef class Xorshift1024(BitGenerator):

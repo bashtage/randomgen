@@ -14,9 +14,9 @@ cdef extern from "src/hc-128/hc-128.h":
 
     ctypedef HC128_STATE_T hc128_state_t
 
-    uint32_t hc128_next32(hc128_state_t *state) nogil
-    uint64_t hc128_next64(hc128_state_t *state) nogil
-    double hc128_next_double(hc128_state_t *state) nogil
+    uint32_t hc128_next32(hc128_state_t *state) noexcept nogil
+    uint64_t hc128_next64(hc128_state_t *state) noexcept nogil
+    double hc128_next_double(hc128_state_t *state) noexcept nogil
     void hc128_seed(hc128_state_t *state, uint32_t *seed)
 
 

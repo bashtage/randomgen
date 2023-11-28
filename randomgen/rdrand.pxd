@@ -13,6 +13,6 @@ cdef extern from "src/rdrand/rdrand.h":
 
     ctypedef s_rdrand_state rdrand_state
 
-    int rdrand_fill_buffer(rdrand_state *state) nogil
-    int rdrand_next64(rdrand_state *state, uint64_t *val) nogil
+    int rdrand_fill_buffer(rdrand_state *state) noexcept nogil
+    int rdrand_next64(rdrand_state *state, uint64_t *val) noexcept nogil
     int rdrand_capable()

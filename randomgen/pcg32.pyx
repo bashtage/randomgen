@@ -9,16 +9,16 @@ from randomgen.entropy import random_entropy
 
 __all__ = ["PCG32"]
 
-cdef uint64_t pcg32_uint64(void* st) nogil:
+cdef uint64_t pcg32_uint64(void* st) noexcept nogil:
     return pcg32_next64(<pcg32_state_t *>st)
 
-cdef uint32_t pcg32_uint32(void *st) nogil:
+cdef uint32_t pcg32_uint32(void *st) noexcept nogil:
     return pcg32_next32(<pcg32_state_t *> st)
 
-cdef double pcg32_double(void* st) nogil:
+cdef double pcg32_double(void* st) noexcept nogil:
     return pcg32_next_double(<pcg32_state_t *>st)
 
-cdef uint64_t pcg32_raw(void* st) nogil:
+cdef uint64_t pcg32_raw(void* st) noexcept nogil:
     return <uint64_t>pcg32_next32(<pcg32_state_t *> st)
 
 
