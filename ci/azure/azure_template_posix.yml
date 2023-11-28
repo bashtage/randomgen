@@ -49,8 +49,9 @@ jobs:
           RANDOMGEN_DEBUG: true
           test.install: true
       ${{ if eq(parameters.name, 'macOS') }}:
-        python39_latest_macos:
+        python311_latest_macos:
           python.version: '3.11'
+          CYTHON: 0.29.36
 
     maxParallel: 10
 
