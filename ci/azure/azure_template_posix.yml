@@ -25,10 +25,15 @@ jobs:
           python.version: '3.8'
         python39_latest:
           python.version: '3.9'
+          NUMPY: 1.19.0
         python310_latest:
           python.version: '3.10'
+          NUMPY: 1.21.0
         python311_latest:
           python.version: '3.11'
+          NUMPY: 1.23.0
+        python312_latest:
+          python.version: '3.12'
         python38_mid_conda:
           python.version: '3.8'
           use.conda: true
@@ -45,7 +50,7 @@ jobs:
           test.install: true
       ${{ if eq(parameters.name, 'macOS') }}:
         python39_latest_macos:
-          python.version: '3.9'
+          python.version: '3.11'
 
     maxParallel: 10
 
