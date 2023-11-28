@@ -59,7 +59,6 @@ jobs:
   - task: UsePythonVersion@0
     inputs:
       versionSpec: '$(python.version)'
-      architecture: 'x64'
     displayName: 'Use Python $(python.version)'
 
   - bash: |
