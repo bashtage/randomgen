@@ -49,9 +49,12 @@ jobs:
           RANDOMGEN_DEBUG: true
           test.install: true
       ${{ if eq(parameters.name, 'macOS') }}:
-        python311_latest_macos:
+        python311_macos:
           python.version: '3.11'
-          CYTHON: 0.29.36
+          CYTHON: 3.0.7
+        python312_latest_macos:
+          python.version: '3.12'
+          CYTHON: 3.0.7
 
     maxParallel: 10
 
@@ -79,11 +82,18 @@ jobs:
      isort --check randomgen
     displayName: 'Check style and formatting'
 
-  - script: python -m pip list
+  - script: |
+      python -m pip install pip --upgrade
+      python -c "import platform;print(platform.uname())"
+      python -c "import numpy;print(numpy.show_runtime())"
+      python -m pip list
     displayName: 'List Configuration (PyPI)'
     condition: ne(variables['use.conda'], 'true')
 
-  - script: conda list
+  - script: |
+      python -m pip install pip --upgrade
+      python -c "import platform;print(platform.uname())"
+      conda list
     displayName: 'List Configuration (conda)'
     condition: eq(variables['use.conda'], 'true')
 
