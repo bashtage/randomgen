@@ -9,13 +9,13 @@ from randomgen.entropy import random_entropy, seed_by_array
 
 __all__ = ["Xoshiro512"]
 
-cdef uint64_t xoshiro512_uint64(void* st) nogil:
+cdef uint64_t xoshiro512_uint64(void* st) noexcept nogil:
     return xoshiro512_next64(<xoshiro512_state_t *>st)
 
-cdef uint32_t xoshiro512_uint32(void *st) nogil:
+cdef uint32_t xoshiro512_uint32(void *st) noexcept nogil:
     return xoshiro512_next32(<xoshiro512_state_t *> st)
 
-cdef double xoshiro512_double(void* st) nogil:
+cdef double xoshiro512_double(void* st) noexcept nogil:
     return uint64_to_double(xoshiro512_next64(<xoshiro512_state_t *>st))
 
 cdef class Xoshiro512(BitGenerator):

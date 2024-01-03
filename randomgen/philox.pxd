@@ -85,19 +85,19 @@ cdef extern from "src/philox/philox.h":
         int number
 
     ctypedef PHILOX_ALL_T philox_all_t
-    uint64_t philox2x32_next64(philox_all_t *state) nogil
-    uint32_t philox2x32_next32(philox_all_t *state) nogil
-    double philox2x32_next_double(philox_all_t *state) nogil
+    uint64_t philox2x32_next64(philox_all_t *state) noexcept nogil
+    uint32_t philox2x32_next32(philox_all_t *state) noexcept nogil
+    double philox2x32_next_double(philox_all_t *state) noexcept nogil
     void philox2x32_advance(philox_all_t *state, uint32_t *step, int use_carry)
-    uint64_t philox4x32_next64(philox_all_t *state) nogil
-    uint32_t philox4x32_next32(philox_all_t *state) nogil
-    double philox4x32_next_double(philox_all_t *state) nogil
+    uint64_t philox4x32_next64(philox_all_t *state) noexcept nogil
+    uint32_t philox4x32_next32(philox_all_t *state) noexcept nogil
+    double philox4x32_next_double(philox_all_t *state) noexcept nogil
     void philox4x32_advance(philox_all_t *state, uint32_t *step, int use_carry)
-    uint64_t philox2x64_next64(philox_all_t *state) nogil
-    uint32_t philox2x64_next32(philox_all_t *state) nogil
-    double philox2x64_next_double(philox_all_t *state) nogil
+    uint64_t philox2x64_next64(philox_all_t *state) noexcept nogil
+    uint32_t philox2x64_next32(philox_all_t *state) noexcept nogil
+    double philox2x64_next_double(philox_all_t *state) noexcept nogil
     void philox2x64_advance(philox_all_t *state, uint64_t *step, int use_carry)
-    uint64_t philox4x64_next64(philox_all_t *state) nogil
-    uint32_t philox4x64_next32(philox_all_t *state) nogil
-    double philox4x64_next_double(philox_all_t *state) nogil
+    uint64_t philox4x64_next64(philox_all_t *state) noexcept nogil
+    uint32_t philox4x64_next32(philox_all_t *state) noexcept nogil
+    double philox4x64_next_double(philox_all_t *state) noexcept nogil
     void philox4x64_advance(philox_all_t *state, uint64_t *step, int use_carry)

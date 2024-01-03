@@ -14,16 +14,16 @@ DEF DSFMT_N = 191  # ((DSFMT_MEXP - 128) / 104 + 1)
 DEF DSFMT_N_PLUS_1 = 192  # DSFMT_N + 1
 DEF DSFMT_N64 = DSFMT_N * 2
 
-cdef uint64_t dsfmt_uint64(void* st) nogil:
+cdef uint64_t dsfmt_uint64(void* st) noexcept nogil:
     return dsfmt_next64(<dsfmt_state_t *>st)
 
-cdef uint32_t dsfmt_uint32(void *st) nogil:
+cdef uint32_t dsfmt_uint32(void *st) noexcept nogil:
     return dsfmt_next32(<dsfmt_state_t *> st)
 
-cdef double dsfmt_double(void* st) nogil:
+cdef double dsfmt_double(void* st) noexcept nogil:
     return dsfmt_next_double(<dsfmt_state_t *>st)
 
-cdef uint64_t dsfmt_raw(void *st) nogil:
+cdef uint64_t dsfmt_raw(void *st) noexcept nogil:
     return dsfmt_next_raw(<dsfmt_state_t *>st)
 
 cdef class DSFMT(BitGenerator):

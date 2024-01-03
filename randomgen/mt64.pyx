@@ -11,16 +11,16 @@ from randomgen.entropy import random_entropy
 
 __all__ = ["MT64"]
 
-cdef uint64_t mt64_uint64(void *st) nogil:
+cdef uint64_t mt64_uint64(void *st) noexcept nogil:
     return mt64_next64(<mt64_state_t *> st)
 
-cdef uint32_t mt64_uint32(void *st) nogil:
+cdef uint32_t mt64_uint32(void *st) noexcept nogil:
     return mt64_next32(<mt64_state_t *> st)
 
-cdef double mt64_double(void *st) nogil:
+cdef double mt64_double(void *st) noexcept nogil:
     return uint64_to_double(mt64_next64(<mt64_state_t *> st))
 
-cdef uint64_t mt64_raw(void *st) nogil:
+cdef uint64_t mt64_raw(void *st) noexcept nogil:
     return mt64_next64(<mt64_state_t *> st)
 
 cdef class MT64(BitGenerator):

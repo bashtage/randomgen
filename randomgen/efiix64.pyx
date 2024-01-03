@@ -10,13 +10,13 @@ DEF ITERATION_SIZE = 32
 
 __all__ = ["EFIIX64"]
 
-cdef uint64_t efiix64_uint64(void* st) nogil:
+cdef uint64_t efiix64_uint64(void* st) noexcept nogil:
     return efiix64_next64(<efiix64_state_t *>st)
 
-cdef uint32_t efiix64_uint32(void *st) nogil:
+cdef uint32_t efiix64_uint32(void *st) noexcept nogil:
     return efiix64_next32(<efiix64_state_t *> st)
 
-cdef double efiix64_double(void* st) nogil:
+cdef double efiix64_double(void* st) noexcept nogil:
     return uint64_to_double(efiix64_next64(<efiix64_state_t *>st))
 
 cdef class EFIIX64(BitGenerator):

@@ -59,9 +59,9 @@ cdef extern from "src/threefry/threefry.h":
 
 {{for w in W}}
 {{for n in (2,4)}}
-    uint64_t threefry{{n}}x{{w}}_next64(threefry_all_t *state) nogil
-    uint32_t threefry{{n}}x{{w}}_next32(threefry_all_t *state) nogil
-    double threefry{{n}}x{{w}}_next_double(threefry_all_t *state) nogil
+    uint64_t threefry{{n}}x{{w}}_next64(threefry_all_t *state) noexcept nogil
+    uint32_t threefry{{n}}x{{w}}_next32(threefry_all_t *state) noexcept nogil
+    double threefry{{n}}x{{w}}_next_double(threefry_all_t *state) noexcept nogil
     void threefry{{n}}x{{w}}_advance(threefry_all_t *state, uint{{w}}_t *step, int use_carry)
 
 {{endfor}}

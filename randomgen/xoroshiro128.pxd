@@ -10,12 +10,12 @@ cdef extern from "src/xoroshiro128/xoroshiro128.h":
 
     ctypedef XOROSHIRO128_STATE_T xoroshiro128_state_t
 
-    uint64_t xoroshiro128_next64(xoroshiro128_state_t *state) nogil
-    uint32_t xoroshiro128_next32(xoroshiro128_state_t *state) nogil
+    uint64_t xoroshiro128_next64(xoroshiro128_state_t *state) noexcept nogil
+    uint32_t xoroshiro128_next32(xoroshiro128_state_t *state) noexcept nogil
     void xoroshiro128_jump(xoroshiro128_state_t *state)
 
-    uint64_t xoroshiro128plusplus_next64(xoroshiro128_state_t *state) nogil
-    uint32_t xoroshiro128plusplus_next32(xoroshiro128_state_t *state) nogil
+    uint64_t xoroshiro128plusplus_next64(xoroshiro128_state_t *state) noexcept nogil
+    uint32_t xoroshiro128plusplus_next32(xoroshiro128_state_t *state) noexcept nogil
     void xoroshiro128plusplus_jump(xoroshiro128_state_t *state)
 
 

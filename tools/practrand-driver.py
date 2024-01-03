@@ -97,7 +97,7 @@ def pack_bits(a, bits):
             if remaining:
                 block[:, current] = block[:, col] << u(64 - remaining)
                 to_fill = 64 - remaining
-    print(f"Output size: {block[:,:bits].shape}")
+    print(f"Output size: {block[:, :bits].shape}")
     return block[:, :bits].ravel()
 
 

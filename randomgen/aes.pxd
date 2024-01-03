@@ -15,9 +15,9 @@ cdef extern from "src/aesctr/aesctr.h":
 
     ctypedef AESCTR_STATE_T aesctr_state_t
 
-    uint64_t aes_next64(aesctr_state_t *aesctr) nogil
-    uint32_t aes_next32(aesctr_state_t *aesctr) nogil
-    double aes_next_double(aesctr_state_t *aesctr) nogil
+    uint64_t aes_next64(aesctr_state_t *aesctr) noexcept nogil
+    uint32_t aes_next32(aesctr_state_t *aesctr) noexcept nogil
+    double aes_next_double(aesctr_state_t *aesctr) noexcept nogil
 
     int RANDOMGEN_USE_AESNI
     void aesctr_use_aesni(int val)

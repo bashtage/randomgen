@@ -8,13 +8,13 @@ from randomgen.common cimport *
 
 __all__ = ["LXM"]
 
-cdef uint64_t lxm_uint64(void* st) nogil:
+cdef uint64_t lxm_uint64(void* st) noexcept nogil:
     return lxm_next64(<lxm_state_t *>st)
 
-cdef uint32_t lxm_uint32(void *st) nogil:
+cdef uint32_t lxm_uint32(void *st) noexcept nogil:
     return lxm_next32(<lxm_state_t *> st)
 
-cdef double lxm_double(void* st) nogil:
+cdef double lxm_double(void* st) noexcept nogil:
     return uint64_to_double(lxm_next64(<lxm_state_t *>st))
 
 cdef class LXM(BitGenerator):

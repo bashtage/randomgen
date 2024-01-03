@@ -13,7 +13,6 @@ trigger:
 
 variables:
   PYTHONHASHSEED: 12345678
-  SETUPTOOLS_USE_DISTUTILS: "stdlib"
   coverage: true
   RANDOMGEN_CYTHON_COVERAGE: true
 

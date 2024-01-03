@@ -8,13 +8,13 @@ from randomgen.entropy import random_entropy, seed_by_array
 
 __all__ = ["HC128"]
 
-cdef uint64_t hc128_uint64(void* st) nogil:
+cdef uint64_t hc128_uint64(void* st) noexcept nogil:
     return hc128_next64(<hc128_state_t *>st)
 
-cdef uint32_t hc128_uint32(void *st) nogil:
+cdef uint32_t hc128_uint32(void *st) noexcept nogil:
     return hc128_next32(<hc128_state_t *> st)
 
-cdef double hc128_double(void* st) nogil:
+cdef double hc128_double(void* st) noexcept nogil:
     return hc128_next_double(<hc128_state_t *> st)
 
 

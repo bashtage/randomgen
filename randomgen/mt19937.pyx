@@ -12,16 +12,16 @@ from randomgen.entropy import random_entropy
 
 __all__ = ["MT19937"]
 
-cdef uint64_t mt19937_uint64(void *st) nogil:
+cdef uint64_t mt19937_uint64(void *st) noexcept nogil:
     return mt19937_next64(<mt19937_state_t *> st)
 
-cdef uint32_t mt19937_uint32(void *st) nogil:
+cdef uint32_t mt19937_uint32(void *st) noexcept nogil:
     return mt19937_next32(<mt19937_state_t *> st)
 
-cdef double mt19937_double(void *st) nogil:
+cdef double mt19937_double(void *st) noexcept nogil:
     return mt19937_next_double(<mt19937_state_t *> st)
 
-cdef uint64_t mt19937_raw(void *st) nogil:
+cdef uint64_t mt19937_raw(void *st) noexcept nogil:
     return <uint64_t>mt19937_next32(<mt19937_state_t *> st)
 
 cdef class MT19937(BitGenerator):

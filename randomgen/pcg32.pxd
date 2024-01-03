@@ -14,9 +14,9 @@ cdef extern from "src/pcg32/pcg32.h":
 
     ctypedef PCG32_STATE_T pcg32_state_t
 
-    uint64_t pcg32_next64(pcg32_state_t *state) nogil
-    uint32_t pcg32_next32(pcg32_state_t *state) nogil
-    double pcg32_next_double(pcg32_state_t *state) nogil
+    uint64_t pcg32_next64(pcg32_state_t *state) noexcept nogil
+    uint32_t pcg32_next32(pcg32_state_t *state) noexcept nogil
+    double pcg32_next_double(pcg32_state_t *state) noexcept nogil
     void pcg32_jump(pcg32_state_t *state)
     void pcg32_advance_state(pcg32_state_t *state, uint64_t step)
     void pcg32_set_seed(pcg32_state_t *state, uint64_t seed, uint64_t inc)

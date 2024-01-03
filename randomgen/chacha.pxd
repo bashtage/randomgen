@@ -15,9 +15,9 @@ cdef extern from "src/chacha/chacha.h":
 
     ctypedef CHACHA_STATE_T chacha_state_t
 
-    uint32_t chacha_next32(chacha_state_t *state) nogil
-    uint64_t chacha_next64(chacha_state_t *state) nogil
-    double chacha_next_double(chacha_state_t *state) nogil
+    uint32_t chacha_next32(chacha_state_t *state) noexcept nogil
+    uint64_t chacha_next64(chacha_state_t *state) noexcept nogil
+    double chacha_next_double(chacha_state_t *state) noexcept nogil
 
     void chacha_seed(
             chacha_state_t *state,

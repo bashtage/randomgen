@@ -59,9 +59,9 @@ cdef extern from "src/philox/philox.h":
 
 {{for w in W}}
 {{for n in (2,4)}}
-    uint64_t philox{{n}}x{{w}}_next64(philox_all_t *state) nogil
-    uint32_t philox{{n}}x{{w}}_next32(philox_all_t *state) nogil
-    double philox{{n}}x{{w}}_next_double(philox_all_t *state) nogil
+    uint64_t philox{{n}}x{{w}}_next64(philox_all_t *state) noexcept nogil
+    uint32_t philox{{n}}x{{w}}_next32(philox_all_t *state) noexcept nogil
+    double philox{{n}}x{{w}}_next_double(philox_all_t *state) noexcept nogil
     void philox{{n}}x{{w}}_advance(philox_all_t *state, uint{{w}}_t *step, int use_carry)
 
 {{endfor}}

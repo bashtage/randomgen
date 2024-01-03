@@ -11,36 +11,36 @@ __all__ = ["ThreeFry"]
 DEF THREEFRY_BUFFER_SIZE=4
 
 # Keeping these here makes a large difference (2x) to performance
-cdef uint64_t threefry2x64_uint64(void*st) nogil:
+cdef uint64_t threefry2x64_uint64(void*st) noexcept nogil:
     return threefry2x64_next64(<threefry_all_t *> st)
-cdef uint32_t threefry2x64_uint32(void *st) nogil:
+cdef uint32_t threefry2x64_uint32(void *st) noexcept nogil:
     return threefry2x64_next32(<threefry_all_t *> st)
-cdef double threefry2x64_double(void*st) nogil:
+cdef double threefry2x64_double(void*st) noexcept nogil:
     return threefry2x64_next_double(<threefry_all_t *> st)
 
-cdef uint64_t threefry4x64_uint64(void*st) nogil:
+cdef uint64_t threefry4x64_uint64(void*st) noexcept nogil:
     return threefry4x64_next64(<threefry_all_t *> st)
-cdef uint32_t threefry4x64_uint32(void *st) nogil:
+cdef uint32_t threefry4x64_uint32(void *st) noexcept nogil:
     return threefry4x64_next32(<threefry_all_t *> st)
-cdef double threefry4x64_double(void*st) nogil:
+cdef double threefry4x64_double(void*st) noexcept nogil:
     return threefry4x64_next_double(<threefry_all_t *> st)
 
-cdef uint64_t threefry4x32_uint64(void*st) nogil:
+cdef uint64_t threefry4x32_uint64(void*st) noexcept nogil:
     return threefry4x32_next64(<threefry_all_t *> st)
-cdef uint32_t threefry4x32_uint32(void *st) nogil:
+cdef uint32_t threefry4x32_uint32(void *st) noexcept nogil:
     return threefry4x32_next32(<threefry_all_t *> st)
-cdef double threefry4x32_double(void*st) nogil:
+cdef double threefry4x32_double(void*st) noexcept nogil:
     return threefry4x32_next_double(<threefry_all_t *> st)
-cdef uint64_t threefry4x32_raw(void *st) nogil:
+cdef uint64_t threefry4x32_raw(void *st) noexcept nogil:
     return <uint64_t>threefry4x32_next32(<threefry_all_t *> st)
 
-cdef uint64_t threefry2x32_uint64(void*st) nogil:
+cdef uint64_t threefry2x32_uint64(void*st) noexcept nogil:
     return threefry2x32_next64(<threefry_all_t *> st)
-cdef uint32_t threefry2x32_uint32(void *st) nogil:
+cdef uint32_t threefry2x32_uint32(void *st) noexcept nogil:
     return threefry2x32_next32(<threefry_all_t *> st)
-cdef double threefry2x32_double(void*st) nogil:
+cdef double threefry2x32_double(void*st) noexcept nogil:
     return threefry2x32_next_double(<threefry_all_t *> st)
-cdef uint64_t threefry2x32_raw(void *st) nogil:
+cdef uint64_t threefry2x32_raw(void *st) noexcept nogil:
     return <uint64_t>threefry2x32_next32(<threefry_all_t *> st)
 
 cdef class ThreeFry(BitGenerator):

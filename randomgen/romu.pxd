@@ -13,10 +13,10 @@ cdef extern from "src/romu/romu.h":
 
     ctypedef ROMU_STATE_T romu_state_t
 
-    uint64_t romuquad_next64(romu_state_t *state) nogil
-    uint32_t romuquad_next32(romu_state_t *state) nogil
-    uint64_t romutrio_next64(romu_state_t *state) nogil
-    uint32_t romutrio_next32(romu_state_t *state) nogil
+    uint64_t romuquad_next64(romu_state_t *state) noexcept nogil
+    uint32_t romuquad_next32(romu_state_t *state) noexcept nogil
+    uint64_t romutrio_next64(romu_state_t *state) noexcept nogil
+    uint32_t romutrio_next32(romu_state_t *state) noexcept nogil
     void romu_seed(romu_state_t *state, uint64_t w, uint64_t x, uint64_t y, uint64_t z, int quad)
 
 

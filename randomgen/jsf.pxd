@@ -23,14 +23,14 @@ cdef extern from "src/jsf/jsf.h":
 
     ctypedef JSF_STATE_T jsf_state_t
 
-    uint64_t jsf64_next64(jsf_state_t *state) nogil
-    uint32_t jsf64_next32(jsf_state_t *state) nogil
-    double jsf64_next_double(jsf_state_t *state) nogil
+    uint64_t jsf64_next64(jsf_state_t *state) noexcept nogil
+    uint32_t jsf64_next32(jsf_state_t *state) noexcept nogil
+    double jsf64_next_double(jsf_state_t *state) noexcept nogil
     void jsf64_seed(jsf_state_t *state, uint64_t *seed, int size)
 
-    uint64_t jsf32_next64(jsf_state_t *state) nogil
-    uint32_t jsf32_next32(jsf_state_t *state) nogil
-    double jsf32_next_double(jsf_state_t *state) nogil
+    uint64_t jsf32_next64(jsf_state_t *state) noexcept nogil
+    uint32_t jsf32_next32(jsf_state_t *state) noexcept nogil
+    double jsf32_next_double(jsf_state_t *state) noexcept nogil
     void jsf32_seed(jsf_state_t *state, uint32_t *seed, int size)
 
 

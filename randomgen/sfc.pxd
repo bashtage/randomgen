@@ -14,8 +14,8 @@ cdef extern from "src/sfc/sfc.h":
 
     ctypedef SFC_STATE_T sfc_state_t
 
-    uint64_t sfc_next64(sfc_state_t *state) nogil
-    uint32_t sfc_next32(sfc_state_t *state) nogil
+    uint64_t sfc_next64(sfc_state_t *state) noexcept nogil
+    uint32_t sfc_next32(sfc_state_t *state) noexcept nogil
     void sfc_seed(sfc_state_t *state, uint64_t *seed, uint64_t w, uint64_t k)
 
 cdef class SFC64(BitGenerator):

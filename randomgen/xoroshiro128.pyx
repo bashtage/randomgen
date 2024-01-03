@@ -9,22 +9,22 @@ from randomgen.entropy import random_entropy, seed_by_array
 
 __all__ = ["Xoroshiro128"]
 
-cdef uint64_t xoroshiro128_uint64(void* st) nogil:
+cdef uint64_t xoroshiro128_uint64(void* st) noexcept nogil:
     return xoroshiro128_next64(<xoroshiro128_state_t *>st)
 
-cdef uint64_t xoroshiro128plusplus_uint64(void* st) nogil:
+cdef uint64_t xoroshiro128plusplus_uint64(void* st) noexcept nogil:
     return xoroshiro128plusplus_next64(<xoroshiro128_state_t *>st)
 
-cdef uint32_t xoroshiro128_uint32(void *st) nogil:
+cdef uint32_t xoroshiro128_uint32(void *st) noexcept nogil:
     return xoroshiro128_next32(<xoroshiro128_state_t *> st)
 
-cdef uint32_t xoroshiro128plusplus_uint32(void *st) nogil:
+cdef uint32_t xoroshiro128plusplus_uint32(void *st) noexcept nogil:
     return xoroshiro128plusplus_next32(<xoroshiro128_state_t *> st)
 
-cdef double xoroshiro128_double(void* st) nogil:
+cdef double xoroshiro128_double(void* st) noexcept nogil:
     return uint64_to_double(xoroshiro128_next64(<xoroshiro128_state_t *>st))
 
-cdef double xoroshiro128plusplus_double(void* st) nogil:
+cdef double xoroshiro128plusplus_double(void* st) noexcept nogil:
     return uint64_to_double(xoroshiro128plusplus_next64(<xoroshiro128_state_t *>st))
 
 cdef class Xoroshiro128(BitGenerator):

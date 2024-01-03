@@ -1,7 +1,8 @@
-black~=23.9.0
+black[jupyter]~=23.11.0
+isort~=5.0
 pytest>=6
 pytest-cov
 scipy>=1.3.2
-setuptools_scm[toml]>=7.1.0,<8.0.0
+setuptools_scm[toml]>=8.0.0,<9.0.0
 oldest_supported_numpy
 packaging>=21.0

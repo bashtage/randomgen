@@ -6,13 +6,13 @@ from randomgen.entropy import random_entropy, seed_by_array
 
 __all__ = ["AESCounter"]
 
-cdef uint64_t aes_uint64(void* st) nogil:
+cdef uint64_t aes_uint64(void* st) noexcept nogil:
     return aes_next64(<aesctr_state_t *>st)
 
-cdef uint32_t aes_uint32(void *st) nogil:
+cdef uint32_t aes_uint32(void *st) noexcept nogil:
     return aes_next32(<aesctr_state_t *> st)
 
-cdef double aes_double(void* st) nogil:
+cdef double aes_double(void* st) noexcept nogil:
     return uint64_to_double(aes_next64(<aesctr_state_t *>st))
 
 cdef class AESCounter(BitGenerator):
