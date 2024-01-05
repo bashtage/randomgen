@@ -13,6 +13,10 @@ Change Log
   You should be using :class:`numpy.random.Generator` or
   :class:`numpy.random.RandomState` which are maintained. 
 
+v1.26.1
+=======
+- Initial compatability with Cython 3 and NumPy 2
+
 v1.26.0
 =======
 - Fixed a bug that affected the :meth:`randomgen.xoroshiro128.Xoroshiro128.jumped`
