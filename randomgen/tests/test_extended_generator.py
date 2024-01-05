@@ -291,8 +291,7 @@ def test_random_uintegers():
     assert isinstance(random.uintegers(), int)
     assert isinstance(random.uintegers(bits=32), int)
     with pytest.raises(ValueError):
-        with pytest.deprecated_call():
-            random.uintegers(bits=128)
+        random.uintegers(bits=128)
 
 
 def test_str_repr():
