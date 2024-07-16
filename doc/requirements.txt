@@ -4,3 +4,4 @@ sphinx-immaterial
 sphinx>=5
 ipython>=6
 pygments>=2.7.4 # not directly required, pinned by Snyk to avoid a vulnerability
+setuptools>=70.0.0 # not directly required, pinned by Snyk to avoid a vulnerability
