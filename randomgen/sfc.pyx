@@ -112,8 +112,8 @@ cdef class SFC64(BitGenerator):
     _seed_seq_len = 4
     _seed_seq_dtype = np.uint64
 
-    def __init__(self, seed=None, w=1, k=1, *, mode="sequence"):
-        BitGenerator.__init__(self, seed, mode)
+    def __init__(self, seed=None, w=1, k=1):
+        BitGenerator.__init__(self, seed)
         self.w = w
         self.k = k
         self.seed(seed)
@@ -128,9 +128,6 @@ cdef class SFC64(BitGenerator):
     cdef _reset_state_variables(self):
         self.rng_state.has_uint32 = 0
         self.rng_state.uinteger = 0
-
-    def _supported_modes(self):
-        return "sequence", "numpy"
 
     def _seed_from_seq(self):
         cdef int i, loc, cnt

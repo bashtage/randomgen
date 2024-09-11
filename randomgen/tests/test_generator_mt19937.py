@@ -66,7 +66,7 @@ def test_jumped(config):
 
     seed = seed_tpl[0] if len(seed_tpl) == 1 else list(seed_tpl)
     initial_state = np.random.MT19937(seed).state
-    mt19937 = MT19937(mode="sequence")
+    mt19937 = MT19937()
     mt19937.state = initial_state
     mt19937.random_raw(step)
     if typ == "jumped":

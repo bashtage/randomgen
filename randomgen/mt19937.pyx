@@ -114,17 +114,14 @@ cdef class MT19937(BitGenerator):
         No. 3, Summer 2008, pp. 385-390.
 
     """
-    def __init__(self, seed=None, *, mode=None):
-        BitGenerator.__init__(self, seed, mode)
+    def __init__(self, seed=None):
+        BitGenerator.__init__(self, seed)
         self.seed(seed)
         self._bitgen.state = &self.rng_state
         self._bitgen.next_uint64 = &mt19937_uint64
         self._bitgen.next_uint32 = &mt19937_uint32
         self._bitgen.next_double = &mt19937_double
         self._bitgen.next_raw = &mt19937_raw
-
-    def _supported_modes(self):
-        return "legacy", "sequence", "numpy"
 
     def _seed_from_seq(self):
         state = self.seed_seq.generate_state(RK_STATE_LEN, np.uint32)
@@ -226,7 +223,7 @@ cdef class MT19937(BitGenerator):
         """
         cdef MT19937 bit_generator
 
-        bit_generator = self.__class__(mode=self.mode)
+        bit_generator = self.__class__()
         bit_generator.state = self.state
         mt19937_jump_default(&bit_generator.rng_state)
 
@@ -295,7 +292,7 @@ cdef class MT19937(BitGenerator):
         """
         cdef MT19937 bit_generator
 
-        bit_generator = self.__class__(seed=self._copy_seed(), mode=self.mode)
+        bit_generator = self.__class__(seed=self._copy_seed())
         bit_generator.state = self.state
         bit_generator.jump_inplace(jumps)
 

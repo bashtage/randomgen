@@ -117,8 +117,8 @@ cdef class Xorshift1024(BitGenerator):
     .. [4] Sebastiano Vigna. "Further scramblings of Marsaglia's xorshift
            generators." CoRR, abs/1403.0930, 2014.
     """
-    def __init__(self, seed=None, *, mode=None):
-        BitGenerator.__init__(self, seed, mode)
+    def __init__(self, seed=None, *):
+        BitGenerator.__init__(self, seed)
         self.seed(seed)
 
         self._bitgen.state = <void *>&self.rng_state
@@ -245,7 +245,7 @@ cdef class Xorshift1024(BitGenerator):
         """
         cdef Xorshift1024 bit_generator
 
-        bit_generator = self.__class__(seed=self._copy_seed(), mode=self.mode)
+        bit_generator = self.__class__(seed=self._copy_seed())
         bit_generator.state = self.state
         bit_generator.jump_inplace(iter)
 

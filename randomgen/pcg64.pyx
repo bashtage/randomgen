@@ -147,8 +147,8 @@ cdef class PCG64(BitGenerator):
     .. [2] O'Neill, Melissa E. "PCG: A Family of Simple Fast Space-Efficient
            Statistically Good Algorithms for Random Number Generation"
     """
-    def __init__(self, seed=None, inc=None, *, variant="xsl-rr", mode=None):
-        BitGenerator.__init__(self, seed, mode)
+    def __init__(self, seed=None, inc=None, *, variant="xsl-rr"):
+        BitGenerator.__init__(self, seed)
         self.rng_state.pcg_state = <pcg64_random_t *>PyArray_malloc_aligned(sizeof(pcg64_random_t))
         inc = None if seed is None else inc
 
@@ -187,9 +187,6 @@ cdef class PCG64(BitGenerator):
             self._bitgen.next_uint32 = &pcg64_cm_dxsm_uint32
             self._bitgen.next_double = &pcg64_cm_dxsm_double
             self._bitgen.next_raw = &pcg64_cm_dxsm_uint64
-
-    def _supported_modes(self):
-        return "legacy", "sequence", "numpy"
 
     def __repr__(self):
         out = object.__repr__(self)
@@ -482,7 +479,7 @@ cdef class PCG64(BitGenerator):
         """
         cdef PCG64 bit_generator
 
-        bit_generator = self.__class__(seed=self._copy_seed(), mode=self.mode, variant=self.variant)
+        bit_generator = self.__class__(seed=self._copy_seed(), variant=self.variant)
         bit_generator.state = self.state
         bit_generator.jump_inplace(iter)
 
@@ -1051,7 +1048,7 @@ cdef class PCG64DXSM(PCG64):
     """
 
     def __init__(self, seed=None, inc=None):
-        PCG64.__init__(self, seed, inc, variant="dxsm", mode="sequence")
+        PCG64.__init__(self, seed, inc, variant="dxsm")
 
     @property
     def state(self):

@@ -12,6 +12,7 @@ Get the state using NumPy's state initialization
 poly-128 is the 2**128 poly computed using the original author's code
 clist_mt19937 is the polynomial shipped by the original author
 """
+
 import hashlib
 import os
 import platform

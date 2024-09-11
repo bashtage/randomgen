@@ -189,8 +189,8 @@ cdef class JSF(BitGenerator):
     parameters = JSF_PARAMETERS
 
     def __init__(self, seed=None, *, seed_size=1, size=64, p=None, q=None,
-                 r=None, mode=None):
-        BitGenerator.__init__(self, seed, mode)
+                 r=None):
+        BitGenerator.__init__(self, seed)
         if size not in (32, 64) or not isinstance(size, INT_TYPES):
             raise ValueError("size must be either 32 or 64")
         if seed_size not in (1, 2, 3) or not isinstance(seed_size, INT_TYPES):

@@ -100,7 +100,7 @@ cdef class UserBitGenerator(BitGenerator):
     def __init__(self, next_raw, bits=64, next_64=None, next_32=None,
                  next_double=None, state=None, state_getter=None,
                  state_setter=None):
-        BitGenerator.__init__(self, 0, mode="sequence")
+        BitGenerator.__init__(self, 0)
         self.funcs = {"next_raw": next_raw,
                       "next_64": next_64,
                       "next_32": next_32,

@@ -117,8 +117,8 @@ cdef class SFMT(BitGenerator):
            Jump Ahead Algorithm for Linear Recurrences in a Polynomial Space",
            Sequences and Their Applications - SETA, 290--298, 2008.
     """
-    def __init__(self, seed=None, *, mode=None):
-        BitGenerator.__init__(self, seed, mode)
+    def __init__(self, seed=None):
+        BitGenerator.__init__(self, seed)
         self.rng_state.state = <sfmt_t *>PyArray_malloc_aligned(sizeof(sfmt_t))
         self.rng_state.buffered_uint64 = <uint64_t *>PyArray_calloc_aligned(SFMT_N64, sizeof(uint64_t))
         self.rng_state.buffer_loc = SFMT_N64
@@ -262,7 +262,7 @@ cdef class SFMT(BitGenerator):
         """
         cdef SFMT bit_generator
 
-        bit_generator = self.__class__(seed=self._copy_seed(), mode=self.mode)
+        bit_generator = self.__class__(seed=self._copy_seed())
         bit_generator.state = self.state
         bit_generator.jump_inplace(iter)
 

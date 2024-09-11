@@ -69,7 +69,9 @@ DEBUG = os.environ.get("RANDOMGEN_DEBUG", False) in (1, "1", "True", "true")
 if DEBUG:
     print("Debug build, RANDOMGEN_DEBUG=" + os.environ["RANDOMGEN_DEBUG"])
 
-EXTRA_INCLUDE_DIRS = [np.get_include()]
+NUMPY_INCLUDE = np.get_include()
+NUMPY_RANDOM_INCLUDE = os.path.join(NUMPY_INCLUDE, "random")
+EXTRA_INCLUDE_DIRS = [NUMPY_INCLUDE, NUMPY_RANDOM_INCLUDE]
 EXTRA_LINK_ARGS = [] if os.name == "nt" else []
 EXTRA_LIBRARIES = ["m"] if os.name != "nt" else []
 # Undef for manylinux
@@ -141,12 +143,12 @@ for templated_file in files:
 
 extensions = []
 for name in (
-    "bounded_integers",
+    # "bounded_integers",
     "common",
     "entropy",
-    "generator",
-    "legacy.bounded_integers",
-    "mtrand",
+    # "generator",
+    # "legacy.bounded_integers",
+    # "mtrand",
     "_seed_sequence",
 ):
     extra_source = []
@@ -258,7 +260,7 @@ ext = Extension(
     undef_macros=UNDEF_MACROS,
 )
 extensions.append(ext)
-
+#
 bit_generator("philox", defs=PHILOX_DEFS)
 bit_generator("rdrand", cpu_features=True, compile_args=RDRAND_COMPILE_ARGS)
 bit_generator(

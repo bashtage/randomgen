@@ -104,7 +104,7 @@ cdef class EFIIX64(BitGenerator):
     _seed_seq_dtype = np.uint64
 
     def __init__(self, seed=None):
-        BitGenerator.__init__(self, seed, mode="sequence")
+        BitGenerator.__init__(self, seed)
         self.seed(seed)
 
         self._bitgen.state = <void *>&self.rng_state

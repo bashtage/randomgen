@@ -93,8 +93,8 @@ cdef class MT64(BitGenerator):
     .. [2] Nishimura, T. "Tables of 64-bit Mersenne Twisters" ACM Transactions
         on Modeling and Computer Simulation 10. (2000) 348-357.
     """
-    def __init__(self, seed=None, *, mode=None):
-        BitGenerator.__init__(self, seed, mode)
+    def __init__(self, seed=None):
+        BitGenerator.__init__(self, seed)
         self.seed(seed)
 
         self._bitgen.state = &self.rng_state

@@ -112,8 +112,8 @@ cdef class HC128(BitGenerator):
     .. [2] Wu, Hongjun, "Stream Ciphers HC-128 and HC-256".
         https://www.ntu.edu.sg/home/wuhj/research/hc/index.html)
     """
-    def __init__(self, seed=None, *, key=None, mode=None):
-        BitGenerator.__init__(self, seed, mode)
+    def __init__(self, seed=None, *, key=None):
+        BitGenerator.__init__(self, seed)
         self.seed(seed, key)
 
         self._bitgen.state = <void *>&self.rng_state

@@ -103,8 +103,8 @@ cdef class PCG32(BitGenerator):
     .. [2] O'Neill, Melissa E. "PCG: A Family of Simple Fast Space-Efficient
            Statistically Good Algorithms for Random Number Generation"
     """
-    def __init__(self, seed=None, inc=None, *, mode=None):
-        BitGenerator.__init__(self, seed, mode)
+    def __init__(self, seed=None, inc=None):
+        BitGenerator.__init__(self, seed)
         self.seed(seed, inc)
         self._bitgen.state = <void *>&self.rng_state
         self._bitgen.next_uint64 = &pcg32_uint64
@@ -310,7 +310,7 @@ cdef class PCG32(BitGenerator):
         """
         cdef PCG32 bit_generator
 
-        bit_generator = self.__class__(seed=self._copy_seed(), mode=self.mode)
+        bit_generator = self.__class__(seed=self._copy_seed())
         bit_generator.state = self.state
         bit_generator.jump_inplace(iter)
 

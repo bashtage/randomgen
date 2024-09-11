@@ -18,6 +18,7 @@ cl.exe /LD .\distributions.c -DDLL_EXPORT \
     -I%PYTHON_HOME%\include %PYTHON_HOME%\libs\python36.lib
 move distributions.dll ../../examples/numba/
 """
+
 import os
 
 from cffi import FFI

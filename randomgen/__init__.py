@@ -8,13 +8,15 @@ from randomgen.chacha import ChaCha
 from randomgen.dsfmt import DSFMT
 from randomgen.efiix64 import EFIIX64
 from randomgen.entropy import random_entropy
-from randomgen.generator import ExtendedGenerator, Generator
+
+# from randomgen.generator import ExtendedGenerator, Generator
 from randomgen.hc128 import HC128
 from randomgen.jsf import JSF
 from randomgen.lxm import LXM
 from randomgen.mt64 import MT64
 from randomgen.mt19937 import MT19937
-from randomgen.mtrand import RandomState
+
+# from randomgen.mtrand import RandomState
 from randomgen.pcg32 import PCG32
 from randomgen.pcg64 import PCG64, PCG64DXSM, LCG128Mix
 from randomgen.philox import Philox

@@ -139,8 +139,8 @@ cdef class SPECK128(BitGenerator):
        National Security Agency. January 15, 2019. from
        https://nsacyber.github.io/simon-speck/implementations/ImplementationGuide1.1.pdf
     """
-    def __init__(self, seed=None, *, counter=None, key=None, rounds=SPECK_MAX_ROUNDS, mode=None):
-        BitGenerator.__init__(self, seed, mode)
+    def __init__(self, seed=None, *, counter=None, key=None, rounds=SPECK_MAX_ROUNDS):
+        BitGenerator.__init__(self, seed)
         # Calloc since ctr needs to be 0
         self.rng_state = <speck_state_t *>PyArray_calloc_aligned(sizeof(speck_state_t), 1)
         if (rounds <= 0) or rounds > SPECK_MAX_ROUNDS or int(rounds) != rounds:
@@ -394,7 +394,7 @@ cdef class SPECK128(BitGenerator):
             New instance of generator jumped iter times
         """
         cdef SPECK128 bit_generator
-        bit_generator = self.__class__(seed=self._copy_seed(), mode=self.mode)
+        bit_generator = self.__class__(seed=self._copy_seed())
         bit_generator.state = self.state
         bit_generator.jump_inplace(iter)
         return bit_generator

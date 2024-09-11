@@ -15,9 +15,9 @@ from libc.stdint cimport (
     uintptr_t,
 )
 
-from randomgen.distributions cimport bitgen_t
-
 import numpy as np
+from numpy.random cimport bitgen_t
+from numpy.random.bit_generator cimport BitGenerator as _BitGenerator
 
 cimport numpy as np
 
@@ -42,14 +42,9 @@ cdef enum ConstraintType:
 
 ctypedef ConstraintType constraint_type
 
-cdef class BitGenerator:
-    cdef bitgen_t _bitgen
-    cdef readonly object capsule
-    cdef object _ctypes
-    cdef object _cffi
+
+cdef class BitGenerator(_BitGenerator):
     cdef object mode
-    cdef readonly object lock
-    cdef public object seed_seq
     cdef object _copy_seed(self)
 
 cdef object benchmark(bitgen_t *bitgen, object lock, Py_ssize_t cnt, object method)

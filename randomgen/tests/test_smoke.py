@@ -137,7 +137,7 @@ class RNG:
         cls.bit_generator = Xoshiro256
         cls.advance = None
         cls.seed = [12345]
-        cls.rg = np.random.Generator(cls.bit_generator(*cls.seed, mode="legacy"))
+        cls.rg = np.random.Generator(cls.bit_generator(*cls.seed))
         cls.initial_state = cls.rg.bit_generator.state
         cls.seed_vector_bits = 64
         cls._extra_setup()
@@ -150,7 +150,7 @@ class RNG:
         cls.mat = np.arange(2.0, 102.0, 0.01).reshape((100, 100))
         cls.seed_error = TypeError
 
-    def init_generator(self, seed=None, mode="sequence"):
+    def init_generator(self, seed=None):
         if seed is not None:
             return np.random.Generator(self.bit_generator(*seed, mode=mode))
         else:
@@ -333,15 +333,15 @@ class RNG:
         assert_(not comp_state(rg.bit_generator.state, rg2.bit_generator.state))
 
     def test_seed(self):
-        rg = self.init_generator(self.seed, mode="legacy")
-        rg2 = self.init_generator(self.seed, mode="legacy")
+        rg = self.init_generator(self.seed)
+        rg2 = self.init_generator(self.seed)
         assert_(comp_state(rg.bit_generator.state, rg2.bit_generator.state))
         rg.random()
         rg2.random()
         assert_(comp_state(rg.bit_generator.state, rg2.bit_generator.state))
 
     def test_reset_state_gauss(self):
-        rg = self.init_generator(seed=self.seed, mode="legacy")
+        rg = self.init_generator(seed=self.seed)
         rg.standard_normal()
         state = rg.bit_generator.state
         n1 = rg.standard_normal(size=10)
@@ -351,7 +351,7 @@ class RNG:
         assert_array_equal(n1, n2)
 
     def test_reset_state_uint32(self):
-        rg = self.init_generator(seed=self.seed, mode="legacy")
+        rg = self.init_generator(seed=self.seed)
         rg.integers(0, 2**24, 120, dtype=np.uint32)
         state = rg.bit_generator.state
         n1 = rg.integers(0, 2**24, 10, dtype=np.uint32)
@@ -361,7 +361,7 @@ class RNG:
         assert_array_equal(n1, n2)
 
     def test_reset_state_float(self):
-        rg = self.init_generator(seed=self.seed, mode="legacy")
+        rg = self.init_generator(seed=self.seed)
         rg.random(dtype="float32")
         state = rg.bit_generator.state
         n1 = rg.random(size=10, dtype="float32")
@@ -896,7 +896,7 @@ class TestMT19937(RNG):
         cls.bit_generator = MT19937
         cls.advance = None
         cls.seed = [2**21 + 2**16 + 2**5 + 1]
-        cls.rg = np.random.Generator(cls.bit_generator(*cls.seed, mode="legacy"))
+        cls.rg = np.random.Generator(cls.bit_generator(*cls.seed))
         cls.initial_state = cls.rg.bit_generator.state
         cls.seed_vector_bits = 32
         cls._extra_setup()
@@ -919,7 +919,7 @@ class TestMT64(RNG):
         cls.bit_generator = MT64
         cls.advance = None
         cls.seed = [2**43 + 2**21 + 2**16 + 2**5 + 1]
-        cls.rg = np.random.Generator(cls.bit_generator(*cls.seed, mode="legacy"))
+        cls.rg = np.random.Generator(cls.bit_generator(*cls.seed))
         cls.initial_state = cls.rg.bit_generator.state
         cls.seed_vector_bits = 64
         cls._extra_setup()
@@ -933,7 +933,7 @@ class TestJSF64(RNG):
         cls.bit_generator = partial(JSF, seed_size=3)
         cls.advance = None
         cls.seed = [12345]
-        cls.rg = np.random.Generator(cls.bit_generator(*cls.seed, mode="legacy"))
+        cls.rg = np.random.Generator(cls.bit_generator(*cls.seed))
         cls.initial_state = cls.rg.bit_generator.state
         cls.seed_vector_bits = 64
         cls._extra_setup()
@@ -946,7 +946,7 @@ class TestJSF32(RNG):
         cls.bit_generator = partial(JSF, size=32, seed_size=3)
         cls.advance = None
         cls.seed = [12345]
-        cls.rg = np.random.Generator(cls.bit_generator(*cls.seed, mode="legacy"))
+        cls.rg = np.random.Generator(cls.bit_generator(*cls.seed))
         cls.initial_state = cls.rg.bit_generator.state
         cls.seed_vector_bits = 64
         cls._extra_setup()
@@ -962,7 +962,7 @@ class TestPCG64(RNG):
             2**96 + 2**48 + 2**21 + 2**16 + 2**5 + 1,
             2**21 + 2**16 + 2**5 + 1,
         ]
-        cls.rg = np.random.Generator(cls.bit_generator(*cls.seed, mode="legacy"))
+        cls.rg = np.random.Generator(cls.bit_generator(*cls.seed))
         cls.initial_state = cls.rg.bit_generator.state
         cls.seed_vector_bits = None
         cls._extra_setup()
@@ -1000,7 +1000,7 @@ class TestPCG64VariantDXSM(TestPCG64):
     def setup_class(cls):
         super().setup_class()
         cls.bit_generator = partial(PCG64, variant="dxsm-128")
-        cls.rg = np.random.Generator(cls.bit_generator(*cls.seed, mode="legacy"))
+        cls.rg = np.random.Generator(cls.bit_generator(*cls.seed))
         cls.initial_state = cls.rg.bit_generator.state
         cls._extra_setup()
 
@@ -1010,7 +1010,7 @@ class TestPCG64CMDXSM(TestPCG64):
     def setup_class(cls):
         super().setup_class()
         cls.bit_generator = partial(PCG64, variant="dxsm")
-        cls.rg = np.random.Generator(cls.bit_generator(*cls.seed, mode="legacy"))
+        cls.rg = np.random.Generator(cls.bit_generator(*cls.seed))
         cls.initial_state = cls.rg.bit_generator.state
         cls._extra_setup()
 
@@ -1025,21 +1025,21 @@ class TestPhilox4x64(RNG):
         cls.bit_generator = partial(Philox, number=cls.number, width=cls.width)
         cls.advance = 2**63 + 2**31 + 2**15 + 1
         cls.seed = [12345]
-        cls.rg = np.random.Generator(cls.bit_generator(*cls.seed, mode="legacy"))
+        cls.rg = np.random.Generator(cls.bit_generator(*cls.seed))
         cls.initial_state = cls.rg.bit_generator.state
         cls.seed_vector_bits = 64
         cls.max_vector_seed_size = 1
         cls._extra_setup()
 
     def test_repr(self):
-        rpr = repr(self.bit_generator(mode="sequence"))
+        rpr = repr(self.bit_generator())
         assert f"{self.number}x{self.width}" in rpr
 
     def test_bad_width_number(self):
         with pytest.raises(ValueError, match="number must be either 2 or 4"):
-            self.bit_generator_base(number=self.number + 1, mode="legacy")
+            self.bit_generator_base(number=self.number + 1)
         with pytest.raises(ValueError, match="width must be either 32 or 64"):
-            self.bit_generator_base(width=self.width - 1, mode="legacy")
+            self.bit_generator_base(width=self.width - 1)
 
 
 class TestPhilox2x64(TestPhilox4x64):
@@ -1051,7 +1051,7 @@ class TestPhilox2x64(TestPhilox4x64):
         cls.bit_generator = partial(Philox, number=cls.number, width=cls.width)
         cls.advance = 2**63 + 2**31 + 2**15 + 1
         cls.seed = [12345]
-        cls.rg = np.random.Generator(cls.bit_generator(*cls.seed, mode="legacy"))
+        cls.rg = np.random.Generator(cls.bit_generator(*cls.seed))
         cls.initial_state = cls.rg.bit_generator.state
         cls.seed_vector_bits = 64
         cls.max_vector_seed_size = 1
@@ -1067,7 +1067,7 @@ class TestPhilox2x32(TestPhilox4x64):
         cls.bit_generator = partial(Philox, number=cls.number, width=cls.width)
         cls.advance = 2**63 + 2**31 + 2**15 + 1
         cls.seed = [12345]
-        cls.rg = np.random.Generator(cls.bit_generator(*cls.seed, mode="legacy"))
+        cls.rg = np.random.Generator(cls.bit_generator(*cls.seed))
         cls.initial_state = cls.rg.bit_generator.state
         cls.seed_vector_bits = 64
         cls._extra_setup()
@@ -1082,7 +1082,7 @@ class TestPhilox4x32(TestPhilox4x64):
         cls.bit_generator = partial(Philox, number=cls.number, width=cls.width)
         cls.advance = 2**63 + 2**31 + 2**15 + 1
         cls.seed = [12345]
-        cls.rg = np.random.Generator(cls.bit_generator(*cls.seed, mode="legacy"))
+        cls.rg = np.random.Generator(cls.bit_generator(*cls.seed))
         cls.initial_state = cls.rg.bit_generator.state
         cls.seed_vector_bits = 64
         cls._extra_setup()
@@ -1098,7 +1098,7 @@ class TestThreeFry4x64(TestPhilox4x64):
         cls.bit_generator = partial(ThreeFry, number=cls.number, width=cls.width)
         cls.advance = 2**63 + 2**31 + 2**15 + 1
         cls.seed = [12345]
-        cls.rg = np.random.Generator(cls.bit_generator(*cls.seed, mode="legacy"))
+        cls.rg = np.random.Generator(cls.bit_generator(*cls.seed))
         cls.initial_state = cls.rg.bit_generator.state
         cls.seed_vector_bits = 64
         cls._extra_setup()
@@ -1113,7 +1113,7 @@ class TestThreeFry2x64(TestPhilox4x64):
         cls.bit_generator = partial(ThreeFry, number=cls.number, width=cls.width)
         cls.advance = 2**63 + 2**31 + 2**15 + 1
         cls.seed = [12345]
-        cls.rg = np.random.Generator(cls.bit_generator(*cls.seed, mode="legacy"))
+        cls.rg = np.random.Generator(cls.bit_generator(*cls.seed))
         cls.initial_state = cls.rg.bit_generator.state
         cls.seed_vector_bits = 64
         cls._extra_setup()
@@ -1128,7 +1128,7 @@ class TestThreeFry2x32(TestPhilox4x64):
         cls.bit_generator = partial(ThreeFry, number=cls.number, width=cls.width)
         cls.advance = 2**63 + 2**31 + 2**15 + 1
         cls.seed = [12345]
-        cls.rg = np.random.Generator(cls.bit_generator(*cls.seed, mode="legacy"))
+        cls.rg = np.random.Generator(cls.bit_generator(*cls.seed))
         cls.initial_state = cls.rg.bit_generator.state
         cls.seed_vector_bits = 64
         cls._extra_setup()
@@ -1143,7 +1143,7 @@ class TestThreeFry4x32(TestPhilox4x64):
         cls.bit_generator = partial(ThreeFry, number=cls.number, width=cls.width)
         cls.advance = 2**63 + 2**31 + 2**15 + 1
         cls.seed = [12345]
-        cls.rg = np.random.Generator(cls.bit_generator(*cls.seed, mode="legacy"))
+        cls.rg = np.random.Generator(cls.bit_generator(*cls.seed))
         cls.initial_state = cls.rg.bit_generator.state
         cls.seed_vector_bits = 64
         cls._extra_setup()
@@ -1156,7 +1156,7 @@ class TestXoroshiro128(RNG):
         cls.bit_generator = Xoroshiro128
         cls.advance = None
         cls.seed = [12345]
-        cls.rg = np.random.Generator(cls.bit_generator(*cls.seed, mode="legacy"))
+        cls.rg = np.random.Generator(cls.bit_generator(*cls.seed))
         cls.initial_state = cls.rg.bit_generator.state
         cls.seed_vector_bits = 64
         cls._extra_setup()
@@ -1167,7 +1167,7 @@ class TestXoroshiro128PlusPlus(RNG):
     def setup_class(cls):
         super().setup_class()
         cls.bit_generator = partial(Xoroshiro128, plusplus=True)
-        cls.rg = np.random.Generator(cls.bit_generator(*cls.seed, mode="legacy"))
+        cls.rg = np.random.Generator(cls.bit_generator(*cls.seed))
         cls.initial_state = cls.rg.bit_generator.state
         cls._extra_setup()
 
@@ -1179,7 +1179,7 @@ class TestXoshiro256(RNG):
         cls.bit_generator = Xoshiro256
         cls.advance = None
         cls.seed = [12345]
-        cls.rg = np.random.Generator(cls.bit_generator(*cls.seed, mode="legacy"))
+        cls.rg = np.random.Generator(cls.bit_generator(*cls.seed))
         cls.initial_state = cls.rg.bit_generator.state
         cls.seed_vector_bits = 64
         cls._extra_setup()
@@ -1192,7 +1192,7 @@ class TestXoshiro512(RNG):
         cls.bit_generator = Xoshiro512
         cls.advance = None
         cls.seed = [12345]
-        cls.rg = np.random.Generator(cls.bit_generator(*cls.seed, mode="legacy"))
+        cls.rg = np.random.Generator(cls.bit_generator(*cls.seed))
         cls.initial_state = cls.rg.bit_generator.state
         cls.seed_vector_bits = 64
         cls._extra_setup()
@@ -1205,7 +1205,7 @@ class TestXorshift1024(RNG):
         cls.bit_generator = Xorshift1024
         cls.advance = None
         cls.seed = [12345]
-        cls.rg = np.random.Generator(cls.bit_generator(*cls.seed, mode="legacy"))
+        cls.rg = np.random.Generator(cls.bit_generator(*cls.seed))
         cls.initial_state = cls.rg.bit_generator.state
         cls.seed_vector_bits = 64
         cls._extra_setup()
@@ -1218,7 +1218,7 @@ class TestDSFMT(RNG):
         cls.bit_generator = DSFMT
         cls.advance = None
         cls.seed = [12345]
-        cls.rg = np.random.Generator(cls.bit_generator(*cls.seed, mode="legacy"))
+        cls.rg = np.random.Generator(cls.bit_generator(*cls.seed))
         cls.initial_state = cls.rg.bit_generator.state
         cls._extra_setup()
         cls.seed_vector_bits = 32
@@ -1231,7 +1231,7 @@ class TestSFMT(RNG):
         cls.bit_generator = SFMT
         cls.advance = None
         cls.seed = [12345]
-        cls.rg = np.random.Generator(cls.bit_generator(*cls.seed, mode="legacy"))
+        cls.rg = np.random.Generator(cls.bit_generator(*cls.seed))
         cls.initial_state = cls.rg.bit_generator.state
         cls._extra_setup()
         cls.seed_vector_bits = 32
@@ -1266,7 +1266,7 @@ class TestPCG32(TestPCG64):
             2**48 + 2**21 + 2**16 + 2**5 + 1,
             2**21 + 2**16 + 2**5 + 1,
         ]
-        cls.rg = np.random.Generator(cls.bit_generator(*cls.seed, mode="legacy"))
+        cls.rg = np.random.Generator(cls.bit_generator(*cls.seed))
         cls.initial_state = cls.rg.bit_generator.state
         cls.seed_vector_bits = None
         cls._extra_setup()
@@ -1279,7 +1279,7 @@ class TestAESCounter(RNG):
         cls.bit_generator = AESCounter
         cls.advance = 2**63 + 2**31 + 2**15 + 1
         cls.seed = [2**21 + 2**16 + 2**5 + 1]
-        cls.rg = np.random.Generator(cls.bit_generator(*cls.seed, mode="legacy"))
+        cls.rg = np.random.Generator(cls.bit_generator(*cls.seed))
         cls.initial_state = cls.rg.bit_generator.state
         cls.seed_vector_bits = 64
         cls._extra_setup()
@@ -1294,7 +1294,7 @@ class TestChaCha(RNG):
         cls.bit_generator = ChaCha
         cls.advance = 2**63 + 2**31 + 2**15 + 1
         cls.seed = [2**21 + 2**16 + 2**5 + 1]
-        cls.rg = np.random.Generator(cls.bit_generator(*cls.seed, mode="legacy"))
+        cls.rg = np.random.Generator(cls.bit_generator(*cls.seed))
         cls.initial_state = cls.rg.bit_generator.state
         cls.seed_vector_bits = 64
         cls._extra_setup()
@@ -1307,7 +1307,7 @@ class TestHC128(RNG):
         super().setup_class()
         cls.bit_generator = HC128
         cls.seed = [2**231 + 2**21 + 2**16 + 2**5 + 1]
-        cls.rg = np.random.Generator(cls.bit_generator(*cls.seed, mode="legacy"))
+        cls.rg = np.random.Generator(cls.bit_generator(*cls.seed))
         cls.initial_state = cls.rg.bit_generator.state
         cls.seed_vector_bits = 64
         cls._extra_setup()
@@ -1320,7 +1320,7 @@ class TestSPECK128(RNG):
         super().setup_class()
         cls.bit_generator = SPECK128
         cls.seed = [2**231 + 2**21 + 2**16 + 2**5 + 1]
-        cls.rg = np.random.Generator(cls.bit_generator(*cls.seed, mode="legacy"))
+        cls.rg = np.random.Generator(cls.bit_generator(*cls.seed))
         cls.advance = 2**63 + 2**31 + 2**15 + 1
         cls.initial_state = cls.rg.bit_generator.state
         cls.seed_vector_bits = 64
@@ -1342,7 +1342,7 @@ class TestLXM(RNG):
         cls.seed_error = ValueError
         cls.out_of_bounds = 2**192 + 1
 
-    def init_generator(self, seed=None, mode="sequence"):
+    def init_generator(self, seed=None):
         return np.random.Generator(self.bit_generator(seed=seed))
 
 
@@ -1360,7 +1360,7 @@ class TestLCG128Mix(RNG):
         cls.seed_error = ValueError
         cls.out_of_bounds = 2**192 + 1
 
-    def init_generator(self, seed=None, mode="sequence"):
+    def init_generator(self, seed=None):
         return np.random.Generator(self.bit_generator(seed=seed))
 
 

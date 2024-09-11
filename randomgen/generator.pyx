@@ -10,22 +10,11 @@ from cpython cimport (PyComplex_FromDoubles,
                       PyComplex_ImagAsDouble, PyComplex_RealAsDouble,
                       )
 
-from randomgen.bounded_integers cimport *
 from randomgen.common cimport *
-from randomgen.distributions cimport *
+# from randomgen.distributions cimport *
 from randomgen cimport api
-from typing import Callable, Any
 
-__all__ = ["Generator", "beta", "binomial", "bytes", "chisquare", "choice",
-           "complex_normal", "dirichlet", "exponential", "f", "gamma",
-           "geometric", "gumbel", "hypergeometric", "integers", "laplace",
-           "logistic", "lognormal", "logseries", "multinomial",
-           "multivariate_normal", "negative_binomial", "noncentral_chisquare",
-           "noncentral_f", "normal", "pareto", "permutation",
-           "poisson", "power", "randint", "random",  "rayleigh", "shuffle",
-           "standard_cauchy", "standard_exponential", "standard_gamma",
-           "standard_normal", "standard_t", "triangular",
-           "uniform", "vonmises", "wald", "weibull", "zipf", "ExtendedGenerator"]
+__all__ = ["Generator", "ExtendedGenerator"]
 
 np.import_array()
 
@@ -180,7 +169,7 @@ cdef class ExtendedGenerator:
 
     def __init__(self, bit_generator=None):
         if bit_generator is None:
-            bit_generator = PCG64(mode="sequence", variant="dxsm")
+            bit_generator = PCG64(variant="dxsm")
         self._bit_generator = bit_generator
 
         capsule = bit_generator.capsule
@@ -1242,61 +1231,3 @@ and the trailing dimensions must match exactly so that
             larr.view(np.float64), factors, size=size, method="factor"
         )
         return out.view(complex)
-
-
-def _removed(name: str) -> Callable[[Any, Any],None]:
-    def f(*args, **kwargs):
-        raise NotImplementedError(
-            f"{name} has been removed. Use NumPy's Generator"
-        )
-    return f
-
-
-beta = _removed("beta")
-binomial = _removed("binomial")
-bytes = _removed("bytes")
-chisquare = _removed("chisquare")
-choice = _removed("choice")
-complex_normal = _removed("complex_normal")
-dirichlet = _removed("dirichlet")
-exponential = _removed("exponential")
-f = _removed("f")
-gamma = _removed("gamma")
-geometric = _removed("geometric")
-gumbel = _removed("gumbel")
-hypergeometric = _removed("hypergeometric")
-integers = _removed("integers")
-laplace = _removed("laplace")
-logistic = _removed("logistic")
-lognormal = _removed("lognormal")
-logseries = _removed("logseries")
-multinomial = _removed("multinomial")
-multivariate_normal = _removed("multivariate_normal")
-negative_binomial = _removed("negative_binomial")
-noncentral_chisquare = _removed("noncentral_chisquare")
-noncentral_f = _removed("noncentral_f")
-normal = _removed("normal")
-pareto = _removed("pareto")
-permutation = _removed("permutation")
-poisson = _removed("poisson")
-power = _removed("power")
-rand = _removed("rand")
-randint = _removed("randint")
-randn = _removed("randn")
-random_integers = _removed("random_integers")
-random_sample = _removed("random_sample")
-random = _removed("random")
-rayleigh = _removed("rayleigh")
-shuffle = _removed("shuffle")
-standard_cauchy = _removed("standard_cauchy")
-standard_exponential = _removed("standard_exponential")
-standard_gamma = _removed("standard_gamma")
-standard_normal = _removed("standard_normal")
-standard_t = _removed("standard_t")
-tomaxint = _removed("tomaxint")
-triangular = _removed("triangular")
-uniform = _removed("uniform")
-vonmises = _removed("vonmises")
-wald = _removed("wald")
-weibull = _removed("weibull")
-zipf = _removed("zipf")

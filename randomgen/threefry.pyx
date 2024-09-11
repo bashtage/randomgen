@@ -170,8 +170,8 @@ cdef class ThreeFry(BitGenerator):
     cdef int n
     cdef int w
 
-    def __init__(self, seed=None, *, counter=None, key=None, number=4, width=64, mode=None):
-        BitGenerator.__init__(self, seed, mode)
+    def __init__(self, seed=None, *, counter=None, key=None, number=4, width=64):
+        BitGenerator.__init__(self, seed)
         if number not in (2, 4):
             raise ValueError("number must be either 2 or 4")
         if width not in (32, 64):
@@ -460,7 +460,7 @@ cdef class ThreeFry(BitGenerator):
         """
         cdef ThreeFry bit_generator
 
-        bit_generator = self.__class__(seed=self._copy_seed(), mode=self.mode)
+        bit_generator = self.__class__(seed=self._copy_seed())
         bit_generator.state = self.state
         bit_generator.jump_inplace(iter)
 

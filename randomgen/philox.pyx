@@ -173,8 +173,8 @@ cdef class Philox(BitGenerator):
     cdef int w
 
     def __init__(self, seed=None, *, counter=None, key=None, number=4,
-                 width=64, mode=None):
-        BitGenerator.__init__(self, seed, mode)
+                 width=64):
+        BitGenerator.__init__(self, seed)
         if number not in (2, 4):
             raise ValueError("number must be either 2 or 4")
         if width not in (32, 64):
@@ -223,9 +223,6 @@ cdef class Philox(BitGenerator):
         self.rng_state.buffer_pos = PHILOX_BUFFER_SIZE
         for i in range(PHILOX_BUFFER_SIZE):
             self.rng_state.buffer[i].u64 = 0
-
-    def _supported_modes(self):
-        return "legacy", "sequence", "numpy"
 
     def _seed_from_seq(self, counter=None):
         seed_seq_size = max(self.n * self.w // 128, 1)
@@ -484,7 +481,7 @@ cdef class Philox(BitGenerator):
         """
         cdef Philox bit_generator
 
-        bit_generator = self.__class__(seed=self._copy_seed(), mode=self.mode)
+        bit_generator = self.__class__(seed=self._copy_seed())
         bit_generator.state = self.state
         bit_generator.jump_inplace(iter)
 

@@ -251,7 +251,7 @@ cdef class RDRAND(BitGenerator):
     def __init__(self, seed=None, *, int retries=10):
         cdef int i
 
-        BitGenerator.__init__(self, seed, mode="sequence")
+        BitGenerator.__init__(self, seed)
         self.lock = RaisingLock()
         if not rdrand_capable():
             raise RuntimeError("The RDRAND instruction is not available")   # pragma: no cover

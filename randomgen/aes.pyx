@@ -127,8 +127,8 @@ cdef class AESCounter(BitGenerator):
     .. [1] Advanced Encryption Standard. (n.d.). In Wikipedia. Retrieved
         June 1, 2019, from https://en.wikipedia.org/wiki/Advanced_Encryption_Standard
     """
-    def __init__(self, seed=None, *, counter=None, key=None, mode=None):
-        BitGenerator.__init__(self, seed, mode)
+    def __init__(self, seed=None, *, counter=None, key=None):
+        BitGenerator.__init__(self, seed)
         # Calloc since ctr needs to be 0
         self.rng_state = <aesctr_state_t *>PyArray_calloc_aligned(
             sizeof(aesctr_state_t), 1
@@ -373,7 +373,7 @@ cdef class AESCounter(BitGenerator):
         """
         cdef AESCounter bit_generator
 
-        bit_generator = self.__class__(seed=self._copy_seed(), mode=self.mode)
+        bit_generator = self.__class__(seed=self._copy_seed())
         bit_generator.state = self.state
         bit_generator.jump_inplace(iter)
 

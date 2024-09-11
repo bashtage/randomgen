@@ -134,8 +134,8 @@ cdef class ChaCha(BitGenerator):
     .. [1] Bernstein, D. J.. ChaCha, a variant of Salsa20.
          http://cr.yp.to/papers.html#chacha. 2008.01.28.
     """
-    def __init__(self, seed=None, *, counter=None, key=None, rounds=20, mode=None):
-        BitGenerator.__init__(self, seed, mode)
+    def __init__(self, seed=None, *, counter=None, key=None, rounds=20):
+        BitGenerator.__init__(self, seed)
         self.rng_state = <chacha_state_t *>PyArray_malloc_aligned(
             sizeof(chacha_state_t)
         )
@@ -362,7 +362,7 @@ cdef class ChaCha(BitGenerator):
         """
         cdef ChaCha bit_generator
 
-        bit_generator = self.__class__(seed=self._copy_seed(), mode=self.mode)
+        bit_generator = self.__class__(seed=self._copy_seed())
         bit_generator.state = self.state
         bit_generator.jump_inplace(iter)
 

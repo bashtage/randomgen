@@ -129,8 +129,8 @@ cdef class Xoroshiro128(BitGenerator):
     .. [1] "xoroshiro+ / xorshift* / xorshift+ generators and the PRNG shootout",
            https://prng.di.unimi.it/
     """
-    def __init__(self, seed=None, *, mode=None, plusplus=False):
-        BitGenerator.__init__(self, seed, mode)
+    def __init__(self, seed=None, *, plusplus=False):
+        BitGenerator.__init__(self, seed)
         self.seed(seed)
         self._plusplus = plusplus
         self._set_generators()
@@ -267,7 +267,7 @@ cdef class Xoroshiro128(BitGenerator):
         """
         cdef Xoroshiro128 bit_generator
 
-        bit_generator = self.__class__(seed=self._copy_seed(), mode=self.mode)
+        bit_generator = self.__class__(seed=self._copy_seed())
         bit_generator.state = self.state
         bit_generator.jump_inplace(iter)
 
