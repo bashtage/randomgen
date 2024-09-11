@@ -45,7 +45,7 @@ cdef uint64_t threefry2x32_raw(void *st) noexcept nogil:
 
 cdef class ThreeFry(BitGenerator):
     """
-    ThreeFry(seed=None, *, counter=None, key=None, number=4, width=64, mode=None)
+    ThreeFry(seed=None, *, counter=None, key=None, number=4, width=64)
 
     Container for the ThreeFry family of pseudo-random number generators.
 
@@ -76,11 +76,6 @@ cdef class ThreeFry(BitGenerator):
     width : {32, 64}, optional
         Bit width the values produced. Maps to W in the ThreeFry variant naming
         scheme ThreeFryNxW.
-    mode : {None, "sequence", "legacy"}, optional
-        The seeding mode to use. "legacy" uses the legacy
-        SplitMix64-based initialization. "sequence" uses a SeedSequence
-        to transforms the seed into an initial state.  None defaults to
-        "sequence".
 
     Attributes
     ----------

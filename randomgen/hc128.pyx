@@ -20,7 +20,7 @@ cdef double hc128_double(void* st) noexcept nogil:
 
 cdef class HC128(BitGenerator):
     """
-    HC128(seed=None, *, key=None, mode=None)
+    HC128(seed=None, *, key=None)
 
     Container for the HC-128 cipher-based pseudo-random number generator
 
@@ -37,11 +37,6 @@ cdef class HC128(BitGenerator):
         Key for HC128. The key is a 256-bit integer that contains both the
         key (lower 128 bits) and initial values (upper 128-bits) for the
         HC-128 cipher. key and seed cannot both be used.
-    mode : {None, "sequence", "legacy"}, optional
-        The seeding mode to use. "legacy" uses the legacy
-        SplitMix64-based initialization. "sequence" uses a SeedSequence
-        to transforms the seed into an initial state.  None defaults to
-        "sequence".
 
     Attributes
     ----------

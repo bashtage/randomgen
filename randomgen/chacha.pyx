@@ -17,7 +17,7 @@ cdef double chacha_double(void* st) noexcept nogil:
 
 cdef class ChaCha(BitGenerator):
     """
-    ChaCha(seed=None, *, counter=None, key=None, rounds=20, mode=None)
+    ChaCha(seed=None, *, counter=None, key=None, rounds=20)
 
     Container for the ChaCha family of Counter pseudo-random number generators
 
@@ -44,12 +44,6 @@ cdef class ChaCha(BitGenerator):
         The standard number of rounds in 20. Smaller values, usually 8 or
         more, can be used to reduce security properties of the random stream
         while improving performance.
-    mode : {None, "sequence", "legacy"}, optional
-        The seeding mode to use. "legacy" uses the legacy
-        SplitMix64-based initialization. "sequence" uses a SeedSequence
-        to transforms the seed into an initial state. None defaults to
-        "sequence".
-
 
     Attributes
     ----------

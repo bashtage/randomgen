@@ -26,7 +26,7 @@ cdef uint64_t mt19937_raw(void *st) noexcept nogil:
 
 cdef class MT19937(BitGenerator):
     """
-    MT19937(seed=None, *, mode=None)
+    MT19937(seed=None, *, mode="sequence")
 
     Container for the Mersenne Twister pseudo-random number generator.
 
@@ -40,11 +40,10 @@ cdef class MT19937(BitGenerator):
         unsigned integers are read from ``/dev/urandom`` (or the Windows
         analog) if available. If unavailable, a hash of the time and process
         ID is used.
-    mode : {None, "sequence", "legacy", "numpy"}, optional
-        The seeding mode to use. "legacy" uses the legacy
-        SplitMix64-based initialization. "sequence" uses a SeedSequence
-        to transforms the seed into an initial state. None defaults to "sequence".
-        "numpy" uses the same seeding mechanism as NumPy and so matches exactly.
+    mode : {None, "sequence", "numpy"}, optional
+        "sequence" uses a SeedSequence to transforms the seed into an initial
+        state. None defaults to "sequence". "numpy" uses the same seeding
+        mechanism as NumPy and so matches NumPy exactly.
 
     Attributes
     ----------
@@ -114,14 +113,17 @@ cdef class MT19937(BitGenerator):
         No. 3, Summer 2008, pp. 385-390.
 
     """
-    def __init__(self, seed=None):
-        BitGenerator.__init__(self, seed)
+    def __init__(self, seed=None, *, mode="sequence"):
+        BitGenerator.__init__(self, seed, mode)
         self.seed(seed)
         self._bitgen.state = &self.rng_state
         self._bitgen.next_uint64 = &mt19937_uint64
         self._bitgen.next_uint32 = &mt19937_uint32
         self._bitgen.next_double = &mt19937_double
         self._bitgen.next_raw = &mt19937_raw
+
+    def _supported_modes(self):
+        return "sequence", "numpy"
 
     def _seed_from_seq(self):
         state = self.seed_seq.generate_state(RK_STATE_LEN, np.uint32)
@@ -223,7 +225,7 @@ cdef class MT19937(BitGenerator):
         """
         cdef MT19937 bit_generator
 
-        bit_generator = self.__class__()
+        bit_generator = self.__class__(mode=self.mode)
         bit_generator.state = self.state
         mt19937_jump_default(&bit_generator.rng_state)
 
@@ -292,7 +294,7 @@ cdef class MT19937(BitGenerator):
         """
         cdef MT19937 bit_generator
 
-        bit_generator = self.__class__(seed=self._copy_seed())
+        bit_generator = self.__class__(seed=self._copy_seed(), mode=self.mode)
         bit_generator.state = self.state
         bit_generator.jump_inplace(jumps)
 

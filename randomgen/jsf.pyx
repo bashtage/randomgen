@@ -81,7 +81,7 @@ cdef uint64_t jsf32_raw(void* st) noexcept nogil:
 
 cdef class JSF(BitGenerator):
     """
-    JSF(seed=None, *, seed_size=1, size=64, p=None, q=None, r=None, mode=None)
+    JSF(seed=None, *, seed_size=1, size=64, p=None, q=None, r=None)
 
     Container for Jenkins's Fast Small (JSF) pseudo-random number generator
 
@@ -110,11 +110,6 @@ cdef class JSF(BitGenerator):
     r : int, optional
         One the the three parameters that defines JSF. See Notes. If not
         provided uses the default values for the selected size listed in Notes.
-    mode : {None, "sequence", "legacy"}, optional
-        The seeding mode to use. "legacy" uses the legacy
-        SplitMix64-based initialization. "sequence" uses a SeedSequence
-        to transforms the seed into an initial state.  None defaults to
-        "sequence".
 
     Attributes
     ----------

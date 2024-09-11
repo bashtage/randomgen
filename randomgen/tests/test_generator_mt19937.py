@@ -46,16 +46,16 @@ def endpoint(request):
 class TestSeed:
     def test_invalid_scalar(self):
         # seed must be an unsigned 32 bit integer
-        assert_raises(TypeError, MT19937, -0.5, mode="legacy")
-        assert_raises(ValueError, MT19937, -1, mode="legacy")
+        assert_raises(TypeError, MT19937, -0.5)
+        assert_raises(ValueError, MT19937, -1)
 
     def test_invalid_array(self):
         # seed must be an unsigned 32 bit integer
-        assert_raises(TypeError, MT19937, [-0.5], mode="legacy")
-        assert_raises(ValueError, MT19937, [-1], mode="legacy")
-        assert_raises(ValueError, MT19937, [4294967296], mode="legacy")
-        assert_raises(ValueError, MT19937, [1, 2, 4294967296], mode="legacy")
-        assert_raises(ValueError, MT19937, [1, -2, 4294967296], mode="legacy")
+        assert_raises(TypeError, MT19937, [-0.5])
+        assert_raises(ValueError, MT19937, [-1])
+        assert_raises(ValueError, MT19937, [4294967296])
+        assert_raises(ValueError, MT19937, [1, 2, 4294967296])
+        assert_raises(ValueError, MT19937, [1, -2, 4294967296])
 
 
 @pytest.mark.skipif(NP_LT_118, reason="Can only test with NumPy >= 1.18")

@@ -17,7 +17,7 @@ cdef double aes_double(void* st) noexcept nogil:
 
 cdef class AESCounter(BitGenerator):
     """
-    AESCounter(seed=None, *, counter=None, key=None, mode=None)
+    AESCounter(seed=None, *, counter=None, key=None)
 
     Container for the AES Counter pseudo-random number generator.
 
@@ -38,10 +38,6 @@ cdef class AESCounter(BitGenerator):
         another RNG before use, the value in key is directly set. Can be either
         a Python int in [0, 2**128) or a 2-element uint64 array.
         key and seed cannot both be used.
-    mode : {None, "sequence", "legacy"}, optional
-        The seeding mode to use. "legacy" uses the legacy
-        SplitMix64-based initialization. "sequence" uses a SeedSequence
-        to transforms the seed into an initial state. None defaults to "sequence".
 
     Attributes
     ----------

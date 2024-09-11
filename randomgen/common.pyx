@@ -43,17 +43,18 @@ cdef class BitGenerator(_BitGenerator):
     """
     Abstract class for all BitGenerators
     """
-    def __init__(self, seed):
-        self.mode = "sequence"
-        self.lock = Lock()
-        self._ctypes = None
-        self._cffi = None
+    def __init__(self, seed, mode="sequence"):
+        if mode is not None and (not isinstance(mode, str) or mode.lower() not in self._supported_modes()):
+            if len(self._supported_modes()) == 1:
+                msg = f"mode must be {self._supported_modes()[0]}"
+            else:
+                modes = ", ".join(f"\"{mode}\"" for mode in self._supported_modes())
+            raise ValueError(f"mode must be one of: {modes}.")
+        self.mode = mode.lower()
+        super().__init__(seed)
 
-        cdef const char *name = "BitGenerator"
-        self.capsule = PyCapsule_New(<void *>&self._bitgen, name, NULL)
-        if type(self) is BitGenerator:
-            raise NotImplementedError("BitGenerator cannot be instantized")
-        self._seed_seq = None
+    def _supported_modes(self):
+        return ("sequence",)
 
     def _seed_from_seq(self):
         raise NotImplementedError("Subclass must override")
@@ -75,10 +76,8 @@ cdef class BitGenerator(_BitGenerator):
             pass
         if isinstance(seed, ISEED_SEQUENCES):
             self._seed_seq = seed
-        elif self.mode in ("sequence", "numpy"):
-            self._seed_seq = DefaultSeedSequence(seed)
         else:
-            self._seed_seq = None
+            self._seed_seq = DefaultSeedSequence(seed)
         if self._seed_seq is not None:
             if self.mode == "sequence":
                 self._seed_from_seq(**kwargs)

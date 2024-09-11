@@ -22,7 +22,7 @@ cdef double speck_double(void* st) noexcept nogil:
 
 cdef class SPECK128(BitGenerator):
     """
-    SPECK128(seed=None, *, counter=None, key=None, rounds=34, mode=None)
+    SPECK128(seed=None, *, counter=None, key=None, rounds=34)
 
     Container for the SPECK (128 x 256) pseudo-random number generator.
 
@@ -47,11 +47,6 @@ cdef class SPECK128(BitGenerator):
         Number of rounds of the SPECK algorithm to run. The default value 34
         is the official value used in encryption. Reduced-round variant
         *might* (untested) perform well statistically with improved performance.
-    mode : {None, "sequence", "legacy"}, optional
-        The seeding mode to use. "legacy" uses the legacy
-        SplitMix64-based initialization. "sequence" uses a SeedSequence
-        to transforms the seed into an initial state.  None defaults to
-        "sequence".
 
     Attributes
     ----------

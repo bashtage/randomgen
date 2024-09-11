@@ -150,11 +150,12 @@ class RNG:
         cls.mat = np.arange(2.0, 102.0, 0.01).reshape((100, 100))
         cls.seed_error = TypeError
 
-    def init_generator(self, seed=None):
+    def init_generator(self, seed=None, mode="sequence"):
+        kwargs = {} if mode == "sequence" else {"mode":mode}
         if seed is not None:
-            return np.random.Generator(self.bit_generator(*seed, mode=mode))
+            return np.random.Generator(self.bit_generator(*seed, **kwargs))
         else:
-            return np.random.Generator(self.bit_generator(seed=seed, mode=mode))
+            return np.random.Generator(self.bit_generator(seed=seed, **kwargs))
 
     def _reset_state(self):
         self.rg.bit_generator.state = self.initial_state
@@ -627,7 +628,7 @@ class RNG:
             self.rg.bit_generator.seed(seed)
 
     def test_uniform_float(self):
-        rg = self.init_generator(seed=[12345], mode="legacy")
+        rg = self.init_generator(seed=[12345])
         warmup(rg)
         state = rg.bit_generator.state
         r1 = rg.random(11, dtype=np.float32)
@@ -644,7 +645,7 @@ class RNG:
         warmup(rg)
         state = rg.bit_generator.state
         r1 = rg.standard_gamma(4.0, 11, dtype=np.float32)
-        rg2 = self.init_generator(mode="legacy")
+        rg2 = self.init_generator()
         warmup(rg2)
         rg2.bit_generator.state = state
         r2 = rg2.standard_gamma(4.0, 11, dtype=np.float32)
@@ -653,7 +654,7 @@ class RNG:
         assert_(comp_state(rg.bit_generator.state, rg2.bit_generator.state))
 
     def test_normal_floats(self):
-        rg = self.init_generator(mode="legacy")
+        rg = self.init_generator()
         warmup(rg)
         state = rg.bit_generator.state
         r1 = rg.standard_normal(11, dtype=np.float32)
@@ -670,7 +671,7 @@ class RNG:
         warmup(rg)
         state = rg.bit_generator.state
         r1 = rg.standard_normal(11, dtype=np.float32)
-        rg2 = self.init_generator(mode="legacy")
+        rg2 = self.init_generator()
         warmup(rg2)
         rg2.bit_generator.state = state
         r2 = rg2.standard_normal(11, dtype=np.float32)

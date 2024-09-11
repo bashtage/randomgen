@@ -47,10 +47,10 @@ def extended_gen():
 
 @pytest.fixture(scope="function")
 def extended_gen_legacy():
-    return ExtendedGenerator(MT19937(mode="legacy"))
+    return ExtendedGenerator(MT19937())
 
 
-_mt19937 = MT19937(SEED, mode="legacy")
+_mt19937 = MT19937(SEED)
 random = ExtendedGenerator(_mt19937)
 
 NP_LT_118 = parse(np.__version__) < parse("1.18.0")

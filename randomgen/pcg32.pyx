@@ -24,7 +24,7 @@ cdef uint64_t pcg32_raw(void* st) noexcept nogil:
 
 cdef class PCG32(BitGenerator):
     """
-    PCG32(seed=None, inc=0, *, mode=None)
+    PCG32(seed=None, inc=0)
 
     Container for the PCG-32 pseudo-random number generator.
 
@@ -40,11 +40,6 @@ cdef class PCG32(BitGenerator):
         The increment in the LCG. Can be an integer in [0, 2**64] or ``None``.
         The default is 0. If `inc` is ``None``, then it is initialized using
         entropy.
-    mode : {None, "sequence", "legacy"}, optional
-        The seeding mode to use. "legacy" uses the legacy
-        SplitMix64-based initialization. "sequence" uses a SeedSequence
-        to transforms the seed into an initial state.  None defaults to
-        "sequence".
 
     Attributes
     ----------

@@ -45,7 +45,7 @@ cdef uint64_t philox2x32_raw(void *st) noexcept nogil:
 
 cdef class Philox(BitGenerator):
     """
-    Philox(seed=None, *, counter=None, key=None, number=4, width=64, mode=None)
+    Philox(seed=None, *, counter=None, key=None, number=4, width=64, mode="sequence")
 
     Container for the Philox family of pseudo-random number generators.
 
@@ -76,13 +76,12 @@ cdef class Philox(BitGenerator):
     width : {32, 64}, optional
         Bit width the values produced. Maps to W in the Philox variant naming
         scheme PhiloxNxW.
-    mode : {None, "sequence", "legacy", "numpy"}, optional
-        The seeding mode to use. "legacy" uses the legacy
-        SplitMix64-based initialization. "sequence" uses a SeedSequence
-        to transforms the seed into an initial state.  None defaults to
-        "sequence". Using "numpy" ensures that the generator is configurated
-        using the same parameters required to produce the same sequence that
-        is realized in NumPy, for a given ``SeedSequence``.
+    mode : {None, "sequence", "numpy"}, optional
+        "sequence" uses a SeedSequence to transforms the seed into an initial
+        state.  None defaults to "sequence". Using "numpy" ensures that the
+        generator is configurated using the same parameters required to
+        produce the same sequence that is realized in NumPy, for a given
+        ``SeedSequence``.
 
     Attributes
     ----------
@@ -173,8 +172,8 @@ cdef class Philox(BitGenerator):
     cdef int w
 
     def __init__(self, seed=None, *, counter=None, key=None, number=4,
-                 width=64):
-        BitGenerator.__init__(self, seed)
+                 width=64, mode="sequence"):
+        BitGenerator.__init__(self, seed, mode)
         if number not in (2, 4):
             raise ValueError("number must be either 2 or 4")
         if width not in (32, 64):
@@ -223,6 +222,9 @@ cdef class Philox(BitGenerator):
         self.rng_state.buffer_pos = PHILOX_BUFFER_SIZE
         for i in range(PHILOX_BUFFER_SIZE):
             self.rng_state.buffer[i].u64 = 0
+
+    def _supported_modes(self):
+        return "sequence", "numpy"
 
     def _seed_from_seq(self, counter=None):
         seed_seq_size = max(self.n * self.w // 128, 1)
@@ -481,7 +483,7 @@ cdef class Philox(BitGenerator):
         """
         cdef Philox bit_generator
 
-        bit_generator = self.__class__(seed=self._copy_seed())
+        bit_generator = self.__class__(seed=self._copy_seed(), mode=self.mode)
         bit_generator.state = self.state
         bit_generator.jump_inplace(iter)
 

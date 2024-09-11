@@ -30,7 +30,7 @@ cdef double sfmt_double(void* st) noexcept nogil:
 
 cdef class SFMT(BitGenerator):
     """
-    SFMT(seed=None, *, mode=None)
+    SFMT(seed=None)
 
     Container for the SIMD-based Mersenne Twister pseudo RNG.
 
@@ -44,11 +44,6 @@ cdef class SFMT(BitGenerator):
         unsigned integers are read from ``/dev/urandom`` (or the Windows
         analog) if available. If unavailable, a hash of the time and process
         ID is used.
-    mode : {None, "sequence", "legacy"}, optional
-        The seeding mode to use. "legacy" uses the legacy
-        SplitMix64-based initialization. "sequence" uses a SeedSequence
-        to transforms the seed into an initial state.  None defaults to
-        "sequence".
 
     Attributes
     ----------

@@ -20,7 +20,7 @@ cdef double xoshiro256_double(void* st) noexcept nogil:
 
 cdef class Xoshiro256(BitGenerator):
     """
-    Xoshiro256(seed=None, *, mode=None)
+    Xoshiro256(seed=None)
 
     Container for the xoshiro256** pseudo-random number generator.
 
@@ -33,11 +33,6 @@ cdef class Xoshiro256(BitGenerator):
         ``None``, then  data is read from ``/dev/urandom`` (or the Windows
         analog) if available. If unavailable, a hash of the time and
         process ID is used.
-    mode : {None, "sequence", "legacy"}
-        The seeding mode to use. "legacy" uses the legacy
-        SplitMix64-based initialization. "sequence" uses a SeedSequence
-        to transforms the seed into an initial state.  None defaults to
-        "sequence".
 
     Attributes
     ----------

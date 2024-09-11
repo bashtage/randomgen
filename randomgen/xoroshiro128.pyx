@@ -29,7 +29,7 @@ cdef double xoroshiro128plusplus_double(void* st) noexcept nogil:
 
 cdef class Xoroshiro128(BitGenerator):
     """
-    Xoroshiro128(seed=None, *, mode=None, plusplus=False)
+    Xoroshiro128(seed=None, *, plusplus=False)
 
     Container for the xoroshiro128+/++ pseudo-random number generator.
 
@@ -42,11 +42,6 @@ cdef class Xoroshiro128(BitGenerator):
         ``None``, then  data is read from ``/dev/urandom`` (or the Windows
         analog) if available. If unavailable, a hash of the time and process
         ID is used.
-    mode : {None, "sequence", "legacy"}
-        The seeding mode to use. "legacy" uses the legacy
-        SplitMix64-based initialization. "sequence" uses a SeedSequence
-        to transforms the seed into an initial state.  None defaults to
-        "sequence".
     plusplus : bool, default False
         Whether to use the ++ version (xoroshiro128++). The default is False
         which uses the xoroshiro128+ PRNG which
