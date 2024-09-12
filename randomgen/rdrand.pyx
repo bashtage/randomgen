@@ -250,7 +250,8 @@ cdef class RDRAND(BitGenerator):
 
     def __init__(self, seed=None, *, int retries=10):
         cdef int i
-
+        if seed is not None:
+            raise TypeError("seed cannot be set and so must be None")
         BitGenerator.__init__(self, seed)
         self.lock = RaisingLock()
         if not rdrand_capable():
@@ -414,7 +415,7 @@ cdef class RDRAND(BitGenerator):
         Provided for API compatibility
         """
         cdef RDRAND bit_generator
-        bit_generator = self.__class__(seed=self._copy_seed())
+        bit_generator = self.__class__()
 
         return bit_generator
 
