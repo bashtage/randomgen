@@ -1,7 +1,7 @@
 #include <inttypes.h>
 
 /* SeedSequence(0).generate_state312, dtype=np.uint64) */ 
-uint64_t seed_seq_0[312] = {
+uint64_t seed_seq_0[] = {
   15793235383387715774ULL,
   12390638538380655177ULL,
   2361836109651742017ULL,
@@ -317,7 +317,7 @@ uint64_t seed_seq_0[312] = {
 };
 
 /* SeedSequence(0xDEADBEAF).generate_state312, dtype=np.uint64) */ 
-uint64_t seed_seq_deadbeaf[312] = {
+uint64_t seed_seq_deadbeaf[] = {
   5778446405158232650ULL,
   4639759349701729399ULL,
   13222832537653397986ULL,
