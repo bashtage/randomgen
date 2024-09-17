@@ -16,10 +16,10 @@ from libc.stdint cimport (
 )
 
 import numpy as np
-from numpy.random cimport bitgen_t
-from numpy.random.bit_generator cimport BitGenerator as _BitGenerator
 
 cimport numpy as np
+from numpy.random cimport bitgen_t
+from numpy.random.bit_generator cimport BitGenerator as _BitGenerator
 
 
 cdef bint RANDOMGEN_BIG_ENDIAN

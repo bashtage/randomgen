@@ -151,7 +151,7 @@ class RNG:
         cls.seed_error = TypeError
 
     def init_generator(self, seed=None, mode="sequence"):
-        kwargs = {} if mode == "sequence" else {"mode":mode}
+        kwargs = {} if mode == "sequence" else {"mode": mode}
         if seed is not None:
             return np.random.Generator(self.bit_generator(*seed, **kwargs))
         else:
@@ -603,11 +603,6 @@ class RNG:
         assert_(not comp_state(state1, state2))
 
     def test_seed_array_error(self):
-        if self.seed_vector_bits == 32:
-            out_of_bounds = 2**32
-        else:
-            out_of_bounds = 2**64
-
         seed = -1
         with pytest.raises(ValueError):
             self.rg.bit_generator.seed(seed)
@@ -795,7 +790,7 @@ class RNG:
             rg.standard_gamma(1.0, out=existing[::3])
 
     def test_integers_broadcast(self, dtype):
-        if dtype == bool:
+        if dtype is bool:
             upper = 2
             lower = 0
         else:
@@ -844,7 +839,7 @@ class RNG:
         assert out.shape == (1,)
 
     def test_integers_broadcast_errors(self, dtype):
-        if dtype == bool:
+        if dtype is bool:
             upper = 2
             lower = 0
         else:
@@ -967,16 +962,10 @@ class TestPCG64(RNG):
 
     def test_seed_array_error(self):
         # GH #82 for error type changes
-        if self.seed_vector_bits == 32:
-            out_of_bounds = 2**32
-        else:
-            out_of_bounds = 2**64
-
         seed = -1
         with pytest.raises(ValueError):
             self.rg.bit_generator.seed(seed)
 
-        error_type = ValueError if self.seed_vector_bits else TypeError
         seed = np.array([-1], dtype=np.int32)
         with pytest.raises(ValueError):
             self.rg.bit_generator.seed(seed)
@@ -984,7 +973,6 @@ class TestPCG64(RNG):
         seed = np.array([1, 2, 3, -5], dtype=np.int32)
         with pytest.raises(ValueError):
             self.rg.bit_generator.seed(seed)
-
 
     def test_array_scalar_seed_diff(self):
         pass

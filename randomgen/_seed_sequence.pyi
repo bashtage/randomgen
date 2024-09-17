@@ -1,7 +1,7 @@
 from abc import ABCMeta, abstractmethod
-from typing import Any, Dict, List, Literal, Optional, Sequence, Type, Union
+from typing import Any, Dict, List, Optional, Sequence, Type, Union
 
-from numpy import uint32, uint64, unsignedinteger
+from numpy import unsignedinteger
 
 DEFAULT_POOL_SIZE: int
 

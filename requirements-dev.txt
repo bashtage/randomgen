@@ -6,3 +6,6 @@ pytest-xdist
 scipy>=1.13.1
 setuptools_scm[toml]>=8.0.0,<9.0.0
 packaging>=21.0
+ruff
+flake8
+flake8-pyi

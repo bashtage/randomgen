@@ -1,5 +1,5 @@
 from threading import Lock
-from typing import Any, Dict, Literal, Optional, Sequence, Tuple, Union, overload
+from typing import Any, Dict, Literal, Optional, Union, overload
 
 from numpy import ndarray
 

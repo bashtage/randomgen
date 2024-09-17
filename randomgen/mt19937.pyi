@@ -3,7 +3,7 @@ from typing import Dict, Literal, Optional, Tuple, Union
 import numpy as np
 
 from randomgen.common import BitGenerator
-from randomgen.typing import IntegerSequenceSeed, SeedMode
+from randomgen.typing import IntegerSequenceSeed
 
 class MT19937(BitGenerator):
     def __init__(

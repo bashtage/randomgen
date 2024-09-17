@@ -38,7 +38,6 @@ from randomgen import (
 )
 from randomgen.common import interface
 from randomgen.seed_sequence import ISeedSequence
-from randomgen.tests.data.compute_hashes import kwargs
 
 try:
     from numpy.random import SeedSequence
@@ -1300,15 +1299,11 @@ class TestThreeFry4x32(Random123):
         ]
 
     def test_seed_sequence(self):
-        bg = self.bit_generator_base(
-            number=self.number, width=self.width
-        )
+        bg = self.bit_generator_base(number=self.number, width=self.width)
         assert isinstance(bg, self.bit_generator_base)
         assert isinstance(bg.seed_seq, SeedSequence)
 
-        bg = self.bit_generator_base(
-            0, number=self.number, width=self.width
-        )
+        bg = self.bit_generator_base(0, number=self.number, width=self.width)
         assert bg.seed_seq.entropy == 0
 
         ss = SeedSequence(0)
@@ -1573,9 +1568,7 @@ class TestChaCha(Base):
         cls.state_name = "key"
 
     def setup_bitgenerator(self, seed, **kwargs):
-        stream = 3735928559 * 2**64 + 3735928559 * 2**96
         seed = [0] if None in seed else seed
-        key = seed[0] + stream + 2**128 * stream
         bg = self.bit_generator(*seed, **kwargs)
         return bg
 

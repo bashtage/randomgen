@@ -3,7 +3,7 @@ from typing import Dict, Optional, Union
 import numpy as np
 
 from randomgen.common import BitGenerator
-from randomgen.typing import IntegerSequenceSeed, SeedMode
+from randomgen.typing import IntegerSequenceSeed
 
 class EFIIX64(BitGenerator):
     def __init__(self, seed: Optional[IntegerSequenceSeed] = ...) -> None: ...
