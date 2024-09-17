@@ -1,9 +1,9 @@
-from typing import Any, Optional
+from typing import Any
 
 from randomgen.common import BitGenerator
 
 class RandomState:
-    def __init__(self, bit_generator: Optional[BitGenerator] = ...) -> None: ...
+    def __init__(self, bit_generator: BitGenerator | None = ...) -> None: ...
 
 def _raises_not_implemented(*args: Any, **kwargs: Any) -> None: ...
 

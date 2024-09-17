@@ -1,4 +1,4 @@
-from typing import Dict, Optional, Sequence, Union
+from collections.abc import Sequence
 
 import numpy as np
 
@@ -8,19 +8,17 @@ from randomgen.typing import IntegerSequenceSeed, SeedMode
 class HC128(BitGenerator):
     def __init__(
         self,
-        seed: Optional[IntegerSequenceSeed] = ...,
+        seed: IntegerSequenceSeed | None = ...,
         *,
-        key: Optional[Union[int, Sequence[int]]] = ...,
+        key: int | Sequence[int] | None = ...,
         mode: SeedMode = ...
     ) -> None: ...
     def seed(
         self,
-        seed: Optional[IntegerSequenceSeed] = ...,
-        key: Optional[Union[int, Sequence[int]]] = ...,
+        seed: IntegerSequenceSeed | None = ...,
+        key: int | Sequence[int] | None = ...,
     ) -> None: ...
     @property
-    def state(self) -> Dict[str, Union[str, Dict[str, Union[int, np.ndarray]]]]: ...
+    def state(self) -> dict[str, str | dict[str, int | np.ndarray]]: ...
     @state.setter
-    def state(
-        self, value: Dict[str, Union[str, Dict[str, Union[int, np.ndarray]]]]
-    ) -> None: ...
+    def state(self, value: dict[str, str | dict[str, int | np.ndarray]]) -> None: ...

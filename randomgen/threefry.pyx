@@ -86,7 +86,7 @@ cdef class ThreeFry(BitGenerator):
         lock.
     seed_seq : {None, SeedSequence}
         The SeedSequence instance used to initialize the generator if mode is
-        "sequence" or is seed is a SeedSequence. None if mode is "legacy".
+        "sequence" or is seed is a SeedSequence. 
 
     Notes
     -----
@@ -112,10 +112,6 @@ cdef class ThreeFry(BitGenerator):
     randoms produced. The second is a key which determines the sequence
     produced. Using different keys produces distinct sequences.
 
-    When mode is "legacy", ``ThreeFry`` is seeded using either a single 64-bit
-    unsigned integer or a vector of 64-bit unsigned integers. In either case,
-    the seed is used as an input for a second random number generator,
-    SplitMix64, and the output of this PRNG function is used as the initial state.
     Using a single 64-bit value for the seed can only initialize a small range of
     the possible initial state values.
 

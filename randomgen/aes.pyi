@@ -1,7 +1,6 @@
-from typing import Dict, Optional, Sequence, Union
+from collections.abc import Sequence
 
 from numpy import ndarray
-from numpy.random import SeedSequence
 
 from randomgen.common import BitGenerator
 from randomgen.typing import IntegerSequenceSeed, SeedMode
@@ -9,11 +8,11 @@ from randomgen.typing import IntegerSequenceSeed, SeedMode
 class AESCounter(BitGenerator):
     def __init__(
         self,
-        seed: Optional[IntegerSequenceSeed] = ...,
+        seed: IntegerSequenceSeed | None = ...,
         *,
-        counter: Optional[Union[int, Sequence[int]]] = ...,
-        key: Optional[Union[int, Sequence[int]]] = ...,
-        mode: Optional[SeedMode] = ...
+        counter: int | Sequence[int] | None = ...,
+        key: int | Sequence[int] | None = ...,
+        mode: SeedMode | None = ...
     ) -> None: ...
     @property
     def use_aesni(self) -> bool: ...
@@ -21,16 +20,14 @@ class AESCounter(BitGenerator):
     def use_aesni(self, value: bool) -> None: ...
     def seed(
         self,
-        seed: Union[int, SeedSequence] = ...,
-        counter: Optional[Union[int, Sequence[int]]] = ...,
-        key: Optional[Union[int, Sequence[int]]] = ...,
+        seed: int | Sequence[int] = ...,
+        counter: int | Sequence[int] | None = ...,
+        key: int | Sequence[int] | None = ...,
     ) -> None: ...
     @property
-    def state(self) -> Dict[str, Union[str, Dict[str, Union[int, ndarray]], int]]: ...
+    def state(self) -> dict[str, str | dict[str, int | ndarray] | int]: ...
     @state.setter
-    def state(
-        self, value: Dict[str, Union[str, Dict[str, Union[int, ndarray]], int]]
-    ) -> None: ...
+    def state(self, value: dict[str, str | dict[str, int | ndarray] | int]) -> None: ...
     def jump(self, iter: int = ...) -> AESCounter: ...
     def jumped(self, iter: int = ...) -> AESCounter: ...
     def advance(self, delta: int) -> AESCounter: ...

@@ -1,5 +1,3 @@
-from typing import Dict, Optional, Union
-
 import numpy as np
 
 from randomgen.common import BitGenerator
@@ -8,28 +6,28 @@ from randomgen.typing import IntegerSequenceSeed, SeedMode
 class ThreeFry(BitGenerator):
     def __init__(
         self,
-        seed: Optional[IntegerSequenceSeed] = ...,
+        seed: IntegerSequenceSeed | None = ...,
         *,
-        counter: Optional[Union[int, np.ndarray]] = ...,
-        key: Optional[Union[int, np.ndarray]] = ...,
+        counter: int | np.ndarray | None = ...,
+        key: int | np.ndarray | None = ...,
         number: int = ...,
         width: int = ...,
-        mode: Optional[SeedMode] = ...
+        mode: SeedMode | None = ...
     ) -> None: ...
     def seed(
         self,
-        seed: Optional[IntegerSequenceSeed] = ...,
-        counter: Optional[Union[int, np.ndarray]] = ...,
-        key: Optional[Union[int, np.ndarray]] = ...,
+        seed: IntegerSequenceSeed | None = ...,
+        counter: int | np.ndarray | None = ...,
+        key: int | np.ndarray | None = ...,
     ) -> None: ...
     @property
     def state(
         self,
-    ) -> Dict[str, Union[str, int, np.ndarray, Dict[str, np.ndarray]]]: ...
+    ) -> dict[str, str | int | np.ndarray | dict[str, np.ndarray]]: ...
     @state.setter
     def state(
-        self, value: Dict[str, Union[str, int, np.ndarray, Dict[str, np.ndarray]]]
+        self, value: dict[str, str | int | np.ndarray | dict[str, np.ndarray]]
     ) -> None: ...
     def jump(self, iter: int = ...) -> ThreeFry: ...
     def jumped(self, iter: int = ...) -> ThreeFry: ...
-    def advance(self, delta: int, counter: Optional[bool] = ...) -> ThreeFry: ...
+    def advance(self, delta: int, counter: bool | None = ...) -> ThreeFry: ...

@@ -1,4 +1,3 @@
-from typing import Dict, Type, Union
 import warnings
 
 from randomgen.aes import AESCounter
@@ -71,7 +70,7 @@ def _get_bitgenerator(bit_generator_name: str) -> type[BitGenerator]:
     return bit_generator
 
 
-def _decode(name: Union[str, bytes]) -> str:
+def _decode(name: str | bytes) -> str:
     if isinstance(name, str):
         return name
     assert isinstance(name, bytes)
@@ -79,7 +78,7 @@ def _decode(name: Union[str, bytes]) -> str:
 
 
 def __extended_generator_ctor(
-    bit_generator_name: Union[str, bytes] = "MT19937"
+    bit_generator_name: str | bytes = "MT19937",
 ) -> ExtendedGenerator:
     """
     Pickling helper function that returns a Generator object
@@ -103,9 +102,7 @@ def __extended_generator_ctor(
     return ExtendedGenerator(bit_gen)
 
 
-def __bit_generator_ctor(
-    bit_generator_name: Union[str, bytes] = "MT19937"
-) -> BitGenerator:
+def __bit_generator_ctor(bit_generator_name: str | bytes = "MT19937") -> BitGenerator:
     """
     Pickling helper function that returns a bit generator object
 

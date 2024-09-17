@@ -19,7 +19,7 @@ import platform
 import pprint
 import shutil
 import subprocess
-from typing import Dict, List, Tuple, Union, cast
+from typing import cast
 
 import black
 import numpy as np
@@ -36,7 +36,7 @@ else:
 
 
 def save_state(bit_gen: MT19937, file_name: str) -> None:
-    bit_gen_state = cast(dict[str, Union[int, np.ndarray]], bit_gen.state["state"])
+    bit_gen_state = cast(dict[str, int | np.ndarray], bit_gen.state["state"])
     state_key = cast(np.ndarray, bit_gen_state["key"])
     state_pos = bit_gen_state["pos"]
     with open(file_name, "w") as f:
@@ -45,7 +45,7 @@ def save_state(bit_gen: MT19937, file_name: str) -> None:
         f.write(f"{state_pos}\n")
 
 
-def parse_output(text: str) -> tuple[list[dict[str, Union[list, int]]], list[int]]:
+def parse_output(text: str) -> tuple[list[dict[str, list | int]], list[int]]:
     lines = text.split("\n")
     key_list: list[int] = []
     output_state = {"key": key_list, "pos": -1}

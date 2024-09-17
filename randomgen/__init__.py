@@ -1,6 +1,5 @@
 import os
 import sys
-from typing import List, Union
 
 from randomgen._register import BitGenerators
 from randomgen.aes import AESCounter
@@ -76,7 +75,7 @@ __all__ = [
 ]
 
 
-def test(extra_args: Union[str, list[str]] = None) -> None:
+def test(extra_args: str | list[str] | None = None) -> None:
     try:
         import pytest
     except ImportError as err:

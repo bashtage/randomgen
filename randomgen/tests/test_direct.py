@@ -1,7 +1,7 @@
 from functools import partial
 import os
 from os.path import join
-from typing import Any, Dict, Optional, Tuple, Type, Union
+from typing import Any
 
 import numpy as np
 from numpy.testing import (
@@ -197,8 +197,8 @@ def gauss_from_uint(x, n, bits):
 
 class Base:
     dtype = np.uint64
-    data2: dict[str, Union[int, np.ndarray]] = {}
-    data1: dict[str, Union[int, np.ndarray]] = {}
+    data2: dict[str, int | np.ndarray] = {}
+    data1: dict[str, int | np.ndarray] = {}
 
     @classmethod
     def setup_class(cls):
@@ -793,7 +793,7 @@ class TestPCG64XSLRR(Base):
         cls.large_advance_initial = 141078743063826365544432622475512570578
         cls.large_advance_final = 32639015182640331666105117402520879107
 
-    def setup_bitgenerator(self, seed, mode="sequence", inc: Optional[int] = 0):
+    def setup_bitgenerator(self, seed, mode="sequence", inc: int | None = 0):
         return self.bit_generator(*seed, mode=mode, variant="xsl-rr", inc=inc)  # type: ignore
 
     def test_seed_float_array(self):
