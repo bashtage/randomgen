@@ -13,7 +13,7 @@ int main(void) {
   uint64_t *temp;
   uint32_t seed = 0UL;
   sfmt_t state;
-  sfmt_init_by_array(&state, &seed_seq_0, 2 * SFMT_N64);
+  sfmt_init_by_array(&state, (uint32_t *)&seed_seq_0, 2 * SFMT_N64);
   uint64_t out[1000];
   sfmt_fill_array64(&state, out, 1000);
 
@@ -31,7 +31,7 @@ int main(void) {
   fclose(fp);
 
   seed = 0xDEADBEAFUL;
-  sfmt_init_by_array(&state, &seed_seq_deadbeaf, 2 * SFMT_N64);
+  sfmt_init_by_array(&state, (uint32_t *)&seed_seq_deadbeaf, 2 * SFMT_N64);
   sfmt_fill_array64(&state, out, 1000);
   fp = fopen("sfmt-testset-2.csv", "w");
   if (fp == NULL) {
