@@ -25,7 +25,12 @@ int main(int argc, char *argv[]) {
   seed = state = 0;
   int loc;
   /* SeedSequence(0).generate_state(4, dtype=np.uint64) */
-  uint64_t seed_seq[4] = {15793235383387715774, 12390638538380655177, 2361836109651742017, 3188717715514472916};
+  uint64_t seed_seq[4] = {
+    15793235383387715774ULL,
+    12390638538380655177ULL,
+    2361836109651742017ULL,
+    3188717715514472916ULL
+  };
   for (int i = 0; i < 4; i++) {
     seeded_key[i] = seed_seq[i];
   }
@@ -55,8 +60,12 @@ int main(int argc, char *argv[]) {
 
   seed = state = 0xDEADBEAF;
   /* SeedSequence(0xDEADBEAF).generate_state(4, dtype=np.uint64) */
-  uint64_t seed_seq_deadbeaf[4] = {5778446405158232650, 4639759349701729399,
-                          13222832537653397986, 2330059127936092250};
+  uint64_t seed_seq_deadbeaf[4] = {
+    5778446405158232650ULL,
+    4639759349701729399ULL,
+    13222832537653397986ULL,
+    2330059127936092250ULL
+  };
   for (int i = 0; i < 4; i++) {
     seeded_key[i] = seed_seq_deadbeaf[i];
   }
