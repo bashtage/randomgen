@@ -307,6 +307,15 @@ cdef class RDRAND(BitGenerator):
             self.rng_state.status = 1
             self.rng_state.buffer_loc = BUFFER_SIZE
 
+    cdef _set_seed_seq(self, seed_seq):
+        """
+        Not part of the public API
+
+        Allows a seed sequence to be set even though it is ignored
+        """
+        self._seed_seq = seed_seq
+
+
     def seed(self, seed=None):
         """
         seed(seed=None)
@@ -320,7 +329,7 @@ cdef class RDRAND(BitGenerator):
 
         Raises
         ------
-        ValueError
+        TypeError
             If seed is not None
         """
         if seed is not None:
@@ -416,6 +425,7 @@ cdef class RDRAND(BitGenerator):
         """
         cdef RDRAND bit_generator
         bit_generator = self.__class__()
+        bit_generator._set_seed_seq(self._seed_seq)
 
         return bit_generator
 

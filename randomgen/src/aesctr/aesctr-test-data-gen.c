@@ -10,7 +10,6 @@
  *
  */
 
-#include "../splitmix64/splitmix64.h"
 #include "aesctr.orig.h"
 #include <inttypes.h>
 #include <stdio.h>
@@ -22,12 +21,13 @@ int main()
     aesctr_state state;
     uint64_t sm_state, seed = 0xDEADBEAF;
     sm_state = seed;
-    uint64_t initial_seed[2];
+    /* SeedSequence(0xDEADBEAF).generate_state(2, dtype=np.uint64) */
+    uint64_t initial_seed[2] = {5778446405158232650, 4639759349701729399};
     int i;
     for (i = 0; i < 2; i++) {
-        initial_seed[i] = splitmix64_next(&sm_state);
         printf("state %d: 0x%" PRIx64 "\n", i, initial_seed[i]);
     }
+
     uint64_t store[N];
     aesctr_seed_r(&state, &initial_seed[0]);
     for (i = 0; i < N; i++)
@@ -55,8 +55,10 @@ int main()
 
     seed = 0;
     sm_state = seed;
+    /* SeedSequence(0).generate_state(2, dtype=np.uint64) */
+    initial_seed[0] = 15793235383387715774;
+    initial_seed[1] = 12390638538380655177;
     for (i = 0; i < 2; i++) {
-        initial_seed[i] = splitmix64_next(&sm_state);
         printf("state %d: 0x%" PRIx64 "\n", i, initial_seed[i]);
     }
     aesctr_seed_r(&state, &initial_seed[0]);

@@ -1550,7 +1550,7 @@ class TestRDRAND(Base):
         bg = self.setup_bitgenerator([None])
         val = bg.random_raw()
         assert isinstance(val, int)
-        assert bg.seed_seq is None
+        assert isinstance(bg.seed_seq, SeedSequence)
 
     def test_seed_sequence_error(self):
         with pytest.raises(TypeError, match="seed cannot be set"):
