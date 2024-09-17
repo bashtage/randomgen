@@ -112,6 +112,8 @@ extern char *rk_strerror[RK_ERR_MAX];
 extern "C" {
 #endif
 
+extern void rk_init_by_array(rk_state *state, uint32_t *init_key, int key_length);
+
 /*
  * Initialize the RNG state using the given seed.
  */
