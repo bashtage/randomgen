@@ -76,7 +76,7 @@ __all__ = [
 ]
 
 
-def test(extra_args: Union[str, List[str]] = None) -> None:
+def test(extra_args: Union[str, list[str]] = None) -> None:
     try:
         import pytest
     except ImportError as err:

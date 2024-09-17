@@ -1,4 +1,5 @@
-from typing import Literal, Optional, Sequence, Union
+from typing import Literal, Optional, Union
+from collections.abc import Sequence
 
 from randomgen.seed_sequence import SeedSequence
 

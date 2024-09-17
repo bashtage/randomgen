@@ -74,7 +74,7 @@ try:
 except ImportError:
     MISSING_CTYPES = False
 
-ISEED_SEQUENCES: Tuple[Any, ...] = (ISeedSequence,)
+ISEED_SEQUENCES: tuple[Any, ...] = (ISeedSequence,)
 # NumPy 1.17
 try:
     ISEED_SEQUENCES += (np.random.bit_generator.ISeedSequence,)
@@ -197,8 +197,8 @@ def gauss_from_uint(x, n, bits):
 
 class Base:
     dtype = np.uint64
-    data2: Dict[str, Union[int, np.ndarray]] = {}
-    data1: Dict[str, Union[int, np.ndarray]] = {}
+    data2: dict[str, Union[int, np.ndarray]] = {}
+    data1: dict[str, Union[int, np.ndarray]] = {}
 
     @classmethod
     def setup_class(cls):
@@ -775,7 +775,7 @@ class TestThreeFry(Random123):
 
 
 class TestPCG64XSLRR(Base):
-    bit_generator: Type[PCG64]
+    bit_generator: type[PCG64]
 
     @classmethod
     def setup_class(cls):
