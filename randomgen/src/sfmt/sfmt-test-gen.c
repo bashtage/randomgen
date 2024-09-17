@@ -3,6 +3,7 @@
 * gcc SFMT-test-gen.c SFMT.c -DHAVE_SSE2 -DSFMT_MEXP=19937 -o SFMT
 */
 #include "sfmt.h"
+#include "sfmt-test-data-seed.h"
 #include <inttypes.h>
 #include <stdio.h>
 
@@ -10,9 +11,9 @@
 int main(void) {
   int i;
   uint64_t *temp;
-  uint32_t seed = 1UL;
+  uint32_t seed = 0UL;
   sfmt_t state;
-  sfmt_init_gen_rand(&state, seed);
+  sfmt_init_by_array(&state, seed_seq_0, 2 * SFMT_N64);
   uint64_t out[1000];
   sfmt_fill_array64(&state, out, 1000);
 
@@ -29,8 +30,8 @@ int main(void) {
   }
   fclose(fp);
 
-  seed = 123456789UL;
-  sfmt_init_gen_rand(&state, seed);
+  seed = 0xDEADBEAFUL;
+  sfmt_init_by_array(&state, seed_seq_deadbeaf, 2 * SFMT_N64);
   sfmt_fill_array64(&state, out, 1000);
   fp = fopen("sfmt-testset-2.csv", "w");
   if (fp == NULL) {
