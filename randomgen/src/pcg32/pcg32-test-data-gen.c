@@ -2,8 +2,7 @@
  * Generate testing csv files
  *
  *
- * gcc  pcg32-test-data-gen.c pcg32.orig.c ../splitmix64/splitmix64.c -o
- * pgc64-test-data-gen
+ * gcc  pcg32-test-data-gen.c pcg32.orig.c -o pgc64-test-data-gen
  */
 
 #include "pcg_variants.h"

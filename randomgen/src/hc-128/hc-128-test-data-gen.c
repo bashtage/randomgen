@@ -1,17 +1,14 @@
 /*
  * Generate testing csv files
  *
- *  cl hc-128-test-data-gen.c hc-128.orig.c  util.orig.c /
- * ../splitmix64/splitmix64.c /Ox -DLITTLE_ENDIAN
+ * cl hc-128-test-data-gen.c hc-128.orig.c  util.orig.c /Ox -DLITTLE_ENDIAN
  * hc-128-test-data-gen.exe *
  *
- *  gcc hc-128-test-data-gen.c hc-128.orig.c  util.orig.c /
- * ../splitmix64/splitmix64.c /Ox -DLITTLE_ENDIAN -o hc-128-test-data-gen
+ *  gcc hc-128-test-data-gen.c hc-128.orig.c  util.orig.c /O2 -DLITTLE_ENDIAN -o hc-128-test-data-gen
  *  ./hc-128-test-data-gen
  *
  */
 
-#include "../splitmix64/splitmix64.h"
 #include "hc-128.orig.h"
 #include <inttypes.h>
 #include <stdio.h>
@@ -29,8 +26,10 @@ int main() {
   int i, j;
   hc128_state hstate;
   state = seed;
+  /* SeedSequence(0xDEADBEAF).generate_state(4, dtype=np.uint64) */
+  uint64_t seed_seq_deafbeaf[4] = {5778446405158232650, 4639759349701729399, 13222832537653397986, 2330059127936092250};
   for (i = 0; i < 4; i++) {
-    key_iv[i] = splitmix64_next(&state);
+    key_iv[i] = seed_seq_deafbeaf[i];
     printf("%"PRIu64"\n", key_iv[i]);
   }
   hc128_init(&hstate, (uint8_t *)&key_iv[0], (uint8_t *)&key_iv[2]);
@@ -59,8 +58,10 @@ int main() {
   fclose(fp);
 
   seed = state = 0;
+  /* SeedSequence(0).generate_state(4, dtype=np.uint64) */
+  uint64_t seed_seq_0[4] = {15793235383387715774, 12390638538380655177, 2361836109651742017, 3188717715514472916};
   for (i = 0; i < 4; i++) {
-    key_iv[i] = splitmix64_next(&state);
+    key_iv[i] = seed_seq_0[i];
     printf("%"PRIu64"\n", key_iv[i]);
   }
   hc128_init(&hstate, (uint8_t *)&key_iv[0], (uint8_t *)&key_iv[2]);

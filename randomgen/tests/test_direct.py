@@ -613,7 +613,7 @@ class TestJSF64(Base):
         cls.data2 = cls._read_csv(join(pwd, "./data/jsf64-testset-2.csv"))
         cls.seed_error_type = TypeError
         cls.invalid_seed_types = [("apple",), (2 + 3j,), (3.1,)]
-        cls.invalid_seed_values = [(-2,), (np.empty((2, 2), dtype=np.int64),)]
+        cls.invalid_seed_values = [(-2,)]
 
     def test_invalid_seed_size(self):
         with pytest.raises(ValueError, match="seed size must be one"):
@@ -635,7 +635,7 @@ class TestJSF32(TestJSF64):
         cls.data2 = cls._read_csv(join(pwd, "./data/jsf32-testset-2.csv"))
         cls.seed_error_type = TypeError
         cls.invalid_seed_types = [("apple",), (2 + 3j,), (3.1,)]
-        cls.invalid_seed_values = [(-2,), (np.empty((2, 2), dtype=np.int64),)]
+        cls.invalid_seed_values = [(-2,)]
 
     def test_seed_sequence(self):
         bg = self.bit_generator_base(size=self.size)
@@ -694,7 +694,7 @@ class TestXoshiro256(Base):
         cls.data2 = cls._read_csv(join(pwd, "./data/xoshiro256-testset-2.csv"))
         cls.seed_error_type = TypeError
         cls.invalid_seed_types = [("apple",), (2 + 3j,), (3.1,)]
-        cls.invalid_seed_values = [(-2,), (np.empty((2, 2), dtype=np.int64),)]
+        cls.invalid_seed_values = [(-2,)]
 
 
 class TestXoshiro512(Base):
@@ -708,7 +708,7 @@ class TestXoshiro512(Base):
         cls.data2 = cls._read_csv(join(pwd, "./data/xoshiro512-testset-2.csv"))
         cls.seed_error_type = TypeError
         cls.invalid_seed_types = [("apple",), (2 + 3j,), (3.1,)]
-        cls.invalid_seed_values = [(-2,), (np.empty((2, 2), dtype=np.int64),)]
+        cls.invalid_seed_values = [(-2,)]
 
 
 class TestXorshift1024(Base):
@@ -787,9 +787,7 @@ class TestPCG64XSLRR(Base):
         cls.data2 = cls._read_csv(join(pwd, "./data/pcg64-testset-2.csv"))
         cls.seed_error_type = TypeError
         cls.invalid_seed_types = [(3.2,)]
-        cls.invalid_seed_values = [
-            (-2,),
-        ]
+        cls.invalid_seed_values = [            (-2,)        ]
         cls.large_advance_initial = 141078743063826365544432622475512570578
         cls.large_advance_final = 32639015182640331666105117402520879107
 
@@ -958,7 +956,6 @@ class TestAESCounter(TestPhilox):
         cls.invalid_seed_values = [
             (1, None, 1),
             (-1,),
-            (2**257 + 1,),
             (None, None, 2**257 + 1),
         ]
 

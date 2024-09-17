@@ -3,7 +3,7 @@
  *
  * GCC only
  *
- * gcc  pcg64-test-data-gen.c pcg64.orig.c ../splitmix64/splitmix64.c -o
+ * gcc  pcg64-test-data-gen.c pcg64.orig.c -o
  * pgc64-test-data-gen
  */
 
