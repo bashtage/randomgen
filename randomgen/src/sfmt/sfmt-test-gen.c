@@ -1,6 +1,6 @@
 /*
 *
-* gcc SFMT-test-gen.c SFMT.c -DHAVE_SSE2 -DSFMT_MEXP=19937 -o SFMT
+* gcc sfmt-test-gen.c sfmt.c sfmt-jump.c -DHAVE_SSE2 -DSFMT_MEXP=19937 -o sfmt /O2
 */
 #include "sfmt.h"
 #include "sfmt-test-data-seed.h"

@@ -1,17 +1,19 @@
 /*
- * clang++ speck-test-data-gen.cpp cryptoPP/libcryptopp.a -o speck-test-data-gen
+ * 1. Get https://github.com/weidai11/cryptopp
+ * 2. make
+ * 3. clang++ speck-test-data-gen.cpp cryptopp/libcryptopp.a -o speck-test-data-gen
  * ./speck-test-data-gen
  */
 
 #include <iomanip>
 #include <iostream>
 
-#include "cryptoPP/cryptlib.h"
-#include "cryptoPP/files.h"
-#include "cryptoPP/filters.h"
-#include "cryptoPP/hex.h"
-#include "cryptoPP/modes.h"
-#include "cryptoPP/speck.h"
+#include "cryptopp/cryptlib.h"
+#include "cryptopp/files.h"
+#include "cryptopp/filters.h"
+#include "cryptopp/hex.h"
+#include "cryptopp/modes.h"
+#include "cryptopp/speck.h"
 
 using namespace std;
 using namespace CryptoPP;
