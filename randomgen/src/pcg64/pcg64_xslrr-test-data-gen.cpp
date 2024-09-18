@@ -26,7 +26,7 @@ int main() {
   cout << cm_rng << "\n\n";
 
   ofile.open("pcg64-xsl_rr-testset-1.csv");
-  cm_ofile.open("pcg64-xsl_rr-testset-1.csv");
+  cm_ofile.open("pcg64-cm--xsl_rr-testset-1.csv");
   ofile << "seed, 0x" << 0 << endl;
   // cm_ofile << "seed, 0x" << 0 << endl;
   for (int i = 0; i < N; i++) {
@@ -48,7 +48,7 @@ int main() {
   cm_rng = pcg_engines::cm_setseq_xsl_rr_128_64(seed, inc);
 
   ofile.open("pcg64-xsl_rr-testset-2.csv");
-  cm_ofile.open("pcg64-xsl_rr-dxsm-testset-2.csv");
+  cm_ofile.open("pcg64-cm-xsl_rr-testset-2.csv");
   ofile << "seed, 0x" << 0xDEADBEAF << endl;
   cm_ofile << "seed, 0x" << 0xDEADBEAF << endl;
   for (int i = 0; i < N; i++) {
