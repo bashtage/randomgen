@@ -15,14 +15,17 @@
 
 int main() {
     pcg64_random_t rng;
-    uint64_t state, seed = 0xDEADBEAF;
-    state = seed;
-    __uint128_t temp, s, inc;
+    uint64_t state;
+    __uint128_t temp;
+    uint64_t seed = 0ULL;
+    // First 4 values produced by SeedSequence(0)
+    __uint128_t seed_seq =
+      U128BIT_CONSTANT(15793235383387715774ULL, 12390638538380655177ULL);
+    __uint128_t inc =
+      U128BIT_CONSTANT(2361836109651742017ULL, 3188717715514472916ULL);
     int i;
     uint64_t store[N];
-    s = (__uint128_t)seed;
-    inc = (__uint128_t)0;
-    pcg64_srandom_r(&rng, s, inc);
+    pcg64_srandom_r(&rng, seed_seq, inc);
     printf("0x%" PRIx64, (uint64_t)(rng.state >> 64));
     printf("%" PRIx64 "\n", (uint64_t)rng.state);
     printf("0x%" PRIx64, (uint64_t)(rng.inc >> 64));
@@ -46,9 +49,10 @@ int main() {
     }
     fclose(fp);
 
-    state = seed = 0;
-    s = (__uint128_t)seed;
-    i = (__uint128_t)0;
+    seed = 0xDEADBEAFULL;
+    // First values produced by SeedSequence(0xDEADBEAF)
+    seed = U128BIT_CONSTANT(5778446405158232650ULL, 4639759349701729399ULL);
+    inc = U128BIT_CONSTANT(13222832537653397986ULL, 2330059127936092250ULL);
     pcg64_srandom_r(&rng, s, i);
     printf("0x%" PRIx64, (uint64_t)(rng.state >> 64));
     printf("%" PRIx64 "\n", (uint64_t)rng.state);
