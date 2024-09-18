@@ -26,7 +26,7 @@ int main() {
   cout << cm_rng << "\n\n";
 
   ofile.open("pcg64-xsl_rr-testset-1.csv");
-  cm_ofile.open("pcg64-cm--xsl_rr-testset-1.csv");
+  cm_ofile.open("pcg64-cm-xsl_rr-testset-1.csv");
   ofile << "seed, 0x" << 0 << endl;
   // cm_ofile << "seed, 0x" << 0 << endl;
   for (int i = 0; i < N; i++) {
