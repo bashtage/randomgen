@@ -1342,7 +1342,7 @@ class TestPCG32(TestPCG64XSLRR):
         cls.large_advance_initial = 645664597830827402
         cls.large_advance_final = 3
 
-    def setup_bitgenerator(self, seed, mode="sequence", inc=0):
+    def setup_bitgenerator(self, seed, mode="sequence", inc=None):
         kwargs = {"inc": inc}
         if mode != "sequence":
             kwargs["mode"] = mode

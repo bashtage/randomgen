@@ -115,6 +115,7 @@ cdef class PCG32(BitGenerator):
         else:
             state = self.seed_seq.generate_state(1, np.uint64)
             _inc = <uint64_t>inc
+        print(state[0], _inc)
         pcg32_set_seed(&self.rng_state, <uint64_t>state[0], _inc)
 
     def seed(self, seed=None, inc=None):
