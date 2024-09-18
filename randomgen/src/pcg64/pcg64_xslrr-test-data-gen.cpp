@@ -22,8 +22,8 @@ int main() {
       U128BIT_CONSTANT(2361836109651742017ULL, 3188717715514472916ULL);
   pcg_engines::setseq_xsl_rr_128_64 rng(seed, inc);
   pcg_engines::cm_setseq_xsl_rr_128_64 cm_rng(seed, inc);
-  cout << rng << "\n";
-  cout << cm_rng << "\n";
+  cout << rng << "\n\n";
+  cout << cm_rng << "\n\n";
 
   ofile.open("pcg64-xsl_rr-testset-1.csv");
   cm_ofile.open("pcg64-xsl_rr-testset-1.csv");
