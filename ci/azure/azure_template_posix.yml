@@ -17,48 +17,43 @@ jobs:
   strategy:
     matrix:
       ${{ if eq(parameters.name, 'Linux') }}:
-        python38_legacy:
-          python.version: '3.8'
-          coverage: true
-          NUMPY: 1.17.0
-        python38_latest:
-          python.version: '3.8'
-        python39_latest:
+        python39_legacy:
           python.version: '3.9'
-          NUMPY: 1.19.0
+          NUMPY: 1.22.3
+        python310_last_numpy_1:
+          python.version: '3.10'
+          NUMPY: 1.26.4
         python310_latest:
           python.version: '3.10'
-          NUMPY: 1.21.0
+        python311_latest_numpy_2:
+          python.version: '3.11'
+          NUMPY: 2.0.0
         python311_latest:
           python.version: '3.11'
-          NUMPY: 1.23.0
         python312_latest:
           python.version: '3.12'
         python312_prerelease:
           python.version: '3.12'
           pip.pre: true
-        python38_mid_conda:
-          python.version: '3.8'
-          use.conda: true
-          NUMPY: 1.18.5
-          CYTHON: 0.29.24
-          USE_SCIPY: "true"
-          USE_NUMBA: "true"
-        python_38_coverage:
-          python.version: '3.8'
+        python_312_coverage:
+          python.version: '3.12'
           PYPI: true
           coverage: false
           RANDOMGEN_CYTHON_COVERAGE: false
           RANDOMGEN_DEBUG: true
           test.install: true
       ${{ if eq(parameters.name, 'macOS') }}:
+        python310_macos:
+          python.version: '3.10'
+          CYTHON: 3.0.10
+          ARCHFLAGS: "-arch x86_64"
         python311_macos:
           python.version: '3.11'
-          CYTHON: 3.0.7
+          CYTHON: 3.0.11
           ARCHFLAGS: "-arch x86_64"
         python312_latest_macos:
           python.version: '3.12'
-          CYTHON: 3.0.7
+          CYTHON: 3.0.11
           ARCHFLAGS: "-arch x86_64"
 
     maxParallel: 10
