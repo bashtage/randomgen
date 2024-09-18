@@ -1,22 +1,22 @@
 /*
- * cl dSFMT-test-gen.c dSFMT.c -DHAVE_SSE2 -DDSFMT_MEXP=19937 /Ox
+ * cl dSFMT-test-gen.c dSFMT.c dSFMT-jump.c -DHAVE_SSE2 -DDSFMT_MEXP=19937 /O2
  *
- * gcc dSFMT-test-gen.c dSFMT.c -DHAVE_SSE2 -DDSFMT_MEXP=19937 -o dSFMT
+ * gcc dSFMT-test-gen.c dSFMT.c  dSFMT-jump.c -DHAVE_SSE2 -DDSFMT_MEXP=19937 -o dSFMT
  */
 
 #include <inttypes.h>
 #include <stdio.h>
-
 #include "dsfmt.h"
+#include "dsfmt-test-data-seed.h"
 
 
 int main(void) {
   int i;
   double d;
   uint64_t *temp;
-  uint32_t seed = 1UL;
+  uint32_t seed = 0UL;
   dsfmt_t state;
-  dsfmt_init_gen_rand(&state, seed);
+  dsfmt_init_by_array(&state, seed_seq_0, 2 * DSFMT_N64);
   double out[1000];
   dsfmt_fill_array_close1_open2(&state, out, 1000);
 
@@ -37,8 +37,8 @@ int main(void) {
   }
   fclose(fp);
 
-  seed = 123456789UL;
-  dsfmt_init_gen_rand(&state, seed);
+  seed = 0xDEADBEAFUL;
+  dsfmt_init_by_array(&state, seed_seq_deadbeaf, 2 * DSFMT_N64);
   dsfmt_fill_array_close1_open2(&state, out, 1000);
   fp = fopen("dSFMT-testset-2.csv", "w");
   if (fp == NULL) {
