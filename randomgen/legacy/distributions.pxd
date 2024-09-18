@@ -19,7 +19,7 @@ cimport numpy as np
 from randomgen.distributions cimport binomial_t, bitgen_t
 
 
-cdef extern from "../src/legacy/legacy-distributions.h":
+cdef extern from "../src/legacy/legacy-distributions.orig.h":
 
     struct aug_bitgen:
         bitgen_t *bit_generator

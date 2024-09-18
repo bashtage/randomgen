@@ -1,6 +1,6 @@
 from setuptools import Distribution, find_namespace_packages, setup
 from setuptools.extension import Extension
-
+from pathlib import Path
 import glob
 import os
 from os.path import exists, join, splitext
@@ -146,36 +146,30 @@ for name in (
     # "bounded_integers",
     "common",
     "entropy",
-    # "generator",
-    # "legacy.bounded_integers",
-    # "mtrand",
+    "generator",
     "_seed_sequence",
 ):
     extra_source = []
     extra_macros = []
     extra_incl = []
 
+    libraries = []
+    library_dirs = []
     source = ["randomgen/{}.pyx".format(name.replace(".", "/"))]
-
-    legacy = name in ("legacy.bounded_integers", "mtrand")
-    if name in ("bounded_integers", "generator") or legacy:
-        extra_source = [src_join("distributions", "distributions.c")]
-        if name == "generator":
-            extra_source += [
-                src_join("distributions", "logfactorial.c"),
-                src_join("distributions", "hypergeometric.c"),
-            ]
-        if legacy:
-            extra_source += [src_join("legacy", "legacy-distributions.c")]
-            extra_macros = [("RANDOMGEN_LEGACY", "1")]
+    if name == "generator":
+        extra_source = [src_join("distributions", "rg-distributions.c")]
     elif name == "entropy":
         extra_source = [src_join("entropy", "entropy.c")]
         extra_incl = [src_join("entropy")]
-
+    if name == "generator":
+        libraries = ["npymath", "npyrandom"]
+        library_dirs = [str((Path(NUMPY_INCLUDE) / ".." / "lib").resolve()),
+                        str((Path(NUMPY_INCLUDE) / ".." / ".." / "random" / "lib").resolve()),]
     ext = Extension(
         f"randomgen.{name}",
         source + extra_source,
-        libraries=EXTRA_LIBRARIES,
+        libraries=EXTRA_LIBRARIES + libraries,
+        library_dirs=library_dirs,
         include_dirs=EXTRA_INCLUDE_DIRS + extra_incl,
         extra_compile_args=EXTRA_COMPILE_ARGS,
         extra_link_args=EXTRA_LINK_ARGS,
@@ -223,21 +217,21 @@ def bit_generator(
 
 
 bit_generator(
-    "aes",
-    c_name="aesctr",
-    cpu_features=True,
-    aligned=True,
-    compile_args=AES_COMPILE_ARGS,
+     "aes",
+     c_name="aesctr",
+     cpu_features=True,
+     aligned=True,
+     compile_args=AES_COMPILE_ARGS,
 )
 bit_generator(
-    "chacha", cpu_features=True, aligned=True, compile_args=SSSE3_COMPILE_ARGS
+     "chacha", cpu_features=True, aligned=True, compile_args=SSSE3_COMPILE_ARGS
 )
 bit_generator(
-    "dsfmt",
-    aligned=True,
-    defs=DSFMT_DEFS,
-    extra_source=src_join("dsfmt", "dSFMT-jump.c"),
-)
+     "dsfmt",
+     aligned=True,
+     defs=DSFMT_DEFS,
+     extra_source=src_join("dsfmt", "dSFMT-jump.c"),
+ )
 bit_generator("hc128", c_name="hc-128")
 bit_generator("jsf")
 bit_generator("mt19937", extra_source=src_join("mt19937", "mt19937-jump.c"))
@@ -245,22 +239,22 @@ bit_generator("mt64")
 bit_generator("pcg32")
 # PCG requires special treatment since it contains multiple bit gens
 ext = Extension(
-    "randomgen.pcg64",
-    ["randomgen/pcg64.pyx"]
-    + [
-        src_join("pcg64", "pcg64-common.c"),
-        src_join("pcg64", "pcg64-v2.c"),
-        src_join("pcg64", "lcg128mix.c"),
-    ],
-    libraries=EXTRA_LIBRARIES,
-    include_dirs=EXTRA_INCLUDE_DIRS,
-    extra_compile_args=EXTRA_COMPILE_ARGS,
-    extra_link_args=EXTRA_LINK_ARGS,
-    define_macros=DEFS,
-    undef_macros=UNDEF_MACROS,
+     "randomgen.pcg64",
+     ["randomgen/pcg64.pyx"]
+     + [
+         src_join("pcg64", "pcg64-common.c"),
+         src_join("pcg64", "pcg64-v2.c"),
+         src_join("pcg64", "lcg128mix.c"),
+     ],
+     libraries=EXTRA_LIBRARIES,
+     include_dirs=EXTRA_INCLUDE_DIRS,
+     extra_compile_args=EXTRA_COMPILE_ARGS,
+     extra_link_args=EXTRA_LINK_ARGS,
+     define_macros=DEFS,
+     undef_macros=UNDEF_MACROS,
 )
 extensions.append(ext)
-#
+
 bit_generator("philox", defs=PHILOX_DEFS)
 bit_generator("rdrand", cpu_features=True, compile_args=RDRAND_COMPILE_ARGS)
 bit_generator(

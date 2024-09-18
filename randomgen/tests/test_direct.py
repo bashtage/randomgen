@@ -791,7 +791,7 @@ class TestPCG64XSLRR(Base):
         cls.large_advance_initial = 141078743063826365544432622475512570578
         cls.large_advance_final = 32639015182640331666105117402520879107
 
-    def setup_bitgenerator(self, seed, mode="sequence", inc: int | None = 0):
+    def setup_bitgenerator(self, seed, mode="sequence", inc: int | None = None):
         return self.bit_generator(*seed, mode=mode, variant="xsl-rr", inc=inc)  # type: ignore
 
     def test_seed_float_array(self):
