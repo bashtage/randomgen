@@ -459,7 +459,7 @@ cdef class SeedSequence(object):
 
         Returns
         -------
-        seqs : List[SeedSequence]
+        seqs :  list[SeedSequence]
             Child SeedSequences with incremented  ``spawn_key``
         """
         cdef int i

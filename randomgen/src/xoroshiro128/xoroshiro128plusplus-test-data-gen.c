@@ -1,17 +1,15 @@
 /*
  * Generate testing csv files
  *
- *  cl xoroshiro128plusplus-test-data-gen.c xoroshiro128plusplus.orig.c `
- *     ../splitmix64/splitmix64.c /Ox
+ *  cl xoroshiro128plusplus-test-data-gen.c xoroshiro128plusplus.orig.c  /Ox
  *  xoroshiro128plusplus-test-data-gen.exe
  *
  *  gcc xoroshiro128plusplus-test-data-gen.c xoroshiro128plusplus.orig.c /
- * ../splitmix64/splitmix64.c -o xoroshiro128plusplus-test-data-gen
+ *  -o xoroshiro128plusplus-test-data-gen
  *  ./xoroshiro128plusplus-test-data-gen
  *
  */
 
-#include "../splitmix64/splitmix64.h"
 #include "xoroshiro128plus.orig.h"
 #include <inttypes.h>
 #include <stdio.h>
@@ -23,10 +21,9 @@ int main()
   uint64_t state, seed = 0xDEADBEAF;
   state = seed;
   int i;
-  for (i = 0; i < 2; i++)
-  {
-    s[i] = splitmix64_next(&state);
-  }
+  /* SeedSequence(0xDEADBEAF).generate_state(2, dtype=np.uint64) */
+  s[0] = 5778446405158232650;
+  s[1] = 4639759349701729399;
   uint64_t store[N];
   for (i = 0; i < N; i++)
   {
@@ -53,9 +50,9 @@ int main()
 
   seed = state = 0;
   for (i = 0; i < 2; i++)
-  {
-    s[i] = splitmix64_next(&state);
-  }
+  /* SeedSequence(0).generate_state(2, dtype=np.uint64) */
+  s[0] = 15793235383387715774;
+  s[1] = 12390638538380655177;
   for (i = 0; i < N; i++)
   {
     store[i] = next();

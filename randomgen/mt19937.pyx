@@ -26,7 +26,7 @@ cdef uint64_t mt19937_raw(void *st) noexcept nogil:
 
 cdef class MT19937(BitGenerator):
     """
-    MT19937(seed=None, *, mode=None)
+    MT19937(seed=None, *, mode="sequence")
 
     Container for the Mersenne Twister pseudo-random number generator.
 
@@ -40,11 +40,10 @@ cdef class MT19937(BitGenerator):
         unsigned integers are read from ``/dev/urandom`` (or the Windows
         analog) if available. If unavailable, a hash of the time and process
         ID is used.
-    mode : {None, "sequence", "legacy", "numpy"}, optional
-        The seeding mode to use. "legacy" uses the legacy
-        SplitMix64-based initialization. "sequence" uses a SeedSequence
-        to transforms the seed into an initial state. None defaults to "sequence".
-        "numpy" uses the same seeding mechanism as NumPy and so matches exactly.
+    mode : {None, "sequence", "numpy"}, optional
+        "sequence" uses a SeedSequence to transforms the seed into an initial
+        state. None defaults to "sequence". "numpy" uses the same seeding
+        mechanism as NumPy and so matches NumPy exactly.
 
     Attributes
     ----------
@@ -55,7 +54,7 @@ cdef class MT19937(BitGenerator):
         lock.
     seed_seq : {None, SeedSequence}
         The SeedSequence instance used to initialize the generator if mode is
-        "sequence" or is seed is a SeedSequence. None if mode is "legacy".
+        "sequence" or is seed is a SeedSequence. 
 
     Notes
     -----
@@ -114,7 +113,7 @@ cdef class MT19937(BitGenerator):
         No. 3, Summer 2008, pp. 385-390.
 
     """
-    def __init__(self, seed=None, *, mode=None):
+    def __init__(self, seed=None, *, mode="sequence"):
         BitGenerator.__init__(self, seed, mode)
         self.seed(seed)
         self._bitgen.state = &self.rng_state
@@ -124,17 +123,23 @@ cdef class MT19937(BitGenerator):
         self._bitgen.next_raw = &mt19937_raw
 
     def _supported_modes(self):
-        return "legacy", "sequence", "numpy"
+        return "sequence", "numpy"
 
     def _seed_from_seq(self):
-        state = self.seed_seq.generate_state(RK_STATE_LEN, np.uint32)
+        try:
+            state = self.seed_seq.generate_state(RK_STATE_LEN, np.uint32)
+        except AttributeError:
+            state = self._seed_seq.generate_state(RK_STATE_LEN, np.uint32)
         mt19937_init_by_array(&self.rng_state,
                               <uint32_t*>np.PyArray_DATA(state),
                               RK_STATE_LEN)
 
     def _seed_from_seq_numpy_compat(self, inc=None):
         # MSB is 1; assuring non-zero initial array
-        val = self.seed_seq.generate_state(RK_STATE_LEN, np.uint32)
+        try:
+            val = self.seed_seq.generate_state(RK_STATE_LEN, np.uint32)
+        except AttributeError:
+            val = self._seed_seq.generate_state(RK_STATE_LEN, np.uint32)
         # MSB is 1; assuring non-zero initial array
         self.rng_state.key[0] = 0x80000000UL
         for i in range(1, RK_STATE_LEN):
@@ -166,9 +171,12 @@ cdef class MT19937(BitGenerator):
         cdef np.ndarray obj
 
         BitGenerator._seed_with_seed_sequence(self, seed)
-        if self.seed_seq is not None:
-            return
-
+        try:
+            if self.seed_seq is not None:
+                return
+        except AttributeError:
+            if self._seed_seq is not None:
+                return
         try:
             if seed is None:
                 seed = random_entropy(RK_STATE_LEN, "auto")

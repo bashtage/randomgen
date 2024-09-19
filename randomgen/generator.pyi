@@ -1,5 +1,5 @@
 from threading import Lock
-from typing import Any, Dict, Literal, Optional, Sequence, Tuple, Union, overload
+from typing import Any, Literal, overload
 
 from numpy import ndarray
 
@@ -7,20 +7,19 @@ from randomgen.common import BitGenerator
 from randomgen.typing import RequiredSize, Size
 
 class Generator:
-    ...
-    def __init__(self, bit_generator: Optional[BitGenerator] = ...) -> None: ...
+    def __init__(self, bit_generator: BitGenerator | None = ...) -> None: ...
 
 class ExtendedGenerator:
     _bit_generator: BitGenerator
     lock: Lock
     _generator: Generator
-    def __init__(self, bit_generator: Optional[BitGenerator] = ...) -> None: ...
+    def __init__(self, bit_generator: BitGenerator | None = ...) -> None: ...
     @property
     def bit_generator(self) -> BitGenerator: ...
     @property
-    def state(self) -> Dict[str, Any]: ...
+    def state(self) -> dict[str, Any]: ...
     @state.setter
-    def state(self, value: Dict[str, Any]) -> None: ...
+    def state(self, value: dict[str, Any]) -> None: ...
     @overload
     def uintegers(self, size: None, bits: Literal[32, 64] = ...) -> int: ...
     @overload
@@ -31,7 +30,7 @@ class ExtendedGenerator:
     def random(self, size: None) -> float: ...
     @overload
     def random(
-        self, size: RequiredSize, dtype: str = ..., out: Optional[ndarray] = ...
+        self, size: RequiredSize, dtype: str = ..., out: ndarray | None = ...
     ) -> ndarray: ...
     def multivariate_normal(
         self,
@@ -60,33 +59,27 @@ class ExtendedGenerator:
     @overload
     def complex_normal(self, *, gamma: ndarray) -> ndarray: ...
     @overload
+    def complex_normal(self, loc: complex | ndarray, gamma: ndarray) -> ndarray: ...
+    @overload
     def complex_normal(
-        self, loc: Union[complex, ndarray], gamma: ndarray
+        self, *, gamma: ndarray, relation: complex | ndarray
     ) -> ndarray: ...
     @overload
     def complex_normal(
-        self, *, gamma: ndarray, relation: Union[complex, ndarray]
+        self, loc: complex | ndarray, *, relation: ndarray
     ) -> ndarray: ...
     @overload
     def complex_normal(
-        self, loc: Union[complex, ndarray], *, relation: ndarray
-    ) -> ndarray: ...
-    @overload
-    def complex_normal(
-        self,
-        loc: Union[complex, ndarray],
-        gamma: Union[complex, ndarray],
-        *,
-        relation: ndarray
+        self, loc: complex | ndarray, gamma: complex | ndarray, *, relation: ndarray
     ) -> ndarray: ...
     @overload
     def complex_normal(self, *, relation: ndarray) -> ndarray: ...
     @overload
     def complex_normal(
         self,
-        loc: Union[complex, ndarray],
-        gamma: Union[complex, ndarray],
-        relation: Union[complex, ndarray],
+        loc: complex | ndarray,
+        gamma: complex | ndarray,
+        relation: complex | ndarray,
         size: RequiredSize,
     ) -> ndarray: ...
     def standard_wishart(
@@ -94,20 +87,20 @@ class ExtendedGenerator:
     ) -> ndarray: ...
     def wishart(
         self,
-        df: Union[int, ndarray],
+        df: int | ndarray,
         scale: ndarray,
         size: Size = ...,
         *,
         check_valid: Literal["raise", "ignore", "warn"] = ...,
         tol: float = ...,
-        rank: Optional[int] = ...,
+        rank: int | None = ...,
         method: Literal["svd", "eigh", "cholesky", "factor"] = ...
     ) -> ndarray: ...
     def multivariate_complex_normal(
         self,
         loc: ndarray,
-        gamma: Optional[ndarray] = ...,
-        relation: Optional[ndarray] = ...,
+        gamma: ndarray | None = ...,
+        relation: ndarray | None = ...,
         size: Size = ...,
         *,
         check_valid: Literal["raise", "ignore", "warn"] = ...,

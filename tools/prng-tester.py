@@ -1,6 +1,7 @@
 """
 The main test program for quality assurance in randomgen
 """
+
 from collections import defaultdict
 import itertools
 import json

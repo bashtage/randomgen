@@ -81,7 +81,7 @@ cdef uint64_t jsf32_raw(void* st) noexcept nogil:
 
 cdef class JSF(BitGenerator):
     """
-    JSF(seed=None, *, seed_size=1, size=64, p=None, q=None, r=None, mode=None)
+    JSF(seed=None, *, seed_size=1, size=64, p=None, q=None, r=None)
 
     Container for Jenkins's Fast Small (JSF) pseudo-random number generator
 
@@ -110,11 +110,6 @@ cdef class JSF(BitGenerator):
     r : int, optional
         One the the three parameters that defines JSF. See Notes. If not
         provided uses the default values for the selected size listed in Notes.
-    mode : {None, "sequence", "legacy"}, optional
-        The seeding mode to use. "legacy" uses the legacy
-        SplitMix64-based initialization. "sequence" uses a SeedSequence
-        to transforms the seed into an initial state.  None defaults to
-        "sequence".
 
     Attributes
     ----------
@@ -125,7 +120,7 @@ cdef class JSF(BitGenerator):
         lock.
     seed_seq : {None, SeedSequence}
         The SeedSequence instance used to initialize the generator if mode is
-        "sequence" or is seed is a SeedSequence. None if mode is "legacy".
+        "sequence" or is seed is a SeedSequence. 
 
     Notes
     -----
@@ -189,8 +184,8 @@ cdef class JSF(BitGenerator):
     parameters = JSF_PARAMETERS
 
     def __init__(self, seed=None, *, seed_size=1, size=64, p=None, q=None,
-                 r=None, mode=None):
-        BitGenerator.__init__(self, seed, mode)
+                 r=None):
+        BitGenerator.__init__(self, seed)
         if size not in (32, 64) or not isinstance(size, INT_TYPES):
             raise ValueError("size must be either 32 or 64")
         if seed_size not in (1, 2, 3) or not isinstance(seed_size, INT_TYPES):
@@ -232,7 +227,10 @@ cdef class JSF(BitGenerator):
 
     def _seed_from_seq(self):
         dtype = np.uint64 if self.size == 64 else np.uint32
-        state = self.seed_seq.generate_state(self.seed_size, dtype)
+        try:
+            state = self.seed_seq.generate_state(self.seed_size, dtype)
+        except AttributeError:
+            state = self._seed_seq.generate_state(self.seed_size, dtype)
         if self.size == 64:
             jsf64_seed(&self.rng_state,
                        <uint64_t*>np.PyArray_DATA(state),
@@ -268,8 +266,12 @@ cdef class JSF(BitGenerator):
             If seed values are out of range for the PRNG.
         """
         BitGenerator._seed_with_seed_sequence(self, seed)
-        if self.seed_seq is not None:
-            return
+        try:
+            if self.seed_seq is not None:
+                return
+        except AttributeError:
+            if self._seed_seq is not None:
+                return
 
         if seed is None:
             state = random_entropy(3 * self.size // 32, "auto")

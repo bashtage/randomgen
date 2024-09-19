@@ -1,4 +1,5 @@
-from typing import Dict, Type, Union
+from __future__ import annotations
+
 import warnings
 
 from randomgen.aes import AESCounter
@@ -26,7 +27,7 @@ from randomgen.xorshift1024 import Xorshift1024
 from randomgen.xoshiro256 import Xoshiro256
 from randomgen.xoshiro512 import Xoshiro512
 
-BitGenerators: Dict[str, Type[BitGenerator]] = {
+BitGenerators: dict[str, type[BitGenerator]] = {
     "AESCounter": AESCounter,
     "ChaCha": ChaCha,
     "LCG128Mix": LCG128Mix,
@@ -58,7 +59,7 @@ for value in list(BitGenerators.values()):
     BitGenerators[f"{value.__module__}.{value.__name__}"] = value
 
 
-def _get_bitgenerator(bit_generator_name: str) -> Type[BitGenerator]:
+def _get_bitgenerator(bit_generator_name: str) -> type[BitGenerator]:
     """
     Bit generator look-up with user-friendly errors
     """
@@ -71,7 +72,7 @@ def _get_bitgenerator(bit_generator_name: str) -> Type[BitGenerator]:
     return bit_generator
 
 
-def _decode(name: Union[str, bytes]) -> str:
+def _decode(name: str | bytes) -> str:
     if isinstance(name, str):
         return name
     assert isinstance(name, bytes)
@@ -79,7 +80,7 @@ def _decode(name: Union[str, bytes]) -> str:
 
 
 def __extended_generator_ctor(
-    bit_generator_name: Union[str, bytes] = "MT19937"
+    bit_generator_name: str | bytes = "MT19937",
 ) -> ExtendedGenerator:
     """
     Pickling helper function that returns a Generator object
@@ -103,9 +104,7 @@ def __extended_generator_ctor(
     return ExtendedGenerator(bit_gen)
 
 
-def __bit_generator_ctor(
-    bit_generator_name: Union[str, bytes] = "MT19937"
-) -> BitGenerator:
+def __bit_generator_ctor(bit_generator_name: str | bytes = "MT19937") -> BitGenerator:
     """
     Pickling helper function that returns a bit generator object
 

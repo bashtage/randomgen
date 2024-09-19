@@ -45,7 +45,7 @@ cdef uint64_t threefry2x32_raw(void *st) noexcept nogil:
 
 cdef class ThreeFry(BitGenerator):
     """
-    ThreeFry(seed=None, *, counter=None, key=None, number=4, width=64, mode=None)
+    ThreeFry(seed=None, *, counter=None, key=None, number=4, width=64)
 
     Container for the ThreeFry family of pseudo-random number generators.
 
@@ -76,11 +76,6 @@ cdef class ThreeFry(BitGenerator):
     width : {32, 64}, optional
         Bit width the values produced. Maps to W in the ThreeFry variant naming
         scheme ThreeFryNxW.
-    mode : {None, "sequence", "legacy"}, optional
-        The seeding mode to use. "legacy" uses the legacy
-        SplitMix64-based initialization. "sequence" uses a SeedSequence
-        to transforms the seed into an initial state.  None defaults to
-        "sequence".
 
     Attributes
     ----------
@@ -91,7 +86,7 @@ cdef class ThreeFry(BitGenerator):
         lock.
     seed_seq : {None, SeedSequence}
         The SeedSequence instance used to initialize the generator if mode is
-        "sequence" or is seed is a SeedSequence. None if mode is "legacy".
+        "sequence" or is seed is a SeedSequence. 
 
     Notes
     -----
@@ -117,10 +112,6 @@ cdef class ThreeFry(BitGenerator):
     randoms produced. The second is a key which determines the sequence
     produced. Using different keys produces distinct sequences.
 
-    When mode is "legacy", ``ThreeFry`` is seeded using either a single 64-bit
-    unsigned integer or a vector of 64-bit unsigned integers. In either case,
-    the seed is used as an input for a second random number generator,
-    SplitMix64, and the output of this PRNG function is used as the initial state.
     Using a single 64-bit value for the seed can only initialize a small range of
     the possible initial state values.
 
@@ -170,8 +161,8 @@ cdef class ThreeFry(BitGenerator):
     cdef int n
     cdef int w
 
-    def __init__(self, seed=None, *, counter=None, key=None, number=4, width=64, mode=None):
-        BitGenerator.__init__(self, seed, mode)
+    def __init__(self, seed=None, *, counter=None, key=None, number=4, width=64):
+        BitGenerator.__init__(self, seed)
         if number not in (2, 4):
             raise ValueError("number must be either 2 or 4")
         if width not in (32, 64):
@@ -222,7 +213,10 @@ cdef class ThreeFry(BitGenerator):
             self.rng_state.buffer[i].u64 = 0
 
     def _seed_from_seq(self, counter=None):
-        state = self.seed_seq.generate_state(self.n * self.w // 64, np.uint64)
+        try:
+            state = self.seed_seq.generate_state(self.n * self.w // 64, np.uint64)
+        except AttributeError:
+            state = self._seed_seq.generate_state(self.n * self.w // 64, np.uint64)
         self.seed(key=state, counter=counter)
         self._reset_state_variables()
 
@@ -272,8 +266,12 @@ cdef class ThreeFry(BitGenerator):
             raise ValueError("seed and key cannot be both used")
         if key is None:
             BitGenerator._seed_with_seed_sequence(self, seed, counter=counter)
-            if self.seed_seq is not None:
-                return
+            try:
+                if self.seed_seq is not None:
+                    return
+            except AttributeError:
+                if self._seed_seq is not None:
+                    return
 
         # Legacy seeding
         seed = object_to_int(seed, nxw, "seed")
@@ -460,7 +458,7 @@ cdef class ThreeFry(BitGenerator):
         """
         cdef ThreeFry bit_generator
 
-        bit_generator = self.__class__(seed=self._copy_seed(), mode=self.mode)
+        bit_generator = self.__class__(seed=self._copy_seed())
         bit_generator.state = self.state
         bit_generator.jump_inplace(iter)
 

@@ -1,15 +1,13 @@
 /*
  * Generate testing csv files
  *
- * cl mt19937-test-data-gen.c randomkit.c
- *   -IC:\Anaconda\Lib\site-packages\numpy\core\include -IC:\Anaconda\include
- *   Advapi32.lib Kernel32.lib C:\Anaconda\libs\python36.lib  -DRK_NO_WINCRYPT=1
+ * cl mt19937-test-data-gen.c randomkit.c -IC:\anaconda\envs\randomgen\Lib\site-packages\numpy\_core\include -IC:\anaconda\envs\randomgen\include Advapi32.lib Kernel32.lib C:\anaconda\envs\randomgen\libs\python312.lib  -DRK_NO_WINCRYPT=1
  *
  */
 #include "randomkit.h"
 #include <inttypes.h>
 #include <stdio.h>
-
+#include "mt119937-test-data-seed.h"
 #define N 1000
 
 int main() {
@@ -17,8 +15,8 @@ int main() {
   uint32_t seed = 0xDEADBEAF;
   int i;
   rk_state state;
-  rk_seed(seed, &state);
   uint64_t store[N];
+  rk_init_by_array(&state, (uint32_t *)&seed_seq_deadbeaf, 624);
   for (i = 0; i < N; i++) {
     store[i] = (uint64_t)rk_random(&state);
   }
@@ -39,7 +37,7 @@ int main() {
   fclose(fp);
 
   seed = 0;
-  rk_seed(seed, &state);
+  rk_init_by_array(&state, (uint32_t *)&seed_seq_0, 624);
   for (i = 0; i < N; i++) {
     store[i] = (uint64_t)rk_random(&state);
   }

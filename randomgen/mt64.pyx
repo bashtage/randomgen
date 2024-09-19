@@ -25,7 +25,7 @@ cdef uint64_t mt64_raw(void *st) noexcept nogil:
 
 cdef class MT64(BitGenerator):
     """
-    MT64(seed=None, *, mode=None)
+    MT64(seed=None)
 
     Container for the 64-bit Mersenne Twister pseudo-random number generator
 
@@ -39,11 +39,6 @@ cdef class MT64(BitGenerator):
         unsigned integers are read from ``/dev/urandom`` (or the Windows
         analog) if available. If unavailable, a hash of the time and process
         ID is used.
-    mode : {None, "sequence", "legacy"}, optional
-        The seeding mode to use. "legacy" uses the legacy
-        SplitMix64-based initialization. "sequence" uses a SeedSequence
-        to transforms the seed into an initial state.  None defaults to
-        "sequence".
 
     Attributes
     ----------
@@ -54,7 +49,7 @@ cdef class MT64(BitGenerator):
         lock.
     seed_seq : {None, SeedSequence}
         The SeedSequence instance used to initialize the generator if mode is
-        "sequence" or is seed is a SeedSequence. None if mode is "legacy".
+        "sequence" or is seed is a SeedSequence. 
 
     Notes
     -----
@@ -93,8 +88,8 @@ cdef class MT64(BitGenerator):
     .. [2] Nishimura, T. "Tables of 64-bit Mersenne Twisters" ACM Transactions
         on Modeling and Computer Simulation 10. (2000) 348-357.
     """
-    def __init__(self, seed=None, *, mode=None):
-        BitGenerator.__init__(self, seed, mode)
+    def __init__(self, seed=None):
+        BitGenerator.__init__(self, seed)
         self.seed(seed)
 
         self._bitgen.state = &self.rng_state
@@ -108,7 +103,10 @@ cdef class MT64(BitGenerator):
         self.rng_state.uinteger = 0
 
     def _seed_from_seq(self):
-        state = self.seed_seq.generate_state(312, np.uint64)
+        try:
+            state = self.seed_seq.generate_state(312, np.uint64)
+        except AttributeError:
+            state = self._seed_seq.generate_state(312, np.uint64)
         mt64_init_by_array(&self.rng_state,
                            <uint64_t*>np.PyArray_DATA(state),
                            312)
@@ -139,8 +137,12 @@ cdef class MT64(BitGenerator):
         cdef np.ndarray obj
 
         BitGenerator._seed_with_seed_sequence(self, seed)
-        if self.seed_seq is not None:
-            return
+        try:
+            if self.seed_seq is not None:
+                return
+        except AttributeError:
+            if self._seed_seq is not None:
+                return
 
         try:
             if seed is None:

@@ -12,13 +12,14 @@ Get the state using NumPy's state initialization
 poly-128 is the 2**128 poly computed using the original author's code
 clist_mt19937 is the polynomial shipped by the original author
 """
+
 import hashlib
 import os
 import platform
 import pprint
 import shutil
 import subprocess
-from typing import Dict, List, Tuple, Union, cast
+from typing import cast
 
 import black
 import numpy as np
@@ -35,7 +36,7 @@ else:
 
 
 def save_state(bit_gen: MT19937, file_name: str) -> None:
-    bit_gen_state = cast(dict[str, Union[int, np.ndarray]], bit_gen.state["state"])
+    bit_gen_state = cast(dict[str, int | np.ndarray], bit_gen.state["state"])
     state_key = cast(np.ndarray, bit_gen_state["key"])
     state_pos = bit_gen_state["pos"]
     with open(file_name, "w") as f:
@@ -44,7 +45,7 @@ def save_state(bit_gen: MT19937, file_name: str) -> None:
         f.write(f"{state_pos}\n")
 
 
-def parse_output(text: str) -> Tuple[List[Dict[str, Union[List, int]]], List[int]]:
+def parse_output(text: str) -> tuple[list[dict[str, list | int]], list[int]]:
     lines = text.split("\n")
     key_list: list[int] = []
     output_state = {"key": key_list, "pos": -1}
@@ -65,7 +66,7 @@ def parse_output(text: str) -> Tuple[List[Dict[str, Union[List, int]]], List[int
     return states[:-1], pf
 
 
-values: Dict[Tuple[str, Tuple[int, ...], int], Dict] = {}
+values: dict[tuple[str, tuple[int, ...], int], dict] = {}
 for poly in ("poly-128", "clist_mt19937"):
     shutil.copy(f"{poly}.txt", "jump-poly.txt")
     fn = "_jump_tester" if poly == "clist_mt19937" else "jumped"

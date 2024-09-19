@@ -17,7 +17,7 @@ cdef double chacha_double(void* st) noexcept nogil:
 
 cdef class ChaCha(BitGenerator):
     """
-    ChaCha(seed=None, *, counter=None, key=None, rounds=20, mode=None)
+    ChaCha(seed=None, *, counter=None, key=None, rounds=20)
 
     Container for the ChaCha family of Counter pseudo-random number generators
 
@@ -44,12 +44,6 @@ cdef class ChaCha(BitGenerator):
         The standard number of rounds in 20. Smaller values, usually 8 or
         more, can be used to reduce security properties of the random stream
         while improving performance.
-    mode : {None, "sequence", "legacy"}, optional
-        The seeding mode to use. "legacy" uses the legacy
-        SplitMix64-based initialization. "sequence" uses a SeedSequence
-        to transforms the seed into an initial state. None defaults to
-        "sequence".
-
 
     Attributes
     ----------
@@ -60,7 +54,7 @@ cdef class ChaCha(BitGenerator):
         lock.
     seed_seq : {None, SeedSequence}
         The SeedSequence instance used to initialize the generator if mode is
-        "sequence" or is seed is a SeedSequence. None if mode is "legacy".
+        "sequence" or is seed is a SeedSequence. 
 
     Notes
     -----
@@ -134,8 +128,8 @@ cdef class ChaCha(BitGenerator):
     .. [1] Bernstein, D. J.. ChaCha, a variant of Salsa20.
          http://cr.yp.to/papers.html#chacha. 2008.01.28.
     """
-    def __init__(self, seed=None, *, counter=None, key=None, rounds=20, mode=None):
-        BitGenerator.__init__(self, seed, mode)
+    def __init__(self, seed=None, *, counter=None, key=None, rounds=20):
+        BitGenerator.__init__(self, seed)
         self.rng_state = <chacha_state_t *>PyArray_malloc_aligned(
             sizeof(chacha_state_t)
         )
@@ -155,7 +149,10 @@ cdef class ChaCha(BitGenerator):
             PyArray_free_aligned(self.rng_state)
 
     def _seed_from_seq(self, counter=None):
-        state = self.seed_seq.generate_state(4, np.uint64)
+        try:
+            state = self.seed_seq.generate_state(4, np.uint64)
+        except AttributeError:
+            state = self._seed_seq.generate_state(4, np.uint64)
         self.seed(key=state, counter=counter)
 
     @property
@@ -228,8 +225,12 @@ cdef class ChaCha(BitGenerator):
             raise ValueError("seed and key cannot be both used")
         if key is None:
             BitGenerator._seed_with_seed_sequence(self, seed, counter=counter)
-            if self.seed_seq is not None:
-                return
+            try:
+                if self.seed_seq is not None:
+                    return
+            except AttributeError:
+                if self._seed_seq is not None:
+                    return
 
         seed = object_to_int(seed, 256, "seed")
         key = object_to_int(key, 256, "key")
@@ -362,7 +363,7 @@ cdef class ChaCha(BitGenerator):
         """
         cdef ChaCha bit_generator
 
-        bit_generator = self.__class__(seed=self._copy_seed(), mode=self.mode)
+        bit_generator = self.__class__(seed=self._copy_seed())
         bit_generator.state = self.state
         bit_generator.jump_inplace(iter)
 

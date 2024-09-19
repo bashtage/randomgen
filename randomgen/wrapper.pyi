@@ -1,5 +1,6 @@
+from collections.abc import Callable
 from ctypes import c_void_p
-from typing import Any, Callable, Literal, Optional
+from typing import Any, Literal
 
 from numba.core.ccallback import CFunc
 
@@ -8,14 +9,14 @@ from randomgen.common import BitGenerator
 class UserBitGenerator(BitGenerator):
     def __init__(
         self,
-        next_raw: Optional[Callable[[int], int]],
+        next_raw: Callable[[int], int] | None,
         bits: Literal[32, 64] = ...,
-        next_64: Optional[Callable[[int], int]] = ...,
-        next_32: Optional[Callable[[int], int]] = ...,
-        next_double: Optional[Callable[[int], float]] = ...,
-        state: Optional[int] = ...,
-        state_getter: Optional[Callable[[], Any]] = ...,
-        state_setter: Optional[Callable[[Any], None]] = ...,
+        next_64: Callable[[int], int] | None = ...,
+        next_32: Callable[[int], int] | None = ...,
+        next_double: Callable[[int], float] | None = ...,
+        state: int | None = ...,
+        state_getter: Callable[[], Any] | None = ...,
+        state_setter: Callable[[Any], None] | None = ...,
     ) -> None: ...
     @property
     def state(self) -> Any: ...
@@ -29,8 +30,8 @@ class UserBitGenerator(BitGenerator):
         next_32: CFunc,
         next_double: CFunc,
         state: int,
-        state_getter: Optional[Callable[[], Any]] = ...,
-        state_setter: Optional[Callable[[Any], None]] = ...,
+        state_getter: Callable[[], Any] | None = ...,
+        state_setter: Callable[[Any], None] | None = ...,
     ) -> UserBitGenerator: ...
     @classmethod
     def from_ctypes(
@@ -40,6 +41,6 @@ class UserBitGenerator(BitGenerator):
         next_32: Any,
         next_double: Any,
         state: c_void_p,
-        state_getter: Optional[Callable[[], Any]] = ...,
-        state_setter: Optional[Callable[[Any], None]] = ...,
+        state_getter: Callable[[], Any] | None = ...,
+        state_setter: Callable[[Any], None] | None = ...,
     ) -> UserBitGenerator: ...

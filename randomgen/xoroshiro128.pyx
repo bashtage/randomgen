@@ -29,7 +29,7 @@ cdef double xoroshiro128plusplus_double(void* st) noexcept nogil:
 
 cdef class Xoroshiro128(BitGenerator):
     """
-    Xoroshiro128(seed=None, *, mode=None, plusplus=False)
+    Xoroshiro128(seed=None, *, plusplus=False)
 
     Container for the xoroshiro128+/++ pseudo-random number generator.
 
@@ -42,11 +42,6 @@ cdef class Xoroshiro128(BitGenerator):
         ``None``, then  data is read from ``/dev/urandom`` (or the Windows
         analog) if available. If unavailable, a hash of the time and process
         ID is used.
-    mode : {None, "sequence", "legacy"}
-        The seeding mode to use. "legacy" uses the legacy
-        SplitMix64-based initialization. "sequence" uses a SeedSequence
-        to transforms the seed into an initial state.  None defaults to
-        "sequence".
     plusplus : bool, default False
         Whether to use the ++ version (xoroshiro128++). The default is False
         which uses the xoroshiro128+ PRNG which
@@ -60,7 +55,7 @@ cdef class Xoroshiro128(BitGenerator):
         lock.
     seed_seq : {None, SeedSequence}
         The SeedSequence instance used to initialize the generator if mode is
-        "sequence" or is seed is a SeedSequence. None if mode is "legacy".
+        "sequence" or is seed is a SeedSequence. 
 
     Notes
     -----
@@ -129,8 +124,8 @@ cdef class Xoroshiro128(BitGenerator):
     .. [1] "xoroshiro+ / xorshift* / xorshift+ generators and the PRNG shootout",
            https://prng.di.unimi.it/
     """
-    def __init__(self, seed=None, *, mode=None, plusplus=False):
-        BitGenerator.__init__(self, seed, mode)
+    def __init__(self, seed=None, *, plusplus=False):
+        BitGenerator.__init__(self, seed)
         self.seed(seed)
         self._plusplus = plusplus
         self._set_generators()
@@ -156,7 +151,10 @@ cdef class Xoroshiro128(BitGenerator):
         cdef int i
         cdef uint64_t *state_arr
 
-        state = self.seed_seq.generate_state(2, np.uint64)
+        try:
+            state = self.seed_seq.generate_state(2, np.uint64)
+        except AttributeError:
+            state = self._seed_seq.generate_state(2, np.uint64)
         state_arr = <np.uint64_t *>np.PyArray_DATA(state)
         for i in range(2):
             self.rng_state.s[i] = state[i]
@@ -187,8 +185,12 @@ cdef class Xoroshiro128(BitGenerator):
             If seed values are out of range for the PRNG.
         """
         BitGenerator._seed_with_seed_sequence(self, seed)
-        if self.seed_seq is not None:
-            return
+        try:
+            if self.seed_seq is not None:
+                return
+        except AttributeError:
+            if self._seed_seq is not None:
+                return
         # Legacy seeding
         ub = 2 ** 64
         if seed is None:
@@ -267,7 +269,7 @@ cdef class Xoroshiro128(BitGenerator):
         """
         cdef Xoroshiro128 bit_generator
 
-        bit_generator = self.__class__(seed=self._copy_seed(), mode=self.mode)
+        bit_generator = self.__class__(seed=self._copy_seed())
         bit_generator.state = self.state
         bit_generator.jump_inplace(iter)
 

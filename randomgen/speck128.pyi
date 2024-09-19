@@ -1,5 +1,3 @@
-from typing import Dict, Optional, Union
-
 import numpy as np
 
 from randomgen.common import BitGenerator
@@ -10,18 +8,18 @@ SPECK_MAX_ROUNDS: int
 class SPECK128(BitGenerator):
     def __init__(
         self,
-        seed: Optional[IntegerSequenceSeed] = ...,
+        seed: IntegerSequenceSeed | None = ...,
         *,
-        counter: Optional[Union[int, np.ndarray]] = ...,
-        key: Optional[Union[int, np.ndarray]] = ...,
+        counter: int | np.ndarray | None = ...,
+        key: int | np.ndarray | None = ...,
         rounds: int = ...,
-        mode: Optional[SeedMode] = ...
+        mode: SeedMode | None = ...
     ) -> None: ...
     def seed(
         self,
-        seed: Optional[IntegerSequenceSeed] = ...,
-        counter: Optional[Union[int, np.ndarray]] = ...,
-        key: Optional[Union[int, np.ndarray]] = ...,
+        seed: IntegerSequenceSeed | None = ...,
+        counter: int | np.ndarray | None = ...,
+        key: int | np.ndarray | None = ...,
     ) -> None: ...
     @property
     def use_sse41(self) -> bool: ...
@@ -30,10 +28,10 @@ class SPECK128(BitGenerator):
     @property
     def state(
         self,
-    ) -> Dict[str, Union[str, int, Dict[str, Union[int, np.ndarray]]]]: ...
+    ) -> dict[str, str | int | dict[str, int | np.ndarray]]: ...
     @state.setter
     def state(
-        self, value: Dict[str, Union[str, int, Dict[str, Union[int, np.ndarray]]]]
+        self, value: dict[str, str | int | dict[str, int | np.ndarray]]
     ) -> None: ...
     def jump(self, iter: int = ...) -> SPECK128: ...
     def jumped(self, iter: int = ...) -> SPECK128: ...

@@ -20,7 +20,7 @@ cdef double hc128_double(void* st) noexcept nogil:
 
 cdef class HC128(BitGenerator):
     """
-    HC128(seed=None, *, key=None, mode=None)
+    HC128(seed=None, *, key=None)
 
     Container for the HC-128 cipher-based pseudo-random number generator
 
@@ -37,11 +37,6 @@ cdef class HC128(BitGenerator):
         Key for HC128. The key is a 256-bit integer that contains both the
         key (lower 128 bits) and initial values (upper 128-bits) for the
         HC-128 cipher. key and seed cannot both be used.
-    mode : {None, "sequence", "legacy"}, optional
-        The seeding mode to use. "legacy" uses the legacy
-        SplitMix64-based initialization. "sequence" uses a SeedSequence
-        to transforms the seed into an initial state.  None defaults to
-        "sequence".
 
     Attributes
     ----------
@@ -52,7 +47,7 @@ cdef class HC128(BitGenerator):
         lock.
     seed_seq : {None, SeedSequence}
         The SeedSequence instance used to initialize the generator if mode is
-        "sequence" or is seed is a SeedSequence. None if mode is "legacy".
+        "sequence" or is seed is a SeedSequence. 
 
     Notes
     -----
@@ -112,8 +107,8 @@ cdef class HC128(BitGenerator):
     .. [2] Wu, Hongjun, "Stream Ciphers HC-128 and HC-256".
         https://www.ntu.edu.sg/home/wuhj/research/hc/index.html)
     """
-    def __init__(self, seed=None, *, key=None, mode=None):
-        BitGenerator.__init__(self, seed, mode)
+    def __init__(self, seed=None, *, key=None):
+        BitGenerator.__init__(self, seed)
         self.seed(seed, key)
 
         self._bitgen.state = <void *>&self.rng_state
@@ -123,7 +118,10 @@ cdef class HC128(BitGenerator):
         self._bitgen.next_raw = &hc128_uint64
 
     def _seed_from_seq(self):
-        state = self.seed_seq.generate_state(4, np.uint64)
+        try:
+            state = self.seed_seq.generate_state(4, np.uint64)
+        except AttributeError:
+            state = self._seed_seq.generate_state(4, np.uint64)
         self.seed(key=state)
 
     def seed(self, seed=None, key=None):
@@ -158,8 +156,12 @@ cdef class HC128(BitGenerator):
             raise ValueError("seed and key cannot be simultaneously used")
         if key is None:
             BitGenerator._seed_with_seed_sequence(self, seed)
-            if self.seed_seq is not None:
-                return
+            try:
+                if self.seed_seq is not None:
+                    return
+            except AttributeError:
+                if self._seed_seq is not None:
+                    return
 
         seed = object_to_int(seed, 256, "seed")
         key = object_to_int(key, 256, "key")

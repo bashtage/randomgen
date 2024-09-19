@@ -43,7 +43,7 @@ cdef double lcg128mix_double(void* st) noexcept nogil:
 
 cdef class PCG64(BitGenerator):
     """
-    PCG64(seed=None, inc=0, *, variant="xsl-rr", mode=None)
+    PCG64(seed=None, inc=0, *, variant="xsl-rr", mode="sequence")
 
     Container for the PCG-64 pseudo-random number generator.
 
@@ -66,13 +66,12 @@ cdef class PCG64(BitGenerator):
         returns the value before advancing the state. This variant is
         PCG64 2.0. "cm-dxsm" (cheap multiplier-dxsm), 2 and "2.0" are aliases
         for "dxsm". None trusts randomgen to chose the variant.
-    mode : {None, "sequence", "legacy", "numpy"}, optional
-        The seeding mode to use. "legacy" uses the legacy
-        SplitMix64-based initialization. "sequence" uses a SeedSequence
-        to transforms the seed into an initial state. "numpy" also uses a
-        SeedSequence but seeds the generator in a way that is identical to NumPy.
-        When using "numpy", ``inc`` must be ``None``. Additionally, to match NumPy,
-        variant must be ``xsl-rr`` (this is not checked). None defaults to "sequence".
+    mode : {None, "sequence", "numpy"}, optional
+        "sequence" uses a SeedSequence to transforms the seed into an initial
+        state. "numpy" also uses a SeedSequence but seeds the generator in a
+        way that is identical to NumPy. When using "numpy", ``inc`` must be
+        ``None``. Additionally, to match NumPy, variant must be ``xsl-rr``
+        (this is not checked).
 
     Attributes
     ----------
@@ -83,7 +82,7 @@ cdef class PCG64(BitGenerator):
         lock.
     seed_seq : {None, SeedSequence}
         The SeedSequence instance used to initialize the generator if mode is
-        "sequence" or is seed is a SeedSequence. None if mode is "legacy".
+        "sequence" or is seed is a SeedSequence. 
 
     Notes
     -----
@@ -147,7 +146,7 @@ cdef class PCG64(BitGenerator):
     .. [2] O'Neill, Melissa E. "PCG: A Family of Simple Fast Space-Efficient
            Statistically Good Algorithms for Random Number Generation"
     """
-    def __init__(self, seed=None, inc=None, *, variant="xsl-rr", mode=None):
+    def __init__(self, seed=None, inc=None, *, variant="xsl-rr", mode="sequence"):
         BitGenerator.__init__(self, seed, mode)
         self.rng_state.pcg_state = <pcg64_random_t *>PyArray_malloc_aligned(sizeof(pcg64_random_t))
         inc = None if seed is None else inc
@@ -189,7 +188,7 @@ cdef class PCG64(BitGenerator):
             self._bitgen.next_raw = &pcg64_cm_dxsm_uint64
 
     def _supported_modes(self):
-        return "legacy", "sequence", "numpy"
+        return "sequence", "numpy"
 
     def __repr__(self):
         out = object.__repr__(self)
@@ -208,7 +207,10 @@ cdef class PCG64(BitGenerator):
 
     def _seed_from_seq(self, inc=0):
         size = 4 if inc is None else 2
-        state = self.seed_seq.generate_state(size, np.uint64)
+        try:
+            state = self.seed_seq.generate_state(size, np.uint64)
+        except AttributeError:
+            state = self._seed_seq.generate_state(size, np.uint64)
         if inc is None:
             _inc = state[2:]
         else:
@@ -267,8 +269,13 @@ cdef class PCG64(BitGenerator):
                 raise TypeError(err_msg)
 
         BitGenerator._seed_with_seed_sequence(self, seed, inc=inc)
-        if self.seed_seq is not None:
-            return
+        try:
+            if self.seed_seq is not None:
+                return
+        except AttributeError:
+            if self._seed_seq is not None:
+                return
+
 
         if inc is None:
             _inc = <np.ndarray>random_entropy(4, "auto")
@@ -541,7 +548,7 @@ cdef class LCG128Mix(BitGenerator):
         lock.
     seed_seq : {None, SeedSequence}
         The SeedSequence instance used to initialize the generator if mode is
-        "sequence" or is seed is a SeedSequence. None if mode is "legacy".
+        "sequence" or is seed is a SeedSequence. 
 
     Notes
     -----
@@ -715,7 +722,10 @@ cdef class LCG128Mix(BitGenerator):
         cdef np.ndarray mult_vec, state, _inc
 
         size = 4 if inc is None else 2
-        state = np.array(self.seed_seq.generate_state(2, np.uint64))
+        try:
+            state = np.array(self.seed_seq.generate_state(2, np.uint64))
+        except AttributeError:
+            state = np.array(self._seed_seq.generate_state(2, np.uint64))
         mult_vec = np.empty(2, dtype=np.uint64)
         mult_vec[0] = self.multiplier >> 64
         mult_vec[1] = self.multiplier & 0xFFFFFFFFFFFFFFFF
@@ -980,7 +990,7 @@ cdef class PCG64DXSM(PCG64):
         lock.
     seed_seq : {None, SeedSequence}
         The SeedSequence instance used to initialize the generator if mode is
-        "sequence" or is seed is a SeedSequence. None if mode is "legacy".
+        "sequence" or is seed is a SeedSequence. 
 
     Notes
     -----
@@ -1051,7 +1061,7 @@ cdef class PCG64DXSM(PCG64):
     """
 
     def __init__(self, seed=None, inc=None):
-        PCG64.__init__(self, seed, inc, variant="dxsm", mode="sequence")
+        PCG64.__init__(self, seed, inc, variant="dxsm")
 
     @property
     def state(self):

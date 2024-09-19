@@ -1,3 +1,6 @@
+# flake8: noqa
+#
+
 known_hashes = {
     ("ChaCha", "seed"): {
         "random_values": "0dda65c819197b3ca467f053869aa1f4a4123cb2e55a290453651916dd7002bd",

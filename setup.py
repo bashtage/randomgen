@@ -4,6 +4,7 @@ from setuptools.extension import Extension
 import glob
 import os
 from os.path import exists, join, splitext
+from pathlib import Path
 import platform
 import struct
 import sys
@@ -69,7 +70,9 @@ DEBUG = os.environ.get("RANDOMGEN_DEBUG", False) in (1, "1", "True", "true")
 if DEBUG:
     print("Debug build, RANDOMGEN_DEBUG=" + os.environ["RANDOMGEN_DEBUG"])
 
-EXTRA_INCLUDE_DIRS = [np.get_include()]
+NUMPY_INCLUDE = np.get_include()
+NUMPY_RANDOM_INCLUDE = os.path.join(NUMPY_INCLUDE, "random")
+EXTRA_INCLUDE_DIRS = [NUMPY_INCLUDE, NUMPY_RANDOM_INCLUDE]
 EXTRA_LINK_ARGS = [] if os.name == "nt" else []
 EXTRA_LIBRARIES = ["m"] if os.name != "nt" else []
 # Undef for manylinux
@@ -141,39 +144,35 @@ for templated_file in files:
 
 extensions = []
 for name in (
-    "bounded_integers",
+    # "bounded_integers",
     "common",
     "entropy",
     "generator",
-    "legacy.bounded_integers",
-    "mtrand",
     "_seed_sequence",
 ):
     extra_source = []
     extra_macros = []
     extra_incl = []
 
+    libraries = []
+    library_dirs = []
     source = ["randomgen/{}.pyx".format(name.replace(".", "/"))]
-
-    legacy = name in ("legacy.bounded_integers", "mtrand")
-    if name in ("bounded_integers", "generator") or legacy:
-        extra_source = [src_join("distributions", "distributions.c")]
-        if name == "generator":
-            extra_source += [
-                src_join("distributions", "logfactorial.c"),
-                src_join("distributions", "hypergeometric.c"),
-            ]
-        if legacy:
-            extra_source += [src_join("legacy", "legacy-distributions.c")]
-            extra_macros = [("RANDOMGEN_LEGACY", "1")]
+    if name == "generator":
+        extra_source = [src_join("distributions", "rg-distributions.c")]
     elif name == "entropy":
         extra_source = [src_join("entropy", "entropy.c")]
         extra_incl = [src_join("entropy")]
-
+    if name == "generator":
+        libraries = ["npymath", "npyrandom"]
+        library_dirs = [
+            str((Path(NUMPY_INCLUDE) / ".." / "lib").resolve()),
+            str((Path(NUMPY_INCLUDE) / ".." / ".." / "random" / "lib").resolve()),
+        ]
     ext = Extension(
         f"randomgen.{name}",
         source + extra_source,
-        libraries=EXTRA_LIBRARIES,
+        libraries=EXTRA_LIBRARIES + libraries,
+        library_dirs=library_dirs,
         include_dirs=EXTRA_INCLUDE_DIRS + extra_incl,
         extra_compile_args=EXTRA_COMPILE_ARGS,
         extra_link_args=EXTRA_LINK_ARGS,

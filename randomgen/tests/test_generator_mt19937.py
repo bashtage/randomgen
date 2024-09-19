@@ -46,16 +46,13 @@ def endpoint(request):
 class TestSeed:
     def test_invalid_scalar(self):
         # seed must be an unsigned 32 bit integer
-        assert_raises(TypeError, MT19937, -0.5, mode="legacy")
-        assert_raises(ValueError, MT19937, -1, mode="legacy")
+        assert_raises(TypeError, MT19937, -0.5)
+        assert_raises(ValueError, MT19937, -1)
 
     def test_invalid_array(self):
         # seed must be an unsigned 32 bit integer
-        assert_raises(TypeError, MT19937, [-0.5], mode="legacy")
-        assert_raises(ValueError, MT19937, [-1], mode="legacy")
-        assert_raises(ValueError, MT19937, [4294967296], mode="legacy")
-        assert_raises(ValueError, MT19937, [1, 2, 4294967296], mode="legacy")
-        assert_raises(ValueError, MT19937, [1, -2, 4294967296], mode="legacy")
+        assert_raises(TypeError, MT19937, [-0.5])
+        assert_raises(ValueError, MT19937, [-1])
 
 
 @pytest.mark.skipif(NP_LT_118, reason="Can only test with NumPy >= 1.18")
@@ -66,7 +63,7 @@ def test_jumped(config):
 
     seed = seed_tpl[0] if len(seed_tpl) == 1 else list(seed_tpl)
     initial_state = np.random.MT19937(seed).state
-    mt19937 = MT19937(mode="sequence")
+    mt19937 = MT19937()
     mt19937.state = initial_state
     mt19937.random_raw(step)
     if typ == "jumped":

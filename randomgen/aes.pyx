@@ -17,7 +17,7 @@ cdef double aes_double(void* st) noexcept nogil:
 
 cdef class AESCounter(BitGenerator):
     """
-    AESCounter(seed=None, *, counter=None, key=None, mode=None)
+    AESCounter(seed=None, *, counter=None, key=None)
 
     Container for the AES Counter pseudo-random number generator.
 
@@ -38,10 +38,6 @@ cdef class AESCounter(BitGenerator):
         another RNG before use, the value in key is directly set. Can be either
         a Python int in [0, 2**128) or a 2-element uint64 array.
         key and seed cannot both be used.
-    mode : {None, "sequence", "legacy"}, optional
-        The seeding mode to use. "legacy" uses the legacy
-        SplitMix64-based initialization. "sequence" uses a SeedSequence
-        to transforms the seed into an initial state. None defaults to "sequence".
 
     Attributes
     ----------
@@ -52,7 +48,7 @@ cdef class AESCounter(BitGenerator):
         lock.
     seed_seq : {None, SeedSequence}
         The SeedSequence instance used to initialize the generator if mode is
-        "sequence" or is seed is a SeedSequence. None if mode is "legacy".
+        "sequence" or is seed is a SeedSequence. 
 
     Notes
     -----
@@ -127,8 +123,8 @@ cdef class AESCounter(BitGenerator):
     .. [1] Advanced Encryption Standard. (n.d.). In Wikipedia. Retrieved
         June 1, 2019, from https://en.wikipedia.org/wiki/Advanced_Encryption_Standard
     """
-    def __init__(self, seed=None, *, counter=None, key=None, mode=None):
-        BitGenerator.__init__(self, seed, mode)
+    def __init__(self, seed=None, *, counter=None, key=None):
+        BitGenerator.__init__(self, seed)
         # Calloc since ctr needs to be 0
         self.rng_state = <aesctr_state_t *>PyArray_calloc_aligned(
             sizeof(aesctr_state_t), 1
@@ -179,7 +175,10 @@ cdef class AESCounter(BitGenerator):
         aesctr_use_aesni(bool(value))
 
     def _seed_from_seq(self, counter=None):
-        state = self.seed_seq.generate_state(2, np.uint64)
+        try:
+            state = self.seed_seq.generate_state(2, np.uint64)
+        except AttributeError:
+            state = self._seed_seq.generate_state(2, np.uint64)
         self.seed(key=state, counter=counter)
         self._reset_state_variables()
 
@@ -227,8 +226,12 @@ cdef class AESCounter(BitGenerator):
             raise ValueError("seed and key cannot be both used")
         if key is None:
             BitGenerator._seed_with_seed_sequence(self, seed, counter=counter)
-            if self.seed_seq is not None:
-                return
+            try:
+                if self.seed_seq is not None:
+                    return
+            except AttributeError:
+                if self._seed_seq is not None:
+                    return
 
         seed = object_to_int(seed, 128, "seed")
         key = object_to_int(key, 128, "key")
@@ -373,7 +376,7 @@ cdef class AESCounter(BitGenerator):
         """
         cdef AESCounter bit_generator
 
-        bit_generator = self.__class__(seed=self._copy_seed(), mode=self.mode)
+        bit_generator = self.__class__(seed=self._copy_seed())
         bit_generator.state = self.state
         bit_generator.jump_inplace(iter)
 

@@ -1,4 +1,4 @@
-from typing import Dict, Optional, Sequence, Union
+from collections.abc import Sequence
 
 from numpy import ndarray
 
@@ -8,12 +8,12 @@ from randomgen.typing import IntegerSequenceSeed, SeedMode
 class ChaCha(BitGenerator):
     def __init__(
         self,
-        seed: Optional[IntegerSequenceSeed] = ...,
+        seed: IntegerSequenceSeed | None = ...,
         *,
-        counter: Optional[Union[int, Sequence[int]]] = ...,
-        key: Optional[Union[int, Sequence[int]]] = ...,
+        counter: int | Sequence[int] | None = ...,
+        key: int | Sequence[int] | None = ...,
         rounds: int = ...,
-        mode: Optional[SeedMode] = ...
+        mode: SeedMode | None = ...
     ) -> None: ...
     @property
     def use_simd(self) -> bool: ...
@@ -21,16 +21,14 @@ class ChaCha(BitGenerator):
     def use_simd(self, value: bool) -> None: ...
     def seed(
         self,
-        seed: Optional[IntegerSequenceSeed] = ...,
-        counter: Optional[Union[int, Sequence[int]]] = ...,
-        key: Optional[Union[int, Sequence[int]]] = ...,
+        seed: IntegerSequenceSeed | None = ...,
+        counter: int | Sequence[int] | None = ...,
+        key: int | Sequence[int] | None = ...,
     ) -> None: ...
     @property
-    def state(self) -> Dict[str, Union[str, Dict[str, Union[ndarray, int]]]]: ...
+    def state(self) -> dict[str, str | dict[str, ndarray | int]]: ...
     @state.setter
-    def state(
-        self, value: Dict[str, Union[str, Dict[str, Union[ndarray, int]]]]
-    ) -> None: ...
+    def state(self, value: dict[str, str | dict[str, ndarray | int]]) -> None: ...
     def jump(self, iter: int = ...) -> ChaCha: ...
     def jumped(self, iter: int = ...) -> ChaCha: ...
     def advance(self, delta: int) -> ChaCha: ...

@@ -38,6 +38,6 @@ def endpoint(request):
 
 
 def test_generator_raises(bit_generator):
-    bg = bit_generator(mode="sequence")
+    bg = bit_generator()
     with pytest.raises(NotImplementedError):
         bg.generator

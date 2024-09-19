@@ -2,30 +2,28 @@
 #cython: wraparound=False, nonecheck=False, boundscheck=False, cdivision=True, language_level=3, binding=True
 import warnings
 
-import numpy as np
+from libc.math cimport sqrt
+from libc.stdint cimport (
+    int64_t,
+    uint32_t,
+    uint64_t,
+)
 
+import numpy as np
+cimport numpy as np
 from randomgen.pcg64 import PCG64
 from cpython.pycapsule cimport PyCapsule_IsValid, PyCapsule_GetPointer
 from cpython cimport (PyComplex_FromDoubles,
                       PyComplex_ImagAsDouble, PyComplex_RealAsDouble,
                       )
 
-from randomgen.bounded_integers cimport *
-from randomgen.common cimport *
-from randomgen.distributions cimport *
 from randomgen cimport api
-from typing import Callable, Any
+from numpy.random cimport bitgen_t
+from numpy.random.c_distributions cimport random_standard_normal, random_standard_normal_fill
+from randomgen.distributions cimport random_double_fill, random_float, random_long_double_size, random_long_double_fill, random_wishart_large_df
+from randomgen.common cimport double_fill, float_fill, check_output, compute_complex, validate_output_shape
 
-__all__ = ["Generator", "beta", "binomial", "bytes", "chisquare", "choice",
-           "complex_normal", "dirichlet", "exponential", "f", "gamma",
-           "geometric", "gumbel", "hypergeometric", "integers", "laplace",
-           "logistic", "lognormal", "logseries", "multinomial",
-           "multivariate_normal", "negative_binomial", "noncentral_chisquare",
-           "noncentral_f", "normal", "pareto", "permutation",
-           "poisson", "power", "randint", "random",  "rayleigh", "shuffle",
-           "standard_cauchy", "standard_exponential", "standard_gamma",
-           "standard_normal", "standard_t", "triangular",
-           "uniform", "vonmises", "wald", "weibull", "zipf", "ExtendedGenerator"]
+__all__ = ["ExtendedGenerator"]
 
 np.import_array()
 
@@ -109,30 +107,6 @@ cdef _factorize(cov, meth, check_valid, tol, rank):
     return _factor
 
 
-cdef class Generator:
-    """
-    Generator(bit_generator=None)
-
-    Generator has been removed in the 1.23 release.
-
-    Use ``numpy.random.Generator``. Unique features of Generator
-    have been moved to randomgen.generator.ExtendedGenerator.
-
-    See Also
-    --------
-    numpy.random.Generator
-    numpy.random.default_rng
-    ExtendedGenerator
-    """
-
-    def __init__(self, bit_generator=None):
-        raise NotImplementedError("""\
-Generator has been deprecated removed in the 1.23 release.
-
-Use ``numpy.random.Generator``. Unique features of Generator
-have been moved to randomgen.generator.ExtendedGenerator. 
-""")
-
 cdef class ExtendedGenerator:
     """
     ExtendedGenerator(bit_generator=None)
@@ -175,12 +149,11 @@ cdef class ExtendedGenerator:
 
     cdef public object _bit_generator
     cdef bitgen_t _bitgen
-    cdef binomial_t _binomial
     cdef object lock, _generator
 
     def __init__(self, bit_generator=None):
         if bit_generator is None:
-            bit_generator = PCG64(mode="sequence", variant="dxsm")
+            bit_generator = PCG64(variant="dxsm")
         self._bit_generator = bit_generator
 
         capsule = bit_generator.capsule
@@ -190,12 +163,8 @@ cdef class ExtendedGenerator:
                              "be instantized.")
         self._bitgen = (<bitgen_t *> PyCapsule_GetPointer(capsule, name))[0]
         self.lock = bit_generator.lock
-        try:
-            from numpy.random import Generator
-            self._generator = Generator(bit_generator)
-        except ImportError:
-            from randomgen.generator import Generator
-            self._generator = Generator(bit_generator)
+        from numpy.random import Generator
+        self._generator = Generator(bit_generator)
 
     def __repr__(self):
         out = object.__repr__(self)
@@ -658,8 +627,8 @@ cdef class ExtendedGenerator:
                 raise ValueError("Im(relation) ** 2 > Re(gamma ** 2 - relation** 2)")
 
             if size is None:
-                f_real = random_gauss_zig(&self._bitgen)
-                f_imag = random_gauss_zig(&self._bitgen)
+                f_real = random_standard_normal(&self._bitgen)
+                f_imag = random_standard_normal(&self._bitgen)
 
                 compute_complex(&f_real, &f_imag, floc_r, floc_i, fvar_r,
                                 fvar_i, f_rho)
@@ -672,8 +641,8 @@ cdef class ExtendedGenerator:
             j = 0
             with self.lock, nogil:
                 for i in range(n):
-                    f_real = random_gauss_zig(&self._bitgen)
-                    f_imag = random_gauss_zig(&self._bitgen)
+                    f_real = random_standard_normal(&self._bitgen)
+                    f_imag = random_standard_normal(&self._bitgen)
                     compute_complex(&f_real, &f_imag, floc_r, floc_i, fvar_r,
                                     fvar_i, f_rho)
                     randoms_data[j] = f_real
@@ -714,7 +683,7 @@ cdef class ExtendedGenerator:
         with self.lock, nogil:
             n2 = 2 * n  # Avoid compiler noise for cast
             for i in range(n2):
-                randoms_data[i] = random_gauss_zig(&self._bitgen)
+                randoms_data[i] = random_standard_normal(&self._bitgen)
         with nogil:
             j = 0
             for i in range(n):
@@ -731,7 +700,7 @@ cdef class ExtendedGenerator:
         return randoms
 
     cdef object random_wishart_small_df(self, int64_t df, np.npy_intp dim, np.npy_intp num, object n):
-        double_fill(&random_gauss_zig_fill, &self._bitgen, None, self.lock, n)
+        double_fill(&random_standard_normal_fill, &self._bitgen, None, self.lock, n)
         return np.matmul(np.transpose(n,(0, 2, 1)),n)
 
     def standard_wishart(self, int64_t df, np.npy_intp dim, size=None, rescale=True):
@@ -1242,61 +1211,3 @@ and the trailing dimensions must match exactly so that
             larr.view(np.float64), factors, size=size, method="factor"
         )
         return out.view(complex)
-
-
-def _removed(name: str) -> Callable[[Any, Any],None]:
-    def f(*args, **kwargs):
-        raise NotImplementedError(
-            f"{name} has been removed. Use NumPy's Generator"
-        )
-    return f
-
-
-beta = _removed("beta")
-binomial = _removed("binomial")
-bytes = _removed("bytes")
-chisquare = _removed("chisquare")
-choice = _removed("choice")
-complex_normal = _removed("complex_normal")
-dirichlet = _removed("dirichlet")
-exponential = _removed("exponential")
-f = _removed("f")
-gamma = _removed("gamma")
-geometric = _removed("geometric")
-gumbel = _removed("gumbel")
-hypergeometric = _removed("hypergeometric")
-integers = _removed("integers")
-laplace = _removed("laplace")
-logistic = _removed("logistic")
-lognormal = _removed("lognormal")
-logseries = _removed("logseries")
-multinomial = _removed("multinomial")
-multivariate_normal = _removed("multivariate_normal")
-negative_binomial = _removed("negative_binomial")
-noncentral_chisquare = _removed("noncentral_chisquare")
-noncentral_f = _removed("noncentral_f")
-normal = _removed("normal")
-pareto = _removed("pareto")
-permutation = _removed("permutation")
-poisson = _removed("poisson")
-power = _removed("power")
-rand = _removed("rand")
-randint = _removed("randint")
-randn = _removed("randn")
-random_integers = _removed("random_integers")
-random_sample = _removed("random_sample")
-random = _removed("random")
-rayleigh = _removed("rayleigh")
-shuffle = _removed("shuffle")
-standard_cauchy = _removed("standard_cauchy")
-standard_exponential = _removed("standard_exponential")
-standard_gamma = _removed("standard_gamma")
-standard_normal = _removed("standard_normal")
-standard_t = _removed("standard_t")
-tomaxint = _removed("tomaxint")
-triangular = _removed("triangular")
-uniform = _removed("uniform")
-vonmises = _removed("vonmises")
-wald = _removed("wald")
-weibull = _removed("weibull")
-zipf = _removed("zipf")

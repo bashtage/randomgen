@@ -24,7 +24,7 @@ cdef uint64_t pcg32_raw(void* st) noexcept nogil:
 
 cdef class PCG32(BitGenerator):
     """
-    PCG32(seed=None, inc=0, *, mode=None)
+    PCG32(seed=None, inc=0)
 
     Container for the PCG-32 pseudo-random number generator.
 
@@ -40,11 +40,6 @@ cdef class PCG32(BitGenerator):
         The increment in the LCG. Can be an integer in [0, 2**64] or ``None``.
         The default is 0. If `inc` is ``None``, then it is initialized using
         entropy.
-    mode : {None, "sequence", "legacy"}, optional
-        The seeding mode to use. "legacy" uses the legacy
-        SplitMix64-based initialization. "sequence" uses a SeedSequence
-        to transforms the seed into an initial state.  None defaults to
-        "sequence".
 
     Attributes
     ----------
@@ -55,7 +50,7 @@ cdef class PCG32(BitGenerator):
         lock.
     seed_seq : {None, SeedSequence}
         The SeedSequence instance used to initialize the generator if mode is
-        "sequence" or is seed is a SeedSequence. None if mode is "legacy".
+        "sequence" or is seed is a SeedSequence. 
 
     Notes
     -----
@@ -103,8 +98,8 @@ cdef class PCG32(BitGenerator):
     .. [2] O'Neill, Melissa E. "PCG: A Family of Simple Fast Space-Efficient
            Statistically Good Algorithms for Random Number Generation"
     """
-    def __init__(self, seed=None, inc=None, *, mode=None):
-        BitGenerator.__init__(self, seed, mode)
+    def __init__(self, seed=None, inc=None):
+        BitGenerator.__init__(self, seed)
         self.seed(seed, inc)
         self._bitgen.state = <void *>&self.rng_state
         self._bitgen.next_uint64 = &pcg32_uint64
@@ -115,11 +110,18 @@ cdef class PCG32(BitGenerator):
     def _seed_from_seq(self, inc=None):
         cdef uint64_t _inc
         if inc is None:
-            state = self.seed_seq.generate_state(2, np.uint64)
+            try:
+                state = self.seed_seq.generate_state(2, np.uint64)
+            except AttributeError:
+                state = self._seed_seq.generate_state(2, np.uint64)
             _inc = state[1]
         else:
-            state = self.seed_seq.generate_state(1, np.uint64)
+            try:
+                state = self.seed_seq.generate_state(1, np.uint64)
+            except AttributeError:
+                state = self._seed_seq.generate_state(1, np.uint64)
             _inc = <uint64_t>inc
+        print(state[0], _inc)
         pcg32_set_seed(&self.rng_state, <uint64_t>state[0], _inc)
 
     def seed(self, seed=None, inc=None):
@@ -155,8 +157,12 @@ cdef class PCG32(BitGenerator):
             if not np.isscalar(inc):
                 raise TypeError(err_msg)
         BitGenerator._seed_with_seed_sequence(self, seed, inc=inc)
-        if self.seed_seq is not None:
-            return
+        try:
+            if self.seed_seq is not None:
+                return
+        except AttributeError:
+            if self._seed_seq is not None:
+                return
 
         inc = 0 if inc is None else inc
         if seed is None:
@@ -310,7 +316,7 @@ cdef class PCG32(BitGenerator):
         """
         cdef PCG32 bit_generator
 
-        bit_generator = self.__class__(seed=self._copy_seed(), mode=self.mode)
+        bit_generator = self.__class__(seed=self._copy_seed())
         bit_generator.state = self.state
         bit_generator.jump_inplace(iter)
 

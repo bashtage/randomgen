@@ -1,6 +1,7 @@
+from __future__ import annotations
+
 import os
 import sys
-from typing import List, Union
 
 from randomgen._register import BitGenerators
 from randomgen.aes import AESCounter
@@ -8,13 +9,12 @@ from randomgen.chacha import ChaCha
 from randomgen.dsfmt import DSFMT
 from randomgen.efiix64 import EFIIX64
 from randomgen.entropy import random_entropy
-from randomgen.generator import ExtendedGenerator, Generator
+from randomgen.generator import ExtendedGenerator
 from randomgen.hc128 import HC128
 from randomgen.jsf import JSF
 from randomgen.lxm import LXM
 from randomgen.mt64 import MT64
 from randomgen.mt19937 import MT19937
-from randomgen.mtrand import RandomState
 from randomgen.pcg32 import PCG32
 from randomgen.pcg64 import PCG64, PCG64DXSM, LCG128Mix
 from randomgen.philox import Philox
@@ -43,7 +43,6 @@ __all__ = [
     "DSFMT",
     "EFIIX64",
     "ExtendedGenerator",
-    "Generator",
     "HC128",
     "JSF",
     "LCG128Mix",
@@ -56,7 +55,6 @@ __all__ = [
     "Philox",
     "RDRAND",
     "Romu",
-    "RandomState",
     "SFC64",
     "SFMT",
     "SPECK128",
@@ -74,7 +72,7 @@ __all__ = [
 ]
 
 
-def test(extra_args: Union[str, List[str]] = None) -> None:
+def test(extra_args: str | list[str] | None = None) -> None:
     try:
         import pytest
     except ImportError as err:

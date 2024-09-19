@@ -44,7 +44,7 @@ cdef class EFIIX64(BitGenerator):
         lock.
     seed_seq : {None, SeedSequence}
         The SeedSequence instance used to initialize the generator if mode is
-        "sequence" or is seed is a SeedSequence. None if mode is "legacy".
+        "sequence" or is seed is a SeedSequence. 
 
 
     Notes
@@ -104,7 +104,7 @@ cdef class EFIIX64(BitGenerator):
     _seed_seq_dtype = np.uint64
 
     def __init__(self, seed=None):
-        BitGenerator.__init__(self, seed, mode="sequence")
+        BitGenerator.__init__(self, seed)
         self.seed(seed)
 
         self._bitgen.state = <void *>&self.rng_state
@@ -120,7 +120,10 @@ cdef class EFIIX64(BitGenerator):
     def _seed_from_seq(self):
         cdef uint64_t *state_arr
 
-        state = self.seed_seq.generate_state(4, np.uint64)
+        try:
+            state = self.seed_seq.generate_state(4, np.uint64)
+        except AttributeError:
+            state = self._seed_seq.generate_state(4, np.uint64)
         state_arr = <np.uint64_t *>np.PyArray_DATA(state)
         efiix64_seed(&self.rng_state, state_arr)
         self._reset_state_variables()

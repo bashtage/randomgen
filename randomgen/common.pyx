@@ -7,7 +7,7 @@ except ImportError:
     from dummy_threading import Lock
 
 import numpy as np
-
+from numpy.random.bit_generator cimport BitGenerator as _BitGenerator
 from cpython cimport PyFloat_AsDouble
 cimport numpy as np
 
@@ -39,44 +39,22 @@ interface = namedtuple("interface", ["state_address", "state", "next_uint64",
 cdef bint RANDOMGEN_BIG_ENDIAN = sys.byteorder == "big"
 cdef bint RANDOMGEN_LITTLE_ENDIAN = not RANDOMGEN_BIG_ENDIAN
 
-cdef class BitGenerator:
+cdef class BitGenerator(_BitGenerator):
     """
     Abstract class for all BitGenerators
     """
-    def __init__(self, seed, mode=None):
+    def __init__(self, seed, mode="sequence"):
         if mode is not None and (not isinstance(mode, str) or mode.lower() not in self._supported_modes()):
-            raise ValueError("mode must be one of None, \"legacy\" or \"sequence\".")
-        if isinstance(seed, ISEED_SEQUENCES):
-            if mode == "legacy":
-                raise ValueError("seed is a SeedSequence instance but mode is "
-                                 "\"legacy\". Using a SeedSequence requires "
-                                 "mode=\"sequence\".")
-        elif mode is None and seed is not None:
-            mode="sequence"
-        self.mode = mode.lower() if mode is not None else "sequence"
-        self.lock = Lock()
-        self._ctypes = None
-        self._cffi = None
-
-        cdef const char *name = "BitGenerator"
-        self.capsule = PyCapsule_New(<void *>&self._bitgen, name, NULL)
-        if type(self) is BitGenerator:
-            raise NotImplementedError("BitGenerator cannot be instantized")
-        self.seed_seq = None
+            if len(self._supported_modes()) == 1:
+                msg = f"mode must be {self._supported_modes()[0]}"
+            else:
+                modes = ", ".join(f"\"{mode}\"" for mode in self._supported_modes())
+            raise ValueError(f"mode must be one of: {modes}.")
+        self.mode = mode.lower()
+        super().__init__(seed)
 
     def _supported_modes(self):
-        return "legacy", "sequence"
-
-    # Pickling support:
-    def __getstate__(self):
-        return self.state
-
-    def __setstate__(self, state):
-        self.state = state
-
-    def __reduce__(self):
-        from randomgen._pickle import __bit_generator_ctor
-        return __bit_generator_ctor, (self.state["bit_generator"],), self.state
+        return ("sequence",)
 
     def _seed_from_seq(self):
         raise NotImplementedError("Subclass must override")
@@ -87,7 +65,7 @@ cdef class BitGenerator:
     cdef _copy_seed(self):
         import copy
 
-        return copy.deepcopy(self.seed_seq)
+        return copy.deepcopy(self._seed_seq)
 
     def _seed_with_seed_sequence(self, seed, **kwargs):
         from randomgen.seed_sequence import SeedSequence
@@ -97,17 +75,10 @@ cdef class BitGenerator:
         except ImportError:
             pass
         if isinstance(seed, ISEED_SEQUENCES):
-            if self.mode == "legacy":
-                bg = type(self).__name__
-                raise RuntimeError("{bg} was created using mode=\"legacy\". "
-                                   "This is immutable and SeedSequences cannot"
-                                   " be used".format(bg=bg))
-            self.seed_seq = seed
-        elif self.mode in ("sequence", "numpy"):
-            self.seed_seq = DefaultSeedSequence(seed)
+            self._seed_seq = seed
         else:
-            self.seed_seq = None
-        if self.seed_seq is not None:
+            self._seed_seq = DefaultSeedSequence(seed)
+        if self._seed_seq is not None:
             if self.mode == "sequence":
                 self._seed_from_seq(**kwargs)
             else:  # numpy

@@ -45,7 +45,7 @@ cdef uint64_t philox2x32_raw(void *st) noexcept nogil:
 
 cdef class Philox(BitGenerator):
     """
-    Philox(seed=None, *, counter=None, key=None, number=4, width=64, mode=None)
+    Philox(seed=None, *, counter=None, key=None, number=4, width=64, mode="sequence")
 
     Container for the Philox family of pseudo-random number generators.
 
@@ -76,13 +76,12 @@ cdef class Philox(BitGenerator):
     width : {32, 64}, optional
         Bit width the values produced. Maps to W in the Philox variant naming
         scheme PhiloxNxW.
-    mode : {None, "sequence", "legacy", "numpy"}, optional
-        The seeding mode to use. "legacy" uses the legacy
-        SplitMix64-based initialization. "sequence" uses a SeedSequence
-        to transforms the seed into an initial state.  None defaults to
-        "sequence". Using "numpy" ensures that the generator is configurated
-        using the same parameters required to produce the same sequence that
-        is realized in NumPy, for a given ``SeedSequence``.
+    mode : {None, "sequence", "numpy"}, optional
+        "sequence" uses a SeedSequence to transforms the seed into an initial
+        state.  None defaults to "sequence". Using "numpy" ensures that the
+        generator is configurated using the same parameters required to
+        produce the same sequence that is realized in NumPy, for a given
+        ``SeedSequence``.
 
     Attributes
     ----------
@@ -93,7 +92,7 @@ cdef class Philox(BitGenerator):
         lock.
     seed_seq : {None, SeedSequence}
         The SeedSequence instance used to initialize the generator if mode is
-        "sequence" or is seed is a SeedSequence. None if mode is "legacy".
+        "sequence" or is seed is a SeedSequence. 
 
     Notes
     -----
@@ -119,10 +118,6 @@ cdef class Philox(BitGenerator):
     randoms produced. The second is a key which determines the sequence
     produced. Using different keys produces distinct sequences.
 
-    When mode is "legacy", ``Philox`` is seeded using either a single 64-bit
-    unsigned integer or a vector of 64-bit unsigned integers. In either case,
-    the seed is used as an input for a second random number generator,
-    SplitMix64, and the output of this PRNG function is used as the initial state.
     Using a single 64-bit value for the seed can only initialize a small range of
     the possible initial state values.
 
@@ -173,7 +168,7 @@ cdef class Philox(BitGenerator):
     cdef int w
 
     def __init__(self, seed=None, *, counter=None, key=None, number=4,
-                 width=64, mode=None):
+                 width=64, mode="sequence"):
         BitGenerator.__init__(self, seed, mode)
         if number not in (2, 4):
             raise ValueError("number must be either 2 or 4")
@@ -225,11 +220,14 @@ cdef class Philox(BitGenerator):
             self.rng_state.buffer[i].u64 = 0
 
     def _supported_modes(self):
-        return "legacy", "sequence", "numpy"
+        return "sequence", "numpy"
 
     def _seed_from_seq(self, counter=None):
         seed_seq_size = max(self.n * self.w // 128, 1)
-        state = self.seed_seq.generate_state(seed_seq_size, np.uint64)
+        try:
+            state = self.seed_seq.generate_state(seed_seq_size, np.uint64)
+        except AttributeError:
+            state = self._seed_seq.generate_state(seed_seq_size, np.uint64)
         # Special case 2x32 which needs max 32 bits
         if self.n == 2 and self.w == 32:
             state %= np.uint64(2**32)
@@ -285,8 +283,12 @@ cdef class Philox(BitGenerator):
             raise ValueError("seed and key cannot be both used")
         if key is None:
             BitGenerator._seed_with_seed_sequence(self, seed, counter=counter)
-            if self.seed_seq is not None:
-                return
+            try:
+                if self.seed_seq is not None:
+                    return
+            except AttributeError:
+                if self._seed_seq is not None:
+                    return
 
         seed = object_to_int(seed, self.n * self.w // 2, "seed")
         key = object_to_int(key, self.n // 2 * self.w, "key")

@@ -1,20 +1,18 @@
-from typing import Dict, Optional, Sequence, Union
+from collections.abc import Sequence
 
 import numpy as np
+from typing_extensions import TypeAlias
 
 from randomgen.common import BitGenerator
 from randomgen.typing import IntegerSequenceSeed, SeedMode
 
-DSFMTState = Dict[str, Union[str, int, np.ndarray, Dict[str, Union[int, np.ndarray]]]]
+DSFMTState: TypeAlias = dict[str, str | int | np.ndarray | dict[str, int | np.ndarray]]
 
 class DSFMT(BitGenerator):
     def __init__(
-        self,
-        seed: Optional[IntegerSequenceSeed] = ...,
-        *,
-        mode: Optional[SeedMode] = ...
+        self, seed: IntegerSequenceSeed | None = ..., *, mode: SeedMode | None = ...
     ) -> None: ...
-    def seed(self, seed: Union[int, Sequence[int]] = ...) -> None: ...
+    def seed(self, seed: int | Sequence[int] = ...) -> None: ...
     def jump(self, iter: int = ...) -> DSFMT: ...
     def jumped(self, iter: int = ...) -> DSFMT: ...
     @property

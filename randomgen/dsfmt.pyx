@@ -28,7 +28,7 @@ cdef uint64_t dsfmt_raw(void *st) noexcept nogil:
 
 cdef class DSFMT(BitGenerator):
     """
-    DSFMT(seed=None, *, mode=None)
+    DSFMT(seed=None)
 
     Container for the SIMD-based Mersenne Twister pseudo RNG.
 
@@ -41,11 +41,9 @@ cdef class DSFMT(BitGenerator):
         ``None`` (the default). If `seed` is ``None``, then 764 32-bit unsigned
         integers are read from ``/dev/urandom`` (or the Windows analog) if
         available. If unavailable, a hash of the time and process ID is used.
-    mode : {None, "sequence", "legacy"}, optional
-        The seeding mode to use. "legacy" uses the legacy
-        SplitMix64-based initialization. "sequence" uses a SeedSequence
-        to transforms the seed into an initial state.  None defaults to
-        "sequence".
+    mode : {None, "sequence"}, optional
+        The seeding mode to use. "sequence" uses a SeedSequence
+        to transforms the seed into an initial state.
 
     Attributes
     ----------
@@ -56,7 +54,7 @@ cdef class DSFMT(BitGenerator):
         lock.
     seed_seq : {None, SeedSequence}
         The SeedSequence instance used to initialize the generator if mode is
-        "sequence" or is seed is a SeedSequence. None if mode is "legacy".
+        "sequence" or is seed is a SeedSequence. 
 
     Notes
     -----
@@ -116,8 +114,8 @@ cdef class DSFMT(BitGenerator):
            Sequences and Their Applications - SETA, 290--298, 2008.
     """
 
-    def __init__(self, seed=None, *, mode=None):
-        BitGenerator.__init__(self, seed, mode)
+    def __init__(self, seed=None):
+        BitGenerator.__init__(self, seed)
         self.rng_state.state = <dsfmt_t *>PyArray_malloc_aligned(sizeof(dsfmt_t))
         self.rng_state.buffered_uniforms = <double *>PyArray_calloc_aligned(
             DSFMT_N64, sizeof(double)
@@ -141,7 +139,10 @@ cdef class DSFMT(BitGenerator):
         self.rng_state.buffer_loc = DSFMT_N64
 
     def _seed_from_seq(self):
-        state = self.seed_seq.generate_state(2 * DSFMT_N64, np.uint32)
+        try:
+            state = self.seed_seq.generate_state(2 * DSFMT_N64, np.uint32)
+        except AttributeError:
+            state = self._seed_seq.generate_state(2 * DSFMT_N64, np.uint32)
 
         dsfmt_init_by_array(self.rng_state.state,
                             <uint32_t *>np.PyArray_DATA(state),
@@ -173,8 +174,12 @@ cdef class DSFMT(BitGenerator):
         cdef np.ndarray obj, seed_arr
 
         BitGenerator._seed_with_seed_sequence(self, seed)
-        if self.seed_seq is not None:
-            return
+        try:
+            if self.seed_seq is not None:
+                return
+        except AttributeError:
+            if self._seed_seq is not None:
+                return
         try:
             if seed is None:
                 seed_arr = random_entropy(2 * DSFMT_N64, "auto")
@@ -261,7 +266,7 @@ cdef class DSFMT(BitGenerator):
         """
         cdef DSFMT bit_generator
 
-        bit_generator = self.__class__(seed=self._copy_seed(), mode=self.mode)
+        bit_generator = self.__class__(seed=self._copy_seed())
         bit_generator.state = self.state
         bit_generator.jump_inplace(iter)
 

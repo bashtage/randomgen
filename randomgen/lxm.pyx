@@ -45,7 +45,7 @@ cdef class LXM(BitGenerator):
         lock.
     seed_seq : {None, SeedSequence}
         The SeedSequence instance used to initialize the generator if mode is
-        "sequence" or is seed is a SeedSequence. None if mode is "legacy".
+        "sequence" or is seed is a SeedSequence. 
 
     Notes
     -----
@@ -151,7 +151,10 @@ cdef class LXM(BitGenerator):
 
         # Protect against negligible prob of all 0 in Xorshift
         while bits == 0:
-            state = self.seed_seq.generate_state(5, np.uint64)
+            try:
+                state = self.seed_seq.generate_state(5, np.uint64)
+            except:
+                state = self._seed_seq.generate_state(5, np.uint64)
             state_arr = <np.uint64_t *>np.PyArray_DATA(state)
             for i in range(4):
                 self.rng_state.x[i] = state[i]

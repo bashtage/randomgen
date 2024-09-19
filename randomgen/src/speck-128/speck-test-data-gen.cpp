@@ -1,18 +1,19 @@
 /*
- * clang++ speck-test-data-gen.cpp cryptoPP/libcryptopp.a -o speck-test-data-gen
+ * 1. Get https://github.com/weidai11/cryptopp
+ * 2. make
+ * 3. clang++ speck-test-data-gen.cpp cryptopp/libcryptopp.a -o speck-test-data-gen
  * ./speck-test-data-gen
  */
 
 #include <iomanip>
 #include <iostream>
 
-#include "../splitmix64/splitmix64.h"
-#include "cryptoPP/cryptlib.h"
-#include "cryptoPP/files.h"
-#include "cryptoPP/filters.h"
-#include "cryptoPP/hex.h"
-#include "cryptoPP/modes.h"
-#include "cryptoPP/speck.h"
+#include "cryptopp/cryptlib.h"
+#include "cryptopp/files.h"
+#include "cryptopp/filters.h"
+#include "cryptopp/hex.h"
+#include "cryptopp/modes.h"
+#include "cryptopp/speck.h"
 
 using namespace std;
 using namespace CryptoPP;
@@ -23,8 +24,15 @@ int main(int argc, char *argv[]) {
   uint64_t seed, state, seeded_key[4], result[2], ctr[2] = {0, 0};
   seed = state = 0;
   int loc;
+  /* SeedSequence(0).generate_state(4, dtype=np.uint64) */
+  uint64_t seed_seq[4] = {
+    15793235383387715774ULL,
+    12390638538380655177ULL,
+    2361836109651742017ULL,
+    3188717715514472916ULL
+  };
   for (int i = 0; i < 4; i++) {
-    seeded_key[i] = splitmix64_next(&state);
+    seeded_key[i] = seed_seq[i];
   }
   CryptoPP::byte key[SPECK128::MAX_KEYLENGTH];
   CryptoPP::byte cipher[16], counter[16];
@@ -51,8 +59,15 @@ int main(int argc, char *argv[]) {
   ofile.close();
 
   seed = state = 0xDEADBEAF;
+  /* SeedSequence(0xDEADBEAF).generate_state(4, dtype=np.uint64) */
+  uint64_t seed_seq_deadbeaf[4] = {
+    5778446405158232650ULL,
+    4639759349701729399ULL,
+    13222832537653397986ULL,
+    2330059127936092250ULL
+  };
   for (int i = 0; i < 4; i++) {
-    seeded_key[i] = splitmix64_next(&state);
+    seeded_key[i] = seed_seq_deadbeaf[i];
   }
   memcpy(&key, &seeded_key, sizeof(key));
   speck.SetKey(key, SPECK128::MAX_KEYLENGTH);

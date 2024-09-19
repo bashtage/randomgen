@@ -20,7 +20,7 @@ cdef double xorshift1024_double(void* st) noexcept nogil:
 
 cdef class Xorshift1024(BitGenerator):
     """
-    Xorshift1024(seed=None, *, mode=None)
+    Xorshift1024(seed=None)
 
     Container for the xorshift1024*φ pseudo-random number generator.
 
@@ -33,11 +33,6 @@ cdef class Xorshift1024(BitGenerator):
         ``None``, then  data is read from ``/dev/urandom`` (or the Windows
         analog) if available. If unavailable, a hash of the time and process
         ID is used.
-    mode : {None, "sequence", "legacy"}
-        The seeding mode to use. "legacy" uses the legacy
-        SplitMix64-based initialization. "sequence" uses a SeedSequence
-        to transforms the seed into an initial state.  None defaults to
-        "sequence".
 
     Attributes
     ----------
@@ -48,7 +43,7 @@ cdef class Xorshift1024(BitGenerator):
         lock.
     seed_seq : {None, SeedSequence}
         The SeedSequence instance used to initialize the generator if mode is
-        "sequence" or is seed is a SeedSequence. None if mode is "legacy".
+        "sequence" or is seed is a SeedSequence.
 
     Notes
     -----
@@ -117,8 +112,8 @@ cdef class Xorshift1024(BitGenerator):
     .. [4] Sebastiano Vigna. "Further scramblings of Marsaglia's xorshift
            generators." CoRR, abs/1403.0930, 2014.
     """
-    def __init__(self, seed=None, *, mode=None):
-        BitGenerator.__init__(self, seed, mode)
+    def __init__(self, seed=None, *):
+        BitGenerator.__init__(self, seed)
         self.seed(seed)
 
         self._bitgen.state = <void *>&self.rng_state
@@ -135,7 +130,10 @@ cdef class Xorshift1024(BitGenerator):
         cdef int i
         cdef uint64_t *state_arr
 
-        state = self.seed_seq.generate_state(16, np.uint64)
+        try:
+            state = self.seed_seq.generate_state(16, np.uint64)
+        except AttributeError:
+            state = self._seed_seq.generate_state(16, np.uint64)
         state_arr = <np.uint64_t *>np.PyArray_DATA(state)
         for i in range(16):
             self.rng_state.s[i] = state[i]
@@ -167,8 +165,12 @@ cdef class Xorshift1024(BitGenerator):
             If seed values are out of range for the PRNG.
         """
         BitGenerator._seed_with_seed_sequence(self, seed)
-        if self.seed_seq is not None:
-            return
+        try:
+            if self.seed_seq is not None:
+                return
+        except AttributeError:
+            if self._seed_seq is not None:
+                return
         # Legacy seeding
         ub = 2 ** 64
         if seed is None:
@@ -245,7 +247,7 @@ cdef class Xorshift1024(BitGenerator):
         """
         cdef Xorshift1024 bit_generator
 
-        bit_generator = self.__class__(seed=self._copy_seed(), mode=self.mode)
+        bit_generator = self.__class__(seed=self._copy_seed())
         bit_generator.state = self.state
         bit_generator.jump_inplace(iter)
 

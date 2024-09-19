@@ -1,4 +1,4 @@
-from typing import Dict, Literal, Optional, Union
+from typing import Literal
 
 import numpy as np
 
@@ -8,28 +8,28 @@ from randomgen.typing import IntegerSequenceSeed
 class Philox(BitGenerator):
     def __init__(
         self,
-        seed: Optional[IntegerSequenceSeed] = ...,
+        seed: IntegerSequenceSeed | None = ...,
         *,
-        counter: Optional[Union[int, np.ndarray]] = ...,
-        key: Optional[Union[int, np.ndarray]] = ...,
+        counter: int | np.ndarray | None = ...,
+        key: int | np.ndarray | None = ...,
         number: int = ...,
         width: int = ...,
-        mode: Optional[Literal["legacy", "sequence", "numpy"]] = ...
+        mode: Literal["sequence", "numpy"] | None = ...
     ) -> None: ...
     def seed(
         self,
-        seed: Optional[IntegerSequenceSeed] = ...,
-        counter: Optional[Union[int, np.ndarray]] = ...,
-        key: Optional[Union[int, np.ndarray]] = ...,
+        seed: IntegerSequenceSeed | None = ...,
+        counter: int | np.ndarray | None = ...,
+        key: int | np.ndarray | None = ...,
     ) -> None: ...
     @property
     def state(
         self,
-    ) -> Dict[str, Union[str, int, np.ndarray, Dict[str, np.ndarray]]]: ...
+    ) -> dict[str, str | int | np.ndarray | dict[str, np.ndarray]]: ...
     @state.setter
     def state(
-        self, value: Dict[str, Union[str, int, np.ndarray, Dict[str, np.ndarray]]]
+        self, value: dict[str, str | int | np.ndarray | dict[str, np.ndarray]]
     ) -> None: ...
     def jump(self, iter: int = ...) -> Philox: ...
     def jumped(self, iter: int = ...) -> Philox: ...
-    def advance(self, delta: int, counter: Optional[bool] = ...) -> Philox: ...
+    def advance(self, delta: int, counter: bool | None = ...) -> Philox: ...

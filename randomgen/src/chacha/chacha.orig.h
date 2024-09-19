@@ -25,10 +25,10 @@ class ChaCha {
 public:
     typedef uint32_t result_type;
 
-    explicit ChaCha(uint64_t seedval, uint64_t stream = 0);
+    explicit ChaCha(uint64_t seedval[2], uint64_t stream[2] = {0,0});
     template<class Sseq> explicit ChaCha(Sseq& seq);
 
-    void seed(uint64_t seedval, uint64_t stream = 0);
+    void seed(uint64_t seedval[2], uint64_t stream[2] = {0,0});
     template<class Sseq> void seed(Sseq& seq);
 
     uint32_t operator()();
@@ -57,7 +57,7 @@ public:
 
 
 template<size_t R>
-inline ChaCha<R>::ChaCha(uint64_t seedval, uint64_t stream) {
+inline ChaCha<R>::ChaCha(uint64_t seedval[2], uint64_t stream[2]) {
     seed(seedval, stream);
 }
 
@@ -68,14 +68,23 @@ inline ChaCha<R>::ChaCha(Sseq& seq) {
 }
 
 template<size_t R>
-inline void ChaCha<R>::seed(uint64_t seedval, uint64_t stream) {
+inline void ChaCha<R>::seed(uint64_t seedval[2], uint64_t stream[2]) {
     ctr = 0;
-    keysetup[0] = seedval & 0xffffffffu;
-    keysetup[1] = seedval >> 32;
-    keysetup[2] = keysetup[3] = 0xdeadbeef;      // Could use 128-bit seed.
-    keysetup[4] = stream & 0xffffffffu;
-    keysetup[5] = stream >> 32;
-    keysetup[6] = keysetup[7] = 0xdeadbeef;      // Could use 128-bit stream.
+    keysetup[0] = seedval[0] & 0xffffffffu;
+    keysetup[1] = seedval[0] >> 32;
+    keysetup[2] = seedval[1] & 0xffffffffu;
+    keysetup[3] = seedval[1] >> 32;
+    // Using a 128-bit stream.
+    keysetup[4] = stream[0] & 0xffffffffu;
+    keysetup[5] = stream[0] >> 32;
+    keysetup[6] = stream[1] & 0xffffffffu;
+    keysetup[7] = stream[1] >> 32;
+//    keysetup[0] = seedval & 0xffffffffu;
+//    keysetup[1] = seedval >> 32;
+//    keysetup[2] = keysetup[3] = 0xdeadbeef;      // Could use 128-bit seed.
+//    keysetup[4] = stream & 0xffffffffu;
+//    keysetup[5] = stream >> 32;
+//    keysetup[6] = keysetup[7] = 0xdeadbeef;      // Could use 128-bit stream.
 }
 
 template<size_t R>
