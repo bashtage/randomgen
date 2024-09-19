@@ -14,8 +14,8 @@ from libc.stdint cimport (
 
 import numpy as np
 
-from numpy.random cimport bitgen_t
 cimport numpy as np
+from numpy.random cimport bitgen_t
 
 ctypedef uint64_t (*next_uint64_t)(void *st) noexcept nogil
 ctypedef uint32_t (*next_uint32_t)(void *st) noexcept nogil

@@ -1,9 +1,10 @@
 from setuptools import Distribution, find_namespace_packages, setup
 from setuptools.extension import Extension
-from pathlib import Path
+
 import glob
 import os
 from os.path import exists, join, splitext
+from pathlib import Path
 import platform
 import struct
 import sys
@@ -163,8 +164,10 @@ for name in (
         extra_incl = [src_join("entropy")]
     if name == "generator":
         libraries = ["npymath", "npyrandom"]
-        library_dirs = [str((Path(NUMPY_INCLUDE) / ".." / "lib").resolve()),
-                        str((Path(NUMPY_INCLUDE) / ".." / ".." / "random" / "lib").resolve()),]
+        library_dirs = [
+            str((Path(NUMPY_INCLUDE) / ".." / "lib").resolve()),
+            str((Path(NUMPY_INCLUDE) / ".." / ".." / "random" / "lib").resolve()),
+        ]
     ext = Extension(
         f"randomgen.{name}",
         source + extra_source,
@@ -217,21 +220,21 @@ def bit_generator(
 
 
 bit_generator(
-     "aes",
-     c_name="aesctr",
-     cpu_features=True,
-     aligned=True,
-     compile_args=AES_COMPILE_ARGS,
+    "aes",
+    c_name="aesctr",
+    cpu_features=True,
+    aligned=True,
+    compile_args=AES_COMPILE_ARGS,
 )
 bit_generator(
-     "chacha", cpu_features=True, aligned=True, compile_args=SSSE3_COMPILE_ARGS
+    "chacha", cpu_features=True, aligned=True, compile_args=SSSE3_COMPILE_ARGS
 )
 bit_generator(
-     "dsfmt",
-     aligned=True,
-     defs=DSFMT_DEFS,
-     extra_source=src_join("dsfmt", "dSFMT-jump.c"),
- )
+    "dsfmt",
+    aligned=True,
+    defs=DSFMT_DEFS,
+    extra_source=src_join("dsfmt", "dSFMT-jump.c"),
+)
 bit_generator("hc128", c_name="hc-128")
 bit_generator("jsf")
 bit_generator("mt19937", extra_source=src_join("mt19937", "mt19937-jump.c"))
@@ -239,19 +242,19 @@ bit_generator("mt64")
 bit_generator("pcg32")
 # PCG requires special treatment since it contains multiple bit gens
 ext = Extension(
-     "randomgen.pcg64",
-     ["randomgen/pcg64.pyx"]
-     + [
-         src_join("pcg64", "pcg64-common.c"),
-         src_join("pcg64", "pcg64-v2.c"),
-         src_join("pcg64", "lcg128mix.c"),
-     ],
-     libraries=EXTRA_LIBRARIES,
-     include_dirs=EXTRA_INCLUDE_DIRS,
-     extra_compile_args=EXTRA_COMPILE_ARGS,
-     extra_link_args=EXTRA_LINK_ARGS,
-     define_macros=DEFS,
-     undef_macros=UNDEF_MACROS,
+    "randomgen.pcg64",
+    ["randomgen/pcg64.pyx"]
+    + [
+        src_join("pcg64", "pcg64-common.c"),
+        src_join("pcg64", "pcg64-v2.c"),
+        src_join("pcg64", "lcg128mix.c"),
+    ],
+    libraries=EXTRA_LIBRARIES,
+    include_dirs=EXTRA_INCLUDE_DIRS,
+    extra_compile_args=EXTRA_COMPILE_ARGS,
+    extra_link_args=EXTRA_LINK_ARGS,
+    define_macros=DEFS,
+    undef_macros=UNDEF_MACROS,
 )
 extensions.append(ext)
 

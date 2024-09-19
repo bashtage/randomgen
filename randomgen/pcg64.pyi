@@ -1,5 +1,7 @@
+from typing import Literal
+
 from randomgen.common import BitGenerator
-from randomgen.typing import IntegerSequenceSeed, Literal, SeedMode
+from randomgen.typing import IntegerSequenceSeed, SeedMode
 
 DEFAULT_MULTIPLIER: int
 DEFAULT_DXSM_MULTIPLIER: int

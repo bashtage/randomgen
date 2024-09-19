@@ -787,12 +787,14 @@ class TestPCG64XSLRR(Base):
         cls.data2 = cls._read_csv(join(pwd, "./data/pcg64-testset-2.csv"))
         cls.seed_error_type = TypeError
         cls.invalid_seed_types = [(3.2,)]
-        cls.invalid_seed_values = [            (-2,)        ]
+        cls.invalid_seed_values = [(-2,)]
         cls.large_advance_initial = 141078743063826365544432622475512570578
         cls.large_advance_final = 32639015182640331666105117402520879107
 
     def setup_bitgenerator(self, seed, mode="sequence", inc: int | None = None):
-        return self.bit_generator(*seed, mode=mode, variant="xsl-rr", inc=inc)  # type: ignore
+        return self.bit_generator(
+            *seed, mode=mode, variant="xsl-rr", inc=inc  # type: ignore
+        )
 
     def test_seed_float_array(self):
         rs = np.random.Generator(self.setup_bitgenerator(self.data1["seed"]))
