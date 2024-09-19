@@ -103,7 +103,10 @@ cdef class MT64(BitGenerator):
         self.rng_state.uinteger = 0
 
     def _seed_from_seq(self):
-        state = self.seed_seq.generate_state(312, np.uint64)
+        try:
+            state = self.seed_seq.generate_state(312, np.uint64)
+        except AttributeError:
+            state = self._seed_seq.generate_state(312, np.uint64)
         mt64_init_by_array(&self.rng_state,
                            <uint64_t*>np.PyArray_DATA(state),
                            312)
@@ -134,8 +137,12 @@ cdef class MT64(BitGenerator):
         cdef np.ndarray obj
 
         BitGenerator._seed_with_seed_sequence(self, seed)
-        if self.seed_seq is not None:
-            return
+        try:
+            if self.seed_seq is not None:
+                return
+        except AttributeError:
+            if self._seed_seq is not None:
+                return
 
         try:
             if seed is None:

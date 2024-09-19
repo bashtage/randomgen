@@ -236,7 +236,10 @@ class Base:
         bg = self.setup_bitgenerator([None])
         val = bg.random_raw()
         assert isinstance(val, int)
-        assert isinstance(bg.seed_seq, ISEED_SEQUENCES)
+        try:
+            assert isinstance(bg.seed_seq, ISEED_SEQUENCES)
+        except AttributeError:
+            assert isinstance(bg._seed_seq, ISEED_SEQUENCES)
 
     def test_raw(self):
         bit_generator = self.setup_bitgenerator(self.data1["seed"])
@@ -442,12 +445,17 @@ class Base:
         if not hasattr(bg, "jumped"):
             pytest.skip("bit generator does not support jumping")
         g = np.random.Generator(bg)
-        seed_seq = bg.seed_seq
-
+        try:
+            seed_seq = bg.seed_seq
+        except AttributeError:
+            seed_seq = bg._seed_seq
         g.integers(0, 2**32, dtype=np.uint32)
         new_bg = bg.jumped()
         jumped = np.random.Generator(new_bg)
-        new_seed_seq = new_bg.seed_seq
+        try:
+            new_seed_seq = new_bg.seed_seq
+        except AttributeError:
+            new_seed_seq = new_bg._seed_seq
         if seed_seq is None:
             assert new_seed_seq is None
         else:
@@ -470,9 +478,15 @@ class Base:
             bg = self.setup_bitgenerator(self.data1["seed"])
         if not hasattr(bg, "jumped"):
             pytest.skip("bit generator does not support jumping")
-        seed_seq = bg.seed_seq
+        try:
+            seed_seq = bg.seed_seq
+        except AttributeError:
+            seed_seq = bg._seed_seq
         new_bg = bg.jumped()
-        new_seed_seq = new_bg.seed_seq
+        try:
+            new_seed_seq = new_bg.seed_seq
+        except AttributeError:
+            new_seed_seq = new_bg._seed_seq
         if seed_seq is None:
             assert new_seed_seq is None
         else:
@@ -509,14 +523,23 @@ class Base:
             else self.bit_generator
         )
         assert isinstance(bg, typ)
-        assert isinstance(bg.seed_seq, SeedSequence)
+        try:
+            assert isinstance(bg.seed_seq, SeedSequence)
+        except AttributeError:
+            assert isinstance(bg._seed_seq, SeedSequence)
 
         bg = self.setup_bitgenerator([0])
-        assert bg.seed_seq.entropy == 0
+        try:
+            assert bg.seed_seq.entropy == 0
+        except AttributeError:
+            assert bg._seed_seq.entropy == 0
 
         ss = SeedSequence(0)
         bg = self.bit_generator(ss)
-        assert bg.seed_seq.entropy == 0
+        try:
+            assert bg.seed_seq.entropy == 0
+        except AttributeError:
+            assert bg._seed_seq.entropy == 0
 
     def test_bit_generator_repr(self):
         bg = self.setup_bitgenerator([None])
@@ -644,18 +667,30 @@ class TestJSF32(TestJSF64):
     def test_seed_sequence(self):
         bg = self.bit_generator_base(size=self.size)
         assert isinstance(bg, self.bit_generator_base)
-        assert isinstance(bg.seed_seq, SeedSequence)
+        try:
+            assert isinstance(bg.seed_seq, SeedSequence)
+        except AttributeError:
+            assert isinstance(bg._seed_seq, SeedSequence)
 
         bg = self.bit_generator_base(0, size=self.size)
-        assert bg.seed_seq.entropy == 0
+        try:
+            assert bg.seed_seq.entropy == 0
+        except AttributeError:
+            assert bg._seed_seq.entropy == 0
 
         ss = SeedSequence(0)
         bg = self.bit_generator_base(ss)
-        assert bg.seed_seq.entropy == 0
+        try:
+            assert bg.seed_seq.entropy == 0
+        except AttributeError:
+            assert bg._seed_seq.entropy == 0
 
         ss = SeedSequence(1)
         bg = self.bit_generator_base(ss, size=self.size)
-        assert bg.seed_seq.entropy == 1
+        try:
+            assert bg.seed_seq.entropy == 1
+        except AttributeError:
+            assert bg._seed_seq.entropy == 1
 
 
 class TestXoroshiro128(Base):
@@ -927,20 +962,32 @@ class TestPhilox4x32(Random123):
             number=self.number, width=self.width, mode="sequence"
         )
         assert isinstance(bg, self.bit_generator_base)
-        assert isinstance(bg.seed_seq, SeedSequence)
+        try:
+            assert isinstance(bg.seed_seq, SeedSequence)
+        except AttributeError:
+            assert isinstance(bg._seed_seq, SeedSequence)
 
         bg = self.bit_generator_base(
             0, number=self.number, width=self.width, mode="sequence"
         )
-        assert bg.seed_seq.entropy == 0
+        try:
+            assert bg.seed_seq.entropy == 0
+        except AttributeError:
+            assert bg._seed_seq.entropy == 0
 
         ss = SeedSequence(0)
         bg = self.bit_generator_base(ss)
-        assert bg.seed_seq.entropy == 0
+        try:
+            assert bg.seed_seq.entropy == 0
+        except AttributeError:
+            assert bg._seed_seq.entropy == 0
 
         ss = SeedSequence(1)
         bg = self.bit_generator_base(ss, number=self.number, width=self.width)
-        assert bg.seed_seq.entropy == 1
+        try:
+            assert bg.seed_seq.entropy == 1
+        except AttributeError:
+            assert bg._seed_seq.entropy == 1
 
     def test_numpy_mode(self):
         ss = SeedSequence(0)
@@ -1304,18 +1351,30 @@ class TestThreeFry4x32(Random123):
     def test_seed_sequence(self):
         bg = self.bit_generator_base(number=self.number, width=self.width)
         assert isinstance(bg, self.bit_generator_base)
-        assert isinstance(bg.seed_seq, SeedSequence)
+        try:
+            assert isinstance(bg.seed_seq, SeedSequence)
+        except AttributeError:
+            assert isinstance(bg._seed_seq, SeedSequence)
 
         bg = self.bit_generator_base(0, number=self.number, width=self.width)
-        assert bg.seed_seq.entropy == 0
+        try:
+            assert bg.seed_seq.entropy == 0
+        except AttributeError:
+            assert bg._seed_seq.entropy == 0
 
         ss = SeedSequence(0)
         bg = self.bit_generator_base(ss)
-        assert bg.seed_seq.entropy == 0
+        try:
+            assert bg.seed_seq.entropy == 0
+        except AttributeError:
+            assert bg._seed_seq.entropy == 0
 
         ss = SeedSequence(1)
         bg = self.bit_generator_base(ss, number=self.number, width=self.width)
-        assert bg.seed_seq.entropy == 1
+        try:
+            assert bg.seed_seq.entropy == 1
+        except AttributeError:
+            assert bg._seed_seq.entropy == 1
 
     def test_set_key(self):
         bit_generator = self.setup_bitgenerator(self.data1["seed"])
@@ -1535,7 +1594,10 @@ class TestRDRAND(Base):
     def test_seed_sequence(self):
         bg = self.bit_generator()
         assert isinstance(bg, self.bit_generator)
-        assert isinstance(bg.seed_seq, SeedSequence)
+        try:
+            assert isinstance(bg.seed_seq, SeedSequence)
+        except AttributeError:
+            assert isinstance(bg._seed_seq, SeedSequence)
 
         with pytest.raises(TypeError):
             self.bit_generator(0)
@@ -1548,7 +1610,10 @@ class TestRDRAND(Base):
         bg = self.setup_bitgenerator([None])
         val = bg.random_raw()
         assert isinstance(val, int)
-        assert isinstance(bg.seed_seq, SeedSequence)
+        try:
+            assert isinstance(bg.seed_seq, SeedSequence)
+        except AttributeError:
+            assert isinstance(bg._seed_seq, SeedSequence)
 
     def test_seed_sequence_error(self):
         with pytest.raises(TypeError, match="seed cannot be set"):
@@ -1872,7 +1937,10 @@ class TestLXM(Base):
         bg = self.setup_bitgenerator([None])
         val = bg.random_raw()
         assert isinstance(val, int)
-        assert isinstance(bg.seed_seq, ISEED_SEQUENCES)
+        try:
+            assert isinstance(bg.seed_seq, ISEED_SEQUENCES)
+        except AttributeError:
+            assert isinstance(bg._seed_seq, ISEED_SEQUENCES)
 
     def test_seed_sequence(self):
         bg = self.setup_bitgenerator([None])
@@ -1882,14 +1950,23 @@ class TestLXM(Base):
             else self.bit_generator
         )
         assert isinstance(bg, typ)
-        assert isinstance(bg.seed_seq, SeedSequence)
+        try:
+            assert isinstance(bg.seed_seq, SeedSequence)
+        except AttributeError:
+            assert isinstance(bg._seed_seq, SeedSequence)
 
         bg = self.setup_bitgenerator([0])
-        assert bg.seed_seq.entropy == 0
+        try:
+            assert bg.seed_seq.entropy == 0
+        except AttributeError:
+            assert bg._seed_seq.entropy == 0
 
         ss = SeedSequence(0)
         bg = self.bit_generator(ss)
-        assert bg.seed_seq.entropy == 0
+        try:
+            assert bg.seed_seq.entropy == 0
+        except AttributeError:
+            assert bg._seed_seq.entropy == 0
 
 
 class TestSFC64(TestLXM):

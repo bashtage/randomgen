@@ -137,8 +137,10 @@ cdef class SFMT(BitGenerator):
         self.rng_state.uinteger = 0
 
     def _seed_from_seq(self):
-        state = self.seed_seq.generate_state(2 * SFMT_N64, np.uint32)
-
+        try:
+            state = self.seed_seq.generate_state(2 * SFMT_N64, np.uint32)
+        except AttributeError:
+            state = self._seed_seq.generate_state(2 * SFMT_N64, np.uint32)
         sfmt_init_by_array(self.rng_state.state,
                            <uint32_t *>np.PyArray_DATA(state),
                            2 * SFMT_N64)
@@ -169,8 +171,12 @@ cdef class SFMT(BitGenerator):
         cdef np.ndarray obj, seed_arr
 
         BitGenerator._seed_with_seed_sequence(self, seed)
-        if self.seed_seq is not None:
-            return
+        try:
+            if self.seed_seq is not None:
+                return
+        except AttributeError:
+            if self._seed_seq is not None:
+                return
 
         try:
             if seed is None:

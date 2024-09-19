@@ -138,7 +138,10 @@ cdef class SFC64(BitGenerator):
         cdef uint64_t k, w
         cnt = 3 + (self.k is None) + (self.w is None)
 
-        state = self.seed_seq.generate_state(cnt, np.uint64)
+        try:
+            state = self.seed_seq.generate_state(cnt, np.uint64)
+        except:
+            state = self._seed_seq.generate_state(cnt, np.uint64)
         state_arr = <np.uint64_t *>np.PyArray_DATA(state)
         w = self.w if self.w is not None else state[3]
         loc = 3 if self.w is not None else 4

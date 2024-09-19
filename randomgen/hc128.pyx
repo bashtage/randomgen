@@ -118,7 +118,10 @@ cdef class HC128(BitGenerator):
         self._bitgen.next_raw = &hc128_uint64
 
     def _seed_from_seq(self):
-        state = self.seed_seq.generate_state(4, np.uint64)
+        try:
+            state = self.seed_seq.generate_state(4, np.uint64)
+        except AttributeError:
+            state = self._seed_seq.generate_state(4, np.uint64)
         self.seed(key=state)
 
     def seed(self, seed=None, key=None):
@@ -153,8 +156,12 @@ cdef class HC128(BitGenerator):
             raise ValueError("seed and key cannot be simultaneously used")
         if key is None:
             BitGenerator._seed_with_seed_sequence(self, seed)
-            if self.seed_seq is not None:
-                return
+            try:
+                if self.seed_seq is not None:
+                    return
+            except AttributeError:
+                if self._seed_seq is not None:
+                    return
 
         seed = object_to_int(seed, 256, "seed")
         key = object_to_int(key, 256, "key")

@@ -158,7 +158,10 @@ cdef class SPECK128(BitGenerator):
         self.rng_state.uinteger = 0
 
     def _seed_from_seq(self, counter=None):
-        state = self.seed_seq.generate_state(4, np.uint64)
+        try:
+            state = self.seed_seq.generate_state(4, np.uint64)
+        except AttributeError:
+            state = self._seed_seq.generate_state(4, np.uint64)
         self.seed(key=state, counter=counter)
         self._reset_state_variables()
 
@@ -202,8 +205,12 @@ cdef class SPECK128(BitGenerator):
             raise ValueError("seed and key cannot be both used")
         if key is None:
             BitGenerator._seed_with_seed_sequence(self, seed, counter=counter)
-            if self.seed_seq is not None:
-                return
+            try:
+                if self.seed_seq is not None:
+                    return
+            except AttributeError:
+                if self._seed_seq is not None:
+                    return
 
         seed = object_to_int(seed, 256, "seed")
         key = object_to_int(key, 256, "key")

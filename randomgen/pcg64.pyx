@@ -207,7 +207,10 @@ cdef class PCG64(BitGenerator):
 
     def _seed_from_seq(self, inc=0):
         size = 4 if inc is None else 2
-        state = self.seed_seq.generate_state(size, np.uint64)
+        try:
+            state = self.seed_seq.generate_state(size, np.uint64)
+        except AttributeError:
+            state = self._seed_seq.generate_state(size, np.uint64)
         if inc is None:
             _inc = state[2:]
         else:
@@ -266,8 +269,13 @@ cdef class PCG64(BitGenerator):
                 raise TypeError(err_msg)
 
         BitGenerator._seed_with_seed_sequence(self, seed, inc=inc)
-        if self.seed_seq is not None:
-            return
+        try:
+            if self.seed_seq is not None:
+                return
+        except AttributeError:
+            if self._seed_seq is not None:
+                return
+
 
         if inc is None:
             _inc = <np.ndarray>random_entropy(4, "auto")
@@ -714,7 +722,10 @@ cdef class LCG128Mix(BitGenerator):
         cdef np.ndarray mult_vec, state, _inc
 
         size = 4 if inc is None else 2
-        state = np.array(self.seed_seq.generate_state(2, np.uint64))
+        try:
+            state = np.array(self.seed_seq.generate_state(2, np.uint64))
+        except AttributeError:
+            state = np.array(self._seed_seq.generate_state(2, np.uint64))
         mult_vec = np.empty(2, dtype=np.uint64)
         mult_vec[0] = self.multiplier >> 64
         mult_vec[1] = self.multiplier & 0xFFFFFFFFFFFFFFFF

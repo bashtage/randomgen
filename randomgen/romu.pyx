@@ -135,7 +135,10 @@ cdef class Romu(BitGenerator):
 
         self._setup_bitgen()
 
-        state = self.seed_seq.generate_state(4, np.uint64)
+        try:
+            state = self.seed_seq.generate_state(4, np.uint64)
+        except:
+            state = self._seed_seq.generate_state(4, np.uint64)
         if (state == 0).all():
             # Ensure at least one non-zero, exceedingly unlikely
             state[3] |= np.uint64(0x1)

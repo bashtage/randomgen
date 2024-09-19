@@ -224,7 +224,10 @@ cdef class Philox(BitGenerator):
 
     def _seed_from_seq(self, counter=None):
         seed_seq_size = max(self.n * self.w // 128, 1)
-        state = self.seed_seq.generate_state(seed_seq_size, np.uint64)
+        try:
+            state = self.seed_seq.generate_state(seed_seq_size, np.uint64)
+        except AttributeError:
+            state = self._seed_seq.generate_state(seed_seq_size, np.uint64)
         # Special case 2x32 which needs max 32 bits
         if self.n == 2 and self.w == 32:
             state %= np.uint64(2**32)
@@ -280,8 +283,12 @@ cdef class Philox(BitGenerator):
             raise ValueError("seed and key cannot be both used")
         if key is None:
             BitGenerator._seed_with_seed_sequence(self, seed, counter=counter)
-            if self.seed_seq is not None:
-                return
+            try:
+                if self.seed_seq is not None:
+                    return
+            except AttributeError:
+                if self._seed_seq is not None:
+                    return
 
         seed = object_to_int(seed, self.n * self.w // 2, "seed")
         key = object_to_int(key, self.n // 2 * self.w, "key")

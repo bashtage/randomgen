@@ -227,7 +227,10 @@ cdef class JSF(BitGenerator):
 
     def _seed_from_seq(self):
         dtype = np.uint64 if self.size == 64 else np.uint32
-        state = self.seed_seq.generate_state(self.seed_size, dtype)
+        try:
+            state = self.seed_seq.generate_state(self.seed_size, dtype)
+        except AttributeError:
+            state = self._seed_seq.generate_state(self.seed_size, dtype)
         if self.size == 64:
             jsf64_seed(&self.rng_state,
                        <uint64_t*>np.PyArray_DATA(state),
@@ -263,8 +266,12 @@ cdef class JSF(BitGenerator):
             If seed values are out of range for the PRNG.
         """
         BitGenerator._seed_with_seed_sequence(self, seed)
-        if self.seed_seq is not None:
-            return
+        try:
+            if self.seed_seq is not None:
+                return
+        except AttributeError:
+            if self._seed_seq is not None:
+                return
 
         if seed is None:
             state = random_entropy(3 * self.size // 32, "auto")

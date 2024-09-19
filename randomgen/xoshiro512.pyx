@@ -126,7 +126,10 @@ cdef class Xoshiro512(BitGenerator):
         cdef int i
         cdef uint64_t *state_arr
 
-        state = self.seed_seq.generate_state(8, np.uint64)
+        try:
+            state = self.seed_seq.generate_state(8, np.uint64)
+        except AttributeError:
+            state = self._seed_seq.generate_state(8, np.uint64)
         state_arr = <np.uint64_t *>np.PyArray_DATA(state)
         for i in range(8):
             self.rng_state.s[i] = state[i]
@@ -157,8 +160,13 @@ cdef class Xoshiro512(BitGenerator):
             If seed values are out of range for the PRNG.
         """
         BitGenerator._seed_with_seed_sequence(self, seed)
-        if self.seed_seq is not None:
-            return
+        try:
+            if self.seed_seq is not None:
+                return
+        except AttributeError:
+            if self._seed_seq is not None:
+                return
+
         ub = 2 ** 64
         if seed is None:
             state = random_entropy(16, "auto")

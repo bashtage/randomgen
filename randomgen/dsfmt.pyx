@@ -139,7 +139,10 @@ cdef class DSFMT(BitGenerator):
         self.rng_state.buffer_loc = DSFMT_N64
 
     def _seed_from_seq(self):
-        state = self.seed_seq.generate_state(2 * DSFMT_N64, np.uint32)
+        try:
+            state = self.seed_seq.generate_state(2 * DSFMT_N64, np.uint32)
+        except AttributeError:
+            state = self._seed_seq.generate_state(2 * DSFMT_N64, np.uint32)
 
         dsfmt_init_by_array(self.rng_state.state,
                             <uint32_t *>np.PyArray_DATA(state),
@@ -171,8 +174,12 @@ cdef class DSFMT(BitGenerator):
         cdef np.ndarray obj, seed_arr
 
         BitGenerator._seed_with_seed_sequence(self, seed)
-        if self.seed_seq is not None:
-            return
+        try:
+            if self.seed_seq is not None:
+                return
+        except AttributeError:
+            if self._seed_seq is not None:
+                return
         try:
             if seed is None:
                 seed_arr = random_entropy(2 * DSFMT_N64, "auto")
