@@ -13,7 +13,7 @@ else
 fi
 
 # Not all available in conda
-python -m pip install setuptools "setuptools_scm[toml]>=8,<9"  wheel pip black==24.8.0 isort flake8 --upgrade
+python -m pip install setuptools "setuptools_scm[toml]>=8,<9"  wheel pip black==24.8.0 isort flake8 threadpoolctl --upgrade
 
 EXTRA="pytest pytest-xdist coverage pytest-cov colorama"
 

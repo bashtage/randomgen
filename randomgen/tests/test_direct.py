@@ -422,7 +422,9 @@ class Base:
     def test_getstate(self):
         bit_generator = self.setup_bitgenerator(self.data1["seed"])
         state = bit_generator.state
-        alt_state = bit_generator.__getstate__()[0]
+        get_state = bit_generator.__getstate__()
+        # Legacy numpy compatability
+        alt_state = get_state[0] if isinstance(get_state, tuple) else get_state
         assert_state_equal(state, alt_state)
 
     def test_uinteger_reset_seed(self):
