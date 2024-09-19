@@ -1,9 +1,3 @@
-freebsd_task:
-  name: FreeBSD 13.2
-  freebsd_instance: {image_family: freebsd-13-2}
-  install_script: . ./ci/cirrus/cirrus-install-freebsd.sh
-  test_script: mkdir test_dir && cd test_dir && echo $PWD && python3.9 -m pip list && python3.9 -c "import randomgen; randomgen.test(['-n', '2'])"
-
 linux_arm_task:
   name: Linux-ARM
   arm_container: {image: python:slim}
