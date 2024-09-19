@@ -1,11 +1,14 @@
-black[jupyter]~=24.8.0
-isort~=5.0
+# Build
+cython>=3.0.10
+# Testing
 pytest>=7
 pytest-cov
 pytest-xdist
 scipy>=1.13.1
+# Lint
+black[jupyter]~=24.8.0
+isort~=5.0
 setuptools_scm[toml]>=8.0.0,<9.0.0
-packaging>=21.0
 ruff
 flake8
 flake8-pyi
