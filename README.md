@@ -8,6 +8,8 @@ This package contains additional bit generators for NumPy's
 
 [![Azure Build Status](https://dev.azure.com/kevinksheppard0207/kevinksheppard/_apis/build/status/bashtage.randomgen?branchName=main)](https://dev.azure.com/kevinksheppard0207/kevinksheppard/_build/latest?definitionId=2&branchName=main)
 [![Cirrus CI Build Status](https://api.cirrus-ci.com/github/bashtage/randomgen.svg?branch=main)](https://cirrus-ci.com/github/bashtage/randomgen)
+[![Github Workflow Build Status](https://github.com/bashtage/randomgen/actions/workflows/cron-build-and-test.yml/badge.svg)](https://github.com/bashtage/randomgen/actions/workflows/cron-build-and-test.yml)
+
 
 **Coverage**
 
