@@ -19,12 +19,12 @@ jobs:
       ${{ if eq(parameters.name, 'Linux') }}:
         python39_legacy:
           python.version: '3.9'
+          test.isolation: true
           NUMPY: 1.22.3
-          build.isolation: true
         python310_last_numpy_1:
           python.version: '3.10'
+          test.isolation: true
           NUMPY: 1.26.4
-          build.isolation: true
         python310_latest:
           python.version: '3.10'
         python311_latest_numpy_2:
@@ -110,12 +110,12 @@ jobs:
   - script: |
       python -m pip install -e . -v
     displayName: 'Install randomgen (editable)'
-    condition: eq(variables['build.isolation'], 'true')
+    condition: eq(variables['test.isolation'], 'true')
 
   - script: |
       python -m pip install -e . -v --no-build-isolation
     displayName: 'Install randomgen (editable, no-build-isolation)'
-    condition: and(ne(variables['test.install'], 'true'), ne(variables['build.isolation'], 'true'))
+    condition: and(ne(variables['test.install'], 'true'), ne(variables['test.isolation'], 'true'))
 
   - script: |
       echo "Testing site packages"
