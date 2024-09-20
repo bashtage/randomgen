@@ -249,7 +249,7 @@ cdef object _rand_{{nptype}}(object low, object high, object size,
 
     Returns
     -------
-    out : python scalar or ndarray of np.{{nptype}}
+    out : int or ndarray of np.{{nptype}}
           `size`-shaped array of random integers from the appropriate
           distribution, or a single such random int if `size` not provided.
 

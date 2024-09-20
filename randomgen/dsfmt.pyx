@@ -41,9 +41,6 @@ cdef class DSFMT(BitGenerator):
         ``None`` (the default). If `seed` is ``None``, then 764 32-bit unsigned
         integers are read from ``/dev/urandom`` (or the Windows analog) if
         available. If unavailable, a hash of the time and process ID is used.
-    mode : {None, "sequence"}, optional
-        The seeding mode to use. "sequence" uses a SeedSequence
-        to transforms the seed into an initial state.
 
     Attributes
     ----------

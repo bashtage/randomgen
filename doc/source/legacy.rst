@@ -10,10 +10,7 @@ Legacy Random Generation
 
 .. danger::
 
-   ``RandomState`` has been **removed**. You should be using :class:`numpy.random.Generator`,
-   or if you must have backward compatibility with NumPy before 1.17, :class:`numpy.random.RandomState`.
-
-.. currentmodule:: randomgen.mtrand
-
-.. autoclass::
-   RandomState
+   ``RandomState`` has been completely **removed** in randomgen 2.0.0.
+   You should be using :class:`numpy.random.Generator`, or if you must
+   have full stability (e.g., for writing tests) or backward compatibility
+   with NumPy before 1.17, :class:`numpy.random.RandomState`.

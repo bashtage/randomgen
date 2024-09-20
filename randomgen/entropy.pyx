@@ -117,7 +117,7 @@ def random_entropy(size=None, source="system"):
 
     Returns
     -------
-    entropy : scalar or ndarray
+    entropy : int or ndarray
         Entropy bits in 32-bit unsigned integers. A scalar is returned if size
         is `None`.
 
