@@ -39,6 +39,7 @@ DECLDIR void random_double_fill(bitgen_t *bitgen_state, npy_intp cnt,
                                 double *out);
 DECLDIR float random_float(bitgen_t *bitgen_state);
 DECLDIR int random_long_double_size(void);
+DECLDIR long double random_long_double(bitgen_t *bitgen_state);
 DECLDIR void random_long_double_fill(bitgen_t *bitgen_state, npy_intp cnt,
                                      long double *out);
 DECLDIR void random_wishart_large_df(bitgen_t *bitgen_state, int64_t df,
