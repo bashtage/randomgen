@@ -36,9 +36,7 @@ cdef object raw_32_to_double(object func):
 
 cdef class UserBitGenerator(BitGenerator):
     """
-    UserBitGenerator(next_raw, bits=64, next_64=None, next_32=None,
-                     next_double=None, state=None, state_getter=None,
-                     state_setter=None)
+    UserBitGenerator(next_raw, bits=64, next_64=None, next_32=None, next_double=None, state=None, state_getter=None, state_setter=None)
 
     Construct a bit generator from  Python functions
 

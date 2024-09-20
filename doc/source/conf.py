@@ -234,14 +234,12 @@ texinfo_documents = [
 
 # Example configuration for intersphinx: refer to the Python standard library.
 intersphinx_mapping = {
-    "statsmodels": ("https://www.statsmodels.org/dev/", None),
-    "matplotlib": ("https://matplotlib.org/stable/", None),
-    "scipy": ("https://docs.scipy.org/doc/scipy/", None),
-    "python": ("https://docs.python.org/3/", None),
-    "numpy": ("https://numpy.org/doc/stable/", None),
-    "np": ("https://numpy.org/doc/stable/", None),
-    "pandas": ("https://pandas.pydata.org/pandas-docs/stable/", None),
-    "pd": ("https://pandas.pydata.org/pandas-docs/stable/", None),
+    "statsmodels": ("https://www.statsmodels.org/dev", None),
+    "matplotlib": ("https://matplotlib.org/stable", None),
+    "scipy": ("https://docs.scipy.org/doc/scipy", None),
+    "python": ("https://docs.python.org/3", None),
+    "numpy": ("https://numpy.org/doc/stable", None),
+    "pandas": ("https://pandas.pydata.org/pandas-docs/stable", None),
 }
 
 

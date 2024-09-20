@@ -29,7 +29,7 @@ Seed information is directly passed to the bit generator.
 
 .. code-block:: python
 
-  rg = Generator(AESCounter(12345, mode="sequence"))
+  rg = Generator(AESCounter(12345))
   rg.random()
 
 History

@@ -194,7 +194,7 @@ cdef class ExtendedGenerator:
 
         Returns
         -------
-        bit_generator : BitGenerator
+        bit_generator : numpy.random.BitGenerator
             The bit generator instance used by the generator
         """
         return self._bit_generator
@@ -239,7 +239,7 @@ cdef class ExtendedGenerator:
 
         Returns
         -------
-        out : uint or ndarray
+        out : integer or ndarray
             Drawn samples.
 
         Notes
@@ -561,7 +561,7 @@ cdef class ExtendedGenerator:
 
         Returns
         -------
-        out : ndarray or scalar
+        out : complex or ndarray
             Drawn samples from the parameterized complex normal distribution.
 
         See Also

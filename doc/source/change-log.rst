@@ -140,12 +140,12 @@ v1.18.0
 - ``choice`` pulled in upstream performance improvement that
   use a hash set when choosing without replacement and without user-provided probabilities.
 - Added support for :class:`~randomgen.seed_sequence.SeedSequence` (and NumPy's ``SeedSequence``).
-- Fixed a bug that affected both :class:`~randomgen.generator.Generator.randint`
+- Fixed a bug that affected both ``randomgen.generator.Generator.randint``
   in ``Generator`` and ``randint``
   in  ``RandomState`` when ``high=2**32``.  This value is inbounds for
   a 32-bit unsigned closed interval generator, and so  should have been redirected to
   a 32-bit generator. It  was erroneously sent to the 64-bit path. The random values produced
-  are fully random but inefficient. This fix breaks the stream in :class:`~randomgen.generator.Generator
+  are fully random but inefficient. This fix breaks the stream in ``randomgen.generator.Generator``
   is the value for ``high`` is used. The fix restores ``RandomState`` to
   NumPy 1.16 compatibility.
   only affects the output if ``dtype`` is ``'int64'``
