@@ -26,6 +26,8 @@ cdef extern from "src/distributions/rg-distributions.h":
     void random_long_double_fill(bitgen_t * bitgen_state, np.npy_intp cnt, long double *out) noexcept nogil
     void random_wishart_large_df(bitgen_t *bitgen_state, int64_t df, np.npy_intp dim, np.npy_intp num, double *w, double *n) noexcept nogil
 
+    long double random_long_double(bitgen_t *bitgen_state) noexcept nogil
+
     float random_float(bitgen_t *bitgen_state) noexcept nogil
 
     int random_long_double_size() noexcept nogil

@@ -47,6 +47,9 @@ static inline long double rg_next_long_double(bitgen_t *bitgen_state) {
 #endif
 }
 
+long double random_long_double(bitgen_t *bitgen_state){
+    return rg_next_long_double(bitgen_state);
+}
 
 void random_long_double_fill(bitgen_t *bitgen_state, npy_intp cnt, long double *out){
    for (int i=0; i < cnt; i++){
