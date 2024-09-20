@@ -4,7 +4,6 @@
 import numpy as np
 
 from randomgen.common cimport *
-from randomgen.entropy import random_entropy, seed_by_array
 
 __all__ = ["SPECK128"]
 
@@ -205,25 +204,12 @@ cdef class SPECK128(BitGenerator):
             raise ValueError("seed and key cannot be both used")
         if key is None:
             BitGenerator._seed_with_seed_sequence(self, seed, counter=counter)
-            try:
-                if self.seed_seq is not None:
-                    return
-            except AttributeError:
-                if self._seed_seq is not None:
-                    return
+            return
 
-        seed = object_to_int(seed, 256, "seed")
         key = object_to_int(key, 256, "key")
         counter = object_to_int(counter, 128, "counter")
+        _seed = int_to_array(key, "key", 256, 64)
 
-        if key is None:
-            if seed is None:
-                _seed = random_entropy(8, "auto")
-                _seed = _seed.view(np.uint64)
-            else:
-                _seed = seed_by_array(int_to_array(seed, "seed", None, 64), 4)
-        else:
-            _seed = int_to_array(key, "key", 256, 64)
         speck_seed(self.rng_state, <uint64_t *>np.PyArray_DATA(_seed))
         counter = 0 if counter is None else counter
         _counter = int_to_array(counter, "counter", 128, 64)

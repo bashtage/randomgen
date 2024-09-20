@@ -68,21 +68,15 @@ cdef class BitGenerator(_BitGenerator):
         return copy.deepcopy(self._seed_seq)
 
     def _seed_with_seed_sequence(self, seed, **kwargs):
-        from randomgen.seed_sequence import SeedSequence
-        DefaultSeedSequence = SeedSequence
-        try:
-            from numpy.random import SeedSequence as DefaultSeedSequence
-        except ImportError:
-            pass
+        from numpy.random import SeedSequence
         if isinstance(seed, ISEED_SEQUENCES):
             self._seed_seq = seed
         else:
-            self._seed_seq = DefaultSeedSequence(seed)
-        if self._seed_seq is not None:
-            if self.mode == "sequence":
-                self._seed_from_seq(**kwargs)
-            else:  # numpy
-                self._seed_from_seq_numpy_compat(**kwargs)
+            self._seed_seq = SeedSequence(seed)
+        if self.mode == "sequence":
+            self._seed_from_seq(**kwargs)
+        else:  # numpy
+            self._seed_from_seq_numpy_compat(**kwargs)
         return
 
     @property

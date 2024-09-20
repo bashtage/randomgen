@@ -5,7 +5,6 @@ import numpy as np
 cimport numpy as np
 
 from randomgen.common cimport *
-from randomgen.entropy import random_entropy
 
 __all__ = ["PCG32"]
 
@@ -157,28 +156,6 @@ cdef class PCG32(BitGenerator):
             if not np.isscalar(inc):
                 raise TypeError(err_msg)
         BitGenerator._seed_with_seed_sequence(self, seed, inc=inc)
-        try:
-            if self.seed_seq is not None:
-                return
-        except AttributeError:
-            if self._seed_seq is not None:
-                return
-
-        inc = 0 if inc is None else inc
-        if seed is None:
-            seed = <np.ndarray>random_entropy(2, "auto")
-            seed = seed.view(np.uint64).squeeze()
-        else:
-            err_msg = "seed must be a scalar integer between 0 and " \
-                      "{ub}".format(ub=ub)
-            if not np.isscalar(seed):
-                raise TypeError(err_msg)
-            if int(seed) != seed:
-                raise TypeError(err_msg)
-            if seed < 0 or seed > ub:
-                raise ValueError(err_msg)
-
-        pcg32_set_seed(&self.rng_state, <uint64_t>seed, <uint64_t>inc)
 
     @property
     def state(self):

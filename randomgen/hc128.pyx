@@ -4,7 +4,6 @@ import numpy as np
 cimport numpy as np
 
 from randomgen.common cimport *
-from randomgen.entropy import random_entropy, seed_by_array
 
 __all__ = ["HC128"]
 
@@ -156,23 +155,11 @@ cdef class HC128(BitGenerator):
             raise ValueError("seed and key cannot be simultaneously used")
         if key is None:
             BitGenerator._seed_with_seed_sequence(self, seed)
-            try:
-                if self.seed_seq is not None:
-                    return
-            except AttributeError:
-                if self._seed_seq is not None:
-                    return
+            return
 
-        seed = object_to_int(seed, 256, "seed")
         key = object_to_int(key, 256, "key")
-        if key is not None:
-            state = int_to_array(key, "key", 256, 64)
-        elif seed is not None:
-            state = seed_by_array(int_to_array(seed, "seed", None, 64), 4)
-        else:
-            state = random_entropy(8, "auto")
-        # Ensure state uint32 values are the same in LE and BE
-        # and in the same order
+        state = int_to_array(key, "key", 256, 64)
+        # Ensure state uint32 values are the same in LE and BE and in the same order
         state = view_little_endian(state, np.uint32)
         hc128_seed(&self.rng_state, <uint32_t *>np.PyArray_DATA(state))
 

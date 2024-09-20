@@ -5,7 +5,7 @@ import numpy as np
 cimport numpy as np
 
 from randomgen.common cimport *
-from randomgen.entropy import random_entropy, seed_by_array
+
 
 __all__ = ["Xoshiro512"]
 
@@ -160,22 +160,6 @@ cdef class Xoshiro512(BitGenerator):
             If seed values are out of range for the PRNG.
         """
         BitGenerator._seed_with_seed_sequence(self, seed)
-        try:
-            if self.seed_seq is not None:
-                return
-        except AttributeError:
-            if self._seed_seq is not None:
-                return
-
-        ub = 2 ** 64
-        if seed is None:
-            state = random_entropy(16, "auto")
-            state = state.view(np.uint64)
-        else:
-            state = seed_by_array(seed, 8)
-        for i in range(8):
-            self.rng_state.s[i] = <uint64_t>int(state[i])
-        self._reset_state_variables()
 
     cdef jump_inplace(self, np.npy_intp iter):
         """

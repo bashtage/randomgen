@@ -2,7 +2,7 @@
 import numpy as np
 
 from randomgen.common cimport *
-from randomgen.entropy import random_entropy, seed_by_array
+
 
 __all__ = ["AESCounter"]
 
@@ -226,26 +226,11 @@ cdef class AESCounter(BitGenerator):
             raise ValueError("seed and key cannot be both used")
         if key is None:
             BitGenerator._seed_with_seed_sequence(self, seed, counter=counter)
-            try:
-                if self.seed_seq is not None:
-                    return
-            except AttributeError:
-                if self._seed_seq is not None:
-                    return
+            return
 
-        seed = object_to_int(seed, 128, "seed")
         key = object_to_int(key, 128, "key")
         counter = object_to_int(counter, 128, "counter")
-        if seed is not None and key is not None:
-            raise ValueError("seed and key cannot be both used")
-        if key is None:
-            if seed is None:
-                _seed = random_entropy(4, "auto")
-                _seed = _seed.view(np.uint64)
-            else:
-                _seed = seed_by_array(int_to_array(seed, "seed", None, 64), 2)
-        else:
-            _seed = int_to_array(key, "key", 128, 64)
+        _seed = int_to_array(key, "key", 128, 64)
         # TODO: We have swapped here, but should we always use native in Python?
         aesctr_seed(self.rng_state, <uint64_t*>np.PyArray_DATA(_seed))
         _counter = np.empty(8, dtype=np.uint64)

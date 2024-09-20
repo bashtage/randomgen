@@ -5,7 +5,6 @@ import numpy as np
 cimport numpy as np
 
 from randomgen.common cimport *
-from randomgen.entropy import random_entropy
 
 __all__ = ["DSFMT"]
 
@@ -168,39 +167,7 @@ cdef class DSFMT(BitGenerator):
         ValueError
             If seed values are out of range for the PRNG.
         """
-        cdef np.ndarray obj, seed_arr
-
         BitGenerator._seed_with_seed_sequence(self, seed)
-        try:
-            if self.seed_seq is not None:
-                return
-        except AttributeError:
-            if self._seed_seq is not None:
-                return
-        try:
-            if seed is None:
-                seed_arr = random_entropy(2 * DSFMT_N64, "auto")
-                dsfmt_init_by_array(self.rng_state.state,
-                                    <uint32_t *>np.PyArray_DATA(seed_arr),
-                                    2 * DSFMT_N64)
-
-            else:
-                if hasattr(seed, "squeeze"):
-                    seed = seed.squeeze()
-                idx = operator.index(seed)
-                if idx > int(2**32 - 1) or idx < 0:
-                    raise ValueError("Seed must be between 0 and 2**32 - 1")
-                dsfmt_init_gen_rand(self.rng_state.state, seed)
-        except TypeError:
-            obj = np.asarray(seed).astype(np.int64, casting="safe").ravel()
-            if ((obj > int(2**32 - 1)) | (obj < 0)).any():
-                raise ValueError("Seed must be between 0 and 2**32 - 1")
-            seed_arr = obj.astype(np.uint32, casting="unsafe", order="C")
-            dsfmt_init_by_array(self.rng_state.state,
-                                <uint32_t *>np.PyArray_DATA(seed_arr),
-                                <int>np.PyArray_DIM(seed_arr, 0))
-        # Clear the buffer
-        self._reset_state_variables()
 
     cdef jump_inplace(self, object iter):
         """
