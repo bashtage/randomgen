@@ -13,7 +13,7 @@
     
     
       
-        <title>randomgen.generator.ExtendedGenerator.multivariate_normal - RandomGen 1.26.1</title>
+        <title>randomgen.generator.ExtendedGenerator.multivariate_normal - RandomGen v1.26.2 (+53)</title>
       
     
     
@@ -36,7 +36,7 @@
         <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
       
     
-        <link rel="stylesheet" type="text/css" href="../_static/sphinx_immaterial_theme.af531f03affe68837.min.css?v=2410bb73" />
+        <link rel="stylesheet" type="text/css" href="../_static/sphinx_immaterial_theme.3625f807144f53acf.min.css?v=fbfc4466" />
     <script>__md_scope=new URL("..",location),__md_hash=e=>[...e].reduce((e,_)=>(e<<5)-e+_.charCodeAt(0),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
     
       
@@ -80,7 +80,7 @@
 
 <header class="md-header" data-md-component="header">
   <nav class="md-header__inner md-grid" aria-label="Header">
-    <a href="../index.html" title="RandomGen 1.26.1" class="md-header__button md-logo" aria-label="RandomGen 1.26.1" data-md-component="logo">
+    <a href="../index.html" title="RandomGen v1.26.2 (+53)" class="md-header__button md-logo" aria-label="RandomGen v1.26.2 (+53)" data-md-component="logo">
       <img src="../_static/casino.svg" alt="logo">
     </a>
     <label class="md-header__button md-icon" for="__drawer">
@@ -90,7 +90,7 @@
       <div class="md-header__ellipsis">
         <div class="md-header__topic">
           <span class="md-ellipsis">
-            RandomGen 1.26.1
+            RandomGen v1.26.2 (+53)
           </span>
         </div>
         <div class="md-header__topic" data-md-component="header-topic">
@@ -177,10 +177,10 @@
 
 <nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
   <label class="md-nav__title" for="__drawer">
-    <a href="../index.html" title="RandomGen 1.26.1" class="md-nav__button md-logo" aria-label="RandomGen 1.26.1" data-md-component="logo">
+    <a href="../index.html" title="RandomGen v1.26.2 (+53)" class="md-nav__button md-logo" aria-label="RandomGen v1.26.2 (+53)" data-md-component="logo">
       <img src="../_static/casino.svg" alt="logo">
     </a>
-    RandomGen 1.26.1
+    RandomGen v1.26.2 (+53)
   </label>
   
     <div class="md-nav__source">
@@ -380,21 +380,21 @@
         
           <li class="md-nav__item">
   <a href="#randomgen.generator.ExtendedGenerator.multivariate_normal.mean" class="md-nav__link">
-    <span aria-label="Python parameter" class="objinfo-icon objinfo-icon__sub-data" title="Python parameter">p</span><span title="randomgen.generator.ExtendedGenerator.multivariate_normal.mean (Python parameter) — Mean of the distribution. Must have shape (m1, m2, ..., mk, N) where (m1, m2, ..., mk) would broadcast with (c1, c2, ..., cj)." class="md-ellipsis">mean</span>
+    <span aria-label="Python parameter" class="objinfo-icon objinfo-icon__sub-data" title="Python parameter">p</span><span title="randomgen.generator.ExtendedGenerator.multivariate_normal.mean (Python parameter) — Mean of the distribution." class="md-ellipsis">mean</span>
   </a>
   
 </li>
         
           <li class="md-nav__item">
   <a href="#randomgen.generator.ExtendedGenerator.multivariate_normal.cov" class="md-nav__link">
-    <span aria-label="Python parameter" class="objinfo-icon objinfo-icon__sub-data" title="Python parameter">p</span><span title="randomgen.generator.ExtendedGenerator.multivariate_normal.cov (Python parameter) — Covariance matrix of the distribution. It must be symmetric and positive-semidefinite for proper sampling. Must have shape (c1, c2, ..., cj, N, N) where (c1, c2, ..., cj) would broadcast with (m1, m2, ..., mk)." class="md-ellipsis">cov</span>
+    <span aria-label="Python parameter" class="objinfo-icon objinfo-icon__sub-data" title="Python parameter">p</span><span title="randomgen.generator.ExtendedGenerator.multivariate_normal.cov (Python parameter) — Covariance matrix of the distribution." class="md-ellipsis">cov</span>
   </a>
   
 </li>
         
           <li class="md-nav__item">
   <a href="#randomgen.generator.ExtendedGenerator.multivariate_normal.size" class="md-nav__link">
-    <span aria-label="Python parameter" class="objinfo-icon objinfo-icon__sub-data" title="Python parameter">p</span><span title="randomgen.generator.ExtendedGenerator.multivariate_normal.size (Python parameter) — Given a shape of, for example, (m,n,k), m*n*k samples are generated, and packed in an m-by-n-by-k arrangement.  Because each sample is N-dimensional, the output shape is (m,n,k,N). If no shape is specified, a single (N-D) sample is returned." class="md-ellipsis">size</span>
+    <span aria-label="Python parameter" class="objinfo-icon objinfo-icon__sub-data" title="Python parameter">p</span><span title="randomgen.generator.ExtendedGenerator.multivariate_normal.size (Python parameter) — Given a shape of, for example, (m,n,k), m*n*k samples are generated, and packed in an m-by-n-by-k arrangement." class="md-ellipsis">size</span>
   </a>
   
 </li>
@@ -415,7 +415,7 @@
         
           <li class="md-nav__item">
   <a href="#randomgen.generator.ExtendedGenerator.multivariate_normal.method" class="md-nav__link">
-    <span aria-label="Python parameter" class="objinfo-icon objinfo-icon__sub-data" title="Python parameter">p</span><span title="randomgen.generator.ExtendedGenerator.multivariate_normal.method (Python parameter) — The cov input is used to compute a factor matrix A such that A @ A.T = cov. This argument is used to select the method used to compute the factor matrix A. The default method &#39;svd&#39; is the slowest, while &#39;cholesky&#39; is the fastest but less robust than the slowest method. The method eigh uses eigen decomposition to compute A and is faster than svd but slower than cholesky. factor assumes that cov has been pre-factored so that no transformation is applied." class="md-ellipsis">method</span>
+    <span aria-label="Python parameter" class="objinfo-icon objinfo-icon__sub-data" title="Python parameter">p</span><span title="randomgen.generator.ExtendedGenerator.multivariate_normal.method (Python parameter) — The cov input is used to compute a factor matrix A such that A @ A.T = cov." class="md-ellipsis">method</span>
   </a>
   
 </li>
@@ -812,21 +812,21 @@
         
           <li class="md-nav__item">
   <a href="#randomgen.generator.ExtendedGenerator.multivariate_normal.mean" class="md-nav__link">
-    <span aria-label="Python parameter" class="objinfo-icon objinfo-icon__sub-data" title="Python parameter">p</span><span title="randomgen.generator.ExtendedGenerator.multivariate_normal.mean (Python parameter) — Mean of the distribution. Must have shape (m1, m2, ..., mk, N) where (m1, m2, ..., mk) would broadcast with (c1, c2, ..., cj)." class="md-ellipsis">mean</span>
+    <span aria-label="Python parameter" class="objinfo-icon objinfo-icon__sub-data" title="Python parameter">p</span><span title="randomgen.generator.ExtendedGenerator.multivariate_normal.mean (Python parameter) — Mean of the distribution." class="md-ellipsis">mean</span>
   </a>
   
 </li>
         
           <li class="md-nav__item">
   <a href="#randomgen.generator.ExtendedGenerator.multivariate_normal.cov" class="md-nav__link">
-    <span aria-label="Python parameter" class="objinfo-icon objinfo-icon__sub-data" title="Python parameter">p</span><span title="randomgen.generator.ExtendedGenerator.multivariate_normal.cov (Python parameter) — Covariance matrix of the distribution. It must be symmetric and positive-semidefinite for proper sampling. Must have shape (c1, c2, ..., cj, N, N) where (c1, c2, ..., cj) would broadcast with (m1, m2, ..., mk)." class="md-ellipsis">cov</span>
+    <span aria-label="Python parameter" class="objinfo-icon objinfo-icon__sub-data" title="Python parameter">p</span><span title="randomgen.generator.ExtendedGenerator.multivariate_normal.cov (Python parameter) — Covariance matrix of the distribution." class="md-ellipsis">cov</span>
   </a>
   
 </li>
         
           <li class="md-nav__item">
   <a href="#randomgen.generator.ExtendedGenerator.multivariate_normal.size" class="md-nav__link">
-    <span aria-label="Python parameter" class="objinfo-icon objinfo-icon__sub-data" title="Python parameter">p</span><span title="randomgen.generator.ExtendedGenerator.multivariate_normal.size (Python parameter) — Given a shape of, for example, (m,n,k), m*n*k samples are generated, and packed in an m-by-n-by-k arrangement.  Because each sample is N-dimensional, the output shape is (m,n,k,N). If no shape is specified, a single (N-D) sample is returned." class="md-ellipsis">size</span>
+    <span aria-label="Python parameter" class="objinfo-icon objinfo-icon__sub-data" title="Python parameter">p</span><span title="randomgen.generator.ExtendedGenerator.multivariate_normal.size (Python parameter) — Given a shape of, for example, (m,n,k), m*n*k samples are generated, and packed in an m-by-n-by-k arrangement." class="md-ellipsis">size</span>
   </a>
   
 </li>
@@ -847,7 +847,7 @@
         
           <li class="md-nav__item">
   <a href="#randomgen.generator.ExtendedGenerator.multivariate_normal.method" class="md-nav__link">
-    <span aria-label="Python parameter" class="objinfo-icon objinfo-icon__sub-data" title="Python parameter">p</span><span title="randomgen.generator.ExtendedGenerator.multivariate_normal.method (Python parameter) — The cov input is used to compute a factor matrix A such that A @ A.T = cov. This argument is used to select the method used to compute the factor matrix A. The default method &#39;svd&#39; is the slowest, while &#39;cholesky&#39; is the fastest but less robust than the slowest method. The method eigh uses eigen decomposition to compute A and is faster than svd but slower than cholesky. factor assumes that cov has been pre-factored so that no transformation is applied." class="md-ellipsis">method</span>
+    <span aria-label="Python parameter" class="objinfo-icon objinfo-icon__sub-data" title="Python parameter">p</span><span title="randomgen.generator.ExtendedGenerator.multivariate_normal.method (Python parameter) — The cov input is used to compute a factor matrix A such that A @ A.T = cov." class="md-ellipsis">method</span>
   </a>
   
 </li>
@@ -893,7 +893,7 @@
 <h1 id="randomgen-generator-extendedgenerator-multivariate-normal">randomgen.generator.ExtendedGenerator.multivariate_normal<a class="headerlink" href="#randomgen-generator-extendedgenerator-multivariate-normal" title="Link to this heading">¶</a></h1>
 <dl class="py method objdesc">
 <dt class="sig sig-object highlight sig-wrap py" id="randomgen.generator.ExtendedGenerator.multivariate_normal">
-<span class="sig-prename descclassname"><span class="pre">ExtendedGenerator.</span></span><span class="sig-name descname"><span class="pre">multivariate_normal</span></span><span class="sig-paren">(</span><span class="sig-param-decl"><em class="sig-param"><a class="n reference internal" href="#randomgen.generator.ExtendedGenerator.multivariate_normal.mean" title="randomgen.generator.ExtendedGenerator.multivariate_normal.mean (Python parameter) — Mean of the distribution. Must have shape (m1, m2, ..., mk, N) where (m1, m2, ..., mk) would broadcast with (c1, c2, ..., cj)."><span class="n"><span class="pre">mean</span></span></a></em>, </span><span class="sig-param-decl"><em class="sig-param"><a class="n reference internal" href="#randomgen.generator.ExtendedGenerator.multivariate_normal.cov" title="randomgen.generator.ExtendedGenerator.multivariate_normal.cov (Python parameter) — Covariance matrix of the distribution. It must be symmetric and positive-semidefinite for proper sampling. Must have shape (c1, c2, ..., cj, N, N) where (c1, c2, ..., cj) would broadcast with (m1, m2, ..., mk)."><span class="n"><span class="pre">cov</span></span></a></em>, </span><span class="sig-param-decl"><em class="sig-param"><a class="n reference internal" href="#randomgen.generator.ExtendedGenerator.multivariate_normal.size" title="randomgen.generator.ExtendedGenerator.multivariate_normal.size (Python parameter) — Given a shape of, for example, (m,n,k), m*n*k samples are generated, and packed in an m-by-n-by-k arrangement.  Because each sample is N-dimensional, the output shape is (m,n,k,N). If no shape is specified, a single (N-D) sample is returned."><span class="n"><span class="pre">size</span></span></a><span class="o"><span class="pre">=</span></span><code class="code python default_value docutils literal highlight highlight-python"><span class="kc">None</span></code></em>, </span><span class="sig-param-decl"><em class="sig-param"><a class="n reference internal" href="#randomgen.generator.ExtendedGenerator.multivariate_normal.check_valid" title="randomgen.generator.ExtendedGenerator.multivariate_normal.check_valid (Python parameter) — Behavior when the covariance matrix is not positive semidefinite."><span class="n"><span class="pre">check_valid</span></span></a><span class="o"><span class="pre">=</span></span><code class="code python default_value docutils literal highlight highlight-python"><span class="s1">&#39;warn&#39;</span></code></em>, </span><span class="sig-param-decl"><em class="sig-param"><a class="n reference internal" href="#randomgen.generator.ExtendedGenerator.multivariate_normal.tol" title="randomgen.generator.ExtendedGenerator.multivariate_normal.tol (Python parameter) — Tolerance when checking the singular values in covariance matrix. cov is cast to double before the check."><span class="n"><span class="pre">tol</span></span></a><span class="o"><span class="pre">=</span></span><code class="code python default_value docutils literal highlight highlight-python"><span class="mf">1e-8</span></code></em>, </span><span class="sig-param-decl"><em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, </span><span class="sig-param-decl"><em class="sig-param"><a class="n reference internal" href="#randomgen.generator.ExtendedGenerator.multivariate_normal.method" title="randomgen.generator.ExtendedGenerator.multivariate_normal.method (Python parameter) — The cov input is used to compute a factor matrix A such that A &#64; A.T = cov. This argument is used to select the method used to compute the factor matrix A. The default method 'svd' is the slowest, while 'cholesky' is the fastest but less robust than the slowest method. The method eigh uses eigen decomposition to compute A and is faster than svd but slower than cholesky. factor assumes that cov has been pre-factored so that no transformation is applied."><span class="n"><span class="pre">method</span></span></a><span class="o"><span class="pre">=</span></span><code class="code python default_value docutils literal highlight highlight-python"><span class="s1">&#39;svd&#39;</span></code></em></span><span class="sig-paren">)</span><a class="headerlink" href="#randomgen.generator.ExtendedGenerator.multivariate_normal" title="Link to this definition">¶</a></dt>
+<span class="sig-prename descclassname"><span class="pre">ExtendedGenerator.</span></span><span class="sig-name descname"><span class="pre">multivariate_normal</span></span><span class="sig-paren">(</span><span class="sig-param-decl"><em class="sig-param"><a class="n reference internal" href="#randomgen.generator.ExtendedGenerator.multivariate_normal.mean" title="randomgen.generator.ExtendedGenerator.multivariate_normal.mean (Python parameter) — Mean of the distribution."><span class="n"><span class="pre">mean</span></span></a></em>, </span><span class="sig-param-decl"><em class="sig-param"><a class="n reference internal" href="#randomgen.generator.ExtendedGenerator.multivariate_normal.cov" title="randomgen.generator.ExtendedGenerator.multivariate_normal.cov (Python parameter) — Covariance matrix of the distribution."><span class="n"><span class="pre">cov</span></span></a></em>, </span><span class="sig-param-decl"><em class="sig-param"><a class="n reference internal" href="#randomgen.generator.ExtendedGenerator.multivariate_normal.size" title="randomgen.generator.ExtendedGenerator.multivariate_normal.size (Python parameter) — Given a shape of, for example, (m,n,k), m*n*k samples are generated, and packed in an m-by-n-by-k arrangement."><span class="n"><span class="pre">size</span></span></a><span class="o"><span class="pre">=</span></span><code class="code python default_value docutils literal highlight highlight-python"><span class="kc">None</span></code></em>, </span><span class="sig-param-decl"><em class="sig-param"><a class="n reference internal" href="#randomgen.generator.ExtendedGenerator.multivariate_normal.check_valid" title="randomgen.generator.ExtendedGenerator.multivariate_normal.check_valid (Python parameter) — Behavior when the covariance matrix is not positive semidefinite."><span class="n"><span class="pre">check_valid</span></span></a><span class="o"><span class="pre">=</span></span><code class="code python default_value docutils literal highlight highlight-python"><span class="s1">&#39;warn&#39;</span></code></em>, </span><span class="sig-param-decl"><em class="sig-param"><a class="n reference internal" href="#randomgen.generator.ExtendedGenerator.multivariate_normal.tol" title="randomgen.generator.ExtendedGenerator.multivariate_normal.tol (Python parameter) — Tolerance when checking the singular values in covariance matrix. cov is cast to double before the check."><span class="n"><span class="pre">tol</span></span></a><span class="o"><span class="pre">=</span></span><code class="code python default_value docutils literal highlight highlight-python"><span class="mf">1e-8</span></code></em>, </span><span class="sig-param-decl"><em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, </span><span class="sig-param-decl"><em class="sig-param"><a class="n reference internal" href="#randomgen.generator.ExtendedGenerator.multivariate_normal.method" title="randomgen.generator.ExtendedGenerator.multivariate_normal.method (Python parameter) — The cov input is used to compute a factor matrix A such that A &#64; A.T = cov."><span class="n"><span class="pre">method</span></span></a><span class="o"><span class="pre">=</span></span><code class="code python default_value docutils literal highlight highlight-python"><span class="s1">&#39;svd&#39;</span></code></em></span><span class="sig-paren">)</span><a class="headerlink" href="#randomgen.generator.ExtendedGenerator.multivariate_normal" title="Link to this definition">¶</a></dt>
 <dd><p>Draw random samples from a multivariate normal distribution.</p>
 <p>The multivariate normal, multinormal or Gaussian distribution is a
 generalization of the one-dimensional normal distribution to higher
@@ -942,7 +942,7 @@ value drawn from the distribution.</p>
 </p>
 </dd>
 <dt class="field-odd" id="randomgen.generator.ExtendedGenerator.multivariate_normal-return-type">Return type<span class="colon">:</span><a class="headerlink" href="#randomgen.generator.ExtendedGenerator.multivariate_normal-return-type" title="Permalink to this headline">¶</a></dt>
-<dd class="field-odd"><p><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.26)"><code class="xref py py-class docutils literal notranslate"><span class="pre">numpy.ndarray</span></code></a></p>
+<dd class="field-odd"><p><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.1)"><code class="xref py py-class docutils literal notranslate"><span class="pre">numpy.ndarray</span></code></a></p>
 </dd>
 </dl>
 <p class="rubric">Notes</p>
@@ -1082,7 +1082,7 @@ standard deviation:</p>
   
     Created using
     <a href="https://www.sphinx-doc.org/" target="_blank" rel="noopener">Sphinx</a>
-    7.2.6.
+    8.0.2.
      and
     <a href="https://github.com/jbms/sphinx-immaterial/" target="_blank" rel="noopener">Sphinx-Immaterial</a>
   

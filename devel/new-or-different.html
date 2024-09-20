@@ -13,7 +13,7 @@
     
     
       
-        <title>What’s New or Different - RandomGen 1.26.1</title>
+        <title>What’s New or Different - RandomGen v1.26.2 (+53)</title>
       
     
     
@@ -36,7 +36,7 @@
         <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
       
     
-        <link rel="stylesheet" type="text/css" href="_static/sphinx_immaterial_theme.af531f03affe68837.min.css?v=2410bb73" />
+        <link rel="stylesheet" type="text/css" href="_static/sphinx_immaterial_theme.3625f807144f53acf.min.css?v=fbfc4466" />
     <script>__md_scope=new URL(".",location),__md_hash=e=>[...e].reduce((e,_)=>(e<<5)-e+_.charCodeAt(0),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
     
       
@@ -80,7 +80,7 @@
 
 <header class="md-header" data-md-component="header">
   <nav class="md-header__inner md-grid" aria-label="Header">
-    <a href="index.html" title="RandomGen 1.26.1" class="md-header__button md-logo" aria-label="RandomGen 1.26.1" data-md-component="logo">
+    <a href="index.html" title="RandomGen v1.26.2 (+53)" class="md-header__button md-logo" aria-label="RandomGen v1.26.2 (+53)" data-md-component="logo">
       <img src="_static/casino.svg" alt="logo">
     </a>
     <label class="md-header__button md-icon" for="__drawer">
@@ -90,7 +90,7 @@
       <div class="md-header__ellipsis">
         <div class="md-header__topic">
           <span class="md-ellipsis">
-            RandomGen 1.26.1
+            RandomGen v1.26.2 (+53)
           </span>
         </div>
         <div class="md-header__topic" data-md-component="header-topic">
@@ -177,10 +177,10 @@
 
 <nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
   <label class="md-nav__title" for="__drawer">
-    <a href="index.html" title="RandomGen 1.26.1" class="md-nav__button md-logo" aria-label="RandomGen 1.26.1" data-md-component="logo">
+    <a href="index.html" title="RandomGen v1.26.2 (+53)" class="md-nav__button md-logo" aria-label="RandomGen v1.26.2 (+53)" data-md-component="logo">
       <img src="_static/casino.svg" alt="logo">
     </a>
-    RandomGen 1.26.1
+    RandomGen v1.26.2 (+53)
   </label>
   
     <div class="md-nav__source">
@@ -572,14 +572,14 @@
 <h1 id="what-s-new-or-different"><span id="new-or-different"></span>What’s New or Different<a class="headerlink" href="#what-s-new-or-different" title="Link to this heading">¶</a></h1>
 <h2 id="differences-from-numpy-1-17">Differences from NumPy (1.17+)<a class="headerlink" href="#differences-from-numpy-1-17" title="Link to this heading">¶</a></h2>
 <ul class="simple">
-<li><p><a class="reference internal" href="bit_generators/userbitgenerator.html#randomgen.wrapper.UserBitGenerator" title="randomgen.wrapper.UserBitGenerator (Python class) — next_double=None, state=None, state_getter=None, state_setter=None)"><code class="xref py py-class docutils literal notranslate"><span class="pre">UserBitGenerator</span></code></a> allows bit generators to be
+<li><p><a class="reference internal" href="bit_generators/userbitgenerator.html#randomgen.wrapper.UserBitGenerator" title="randomgen.wrapper.UserBitGenerator (Python class) — Construct a bit generator from  Python functions"><code class="xref py py-class docutils literal notranslate"><span class="pre">UserBitGenerator</span></code></a> allows bit generators to be
 written in Python (slow, suitable for experiments and testing) or numba
 (fast, similar speed to compiled C). See <a class="reference internal" href="custom-bit-generators.html"><span class="doc">the demonstration notebook</span></a> for
 examples.</p></li>
 <li><p><a class="reference internal" href="bit_generators/pcg64.html#randomgen.pcg64.PCG64" title="randomgen.pcg64.PCG64 (Python class) — Container for the PCG-64 pseudo-random number generator."><code class="xref py py-class docutils literal notranslate"><span class="pre">PCG64</span></code></a> supports additional variants of PCG64, including
 the PCG4 2.0 variant (<cite>“cm-dxsm”</cite>).</p></li>
 <li><p><a class="reference internal" href="bit_generators/sfc.html#randomgen.sfc.SFC64" title="randomgen.sfc.SFC64 (Python class) — Chris Doty-Humphrey's Small Fast Chaotic PRNG with optional Weyl Sequence"><code class="xref py py-class docutils literal notranslate"><span class="pre">SFC64</span></code></a> supports optional Weyl sequence increments other
-than 1 which is the fixed increment in <a class="reference external" href="https://numpy.org/doc/stable/reference/random/bit_generators/sfc64.html#numpy.random.SFC64" title="(in NumPy v1.26)"><code class="xref py py-class docutils literal notranslate"><span class="pre">numpy.random.SFC64</span></code></a>.</p></li>
+than 1 which is the fixed increment in <a class="reference external" href="https://numpy.org/doc/stable/reference/random/bit_generators/sfc64.html#numpy.random.SFC64" title="(in NumPy v2.1)"><code class="xref py py-class docutils literal notranslate"><span class="pre">numpy.random.SFC64</span></code></a>.</p></li>
 <li><p><a class="reference internal" href="entropy.html#randomgen.entropy.random_entropy" title="randomgen.entropy.random_entropy (Python function) — Read entropy from the system cryptographic provider"><code class="xref py py-func docutils literal notranslate"><span class="pre">random_entropy()</span></code></a> provides access to the system
 source of randomness that is used in cryptographic applications (e.g.,
 <code class="docutils literal notranslate"><span class="pre">/dev/urandom</span></code> on Unix).</p></li>
@@ -641,7 +641,7 @@ source of randomness that is used in cryptographic applications (e.g.,
 </ul>
 <div class="admonition danger docutils container">
 <p class="admonition-title"> Deprecated </p><p><code class="docutils literal notranslate"><span class="pre">Generator</span></code> is <strong>deprecated</strong>. You should be using
-<a class="reference external" href="https://numpy.org/doc/stable/reference/random/generator.html#numpy.random.Generator" title="(in NumPy v1.26)"><code class="xref py py-class docutils literal notranslate"><span class="pre">numpy.random.Generator</span></code></a>.</p>
+<a class="reference external" href="https://numpy.org/doc/stable/reference/random/generator.html#numpy.random.Generator" title="(in NumPy v2.1)"><code class="xref py py-class docutils literal notranslate"><span class="pre">numpy.random.Generator</span></code></a>.</p>
 </div>
 <ul class="simple">
 <li><p>randomgen’s <code class="docutils literal notranslate"><span class="pre">Generator</span></code> continues to expose legacy
@@ -778,7 +778,7 @@ arbitrary interval by setting <code class="docutils literal notranslate"><span c
   
     Created using
     <a href="https://www.sphinx-doc.org/" target="_blank" rel="noopener">Sphinx</a>
-    7.2.6.
+    8.0.2.
      and
     <a href="https://github.com/jbms/sphinx-immaterial/" target="_blank" rel="noopener">Sphinx-Immaterial</a>
   

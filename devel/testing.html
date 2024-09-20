@@ -13,7 +13,7 @@
     
     
       
-        <title>Quality Assurance - RandomGen 1.26.1</title>
+        <title>Quality Assurance - RandomGen v1.26.2 (+53)</title>
       
     
     
@@ -36,7 +36,7 @@
         <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
       
     
-        <link rel="stylesheet" type="text/css" href="_static/sphinx_immaterial_theme.af531f03affe68837.min.css?v=2410bb73" />
+        <link rel="stylesheet" type="text/css" href="_static/sphinx_immaterial_theme.3625f807144f53acf.min.css?v=fbfc4466" />
     <script>__md_scope=new URL(".",location),__md_hash=e=>[...e].reduce((e,_)=>(e<<5)-e+_.charCodeAt(0),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
     
       
@@ -80,7 +80,7 @@
 
 <header class="md-header" data-md-component="header">
   <nav class="md-header__inner md-grid" aria-label="Header">
-    <a href="index.html" title="RandomGen 1.26.1" class="md-header__button md-logo" aria-label="RandomGen 1.26.1" data-md-component="logo">
+    <a href="index.html" title="RandomGen v1.26.2 (+53)" class="md-header__button md-logo" aria-label="RandomGen v1.26.2 (+53)" data-md-component="logo">
       <img src="_static/casino.svg" alt="logo">
     </a>
     <label class="md-header__button md-icon" for="__drawer">
@@ -90,7 +90,7 @@
       <div class="md-header__ellipsis">
         <div class="md-header__topic">
           <span class="md-ellipsis">
-            RandomGen 1.26.1
+            RandomGen v1.26.2 (+53)
           </span>
         </div>
         <div class="md-header__topic" data-md-component="header-topic">
@@ -177,10 +177,10 @@
 
 <nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
   <label class="md-nav__title" for="__drawer">
-    <a href="index.html" title="RandomGen 1.26.1" class="md-nav__button md-logo" aria-label="RandomGen 1.26.1" data-md-component="logo">
+    <a href="index.html" title="RandomGen v1.26.2 (+53)" class="md-nav__button md-logo" aria-label="RandomGen v1.26.2 (+53)" data-md-component="logo">
       <img src="_static/casino.svg" alt="logo">
     </a>
-    RandomGen 1.26.1
+    RandomGen v1.26.2 (+53)
   </label>
   
     <div class="md-nav__source">
@@ -672,7 +672,7 @@ Non-default configurations are indicated by listing the keyword arguments to the
 Two sets of tests were performed. The first tested all configurations using 128GB of data using
 PractRand’s extended set of tests and additional bit folding. The second set of tests used
 4TB of data wit the standard set of tests and folding.</p>
-<p>All bit generators have been tested using the same <a class="reference external" href="https://numpy.org/doc/stable/reference/random/bit_generators/generated/numpy.random.SeedSequence.html#numpy.random.SeedSequence" title="(in NumPy v1.26)"><code class="xref py py-class docutils literal notranslate"><span class="pre">SeedSequence</span></code></a>
+<p>All bit generators have been tested using the same <a class="reference external" href="https://numpy.org/doc/stable/reference/random/bit_generators/generated/numpy.random.SeedSequence.html#numpy.random.SeedSequence" title="(in NumPy v2.1)"><code class="xref py py-class docutils literal notranslate"><span class="pre">SeedSequence</span></code></a>
 initialized with the same 256-bits of entropy taken from random.org.</p>
 <table class="docutils data align-default">
 <thead>
@@ -909,25 +909,25 @@ configurations simply make changes to either <code class="docutils literal notra
 </div>
 <h2 id="additional-experiments">Additional Experiments<a class="headerlink" href="#additional-experiments" title="Link to this heading">¶</a></h2>
 <p>The best practice for using any of the bit generators is to initialize
-a single <a class="reference external" href="https://numpy.org/doc/stable/reference/random/bit_generators/generated/numpy.random.SeedSequence.html#numpy.random.SeedSequence" title="(in NumPy v1.26)"><code class="xref py py-class docutils literal notranslate"><span class="pre">SeedSequence</span></code></a> with a reasonably random seed,
+a single <a class="reference external" href="https://numpy.org/doc/stable/reference/random/bit_generators/generated/numpy.random.SeedSequence.html#numpy.random.SeedSequence" title="(in NumPy v2.1)"><code class="xref py py-class docutils literal notranslate"><span class="pre">SeedSequence</span></code></a> with a reasonably random seed,
 and then to use this seed sequence to initialize all bit generators.
 Some additional experiments were used to check that the quality of output
 streams is not excessively sensitive to use that deviates from this best practice.</p>
 <h3 id="correlated-seeds">Correlated Seeds<a class="headerlink" href="#correlated-seeds" title="Link to this heading">¶</a></h3>
-<p>While the recommended practice is to use a <a class="reference external" href="https://numpy.org/doc/stable/reference/random/bit_generators/generated/numpy.random.SeedSequence.html#numpy.random.SeedSequence" title="(in NumPy v1.26)"><code class="xref py py-class docutils literal notranslate"><span class="pre">SeedSequence</span></code></a>,
+<p>While the recommended practice is to use a <a class="reference external" href="https://numpy.org/doc/stable/reference/random/bit_generators/generated/numpy.random.SeedSequence.html#numpy.random.SeedSequence" title="(in NumPy v2.1)"><code class="xref py py-class docutils literal notranslate"><span class="pre">SeedSequence</span></code></a>,
 it is natural to worry about bad seeds.  A common sequence of bad seeds are
 those which set a single bit to be non-zero: 1, 2, 4, 8, 16, and so on.
-By default, bit generators use a <a class="reference external" href="https://numpy.org/doc/stable/reference/random/bit_generators/generated/numpy.random.SeedSequence.html#numpy.random.SeedSequence" title="(in NumPy v1.26)"><code class="xref py py-class docutils literal notranslate"><span class="pre">SeedSequence</span></code></a> to transform
+By default, bit generators use a <a class="reference external" href="https://numpy.org/doc/stable/reference/random/bit_generators/generated/numpy.random.SeedSequence.html#numpy.random.SeedSequence" title="(in NumPy v2.1)"><code class="xref py py-class docutils literal notranslate"><span class="pre">SeedSequence</span></code></a> to transform
 seed values into an initial state for the bit generator.
-<a class="reference external" href="https://numpy.org/doc/stable/reference/random/bit_generators/generated/numpy.random.SeedSequence.html#numpy.random.SeedSequence" title="(in NumPy v1.26)"><code class="xref py py-class docutils literal notranslate"><span class="pre">SeedSequence</span></code></a> is itself a random number generator that always
+<a class="reference external" href="https://numpy.org/doc/stable/reference/random/bit_generators/generated/numpy.random.SeedSequence.html#numpy.random.SeedSequence" title="(in NumPy v2.1)"><code class="xref py py-class docutils literal notranslate"><span class="pre">SeedSequence</span></code></a> is itself a random number generator that always
 escapes low-entropy states – that is, those with many 0s or 1s – immediately.
 All bit generators were tested with 8 streams using seeds of the form <span class="math notranslate nohighlight">\(2^i\)</span> for
 i in 0, 1, …, 7. Only three bit generators failed this experiment: <a class="reference internal" href="bit_generators/dsfmt.html#randomgen.dsfmt.DSFMT" title="randomgen.dsfmt.DSFMT (Python class) — Container for the SIMD-based Mersenne Twister pseudo RNG."><code class="xref py py-class docutils literal notranslate"><span class="pre">DSFMT</span></code></a>,
 <a class="reference internal" href="bit_generators/mt19937.html#randomgen.mt19937.MT19937" title="randomgen.mt19937.MT19937 (Python class) — Container for the Mersenne Twister pseudo-random number generator."><code class="xref py py-class docutils literal notranslate"><span class="pre">MT19937</span></code></a>, and <a class="reference internal" href="bit_generators/sfmt.html#randomgen.sfmt.SFMT" title="randomgen.sfmt.SFMT (Python class) — Container for the SIMD-based Mersenne Twister pseudo RNG."><code class="xref py py-class docutils literal notranslate"><span class="pre">SFMT</span></code></a>. These are all
 members of the Mersenne Twister family which commonly fail <code class="docutils literal notranslate"><span class="pre">BRank</span></code> tests.</p>
 <h3 id="sequential-seeds">Sequential Seeds<a class="headerlink" href="#sequential-seeds" title="Link to this heading">¶</a></h3>
-<p>The recommended practice for constructing multiple <a class="reference external" href="https://numpy.org/doc/stable/reference/random/generator.html#numpy.random.Generator" title="(in NumPy v1.26)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Generator</span></code></a> objects
-is to use the <a class="reference external" href="https://numpy.org/doc/stable/reference/random/bit_generators/generated/numpy.random.SeedSequence.spawn.html#numpy.random.SeedSequence.spawn" title="(in NumPy v1.26)"><code class="xref py py-meth docutils literal notranslate"><span class="pre">spawn()</span></code></a> method of <a class="reference external" href="https://numpy.org/doc/stable/reference/random/bit_generators/generated/numpy.random.SeedSequence.html#numpy.random.SeedSequence" title="(in NumPy v1.26)"><code class="xref py py-class docutils literal notranslate"><span class="pre">SeedSequence</span></code></a>.</p>
+<p>The recommended practice for constructing multiple <a class="reference external" href="https://numpy.org/doc/stable/reference/random/generator.html#numpy.random.Generator" title="(in NumPy v2.1)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Generator</span></code></a> objects
+is to use the <a class="reference external" href="https://numpy.org/doc/stable/reference/random/bit_generators/generated/numpy.random.SeedSequence.spawn.html#numpy.random.SeedSequence.spawn" title="(in NumPy v2.1)"><code class="xref py py-meth docutils literal notranslate"><span class="pre">spawn()</span></code></a> method of <a class="reference external" href="https://numpy.org/doc/stable/reference/random/bit_generators/generated/numpy.random.SeedSequence.html#numpy.random.SeedSequence" title="(in NumPy v2.1)"><code class="xref py py-class docutils literal notranslate"><span class="pre">SeedSequence</span></code></a>.</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><code><span class="kn">from</span> <span class="nn">numpy.random</span> <span class="kn">import</span> <span class="n">default_rng</span><span class="p">,</span> <span class="n">Generator</span><span class="p">,</span> <span class="n">SeedSequence</span>
 <span class="kn">from</span> <span class="nn">randomgen</span> <span class="kn">import</span> <span class="n">Romu</span>
 
@@ -948,7 +948,7 @@ is to use the <a class="reference external" href="https://numpy.org/doc/stable/r
 seeded using 0, 1, 2, …, 8,195 by intertwining the output of the
 generators. <strong>None</strong> of the generators failed these tests.</p>
 <h3 id="zero-0-seeding">Zero (0) Seeding<a class="headerlink" href="#zero-0-seeding" title="Link to this heading">¶</a></h3>
-<p>Bit generators use a <a class="reference external" href="https://numpy.org/doc/stable/reference/random/bit_generators/generated/numpy.random.SeedSequence.html#numpy.random.SeedSequence" title="(in NumPy v1.26)"><code class="xref py py-class docutils literal notranslate"><span class="pre">SeedSequence</span></code></a> that always
+<p>Bit generators use a <a class="reference external" href="https://numpy.org/doc/stable/reference/random/bit_generators/generated/numpy.random.SeedSequence.html#numpy.random.SeedSequence" title="(in NumPy v2.1)"><code class="xref py py-class docutils literal notranslate"><span class="pre">SeedSequence</span></code></a> that always
 escapes low-entropy states immediately to transform
 seed values into an initial state for the bit generator.
 To ensure that this is not an issue, all bit generators were tested using 4, 32 or 8196
@@ -1052,7 +1052,7 @@ from each stream since each value is 8-bytes.</p>
   
     Created using
     <a href="https://www.sphinx-doc.org/" target="_blank" rel="noopener">Sphinx</a>
-    7.2.6.
+    8.0.2.
      and
     <a href="https://github.com/jbms/sphinx-immaterial/" target="_blank" rel="noopener">Sphinx-Immaterial</a>
   

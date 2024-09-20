@@ -9,9 +9,6 @@ Random Generator
 
 .. danger::
 
-   ``Generator`` has been **removed**. You should be using  :class:`numpy.random.Generator`.
+   ``Generator`` has been completely **removed** in randomgen 2.0.0.
+   You should be using  :class:`numpy.random.Generator`.
 
-.. currentmodule:: randomgen.generator
-
-.. autoclass::
-   Generator

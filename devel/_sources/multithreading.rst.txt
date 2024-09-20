@@ -1,32 +1,33 @@
 Multithreaded Generation
 ========================
 
-The four core distributions all allow existing arrays to be filled using the
-``out`` keyword argument.  Existing arrays need to be contiguous and
-well-behaved (writable and aligned).  Under normal circumstances, arrays
-created using the common constructors such as :meth:`numpy.empty` will satisfy
-these requirements.
+The four core distributions in :class:`~numpy.random.Generator` all allow
+existing arrays to be filled using the ``out`` keyword argument.
+Existing arrays need to be contiguous and well-behaved (writable and aligned).
+Under normal circumstances, arrays created using the common constructors such
+as :meth:`numpy.empty` will satisfy these requirements.
 
 This example makes use of Python 3 :mod:`concurrent.futures` to fill an array
 using multiple threads.  Threads are long-lived so that repeated calls do not
 require any additional overheads from thread creation. The underlying PRNG is
-xorshift2014 which is fast, has a long period and supports using ``jumped`` to
+xorshift256 which is fast, has a long period and supports using ``jumped`` to
 advance the state. The random numbers generated are reproducible in the sense
 that the same seed will produce the same outputs.
 
 .. code-block:: ipython
 
-    from randomgen import Xoshiro256
     import multiprocessing
     import concurrent.futures
     import numpy as np
     import warnings
 
-    warnings.filterwarnings("ignore", "Generator", FutureWarning)
+    from numpy.random import Generator
+
+    from randomgen import Xoshiro256
 
     class MultithreadedRNG(object):
         def __init__(self, n, seed=None, threads=None):
-            last_bg = Xoshiro256(seed, mode="sequence")
+            last_bg = Xoshiro256(seed)
             if threads is None:
                 threads = multiprocessing.cpu_count()
             self.threads = threads

@@ -13,7 +13,7 @@
     
     
       
-        <title>RandomGen 1.26.1</title>
+        <title>RandomGen v1.26.2 (+53)</title>
       
     
     
@@ -36,7 +36,7 @@
         <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
       
     
-        <link rel="stylesheet" type="text/css" href="_static/sphinx_immaterial_theme.af531f03affe68837.min.css?v=2410bb73" />
+        <link rel="stylesheet" type="text/css" href="_static/sphinx_immaterial_theme.3625f807144f53acf.min.css?v=fbfc4466" />
     <script>__md_scope=new URL(".",location),__md_hash=e=>[...e].reduce((e,_)=>(e<<5)-e+_.charCodeAt(0),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
     
       
@@ -80,7 +80,7 @@
 
 <header class="md-header" data-md-component="header">
   <nav class="md-header__inner md-grid" aria-label="Header">
-    <a href="#" title="RandomGen 1.26.1" class="md-header__button md-logo" aria-label="RandomGen 1.26.1" data-md-component="logo">
+    <a href="#" title="RandomGen v1.26.2 (+53)" class="md-header__button md-logo" aria-label="RandomGen v1.26.2 (+53)" data-md-component="logo">
       <img src="_static/casino.svg" alt="logo">
     </a>
     <label class="md-header__button md-icon" for="__drawer">
@@ -90,7 +90,7 @@
       <div class="md-header__ellipsis">
         <div class="md-header__topic">
           <span class="md-ellipsis">
-            RandomGen 1.26.1
+            RandomGen v1.26.2 (+53)
           </span>
         </div>
         <div class="md-header__topic" data-md-component="header-topic">
@@ -184,10 +184,10 @@
 
 <nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
   <label class="md-nav__title" for="__drawer">
-    <a href="#" title="RandomGen 1.26.1" class="md-nav__button md-logo" aria-label="RandomGen 1.26.1" data-md-component="logo">
+    <a href="#" title="RandomGen v1.26.2 (+53)" class="md-nav__button md-logo" aria-label="RandomGen v1.26.2 (+53)" data-md-component="logo">
       <img src="_static/casino.svg" alt="logo">
     </a>
-    RandomGen 1.26.1
+    RandomGen v1.26.2 (+53)
   </label>
   
     <div class="md-nav__source">
@@ -612,11 +612,11 @@ details how randomgen has changed since it was incorporated into NumPy.</p>
 </div>
 <h1 id="randomgen">RandomGen<a class="headerlink" href="#randomgen" title="Link to this heading">¶</a></h1>
 <p>This package contains additional bit generators for NumPy’s
-<a class="reference external" href="https://numpy.org/doc/stable/reference/random/generator.html#numpy.random.Generator" title="(in NumPy v1.26)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Generator</span></code></a> and an <a class="reference internal" href="extended-generator.html#randomgen.generator.ExtendedGenerator" title="randomgen.generator.ExtendedGenerator (Python class) — Additional random value generator using a bit generator source."><code class="xref py py-class docutils literal notranslate"><span class="pre">ExtendedGenerator</span></code></a>
-exposing methods not in <a class="reference external" href="https://numpy.org/doc/stable/reference/random/generator.html#numpy.random.Generator" title="(in NumPy v1.26)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Generator</span></code></a>.</p>
+<a class="reference external" href="https://numpy.org/doc/stable/reference/random/generator.html#numpy.random.Generator" title="(in NumPy v2.1)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Generator</span></code></a> and an <a class="reference internal" href="extended-generator.html#randomgen.generator.ExtendedGenerator" title="randomgen.generator.ExtendedGenerator (Python class) — Additional random value generator using a bit generator source."><code class="xref py py-class docutils literal notranslate"><span class="pre">ExtendedGenerator</span></code></a>
+exposing methods not in <a class="reference external" href="https://numpy.org/doc/stable/reference/random/generator.html#numpy.random.Generator" title="(in NumPy v2.1)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Generator</span></code></a>.</p>
 <h2 id="introduction">Introduction<a class="headerlink" href="#introduction" title="Link to this heading">¶</a></h2>
 <p>randomgen supplies many bit generators that can be used with
-<a class="reference external" href="https://numpy.org/doc/stable/reference/random/generator.html#numpy.random.Generator" title="(in NumPy v1.26)"><code class="xref py py-class docutils literal notranslate"><span class="pre">numpy.random.Generator</span></code></a>.  It also supports additional variants
+<a class="reference external" href="https://numpy.org/doc/stable/reference/random/generator.html#numpy.random.Generator" title="(in NumPy v2.1)"><code class="xref py py-class docutils literal notranslate"><span class="pre">numpy.random.Generator</span></code></a>.  It also supports additional variants
 of the bit generators included in NumPy.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><code><span class="kn">from</span> <span class="nn">numpy.random</span> <span class="kn">import</span> <span class="n">Generator</span>
 <span class="kn">from</span> <span class="nn">randomgen</span> <span class="kn">import</span> <span class="n">AESCounter</span>
@@ -625,26 +625,26 @@ of the bit generators included in NumPy.</p>
 </code></pre></div>
 </div>
 <p>Seed information is directly passed to the bit generator.</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><code><span class="n">rg</span> <span class="o">=</span> <span class="n">Generator</span><span class="p">(</span><span class="n">AESCounter</span><span class="p">(</span><span class="mi">12345</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s2">&quot;sequence&quot;</span><span class="p">))</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><code><span class="n">rg</span> <span class="o">=</span> <span class="n">Generator</span><span class="p">(</span><span class="n">AESCounter</span><span class="p">(</span><span class="mi">12345</span><span class="p">))</span>
 <span class="n">rg</span><span class="o">.</span><span class="n">random</span><span class="p">()</span>
 </code></pre></div>
 </div>
 <h2 id="history">History<a class="headerlink" href="#history" title="Link to this heading">¶</a></h2>
-<p>randomgen began as a project to modernize NumPy’s <a class="reference external" href="https://numpy.org/doc/stable/reference/random/legacy.html#numpy.random.RandomState" title="(in NumPy v1.26)"><code class="xref py py-class docutils literal notranslate"><span class="pre">RandomState</span></code></a>.
+<p>randomgen began as a project to modernize NumPy’s <a class="reference external" href="https://numpy.org/doc/stable/reference/random/legacy.html#numpy.random.RandomState" title="(in NumPy v2.1)"><code class="xref py py-class docutils literal notranslate"><span class="pre">RandomState</span></code></a>.
 It has succeed at this goal. Some of the components on randomgen were deemed too
 exotic to include with NumPy and so have been retained in randomgen.  Most of these
 are bit generators or extended features of bit generators included with NumPy. In addition
 <a class="reference internal" href="extended-generator.html#randomgen.generator.ExtendedGenerator" title="randomgen.generator.ExtendedGenerator (Python class) — Additional random value generator using a bit generator source."><code class="xref py py-class docutils literal notranslate"><span class="pre">randomgen.generator.ExtendedGenerator</span></code></a> exposes some methods that are not included in
-<a class="reference external" href="https://numpy.org/doc/stable/reference/random/generator.html#numpy.random.Generator" title="(in NumPy v1.26)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Generator</span></code></a>.</p>
+<a class="reference external" href="https://numpy.org/doc/stable/reference/random/generator.html#numpy.random.Generator" title="(in NumPy v2.1)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Generator</span></code></a>.</p>
 <h3 id="what-s-new-or-different">What’s New or Different<a class="headerlink" href="#what-s-new-or-different" title="Link to this heading">¶</a></h3>
 <ul class="simple">
-<li><p>An <a class="reference internal" href="extended-generator.html#randomgen.generator.ExtendedGenerator" title="randomgen.generator.ExtendedGenerator (Python class) — Additional random value generator using a bit generator source."><code class="xref py py-class docutils literal notranslate"><span class="pre">ExtendedGenerator</span></code></a> containing methods not in <a class="reference external" href="https://numpy.org/doc/stable/reference/random/generator.html#numpy.random.Generator" title="(in NumPy v1.26)"><code class="xref py py-class docutils literal notranslate"><span class="pre">numpy.random.Generator</span></code></a>
-that can be used alongside NumPy’s <a class="reference external" href="https://numpy.org/doc/stable/reference/random/generator.html#numpy.random.Generator" title="(in NumPy v1.26)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Generator</span></code></a>.</p></li>
+<li><p>An <a class="reference internal" href="extended-generator.html#randomgen.generator.ExtendedGenerator" title="randomgen.generator.ExtendedGenerator (Python class) — Additional random value generator using a bit generator source."><code class="xref py py-class docutils literal notranslate"><span class="pre">ExtendedGenerator</span></code></a> containing methods not in <a class="reference external" href="https://numpy.org/doc/stable/reference/random/generator.html#numpy.random.Generator" title="(in NumPy v2.1)"><code class="xref py py-class docutils literal notranslate"><span class="pre">numpy.random.Generator</span></code></a>
+that can be used alongside NumPy’s <a class="reference external" href="https://numpy.org/doc/stable/reference/random/generator.html#numpy.random.Generator" title="(in NumPy v2.1)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Generator</span></code></a>.</p></li>
 <li><p>Support for a wider variety of generators including high-quality
 cryptography-based generators (<a class="reference internal" href="bit_generators/aesctr.html#randomgen.aes.AESCounter" title="randomgen.aes.AESCounter (Python class) — Container for the AES Counter pseudo-random number generator."><code class="xref py py-class docutils literal notranslate"><span class="pre">AESCounter</span></code></a>,
 <a class="reference internal" href="bit_generators/speck128.html#randomgen.speck128.SPECK128" title="randomgen.speck128.SPECK128 (Python class) — Container for the SPECK (128 x 256) pseudo-random number generator."><code class="xref py py-class docutils literal notranslate"><span class="pre">SPECK128</span></code></a>).</p></li>
-<li><p>Support for writing <a class="reference internal" href="bit_generators/userbitgenerator.html#randomgen.wrapper.UserBitGenerator" title="randomgen.wrapper.UserBitGenerator (Python class) — next_double=None, state=None, state_getter=None, state_setter=None)"><code class="xref py py-class docutils literal notranslate"><span class="pre">UserBitGenerator</span></code></a> in Python (slow) or numba (fast)
-that can be used as an input for <a class="reference external" href="https://numpy.org/doc/stable/reference/random/generator.html#numpy.random.Generator" title="(in NumPy v1.26)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Generator</span></code></a>.</p></li>
+<li><p>Support for writing <a class="reference internal" href="bit_generators/userbitgenerator.html#randomgen.wrapper.UserBitGenerator" title="randomgen.wrapper.UserBitGenerator (Python class) — Construct a bit generator from  Python functions"><code class="xref py py-class docutils literal notranslate"><span class="pre">UserBitGenerator</span></code></a> in Python (slow) or numba (fast)
+that can be used as an input for <a class="reference external" href="https://numpy.org/doc/stable/reference/random/generator.html#numpy.random.Generator" title="(in NumPy v2.1)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Generator</span></code></a>.</p></li>
 <li><p>Extended configuration options in <a class="reference internal" href="bit_generators/pcg64.html#randomgen.pcg64.PCG64" title="randomgen.pcg64.PCG64 (Python class) — Container for the PCG-64 pseudo-random number generator."><code class="xref py py-class docutils literal notranslate"><span class="pre">PCG64</span></code></a> (see also <a class="reference internal" href="bit_generators/lcg128mix.html#randomgen.pcg64.LCG128Mix" title="randomgen.pcg64.LCG128Mix (Python class) — Customizable 128-bit LCG bit generator with output mixing"><code class="xref py py-class docutils literal notranslate"><span class="pre">LCG128Mix</span></code></a>),
 <a class="reference internal" href="bit_generators/sfc.html#randomgen.sfc.SFC64" title="randomgen.sfc.SFC64 (Python class) — Chris Doty-Humphrey's Small Fast Chaotic PRNG with optional Weyl Sequence"><code class="xref py py-class docutils literal notranslate"><span class="pre">SFC64</span></code></a>, and <a class="reference internal" href="bit_generators/philox.html#randomgen.philox.Philox" title="randomgen.philox.Philox (Python class) — Container for the Philox family of pseudo-random number generators."><code class="xref py py-class docutils literal notranslate"><span class="pre">Philox</span></code></a>.</p></li>
 </ul>
@@ -814,14 +814,8 @@ about these PRNGs is available at the
 <h2 id="removed-features">Removed Features<a class="headerlink" href="#removed-features" title="Link to this heading">¶</a></h2>
 <div class="toctree-wrapper compound">
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="generator.html">Random Generation</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="generator.html#randomgen.generator.Generator">randomgen.generator.Generator</a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="legacy.html">Legacy Random Generation</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="legacy.html#randomgen.mtrand.RandomState">randomgen.mtrand.RandomState</a></li>
-</ul>
-</li>
+<li class="toctree-l1"><a class="reference internal" href="generator.html">Random Generation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="legacy.html">Legacy Random Generation</a></li>
 </ul>
 </div>
 <h3 id="changes">Changes<a class="headerlink" href="#changes" title="Link to this heading">¶</a></h3>
@@ -918,7 +912,7 @@ about these PRNGs is available at the
   
     Created using
     <a href="https://www.sphinx-doc.org/" target="_blank" rel="noopener">Sphinx</a>
-    7.2.6.
+    8.0.2.
      and
     <a href="https://github.com/jbms/sphinx-immaterial/" target="_blank" rel="noopener">Sphinx-Immaterial</a>
   
