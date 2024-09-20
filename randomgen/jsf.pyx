@@ -5,7 +5,6 @@ import numpy as np
 cimport numpy as np
 
 from randomgen.common cimport *
-from randomgen.entropy import random_entropy, seed_by_array
 
 __all__ = ["JSF"]
 
@@ -266,26 +265,6 @@ cdef class JSF(BitGenerator):
             If seed values are out of range for the PRNG.
         """
         BitGenerator._seed_with_seed_sequence(self, seed)
-        try:
-            if self.seed_seq is not None:
-                return
-        except AttributeError:
-            if self._seed_seq is not None:
-                return
-
-        if seed is None:
-            state = random_entropy(3 * self.size // 32, "auto")
-        else:
-            state = seed_by_array(seed, 3)
-        dtype = np.uint64 if self.size==64 else np.uint32
-        state = view_little_endian(state, dtype)
-        if self.size == 64:
-            jsf64_seed(&self.rng_state, <uint64_t*>np.PyArray_DATA(state),
-                       self.seed_size)
-        else:
-            jsf32_seed(&self.rng_state, <uint32_t*>np.PyArray_DATA(state),
-                       self.seed_size)
-        self._reset_state_variables()
 
     @property
     def state(self):

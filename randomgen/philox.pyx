@@ -4,7 +4,7 @@
 import numpy as np
 
 from randomgen.common cimport *
-from randomgen.entropy import random_entropy, seed_by_array
+
 
 __all__ = ["Philox"]
 
@@ -283,27 +283,13 @@ cdef class Philox(BitGenerator):
             raise ValueError("seed and key cannot be both used")
         if key is None:
             BitGenerator._seed_with_seed_sequence(self, seed, counter=counter)
-            try:
-                if self.seed_seq is not None:
-                    return
-            except AttributeError:
-                if self._seed_seq is not None:
-                    return
+            return
 
-        seed = object_to_int(seed, self.n * self.w // 2, "seed")
         key = object_to_int(key, self.n // 2 * self.w, "key")
         counter = object_to_int(counter, self.n * self.w, "counter")
 
-        if seed is not None and key is not None:
-            raise ValueError("seed and key cannot be both used")
         cdef int u32_size = (self.n // 2) * (self.w // 32)
-        if key is not None:
-            _seed = int_to_array(key, "key", self.n // 2 * self.w, self.w)
-        elif seed is not None:
-            seed = int_to_array(seed, "seed", None, 64)
-            _seed = seed_by_array(seed, max(u32_size // 2, 1))
-        else:
-            _seed = random_entropy(u32_size, "auto")
+        _seed = int_to_array(key, "key", self.n // 2 * self.w, self.w)
         dtype = np.uint64 if self.w==64 else np.uint32
         _seed = view_little_endian(_seed, dtype)
         for i in range(self.n // 2):
@@ -327,7 +313,6 @@ cdef class Philox(BitGenerator):
                 self.rng_state.state.state2x64.ctr.v[i] = counter[i]
             else:  # self.w == 64 and self.n == 4:
                 self.rng_state.state.state4x64.ctr.v[i] = counter[i]
-
         self._reset_state_variables()
 
     @property

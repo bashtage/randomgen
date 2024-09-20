@@ -8,7 +8,6 @@ cimport numpy as np
 cimport cython
 
 from randomgen.common cimport *
-from randomgen.entropy import random_entropy, seed_by_array
 
 __all__ = ["SFC64"]
 

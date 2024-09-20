@@ -5,7 +5,6 @@ import numpy as np
 cimport numpy as np
 
 from randomgen.common cimport *
-from randomgen.entropy import random_entropy
 
 __all__ = ["PCG64", "LCG128Mix", "PCG64DXSM"]
 
@@ -257,7 +256,6 @@ cdef class PCG64(BitGenerator):
         ValueError
             If seed values are out of range for the PRNG.
         """
-        cdef np.ndarray _seed, _inc
         ub = 2 ** 128
         inc = None if seed is None else inc
         if inc is not None:
@@ -267,45 +265,7 @@ cdef class PCG64(BitGenerator):
                 raise ValueError(err_msg)
             if not np.isscalar(inc):
                 raise TypeError(err_msg)
-
         BitGenerator._seed_with_seed_sequence(self, seed, inc=inc)
-        try:
-            if self.seed_seq is not None:
-                return
-        except AttributeError:
-            if self._seed_seq is not None:
-                return
-
-
-        if inc is None:
-            _inc = <np.ndarray>random_entropy(4, "auto")
-            _inc = <np.ndarray>_inc.view(np.uint64)
-        else:
-            _inc = <np.ndarray>np.empty(2, np.uint64)
-            _inc[0] = int(inc) // 2**64
-            _inc[1] = int(inc) % 2**64
-
-        if seed is None:
-            _seed = <np.ndarray>random_entropy(4, "auto")
-            _seed = <np.ndarray>_seed.view(np.uint64)
-        else:
-            err_msg = "seed must be a scalar integer between 0 and " \
-                      "{ub}".format(ub=ub)
-            if not np.isscalar(seed):
-                raise TypeError(err_msg)
-            if int(seed) != seed:
-                raise TypeError(err_msg)
-            if seed < 0 or seed > ub:
-                raise ValueError(err_msg)
-            _seed = <np.ndarray>np.empty(2, np.uint64)
-            _seed[0] = int(seed) // 2**64
-            _seed[1] = int(seed) % 2**64
-
-        pcg64_set_seed(&self.rng_state,
-                       <uint64_t *>np.PyArray_DATA(_seed),
-                       <uint64_t *>np.PyArray_DATA(_inc),
-                       self.cheap_multiplier)
-        self._reset_state_variables()
 
     @property
     def state(self):

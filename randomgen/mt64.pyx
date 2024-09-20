@@ -7,7 +7,6 @@ import numpy as np
 cimport numpy as np
 
 from randomgen.common cimport *
-from randomgen.entropy import random_entropy
 
 __all__ = ["MT64"]
 
@@ -134,47 +133,7 @@ cdef class MT64(BitGenerator):
         ValueError
             If seed values are out of range for the PRNG.
         """
-        cdef np.ndarray obj
-
         BitGenerator._seed_with_seed_sequence(self, seed)
-        try:
-            if self.seed_seq is not None:
-                return
-        except AttributeError:
-            if self._seed_seq is not None:
-                return
-
-        try:
-            if seed is None:
-                seed = random_entropy(624, "auto")
-                mt64_init_by_array(&self.rng_state,
-                                   <uint64_t*>np.PyArray_DATA(seed),
-                                   624 // 2)
-            else:
-                if hasattr(seed, "squeeze"):
-                    seed = seed.squeeze()
-                idx = operator.index(seed)
-                if idx > int(2**64 - 1) or idx < 0:
-                    raise ValueError("Seed must be between 0 and 2**64 - 1")
-                mt64_seed(&self.rng_state, seed)
-        except TypeError:
-            obj = np.asarray(seed)
-            if obj.size == 0:
-                raise ValueError("Seed must be non-empty")
-            obj = obj.astype(object, casting="safe")
-            if np.PyArray_NDIM(obj) != 1:
-                raise ValueError("Seed array must be 1-d")
-            if ((obj > int(2**64 - 1)) | (obj < 0)).any():
-                raise ValueError("Seed must be between 0 and 2**64 - 1")
-            for val in obj:
-                if np.floor(val) != val:
-                    raise ValueError("Seed must contains integers")
-            obj = obj.astype(np.uint64, casting="unsafe", order="C")
-            mt64_init_by_array(&self.rng_state,
-                               <uint64_t*>np.PyArray_DATA(obj),
-                               np.PyArray_DIM(obj, 0))
-
-        self._reset_state_variables()
 
     @property
     def state(self):

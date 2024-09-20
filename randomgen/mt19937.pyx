@@ -8,7 +8,6 @@ import numpy as np
 cimport numpy as np
 
 from randomgen.common cimport *
-from randomgen.entropy import random_entropy
 
 __all__ = ["MT19937"]
 
@@ -168,41 +167,7 @@ cdef class MT19937(BitGenerator):
         ValueError
             If seed values are out of range for the PRNG.
         """
-        cdef np.ndarray obj
-
         BitGenerator._seed_with_seed_sequence(self, seed)
-        try:
-            if self.seed_seq is not None:
-                return
-        except AttributeError:
-            if self._seed_seq is not None:
-                return
-        try:
-            if seed is None:
-                seed = random_entropy(RK_STATE_LEN, "auto")
-                mt19937_init_by_array(&self.rng_state,
-                                      <uint32_t*>np.PyArray_DATA(seed),
-                                      RK_STATE_LEN)
-            else:
-                if hasattr(seed, "squeeze"):
-                    seed = seed.squeeze()
-                idx = operator.index(seed)
-                if idx > int(2**32 - 1) or idx < 0:
-                    raise ValueError("Seed must be between 0 and 2**32 - 1")
-                mt19937_seed(&self.rng_state, seed)
-        except TypeError:
-            obj = np.asarray(seed)
-            if obj.size == 0:
-                raise ValueError("Seed must be non-empty")
-            obj = obj.astype(np.int64, casting="safe")
-            if np.PyArray_NDIM(obj) != 1:
-                raise ValueError("Seed array must be 1-d")
-            if ((obj > int(2**32 - 1)) | (obj < 0)).any():
-                raise ValueError("Seed must be between 0 and 2**32 - 1")
-            obj = obj.astype(np.uint32, casting="unsafe", order="C")
-            mt19937_init_by_array(&self.rng_state,
-                                  <uint32_t*>np.PyArray_DATA(obj),
-                                  <int>np.PyArray_DIM(obj, 0))
 
     cdef jump_inplace(self, int jumps):
         """

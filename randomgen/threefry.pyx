@@ -4,7 +4,6 @@
 import numpy as np
 
 from randomgen.common cimport *
-from randomgen.entropy import random_entropy, seed_by_array
 
 __all__ = ["ThreeFry"]
 
@@ -266,27 +265,14 @@ cdef class ThreeFry(BitGenerator):
             raise ValueError("seed and key cannot be both used")
         if key is None:
             BitGenerator._seed_with_seed_sequence(self, seed, counter=counter)
-            try:
-                if self.seed_seq is not None:
-                    return
-            except AttributeError:
-                if self._seed_seq is not None:
-                    return
+            return
 
-        # Legacy seeding
-        seed = object_to_int(seed, nxw, "seed")
         key = object_to_int(key, nxw, "key")
         counter = object_to_int(counter, nxw, "counter")
 
         # Number of uint32 values in the seed
         cdef int u32_size = nxw // 32
-        if key is not None:
-            _seed = int_to_array(key, "key", nxw, self.w)
-        elif seed is not None:
-            seed = int_to_array(seed, "seed", None, 64)
-            _seed = seed_by_array(seed, u32_size // 2)
-        else:
-            _seed = random_entropy(u32_size, "auto")
+        _seed = int_to_array(key, "key", nxw, self.w)
         dtype = np.uint64 if self.w==64 else np.uint32
         _seed = view_little_endian(_seed, dtype)
         for i in range(self.n):

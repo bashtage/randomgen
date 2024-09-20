@@ -2,7 +2,6 @@
 import numpy as np
 
 from randomgen.common cimport *
-from randomgen.entropy import random_entropy, seed_by_array
 
 __all__ = ["ChaCha"]
 
@@ -222,27 +221,14 @@ cdef class ChaCha(BitGenerator):
         array[i] = (value // 2**(64*i)) % 2**64.
         """
         if seed is not None and key is not None:
-            raise ValueError("seed and key cannot be both used")
+            raise ValueError("seed and key cannot be simultaneously used")
         if key is None:
             BitGenerator._seed_with_seed_sequence(self, seed, counter=counter)
-            try:
-                if self.seed_seq is not None:
-                    return
-            except AttributeError:
-                if self._seed_seq is not None:
-                    return
+            return
 
-        seed = object_to_int(seed, 256, "seed")
         key = object_to_int(key, 256, "key")
         counter = object_to_int(counter, 128, "counter")
-        if seed is not None and key is not None:
-            raise ValueError("seed and key cannot be simultaneously used")
-        if key is not None:
-            seed = int_to_array(key, "key", 256, 32)
-        elif seed is not None:
-            seed = seed_by_array(int_to_array(seed, "seed", None, 64), 4)
-        else:
-            seed = random_entropy(8, "auto")
+        seed = int_to_array(key, "key", 256, 32)
         _seed = seed
         if _seed.dtype != np.uint64:
             _seed = view_little_endian(_seed, np.uint64)
