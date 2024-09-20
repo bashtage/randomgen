@@ -32,4 +32,3 @@ cdef extern from "src/chacha/chacha.h":
 cdef class ChaCha(BitGenerator):
 
     cdef chacha_state_t *rng_state
-    cdef jump_inplace(self, object iter)
