@@ -5,6 +5,7 @@ import numpy as np
 cimport numpy as np
 
 from randomgen.common cimport *
+from randomgen._deprecated_value import _DeprecatedValue
 
 __all__ = ["PCG64", "LCG128Mix", "PCG64DXSM"]
 
@@ -42,7 +43,7 @@ cdef double lcg128mix_double(void* st) noexcept nogil:
 
 cdef class PCG64(BitGenerator):
     """
-    PCG64(seed=None, inc=0, *, variant="xsl-rr", mode="sequence")
+    PCG64(seed=None, inc=0, *, variant="xsl-rr", numpy_seed=False, mode=_DeprecatedValue)
 
     Container for the PCG-64 pseudo-random number generator.
 
@@ -65,12 +66,23 @@ cdef class PCG64(BitGenerator):
         returns the value before advancing the state. This variant is
         PCG64 2.0. "cm-dxsm" (cheap multiplier-dxsm), 2 and "2.0" are aliases
         for "dxsm". None trusts randomgen to chose the variant.
+    numpy_seed : bool
+        Set to True to use  the same seeding mechanism as NumPy and
+        so matches NumPy exactly. To match NumPy, variant must be ``xsl-rr``.
+        When using "numpy", ``inc`` must be ``None``.
+
+        .. versionadded: 2.0.0
+
     mode : {None, "sequence", "numpy"}, optional
         "sequence" uses a SeedSequence to transforms the seed into an initial
         state. "numpy" also uses a SeedSequence but seeds the generator in a
         way that is identical to NumPy. When using "numpy", ``inc`` must be
         ``None``. Additionally, to match NumPy, variant must be ``xsl-rr``
         (this is not checked).
+
+        .. deprecated: 2.0.0
+           mode is deprecated. Use numpy_seed tp enforce numpy-matching seeding
+
 
     Attributes
     ----------
@@ -145,8 +157,9 @@ cdef class PCG64(BitGenerator):
     .. [2] O'Neill, Melissa E. "PCG: A Family of Simple Fast Space-Efficient
            Statistically Good Algorithms for Random Number Generation"
     """
-    def __init__(self, seed=None, inc=None, *, variant="xsl-rr", mode="sequence"):
-        BitGenerator.__init__(self, seed, mode)
+    def __init__(self, seed=None, inc=None, *, variant="xsl-rr", numpy_seed=False, mode=_DeprecatedValue):
+        BitGenerator.__init__(self, seed, mode=mode, numpy_seed=numpy_seed)
+
         self.rng_state.pcg_state = <pcg64_random_t *>PyArray_malloc_aligned(sizeof(pcg64_random_t))
         inc = None if seed is None else inc
 
@@ -157,6 +170,14 @@ cdef class PCG64(BitGenerator):
         variant = variant.lower().replace("-", "")
         if variant not in ("xslrr", "1.0", "1", "cmdxsm", "dxsm", "dxsm128", "2.0", "2"):
             raise ValueError(f"variant {orig_variant} is not known.")
+        if self.mode == "numpy":
+            if orig_variant != "xsl-rr":
+                raise ValueError(
+                    f"variant must be 'xsl-rr' when using numpy-matching seeding. Got '{orig_variant}'"
+                )
+            if inc is not None:
+                raise ValueError("inc much be none when using numpy-matching seeding.")
+
         self.variant = variant
         self._setup_rng_state()
         self.seed(seed, inc)
@@ -605,7 +626,7 @@ cdef class LCG128Mix(BitGenerator):
                                "lower": 4}
         self._inv_output_lookup = {v: k for k, v in self._output_lookup.items()}
         self._cfunc = None
-        BitGenerator.__init__(self, seed, "sequence")
+        BitGenerator.__init__(self, seed)
         self.rng_state.pcg_state = <lcg128mix_random_t *>PyArray_malloc_aligned(sizeof(lcg128mix_random_t))
         if hasattr(output, "argtypes") and hasattr(output, "restype"):
             from ctypes import c_ulonglong

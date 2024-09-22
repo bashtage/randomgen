@@ -100,7 +100,7 @@ cdef class Romu(BitGenerator):
 
     def __init__(self, seed=None, variant="quad"):
         self.variant = self._check_variant(variant)
-        BitGenerator.__init__(self, seed, "sequence")
+        BitGenerator.__init__(self, seed)
         self.seed(seed)
 
         self._bitgen.state = <void *>&self.rng_state

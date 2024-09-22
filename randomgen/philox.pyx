@@ -4,7 +4,7 @@
 import numpy as np
 
 from randomgen.common cimport *
-
+from randomgen._deprecated_value import _DeprecatedValue
 
 __all__ = ["Philox"]
 
@@ -45,7 +45,7 @@ cdef uint64_t philox2x32_raw(void *st) noexcept nogil:
 
 cdef class Philox(BitGenerator):
     """
-    Philox(seed=None, *, counter=None, key=None, number=4, width=64, mode="sequence")
+    Philox(seed=None, *, counter=None, key=None, number=4, width=64, *, numpy_seed=False, mode=_DeprecatedValue)
 
     Container for the Philox family of pseudo-random number generators.
 
@@ -76,12 +76,22 @@ cdef class Philox(BitGenerator):
     width : {32, 64}, optional
         Bit width the values produced. Maps to W in the Philox variant naming
         scheme PhiloxNxW.
+    numpy_seed : bool
+        Set to True to use  the same seeding mechanism as NumPy and
+        so matches NumPy exactly. To match NumPy, variant must be ``xsl-rr``.
+        When using "numpy", ``inc`` must be ``None``.
+
+        .. versionadded: 2.0.0
+
     mode : {None, "sequence", "numpy"}, optional
         "sequence" uses a SeedSequence to transforms the seed into an initial
-        state.  None defaults to "sequence". Using "numpy" ensures that the
-        generator is configurated using the same parameters required to
-        produce the same sequence that is realized in NumPy, for a given
-        ``SeedSequence``.
+        state. "numpy" also uses a SeedSequence but seeds the generator in a
+        way that is identical to NumPy. When using "numpy", ``inc`` must be
+        ``None``. Additionally, to match NumPy, variant must be ``xsl-rr``
+        (this is not checked).
+
+        .. deprecated: 2.0.0
+           mode is deprecated. Use numpy_seed tp enforce numpy-matching seeding
 
     Attributes
     ----------
@@ -168,8 +178,8 @@ cdef class Philox(BitGenerator):
     cdef int w
 
     def __init__(self, seed=None, *, counter=None, key=None, number=4,
-                 width=64, mode="sequence"):
-        BitGenerator.__init__(self, seed, mode)
+                 width=64, numpy_seed=False, mode=_DeprecatedValue):
+        BitGenerator.__init__(self, seed, mode=mode, numpy_seed=numpy_seed)
         if number not in (2, 4):
             raise ValueError("number must be either 2 or 4")
         if width not in (32, 64):

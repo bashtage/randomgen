@@ -1,5 +1,6 @@
 #!python
 import sys
+import warnings
 from collections import namedtuple
 try:
     from threading import Lock
@@ -14,6 +15,7 @@ cimport numpy as np
 from randomgen.common cimport *
 from randomgen cimport api
 from randomgen.seed_sequence import ISeedSequence
+from randomgen._deprecated_value import _DeprecatedValue
 
 ISEED_SEQUENCES = (ISeedSequence,)
 # NumPy 1.17
@@ -43,14 +45,23 @@ cdef class BitGenerator(_BitGenerator):
     """
     Abstract class for all BitGenerators
     """
-    def __init__(self, seed, mode="sequence"):
-        if mode is not None and (not isinstance(mode, str) or mode.lower() not in self._supported_modes()):
+    def __init__(self, seed, *, numpy_seed=False, mode=_DeprecatedValue):
+        if mode is not _DeprecatedValue:
+            msg = ("mode is deprecated and will be removed in a future version. "
+                   "Seeding defaults to a numpy.random.SeedSequence instance.")
+            if "numpy" in self._supported_modes():
+                msg += "Use numpy_seed=True to enforce numpy-compatible seeding."
+            warnings.warn(msg, FutureWarning)
+        if mode is not _DeprecatedValue and (
+                not isinstance(mode, str) or mode.lower() not in self._supported_modes()
+        ):
             if len(self._supported_modes()) == 1:
                 msg = f"mode must be {self._supported_modes()[0]}"
             else:
                 modes = ", ".join(f"\"{mode}\"" for mode in self._supported_modes())
             raise ValueError(f"mode must be one of: {modes}.")
-        self.mode = mode.lower()
+        mode = mode.lower() if isinstance(mode, str) else mode
+        self.mode = "numpy" if (numpy_seed or mode == "numpy") else "sequence"
         super().__init__(seed)
 
     def _supported_modes(self):
