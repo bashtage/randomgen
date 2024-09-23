@@ -13,7 +13,7 @@
     
     
       
-        <title>Change Log - RandomGen v1.26.2 (+62)</title>
+        <title>Change Log - RandomGen v1.26.2 (+64)</title>
       
     
     
@@ -62,7 +62,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#v1-26-1" class="md-skip">
+        <a href="#v2-0-0" class="md-skip">
           Skip to content
         </a>
       
@@ -80,7 +80,7 @@
 
 <header class="md-header" data-md-component="header">
   <nav class="md-header__inner md-grid" aria-label="Header">
-    <a href="index.html" title="RandomGen v1.26.2 (+62)" class="md-header__button md-logo" aria-label="RandomGen v1.26.2 (+62)" data-md-component="logo">
+    <a href="index.html" title="RandomGen v1.26.2 (+64)" class="md-header__button md-logo" aria-label="RandomGen v1.26.2 (+64)" data-md-component="logo">
       <img src="_static/casino.svg" alt="logo">
     </a>
     <label class="md-header__button md-icon" for="__drawer">
@@ -90,7 +90,7 @@
       <div class="md-header__ellipsis">
         <div class="md-header__topic">
           <span class="md-ellipsis">
-            RandomGen v1.26.2 (+62)
+            RandomGen v1.26.2 (+64)
           </span>
         </div>
         <div class="md-header__topic" data-md-component="header-topic">
@@ -177,10 +177,10 @@
 
 <nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
   <label class="md-nav__title" for="__drawer">
-    <a href="index.html" title="RandomGen v1.26.2 (+62)" class="md-nav__button md-logo" aria-label="RandomGen v1.26.2 (+62)" data-md-component="logo">
+    <a href="index.html" title="RandomGen v1.26.2 (+64)" class="md-nav__button md-logo" aria-label="RandomGen v1.26.2 (+64)" data-md-component="logo">
       <img src="_static/casino.svg" alt="logo">
     </a>
-    RandomGen v1.26.2 (+62)
+    RandomGen v1.26.2 (+64)
   </label>
   
     <div class="md-nav__source">
@@ -495,6 +495,13 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
+  <a href="#v2-0-0" class="md-nav__link">
+    <span title="/change-log.rst#v2-0-0 (reference label)" class="md-ellipsis">v2.<wbr>0.<wbr>0</span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#v1-26-1" class="md-nav__link">
     <span title="/change-log.rst#v1-26-1 (reference label)" class="md-ellipsis">v1.<wbr>26.<wbr>1</span>
   </a>
@@ -682,6 +689,13 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
+  <a href="#v2-0-0" class="md-nav__link">
+    <span title="/change-log.rst#v2-0-0 (reference label)" class="md-ellipsis">v2.<wbr>0.<wbr>0</span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#v1-26-1" class="md-nav__link">
     <span title="/change-log.rst#v1-26-1 (reference label)" class="md-ellipsis">v1.<wbr>26.<wbr>1</span>
   </a>
@@ -850,11 +864,18 @@
 
 
 <h1 id="change-log"><span id="id1"></span>Change Log<a class="headerlink" href="#change-log" title="Link to this heading">¶</a></h1>
-<div class="admonition danger docutils container">
-<p class="admonition-title"> Deprecated </p><p><code class="docutils literal notranslate"><span class="pre">Generator</span></code> and <code class="docutils literal notranslate"><span class="pre">RandomState</span></code> were <strong>REMOVED</strong> in 1.23.
-You should be using <a class="reference external" href="https://numpy.org/doc/stable/reference/random/generator.html#numpy.random.Generator" title="(in NumPy v2.1)"><code class="xref py py-class docutils literal notranslate"><span class="pre">numpy.random.Generator</span></code></a> or
-<a class="reference external" href="https://numpy.org/doc/stable/reference/random/legacy.html#numpy.random.RandomState" title="(in NumPy v2.1)"><code class="xref py py-class docutils literal notranslate"><span class="pre">numpy.random.RandomState</span></code></a> which are maintained.</p>
-</div>
+<h2 id="v2-0-0">v2.0.0<a class="headerlink" href="#v2-0-0" title="Link to this heading">¶</a></h2>
+<ul class="simple">
+<li><p>Final compatibility with NumPy 2</p></li>
+<li><p>Minimum NumPy is now 1.22.3.</p></li>
+<li><p>Removed <code class="docutils literal notranslate"><span class="pre">&quot;legacy&quot;</span></code> seeding in favor of using <a class="reference external" href="https://numpy.org/doc/stable/reference/random/bit_generators/generated/numpy.random.SeedSequence.html#numpy.random.SeedSequence" title="(in NumPy v2.1)"><code class="xref py py-class docutils literal notranslate"><span class="pre">SeedSequence</span></code></a>.</p></li>
+<li><p>Removed the the vendored copy of <code class="docutils literal notranslate"><span class="pre">SeedSequence</span></code>.</p></li>
+<li><p>Deprecated using the <code class="docutils literal notranslate"><span class="pre">mode</span></code> keyword argument to set the seed mode, since only <code class="docutils literal notranslate"><span class="pre">SeedSequences</span></code> are supported.</p></li>
+<li><p>Changed <code class="docutils literal notranslate"><span class="pre">ranomgen.common.BitGenerator</span></code> to inherit from <code class="docutils literal notranslate"><span class="pre">numpy.random.BitGenerator</span></code> so that
+numpy will recognize these as <code class="docutils literal notranslate"><span class="pre">BitGenerators</span></code>.</p></li>
+<li><p>Removed C distribution functions that are available in NumPy (see libnpyrandom)`.</p></li>
+<li><p>General code cleanup and modernization.</p></li>
+</ul>
 <h2 id="v1-26-1">v1.26.1<a class="headerlink" href="#v1-26-1" title="Link to this heading">¶</a></h2>
 <ul class="simple">
 <li><p>Initial compatability with Cython 3 and NumPy 2</p></li>
@@ -896,7 +917,7 @@ does not match the original specification and so has been changed.</p></li>
 <a class="reference internal" href="bit_generators/mt19937.html#randomgen.mt19937.MT19937" title="randomgen.mt19937.MT19937 (Python class) — Container for the Mersenne Twister pseudo-random number generator."><code class="xref py py-class docutils literal notranslate"><span class="pre">MT19937</span></code></a>, <a class="reference internal" href="bit_generators/philox.html#randomgen.philox.Philox" title="randomgen.philox.Philox (Python class) — Container for the Philox family of pseudo-random number generators."><code class="xref py py-class docutils literal notranslate"><span class="pre">Philox</span></code></a>, and
 <a class="reference internal" href="bit_generators/sfc.html#randomgen.sfc.SFC64" title="randomgen.sfc.SFC64 (Python class) — Chris Doty-Humphrey's Small Fast Chaotic PRNG with optional Weyl Sequence"><code class="xref py py-class docutils literal notranslate"><span class="pre">SFC64</span></code></a>. When using this mode, the sequence generated is
 guaranteed to match the sequence produced using the NumPy implementations as long as
-a <code class="xref py py-class docutils literal notranslate"><span class="pre">SeedSequence</span></code> or <a class="reference external" href="https://numpy.org/doc/stable/reference/random/bit_generators/generated/numpy.random.SeedSequence.html#numpy.random.SeedSequence" title="(in NumPy v2.1)"><code class="xref py py-class docutils literal notranslate"><span class="pre">numpy.random.SeedSequence</span></code></a>
+a <code class="docutils literal notranslate"><span class="pre">randomgen.seed_sequence.SeedSequence</span></code> or <a class="reference external" href="https://numpy.org/doc/stable/reference/random/bit_generators/generated/numpy.random.SeedSequence.html#numpy.random.SeedSequence" title="(in NumPy v2.1)"><code class="xref py py-class docutils literal notranslate"><span class="pre">numpy.random.SeedSequence</span></code></a>
 is used with the same initial seed values.</p></li>
 <li><p>Added <a class="reference internal" href="generated/randomgen.generator.ExtendedGenerator.random.html#randomgen.generator.ExtendedGenerator.random" title="randomgen.generator.ExtendedGenerator.random (Python method) — Return random floats in the half-open interval [0.0, 1.0)."><code class="xref py py-func docutils literal notranslate"><span class="pre">random()</span></code></a> with support for
 <code class="docutils literal notranslate"><span class="pre">dtype=&quot;longdouble&quot;</span></code> to produce extended precision random floats.</p></li>
@@ -981,7 +1002,7 @@ in Python or numba.</p></li>
 <ul class="simple">
 <li><p><code class="docutils literal notranslate"><span class="pre">choice</span></code> pulled in upstream performance improvement that
 use a hash set when choosing without replacement and without user-provided probabilities.</p></li>
-<li><p>Added support for <code class="xref py py-class docutils literal notranslate"><span class="pre">SeedSequence</span></code> (and NumPy’s <code class="docutils literal notranslate"><span class="pre">SeedSequence</span></code>).</p></li>
+<li><p>Added support for <code class="docutils literal notranslate"><span class="pre">randomgen.seed_sequence.SeedSequence</span></code> (and NumPy’s <a class="reference external" href="https://numpy.org/doc/stable/reference/random/bit_generators/generated/numpy.random.SeedSequence.html#numpy.random.SeedSequence" title="(in NumPy v2.1)"><code class="xref py py-class docutils literal notranslate"><span class="pre">SeedSequence</span></code></a>).</p></li>
 <li><p>Fixed a bug that affected both <code class="docutils literal notranslate"><span class="pre">randomgen.generator.Generator.randint</span></code>
 in <code class="docutils literal notranslate"><span class="pre">Generator</span></code> and <code class="docutils literal notranslate"><span class="pre">randint</span></code>
 in  <code class="docutils literal notranslate"><span class="pre">RandomState</span></code> when <code class="docutils literal notranslate"><span class="pre">high=2**32</span></code>.  This value is inbounds for

@@ -13,7 +13,7 @@
     
     
       
-        <title>What’s New or Different - RandomGen v1.26.2 (+62)</title>
+        <title>What’s New or Different - RandomGen v1.26.2 (+64)</title>
       
     
     
@@ -80,7 +80,7 @@
 
 <header class="md-header" data-md-component="header">
   <nav class="md-header__inner md-grid" aria-label="Header">
-    <a href="index.html" title="RandomGen v1.26.2 (+62)" class="md-header__button md-logo" aria-label="RandomGen v1.26.2 (+62)" data-md-component="logo">
+    <a href="index.html" title="RandomGen v1.26.2 (+64)" class="md-header__button md-logo" aria-label="RandomGen v1.26.2 (+64)" data-md-component="logo">
       <img src="_static/casino.svg" alt="logo">
     </a>
     <label class="md-header__button md-icon" for="__drawer">
@@ -90,7 +90,7 @@
       <div class="md-header__ellipsis">
         <div class="md-header__topic">
           <span class="md-ellipsis">
-            RandomGen v1.26.2 (+62)
+            RandomGen v1.26.2 (+64)
           </span>
         </div>
         <div class="md-header__topic" data-md-component="header-topic">
@@ -177,10 +177,10 @@
 
 <nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
   <label class="md-nav__title" for="__drawer">
-    <a href="index.html" title="RandomGen v1.26.2 (+62)" class="md-nav__button md-logo" aria-label="RandomGen v1.26.2 (+62)" data-md-component="logo">
+    <a href="index.html" title="RandomGen v1.26.2 (+64)" class="md-nav__button md-logo" aria-label="RandomGen v1.26.2 (+64)" data-md-component="logo">
       <img src="_static/casino.svg" alt="logo">
     </a>
-    RandomGen v1.26.2 (+62)
+    RandomGen v1.26.2 (+64)
   </label>
   
     <div class="md-nav__source">
@@ -257,13 +257,6 @@
         <li class="md-nav__item">
   <a href="#differences-from-numpy-1-17" class="md-nav__link">
     <span title="/new-or-different.rst#differences-from-numpy-1-17 (reference label)" class="md-ellipsis">Differences from Num<wbr>Py <wbr>(1.<wbr>17+)</span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#differences-from-numpy-before-1-17" class="md-nav__link">
-    <span title="/new-or-different.rst#differences-from-numpy-before-1-17 (reference label)" class="md-ellipsis">Differences from Num<wbr>Py before 1.<wbr>17</span>
   </a>
   
 </li>
@@ -548,13 +541,6 @@
   
 </li>
       
-        <li class="md-nav__item">
-  <a href="#differences-from-numpy-before-1-17" class="md-nav__link">
-    <span title="/new-or-different.rst#differences-from-numpy-before-1-17 (reference label)" class="md-ellipsis">Differences from Num<wbr>Py before 1.<wbr>17</span>
-  </a>
-  
-</li>
-      
     </ul>
   
 </nav>
@@ -638,77 +624,6 @@ source of randomness that is used in cryptographic applications (e.g.,
 </li>
 </ul>
 </li>
-</ul>
-<div class="admonition danger docutils container">
-<p class="admonition-title"> Deprecated </p><p><code class="docutils literal notranslate"><span class="pre">Generator</span></code> is <strong>deprecated</strong>. You should be using
-<a class="reference external" href="https://numpy.org/doc/stable/reference/random/generator.html#numpy.random.Generator" title="(in NumPy v2.1)"><code class="xref py py-class docutils literal notranslate"><span class="pre">numpy.random.Generator</span></code></a>.</p>
-</div>
-<ul class="simple">
-<li><p>randomgen’s <code class="docutils literal notranslate"><span class="pre">Generator</span></code> continues to expose legacy
-methods <code class="docutils literal notranslate"><span class="pre">random_sample</span></code>, <code class="docutils literal notranslate"><span class="pre">randint</span></code>, <code class="docutils literal notranslate"><span class="pre">random_integers</span></code>, <code class="docutils literal notranslate"><span class="pre">rand</span></code>, <code class="docutils literal notranslate"><span class="pre">randn</span></code>,
-and <code class="docutils literal notranslate"><span class="pre">tomaxint</span></code>. <strong>Note</strong>: These should not be used, and their modern replacements are preferred:</p>
-<ul>
-<li><p><code class="docutils literal notranslate"><span class="pre">random_sample</span></code>, <code class="docutils literal notranslate"><span class="pre">rand`</span> <span class="pre">→</span> <span class="pre">``random</span></code></p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">random_integers</span></code>, <code class="docutils literal notranslate"><span class="pre">randint</span></code> → <code class="docutils literal notranslate"><span class="pre">integers</span></code></p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">randn</span></code> → <code class="docutils literal notranslate"><span class="pre">standard_normal</span></code></p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">tomaxint</span></code> → <code class="docutils literal notranslate"><span class="pre">integers</span></code> with <code class="docutils literal notranslate"><span class="pre">dtype</span></code> set to <code class="docutils literal notranslate"><span class="pre">int</span></code></p></li>
-</ul>
-</li>
-<li><p>randomgen’s bit generators remain seedable and the convenience function
-<code class="docutils literal notranslate"><span class="pre">seed`</span> <span class="pre">is</span> <span class="pre">exposed</span> <span class="pre">as</span> <span class="pre">part</span> <span class="pre">of``Generator</span></code>. Additionally, the convenience
-property <code class="docutils literal notranslate"><span class="pre">state</span></code> is available to get or set the state of the underlying bit generator.</p></li>
-<li><p><code class="xref py py-func docutils literal notranslate"><span class="pre">numpy.random.Generator.multivariate_hypergeometric()</span></code> was added after
-<code class="docutils literal notranslate"><span class="pre">Generator</span></code> was merged into NumPy and will not be ported over.</p></li>
-<li><p><code class="xref py py-func docutils literal notranslate"><span class="pre">numpy.random.Generator.shuffle()</span></code> and <code class="xref py py-func docutils literal notranslate"><span class="pre">numpy.random.Generator.permutation()</span></code>
-support <code class="docutils literal notranslate"><span class="pre">axis</span></code> keyword to operator along an axis other than 0.</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">integers</span></code> supports the keyword argument <code class="docutils literal notranslate"><span class="pre">use_masked</span></code> to switch between masked
-generation of bounded integers and Lemire’s superior method.</p></li>
-</ul>
-<h2 id="differences-from-numpy-before-1-17">Differences from NumPy before 1.17<a class="headerlink" href="#differences-from-numpy-before-1-17" title="Link to this heading">¶</a></h2>
-<ul>
-<li><p>The normal, exponential and gamma generators use 256-step Ziggurat
-methods which are 2-10 times faster than NumPy’s default implementation in
-<code class="docutils literal notranslate"><span class="pre">standard_normal</span></code>, <code class="docutils literal notranslate"><span class="pre">standard_exponential</span></code> or <code class="docutils literal notranslate"><span class="pre">standard_gamma</span></code>.</p></li>
-<li><p>The Box-Muller used to produce NumPy’s normals is no longer available.</p></li>
-<li><p>All bit generators functions to produce doubles, uint64s and
-uint32s via CTypes (<a class="reference internal" href="bit_generators/generated/randomgen.xoroshiro128.Xoroshiro128.ctypes.html#randomgen.xoroshiro128.Xoroshiro128.ctypes" title="randomgen.xoroshiro128.Xoroshiro128.ctypes (Python attribute) — ctypes interface"><code class="xref py py-meth docutils literal notranslate"><span class="pre">ctypes()</span></code></a>)
-and CFFI (<a class="reference internal" href="bit_generators/generated/randomgen.xoroshiro128.Xoroshiro128.cffi.html#randomgen.xoroshiro128.Xoroshiro128.cffi" title="randomgen.xoroshiro128.Xoroshiro128.cffi (Python attribute) — CFFI interface"><code class="xref py py-meth docutils literal notranslate"><span class="pre">cffi()</span></code></a>).  This allows
-the bit generators to be used in numba or in other low-level applications</p></li>
-<li><p>The bit generators can be used in downstream projects via Cython.</p></li>
-<li><p>Optional <code class="docutils literal notranslate"><span class="pre">dtype</span></code> argument that accepts <code class="docutils literal notranslate"><span class="pre">np.float32</span></code> or <code class="docutils literal notranslate"><span class="pre">np.float64</span></code>
-to produce either single or double prevision uniform random variables for
-select core distributions</p>
-<ul class="simple">
-<li><p>Uniforms (<code class="docutils literal notranslate"><span class="pre">random</span></code> and <code class="docutils literal notranslate"><span class="pre">rand</span></code>)</p></li>
-<li><p>Normals (<code class="docutils literal notranslate"><span class="pre">standard_normal</span></code> and <code class="docutils literal notranslate"><span class="pre">randn</span></code>)</p></li>
-<li><p>Standard Gammas (<code class="docutils literal notranslate"><span class="pre">standard_gamma</span></code>)</p></li>
-<li><p>Standard Exponentials (<code class="docutils literal notranslate"><span class="pre">standard_exponential</span></code>)</p></li>
-</ul>
-</li>
-<li><p>Optional <code class="docutils literal notranslate"><span class="pre">out</span></code> argument that allows existing arrays to be filled for
-select core distributions</p>
-<ul class="simple">
-<li><p>Uniforms (<code class="docutils literal notranslate"><span class="pre">random</span></code>)</p></li>
-<li><p>Normals (<code class="docutils literal notranslate"><span class="pre">standard_normal</span></code>)</p></li>
-<li><p>Standard Gammas (<code class="docutils literal notranslate"><span class="pre">standard_gamma</span></code>)</p></li>
-<li><p>Standard Exponentials (<code class="docutils literal notranslate"><span class="pre">standard_exponential</span></code>)</p></li>
-</ul>
-<p>This allows multithreading to fill large arrays in chunks using suitable
-PRNGs in parallel.</p>
-</li>
-<li><p><code class="docutils literal notranslate"><span class="pre">integers</span></code> supports broadcasting inputs.</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">integers</span></code> supports drawing from open (default, <code class="docutils literal notranslate"><span class="pre">[low,</span> <span class="pre">high)</span></code>) or closed
-(<code class="docutils literal notranslate"><span class="pre">[low,</span> <span class="pre">high]</span></code>) intervals using the keyword argument
-<code class="docutils literal notranslate"><span class="pre">endpoint</span></code>. Closed intervals are simpler to use when the
-distribution may include the maximum value of a given integer type.</p></li>
-<li><p>The closed interval is particularly helpful when using arrays since
-it avoids object-dtype arrays when sampling from the full range.</p></li>
-<li><p>Support for Lemire’s method of generating uniform integers on an
-arbitrary interval by setting <code class="docutils literal notranslate"><span class="pre">use_masked=True</span></code> in
-(<code class="docutils literal notranslate"><span class="pre">integers</span></code>).</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">multinomial</span></code> supports multidimensional values of <code class="docutils literal notranslate"><span class="pre">n</span></code></p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">choice</span></code>  is much faster when sampling small amounts from large arrays</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">choice</span></code> supports the <code class="docutils literal notranslate"><span class="pre">axis</span></code> keyword to work with multidimensional arrays.</p></li>
 <li><p>For changes since the previous release, see the <a class="reference internal" href="change-log.html#change-log"><span class="std std-ref">Change Log</span></a></p></li>
 </ul>
 
