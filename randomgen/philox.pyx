@@ -45,7 +45,7 @@ cdef uint64_t philox2x32_raw(void *st) noexcept nogil:
 
 cdef class Philox(BitGenerator):
     """
-    Philox(seed=None, *, counter=None, key=None, number=4, width=64, *, numpy_seed=False, mode=_DeprecatedValue)
+    Philox(seed=None, *, counter=None, key=None, number=4, width=64, numpy_seed=False, mode="sequence")
 
     Container for the Philox family of pseudo-random number generators.
 

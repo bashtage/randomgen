@@ -80,7 +80,7 @@ cdef uint64_t jsf32_raw(void* st) noexcept nogil:
 
 cdef class JSF(BitGenerator):
     """
-    JSF(seed=None, *, seed_size=1, size=64, p=None, q=None, r=None, mode=<deprecated>)
+    JSF(seed=None, *, seed_size=1, size=64, p=None, q=None, r=None, mode="sequence")
 
     Container for Jenkins's Fast Small (JSF) pseudo-random number generator
 

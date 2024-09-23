@@ -40,7 +40,7 @@ cdef uint64_t choosek(uint64_t k):
 
 cdef class SFC64(BitGenerator):
     """
-    SFC64(seed=None, w=1, k=1, *, numpy_seed=False, mode=_DeprecatedValue)
+    SFC64(seed=None, w=1, k=1, *, numpy_seed=False, mode="sequence")
 
     Chris Doty-Humphrey's Small Fast Chaotic PRNG with optional Weyl Sequence
 

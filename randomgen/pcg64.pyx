@@ -43,7 +43,7 @@ cdef double lcg128mix_double(void* st) noexcept nogil:
 
 cdef class PCG64(BitGenerator):
     """
-    PCG64(seed=None, inc=0, *, variant="xsl-rr", numpy_seed=False, mode=_DeprecatedValue)
+    PCG64(seed=None, inc=0, *, variant="xsl-rr", numpy_seed=False, mode="sequence")
 
     Container for the PCG-64 pseudo-random number generator.
 

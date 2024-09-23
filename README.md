@@ -120,12 +120,11 @@ the latest commit (unreleased) is available under
 ## Requirements
 Building requires:
 
-* Python (3.6, 3.7, 3.8, 3.9, 3.10)
-* NumPy (1.17+)
-* Cython (0.29+)
-* tempita (0.5+), if not provided by Cython
+* Python (3.9, 3.10, 3.11, 3.12, 3.13)
+* NumPy (1.22.3+, runtime, 2.0.0+, building)
+* Cython (3.0.10+)
 
-Testing requires pytest (6+).
+Testing requires pytest (7+).
 
 **Note:** it might work with other versions but only tested with these
 versions.

@@ -20,7 +20,7 @@ cdef double xoshiro512_double(void* st) noexcept nogil:
 
 cdef class Xoshiro512(BitGenerator):
     """
-    Xoshiro512(seed=None, *, mode=<deprecated>)
+    Xoshiro512(seed=None, *, mode="sequence")
 
     Container for the xoshiro512** pseudo-random number generator.
 

@@ -25,7 +25,7 @@ cdef uint64_t mt64_raw(void *st) noexcept nogil:
 
 cdef class MT64(BitGenerator):
     """
-    MT64(seed=None, *, mode=<deprecated>)
+    MT64(seed=None, *, mode="sequence")
 
     Container for the 64-bit Mersenne Twister pseudo-random number generator
 

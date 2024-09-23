@@ -5,7 +5,7 @@ The four core distributions in :class:`~numpy.random.Generator` all allow
 existing arrays to be filled using the ``out`` keyword argument.
 Existing arrays need to be contiguous and well-behaved (writable and aligned).
 Under normal circumstances, arrays created using the common constructors such
-as :meth:`numpy.empty` will satisfy these requirements.
+as :func:`numpy.empty` will satisfy these requirements.
 
 This example makes use of Python 3 :mod:`concurrent.futures` to fill an array
 using multiple threads.  Threads are long-lived so that repeated calls do not
