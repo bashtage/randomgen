@@ -3,15 +3,17 @@
 Change Log
 ----------
 
-.. container:: admonition danger
-
-  .. raw:: html
-
-      <p class="admonition-title"> Deprecated </p>
-
-  ``Generator`` and ``RandomState`` were **REMOVED** in 1.23.
-  You should be using :class:`numpy.random.Generator` or
-  :class:`numpy.random.RandomState` which are maintained. 
+v2.0.0
+======
+- Final compatibility with NumPy 2
+- Minimum NumPy is now 1.22.3.
+- Removed ``"legacy"`` seeding in favor of using :class:`~numpy.random.SeedSequence`.
+- Removed the the vendored copy of ``SeedSequence``.
+- Deprecated using the ``mode`` keyword argument to set the seed mode, since only ``SeedSequences`` are supported.
+- Changed ``ranomgen.common.BitGenerator`` to inherit from ``numpy.random.BitGenerator`` so that
+  numpy will recognize these as ``BitGenerators``.
+- Removed C distribution functions that are available in NumPy (see libnpyrandom)`.
+- General code cleanup and modernization.
 
 v1.26.1
 =======
@@ -54,7 +56,7 @@ v1.20.2
   :class:`~randomgen.mt19937.MT19937`, :class:`~randomgen.philox.Philox`, and
   :class:`~randomgen.sfc.SFC64`. When using this mode, the sequence generated is
   guaranteed to match the sequence produced using the NumPy implementations as long as
-  a :class:`~randomgen.seed_sequence.SeedSequence` or :class:`numpy.random.SeedSequence`
+  a ``randomgen.seed_sequence.SeedSequence`` or :class:`numpy.random.SeedSequence`
   is used with the same initial seed values.
 - Added :func:`~randomgen.generator.ExtendedGenerator.random` with support for
   ``dtype="longdouble"`` to produce extended precision random floats.
@@ -139,7 +141,7 @@ v1.18.0
 =======
 - ``choice`` pulled in upstream performance improvement that
   use a hash set when choosing without replacement and without user-provided probabilities.
-- Added support for :class:`~randomgen.seed_sequence.SeedSequence` (and NumPy's ``SeedSequence``).
+- Added support for ``randomgen.seed_sequence.SeedSequence`` (and NumPy's :class:`~numpy.random.SeedSequence`).
 - Fixed a bug that affected both ``randomgen.generator.Generator.randint``
   in ``Generator`` and ``randint``
   in  ``RandomState`` when ``high=2**32``.  This value is inbounds for

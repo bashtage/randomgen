@@ -25,7 +25,7 @@ cdef uint64_t mt19937_raw(void *st) noexcept nogil:
 
 cdef class MT19937(BitGenerator):
     """
-    MT19937(seed=None, *, numpy_seed=False, mode=_DeprecatedValue)
+    MT19937(seed=None, *, numpy_seed=False, mode="sequence")
 
     Container for the Mersenne Twister pseudo-random number generator.
 

@@ -22,7 +22,7 @@ cdef double speck_double(void* st) noexcept nogil:
 
 cdef class SPECK128(BitGenerator):
     """
-    SPECK128(seed=None, *, counter=None, key=None, rounds=34, mode=<deprecated>)
+    SPECK128(seed=None, *, counter=None, key=None, rounds=34, mode="sequence")
 
     Container for the SPECK (128 x 256) pseudo-random number generator.
 

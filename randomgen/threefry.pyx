@@ -45,7 +45,7 @@ cdef uint64_t threefry2x32_raw(void *st) noexcept nogil:
 
 cdef class ThreeFry(BitGenerator):
     """
-    ThreeFry(seed=None, *, counter=None, key=None, number=4, width=64, mode=<deprecated>)
+    ThreeFry(seed=None, *, counter=None, key=None, number=4, width=64, mode="sequence")
 
     Container for the ThreeFry family of pseudo-random number generators.
 

@@ -27,7 +27,7 @@ cdef uint64_t dsfmt_raw(void *st) noexcept nogil:
 
 cdef class DSFMT(BitGenerator):
     """
-    DSFMT(seed=None, *, mode=<deprecated>)
+    DSFMT(seed=None, *, mode="sequence")
 
     Container for the SIMD-based Mersenne Twister pseudo RNG.
 

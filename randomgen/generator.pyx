@@ -255,7 +255,7 @@ cdef class ExtendedGenerator:
 
         Returns
         -------
-        out : integer or ndarray
+        out : int or ndarray
             Drawn samples.
 
         Notes

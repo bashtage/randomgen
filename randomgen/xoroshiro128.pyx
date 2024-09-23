@@ -29,7 +29,7 @@ cdef double xoroshiro128plusplus_double(void* st) noexcept nogil:
 
 cdef class Xoroshiro128(BitGenerator):
     """
-    Xoroshiro128(seed=None, *, plusplus=False, mode=<deprecated>)
+    Xoroshiro128(seed=None, *, plusplus=False, mode="sequence")
 
     Container for the xoroshiro128+/++ pseudo-random number generator.
 

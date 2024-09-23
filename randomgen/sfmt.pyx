@@ -30,7 +30,7 @@ cdef double sfmt_double(void* st) noexcept nogil:
 
 cdef class SFMT(BitGenerator):
     """
-    SFMT(seed=None, *, mode=<deprecated>)
+    SFMT(seed=None, *, mode="sequence")
 
     Container for the SIMD-based Mersenne Twister pseudo RNG.
 

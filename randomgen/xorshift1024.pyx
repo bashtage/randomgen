@@ -20,7 +20,7 @@ cdef double xorshift1024_double(void* st) noexcept nogil:
 
 cdef class Xorshift1024(BitGenerator):
     """
-    Xorshift1024(seed=None, *, mode=<deprecated>)
+    Xorshift1024(seed=None, *, mode="sequence")
 
     Container for the xorshift1024*φ pseudo-random number generator.
 

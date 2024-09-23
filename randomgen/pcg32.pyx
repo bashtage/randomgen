@@ -24,7 +24,7 @@ cdef uint64_t pcg32_raw(void* st) noexcept nogil:
 
 cdef class PCG32(BitGenerator):
     """
-    PCG32(seed=None, inc=0, *, mode=<deprecates>)
+    PCG32(seed=None, inc=0, *, mode="sequence")
 
     Container for the PCG-32 pseudo-random number generator.
 
