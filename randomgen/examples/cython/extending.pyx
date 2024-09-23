@@ -1,12 +1,14 @@
 #cython: language_level=3
+from cpython.pycapsule cimport PyCapsule_GetPointer, PyCapsule_IsValid
 from libc.stdint cimport uint32_t
-from cpython.pycapsule cimport PyCapsule_IsValid, PyCapsule_GetPointer
 
 import numpy as np
-cimport numpy as np
+
 cimport cython
+cimport numpy as np
 
 from randomgen.common cimport bitgen_t
+
 from randomgen.xoroshiro128 import Xoroshiro128
 
 np.import_array()

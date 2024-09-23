@@ -44,8 +44,8 @@ except ImportError:
     randbits = SystemRandom().getrandbits
 
 import numpy as np
-cimport numpy as np
 
+cimport numpy as np
 from libc.stdint cimport uint32_t
 
 __all__ = ["SeedSequence", "SeedlessSeedSequence", "ISeedSequence",

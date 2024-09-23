@@ -1,10 +1,13 @@
 #cython: language_level=3
 import numpy as np
-cimport numpy as np
+
 cimport cython
-from cpython.pycapsule cimport PyCapsule_IsValid, PyCapsule_GetPointer
+cimport numpy as np
+from cpython.pycapsule cimport PyCapsule_GetPointer, PyCapsule_IsValid
+
 from randomgen.common cimport *
 from randomgen.distributions cimport random_gauss_zig
+
 from randomgen.xoroshiro128 import Xoroshiro128
 
 

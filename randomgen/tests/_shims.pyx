@@ -1,4 +1,5 @@
-from randomgen.common cimport view_little_endian, int_to_array, byteswap_little_endian
+from randomgen.common cimport byteswap_little_endian, int_to_array, view_little_endian
+
 import numpy as np
 
 

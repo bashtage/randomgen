@@ -2,7 +2,9 @@
 import numpy as np
 
 from randomgen.common cimport *
+
 from randomgen._deprecated_value import _DeprecatedValue
+
 __all__ = ["ChaCha"]
 
 cdef uint64_t chacha_uint64(void* st) noexcept nogil:

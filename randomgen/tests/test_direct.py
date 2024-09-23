@@ -226,7 +226,9 @@ class Base:
             return {"seed": seed, "data": np.array(data, dtype=cls.dtype)}
 
     def test_deprecated_mode(self):
-        if self.bit_generator in NO_MODE_SUPPORT or isinstance(self.bit_generator, partial):
+        if self.bit_generator in NO_MODE_SUPPORT or isinstance(
+            self.bit_generator, partial
+        ):
             pytest.skip("Never supported mode")
         with pytest.warns(FutureWarning):
             self.setup_bitgenerator([0], mode="sequence")

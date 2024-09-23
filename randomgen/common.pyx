@@ -1,21 +1,24 @@
 #!python
+from collections import namedtuple
 import sys
 import warnings
-from collections import namedtuple
+
 try:
     from threading import Lock
 except ImportError:
     from dummy_threading import Lock
 
 import numpy as np
-from numpy.random.bit_generator cimport BitGenerator as _BitGenerator
-from cpython cimport PyFloat_AsDouble
-cimport numpy as np
 
-from randomgen.common cimport *
+cimport numpy as np
+from cpython cimport PyFloat_AsDouble
+from numpy.random.bit_generator cimport BitGenerator as _BitGenerator
+
 from randomgen cimport api
-from randomgen.seed_sequence import ISeedSequence
+from randomgen.common cimport *
+
 from randomgen._deprecated_value import _DeprecatedValue
+from randomgen.seed_sequence import ISeedSequence
 
 ISEED_SEQUENCES = (ISeedSequence,)
 # NumPy 1.17

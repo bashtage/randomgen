@@ -2,7 +2,8 @@
 #cython: binding=True
 
 from randomgen.common cimport *
-from randomgen.distributions cimport next_uint64_t, next_uint32_t, next_double_t
+from randomgen.distributions cimport next_double_t, next_uint32_t, next_uint64_t
+
 import ctypes
 
 __all__ = ["UserBitGenerator"]
