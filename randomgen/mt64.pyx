@@ -7,6 +7,7 @@ import numpy as np
 cimport numpy as np
 
 from randomgen.common cimport *
+from randomgen._deprecated_value import _DeprecatedValue
 
 __all__ = ["MT64"]
 
@@ -24,7 +25,7 @@ cdef uint64_t mt64_raw(void *st) noexcept nogil:
 
 cdef class MT64(BitGenerator):
     """
-    MT64(seed=None)
+    MT64(seed=None, *, mode=<deprecated>)
 
     Container for the 64-bit Mersenne Twister pseudo-random number generator
 
@@ -38,6 +39,13 @@ cdef class MT64(BitGenerator):
         unsigned integers are read from ``/dev/urandom`` (or the Windows
         analog) if available. If unavailable, a hash of the time and process
         ID is used.
+    mode : {None, "sequence"}
+        Deprecated parameter. Do not use.
+
+        .. deprecated: 2.0.0
+
+           Starting in version 2, only seed sequences are supported.
+
 
     Attributes
     ----------
@@ -87,8 +95,8 @@ cdef class MT64(BitGenerator):
     .. [2] Nishimura, T. "Tables of 64-bit Mersenne Twisters" ACM Transactions
         on Modeling and Computer Simulation 10. (2000) 348-357.
     """
-    def __init__(self, seed=None):
-        BitGenerator.__init__(self, seed)
+    def __init__(self, seed=None, *, mode=_DeprecatedValue):
+        BitGenerator.__init__(self, seed, mode=mode)
         self.seed(seed)
 
         self._bitgen.state = &self.rng_state

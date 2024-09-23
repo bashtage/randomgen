@@ -481,7 +481,8 @@ cdef class Philox(BitGenerator):
         """
         cdef Philox bit_generator
 
-        bit_generator = self.__class__(seed=self._copy_seed(), mode=self.mode)
+        kwargs = {} if self.mode != "numpy" else {"numpy_seed": True}
+        bit_generator = self.__class__(seed=self._copy_seed(), **kwargs)
         bit_generator.state = self.state
         bit_generator.jump_inplace(iter)
 

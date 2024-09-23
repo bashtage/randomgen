@@ -208,7 +208,8 @@ cdef class MT19937(BitGenerator):
         """
         cdef MT19937 bit_generator
 
-        bit_generator = self.__class__(mode=self.mode)
+        kwargs = {"numpy_seed": True} if self.mode == "numpy" else {}
+        bit_generator = self.__class__(**kwargs)
         bit_generator.state = self.state
         mt19937_jump_default(&bit_generator.rng_state)
 
@@ -277,7 +278,8 @@ cdef class MT19937(BitGenerator):
         """
         cdef MT19937 bit_generator
 
-        bit_generator = self.__class__(seed=self._copy_seed(), mode=self.mode)
+        kwargs = {} if self.mode != "numpy" else {"numpy_seed": True}
+        bit_generator = self.__class__(seed=self._copy_seed(), **kwargs)
         bit_generator.state = self.state
         bit_generator.jump_inplace(jumps)
 

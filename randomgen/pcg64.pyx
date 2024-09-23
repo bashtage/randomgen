@@ -470,7 +470,8 @@ cdef class PCG64(BitGenerator):
         """
         cdef PCG64 bit_generator
 
-        bit_generator = self.__class__(seed=self._copy_seed(), mode=self.mode, variant=self.variant)
+        kwargs = {"numpy_seed": True} if self.mode == "numpy" else {}
+        bit_generator = self.__class__(seed=self._copy_seed(), variant=self.variant, **kwargs)
         bit_generator.state = self.state
         bit_generator.jump_inplace(iter)
 

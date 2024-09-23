@@ -4,6 +4,7 @@ import numpy as np
 cimport numpy as np
 
 from randomgen.common cimport *
+from randomgen._deprecated_value import _DeprecatedValue
 
 __all__ = ["HC128"]
 
@@ -19,7 +20,7 @@ cdef double hc128_double(void* st) noexcept nogil:
 
 cdef class HC128(BitGenerator):
     """
-    HC128(seed=None, *, key=None)
+    HC128(seed=None, *, key=None, mode=<deprecated>)
 
     Container for the HC-128 cipher-based pseudo-random number generator
 
@@ -36,6 +37,12 @@ cdef class HC128(BitGenerator):
         Key for HC128. The key is a 256-bit integer that contains both the
         key (lower 128 bits) and initial values (upper 128-bits) for the
         HC-128 cipher. key and seed cannot both be used.
+    mode : {None, "sequence"}
+        Deprecated parameter. Do not use.
+
+        .. deprecated: 2.0.0
+
+           Starting in version 2, only seed sequences are supported.
 
     Attributes
     ----------
@@ -106,8 +113,8 @@ cdef class HC128(BitGenerator):
     .. [2] Wu, Hongjun, "Stream Ciphers HC-128 and HC-256".
         https://www.ntu.edu.sg/home/wuhj/research/hc/index.html)
     """
-    def __init__(self, seed=None, *, key=None):
-        BitGenerator.__init__(self, seed)
+    def __init__(self, seed=None, *, key=None, mode=_DeprecatedValue):
+        BitGenerator.__init__(self, seed, mode=mode)
         self.seed(seed, key)
 
         self._bitgen.state = <void *>&self.rng_state

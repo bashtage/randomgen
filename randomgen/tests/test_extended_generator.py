@@ -41,7 +41,7 @@ def mv_seed():
 
 @pytest.fixture(scope="function")
 def extended_gen():
-    pcg = PCG64(0, mode="sequence")
+    pcg = PCG64(0)
     return ExtendedGenerator(pcg)
 
 
@@ -155,7 +155,7 @@ def test_multivariate_normal_method(seed, method):
 
 @pytest.mark.parametrize("method", ["svd", "eigh", "cholesky"])
 def test_multivariate_normal_basic_stats(seed, method):
-    random = ExtendedGenerator(MT19937(seed, mode="sequence"))
+    random = ExtendedGenerator(MT19937(seed))
     n_s = 1000
     mean = np.array([1, 2])
     cov = np.array([[2, 1], [1, 2]])
@@ -184,7 +184,7 @@ def test_multivariate_normal_bad_size(mean, size):
 
 
 def test_multivariate_normal(seed):
-    random = ExtendedGenerator(MT19937(seed, mode="sequence"))
+    random = ExtendedGenerator(MT19937(seed))
     mean = (0.123456789, 10)
     cov = [[1, 0], [0, 1]]
     size = (3, 2)
@@ -244,7 +244,7 @@ def test_multivariate_normal(seed):
 
 
 def test_complex_normal(seed):
-    random = ExtendedGenerator(MT19937(seed, mode="sequence"))
+    random = ExtendedGenerator(MT19937(seed))
     actual = random.complex_normal(loc=1.0, gamma=1.0, relation=0.5, size=(3, 2))
     desired = np.array(
         [
@@ -321,7 +321,7 @@ def test_set_get_state(seed):
 
 
 def test_complex_normal_size(mv_seed):
-    random = ExtendedGenerator(MT19937(mv_seed, mode="sequence"))
+    random = ExtendedGenerator(MT19937(mv_seed))
     state = random.state
     loc = np.ones((1, 2))
     gamma = np.ones((3, 1))
@@ -368,7 +368,7 @@ def test_default_pcg64():
 @pytest.mark.parametrize("dim", [2, 5, 10])
 @pytest.mark.parametrize("size", [None, 5, (3, 7)])
 def test_standard_wishart_reproduce(df, dim, size):
-    pcg = PCG64(0, mode="sequence")
+    pcg = PCG64(0)
     eg = ExtendedGenerator(pcg)
     w = eg.standard_wishart(df, dim, size)
     if size is not None:
@@ -378,7 +378,7 @@ def test_standard_wishart_reproduce(df, dim, size):
         assert w.ndim == 2
     assert w.shape[-2:] == (dim, dim)
 
-    pcg = PCG64(0, mode="sequence")
+    pcg = PCG64(0)
     eg = ExtendedGenerator(pcg)
     w2 = eg.standard_wishart(df, dim, size)
     assert_allclose(w, w2)
@@ -388,7 +388,7 @@ def test_standard_wishart_reproduce(df, dim, size):
 @pytest.mark.parametrize("df", [8, [10], [[5], [6]]])
 def test_wishart_broadcast(df, scale_dim):
     dim = 5
-    pcg = PCG64(0, mode="sequence")
+    pcg = PCG64(0)
     eg = ExtendedGenerator(pcg)
     scale = np.eye(dim)
     for _ in range(scale_dim):
@@ -402,7 +402,7 @@ def test_wishart_broadcast(df, scale_dim):
         assert w.shape[:-2] == np.broadcast(df, z).shape
 
     size = w.shape[:-2]
-    pcg = PCG64(0, mode="sequence")
+    pcg = PCG64(0)
     eg = ExtendedGenerator(pcg)
     w2 = eg.wishart(df, scale, size=size)
     assert_allclose(w, w2)
@@ -417,7 +417,7 @@ if HAS_SCIPY:
 def test_wishart_reduced_rank(method):
     scale = np.eye(3)
     scale[0, 1] = scale[1, 0] = 1.0
-    pcg = PCG64(0, mode="sequence")
+    pcg = PCG64(0)
     eg = ExtendedGenerator(pcg)
     w = eg.wishart(10, scale, method=method, rank=2)
     assert w.shape == (3, 3)
@@ -428,7 +428,7 @@ def test_wishart_reduced_rank(method):
 def test_missing_scipy_exception():
     scale = np.eye(3)
     scale[0, 1] = scale[1, 0] = 1.0
-    pcg = PCG64(0, mode="sequence")
+    pcg = PCG64(0)
     eg = ExtendedGenerator(pcg)
     with pytest.raises(ImportError):
         eg.wishart(10, scale, method="cholesky", rank=2)
@@ -490,7 +490,7 @@ def test_broadcast_both_paths():
 
 
 def test_factor_wishart():
-    pcg = PCG64(0, mode="sequence")
+    pcg = PCG64(0)
     eg = ExtendedGenerator(pcg)
     w = eg.wishart([3, 5], 2 * np.eye(4), size=(10000, 2), method="factor")
     assert_allclose(np.diag((w[:, 0] / 3).mean(0)).mean(), 4, rtol=1e-2)
@@ -649,7 +649,7 @@ def test_random_other_type(extended_gen):
 
 
 def test_random():
-    random = ExtendedGenerator(MT19937(0, mode="sequence"))
+    random = ExtendedGenerator(MT19937(0))
     actual = random.random((3, 2))
     desired = np.array(
         [
@@ -660,13 +660,13 @@ def test_random():
     )
     assert_array_almost_equal(actual, desired, decimal=15)
 
-    random = ExtendedGenerator(MT19937(0, mode="sequence"))
+    random = ExtendedGenerator(MT19937(0))
     actual = random.random()
     assert_array_almost_equal(actual, desired[0, 0], decimal=15)
 
 
 def test_random_float(seed):
-    random = ExtendedGenerator(MT19937(seed, mode="sequence"))
+    random = ExtendedGenerator(MT19937(seed))
     actual = random.random((3, 2))
     desired = np.array(
         [[0.7165936, 0.6035045], [0.4473828, 0.359537], [0.7954794, 0.1942982]]
@@ -675,7 +675,7 @@ def test_random_float(seed):
 
 
 def test_random_float_scalar(seed):
-    random = ExtendedGenerator(MT19937(seed, mode="sequence"))
+    random = ExtendedGenerator(MT19937(seed))
     actual = random.random(dtype=np.float32)
     desired = 0.7165936
     assert_array_almost_equal(actual, desired, decimal=7)

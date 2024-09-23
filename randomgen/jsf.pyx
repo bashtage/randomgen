@@ -3,7 +3,7 @@
 
 import numpy as np
 cimport numpy as np
-
+from randomgen._deprecated_value import _DeprecatedValue
 from randomgen.common cimport *
 
 __all__ = ["JSF"]
@@ -80,7 +80,7 @@ cdef uint64_t jsf32_raw(void* st) noexcept nogil:
 
 cdef class JSF(BitGenerator):
     """
-    JSF(seed=None, *, seed_size=1, size=64, p=None, q=None, r=None)
+    JSF(seed=None, *, seed_size=1, size=64, p=None, q=None, r=None, mode=<deprecated>)
 
     Container for Jenkins's Fast Small (JSF) pseudo-random number generator
 
@@ -109,6 +109,12 @@ cdef class JSF(BitGenerator):
     r : int, optional
         One the the three parameters that defines JSF. See Notes. If not
         provided uses the default values for the selected size listed in Notes.
+    mode : {None, "sequence"}
+        Deprecated parameter. Do not use.
+
+        .. deprecated: 2.0.0
+
+           Starting in version 2, only seed sequences are supported.
 
     Attributes
     ----------
@@ -183,8 +189,8 @@ cdef class JSF(BitGenerator):
     parameters = JSF_PARAMETERS
 
     def __init__(self, seed=None, *, seed_size=1, size=64, p=None, q=None,
-                 r=None):
-        BitGenerator.__init__(self, seed)
+                 r=None, mode=_DeprecatedValue):
+        BitGenerator.__init__(self, seed, mode=mode)
         if size not in (32, 64) or not isinstance(size, INT_TYPES):
             raise ValueError("size must be either 32 or 64")
         if seed_size not in (1, 2, 3) or not isinstance(seed_size, INT_TYPES):

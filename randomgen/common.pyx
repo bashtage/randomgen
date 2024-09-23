@@ -50,7 +50,7 @@ cdef class BitGenerator(_BitGenerator):
             msg = ("mode is deprecated and will be removed in a future version. "
                    "Seeding defaults to a numpy.random.SeedSequence instance.")
             if "numpy" in self._supported_modes():
-                msg += "Use numpy_seed=True to enforce numpy-compatible seeding."
+                msg += " Use numpy_seed=True to enforce numpy-compatible seeding."
             warnings.warn(msg, FutureWarning)
         if mode is not _DeprecatedValue and (
                 not isinstance(mode, str) or mode.lower() not in self._supported_modes()
