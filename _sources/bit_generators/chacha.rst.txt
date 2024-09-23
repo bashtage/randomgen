@@ -16,15 +16,6 @@ Seeding and State
    ~ChaCha.seed
    ~ChaCha.state
 
-Parallel generation
-===================
-.. autosummary::
-   :toctree: generated/
-
-   ~ChaCha.advance
-   ~ChaCha.jump
-   ~ChaCha.jumped
-
 Extending
 =========
 .. autosummary::

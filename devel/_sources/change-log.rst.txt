@@ -8,9 +8,9 @@ v2.0.0
 - Final compatibility with NumPy 2
 - Minimum NumPy is now 1.22.3.
 - Removed ``"legacy"`` seeding in favor of using :class:`~numpy.random.SeedSequence`.
-- Removed the the vendored copy of ``SeedSequence``.
+- Removed the vendored copy of ``SeedSequence``.
 - Deprecated using the ``mode`` keyword argument to set the seed mode, since only ``SeedSequences`` are supported.
-- Changed ``ranomgen.common.BitGenerator`` to inherit from ``numpy.random.BitGenerator`` so that
+- Changed ``randomgen.common.BitGenerator`` to inherit from ``numpy.random.BitGenerator`` so that
   numpy will recognize these as ``BitGenerators``.
 - Removed C distribution functions that are available in NumPy (see libnpyrandom)`.
 - General code cleanup and modernization.

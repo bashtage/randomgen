@@ -13,7 +13,7 @@
     
     
       
-        <title>ThreeFry Counter-based RNG - RandomGen 1.26.1</title>
+        <title>ThreeFry Counter-based RNG - RandomGen 2.0.0</title>
       
     
     
@@ -36,7 +36,7 @@
         <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
       
     
-        <link rel="stylesheet" type="text/css" href="../_static/sphinx_immaterial_theme.af531f03affe68837.min.css?v=2410bb73" />
+        <link rel="stylesheet" type="text/css" href="../_static/sphinx_immaterial_theme.3625f807144f53acf.min.css?v=fbfc4466" />
     <script>__md_scope=new URL("..",location),__md_hash=e=>[...e].reduce((e,_)=>(e<<5)-e+_.charCodeAt(0),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
     
       
@@ -80,7 +80,7 @@
 
 <header class="md-header" data-md-component="header">
   <nav class="md-header__inner md-grid" aria-label="Header">
-    <a href="../index.html" title="RandomGen 1.26.1" class="md-header__button md-logo" aria-label="RandomGen 1.26.1" data-md-component="logo">
+    <a href="../index.html" title="RandomGen 2.0.0" class="md-header__button md-logo" aria-label="RandomGen 2.0.0" data-md-component="logo">
       <img src="../_static/casino.svg" alt="logo">
     </a>
     <label class="md-header__button md-icon" for="__drawer">
@@ -90,7 +90,7 @@
       <div class="md-header__ellipsis">
         <div class="md-header__topic">
           <span class="md-ellipsis">
-            RandomGen 1.26.1
+            RandomGen 2.0.0
           </span>
         </div>
         <div class="md-header__topic" data-md-component="header-topic">
@@ -177,10 +177,10 @@
 
 <nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
   <label class="md-nav__title" for="__drawer">
-    <a href="../index.html" title="RandomGen 1.26.1" class="md-nav__button md-logo" aria-label="RandomGen 1.26.1" data-md-component="logo">
+    <a href="../index.html" title="RandomGen 2.0.0" class="md-nav__button md-logo" aria-label="RandomGen 2.0.0" data-md-component="logo">
       <img src="../_static/casino.svg" alt="logo">
     </a>
-    RandomGen 1.26.1
+    RandomGen 2.0.0
   </label>
   
     <div class="md-nav__source">
@@ -955,42 +955,42 @@
         
           <li class="md-nav__item">
   <a href="#randomgen.threefry.ThreeFry.__init__.seed" class="md-nav__link">
-    <span aria-label="Python parameter" class="objinfo-icon objinfo-icon__sub-data" title="Python parameter">p</span><span title="randomgen.threefry.ThreeFry.__init__.seed (Python parameter) — Entropy initializing the pseudo-random number generator. Can be an integer in [0, 2**64), array of integers in [0, 2**64), a SeedSequence instance or None (the default). If seed is None, data will be read from /dev/urandom (or the Windows analog) if available. If unavailable, a hash of the time and process ID is used." class="md-ellipsis">seed</span>
+    <span aria-label="Python parameter" class="objinfo-icon objinfo-icon__sub-data" title="Python parameter">p</span><span title="randomgen.threefry.ThreeFry.__init__.seed (Python parameter) — Entropy initializing the pseudo-random number generator. Can be an integer in [0, 2**64), array of integers in [0, 2**64), a SeedSequence instance or None (the default). If seed is None, data will be read from /dev/urandom (or the Windows analog) if available." class="md-ellipsis">seed</span>
   </a>
   
 </li>
         
           <li class="md-nav__item">
   <a href="#randomgen.threefry.ThreeFry.__init__.counter" class="md-nav__link">
-    <span aria-label="Python parameter" class="objinfo-icon objinfo-icon__sub-data" title="Python parameter">p</span><span title="randomgen.threefry.ThreeFry.__init__.counter (Python parameter) — Counter to use in the ThreeFry state. Can be either a Python int in [0, 2**(N*W)) where N is number of W is the width, or a M-element uint64 array where M = N*W // 64. If not provided, the counter is initialized at 0." class="md-ellipsis">counter</span>
+    <span aria-label="Python parameter" class="objinfo-icon objinfo-icon__sub-data" title="Python parameter">p</span><span title="randomgen.threefry.ThreeFry.__init__.counter (Python parameter) — Counter to use in the ThreeFry state." class="md-ellipsis">counter</span>
   </a>
   
 </li>
         
           <li class="md-nav__item">
   <a href="#randomgen.threefry.ThreeFry.__init__.key" class="md-nav__link">
-    <span aria-label="Python parameter" class="objinfo-icon objinfo-icon__sub-data" title="Python parameter">p</span><span title="randomgen.threefry.ThreeFry.__init__.key (Python parameter) — Key to use in the ThreeFry state. Unlike seed, which is run through another RNG before use, the value in key is directly set. Can be either a Python int in [0, 2**(N*W//2)) or a m-element uint64 array where m = N*W // (2 * 64). If number=2 and width=32, then the value must be in [0, 2**32) even if stored in a uint64 array. key and seed cannot both be used." class="md-ellipsis">key</span>
+    <span aria-label="Python parameter" class="objinfo-icon objinfo-icon__sub-data" title="Python parameter">p</span><span title="randomgen.threefry.ThreeFry.__init__.key (Python parameter) — Key to use in the ThreeFry state." class="md-ellipsis">key</span>
   </a>
   
 </li>
         
           <li class="md-nav__item">
   <a href="#randomgen.threefry.ThreeFry.__init__.number" class="md-nav__link">
-    <span aria-label="Python parameter" class="objinfo-icon objinfo-icon__sub-data" title="Python parameter">p</span><span title="randomgen.threefry.ThreeFry.__init__.number (Python parameter) — Number of values to produce in a single call. Maps to N in the ThreeFry variant naming scheme ThreeFryNxW." class="md-ellipsis">number</span>
+    <span aria-label="Python parameter" class="objinfo-icon objinfo-icon__sub-data" title="Python parameter">p</span><span title="randomgen.threefry.ThreeFry.__init__.number (Python parameter) — Number of values to produce in a single call." class="md-ellipsis">number</span>
   </a>
   
 </li>
         
           <li class="md-nav__item">
   <a href="#randomgen.threefry.ThreeFry.__init__.width" class="md-nav__link">
-    <span aria-label="Python parameter" class="objinfo-icon objinfo-icon__sub-data" title="Python parameter">p</span><span title="randomgen.threefry.ThreeFry.__init__.width (Python parameter) — Bit width the values produced. Maps to W in the ThreeFry variant naming scheme ThreeFryNxW." class="md-ellipsis">width</span>
+    <span aria-label="Python parameter" class="objinfo-icon objinfo-icon__sub-data" title="Python parameter">p</span><span title="randomgen.threefry.ThreeFry.__init__.width (Python parameter) — Bit width the values produced." class="md-ellipsis">width</span>
   </a>
   
 </li>
         
           <li class="md-nav__item">
   <a href="#randomgen.threefry.ThreeFry.__init__.mode" class="md-nav__link">
-    <span aria-label="Python parameter" class="objinfo-icon objinfo-icon__sub-data" title="Python parameter">p</span><span title="randomgen.threefry.ThreeFry.__init__.mode (Python parameter) — The seeding mode to use. &#34;legacy&#34; uses the legacy SplitMix64-based initialization. &#34;sequence&#34; uses a SeedSequence to transforms the seed into an initial state.  None defaults to &#34;sequence&#34;." class="md-ellipsis">mode</span>
+    <span aria-label="Python parameter" class="objinfo-icon objinfo-icon__sub-data" title="Python parameter">p</span><span title="randomgen.threefry.ThreeFry.__init__.mode (Python parameter) — Deprecated parameter." class="md-ellipsis">mode</span>
   </a>
   
 </li>
@@ -1022,7 +1022,7 @@
         
           <li class="md-nav__item">
   <a href="#randomgen.threefry.ThreeFry.seed_seq" class="md-nav__link">
-    <span aria-label="Python attribute" class="objinfo-icon objinfo-icon__alias" title="Python attribute">A</span><span title="randomgen.threefry.ThreeFry.seed_seq (Python attribute) — The SeedSequence instance used to initialize the generator if mode is &#34;sequence&#34; or is seed is a SeedSequence. None if mode is &#34;legacy&#34;." class="md-ellipsis">seed_<wbr>seq</span>
+    <span aria-label="Python attribute" class="objinfo-icon objinfo-icon__alias" title="Python attribute">A</span><span title="randomgen.threefry.ThreeFry.seed_seq (Python attribute) — The SeedSequence instance used to initialize the generator if mode is &#34;sequence&#34; or is seed is a SeedSequence." class="md-ellipsis">seed_<wbr>seq</span>
   </a>
   
     <nav class="md-nav" aria-label="seed_seq">
@@ -1503,42 +1503,42 @@
         
           <li class="md-nav__item">
   <a href="#randomgen.threefry.ThreeFry.__init__.seed" class="md-nav__link">
-    <span aria-label="Python parameter" class="objinfo-icon objinfo-icon__sub-data" title="Python parameter">p</span><span title="randomgen.threefry.ThreeFry.__init__.seed (Python parameter) — Entropy initializing the pseudo-random number generator. Can be an integer in [0, 2**64), array of integers in [0, 2**64), a SeedSequence instance or None (the default). If seed is None, data will be read from /dev/urandom (or the Windows analog) if available. If unavailable, a hash of the time and process ID is used." class="md-ellipsis">seed</span>
+    <span aria-label="Python parameter" class="objinfo-icon objinfo-icon__sub-data" title="Python parameter">p</span><span title="randomgen.threefry.ThreeFry.__init__.seed (Python parameter) — Entropy initializing the pseudo-random number generator. Can be an integer in [0, 2**64), array of integers in [0, 2**64), a SeedSequence instance or None (the default). If seed is None, data will be read from /dev/urandom (or the Windows analog) if available." class="md-ellipsis">seed</span>
   </a>
   
 </li>
         
           <li class="md-nav__item">
   <a href="#randomgen.threefry.ThreeFry.__init__.counter" class="md-nav__link">
-    <span aria-label="Python parameter" class="objinfo-icon objinfo-icon__sub-data" title="Python parameter">p</span><span title="randomgen.threefry.ThreeFry.__init__.counter (Python parameter) — Counter to use in the ThreeFry state. Can be either a Python int in [0, 2**(N*W)) where N is number of W is the width, or a M-element uint64 array where M = N*W // 64. If not provided, the counter is initialized at 0." class="md-ellipsis">counter</span>
+    <span aria-label="Python parameter" class="objinfo-icon objinfo-icon__sub-data" title="Python parameter">p</span><span title="randomgen.threefry.ThreeFry.__init__.counter (Python parameter) — Counter to use in the ThreeFry state." class="md-ellipsis">counter</span>
   </a>
   
 </li>
         
           <li class="md-nav__item">
   <a href="#randomgen.threefry.ThreeFry.__init__.key" class="md-nav__link">
-    <span aria-label="Python parameter" class="objinfo-icon objinfo-icon__sub-data" title="Python parameter">p</span><span title="randomgen.threefry.ThreeFry.__init__.key (Python parameter) — Key to use in the ThreeFry state. Unlike seed, which is run through another RNG before use, the value in key is directly set. Can be either a Python int in [0, 2**(N*W//2)) or a m-element uint64 array where m = N*W // (2 * 64). If number=2 and width=32, then the value must be in [0, 2**32) even if stored in a uint64 array. key and seed cannot both be used." class="md-ellipsis">key</span>
+    <span aria-label="Python parameter" class="objinfo-icon objinfo-icon__sub-data" title="Python parameter">p</span><span title="randomgen.threefry.ThreeFry.__init__.key (Python parameter) — Key to use in the ThreeFry state." class="md-ellipsis">key</span>
   </a>
   
 </li>
         
           <li class="md-nav__item">
   <a href="#randomgen.threefry.ThreeFry.__init__.number" class="md-nav__link">
-    <span aria-label="Python parameter" class="objinfo-icon objinfo-icon__sub-data" title="Python parameter">p</span><span title="randomgen.threefry.ThreeFry.__init__.number (Python parameter) — Number of values to produce in a single call. Maps to N in the ThreeFry variant naming scheme ThreeFryNxW." class="md-ellipsis">number</span>
+    <span aria-label="Python parameter" class="objinfo-icon objinfo-icon__sub-data" title="Python parameter">p</span><span title="randomgen.threefry.ThreeFry.__init__.number (Python parameter) — Number of values to produce in a single call." class="md-ellipsis">number</span>
   </a>
   
 </li>
         
           <li class="md-nav__item">
   <a href="#randomgen.threefry.ThreeFry.__init__.width" class="md-nav__link">
-    <span aria-label="Python parameter" class="objinfo-icon objinfo-icon__sub-data" title="Python parameter">p</span><span title="randomgen.threefry.ThreeFry.__init__.width (Python parameter) — Bit width the values produced. Maps to W in the ThreeFry variant naming scheme ThreeFryNxW." class="md-ellipsis">width</span>
+    <span aria-label="Python parameter" class="objinfo-icon objinfo-icon__sub-data" title="Python parameter">p</span><span title="randomgen.threefry.ThreeFry.__init__.width (Python parameter) — Bit width the values produced." class="md-ellipsis">width</span>
   </a>
   
 </li>
         
           <li class="md-nav__item">
   <a href="#randomgen.threefry.ThreeFry.__init__.mode" class="md-nav__link">
-    <span aria-label="Python parameter" class="objinfo-icon objinfo-icon__sub-data" title="Python parameter">p</span><span title="randomgen.threefry.ThreeFry.__init__.mode (Python parameter) — The seeding mode to use. &#34;legacy&#34; uses the legacy SplitMix64-based initialization. &#34;sequence&#34; uses a SeedSequence to transforms the seed into an initial state.  None defaults to &#34;sequence&#34;." class="md-ellipsis">mode</span>
+    <span aria-label="Python parameter" class="objinfo-icon objinfo-icon__sub-data" title="Python parameter">p</span><span title="randomgen.threefry.ThreeFry.__init__.mode (Python parameter) — Deprecated parameter." class="md-ellipsis">mode</span>
   </a>
   
 </li>
@@ -1570,7 +1570,7 @@
         
           <li class="md-nav__item">
   <a href="#randomgen.threefry.ThreeFry.seed_seq" class="md-nav__link">
-    <span aria-label="Python attribute" class="objinfo-icon objinfo-icon__alias" title="Python attribute">A</span><span title="randomgen.threefry.ThreeFry.seed_seq (Python attribute) — The SeedSequence instance used to initialize the generator if mode is &#34;sequence&#34; or is seed is a SeedSequence. None if mode is &#34;legacy&#34;." class="md-ellipsis">seed_<wbr>seq</span>
+    <span aria-label="Python attribute" class="objinfo-icon objinfo-icon__alias" title="Python attribute">A</span><span title="randomgen.threefry.ThreeFry.seed_seq (Python attribute) — The SeedSequence instance used to initialize the generator if mode is &#34;sequence&#34; or is seed is a SeedSequence." class="md-ellipsis">seed_<wbr>seq</span>
   </a>
   
     <nav class="md-nav" aria-label="seed_seq">
@@ -1638,7 +1638,7 @@
 <h1 id="module-randomgen.threefry"><span id="threefry-counter-based-rng"></span>ThreeFry Counter-based RNG<a class="headerlink" href="#module-randomgen.threefry" title="Link to this heading">¶</a></h1>
 <dl class="py class objdesc">
 <dt class="sig sig-object highlight sig-wrap py" id="randomgen.threefry.ThreeFry">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">randomgen.threefry.</span></span><span class="sig-name descname"><span class="pre">ThreeFry</span></span><span class="sig-paren">(</span><span class="sig-param-decl"><em class="sig-param"><a class="n reference internal" href="#randomgen.threefry.ThreeFry.__init__.seed" title="randomgen.threefry.ThreeFry.__init__.seed (Python parameter) — Entropy initializing the pseudo-random number generator. Can be an integer in [0, 2**64), array of integers in [0, 2**64), a SeedSequence instance or None (the default). If seed is None, data will be read from /dev/urandom (or the Windows analog) if available. If unavailable, a hash of the time and process ID is used."><span class="n"><span class="pre">seed</span></span></a><span class="o"><span class="pre">=</span></span><code class="code python default_value docutils literal highlight highlight-python"><span class="kc">None</span></code></em>, </span><span class="sig-param-decl"><em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, </span><span class="sig-param-decl"><em class="sig-param"><a class="n reference internal" href="#randomgen.threefry.ThreeFry.__init__.counter" title="randomgen.threefry.ThreeFry.__init__.counter (Python parameter) — Counter to use in the ThreeFry state. Can be either a Python int in [0, 2**(N*W)) where N is number of W is the width, or a M-element uint64 array where M = N*W // 64. If not provided, the counter is initialized at 0."><span class="n"><span class="pre">counter</span></span></a><span class="o"><span class="pre">=</span></span><code class="code python default_value docutils literal highlight highlight-python"><span class="kc">None</span></code></em>, </span><span class="sig-param-decl"><em class="sig-param"><a class="n reference internal" href="#randomgen.threefry.ThreeFry.__init__.key" title="randomgen.threefry.ThreeFry.__init__.key (Python parameter) — Key to use in the ThreeFry state. Unlike seed, which is run through another RNG before use, the value in key is directly set. Can be either a Python int in [0, 2**(N*W//2)) or a m-element uint64 array where m = N*W // (2 * 64). If number=2 and width=32, then the value must be in [0, 2**32) even if stored in a uint64 array. key and seed cannot both be used."><span class="n"><span class="pre">key</span></span></a><span class="o"><span class="pre">=</span></span><code class="code python default_value docutils literal highlight highlight-python"><span class="kc">None</span></code></em>, </span><span class="sig-param-decl"><em class="sig-param"><a class="n reference internal" href="#randomgen.threefry.ThreeFry.__init__.number" title="randomgen.threefry.ThreeFry.__init__.number (Python parameter) — Number of values to produce in a single call. Maps to N in the ThreeFry variant naming scheme ThreeFryNxW."><span class="n"><span class="pre">number</span></span></a><span class="o"><span class="pre">=</span></span><code class="code python default_value docutils literal highlight highlight-python"><span class="mi">4</span></code></em>, </span><span class="sig-param-decl"><em class="sig-param"><a class="n reference internal" href="#randomgen.threefry.ThreeFry.__init__.width" title="randomgen.threefry.ThreeFry.__init__.width (Python parameter) — Bit width the values produced. Maps to W in the ThreeFry variant naming scheme ThreeFryNxW."><span class="n"><span class="pre">width</span></span></a><span class="o"><span class="pre">=</span></span><code class="code python default_value docutils literal highlight highlight-python"><span class="mi">64</span></code></em>, </span><span class="sig-param-decl"><em class="sig-param"><a class="n reference internal" href="#randomgen.threefry.ThreeFry.__init__.mode" title="randomgen.threefry.ThreeFry.__init__.mode (Python parameter) — The seeding mode to use. &quot;legacy&quot; uses the legacy SplitMix64-based initialization. &quot;sequence&quot; uses a SeedSequence to transforms the seed into an initial state.  None defaults to &quot;sequence&quot;."><span class="n"><span class="pre">mode</span></span></a><span class="o"><span class="pre">=</span></span><code class="code python default_value docutils literal highlight highlight-python"><span class="kc">None</span></code></em></span><span class="sig-paren">)</span><a class="headerlink" href="#randomgen.threefry.ThreeFry" title="Link to this definition">¶</a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">randomgen.threefry.</span></span><span class="sig-name descname"><span class="pre">ThreeFry</span></span><span class="sig-paren">(</span><span class="sig-param-decl"><em class="sig-param"><a class="n reference internal" href="#randomgen.threefry.ThreeFry.__init__.seed" title="randomgen.threefry.ThreeFry.__init__.seed (Python parameter) — Entropy initializing the pseudo-random number generator. Can be an integer in [0, 2**64), array of integers in [0, 2**64), a SeedSequence instance or None (the default). If seed is None, data will be read from /dev/urandom (or the Windows analog) if available."><span class="n"><span class="pre">seed</span></span></a><span class="o"><span class="pre">=</span></span><code class="code python default_value docutils literal highlight highlight-python"><span class="kc">None</span></code></em>, </span><span class="sig-param-decl"><em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, </span><span class="sig-param-decl"><em class="sig-param"><a class="n reference internal" href="#randomgen.threefry.ThreeFry.__init__.counter" title="randomgen.threefry.ThreeFry.__init__.counter (Python parameter) — Counter to use in the ThreeFry state."><span class="n"><span class="pre">counter</span></span></a><span class="o"><span class="pre">=</span></span><code class="code python default_value docutils literal highlight highlight-python"><span class="kc">None</span></code></em>, </span><span class="sig-param-decl"><em class="sig-param"><a class="n reference internal" href="#randomgen.threefry.ThreeFry.__init__.key" title="randomgen.threefry.ThreeFry.__init__.key (Python parameter) — Key to use in the ThreeFry state."><span class="n"><span class="pre">key</span></span></a><span class="o"><span class="pre">=</span></span><code class="code python default_value docutils literal highlight highlight-python"><span class="kc">None</span></code></em>, </span><span class="sig-param-decl"><em class="sig-param"><a class="n reference internal" href="#randomgen.threefry.ThreeFry.__init__.number" title="randomgen.threefry.ThreeFry.__init__.number (Python parameter) — Number of values to produce in a single call."><span class="n"><span class="pre">number</span></span></a><span class="o"><span class="pre">=</span></span><code class="code python default_value docutils literal highlight highlight-python"><span class="mi">4</span></code></em>, </span><span class="sig-param-decl"><em class="sig-param"><a class="n reference internal" href="#randomgen.threefry.ThreeFry.__init__.width" title="randomgen.threefry.ThreeFry.__init__.width (Python parameter) — Bit width the values produced."><span class="n"><span class="pre">width</span></span></a><span class="o"><span class="pre">=</span></span><code class="code python default_value docutils literal highlight highlight-python"><span class="mi">64</span></code></em>, </span><span class="sig-param-decl"><em class="sig-param"><a class="n reference internal" href="#randomgen.threefry.ThreeFry.__init__.mode" title="randomgen.threefry.ThreeFry.__init__.mode (Python parameter) — Deprecated parameter."><span class="n"><span class="pre">mode</span></span></a><span class="o"><span class="pre">=</span></span><code class="code python default_value docutils literal highlight highlight-python"><span class="s1">&#39;sequence&#39;</span></code></em></span><span class="sig-paren">)</span><a class="headerlink" href="#randomgen.threefry.ThreeFry" title="Link to this definition">¶</a></dt>
 <dd><p>Container for the ThreeFry family of pseudo-random number generators.</p>
 <dl class="field-list simple">
 <dt class="field-odd" id="randomgen.threefry.ThreeFry-parameters">Parameters<span class="colon">:</span><a class="headerlink" href="#randomgen.threefry.ThreeFry-parameters" title="Permalink to this headline">¶</a></dt>
@@ -1668,10 +1668,8 @@ variant naming scheme ThreeFryNxW.</p>
 <dt id="randomgen.threefry.ThreeFry.__init__.width"><span class="n sig-name">width</span><span class="o">=</span><code class="code python default_value docutils literal highlight highlight-python"><span class="mi">64</span></code><a class="headerlink" href="#randomgen.threefry.ThreeFry.__init__.width" title="Permalink to this definition">¶</a></dt><dd><p>Bit width the values produced. Maps to W in the ThreeFry variant naming
 scheme ThreeFryNxW.</p>
 </dd>
-<dt id="randomgen.threefry.ThreeFry.__init__.mode"><span class="n sig-name">mode</span><span class="o">=</span><code class="code python default_value docutils literal highlight highlight-python"><span class="kc">None</span></code><a class="headerlink" href="#randomgen.threefry.ThreeFry.__init__.mode" title="Permalink to this definition">¶</a></dt><dd><p>The seeding mode to use. “legacy” uses the legacy
-SplitMix64-based initialization. “sequence” uses a SeedSequence
-to transforms the seed into an initial state.  None defaults to
-“sequence”.</p>
+<dt id="randomgen.threefry.ThreeFry.__init__.mode"><span class="n sig-name">mode</span><span class="o">=</span><code class="code python default_value docutils literal highlight highlight-python"><span class="s1">&#39;sequence&#39;</span></code><a class="headerlink" href="#randomgen.threefry.ThreeFry.__init__.mode" title="Permalink to this definition">¶</a></dt><dd><p><p>Deprecated parameter. Do not use.</p>
+</p>
 </dd>
 </dl>
 </dd>
@@ -1694,7 +1692,7 @@ lock.</p>
 <dt class="sig sig-object highlight py" id="randomgen.threefry.ThreeFry.seed_seq">
 <span class="sig-name descname"><span class="pre">seed_seq</span></span><a class="headerlink" href="#randomgen.threefry.ThreeFry.seed_seq" title="Link to this definition">¶</a></dt>
 <dd><p>The SeedSequence instance used to initialize the generator if mode is
-“sequence” or is seed is a SeedSequence. None if mode is “legacy”.</p>
+“sequence” or is seed is a SeedSequence.</p>
 <dl class="field-list simple">
 <dt class="field-odd" id="randomgen.threefry.ThreeFry.seed_seq-type">Type<span class="colon">:</span><a class="headerlink" href="#randomgen.threefry.ThreeFry.seed_seq-type" title="Permalink to this headline">¶</a></dt>
 <dd class="field-odd"><p><code class="docutils literal notranslate"><span class="pre">{None,</span> <span class="pre">SeedSequence}</span></code></p>
@@ -1720,11 +1718,7 @@ or similar object that supports low-level access.</p>
 One is a counter which is incremented by 1 for every <code class="docutils literal notranslate"><span class="pre">n</span></code> <code class="docutils literal notranslate"><span class="pre">w</span></code>-bit
 randoms produced. The second is a key which determines the sequence
 produced. Using different keys produces distinct sequences.</p>
-<p>When mode is “legacy”, <code class="docutils literal notranslate"><span class="pre">ThreeFry</span></code> is seeded using either a single 64-bit
-unsigned integer or a vector of 64-bit unsigned integers. In either case,
-the seed is used as an input for a second random number generator,
-SplitMix64, and the output of this PRNG function is used as the initial state.
-Using a single 64-bit value for the seed can only initialize a small range of
+<p>Using a single 64-bit value for the seed can only initialize a small range of
 the possible initial state values.</p>
 <p><strong>Parallel Features</strong></p>
 <p><code class="docutils literal notranslate"><span class="pre">ThreeFry</span></code> can be used in parallel applications by calling the <code class="docutils literal notranslate"><span class="pre">jump</span></code>
@@ -1881,7 +1875,7 @@ Networking, Storage and Analysis (SC11), New York, NY: ACM, 2011.</p>
   
     Created using
     <a href="https://www.sphinx-doc.org/" target="_blank" rel="noopener">Sphinx</a>
-    7.2.6.
+    8.0.2.
      and
     <a href="https://github.com/jbms/sphinx-immaterial/" target="_blank" rel="noopener">Sphinx-Immaterial</a>
   

@@ -13,7 +13,7 @@
     
     
       
-        <title>Multithreaded Generation - RandomGen 1.26.1</title>
+        <title>Multithreaded Generation - RandomGen 2.0.0</title>
       
     
     
@@ -36,7 +36,7 @@
         <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
       
     
-        <link rel="stylesheet" type="text/css" href="_static/sphinx_immaterial_theme.af531f03affe68837.min.css?v=2410bb73" />
+        <link rel="stylesheet" type="text/css" href="_static/sphinx_immaterial_theme.3625f807144f53acf.min.css?v=fbfc4466" />
     <script>__md_scope=new URL(".",location),__md_hash=e=>[...e].reduce((e,_)=>(e<<5)-e+_.charCodeAt(0),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
     
       
@@ -75,7 +75,7 @@
 
 <header class="md-header" data-md-component="header">
   <nav class="md-header__inner md-grid" aria-label="Header">
-    <a href="index.html" title="RandomGen 1.26.1" class="md-header__button md-logo" aria-label="RandomGen 1.26.1" data-md-component="logo">
+    <a href="index.html" title="RandomGen 2.0.0" class="md-header__button md-logo" aria-label="RandomGen 2.0.0" data-md-component="logo">
       <img src="_static/casino.svg" alt="logo">
     </a>
     <label class="md-header__button md-icon" for="__drawer">
@@ -85,7 +85,7 @@
       <div class="md-header__ellipsis">
         <div class="md-header__topic">
           <span class="md-ellipsis">
-            RandomGen 1.26.1
+            RandomGen 2.0.0
           </span>
         </div>
         <div class="md-header__topic" data-md-component="header-topic">
@@ -172,10 +172,10 @@
 
 <nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
   <label class="md-nav__title" for="__drawer">
-    <a href="index.html" title="RandomGen 1.26.1" class="md-nav__button md-logo" aria-label="RandomGen 1.26.1" data-md-component="logo">
+    <a href="index.html" title="RandomGen 2.0.0" class="md-nav__button md-logo" aria-label="RandomGen 2.0.0" data-md-component="logo">
       <img src="_static/casino.svg" alt="logo">
     </a>
-    RandomGen 1.26.1
+    RandomGen 2.0.0
   </label>
   
     <div class="md-nav__source">
@@ -504,28 +504,29 @@
 
 
 <h1 id="multithreaded-generation">Multithreaded Generation<a class="headerlink" href="#multithreaded-generation" title="Link to this heading">¶</a></h1>
-<p>The four core distributions all allow existing arrays to be filled using the
-<code class="docutils literal notranslate"><span class="pre">out</span></code> keyword argument.  Existing arrays need to be contiguous and
-well-behaved (writable and aligned).  Under normal circumstances, arrays
-created using the common constructors such as <code class="xref py py-meth docutils literal notranslate"><span class="pre">numpy.empty()</span></code> will satisfy
-these requirements.</p>
+<p>The four core distributions in <a class="reference external" href="https://numpy.org/doc/stable/reference/random/generator.html#numpy.random.Generator" title="(in NumPy v2.1)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Generator</span></code></a> all allow
+existing arrays to be filled using the <code class="docutils literal notranslate"><span class="pre">out</span></code> keyword argument.
+Existing arrays need to be contiguous and well-behaved (writable and aligned).
+Under normal circumstances, arrays created using the common constructors such
+as <a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.empty.html#numpy.empty" title="(in NumPy v2.1)"><code class="xref py py-func docutils literal notranslate"><span class="pre">numpy.empty()</span></code></a> will satisfy these requirements.</p>
 <p>This example makes use of Python 3 <a class="reference external" href="https://docs.python.org/3/library/concurrent.futures.html#module-concurrent.futures" title="(in Python v3.12)"><code class="xref py py-mod docutils literal notranslate"><span class="pre">concurrent.futures</span></code></a> to fill an array
 using multiple threads.  Threads are long-lived so that repeated calls do not
 require any additional overheads from thread creation. The underlying PRNG is
-xorshift2014 which is fast, has a long period and supports using <code class="docutils literal notranslate"><span class="pre">jumped</span></code> to
+xorshift256 which is fast, has a long period and supports using <code class="docutils literal notranslate"><span class="pre">jumped</span></code> to
 advance the state. The random numbers generated are reproducible in the sense
 that the same seed will produce the same outputs.</p>
-<div class="highlight-ipython notranslate"><div class="highlight"><pre><span></span><code><span class="kn">from</span> <span class="nn">randomgen</span> <span class="kn">import</span> <span class="n">Xoshiro256</span>
-<span class="kn">import</span> <span class="nn">multiprocessing</span>
+<div class="highlight-ipython notranslate"><div class="highlight"><pre><span></span><code><span class="kn">import</span> <span class="nn">multiprocessing</span>
 <span class="kn">import</span> <span class="nn">concurrent.futures</span>
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="kn">import</span> <span class="nn">warnings</span>
 
-<span class="n">warnings</span><span class="o">.</span><span class="n">filterwarnings</span><span class="p">(</span><span class="s2">&quot;ignore&quot;</span><span class="p">,</span> <span class="s2">&quot;Generator&quot;</span><span class="p">,</span> <span class="ne">FutureWarning</span><span class="p">)</span>
+<span class="kn">from</span> <span class="nn">numpy.random</span> <span class="kn">import</span> <span class="n">Generator</span>
+
+<span class="kn">from</span> <span class="nn">randomgen</span> <span class="kn">import</span> <span class="n">Xoshiro256</span>
 
 <span class="k">class</span> <span class="nc">MultithreadedRNG</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n</span><span class="p">,</span> <span class="n">seed</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">threads</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-        <span class="n">last_bg</span> <span class="o">=</span> <span class="n">Xoshiro256</span><span class="p">(</span><span class="n">seed</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s2">&quot;sequence&quot;</span><span class="p">)</span>
+        <span class="n">last_bg</span> <span class="o">=</span> <span class="n">Xoshiro256</span><span class="p">(</span><span class="n">seed</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">threads</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">threads</span> <span class="o">=</span> <span class="n">multiprocessing</span><span class="o">.</span><span class="n">cpu_count</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">threads</span> <span class="o">=</span> <span class="n">threads</span>
@@ -663,7 +664,7 @@ that does not use an existing array due to array creation overhead.</p>
   
     Created using
     <a href="https://www.sphinx-doc.org/" target="_blank" rel="noopener">Sphinx</a>
-    7.2.6.
+    8.0.2.
      and
     <a href="https://github.com/jbms/sphinx-immaterial/" target="_blank" rel="noopener">Sphinx-Immaterial</a>
   

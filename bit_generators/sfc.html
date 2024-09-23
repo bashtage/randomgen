@@ -13,7 +13,7 @@
     
     
       
-        <title>SFC64 Generator - RandomGen 1.26.1</title>
+        <title>SFC64 Generator - RandomGen 2.0.0</title>
       
     
     
@@ -36,7 +36,7 @@
         <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
       
     
-        <link rel="stylesheet" type="text/css" href="../_static/sphinx_immaterial_theme.af531f03affe68837.min.css?v=2410bb73" />
+        <link rel="stylesheet" type="text/css" href="../_static/sphinx_immaterial_theme.3625f807144f53acf.min.css?v=fbfc4466" />
     <script>__md_scope=new URL("..",location),__md_hash=e=>[...e].reduce((e,_)=>(e<<5)-e+_.charCodeAt(0),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
     
       
@@ -80,7 +80,7 @@
 
 <header class="md-header" data-md-component="header">
   <nav class="md-header__inner md-grid" aria-label="Header">
-    <a href="../index.html" title="RandomGen 1.26.1" class="md-header__button md-logo" aria-label="RandomGen 1.26.1" data-md-component="logo">
+    <a href="../index.html" title="RandomGen 2.0.0" class="md-header__button md-logo" aria-label="RandomGen 2.0.0" data-md-component="logo">
       <img src="../_static/casino.svg" alt="logo">
     </a>
     <label class="md-header__button md-icon" for="__drawer">
@@ -90,7 +90,7 @@
       <div class="md-header__ellipsis">
         <div class="md-header__topic">
           <span class="md-ellipsis">
-            RandomGen 1.26.1
+            RandomGen 2.0.0
           </span>
         </div>
         <div class="md-header__topic" data-md-component="header-topic">
@@ -177,10 +177,10 @@
 
 <nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
   <label class="md-nav__title" for="__drawer">
-    <a href="../index.html" title="RandomGen 1.26.1" class="md-nav__button md-logo" aria-label="RandomGen 1.26.1" data-md-component="logo">
+    <a href="../index.html" title="RandomGen 2.0.0" class="md-nav__button md-logo" aria-label="RandomGen 2.0.0" data-md-component="logo">
       <img src="../_static/casino.svg" alt="logo">
     </a>
-    RandomGen 1.26.1
+    RandomGen 2.0.0
   </label>
   
     <div class="md-nav__source">
@@ -880,21 +880,28 @@
         
           <li class="md-nav__item">
   <a href="#randomgen.sfc.SFC64.__init__.seed" class="md-nav__link">
-    <span aria-label="Python parameter" class="objinfo-icon objinfo-icon__sub-data" title="Python parameter">p</span><span title="randomgen.sfc.SFC64.__init__.seed (Python parameter) — A seed to initialize the BitGenerator. If None, then fresh, unpredictable entropy will be pulled from the OS. If an int or array_like[ints] is passed, then it will be passed to SeedSequence to derive the initial BitGenerator state. One may also pass in a SeedSequence instance." class="md-ellipsis">seed</span>
+    <span aria-label="Python parameter" class="objinfo-icon objinfo-icon__sub-data" title="Python parameter">p</span><span title="randomgen.sfc.SFC64.__init__.seed (Python parameter) — A seed to initialize the BitGenerator." class="md-ellipsis">seed</span>
   </a>
   
 </li>
         
           <li class="md-nav__item">
   <a href="#randomgen.sfc.SFC64.__init__.w" class="md-nav__link">
-    <span aria-label="Python parameter" class="objinfo-icon objinfo-icon__sub-data" title="Python parameter">p</span><span title="randomgen.sfc.SFC64.__init__.w (Python parameter) — The starting value of the Weyl sequence. If None, then the initial value is generated from the SeedSequence." class="md-ellipsis">w</span>
+    <span aria-label="Python parameter" class="objinfo-icon objinfo-icon__sub-data" title="Python parameter">p</span><span title="randomgen.sfc.SFC64.__init__.w (Python parameter) — The starting value of the Weyl sequence." class="md-ellipsis">w</span>
   </a>
   
 </li>
         
           <li class="md-nav__item">
   <a href="#randomgen.sfc.SFC64.__init__.k" class="md-nav__link">
-    <span aria-label="Python parameter" class="objinfo-icon objinfo-icon__sub-data" title="Python parameter">p</span><span title="randomgen.sfc.SFC64.__init__.k (Python parameter) — The increment to the Weyl sequence. Must be odd, and if even, 1 is added. If None, then k is generated from the `SeedSequence." class="md-ellipsis">k</span>
+    <span aria-label="Python parameter" class="objinfo-icon objinfo-icon__sub-data" title="Python parameter">p</span><span title="randomgen.sfc.SFC64.__init__.k (Python parameter) — The increment to the Weyl sequence." class="md-ellipsis">k</span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#randomgen.sfc.SFC64.__init__.numpy_seed" class="md-nav__link">
+    <span aria-label="Python parameter" class="objinfo-icon objinfo-icon__sub-data" title="Python parameter">p</span><span title="randomgen.sfc.SFC64.__init__.numpy_seed (Python parameter) — Set to True to use  the same seeding mechanism as NumPy. Uses the seed sequence to initialize three state values and checks that both w and k are 1." class="md-ellipsis">numpy_<wbr>seed</span>
   </a>
   
 </li>
@@ -1405,21 +1412,28 @@
         
           <li class="md-nav__item">
   <a href="#randomgen.sfc.SFC64.__init__.seed" class="md-nav__link">
-    <span aria-label="Python parameter" class="objinfo-icon objinfo-icon__sub-data" title="Python parameter">p</span><span title="randomgen.sfc.SFC64.__init__.seed (Python parameter) — A seed to initialize the BitGenerator. If None, then fresh, unpredictable entropy will be pulled from the OS. If an int or array_like[ints] is passed, then it will be passed to SeedSequence to derive the initial BitGenerator state. One may also pass in a SeedSequence instance." class="md-ellipsis">seed</span>
+    <span aria-label="Python parameter" class="objinfo-icon objinfo-icon__sub-data" title="Python parameter">p</span><span title="randomgen.sfc.SFC64.__init__.seed (Python parameter) — A seed to initialize the BitGenerator." class="md-ellipsis">seed</span>
   </a>
   
 </li>
         
           <li class="md-nav__item">
   <a href="#randomgen.sfc.SFC64.__init__.w" class="md-nav__link">
-    <span aria-label="Python parameter" class="objinfo-icon objinfo-icon__sub-data" title="Python parameter">p</span><span title="randomgen.sfc.SFC64.__init__.w (Python parameter) — The starting value of the Weyl sequence. If None, then the initial value is generated from the SeedSequence." class="md-ellipsis">w</span>
+    <span aria-label="Python parameter" class="objinfo-icon objinfo-icon__sub-data" title="Python parameter">p</span><span title="randomgen.sfc.SFC64.__init__.w (Python parameter) — The starting value of the Weyl sequence." class="md-ellipsis">w</span>
   </a>
   
 </li>
         
           <li class="md-nav__item">
   <a href="#randomgen.sfc.SFC64.__init__.k" class="md-nav__link">
-    <span aria-label="Python parameter" class="objinfo-icon objinfo-icon__sub-data" title="Python parameter">p</span><span title="randomgen.sfc.SFC64.__init__.k (Python parameter) — The increment to the Weyl sequence. Must be odd, and if even, 1 is added. If None, then k is generated from the `SeedSequence." class="md-ellipsis">k</span>
+    <span aria-label="Python parameter" class="objinfo-icon objinfo-icon__sub-data" title="Python parameter">p</span><span title="randomgen.sfc.SFC64.__init__.k (Python parameter) — The increment to the Weyl sequence." class="md-ellipsis">k</span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#randomgen.sfc.SFC64.__init__.numpy_seed" class="md-nav__link">
+    <span aria-label="Python parameter" class="objinfo-icon objinfo-icon__sub-data" title="Python parameter">p</span><span title="randomgen.sfc.SFC64.__init__.numpy_seed (Python parameter) — Set to True to use  the same seeding mechanism as NumPy. Uses the seed sequence to initialize three state values and checks that both w and k are 1." class="md-ellipsis">numpy_<wbr>seed</span>
   </a>
   
 </li>
@@ -1485,8 +1499,8 @@
 
 <h1 id="module-randomgen.sfc"><span id="sfc64-generator"></span>SFC64 Generator<a class="headerlink" href="#module-randomgen.sfc" title="Link to this heading">¶</a></h1>
 <dl class="py class objdesc">
-<dt class="sig sig-object highlight py" id="randomgen.sfc.SFC64">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">randomgen.sfc.</span></span><span class="sig-name descname"><span class="pre">SFC64</span></span><span class="sig-paren">(</span><span class="sig-param-decl"><em class="sig-param"><a class="n reference internal" href="#randomgen.sfc.SFC64.__init__.seed" title="randomgen.sfc.SFC64.__init__.seed (Python parameter) — A seed to initialize the BitGenerator. If None, then fresh, unpredictable entropy will be pulled from the OS. If an int or array_like[ints] is passed, then it will be passed to SeedSequence to derive the initial BitGenerator state. One may also pass in a SeedSequence instance."><span class="n"><span class="pre">seed</span></span></a><span class="o"><span class="pre">=</span></span><code class="code python default_value docutils literal highlight highlight-python"><span class="kc">None</span></code></em>, </span><span class="sig-param-decl"><em class="sig-param"><a class="n reference internal" href="#randomgen.sfc.SFC64.__init__.w" title="randomgen.sfc.SFC64.__init__.w (Python parameter) — The starting value of the Weyl sequence. If None, then the initial value is generated from the SeedSequence."><span class="n"><span class="pre">w</span></span></a><span class="o"><span class="pre">=</span></span><code class="code python default_value docutils literal highlight highlight-python"><span class="mi">1</span></code></em>, </span><span class="sig-param-decl"><em class="sig-param"><a class="n reference internal" href="#randomgen.sfc.SFC64.__init__.k" title="randomgen.sfc.SFC64.__init__.k (Python parameter) — The increment to the Weyl sequence. Must be odd, and if even, 1 is added. If None, then k is generated from the `SeedSequence."><span class="n"><span class="pre">k</span></span></a><span class="o"><span class="pre">=</span></span><code class="code python default_value docutils literal highlight highlight-python"><span class="mi">1</span></code></em>, </span><span class="sig-param-decl"><em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, </span><span class="sig-param-decl"><em class="sig-param"><a class="n reference internal" href="#randomgen.sfc.SFC64.__init__.mode" title="randomgen.sfc.SFC64.__init__.mode (Python parameter) — The default uses a seed sequence to initialize all unspecified values. When using &quot;numpy&quot; uses the seed sequence to initialize three values and checks that both w and k are 1."><span class="n"><span class="pre">mode</span></span></a><span class="o"><span class="pre">=</span></span><code class="code python default_value docutils literal highlight highlight-python"><span class="s1">&#39;sequence&#39;</span></code></em></span><span class="sig-paren">)</span><a class="headerlink" href="#randomgen.sfc.SFC64" title="Link to this definition">¶</a></dt>
+<dt class="sig sig-object highlight sig-wrap py" id="randomgen.sfc.SFC64">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">randomgen.sfc.</span></span><span class="sig-name descname"><span class="pre">SFC64</span></span><span class="sig-paren">(</span><span class="sig-param-decl"><em class="sig-param"><a class="n reference internal" href="#randomgen.sfc.SFC64.__init__.seed" title="randomgen.sfc.SFC64.__init__.seed (Python parameter) — A seed to initialize the BitGenerator."><span class="n"><span class="pre">seed</span></span></a><span class="o"><span class="pre">=</span></span><code class="code python default_value docutils literal highlight highlight-python"><span class="kc">None</span></code></em>, </span><span class="sig-param-decl"><em class="sig-param"><a class="n reference internal" href="#randomgen.sfc.SFC64.__init__.w" title="randomgen.sfc.SFC64.__init__.w (Python parameter) — The starting value of the Weyl sequence."><span class="n"><span class="pre">w</span></span></a><span class="o"><span class="pre">=</span></span><code class="code python default_value docutils literal highlight highlight-python"><span class="mi">1</span></code></em>, </span><span class="sig-param-decl"><em class="sig-param"><a class="n reference internal" href="#randomgen.sfc.SFC64.__init__.k" title="randomgen.sfc.SFC64.__init__.k (Python parameter) — The increment to the Weyl sequence."><span class="n"><span class="pre">k</span></span></a><span class="o"><span class="pre">=</span></span><code class="code python default_value docutils literal highlight highlight-python"><span class="mi">1</span></code></em>, </span><span class="sig-param-decl"><em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, </span><span class="sig-param-decl"><em class="sig-param"><a class="n reference internal" href="#randomgen.sfc.SFC64.__init__.numpy_seed" title="randomgen.sfc.SFC64.__init__.numpy_seed (Python parameter) — Set to True to use  the same seeding mechanism as NumPy. Uses the seed sequence to initialize three state values and checks that both w and k are 1."><span class="n"><span class="pre">numpy_seed</span></span></a><span class="o"><span class="pre">=</span></span><code class="code python default_value docutils literal highlight highlight-python"><span class="kc">False</span></code></em>, </span><span class="sig-param-decl"><em class="sig-param"><a class="n reference internal" href="#randomgen.sfc.SFC64.__init__.mode" title="randomgen.sfc.SFC64.__init__.mode (Python parameter) — The default uses a seed sequence to initialize all unspecified values. When using &quot;numpy&quot; uses the seed sequence to initialize three values and checks that both w and k are 1."><span class="n"><span class="pre">mode</span></span></a><span class="o"><span class="pre">=</span></span><code class="code python default_value docutils literal highlight highlight-python"><span class="s1">&#39;sequence&#39;</span></code></em></span><span class="sig-paren">)</span><a class="headerlink" href="#randomgen.sfc.SFC64" title="Link to this definition">¶</a></dt>
 <dd><p>Chris Doty-Humphrey’s Small Fast Chaotic PRNG with optional Weyl Sequence</p>
 <dl class="field-list simple">
 <dt class="field-odd" id="randomgen.sfc.SFC64-parameters">Parameters<span class="colon">:</span><a class="headerlink" href="#randomgen.sfc.SFC64-parameters" title="Permalink to this headline">¶</a></dt>
@@ -1503,9 +1517,15 @@ is generated from the <cite>SeedSequence</cite>.</p>
 <dt id="randomgen.sfc.SFC64.__init__.k"><span class="n sig-name">k</span><span class="o">=</span><code class="code python default_value docutils literal highlight highlight-python"><span class="mi">1</span></code><a class="headerlink" href="#randomgen.sfc.SFC64.__init__.k" title="Permalink to this definition">¶</a></dt><dd><p>The increment to the Weyl sequence. Must be odd, and if even, 1 is added.
 If None, then <cite>k</cite> <cite>is generated from the `SeedSequence</cite>.</p>
 </dd>
-<dt id="randomgen.sfc.SFC64.__init__.mode"><span class="n sig-name">mode</span><span class="o">=</span><code class="code python default_value docutils literal highlight highlight-python"><span class="s1">&#39;sequence&#39;</span></code><a class="headerlink" href="#randomgen.sfc.SFC64.__init__.mode" title="Permalink to this definition">¶</a></dt><dd><p>The default uses a seed sequence to initialize all unspecified values.
+<dt id="randomgen.sfc.SFC64.__init__.numpy_seed"><span class="n sig-name">numpy_seed</span><span class="o">=</span><code class="code python default_value docutils literal highlight highlight-python"><span class="kc">False</span></code><a class="headerlink" href="#randomgen.sfc.SFC64.__init__.numpy_seed" title="Permalink to this definition">¶</a></dt><dd><p><p>Set to True to use  the same seeding mechanism as NumPy.
+Uses the seed sequence to initialize three state values and
+checks that both w and k are 1.</p>
+</p>
+</dd>
+<dt id="randomgen.sfc.SFC64.__init__.mode"><span class="n sig-name">mode</span><span class="o">=</span><code class="code python default_value docutils literal highlight highlight-python"><span class="s1">&#39;sequence&#39;</span></code><a class="headerlink" href="#randomgen.sfc.SFC64.__init__.mode" title="Permalink to this definition">¶</a></dt><dd><p><p>The default uses a seed sequence to initialize all unspecified values.
 When using “numpy” uses the seed sequence to initialize three values
 and checks that both w and k are 1.</p>
+</p>
 </dd>
 </dl>
 </dd>
@@ -1664,7 +1684,7 @@ odd coefficients that have 32 or fewer bits set of 1 (i.e., &lt;= 50%).</p>
   
     Created using
     <a href="https://www.sphinx-doc.org/" target="_blank" rel="noopener">Sphinx</a>
-    7.2.6.
+    8.0.2.
      and
     <a href="https://github.com/jbms/sphinx-immaterial/" target="_blank" rel="noopener">Sphinx-Immaterial</a>
   

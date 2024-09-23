@@ -13,7 +13,7 @@
     
     
       
-        <title>Extending - RandomGen 1.26.1</title>
+        <title>Extending - RandomGen 2.0.0</title>
       
     
     
@@ -36,7 +36,7 @@
         <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
       
     
-        <link rel="stylesheet" type="text/css" href="_static/sphinx_immaterial_theme.af531f03affe68837.min.css?v=2410bb73" />
+        <link rel="stylesheet" type="text/css" href="_static/sphinx_immaterial_theme.3625f807144f53acf.min.css?v=fbfc4466" />
     <script>__md_scope=new URL(".",location),__md_hash=e=>[...e].reduce((e,_)=>(e<<5)-e+_.charCodeAt(0),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
     
       
@@ -80,7 +80,7 @@
 
 <header class="md-header" data-md-component="header">
   <nav class="md-header__inner md-grid" aria-label="Header">
-    <a href="index.html" title="RandomGen 1.26.1" class="md-header__button md-logo" aria-label="RandomGen 1.26.1" data-md-component="logo">
+    <a href="index.html" title="RandomGen 2.0.0" class="md-header__button md-logo" aria-label="RandomGen 2.0.0" data-md-component="logo">
       <img src="_static/casino.svg" alt="logo">
     </a>
     <label class="md-header__button md-icon" for="__drawer">
@@ -90,7 +90,7 @@
       <div class="md-header__ellipsis">
         <div class="md-header__topic">
           <span class="md-ellipsis">
-            RandomGen 1.26.1
+            RandomGen 2.0.0
           </span>
         </div>
         <div class="md-header__topic" data-md-component="header-topic">
@@ -177,10 +177,10 @@
 
 <nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
   <label class="md-nav__title" for="__drawer">
-    <a href="index.html" title="RandomGen 1.26.1" class="md-nav__button md-logo" aria-label="RandomGen 1.26.1" data-md-component="logo">
+    <a href="index.html" title="RandomGen 2.0.0" class="md-nav__button md-logo" aria-label="RandomGen 2.0.0" data-md-component="logo">
       <img src="_static/casino.svg" alt="logo">
     </a>
-    RandomGen 1.26.1
+    RandomGen 2.0.0
   </label>
   
     <div class="md-nav__source">
@@ -600,7 +600,7 @@
 <h1 id="extending">Extending<a class="headerlink" href="#extending" title="Link to this heading">¶</a></h1>
 <p>The bit generators have been designed to be extendable using standard tools for
 high-performance Python – numba and Cython.
-The <a class="reference external" href="https://numpy.org/doc/stable/reference/random/generator.html#numpy.random.Generator" title="(in NumPy v1.26)"><code class="xref py py-class docutils literal notranslate"><span class="pre">numpy.random.Generator</span></code></a> object can also be used with
+The <a class="reference external" href="https://numpy.org/doc/stable/reference/random/generator.html#numpy.random.Generator" title="(in NumPy v2.1)"><code class="xref py py-class docutils literal notranslate"><span class="pre">numpy.random.Generator</span></code></a> object can also be used with
 user-provided bit generators as long as these export a small set of required
 functions.</p>
 <h2 id="numba">Numba<a class="headerlink" href="#numba" title="Link to this heading">¶</a></h2>
@@ -741,7 +741,7 @@ the next 64-bit unsigned integer function if not needed. Functions inside
 </code></pre></div>
 </div>
 <h2 id="python-bitgenerators">Python BitGenerators<a class="headerlink" href="#python-bitgenerators" title="Link to this heading">¶</a></h2>
-<p><a class="reference internal" href="bit_generators/userbitgenerator.html#randomgen.wrapper.UserBitGenerator" title="randomgen.wrapper.UserBitGenerator (Python class) — next_double=None, state=None, state_getter=None, state_setter=None)"><code class="xref py py-class docutils literal notranslate"><span class="pre">UserBitGenerator</span></code></a> is a utility class that lets users
+<p><a class="reference internal" href="bit_generators/userbitgenerator.html#randomgen.wrapper.UserBitGenerator" title="randomgen.wrapper.UserBitGenerator (Python class) — Construct a bit generator from  Python functions"><code class="xref py py-class docutils literal notranslate"><span class="pre">UserBitGenerator</span></code></a> is a utility class that lets users
 write bit generators in Python. While these are inherently low performance, this
 interface allows users to rapidly prototype a bit generator and to pass this
 bit generator to a <code class="docutils literal notranslate"><span class="pre">Generator</span></code> to generate variates
@@ -813,7 +813,7 @@ from the full spectrum of distributions.</p>
   
     Created using
     <a href="https://www.sphinx-doc.org/" target="_blank" rel="noopener">Sphinx</a>
-    7.2.6.
+    8.0.2.
      and
     <a href="https://github.com/jbms/sphinx-immaterial/" target="_blank" rel="noopener">Sphinx-Immaterial</a>
   
