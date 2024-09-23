@@ -157,7 +157,7 @@ def test_ctypes():
 
 def test_pcg_warnings_and_errors():
     with pytest.raises(ValueError, match="variant unknown is not known"):
-        PCG64(0, mode="sequence", variant="unknown")
+        PCG64(0, variant="unknown")
 
 
 def test_repr():
@@ -200,7 +200,7 @@ def test_exceptions():
 @pytest.mark.parametrize("seed", [0, sum([2**i for i in range(1, 128, 2)])])
 @pytest.mark.parametrize("inc", [0, sum([2**i for i in range(0, 128, 3)])])
 def test_equivalence_pcg64dxsm(seed, inc):
-    a = PCG64(seed, inc, mode="sequence", variant="dxsm")
+    a = PCG64(seed, inc, variant="dxsm")
     b = PCG64DXSM(seed, inc)
     assert np.all((a.random_raw(10000) - b.random_raw(10000)) == 0)
     assert np.all((a.random_raw(13) - b.random_raw(13)) == 0)

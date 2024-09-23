@@ -38,6 +38,7 @@ from randomgen import (
     Xoshiro256,
     Xoshiro512,
 )
+from randomgen._deprecated_value import _DeprecatedValue
 from randomgen.common import interface
 from randomgen.seed_sequence import ISeedSequence
 
@@ -61,6 +62,7 @@ aes = AESCounter()
 HAS_AESNI = aes.use_aesni
 
 USE_AESNI = [True, False] if HAS_AESNI else [False]
+NO_MODE_SUPPORT = [EFIIX64, LXM, Romu, RDRAND]
 
 try:
     import cffi  # noqa: F401
@@ -223,8 +225,16 @@ class Base:
                 data.append(int(line.split(",")[-1].strip(), 0))
             return {"seed": seed, "data": np.array(data, dtype=cls.dtype)}
 
-    def setup_bitgenerator(self, seed, mode="sequence"):
-        kwargs = {} if mode == "sequence" else {"mode": mode}
+    def test_deprecated_mode(self):
+        if self.bit_generator in NO_MODE_SUPPORT or isinstance(
+            self.bit_generator, partial
+        ):
+            pytest.skip("Never supported mode")
+        with pytest.warns(FutureWarning):
+            self.setup_bitgenerator([0], mode="sequence")
+
+    def setup_bitgenerator(self, seed, mode=None):
+        kwargs = {} if mode is None else {"mode": mode}
         return self.bit_generator(*seed, **kwargs)
 
     def test_default(self):
@@ -470,12 +480,7 @@ class Base:
         assert next_g != next_jumped
 
     def test_jumped_seed_seq_clone(self):
-        mode = "sequence"
-        try:
-            bg = self.setup_bitgenerator(self.data1["seed"], mode=mode)
-        except (TypeError, ValueError):
-            # Newer generators do not accept mode (TypeError)
-            bg = self.setup_bitgenerator(self.data1["seed"])
+        bg = self.setup_bitgenerator(self.data1["seed"])
         if not hasattr(bg, "jumped"):
             pytest.skip("bit generator does not support jumping")
         try:
@@ -830,7 +835,7 @@ class TestPCG64XSLRR(Base):
         cls.large_advance_initial = 141078743063826365544432622475512570578
         cls.large_advance_final = 32639015182640331666105117402520879107
 
-    def setup_bitgenerator(self, seed, mode="sequence", inc: int | None = None):
+    def setup_bitgenerator(self, seed, mode=_DeprecatedValue, inc: int | None = None):
         return self.bit_generator(
             *seed, mode=mode, variant="xsl-rr", inc=inc  # type: ignore
         )
@@ -928,7 +933,9 @@ class TestPhilox(Random123):
 
     def test_numpy_mode(self):
         ss = SeedSequence(0)
-        bg = self.setup_bitgenerator([ss], mode="numpy")
+        bg = self.setup_bitgenerator([ss], numpy_seed=True)
+        with pytest.warns(FutureWarning):
+            self.setup_bitgenerator([ss], mode="numpy")
         assert isinstance(bg, Philox)
 
     def test_seed_key(self):
@@ -958,18 +965,14 @@ class TestPhilox4x32(Random123):
         ]
 
     def test_seed_sequence(self):
-        bg = self.bit_generator_base(
-            number=self.number, width=self.width, mode="sequence"
-        )
+        bg = self.bit_generator_base(number=self.number, width=self.width)
         assert isinstance(bg, self.bit_generator_base)
         try:
             assert isinstance(bg.seed_seq, SeedSequence)
         except AttributeError:
             assert isinstance(bg._seed_seq, SeedSequence)
 
-        bg = self.bit_generator_base(
-            0, number=self.number, width=self.width, mode="sequence"
-        )
+        bg = self.bit_generator_base(0, number=self.number, width=self.width)
         try:
             assert bg.seed_seq.entropy == 0
         except AttributeError:
@@ -992,7 +995,7 @@ class TestPhilox4x32(Random123):
     def test_numpy_mode(self):
         ss = SeedSequence(0)
         with pytest.raises(ValueError, match="n must be 4"):
-            self.setup_bitgenerator([ss], mode="numpy")
+            self.setup_bitgenerator([ss], numpy_seed=True)
 
 
 class TestAESCounter(TestPhilox):
@@ -1407,11 +1410,8 @@ class TestPCG32(TestPCG64XSLRR):
         cls.large_advance_initial = 645664597830827402
         cls.large_advance_final = 3
 
-    def setup_bitgenerator(self, seed, mode="sequence", inc=None):
-        kwargs = {"inc": inc}
-        if mode != "sequence":
-            kwargs["mode"] = mode
-        return self.bit_generator(*seed, **kwargs)
+    def setup_bitgenerator(self, seed, mode=_DeprecatedValue, inc=None):
+        return self.bit_generator(*seed, inc=inc, mode=mode)
 
     def test_advance_symmetry(self):
         rs = np.random.Generator(self.setup_bitgenerator(self.data1["seed"]))
@@ -1841,7 +1841,8 @@ class TestSPECK128(TestHC128):
 
 def test_mode():
     with pytest.raises(ValueError, match="mode must be one of:"):
-        MT19937(mode="unknown")
+        with pytest.warns(FutureWarning):
+            MT19937(mode="unknown")
 
 
 class TestLXM(Base):
@@ -1924,16 +1925,16 @@ class TestSFC64(TestLXM):
 
     def test_numpy_mode(self):
         with pytest.raises(ValueError, match="w and k"):
-            self.setup_bitgenerator([0], mode="numpy", k=3)
+            self.setup_bitgenerator([0], numpy_seed=True, k=3)
         with pytest.raises(ValueError, match="w and k"):
-            self.setup_bitgenerator([0], mode="numpy", w=3)
+            self.setup_bitgenerator([0], numpy_seed=True, w=3)
 
 
 class TestPCG64DXSM(Base):
     @classmethod
     def setup_class(cls):
         super().setup_class()
-        cls.bit_generator = partial(PCG64, mode="sequence", variant="dxsm-128")
+        cls.bit_generator = partial(PCG64, variant="dxsm-128")
         cls.bits = 64
         cls.dtype = np.uint64
         cls.data1 = cls._read_csv(join(pwd, "./data/pcg64-dxsm-testset-1.csv"))
@@ -1965,7 +1966,7 @@ class TestPCG64CMDXSM(TestPCG64DXSM):
     @classmethod
     def setup_class(cls):
         super().setup_class()
-        cls.bit_generator = partial(PCG64, mode="sequence", variant="dxsm")
+        cls.bit_generator = partial(PCG64, variant="dxsm")
         cls.data1 = cls._read_csv(join(pwd, "./data/pcg64-cm-dxsm-testset-1.csv"))
         cls.data2 = cls._read_csv(join(pwd, "./data/pcg64-cm-dxsm-testset-2.csv"))
         cls.large_advance_initial = 159934576226003702342121456273047082943

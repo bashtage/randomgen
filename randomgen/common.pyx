@@ -1,18 +1,23 @@
 #!python
-import sys
 from collections import namedtuple
+import sys
+import warnings
+
 try:
     from threading import Lock
 except ImportError:
     from dummy_threading import Lock
 
 import numpy as np
-from numpy.random.bit_generator cimport BitGenerator as _BitGenerator
-from cpython cimport PyFloat_AsDouble
-cimport numpy as np
 
-from randomgen.common cimport *
+cimport numpy as np
+from cpython cimport PyFloat_AsDouble
+from numpy.random.bit_generator cimport BitGenerator as _BitGenerator
+
 from randomgen cimport api
+from randomgen.common cimport *
+
+from randomgen._deprecated_value import _DeprecatedValue
 from randomgen.seed_sequence import ISeedSequence
 
 ISEED_SEQUENCES = (ISeedSequence,)
@@ -43,14 +48,23 @@ cdef class BitGenerator(_BitGenerator):
     """
     Abstract class for all BitGenerators
     """
-    def __init__(self, seed, mode="sequence"):
-        if mode is not None and (not isinstance(mode, str) or mode.lower() not in self._supported_modes()):
+    def __init__(self, seed, *, numpy_seed=False, mode=_DeprecatedValue):
+        if mode is not _DeprecatedValue:
+            msg = ("mode is deprecated and will be removed in a future version. "
+                   "Seeding defaults to a numpy.random.SeedSequence instance.")
+            if "numpy" in self._supported_modes():
+                msg += " Use numpy_seed=True to enforce numpy-compatible seeding."
+            warnings.warn(msg, FutureWarning)
+        if mode is not _DeprecatedValue and (
+                not isinstance(mode, str) or mode.lower() not in self._supported_modes()
+        ):
             if len(self._supported_modes()) == 1:
                 msg = f"mode must be {self._supported_modes()[0]}"
             else:
                 modes = ", ".join(f"\"{mode}\"" for mode in self._supported_modes())
             raise ValueError(f"mode must be one of: {modes}.")
-        self.mode = mode.lower()
+        mode = mode.lower() if isinstance(mode, str) else mode
+        self.mode = "numpy" if (numpy_seed or mode == "numpy") else "sequence"
         super().__init__(seed)
 
     def _supported_modes(self):

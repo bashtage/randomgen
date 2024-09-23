@@ -1,26 +1,26 @@
 #!python
 #cython: wraparound=False, nonecheck=False, boundscheck=False, cdivision=True, language_level=3
 import operator
-import warnings
 from typing import MutableSequence
+import warnings
 
 import numpy as np
 
 from randomgen.bounded_integers import _integers_types
 from randomgen.mt19937 import MT19937 as _MT19937
 
-from cpython.pycapsule cimport PyCapsule_IsValid, PyCapsule_GetPointer
-from cpython cimport (Py_INCREF, PyFloat_AsDouble)
+cimport cython
+from cpython cimport Py_INCREF, PyFloat_AsDouble
+from cpython.pycapsule cimport PyCapsule_GetPointer, PyCapsule_IsValid
 from libc cimport string
 
-cimport cython
-
-from randomgen.legacy.bounded_integers cimport *
+from randomgen cimport api
 from randomgen.common cimport *
 from randomgen.distributions cimport *
+from randomgen.legacy.bounded_integers cimport *
 from randomgen.legacy.distributions cimport *
-from randomgen cimport api
-from typing import Callable, Any
+
+from typing import Any, Callable
 
 np.import_array()
 

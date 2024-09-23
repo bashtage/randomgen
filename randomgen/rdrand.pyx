@@ -2,14 +2,23 @@
 #cython: binding=True
 
 import numpy as np
+
 cimport numpy as np
 
 from threading import Lock
 
-from randomgen.common cimport *
-from cpython cimport PyObject
-from cpython.exc cimport PyErr_SetString, PyErr_Occurred, PyErr_Clear, PyErr_Print, PyErr_Fetch, PyErr_SetObject
 cimport libc.stdint
+from cpython cimport PyObject
+from cpython.exc cimport (
+    PyErr_Clear,
+    PyErr_Fetch,
+    PyErr_Occurred,
+    PyErr_Print,
+    PyErr_SetObject,
+    PyErr_SetString,
+)
+
+from randomgen.common cimport *
 
 np.import_array()
 

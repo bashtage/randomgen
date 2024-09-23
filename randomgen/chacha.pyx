@@ -3,6 +3,8 @@ import numpy as np
 
 from randomgen.common cimport *
 
+from randomgen._deprecated_value import _DeprecatedValue
+
 __all__ = ["ChaCha"]
 
 cdef uint64_t chacha_uint64(void* st) noexcept nogil:
@@ -16,7 +18,7 @@ cdef double chacha_double(void* st) noexcept nogil:
 
 cdef class ChaCha(BitGenerator):
     """
-    ChaCha(seed=None, *, counter=None, key=None, rounds=20)
+    ChaCha(seed=None, *, counter=None, key=None, rounds=20, mode=<deprecated>)
 
     Container for the ChaCha family of Counter pseudo-random number generators
 
@@ -43,6 +45,12 @@ cdef class ChaCha(BitGenerator):
         The standard number of rounds in 20. Smaller values, usually 8 or
         more, can be used to reduce security properties of the random stream
         while improving performance.
+    mode : {None, "sequence"}
+        Deprecated parameter. Do not use.
+
+        .. deprecated: 2.0.0
+
+           Starting in version 2, only seed sequences are supported.
 
     Attributes
     ----------
@@ -127,8 +135,8 @@ cdef class ChaCha(BitGenerator):
     .. [1] Bernstein, D. J.. ChaCha, a variant of Salsa20.
          http://cr.yp.to/papers.html#chacha. 2008.01.28.
     """
-    def __init__(self, seed=None, *, counter=None, key=None, rounds=20):
-        BitGenerator.__init__(self, seed)
+    def __init__(self, seed=None, *, counter=None, key=None, rounds=20, mode=_DeprecatedValue):
+        BitGenerator.__init__(self, seed, mode=mode)
         self.rng_state = <chacha_state_t *>PyArray_malloc_aligned(
             sizeof(chacha_state_t)
         )

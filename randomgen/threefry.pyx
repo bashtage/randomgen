@@ -4,6 +4,7 @@
 import numpy as np
 
 from randomgen.common cimport *
+from randomgen._deprecated_value import _DeprecatedValue
 
 __all__ = ["ThreeFry"]
 
@@ -44,7 +45,7 @@ cdef uint64_t threefry2x32_raw(void *st) noexcept nogil:
 
 cdef class ThreeFry(BitGenerator):
     """
-    ThreeFry(seed=None, *, counter=None, key=None, number=4, width=64)
+    ThreeFry(seed=None, *, counter=None, key=None, number=4, width=64, mode=<deprecated>)
 
     Container for the ThreeFry family of pseudo-random number generators.
 
@@ -75,6 +76,12 @@ cdef class ThreeFry(BitGenerator):
     width : {32, 64}, optional
         Bit width the values produced. Maps to W in the ThreeFry variant naming
         scheme ThreeFryNxW.
+    mode : {None, "sequence"}
+        Deprecated parameter. Do not use.
+
+        .. deprecated: 2.0.0
+
+           Starting in version 2, only seed sequences are supported.
 
     Attributes
     ----------
@@ -160,8 +167,8 @@ cdef class ThreeFry(BitGenerator):
     cdef int n
     cdef int w
 
-    def __init__(self, seed=None, *, counter=None, key=None, number=4, width=64):
-        BitGenerator.__init__(self, seed)
+    def __init__(self, seed=None, *, counter=None, key=None, number=4, width=64, mode=_DeprecatedValue):
+        BitGenerator.__init__(self, seed, mode=mode)
         if number not in (2, 4):
             raise ValueError("number must be either 2 or 4")
         if width not in (32, 64):

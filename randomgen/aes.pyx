@@ -2,7 +2,7 @@
 import numpy as np
 
 from randomgen.common cimport *
-
+from randomgen._deprecated_value import _DeprecatedValue
 
 __all__ = ["AESCounter"]
 
@@ -17,7 +17,7 @@ cdef double aes_double(void* st) noexcept nogil:
 
 cdef class AESCounter(BitGenerator):
     """
-    AESCounter(seed=None, *, counter=None, key=None)
+    AESCounter(seed=None, *, counter=None, key=None, mode=<deprecated>)
 
     Container for the AES Counter pseudo-random number generator.
 
@@ -38,6 +38,12 @@ cdef class AESCounter(BitGenerator):
         another RNG before use, the value in key is directly set. Can be either
         a Python int in [0, 2**128) or a 2-element uint64 array.
         key and seed cannot both be used.
+    mode : {None, "sequence"}
+        Deprecated parameter. Do not use.
+
+        .. deprecated: 2.0.0
+
+           Starting in version 2, only seed sequences are supported.
 
     Attributes
     ----------
@@ -123,8 +129,8 @@ cdef class AESCounter(BitGenerator):
     .. [1] Advanced Encryption Standard. (n.d.). In Wikipedia. Retrieved
         June 1, 2019, from https://en.wikipedia.org/wiki/Advanced_Encryption_Standard
     """
-    def __init__(self, seed=None, *, counter=None, key=None):
-        BitGenerator.__init__(self, seed)
+    def __init__(self, seed=None, *, counter=None, key=None, mode=_DeprecatedValue):
+        BitGenerator.__init__(self, seed, mode=mode)
         # Calloc since ctr needs to be 0
         self.rng_state = <aesctr_state_t *>PyArray_calloc_aligned(
             sizeof(aesctr_state_t), 1

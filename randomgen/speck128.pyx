@@ -4,6 +4,7 @@
 import numpy as np
 
 from randomgen.common cimport *
+from randomgen._deprecated_value import _DeprecatedValue
 
 __all__ = ["SPECK128"]
 
@@ -21,7 +22,7 @@ cdef double speck_double(void* st) noexcept nogil:
 
 cdef class SPECK128(BitGenerator):
     """
-    SPECK128(seed=None, *, counter=None, key=None, rounds=34)
+    SPECK128(seed=None, *, counter=None, key=None, rounds=34, mode=<deprecated>)
 
     Container for the SPECK (128 x 256) pseudo-random number generator.
 
@@ -46,6 +47,12 @@ cdef class SPECK128(BitGenerator):
         Number of rounds of the SPECK algorithm to run. The default value 34
         is the official value used in encryption. Reduced-round variant
         *might* (untested) perform well statistically with improved performance.
+    mode : {None, "sequence"}
+        Deprecated parameter. Do not use.
+
+        .. deprecated: 2.0.0
+
+           Starting in version 2, only seed sequences are supported.
 
     Attributes
     ----------
@@ -133,8 +140,8 @@ cdef class SPECK128(BitGenerator):
        National Security Agency. January 15, 2019. from
        https://nsacyber.github.io/simon-speck/implementations/ImplementationGuide1.1.pdf
     """
-    def __init__(self, seed=None, *, counter=None, key=None, rounds=SPECK_MAX_ROUNDS):
-        BitGenerator.__init__(self, seed)
+    def __init__(self, seed=None, *, counter=None, key=None, rounds=SPECK_MAX_ROUNDS, mode=_DeprecatedValue):
+        BitGenerator.__init__(self, seed, mode=mode)
         # Calloc since ctr needs to be 0
         self.rng_state = <speck_state_t *>PyArray_calloc_aligned(sizeof(speck_state_t), 1)
         if (rounds <= 0) or rounds > SPECK_MAX_ROUNDS or int(rounds) != rounds:

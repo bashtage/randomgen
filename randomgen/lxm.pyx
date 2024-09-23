@@ -130,7 +130,7 @@ cdef class LXM(BitGenerator):
            https://nuclear.llnl.gov/CNP/rng/rngman/node4.html.
     """
     def __init__(self, seed=None, *, b=3037000493):
-        BitGenerator.__init__(self, seed, "sequence")
+        BitGenerator.__init__(self, seed)
         self.seed(seed)
 
         self.rng_state.b = <uint64_t>b | 1

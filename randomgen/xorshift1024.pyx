@@ -5,7 +5,7 @@ import numpy as np
 cimport numpy as np
 
 from randomgen.common cimport *
-
+from randomgen._deprecated_value import _DeprecatedValue
 
 __all__ = ["Xorshift1024"]
 
@@ -20,7 +20,7 @@ cdef double xorshift1024_double(void* st) noexcept nogil:
 
 cdef class Xorshift1024(BitGenerator):
     """
-    Xorshift1024(seed=None)
+    Xorshift1024(seed=None, *, mode=<deprecated>)
 
     Container for the xorshift1024*φ pseudo-random number generator.
 
@@ -33,6 +33,12 @@ cdef class Xorshift1024(BitGenerator):
         ``None``, then  data is read from ``/dev/urandom`` (or the Windows
         analog) if available. If unavailable, a hash of the time and process
         ID is used.
+    mode : {None, "sequence"}
+        Deprecated parameter. Do not use.
+
+        .. deprecated: 2.0.0
+
+           Starting in version 2, only seed sequences are supported.
 
     Attributes
     ----------
@@ -112,8 +118,8 @@ cdef class Xorshift1024(BitGenerator):
     .. [4] Sebastiano Vigna. "Further scramblings of Marsaglia's xorshift
            generators." CoRR, abs/1403.0930, 2014.
     """
-    def __init__(self, seed=None, *):
-        BitGenerator.__init__(self, seed)
+    def __init__(self, seed=None, *, mode=_DeprecatedValue):
+        BitGenerator.__init__(self, seed, mode=mode)
         self.seed(seed)
 
         self._bitgen.state = <void *>&self.rng_state

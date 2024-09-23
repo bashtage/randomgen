@@ -3,25 +3,41 @@
 import warnings
 
 from libc.math cimport sqrt
-from libc.stdint cimport (
-    int64_t,
-    uint32_t,
-    uint64_t,
-)
+from libc.stdint cimport int64_t, uint32_t, uint64_t
 
 import numpy as np
+
 cimport numpy as np
+
 from randomgen.pcg64 import PCG64
-from cpython.pycapsule cimport PyCapsule_IsValid, PyCapsule_GetPointer
-from cpython cimport (PyComplex_FromDoubles,
-                      PyComplex_ImagAsDouble, PyComplex_RealAsDouble,
-                      )
+
+from cpython cimport (
+    PyComplex_FromDoubles,
+    PyComplex_ImagAsDouble,
+    PyComplex_RealAsDouble,
+)
+from cpython.pycapsule cimport PyCapsule_GetPointer, PyCapsule_IsValid
+from numpy.random cimport bitgen_t
+from numpy.random.c_distributions cimport (
+    random_standard_normal,
+    random_standard_normal_fill,
+)
 
 from randomgen cimport api
-from numpy.random cimport bitgen_t
-from numpy.random.c_distributions cimport random_standard_normal, random_standard_normal_fill
-from randomgen.distributions cimport random_double_fill, random_float, random_long_double_size, random_long_double_fill, random_wishart_large_df
-from randomgen.common cimport double_fill, float_fill, check_output, compute_complex, validate_output_shape
+from randomgen.common cimport (
+    check_output,
+    compute_complex,
+    double_fill,
+    float_fill,
+    validate_output_shape,
+)
+from randomgen.distributions cimport (
+    random_double_fill,
+    random_float,
+    random_long_double_fill,
+    random_long_double_size,
+    random_wishart_large_df,
+)
 
 __all__ = ["ExtendedGenerator"]
 
