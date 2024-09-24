@@ -279,6 +279,7 @@ bit_generator("lxm")
 bit_generator("sfc")
 bit_generator("efiix64")
 bit_generator("romu")
+bit_generator("tyche")
 extensions.append(
     Extension(
         "randomgen.wrapper",

@@ -1,4 +1,6 @@
 #!python
+from multiprocessing.managers import Value
+
 import numpy as np
 cimport numpy as np
 
@@ -102,32 +104,34 @@ cdef class Tyche(BitGenerator):
 
 
     """
-    def __init__(self, seed=None):
+    def __init__(self, seed=None, idx=None):
         BitGenerator.__init__(self, seed)
-        self.seed(seed)
+        self.seed(seed, idx=idx)
 
         self._bitgen.state = <void *>&self.rng_state
         self._bitgen.next_uint64 = &tyche_uint64
         self._bitgen.next_uint32 = &tyche_uint32
         self._bitgen.next_double = &tyche_double
-        self._bitgen.next_raw = &tyche_uint64
+        self._bitgen.next_raw = &tyche_uint32
 
-    cdef _reset_state_variables(self):
-        self.rng_state.has_uint32 = 0
-        self.rng_state.uinteger = 0
-
-    def _seed_from_seq(self):
-        cdef uint64_t *state_arr
+    def _seed_from_seq(self, idx=None):
+        cdef uint64_t state
+        cdef uint32_t _idx
 
         try:
-            state = self.seed_seq.generate_state(4, np.uint64)
+            seed_seq = self.seed_seq
         except AttributeError:
-            state = self._seed_seq.generate_state(4, np.uint64)
-        state_arr = <np.uint64_t *>np.PyArray_DATA(state)
-        tyche_seed(&self.rng_state, state_arr)
+            seed_seq = self._seed_seq
+        state = seed_seq.generate_state(1, np.uint64)
+        if idx is None:
+            _idx = seed_seq.generate_state(1, np.uint32)
+        else:
+            if not 0 <= idx <= np.iinfo(np.uint32).max:
+                raise ValueError("idx must be in the interval [0, 2**32).")
+        tyche_seed(&self.rng_state, state, idx)
         self._reset_state_variables()
 
-    def seed(self, seed=None):
+    def seed(self, seed=None, idx=None):
         """
         seed(seed=None)
 
@@ -151,7 +155,7 @@ cdef class Tyche(BitGenerator):
         ValueError
             If seed values are out of range for the PRNG.
         """
-        BitGenerator._seed_with_seed_sequence(self, seed)
+        BitGenerator._seed_with_seed_sequence(self, seed, idx=idx)
 
     @property
     def state(self):
@@ -189,7 +193,7 @@ cdef class Tyche(BitGenerator):
 
     @state.setter
     def state(self, value):
-        cdef Py_ssize_t i
+        cdef Py_ssize_t i 767
         cdef uint64_t *arr
 
         if not isinstance(value, dict):

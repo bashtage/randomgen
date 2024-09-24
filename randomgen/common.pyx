@@ -2,6 +2,7 @@
 from collections import namedtuple
 import sys
 import warnings
+from numpy.random import SeedSequence
 
 try:
     from threading import Lock
@@ -82,7 +83,6 @@ cdef class BitGenerator(_BitGenerator):
         return copy.deepcopy(self._seed_seq)
 
     def _seed_with_seed_sequence(self, seed, **kwargs):
-        from numpy.random import SeedSequence
         if isinstance(seed, ISEED_SEQUENCES):
             self._seed_seq = seed
         else:
@@ -91,7 +91,6 @@ cdef class BitGenerator(_BitGenerator):
             self._seed_from_seq(**kwargs)
         else:  # numpy
             self._seed_from_seq_numpy_compat(**kwargs)
-        return
 
     @property
     def state(self):
