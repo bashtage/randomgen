@@ -1,5 +1,4 @@
-# flake8: noqa
-#
+import numpy as np
 
 known_hashes = {
     ("ChaCha", "seed"): {
@@ -87,7 +86,7 @@ known_hashes = {
         "initial_state_hash": "b6df29635bf448c80384f97af3b3d2664ad65d84043093a0d0fb8453d91013d3",
         "final_state_hash": "9dd127ae1c4e58ee17cefe44a0c51b1c9ee9d94adf36d38f97c20b6be76fa7be",
     },
-    ("SFC64", "seed", "k", 10998731014437268875): {
+    ("SFC64", "seed", "k", np.uint64(10998731014437268875)): {
         "random_values": "51f5f6960004fd3efd0ece422d46040e97a0d558af17d3cbc428960fd1e993a1",
         "initial_state_hash": "48d052873fd8877566e9b194e1856952b5873c4708e8299ba094d4e7934ae037",
         "final_state_hash": "05feec2e5bc065320805ca3cb6e4ba2f2a90a5ac211fd77c3cb16d78b6ef7195",
@@ -652,6 +651,21 @@ known_hashes = {
         "random_values": "25b866f7ea1c07c038a7c9171600818aa56f301eba78b78b99e18f12e63be3c3",
         "initial_state_hash": "35ebc819d8f1aa7221351102db3262f93da7aebd1792989299ca925d7888d500",
         "final_state_hash": "c3853500044108dd8456aed82bd5943f06e471e45e3150dfc7fc30bc29d15f22",
+    },
+    ("Tyche", "seed"): {
+        "random_values": "8ac46ad1f366c7507d61f81e06fc3ed893b8279ffc62c1f072fa64a940074266",
+        "initial_state_hash": "5f3e453f720533625a39cc4c92088583253de9b9c3d8894082ba4ba3143926f4",
+        "final_state_hash": "caeb185b740abec222204cf44a7bb3065241113107ae24e5dc71c4a34cd3c006",
+    },
+    ("Tyche", "seed", "original", True): {
+        "random_values": "8ac46ad1f366c7507d61f81e06fc3ed893b8279ffc62c1f072fa64a940074266",
+        "initial_state_hash": "5f3e453f720533625a39cc4c92088583253de9b9c3d8894082ba4ba3143926f4",
+        "final_state_hash": "caeb185b740abec222204cf44a7bb3065241113107ae24e5dc71c4a34cd3c006",
+    },
+    ("Tyche", "seed", "original", False): {
+        "random_values": "df5b7742c4b2a16f8ac4ce2abd31a357407b337328d2d76d015a1f47752c7edb",
+        "initial_state_hash": "9e24eeb77e73a2a2091572659137b6a0d605f906d1cc5063a20a128ceb7472e5",
+        "final_state_hash": "9395a90f587f66190dfbb985b4e74d081352de4c5b991dd80e6558b2e2cf8aea",
     },
     ("LCG128Mix", "seed"): {
         "random_values": "78b425d06f86a7f99d2dbd1a37792a4611c246c80aebe49b8071b6002d081e76",

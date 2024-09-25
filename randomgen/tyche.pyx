@@ -19,7 +19,16 @@ cdef uint32_t tyche_uint32(void *st) noexcept nogil:
     return tyche_next32(<tyche_state_t *> st)
 
 cdef double tyche_double(void* st) noexcept nogil:
-    return tyche_next_double(<tyche_state_t *>st))
+    return tyche_next_double(<tyche_state_t *>st)
+
+cdef uint64_t tyche_openrand_uint64(void* st) noexcept nogil:
+    return tyche_openrand_next64(<tyche_state_t *>st)
+
+cdef uint32_t tyche_openrand_uint32(void *st) noexcept nogil:
+    return tyche_openrand_next32(<tyche_state_t *> st)
+
+cdef double tyche_openrand_double(void* st) noexcept nogil:
+    return tyche_openrand_next_double(<tyche_state_t *>st)
 
 cdef class Tyche(BitGenerator):
     """
@@ -36,6 +45,9 @@ cdef class Tyche(BitGenerator):
         ``None``, then  data is read from ``/dev/urandom`` (or the Windows
         analog) if available. If unavailable, a hash of the time and
         process ID is used.
+    idx : {None, int}, optional
+        The index to use when seeding from a SeedSequence. If None, the
+        default, the index is selected at random.
 
     Attributes
     ----------
@@ -104,15 +116,23 @@ cdef class Tyche(BitGenerator):
 
 
     """
-    def __init__(self, seed=None, idx=None):
+
+    def __init__(self, seed=None, *, idx=None, original=True):
         BitGenerator.__init__(self, seed)
+        self.original = bool(original)
         self.seed(seed, idx=idx)
 
         self._bitgen.state = <void *>&self.rng_state
-        self._bitgen.next_uint64 = &tyche_uint64
-        self._bitgen.next_uint32 = &tyche_uint32
-        self._bitgen.next_double = &tyche_double
-        self._bitgen.next_raw = &tyche_uint32
+        if original:
+            self._bitgen.next_uint64 = &tyche_uint64
+            self._bitgen.next_uint32 = &tyche_uint32
+            self._bitgen.next_double = &tyche_double
+            self._bitgen.next_raw = &tyche_uint64
+        else:
+            self._bitgen.next_uint64 = &tyche_openrand_uint64
+            self._bitgen.next_uint32 = &tyche_openrand_uint32
+            self._bitgen.next_double = &tyche_openrand_double
+            self._bitgen.next_raw = &tyche_openrand_uint64
 
     def _seed_from_seq(self, idx=None):
         cdef uint64_t state
@@ -122,16 +142,16 @@ cdef class Tyche(BitGenerator):
             seed_seq = self.seed_seq
         except AttributeError:
             seed_seq = self._seed_seq
-        state = seed_seq.generate_state(1, np.uint64)
+        state = seed_seq.generate_state(1, np.uint64)[0]
         if idx is None:
-            _idx = seed_seq.generate_state(1, np.uint32)
+            _idx = seed_seq.generate_state(1, np.uint32)[0]
         else:
             if not 0 <= idx <= np.iinfo(np.uint32).max:
                 raise ValueError("idx must be in the interval [0, 2**32).")
-        tyche_seed(&self.rng_state, state, idx)
-        self._reset_state_variables()
+            _idx = <uint32_t>idx
+        tyche_seed(&self.rng_state, state, _idx, <int>self.original)
 
-    def seed(self, seed=None, idx=None):
+    def seed(self, seed=None, *, idx=None):
         """
         seed(seed=None)
 
@@ -168,34 +188,16 @@ cdef class Tyche(BitGenerator):
             Dictionary containing the information required to describe the
             state of the PRNG
         """
-        cdef Py_ssize_t i
-        cdef uint64_t *arr
-        indirection_table = np.empty(INDIRECTION_SIZE, dtype=np.uint64)
-        arr = <np.uint64_t *>np.PyArray_DATA(indirection_table)
-        for i in range(0, INDIRECTION_SIZE):
-            arr[i] = self.rng_state.indirection_table[i]
-
-        iteration_table = np.empty(ITERATION_SIZE, dtype=np.uint64)
-        arr = <np.uint64_t *>np.PyArray_DATA(iteration_table)
-        for i in range(0, ITERATION_SIZE):
-            arr[i] = self.rng_state.iteration_table[i]
-
-        state = {"indirection_table": indirection_table,
-                 "iteration_table": iteration_table,
-                 "i": self.rng_state.i,
-                 "a": self.rng_state.a,
+        state = {"a": self.rng_state.a,
                  "b": self.rng_state.b,
-                 "c": self.rng_state.c}
+                 "c": self.rng_state.c,
+                 "d": self.rng_state.d,
+                 "original": self.original}
         return {"bit_generator": fully_qualified_name(self),
-                "state": state,
-                "has_uint32": self.rng_state.has_uint32,
-                "uinteger": self.rng_state.uinteger}
+                "state": state}
 
     @state.setter
     def state(self, value):
-        cdef Py_ssize_t i 767
-        cdef uint64_t *arr
-
         if not isinstance(value, dict):
             raise TypeError("state must be a dict")
         bitgen = value.get("bit_generator", "")
@@ -203,26 +205,10 @@ cdef class Tyche(BitGenerator):
             raise ValueError("state must be for a {0} "
                              "PRNG".format(type(self).__name__))
         state = value["state"]
-
-        indirection_table = check_state_array(state["indirection_table"],
-                                              INDIRECTION_SIZE,
-                                              64,
-                                              "indirection_table")
-        arr = <np.uint64_t *>np.PyArray_DATA(indirection_table)
-        for i in range(0, INDIRECTION_SIZE):
-            self.rng_state.indirection_table[i] = arr[i]
-
-        iteration_table = check_state_array(state["iteration_table"],
-                                            ITERATION_SIZE,
-                                            64,
-                                            "iteration_table")
-        arr = <np.uint64_t *>np.PyArray_DATA(iteration_table)
-        for i in range(0, ITERATION_SIZE):
-            self.rng_state.iteration_table[i] = arr[i]
-        self.rng_state.i = state["i"]
+        if bool(self.original) != bool(state["original"]):
+            raise ValueError("state must be for the same variant of the PRNG")
         self.rng_state.a = state["a"]
         self.rng_state.b = state["b"]
         self.rng_state.c = state["c"]
+        self.rng_state.d = state["d"]
 
-        self.rng_state.has_uint32 = value["has_uint32"]
-        self.rng_state.uinteger = value["uinteger"]

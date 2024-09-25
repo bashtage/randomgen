@@ -9,11 +9,13 @@ extern "C" {
 #include "../common/randomgen_config_numpy.h"
 #include "../common/randomgen_config.h"
 
+/*
 #ifdef DLL_EXPORT
 #define DECLDIR __declspec(dllexport)
 #else
 #define DECLDIR extern
 #endif
+*/
 
 /* Inline generators for internal use */
 static NPY_INLINE uint32_t rg_next_uint32(bitgen_t *bitgen_state) {

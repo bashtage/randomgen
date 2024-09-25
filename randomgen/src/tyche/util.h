@@ -25,79 +25,99 @@
 //********************************************************************************
 // @HEADER
 
-#ifndef OPENRAND_TYCHE_H_
-#define OPENRAND_TYCHE_H_
+#ifndef OPENRAND_UTIL_H_
+#define OPENRAND_UTIL_H_
 
-#include "base_state.h"
-
+#include <cmath>
 #include <cstdint>
-#include <iostream>
-#include <limits>
+#include <type_traits>
 
-namespace {
-inline OPENRAND_DEVICE uint32_t rotl(uint32_t value, unsigned int x) {
-  return (value << x) | (value >> (32 - x));
-}
-}  // namespace
+// Detects Nvidia and AMD devices for now
+#ifdef __CUDA_ARCH__
+#define OPENRAND_DEVICE __host__ __device__
+#elif defined(__HIP_DEVICE_COMPILE__)
+#define OPENRAND_DEVICE __device__ __host__
+#else
+#define OPENRAND_DEVICE
+#endif
 
 namespace openrand {
 
-class Tyche : public BaseRNG<Tyche> {
- public:
-  OPENRAND_DEVICE Tyche(uint64_t seed, uint32_t ctr,
-                        uint32_t global_seed = openrand::DEFAULT_GLOBAL_SEED) {
-    // seed = seed ^ global_seed;
-    a = static_cast<uint32_t>(seed >> 32);
-    b = static_cast<uint32_t>(seed & 0xFFFFFFFFULL);
-    d = d ^ ctr;
+// NOTE: nvcc compiler replaces floating point variants with cuda built-in
+// versions
 
-    for (int i = 0; i < 20; i++) {
-      mix();
-    }
-  }
+constexpr uint32_t DEFAULT_GLOBAL_SEED =
+    0xAAAAAAAA;  // equal number of 0 and 1 bits
 
-  template <typename T = uint32_t>
-  OPENRAND_DEVICE T draw() {
-    mix();
-    if constexpr (std::is_same_v<T, uint32_t>)
-      return b;
+template <typename T>
+inline OPENRAND_DEVICE T sin(T x) {
+  if constexpr (std::is_same_v<T, float>)
+    return sinf(x);
+  else if constexpr (std::is_same_v<T, double>)
+    return std::sin(x);
+}
 
-    else {
-      uint32_t tmp = b;
-      mix();
-      uint64_t res = (static_cast<uint64_t>(tmp) << 32) | b;
-      return static_cast<T>(res);
-    }
-  }
+template <typename T>
+inline OPENRAND_DEVICE T cos(T x) {
+  if constexpr (std::is_same_v<T, float>)
+    return cosf(x);
+  else if constexpr (std::is_same_v<T, double>)
+    return std::cos(x);
+}
 
- private:
-   inline OPENRAND_DEVICE void mix() {
-     a += b;
-     d = rotl(d ^ a, 16);
-     c += d;
-     b = rotl(b ^ c, 12);
-     a += b;
-     d = rotl(d ^ a, 8);
-     c += d;
-     b = rotl(b ^ c, 7);
-   }
+template <typename T>
+inline OPENRAND_DEVICE T log(T x) {
+  if constexpr (std::is_same_v<T, float>)
+    return logf(x);
+  else if constexpr (std::is_same_v<T, double>)
+    return std::log(x);
+}
 
-  // inline OPENRAND_DEVICE void mix() {
-  //     b = rotl(b, 7) ^ c;
-  //     c -= d;
-  //     d = rotl(d, 8) ^ a;
-  //     a -= b;
-  //     b = rotl(b, 12) ^ c;
-  //     c -= d;
-  //     d = rotl(d, 16) ^ a;
-  //     a -= b;
-  // }
+template <typename T>
+inline OPENRAND_DEVICE T sqrt(T x) {
+  if constexpr (std::is_same_v<T, float>)
+    return sqrtf(x);
+  else if constexpr (std::is_same_v<T, double>)
+    return std::sqrt(x);
+}
 
-  uint32_t a, b;
-  uint32_t c = 2654435769;
-  uint32_t d = 1367130551;
-};  // class Tyche
+template <typename T>
+struct vec2 {
+  T x, y;
+};
+
+template <typename T>
+struct vec3 {
+  T x, y, z;
+};
+
+template <typename T>
+struct vec4 {
+  T x, y, z, w;
+};
+
+// for GPU, better to be explicit about the type and size
+using uint2 = vec2<uint32_t>;
+using uint3 = vec3<uint32_t>;
+using uint4 = vec4<uint32_t>;
+
+using float2 = vec2<float>;
+using float3 = vec3<float>;
+using float4 = vec4<float>;
+
+using double2 = vec2<double>;
+using double3 = vec3<double>;
+using double4 = vec4<double>;
+
+// CRTP: helper struct to check if Derived has internal counter
+// that enables O(1) state forwarding
+template <typename T, typename = std::void_t<>>
+struct has_counter : std::false_type {};
+
+template <typename T>
+struct has_counter<T, std::void_t<decltype(std::declval<T>()._ctr)>>
+    : std::true_type {};
 
 }  // namespace openrand
 
-#endif  // OPENRAND_TYCHE_H_
+#endif

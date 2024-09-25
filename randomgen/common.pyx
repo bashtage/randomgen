@@ -2,6 +2,7 @@
 from collections import namedtuple
 import sys
 import warnings
+
 from numpy.random import SeedSequence
 
 try:
