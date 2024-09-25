@@ -22,6 +22,7 @@ from randomgen.sfc import SFC64
 from randomgen.sfmt import SFMT
 from randomgen.speck128 import SPECK128
 from randomgen.threefry import ThreeFry
+from randomgen.tyche import Tyche
 from randomgen.xoroshiro128 import Xoroshiro128
 from randomgen.xorshift1024 import Xorshift1024
 from randomgen.xoshiro256 import Xoshiro256
@@ -52,6 +53,7 @@ BitGenerators: dict[str, type[BitGenerator]] = {
     "SFC64": SFC64,
     "SFMT": SFMT,
     "RDRAND": RDRAND,
+    "Tyche": Tyche,
 }
 
 # Assign the fully qualified name for future proofness
