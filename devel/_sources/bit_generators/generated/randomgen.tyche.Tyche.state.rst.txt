@@ -1,0 +1,6 @@
+﻿randomgen.tyche.Tyche.state
+===========================
+
+.. currentmodule:: randomgen.tyche
+
+.. autoattribute:: Tyche.state

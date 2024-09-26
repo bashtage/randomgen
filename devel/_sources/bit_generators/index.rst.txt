@@ -37,6 +37,7 @@ These RNGs will be included in future releases.
    SFMT <sfmt>
    SPECK128 <speck128>
    ThreeFry <threefry>
+   Tyche <tyche>
    XoroShiro128+/++ <xoroshiro128>
    Xoshiro256** <xoshiro256>
    Xoshiro512** <xoshiro512>

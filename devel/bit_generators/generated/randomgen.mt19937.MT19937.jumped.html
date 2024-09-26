@@ -13,7 +13,7 @@
     
     
       
-        <title>randomgen.mt19937.MT19937.jumped - RandomGen 2.0.1</title>
+        <title>randomgen.mt19937.MT19937.jumped - RandomGen v2.0.2 (+7)</title>
       
     
     
@@ -80,7 +80,7 @@
 
 <header class="md-header" data-md-component="header">
   <nav class="md-header__inner md-grid" aria-label="Header">
-    <a href="../../index.html" title="RandomGen 2.0.1" class="md-header__button md-logo" aria-label="RandomGen 2.0.1" data-md-component="logo">
+    <a href="../../index.html" title="RandomGen v2.0.2 (+7)" class="md-header__button md-logo" aria-label="RandomGen v2.0.2 (+7)" data-md-component="logo">
       <img src="../../_static/casino.svg" alt="logo">
     </a>
     <label class="md-header__button md-icon" for="__drawer">
@@ -90,7 +90,7 @@
       <div class="md-header__ellipsis">
         <div class="md-header__topic">
           <span class="md-ellipsis">
-            RandomGen 2.0.1
+            RandomGen v2.0.2 (+7)
           </span>
         </div>
         <div class="md-header__topic" data-md-component="header-topic">
@@ -177,10 +177,10 @@
 
 <nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
   <label class="md-nav__title" for="__drawer">
-    <a href="../../index.html" title="RandomGen 2.0.1" class="md-nav__button md-logo" aria-label="RandomGen 2.0.1" data-md-component="logo">
+    <a href="../../index.html" title="RandomGen v2.0.2 (+7)" class="md-nav__button md-logo" aria-label="RandomGen v2.0.2 (+7)" data-md-component="logo">
       <img src="../../_static/casino.svg" alt="logo">
     </a>
-    RandomGen 2.0.1
+    RandomGen v2.0.2 (+7)
   </label>
   
     <div class="md-nav__source">
@@ -838,6 +838,21 @@
   
   
     <li class="md-nav__item">
+      <a href="../tyche.html" class="md-nav__link">
+        <span title="/bit_generators/tyche.rst (reference label)" class="md-ellipsis">Tyche</span>
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../xoroshiro128.html" class="md-nav__link">
         <span title="/bit_generators/xoroshiro128.rst (reference label)" class="md-ellipsis">Xoro<wbr>Shiro128+/++</span>
       </a>
@@ -1240,18 +1255,19 @@
 <p>The jump step is computed using a modified version of Matsumoto’s
 implementation of Horner’s method. The step polynomial is precomputed
 to perform 2**128 steps. The jumped state has been verified to match
-the state produced using Matsumoto’s original code.</p>
+the state produced using Matsumoto’s original code. The jump
+implementation is based on code from <a class="footnote-reference brackets" href="#id3" id="id1" role="doc-noteref"><span class="fn-bracket">[</span>1<span class="fn-bracket">]</span></a> and <a class="footnote-reference brackets" href="#id4" id="id2" role="doc-noteref"><span class="fn-bracket">[</span>2<span class="fn-bracket">]</span></a>.</p>
 <p class="rubric">References</p>
 <aside class="footnote-list brackets">
-<aside class="footnote brackets" id="id1" role="doc-footnote">
-<span class="label"><span class="fn-bracket">[</span>1<span class="fn-bracket">]</span></span>
+<aside class="footnote brackets" id="id3" role="doc-footnote">
+<span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id1">1</a><span class="fn-bracket">]</span></span>
 <p>Matsumoto, M, Generating multiple disjoint streams of
 pseudorandom number sequences.  Accessed on: May 6, 2020.
 (online). Available:
 <a class="reference external" href="http://www.math.sci.hiroshima-u.ac.jp/~m-mat/MT/JUMP/">http://www.math.sci.hiroshima-u.ac.jp/~m-mat/MT/JUMP/</a></p>
 </aside>
-<aside class="footnote brackets" id="id2" role="doc-footnote">
-<span class="label"><span class="fn-bracket">[</span>2<span class="fn-bracket">]</span></span>
+<aside class="footnote brackets" id="id4" role="doc-footnote">
+<span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id2">2</a><span class="fn-bracket">]</span></span>
 <p>Hiroshi Haramoto, Makoto Matsumoto, Takuji Nishimura, François
 Panneton, Pierre L’Ecuyer, “Efficient Jump Ahead for F2-Linear
 Random Number Generators”, INFORMS JOURNAL ON COMPUTING, Vol. 20,

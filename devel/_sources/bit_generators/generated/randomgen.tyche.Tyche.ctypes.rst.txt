@@ -1,0 +1,6 @@
+﻿randomgen.tyche.Tyche.ctypes
+============================
+
+.. currentmodule:: randomgen.tyche
+
+.. autoattribute:: Tyche.ctypes
