@@ -15,6 +15,21 @@ cimport numpy as np
 from numpy.random import SeedSequence
 
 
+cdef class _TestSeninal:
+
+    cdef bint testing
+
+    def __init__(self, bint testing=0):
+        self.testing=testing
+
+    def get_testing(self):
+        return self.testing
+
+    def set_testing(self, bint value):
+         self.testing = value
+
+_test_sentinal = _TestSeninal()
+
 # Module level variables to save small allocations
 cdef np.ndarray WORDS_ARR = np.arange(16, dtype=np.uint8)
 cdef uint8_t[::1] WORDS = WORDS_ARR
@@ -89,7 +104,7 @@ cdef class _SequenceSampler:
     cdef uint64_t random_inverval(self, uint64_t max_value):
         """
         Generate random intervales with max values between 1 and 16.
-        
+
         No error checking is performed if max_value > 16."""
         cdef int bits
         cdef uint64_t out
@@ -251,7 +266,7 @@ def generate_keys(seed=None, intptr_t n=1, bint unique=False):
     cdef intptr_t i, nunique, iter, start = 0
     cdef uint64_t[::1] out, tmp, index
     cdef np.ndarray out_arr, tmp_arr, index_arr
-
+    cdef _TestSeninal _internal_senintal = _test_sentinal
     cdef _SequenceSampler seq_sampler
     cdef bint incomplete = True
 
@@ -275,7 +290,7 @@ def generate_keys(seed=None, intptr_t n=1, bint unique=False):
         index_arr.sort()
         index = index_arr = index_arr.astype(np.uint64)
         nunique = index_arr.shape[0]
-        if  iter < 2 and os.environ.get("RANDOMGEN_GENERATE_KEYS_TESTING", False) == "1":
+        if  iter < 2 and _internal_senintal.testing:
             orig = nunique
             nunique = nunique - max(min(10, nunique // 2), 1)
 
