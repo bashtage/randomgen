@@ -262,7 +262,8 @@ cdef class MT19937(BitGenerator):
         The jump step is computed using a modified version of Matsumoto's
         implementation of Horner's method. The step polynomial is precomputed
         to perform 2**128 steps. The jumped state has been verified to match
-        the state produced using Matsumoto's original code.
+        the state produced using Matsumoto's original code. The jump
+        implementation is based on code from [1]_ and [2]_.
 
         References
         ----------

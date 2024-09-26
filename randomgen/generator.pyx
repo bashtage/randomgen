@@ -472,7 +472,8 @@ cdef class ExtendedGenerator:
 
         Note that the covariance matrix must be positive semidefinite (a.k.a.
         nonnegative-definite). Otherwise, the behavior of this method is
-        undefined and backwards compatibility is not guaranteed.
+        undefined and backwards compatibility is not guaranteed. See [1]_
+        and [2]_ for more information.
 
         References
         ----------
@@ -593,7 +594,8 @@ cdef class ExtendedGenerator:
         the covariance between the two is 0.5 Im(relation). The implied
         covariance matrix must be positive semi-definite and so both variances
         must be zero and the covariance must be weakly smaller than the
-        product of the two standard deviations.
+        product of the two standard deviations. See [1]_ and [2]_ for
+        additional details.
 
         References
         ----------
@@ -758,6 +760,7 @@ cdef class ExtendedGenerator:
         Uses the method of Odell and Feiveson [1]_ when `df` >= `dim`.
         Otherwise variates are directly generated as the inner product
         of `df` by `dim` arrays of standard normal random variates.
+        See [1]_, [2]_, and [3]_ for more information.
 
         References
         ----------
@@ -862,6 +865,7 @@ cdef class ExtendedGenerator:
         Uses the method of Odell and Feiveson [1]_ when `df` >= `dim`.
         Otherwise variates are directly generated as the inner product
         of `df` by `dim` arrays of standard normal random variates.
+        See [1]_, [2]_, and [3]_ for more information.
 
         References
         ----------
@@ -1064,6 +1068,9 @@ and the trailing dimensions must match exactly so that
 
         If the implied covariance matrix is not positive semi-definite a warning
         or exception may be raised depending on the value `check_valid`.
+
+        The implementation is based in the mathematical description in
+        [1]_ and [2]_.
 
         References
         ----------

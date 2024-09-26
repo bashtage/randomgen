@@ -25,6 +25,7 @@ from randomgen.sfc import SFC64
 from randomgen.sfmt import SFMT
 from randomgen.speck128 import SPECK128
 from randomgen.threefry import ThreeFry
+from randomgen.tyche import Tyche
 from randomgen.wrapper import UserBitGenerator
 from randomgen.xoroshiro128 import Xoroshiro128
 from randomgen.xorshift1024 import Xorshift1024
@@ -61,6 +62,7 @@ __all__ = [
     "SeedSequence",
     "SeedlessSeedSequence",
     "ThreeFry",
+    "Tyche",
     "UserBitGenerator",
     "Xoroshiro128",
     "Xorshift1024",

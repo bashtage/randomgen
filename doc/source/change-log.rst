@@ -3,6 +3,12 @@
 Change Log
 ----------
 
+v2.1.0 (Unreleased)
+===================
+- Added the :class:`~randomgen.tyche.Tyche` PRNG of Neves and Araujo. Supports
+  two variants. One is the original implementation in the 2012 paper. The
+  second matches the version in ``OpenRand``.
+
 v2.0.0
 ======
 - Final compatibility with NumPy 2

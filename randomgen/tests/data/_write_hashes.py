@@ -12,7 +12,9 @@ if __name__ == "__main__":
 
     fm = black.FileMode({black.TargetVersion.PY37, black.TargetVersion.PY38})
     out = black.format_file_contents(
-        "known_hashes = " + str(dict(computed_hashes)), fast=True, mode=fm
+        "import numpy as np\n\n" + "known_hashes = " + str(dict(computed_hashes)),
+        fast=True,
+        mode=fm,
     )
     with open("stable_hashes.py", "w") as results:
         results.write(out)

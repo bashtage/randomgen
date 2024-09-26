@@ -25,6 +25,7 @@ from randomgen import (
     Philox,
     Romu,
     ThreeFry,
+    Tyche,
     Xoroshiro128,
     Xorshift1024,
     Xoshiro256,
@@ -177,6 +178,7 @@ configs = {
         "BLOCKED": (("seed", "key"),),
         "REQUIRED": ("seed", "key"),
     },
+    "Tyche": {"seed": seed_seq(), "original": [True, False]},
     "LCG128Mix": {
         "seed": seed_seq(),
         "inc": [0, None],
@@ -214,6 +216,7 @@ BIT_GEN = {
     "Philox": Philox,
     "ThreeFry": ThreeFry,
     "LCG128Mix": LCG128Mix,
+    "Tyche": Tyche,
 }
 
 final_configurations = {}

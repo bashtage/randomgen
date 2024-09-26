@@ -6,6 +6,7 @@ from os.path import join
 from typing import Any
 
 import numpy as np
+from numpy.random import SeedSequence
 from numpy.testing import (
     assert_allclose,
     assert_array_equal,
@@ -33,6 +34,7 @@ from randomgen import (
     Philox,
     Romu,
     ThreeFry,
+    Tyche,
     Xoroshiro128,
     Xorshift1024,
     Xoshiro256,
@@ -41,15 +43,6 @@ from randomgen import (
 from randomgen._deprecated_value import _DeprecatedValue
 from randomgen.common import interface
 from randomgen.seed_sequence import ISeedSequence
-
-try:
-    from numpy.random import SeedSequence
-
-    NP_SEED_SEQ = True
-except ImportError:
-    from randomgen import SeedSequence
-
-    NP_SEED_SEQ = False
 
 MISSING_RDRAND = False
 try:
@@ -62,7 +55,7 @@ aes = AESCounter()
 HAS_AESNI = aes.use_aesni
 
 USE_AESNI = [True, False] if HAS_AESNI else [False]
-NO_MODE_SUPPORT = [EFIIX64, LXM, Romu, RDRAND]
+NO_MODE_SUPPORT = [EFIIX64, LXM, Romu, RDRAND, Tyche]
 
 try:
     import cffi  # noqa: F401
@@ -118,12 +111,15 @@ def assert_state_equal(actual, target):
             assert actual[key] == target[key]
 
 
-def uniform32_from_uint64(x):
+def uniform32_from_uint64(x, reversed=False):
     x = np.uint64(x)
     upper = np.array(x >> np.uint64(32), dtype=np.uint32)
     lower = np.uint64(0xFFFFFFFF)
     lower = np.array(x & lower, dtype=np.uint32)
-    joined = np.column_stack([lower, upper]).ravel()
+    if reversed:
+        joined = np.column_stack([upper, lower]).ravel()
+    else:
+        joined = np.column_stack([lower, upper]).ravel()
     out = (joined >> np.uint32(8)) * (np.float32(1.0) / np.float32(2**24))
     return out.astype(np.float32)
 
@@ -139,9 +135,9 @@ def uniform32_from_uint32(x):
     return (x >> np.uint32(8)) * (np.float32(1.0) / np.float32(2**24))
 
 
-def uniform32_from_uint(x, bits):
+def uniform32_from_uint(x, bits, reversed=False):
     if bits == 64:
-        return uniform32_from_uint64(x)
+        return uniform32_from_uint64(x, reversed)
     elif bits == 53:
         return uniform32_from_uint53(x)
     elif bits == 32:
@@ -1857,10 +1853,7 @@ class TestLXM(Base):
         cls.seed_error_type = TypeError
         cls.invalid_seed_types = [(2 + 3j,), (3.1,)]
         cls.invalid_seed_values = [(-2,), ([-2],)]
-        if NP_SEED_SEQ:
-            cls.invalid_seed_types += [("apple",)]
-        else:
-            cls.invalid_seed_values += [("apple",)]
+        cls.invalid_seed_types += [("apple",)]
         cls.seed_sequence_only = True
 
     def setup_bitgenerator(self, seed, **kwargs):
@@ -1905,6 +1898,60 @@ class TestLXM(Base):
             assert bg._seed_seq.entropy == 0
 
 
+class TestTyche(TestLXM):
+    @classmethod
+    def setup_class(cls):
+        super().setup_class()
+        cls.bit_generator = Tyche
+        cls.bits = 64
+        cls.dtype = np.uint64
+        cls.data1 = cls._read_csv(join(pwd, "./data/tyche-testset-1.csv"))
+        cls.data2 = cls._read_csv(join(pwd, "./data/tyche-testset-2.csv"))
+        cls.seed_error_type = TypeError
+        cls.invalid_seed_types = [(2 + 3j,), (3.1,)]
+        cls.invalid_seed_values = [(-2,), ([-2],)]
+        cls.invalid_seed_types += [("apple",)]
+        cls.seed_sequence_only = True
+
+    def test_gauss_inv(self):
+        n = 25
+        rs = np.random.RandomState(self.setup_bitgenerator(self.data1["seed"]))
+        gauss = rs.standard_normal(n)
+        bits = getattr(self, "bit_name", self.bits)
+        assert_allclose(gauss, gauss_from_uint(self.data1["data"], n, bits), rtol=9e-6)
+
+        rs = np.random.RandomState(self.setup_bitgenerator(self.data2["seed"]))
+        gauss = rs.standard_normal(25)
+        assert_allclose(gauss, gauss_from_uint(self.data2["data"], n, bits), rtol=9e-6)
+
+    def test_uniform_float(self):
+        rs = np.random.Generator(self.setup_bitgenerator(self.data1["seed"]))
+        vals = uniform32_from_uint(self.data1["data"], self.bits, reversed=True)
+        uniforms = rs.random(len(vals), dtype=np.float32)
+        assert_allclose(uniforms, vals, atol=1e-7)
+        assert_equal(uniforms.dtype, np.float32)
+
+        rs = np.random.Generator(self.setup_bitgenerator(self.data2["seed"]))
+        vals = uniform32_from_uint(self.data2["data"], self.bits, reversed=True)
+        uniforms = rs.random(len(vals), dtype=np.float32)
+        assert_allclose(uniforms, vals, atol=1e-7)
+        assert_equal(uniforms.dtype, np.float32)
+
+    def test_idx(self):
+        bg1 = self.bit_generator(0, idx=0)
+        bg2 = self.bit_generator(0, idx=1)
+        assert np.all(bg1.random_raw(10) != bg2.random_raw(10))
+
+
+class TestTycheOpenRand(TestTyche):
+    @classmethod
+    def setup_class(cls):
+        super().setup_class()
+        cls.bit_generator = partial(Tyche, original=False)
+        cls.data1 = cls._read_csv(join(pwd, "./data/tyche-openrand-testset-1.csv"))
+        cls.data2 = cls._read_csv(join(pwd, "./data/tyche-openrand-testset-2.csv"))
+
+
 class TestSFC64(TestLXM):
     @classmethod
     def setup_class(cls):
@@ -1917,10 +1964,7 @@ class TestSFC64(TestLXM):
         cls.seed_error_type = TypeError
         cls.invalid_seed_types = [(2 + 3j,), (3.1,)]
         cls.invalid_seed_values = [(-2,), ([-2],)]
-        if NP_SEED_SEQ:
-            cls.invalid_seed_types += [("apple",)]
-        else:
-            cls.invalid_seed_values += [("apple",)]
+        cls.invalid_seed_types += [("apple",)]
         cls.seed_sequence_only = True
 
     def test_numpy_mode(self):
@@ -1942,10 +1986,7 @@ class TestPCG64DXSM(Base):
         cls.seed_error_type = TypeError
         cls.invalid_seed_types = [(2 + 3j,), (3.1,)]
         cls.invalid_seed_values = [(-2,), ([-2],)]
-        if NP_SEED_SEQ:
-            cls.invalid_seed_types += [("apple",)]
-        else:
-            cls.invalid_seed_values += [("apple",)]
+        cls.invalid_seed_types += [("apple",)]
         cls.seed_sequence_only = True
         cls.large_advance_initial = 262626489767919729675955844831248137855
         cls.large_advance_final = 326675794918500479020985263602132957772
@@ -1985,10 +2026,7 @@ class TestEFIIX64(TestLXM):
         cls.seed_error_type = TypeError
         cls.invalid_seed_types = [(2 + 3j,), (3.1,)]
         cls.invalid_seed_values = [(-2,), ([-2],)]
-        if NP_SEED_SEQ:
-            cls.invalid_seed_types += [("apple",)]
-        else:
-            cls.invalid_seed_values += [("apple",)]
+        cls.invalid_seed_types += [("apple",)]
         cls.seed_sequence_only = True
 
 
@@ -2004,10 +2042,7 @@ class TestRomuQuad(TestLXM):
         cls.seed_error_type = TypeError
         cls.invalid_seed_types = [(2 + 3j,), (3.1,)]
         cls.invalid_seed_values = [(-2,), ([-2],)]
-        if NP_SEED_SEQ:
-            cls.invalid_seed_types += [("apple",)]
-        else:
-            cls.invalid_seed_values += [("apple",)]
+        cls.invalid_seed_types += [("apple",)]
         cls.seed_sequence_only = True
 
     def test_bad_varainte(self):
@@ -2029,8 +2064,5 @@ class TestRomuTrio(TestLXM):
         cls.seed_error_type = TypeError
         cls.invalid_seed_types = [(2 + 3j,), (3.1,)]
         cls.invalid_seed_values = [(-2,), ([-2],)]
-        if NP_SEED_SEQ:
-            cls.invalid_seed_types += [("apple",)]
-        else:
-            cls.invalid_seed_values += [("apple",)]
+        cls.invalid_seed_types += [("apple",)]
         cls.seed_sequence_only = True
