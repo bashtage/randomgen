@@ -1937,6 +1937,20 @@ class TestTyche(TestLXM):
         assert_allclose(uniforms, vals, atol=1e-7)
         assert_equal(uniforms.dtype, np.float32)
 
+    def test_idx(self):
+        bg1 = self.bit_generator(0, idx=0)
+        bg2 = self.bit_generator(0, idx=1)
+        assert np.all(bg1.random_raw(10) != bg2.random_raw(10))
+
+
+class TestTycheOpenRand(TestTyche):
+    @classmethod
+    def setup_class(cls):
+        super().setup_class()
+        cls.bit_generator = partial(Tyche, original=False)
+        cls.data1 = cls._read_csv(join(pwd, "./data/tyche-openrand-testset-1.csv"))
+        cls.data2 = cls._read_csv(join(pwd, "./data/tyche-openrand-testset-2.csv"))
+
 
 class TestSFC64(TestLXM):
     @classmethod

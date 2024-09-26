@@ -25,6 +25,8 @@
 //********************************************************************************
 // @HEADER
 
+// Modifications by Kevin Sheppard c2024. BSD 3-Clause License
+
 #ifndef OPENRAND_TYCHE_H_
 #define OPENRAND_TYCHE_H_
 
@@ -33,6 +35,18 @@
 #include <cstdint>
 #include <iostream>
 #include <limits>
+
+
+#if !defined(__USE_OPENRAND_TYCHE__) && !defined(__USE_ORIGINAL_TYCHE__)
+error("No implementation selected for Tyche");
+#endif
+
+#ifdef __USE_OPENRAND_TYCHE__
+#define STATE_VARIABLE a
+#else // __USE_ORIGINAL_TYCHE__
+#define STATE_VARIABLE b
+#endif
+
 
 namespace {
 inline OPENRAND_DEVICE uint32_t rotl(uint32_t value, unsigned int x) {
@@ -60,17 +74,18 @@ class Tyche : public BaseRNG<Tyche> {
   OPENRAND_DEVICE T draw() {
     mix();
     if constexpr (std::is_same_v<T, uint32_t>)
-      return b;
+      return STATE_VARIABLE;
 
     else {
-      uint32_t tmp = b;
+      uint32_t tmp = STATE_VARIABLE;
       mix();
-      uint64_t res = (static_cast<uint64_t>(tmp) << 32) | b;
+      uint64_t res = (static_cast<uint64_t>(tmp) << 32) | STATE_VARIABLE;
       return static_cast<T>(res);
     }
   }
 
  private:
+#ifdef __USE_ORIGINAL_TYCHE__
    inline OPENRAND_DEVICE void mix() {
      a += b;
      d = rotl(d ^ a, 16);
@@ -81,17 +96,18 @@ class Tyche : public BaseRNG<Tyche> {
      c += d;
      b = rotl(b ^ c, 7);
    }
-
-  // inline OPENRAND_DEVICE void mix() {
-  //     b = rotl(b, 7) ^ c;
-  //     c -= d;
-  //     d = rotl(d, 8) ^ a;
-  //     a -= b;
-  //     b = rotl(b, 12) ^ c;
-  //     c -= d;
-  //     d = rotl(d, 16) ^ a;
-  //     a -= b;
-  // }
+#else // __USE_ORIGINAL_TYCHE__
+ inline OPENRAND_DEVICE void mix() {
+      b = rotl(b, 7) ^ c;
+      c -= d;
+      d = rotl(d, 8) ^ a;
+      a -= b;
+      b = rotl(b, 12) ^ c;
+      c -= d;
+      d = rotl(d, 16) ^ a;
+      a -= b;
+  }
+#endif
 
   uint32_t a, b;
   uint32_t c = 2654435769;

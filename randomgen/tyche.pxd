@@ -25,6 +25,6 @@ cdef extern from "src/tyche/tyche.h":
 
 
 cdef class Tyche(BitGenerator):
-    cdef:
-        bint original
-        tyche_state_t rng_state
+    cdef bint original
+    cdef tyche_state_t rng_state
+    cdef void _setup_bitgen(self)

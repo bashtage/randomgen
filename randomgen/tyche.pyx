@@ -32,9 +32,9 @@ cdef double tyche_openrand_double(void* st) noexcept nogil:
 
 cdef class Tyche(BitGenerator):
     """
-    EFIIX64(seed=None)
+    Tyche(seed=None, idx=None, original=True)
 
-    Container for the EFIIX64x384 pseudo-random number generator.
+    Container for the Tychee pseudo-random number generator.
 
     Parameters
     ----------
@@ -43,11 +43,13 @@ cdef class Tyche(BitGenerator):
         Can be an integer in [0, 2**64), array of integers in [0, 2**64),
         a SeedSequence instance or ``None`` (the default). If `seed` is
         ``None``, then  data is read from ``/dev/urandom`` (or the Windows
-        analog) if available. If unavailable, a hash of the time and
-        process ID is used.
+        analog) if available.
     idx : {None, int}, optional
         The index to use when seeding from a SeedSequence. If None, the
         default, the index is selected at random.
+    original : bool, optional
+        If True, use the original Tyche implementation. If False, use the
+        OpenRand implementation. Default is True.
 
     Attributes
     ----------
@@ -60,51 +62,45 @@ cdef class Tyche(BitGenerator):
         The SeedSequence instance used to initialize the generator if mode is
         "sequence" or is seed is a SeedSequence. 
 
-
     Notes
     -----
-    ``EFIIX64`` (also known as tychex384) is written by Chris Doty-Humphrey.
-    It is a 64-bit PRNG that uses a set of tables generate random values.
-    This produces a fast PRNG with statistical quality similar to cryptographic
-    generators but faster [1]_.
-
-    ``EFIIX64`` provides a capsule containing function pointers that
-    produce doubles, and unsigned 32 and 64- bit integers. These are not
-    directly consumable in Python and must be consumed by a ``Generator``
-    or similar object that supports low-level access.
+    ``Tyche`` [1]_ is a pseudo-random number generator based on the Tyche PRNG.
+    It is a 32-bit PRNG that uses a set 4 32-bit unsigned integers as state,
+    and operates using only addition, subtraction, rotation and xor.
 
     **State and Seeding**
 
-    The ``EFIIX64`` state vector consists of a 16-element array of 64-bit
-    unsigned integers and a 32-element array of 64-bit unsigned integers.
-    In addition, 3 constant values and a counter are used in the update.
-
-    ``EFIIX64`` is seeded using an integer, a sequence of integer or a
-    SeedSequence.  If the seed is not SeedSequence, the seed values are
-    passed to a SeedSequence which is then used to produce 4 64-bit unsigned
-    integer values which are used to Seed the generator
+    The ``EFIIX64`` state vector consists of 4 32-bit unsigned integers.
+    The ``seed`` value is translated into a 64-bit unsigned integer. If
+    ``idx`` is not None, it is translated into a 32-bit unsigned integer.
 
     **Compatibility Guarantee**
 
-    ``EFIIX64`` makes a guarantee that a fixed seed will always
+    ``Tyche`` makes a guarantee that a fixed seed will always
     produce the same random integer stream.
 
     Examples
     --------
     >>> from numpy.random import Generator
-    >>> from randomgen import EFIIX64
-    >>> rg = Generator(EFIIX64(1234))
+    >>> from randomgen import Tyche
+    >>> rg = Generator(Tyche(1234))
     >>> rg.standard_normal()
     0.123  # random
 
     **Parallel Features**
 
-    ``EFIIX64`` can be used in parallel when combined with a ``SeedSequence``
+    ``Tyche`` can be used in parallel when combined with a ``SeedSequence``
     using ``spawn``.
 
     >>> from randomgen import SeedSequence
-    >>> ss = SeedSequence(8509285875904376097169743623867)
-    >>> bit_gens = [EFIIX64(child) for child in ss.spawn(1024)]
+    >>> entropy = 8509285875904376097169743623867
+    >>> ss = SeedSequence(entropy)
+    >>> bit_gens = [Tyche(child) for child in ss.spawn(1024)]
+
+    Alternatively, the same ``seed`` value can be used with different ``idx`` values.
+
+    >>> from randomgen import SeedSequence
+    >>> bit_gens = [Tyche(SeedSequence(entropy), idx=i) for i in range(1024)]
 
     References
     ----------
@@ -123,7 +119,10 @@ cdef class Tyche(BitGenerator):
         self.seed(seed, idx=idx)
 
         self._bitgen.state = <void *>&self.rng_state
-        if original:
+        self._setup_bitgen()
+
+    cdef void _setup_bitgen(self):
+        if self.original:
             self._bitgen.next_uint64 = &tyche_uint64
             self._bitgen.next_uint32 = &tyche_uint32
             self._bitgen.next_double = &tyche_double
@@ -133,6 +132,7 @@ cdef class Tyche(BitGenerator):
             self._bitgen.next_uint32 = &tyche_openrand_uint32
             self._bitgen.next_double = &tyche_openrand_double
             self._bitgen.next_raw = &tyche_openrand_uint64
+
 
     def _seed_from_seq(self, idx=None):
         cdef uint64_t state
@@ -205,10 +205,10 @@ cdef class Tyche(BitGenerator):
             raise ValueError("state must be for a {0} "
                              "PRNG".format(type(self).__name__))
         state = value["state"]
-        if bool(self.original) != bool(state["original"]):
-            raise ValueError("state must be for the same variant of the PRNG")
+        self.original = bool(state["original"])
         self.rng_state.a = state["a"]
         self.rng_state.b = state["b"]
         self.rng_state.c = state["c"]
         self.rng_state.d = state["d"]
+        self._setup_bitgen()
 
