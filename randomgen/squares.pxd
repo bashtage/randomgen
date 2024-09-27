@@ -6,8 +6,8 @@ from randomgen.common cimport *
 cdef extern from "src/squares/squares.h":
 
     struct SQUARES_STATE_T:
-        uint64_t cnt
         uint64_t key
+        uint64_t counter
         int has_uint32
         uint32_t uinteger
 
@@ -22,3 +22,6 @@ cdef extern from "src/squares/squares.h":
 
 cdef class Squares(BitGenerator):
     cdef squares_state_t rng_state
+    cdef void _setup_bitgen(self)
+    cdef uint64_t _check_value(self, object val, object name, bint odd)
+    cdef void _reset_state_variables(self)
