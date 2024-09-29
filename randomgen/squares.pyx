@@ -267,43 +267,66 @@ cdef class Squares(BitGenerator):
 
     Notes
     -----
-    ``Tyche`` [1]_ is a pseudo-random number generator based on the Tyche PRNG.
-    It is a 32-bit PRNG that uses a set 4 32-bit unsigned integers as state,
-    and operates using only addition, subtraction, rotation and xor.
+    ``Squares`` [2]_ is a pseudo-random number generator based on the Squares
+    PRNG. It comes in both 64-bit (default) and 32-bit variants. It uses a
+    64-bit key and a counter. Each draw transforms the current counter using
+    a number of middle-square operations and the key. The key is constructed
+    using 3 rues:
+
+      - The first word (16 bits) ia selected from the set {1, 3, 5, ...
+        B, D, F}, and so is always odd.
+      - The next 7 words are selected without repetition from the set
+        {1, 2, 3, ..., D, E, F}, excluding the word selected in the 1st
+        position.
+      - The remaining 8 words are selected at random (with replacement)
+        from the set {1, 2, 3, ..., D, E, F} with the run that the word
+        in position i must differ from the work in position j.
+
+    The ``SeedSequence`` used in the initialization of the bit generator is
+    used as the source of randomness for
 
     **State and Seeding**
 
-    The ``EFIIX64`` state vector consists of 4 32-bit unsigned integers.
-    The ``seed`` value is translated into a 64-bit unsigned integer. If
-    ``idx`` is not None, it is translated into a 32-bit unsigned integer.
+    The ``Squares`` state consists of a 64-bit unsigned integer key
+    and a 64-bit unsigned integer counter.
+    By default, the ``seed`` value is translated into the 64-bit
+    unsigned integer. If ``counter`` is None, the PRNG starts with a
+    counter of 0..
 
     **Compatibility Guarantee**
 
-    ``Tyche`` makes a guarantee that a fixed seed will always
+    ``Squares`` makes a guarantee that a fixed seed will always
     produce the same random integer stream.
 
     Examples
     --------
     >>> from numpy.random import Generator
-    >>> from randomgen import Tyche
-    >>> rg = Generator(Tyche(1234))
+    >>> from randomgen import Squares
+    >>> rg = Generator(Squares(1234))
     >>> rg.standard_normal()
     0.123  # random
 
     **Parallel Features**
 
-    ``Tyche`` can be used in parallel when combined with a ``SeedSequence``
+    ``Squares`` can be used in parallel when combined with a ``SeedSequence``
     using ``spawn``.
 
     >>> from randomgen import SeedSequence
     >>> entropy = 8509285875904376097169743623867
     >>> ss = SeedSequence(entropy)
-    >>> bit_gens = [Tyche(child) for child in ss.spawn(1024)]
+    >>> bit_gens = [Squares(child) for child in ss.spawn(1024)]
 
-    Alternatively, the same ``seed`` value can be used with different ``idx`` values.
+    An alternative generates a set of keys from a single seed.
+
+    >>> from randomgen.squares import generate_keys
+    >>> keys = generate_keys(1234, 1024)
+    >>> bit_gens = [Squares(key=key) for key in keys]
+
+    The final options uses the same ``seed`` value along with different
+    ``counter`` values.
 
     >>> from randomgen import SeedSequence
-    >>> bit_gens = [Tyche(SeedSequence(entropy), idx=i) for i in range(1024)]
+    >>> bit_gens = [Squares(SeedSequence(entropy), counter=1_000_000_000 * i) for i in range(1024)]
 
     See also
     --------
@@ -317,8 +340,6 @@ cdef class Squares(BitGenerator):
            https://en.wikipedia.org/wiki/Middle-square_method
     .. [2] Widynski, Bernard. Middle-Square Weyl Sequence RNG.
            arXiv:1704.00358. 2017. https://doi.org/10.48550/arXiv.2004.06278.
-}
-
     """
     def __init__(self, seed=None, counter=None, key=None, variant=64):
         BitGenerator.__init__(self, seed)
