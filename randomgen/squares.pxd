@@ -23,7 +23,7 @@ cdef extern from "src/squares/squares.h":
 cdef class Squares(BitGenerator):
     cdef squares_state_t rng_state
     cdef void _setup_bitgen(self)
-    cdef object variant
+    cdef int variant
     cdef bint _use64
     cdef uint64_t _check_value(self, object val, object name, bint odd)
     cdef void _reset_state_variables(self)

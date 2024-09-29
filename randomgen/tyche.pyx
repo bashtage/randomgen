@@ -104,8 +104,6 @@ cdef class Tyche(BitGenerator):
        J., Karczewski, K., Waśniewski, J. (eds) Parallel Processing and Applied
        Mathematics. PPAM 2011. Lecture Notes in Computer Science, vol 7203.
        Springer, Berlin, Heidelberg. https://doi.org/10.1007/978-3-642-31464-3_10
-
-
     """
 
     def __init__(self, seed=None, *, idx=None, original=True):
