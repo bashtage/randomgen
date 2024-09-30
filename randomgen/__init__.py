@@ -62,6 +62,7 @@ __all__ = [
     "SPECK128",
     "SeedSequence",
     "SeedlessSeedSequence",
+    "Squares",
     "ThreeFry",
     "Tyche",
     "UserBitGenerator",

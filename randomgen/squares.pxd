@@ -27,3 +27,4 @@ cdef class Squares(BitGenerator):
     cdef bint _use64
     cdef uint64_t _check_value(self, object val, object name, bint odd)
     cdef void _reset_state_variables(self)
+

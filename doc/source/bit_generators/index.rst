@@ -36,6 +36,7 @@ These RNGs will be included in future releases.
    SFC64 <sfc>
    SFMT <sfmt>
    SPECK128 <speck128>
+   Squares <squares>
    ThreeFry <threefry>
    Tyche <tyche>
    XoroShiro128+/++ <xoroshiro128>

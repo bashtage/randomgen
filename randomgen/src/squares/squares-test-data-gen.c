@@ -17,10 +17,11 @@
 
 int main() {
   int i;
-  uint64_t seed = 0x3bc8bca4d301945b;
+  uint64_t seed = 0xDEADBEAF;
   /* key =  randomgen.squares.generate_keys(0xDEADBEAF, 1)[0] */
-  uint64_t key = 0x3BC8BCA4D301945B;
+  uint64_t key = 0x3bc8bca4d301945b;
   uint64_t ctr = 0x0;
+  uint64_t a, b;
   uint64_t store[N];
   for (i = 0; i < N; i++) {
     store[i] = squares64(key, ctr);
@@ -44,8 +45,12 @@ int main() {
 
   ctr = 0;
   for (i = 0; i < N; i++) {
-    store[i] = squares32(key, ctr++) | ((uint64_t)(squares32(key, ctr++)) << 32);
-  }
+    a = (uint64_t)squares32(key, ctr);
+    ctr++;
+    b = (uint64_t)squares32(key, ctr);
+    ctr++;
+    store[i] = a | (b << 32);
+}
 
   fp = fopen("squares-32-testset-1.csv", "w");
   if (fp == NULL) {
@@ -64,7 +69,7 @@ int main() {
 
   seed = 0x0;
   /* key =  squares.generate_keys(0, 1)[0] */
-  key = 0x32D1638D0D582ACF;
+  key = 0x32d1638d0d582acf;
   ctr = 0x0;
 
   for (i = 0; i < N; i++) {
@@ -87,7 +92,11 @@ int main() {
 
   ctr = 0;
   for (i = 0; i < N; i++) {
-    store[i] = squares32(key, ctr++) | ((uint64_t)(squares32(key, ctr++)) << 32);
+    a = (uint64_t)squares32(key, ctr);
+    ctr++;
+    b = (uint64_t)squares32(key, ctr);
+    ctr++;
+    store[i] = a | (b << 32);
   }
 
   fp = fopen("squares-32-testset-2.csv", "w");

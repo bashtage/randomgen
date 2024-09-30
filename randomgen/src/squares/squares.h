@@ -46,20 +46,22 @@ inline static uint64_t squares_next64(squares_state_t *state) {
   return squares64(state);
 }
 inline static uint32_t squares_next32(squares_state_t *state) {
-    uint64_t tmp;
-    if (state -> has_uint32) {
+  uint64_t next;
+   if (state -> has_uint32) {
         state -> has_uint32 = 0;
         return state -> uinteger;
     }
-    tmp = squares64(state);
-    state -> uinteger = tmp & 0xFFFFFFFF;
-    return (uint32_t)(tmp >> 32);
+  next = squares64(state);
+  state->has_uint32 = 1;
+  state->uinteger = next >> 32;
+  return (uint32_t)next;
 }
+
 inline static double squares_next_double(squares_state_t *state) {
   return (squares64(state) >> 11) * (1.0 / 9007199254740992.0);
 }
 inline static uint64_t squares_32_next64(squares_state_t *state) {
-  return squares32(state) | ((uint64_t)squares32(state) << 32);
+  return squares32(state) | (((uint64_t)squares32(state)) << 32);
 }
 
 inline static uint32_t squares_32_next32(squares_state_t *state) {

@@ -24,6 +24,7 @@ from randomgen import (
     LCG128Mix,
     Philox,
     Romu,
+    Squares,
     ThreeFry,
     Tyche,
     Xoroshiro128,
@@ -169,6 +170,13 @@ configs = {
         "REQUIRED": ("seed", "key"),
     },
     "Romu": {"seed": seed_seq(), "variant": ["quad", "trio"]},
+    "Squares": {
+        "seed": seed_seq(),
+        "key": 0xF9DB92E5A801E679,
+        "variant": [32, 64],
+        "BLOCKED": (("seed", "key"),),
+        "REQUIRED": ("seed", "key"),
+    },
     "ThreeFry": {
         "seed": seed_seq(),
         "number": [2, 4],
@@ -217,6 +225,7 @@ BIT_GEN = {
     "ThreeFry": ThreeFry,
     "LCG128Mix": LCG128Mix,
     "Tyche": Tyche,
+    "Squares": Squares,
 }
 
 final_configurations = {}

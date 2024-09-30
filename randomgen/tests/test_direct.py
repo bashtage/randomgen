@@ -33,6 +33,7 @@ from randomgen import (
     ChaCha,
     Philox,
     Romu,
+    Squares,
     ThreeFry,
     Tyche,
     Xoroshiro128,
@@ -55,7 +56,7 @@ aes = AESCounter()
 HAS_AESNI = aes.use_aesni
 
 USE_AESNI = [True, False] if HAS_AESNI else [False]
-NO_MODE_SUPPORT = [EFIIX64, LXM, Romu, RDRAND, Tyche]
+NO_MODE_SUPPORT = [EFIIX64, LXM, Romu, RDRAND, Tyche, Squares]
 
 try:
     import cffi  # noqa: F401
@@ -177,6 +178,9 @@ def gauss_from_uint(x, n, bits):
         doubles = uniform_from_uint32(x)
     elif bits == "dsfmt":
         doubles = uniform_from_dsfmt(x)
+    elif bits == "squares32":
+        x = x.view(np.uint32)
+        doubles = uniform_from_uint32(x)
     gauss = []
     loc = 0
     x1 = x2 = 0.0
@@ -2012,6 +2016,70 @@ class TestPCG64CMDXSM(TestPCG64DXSM):
         cls.data2 = cls._read_csv(join(pwd, "./data/pcg64-cm-dxsm-testset-2.csv"))
         cls.large_advance_initial = 159934576226003702342121456273047082943
         cls.large_advance_final = 43406923282132296644520456716700203596
+
+
+class TestSquares(TestPCG64DXSM):
+    @classmethod
+    def setup_class(cls):
+        super().setup_class()
+        cls.bit_generator = Squares
+        cls.data1 = cls._read_csv(join(pwd, "./data/squares-testset-1.csv"))
+        cls.data2 = cls._read_csv(join(pwd, "./data/squares-testset-2.csv"))
+        cls.large_advance_initial = 11400714819323198485
+        cls.large_advance_final = 2177342782468422676
+
+    def setup_bitgenerator(self, seed, counter=None, key=None):
+        return self.bit_generator(*seed, counter=counter, key=key)
+
+    def test_large_advance(self):
+        bg = self.setup_bitgenerator([0], counter=11400714819323198485)
+        state = bg.state["state"]
+        assert state["counter"] == self.large_advance_initial
+        bg.advance(sum(2**i for i in range(63)))
+        state = bg.state["state"]
+        assert state["counter"] == self.large_advance_final
+
+
+class TestSquares32(TestSquares):
+    @classmethod
+    def setup_class(cls):
+        super().setup_class()
+        cls.bit_generator = partial(Squares, variant=32)
+        cls.data1 = cls._read_csv(join(pwd, "./data/squares-32-testset-1.csv"))
+        cls.data2 = cls._read_csv(join(pwd, "./data/squares-32-testset-2.csv"))
+
+    def test_uniform_double(self):
+        # Special case since this ia a 32-bit generator that returns 2 32-bit per pass
+        # but uses the better formula discarding the lower bits of both 32 bit
+        # values when generating doubles
+        rs = np.random.Generator(self.setup_bitgenerator(self.data1["seed"]))
+        transformed = self.data1["data"].view(np.uint32)
+        vals = uniform_from_uint(transformed, 32)
+        uniforms = rs.random(len(vals))
+        assert_allclose(uniforms, vals, atol=1e-8)
+        assert_equal(uniforms.dtype, np.float64)
+
+        rs = np.random.Generator(self.setup_bitgenerator(self.data2["seed"]))
+        transformed = self.data2["data"].view(np.uint32)
+        vals = uniform_from_uint(transformed, 32)
+        uniforms = rs.random(len(vals))
+        assert_allclose(uniforms, vals, atol=1e-8)
+        assert_equal(uniforms.dtype, np.float64)
+
+    def test_gauss_inv(self):
+        # Special case since this ia a 32-bit generator that returns 2 32-bit per pass
+        # but uses the better formula discarding the lower bits of both 32 bit
+        # values when generating doubles
+        n = 25
+        rs = np.random.RandomState(self.setup_bitgenerator(self.data1["seed"]))
+        gauss = rs.standard_normal(n)
+        assert_allclose(gauss, gauss_from_uint(self.data1["data"], n, "squares32"))
+
+        rs = np.random.RandomState(self.setup_bitgenerator(self.data2["seed"]))
+        gauss = rs.standard_normal(25)
+        assert_allclose(
+            gauss, gauss_from_uint(self.data2["data"], n, "squares32"), rtol=3e-6
+        )
 
 
 class TestEFIIX64(TestLXM):
