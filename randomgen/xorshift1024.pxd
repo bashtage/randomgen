@@ -1,4 +1,12 @@
-from randomgen.common cimport *
+cimport numpy as np
+from libc.stdint cimport uint32_t, uint64_t
+
+from randomgen.common cimport (
+    BitGenerator,
+    check_state_array,
+    fully_qualified_name,
+    uint64_to_double,
+)
 
 
 cdef extern from "src/xorshift1024/xorshift1024.h":
