@@ -17,6 +17,7 @@ from randomgen.romu import Romu
 from randomgen.sfc import SFC64
 from randomgen.sfmt import SFMT
 from randomgen.speck128 import SPECK128
+from randomgen.squares import Squares
 from randomgen.threefry import ThreeFry
 from randomgen.tyche import Tyche
 from randomgen.wrapper import UserBitGenerator
@@ -45,6 +46,7 @@ bit_generators = [
     SFC64,
     SFMT,
     SPECK128,
+    Squares,
     ThreeFry,
     Tyche,
     UserBitGenerator,
