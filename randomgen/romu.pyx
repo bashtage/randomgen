@@ -1,14 +1,7 @@
 #!python
 #cython: binding=True
 
-import warnings
-
 import numpy as np
-
-cimport cython
-cimport numpy as np
-
-from randomgen.common cimport *
 
 __all__ = ["Romu"]
 

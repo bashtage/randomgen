@@ -1,5 +1,15 @@
 # cython: binding=True, language_level=3
-from randomgen.common cimport *
+cimport numpy as np
+from libc.stdint cimport uint32_t, uint64_t
+
+from randomgen.common cimport (
+    BitGenerator,
+    PyArray_calloc_aligned,
+    PyArray_free_aligned,
+    PyArray_malloc_aligned,
+    check_state_array,
+    fully_qualified_name,
+)
 
 DEF DSFMT_MEXP = 19937
 DEF DSFMT_N = 191  # ((DSFMT_MEXP - 128) / 104 + 1)

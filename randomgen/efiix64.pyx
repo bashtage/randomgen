@@ -1,8 +1,5 @@
 #!python
 import numpy as np
-cimport numpy as np
-
-from randomgen.common cimport *
 
 DEF INDIRECTION_SIZE = 16
 DEF ITERATION_SIZE = 32

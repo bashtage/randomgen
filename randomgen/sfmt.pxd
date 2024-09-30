@@ -1,4 +1,15 @@
-from randomgen.common cimport *
+cimport numpy as np
+from libc.stdint cimport uint32_t, uint64_t
+
+from randomgen.common cimport (
+    BitGenerator,
+    PyArray_calloc_aligned,
+    PyArray_free_aligned,
+    PyArray_malloc_aligned,
+    check_state_array,
+    fully_qualified_name,
+    uint64_to_double,
+)
 
 DEF SFMT_MEXP = 19937
 DEF SFMT_N = 156  # SFMT_MEXP / 128 + 1

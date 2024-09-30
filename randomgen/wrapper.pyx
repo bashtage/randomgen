@@ -1,7 +1,9 @@
 #!python
 #cython: binding=True
 
-from randomgen.common cimport *
+from libc.stdint cimport uint32_t, uint64_t
+
+from randomgen.common cimport BitGenerator
 from randomgen.distributions cimport next_double_t, next_uint32_t, next_uint64_t
 
 import ctypes

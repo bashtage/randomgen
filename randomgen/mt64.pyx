@@ -4,9 +4,7 @@
 import operator
 
 import numpy as np
-cimport numpy as np
 
-from randomgen.common cimport *
 from randomgen._deprecated_value import _DeprecatedValue
 
 __all__ = ["MT64"]

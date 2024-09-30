@@ -21,7 +21,6 @@ from randomgen.romu import Romu
 from randomgen.sfc import SFC64
 from randomgen.sfmt import SFMT
 from randomgen.speck128 import SPECK128
-
 from randomgen.threefry import ThreeFry
 from randomgen.tyche import Tyche
 from randomgen.xoroshiro128 import Xoroshiro128
