@@ -5,9 +5,8 @@
 import operator
 
 import numpy as np
-cimport numpy as np
+
 from randomgen._deprecated_value import _DeprecatedValue
-from randomgen.common cimport *
 
 __all__ = ["MT19937"]
 

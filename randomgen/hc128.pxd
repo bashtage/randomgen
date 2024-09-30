@@ -1,6 +1,16 @@
 # cython: binding=True, language_level=3
 # coding=utf-8
-from randomgen.common cimport *
+cimport numpy as np
+from libc.stdint cimport uint32_t, uint64_t
+
+from randomgen.common cimport (
+    BitGenerator,
+    check_state_array,
+    fully_qualified_name,
+    int_to_array,
+    object_to_int,
+    view_little_endian,
+)
 
 
 cdef extern from "src/hc-128/hc-128.h":

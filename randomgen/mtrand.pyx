@@ -1,40 +1,7 @@
 #!python
 #cython: wraparound=False, nonecheck=False, boundscheck=False, cdivision=True, language_level=3
-import operator
-from typing import MutableSequence
-import warnings
-
-import numpy as np
-
-from randomgen.bounded_integers import _integers_types
-from randomgen.mt19937 import MT19937 as _MT19937
-
-cimport cython
-from cpython cimport Py_INCREF, PyFloat_AsDouble
-from cpython.pycapsule cimport PyCapsule_GetPointer, PyCapsule_IsValid
-from libc cimport string
-
-from randomgen cimport api
-from randomgen.common cimport *
-from randomgen.distributions cimport *
-from randomgen.legacy.bounded_integers cimport *
-from randomgen.legacy.distributions cimport *
 
 from typing import Any, Callable
-
-np.import_array()
-
-cdef object int64_to_long(object x):
-    """
-    Convert int64 to long for legacy compatibility, which used long for integer
-    distributions
-    """
-    cdef int64_t x64
-
-    if np.isscalar(x):
-        x64 = x
-        return <long>x64
-    return x.astype("l", casting="unsafe")
 
 
 cdef class RandomState:

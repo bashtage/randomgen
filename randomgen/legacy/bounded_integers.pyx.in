@@ -5,8 +5,6 @@ import numpy as np
 
 cimport numpy as np
 
-from randomgen.legacy.distributions cimport *
-
 np.import_array()
 
 _integers_types = {"bool": (0, 2),

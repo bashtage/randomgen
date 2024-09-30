@@ -1,4 +1,14 @@
-from randomgen.common cimport *
+cimport numpy as np
+from libc.stdint cimport uint32_t, uint64_t
+
+from randomgen.common cimport (
+    BitGenerator,
+    PyArray_free_aligned,
+    PyArray_malloc_aligned,
+    fully_qualified_name,
+    uint64_to_double,
+    wrap_int,
+)
 
 
 cdef extern from "src/pcg64/pcg64-common.h":

@@ -9,16 +9,7 @@ from threading import Lock
 
 cimport libc.stdint
 from cpython cimport PyObject
-from cpython.exc cimport (
-    PyErr_Clear,
-    PyErr_Fetch,
-    PyErr_Occurred,
-    PyErr_Print,
-    PyErr_SetObject,
-    PyErr_SetString,
-)
-
-from randomgen.common cimport *
+from cpython.exc cimport PyErr_Clear, PyErr_Occurred, PyErr_SetString
 
 np.import_array()
 

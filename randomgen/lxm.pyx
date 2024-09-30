@@ -2,9 +2,6 @@
 
 # coding=utf-8
 import numpy as np
-cimport numpy as np
-
-from randomgen.common cimport *
 
 __all__ = ["LXM"]
 

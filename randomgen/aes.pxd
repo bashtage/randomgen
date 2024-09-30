@@ -1,5 +1,18 @@
 # cython: binding=True, language_level=3
-from randomgen.common cimport *
+
+cimport numpy as np
+from libc.stdint cimport uint8_t, uint32_t, uint64_t
+
+from randomgen.common cimport (
+    BitGenerator,
+    PyArray_calloc_aligned,
+    PyArray_free_aligned,
+    fully_qualified_name,
+    int_to_array,
+    object_to_int,
+    uint64_to_double,
+    wrap_int,
+)
 
 
 cdef extern from "src/aesctr/aesctr.h":

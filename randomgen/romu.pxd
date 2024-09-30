@@ -1,4 +1,7 @@
-from randomgen.common cimport *
+cimport numpy as np
+from libc.stdint cimport uint32_t, uint64_t
+
+from randomgen.common cimport BitGenerator, fully_qualified_name, uint64_to_double
 
 
 cdef extern from "src/romu/romu.h":

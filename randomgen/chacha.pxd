@@ -1,6 +1,17 @@
 # cython: binding=True, language_level=3
 
-from randomgen.common cimport *
+cimport numpy as np
+from libc.stdint cimport uint32_t, uint64_t
+
+from randomgen.common cimport (
+    BitGenerator,
+    PyArray_free_aligned,
+    PyArray_malloc_aligned,
+    fully_qualified_name,
+    int_to_array,
+    object_to_int,
+    view_little_endian,
+)
 
 
 cdef extern from "src/chacha/chacha.h":

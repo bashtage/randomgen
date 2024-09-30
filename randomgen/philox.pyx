@@ -3,7 +3,6 @@
 
 import numpy as np
 
-from randomgen.common cimport *
 from randomgen._deprecated_value import _DeprecatedValue
 
 __all__ = ["Philox"]

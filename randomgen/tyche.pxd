@@ -1,6 +1,9 @@
 # cython: binding=True, language_level=3
 
-from randomgen.common cimport *
+cimport numpy as np
+from libc.stdint cimport uint32_t, uint64_t
+
+from randomgen.common cimport BitGenerator, check_state_array, fully_qualified_name
 
 
 cdef extern from "src/tyche/tyche.h":

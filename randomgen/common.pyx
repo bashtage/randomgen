@@ -17,7 +17,7 @@ from cpython cimport PyFloat_AsDouble
 from numpy.random.bit_generator cimport BitGenerator as _BitGenerator
 
 from randomgen cimport api
-from randomgen.common cimport *
+
 
 from randomgen._deprecated_value import _DeprecatedValue
 from randomgen.seed_sequence import ISeedSequence

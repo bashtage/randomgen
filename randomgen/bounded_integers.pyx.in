@@ -3,9 +3,6 @@
 
 import numpy as np
 
-cimport numpy as np
-
-from randomgen.distributions cimport *
 from randomgen cimport api
 
 __all__ = []
