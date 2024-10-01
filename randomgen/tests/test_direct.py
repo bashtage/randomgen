@@ -2231,3 +2231,22 @@ def test_numpy_mode_error_pcg64():
     with pytest.raises(ValueError):
         with pytest.warns(FutureWarning):
             PCG64(0, inc=1, mode="numpy")
+
+
+def test_test_runner():
+    from randomgen import test
+
+    val = test(["--collect-only"], exit=False)
+    assert val == 0
+    val = test("--collect-only", exit=False)
+    assert val == 0
+
+
+def test_bitgen_ctor():
+    import randomgen._pickle as p
+
+    assert isinstance(p.__bit_generator_ctor(), MT19937)
+    assert isinstance(p.__bit_generator_ctor("LXM"), LXM)
+    assert isinstance(p.__bit_generator_ctor(b"LXM"), LXM)
+    with pytest.raises(ValueError):
+        p.__bit_generator_ctor("NewFangledBG")

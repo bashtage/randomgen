@@ -22,18 +22,7 @@ from randomgen cimport api
 from randomgen._deprecated_value import _DeprecatedValue
 from randomgen.seed_sequence import ISeedSequence
 
-ISEED_SEQUENCES = (ISeedSequence,)
-# NumPy 1.17
-try:
-   ISEED_SEQUENCES += (np.random.bit_generator.ISeedSequence,)
-except AttributeError:
-    pass
-# NumPy 1.18
-try:
-   ISEED_SEQUENCES += (np.random._bit_generator.ISeedSequence,)
-except AttributeError:
-    pass
-
+ISEED_SEQUENCES = (ISeedSequence, np.random.bit_generator.ISeedSequence)
 
 __all__ = ["interface"]
 
@@ -63,8 +52,8 @@ cdef class BitGenerator(_BitGenerator):
             if len(self._supported_modes()) == 1:
                 msg = f"mode must be {self._supported_modes()[0]}"
             else:
-                modes = ", ".join(f"\"{mode}\"" for mode in self._supported_modes())
-            raise ValueError(f"mode must be one of: {modes}.")
+                msg = ("mode must be one of: " + ", ".join(f"\"{mode}\"" for mode in self._supported_modes()))
+            raise ValueError(msg)
         mode = mode.lower() if isinstance(mode, str) else mode
         self.mode = "numpy" if (numpy_seed or mode == "numpy") else "sequence"
         super().__init__(seed)
@@ -333,18 +322,6 @@ cdef object prepare_ctypes(bitgen_t *bitgen):
                                                      ctypes.c_void_p)),
                         ctypes.c_void_p(<uintptr_t>bitgen))
     return _ctypes
-
-cdef double kahan_sum(double *darr, np.npy_intp n):
-    cdef double c, y, t, sum
-    cdef np.npy_intp i
-    sum = darr[0]
-    c = 0.0
-    for i in range(1, n):
-        y = darr[i] - c
-        t = sum + y
-        c = (t-sum) - y
-        sum = t
-    return sum
 
 cpdef object object_to_int(object val, object bits, object name, int default_bits=64,
                            object allowed_sizes=(64,)):

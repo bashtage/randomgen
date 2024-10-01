@@ -681,6 +681,16 @@ def test_random_float_scalar(seed):
     assert_array_almost_equal(actual, desired, decimal=7)
 
 
+def test_random_float_out(seed):
+    random = ExtendedGenerator(MT19937(seed))
+    actual = random.random((3, 2), dtype=np.float32)
+    random = ExtendedGenerator(MT19937(seed))
+    other = np.empty_like(actual)
+    other2 = random.random(out=other, dtype=np.float32)
+    assert other2 is other
+    assert_allclose(actual, other)
+
+
 def test_random_long_double_direct(extended_gen):
     state = extended_gen.state
     actual = extended_gen.random(10, dtype=np.longdouble)

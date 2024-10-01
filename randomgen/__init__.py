@@ -76,7 +76,7 @@ __all__ = [
 ]
 
 
-def test(extra_args: str | list[str] | None = None) -> None:
+def test(extra_args: str | list[str] | None = None, exit=True) -> None:
     try:
         import pytest
     except ImportError as err:
@@ -90,4 +90,7 @@ def test(extra_args: str | list[str] | None = None) -> None:
     cmd += [PKG]
     joined = " ".join(cmd)
     print(f"running: pytest {joined}")
-    sys.exit(pytest.main(cmd))
+    result = pytest.main(cmd)
+    if exit:
+        sys.exit(result)
+    return result
