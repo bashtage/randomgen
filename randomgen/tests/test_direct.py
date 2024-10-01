@@ -1956,6 +1956,10 @@ class TestTyche(TestLXM):
         bg1 = self.bit_generator(0, idx=0)
         bg2 = self.bit_generator(0, idx=1)
         assert np.all(bg1.random_raw(10) != bg2.random_raw(10))
+        with pytest.raises(ValueError):
+            self.bit_generator(0, idx=sum(2**i for i in range(43)))
+        with pytest.raises(ValueError):
+            self.bit_generator(0, idx=-73)
 
 
 class TestTycheOpenRand(TestTyche):
@@ -2016,6 +2020,13 @@ class TestPCG64DXSM(Base):
         bg.advance(sum(2**i for i in range(96)))
         state = bg.state["state"]
         assert state["state"] == self.large_advance_final
+
+    def test_numpy_mode_error(self):
+        with pytest.raises(ValueError):
+            with pytest.warns(FutureWarning):
+                self.bit_generator(mode="numpy")
+        with pytest.raises(ValueError):
+            self.bit_generator(numpy_seed=True)
 
 
 class TestPCG64CMDXSM(TestPCG64DXSM):
