@@ -24,6 +24,7 @@ CMD="$CMD pandas"
 CMD="$CMD $EXTRA"
 if [[ ${USE_CONDA} == "true" ]]; then CMD="$CMD numba"; fi;
 if [[ ${USE_SCIPY} == "true" ]]; then CMD="$CMD scipy"; fi;
+if [[ ${USE_NUMBA} == "true" ]]; then CMD="$CMD numba==$NUMBA"; fi;
 echo $CMD
 eval $CMD
 
