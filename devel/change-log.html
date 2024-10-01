@@ -13,7 +13,7 @@
     
     
       
-        <title>Change Log - RandomGen v2.0.2 (+16)</title>
+        <title>Change Log - RandomGen v2.0.2 (+32)</title>
       
     
     
@@ -62,7 +62,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#v2-1-0-unreleased" class="md-skip">
+        <a href="#v2-1-0" class="md-skip">
           Skip to content
         </a>
       
@@ -80,7 +80,7 @@
 
 <header class="md-header" data-md-component="header">
   <nav class="md-header__inner md-grid" aria-label="Header">
-    <a href="index.html" title="RandomGen v2.0.2 (+16)" class="md-header__button md-logo" aria-label="RandomGen v2.0.2 (+16)" data-md-component="logo">
+    <a href="index.html" title="RandomGen v2.0.2 (+32)" class="md-header__button md-logo" aria-label="RandomGen v2.0.2 (+32)" data-md-component="logo">
       <img src="_static/casino.svg" alt="logo">
     </a>
     <label class="md-header__button md-icon" for="__drawer">
@@ -90,7 +90,7 @@
       <div class="md-header__ellipsis">
         <div class="md-header__topic">
           <span class="md-ellipsis">
-            RandomGen v2.0.2 (+16)
+            RandomGen v2.0.2 (+32)
           </span>
         </div>
         <div class="md-header__topic" data-md-component="header-topic">
@@ -177,10 +177,10 @@
 
 <nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
   <label class="md-nav__title" for="__drawer">
-    <a href="index.html" title="RandomGen v2.0.2 (+16)" class="md-nav__button md-logo" aria-label="RandomGen v2.0.2 (+16)" data-md-component="logo">
+    <a href="index.html" title="RandomGen v2.0.2 (+32)" class="md-nav__button md-logo" aria-label="RandomGen v2.0.2 (+32)" data-md-component="logo">
       <img src="_static/casino.svg" alt="logo">
     </a>
-    RandomGen v2.0.2 (+16)
+    RandomGen v2.0.2 (+32)
   </label>
   
     <div class="md-nav__source">
@@ -495,8 +495,8 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#v2-1-0-unreleased" class="md-nav__link">
-    <span title="/change-log.rst#v2-1-0-unreleased (reference label)" class="md-ellipsis">v2.<wbr>1.<wbr>0 <wbr>(Unreleased)</span>
+  <a href="#v2-1-0" class="md-nav__link">
+    <span title="/change-log.rst#v2-1-0 (reference label)" class="md-ellipsis">v2.<wbr>1.<wbr>0</span>
   </a>
   
 </li>
@@ -696,8 +696,8 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#v2-1-0-unreleased" class="md-nav__link">
-    <span title="/change-log.rst#v2-1-0-unreleased (reference label)" class="md-ellipsis">v2.<wbr>1.<wbr>0 <wbr>(Unreleased)</span>
+  <a href="#v2-1-0" class="md-nav__link">
+    <span title="/change-log.rst#v2-1-0 (reference label)" class="md-ellipsis">v2.<wbr>1.<wbr>0</span>
   </a>
   
 </li>
@@ -878,11 +878,19 @@
 
 
 <h1 id="change-log"><span id="id1"></span>Change Log<a class="headerlink" href="#change-log" title="Link to this heading">¶</a></h1>
-<h2 id="v2-1-0-unreleased">v2.1.0 (Unreleased)<a class="headerlink" href="#v2-1-0-unreleased" title="Link to this heading">¶</a></h2>
+<h2 id="v2-1-0">v2.1.0<a class="headerlink" href="#v2-1-0" title="Link to this heading">¶</a></h2>
 <ul class="simple">
 <li><p>Added the <a class="reference internal" href="bit_generators/tyche.html#randomgen.tyche.Tyche" title="randomgen.tyche.Tyche (Python class) — Container for the Tychee pseudo-random number generator."><code class="xref py py-class docutils literal notranslate"><span class="pre">Tyche</span></code></a> PRNG of Neves and Araujo. Supports
 two variants. One is the original implementation in the 2012 paper. The
 second matches the version in <code class="docutils literal notranslate"><span class="pre">OpenRand</span></code>.</p></li>
+<li><p>Added the <a class="reference internal" href="bit_generators/squares.html#randomgen.squares.Squares" title="randomgen.squares.Squares (Python class) — Squares counter-based PRNG"><code class="xref py py-class docutils literal notranslate"><span class="pre">Squares</span></code></a> PRNG of Widynski. Supports
+two variants. The default uses 5 rounds of the middle square algorithm and outputs
+a 64-bit value. If <code class="docutils literal notranslate"><span class="pre">variant=32</span></code>, then 4 rounds are sued but only 32 bits
+returned.</p></li>
+<li><p>Added the helper function <a class="reference internal" href="bit_generators/generated/randomgen.squares.generate_keys.html#randomgen.squares.generate_keys" title="randomgen.squares.generate_keys (Python function) — Pre-generate keys for use with Squares"><code class="xref py py-func docutils literal notranslate"><span class="pre">generate_keys()</span></code></a> for
+<a class="reference internal" href="bit_generators/squares.html#randomgen.squares.Squares" title="randomgen.squares.Squares (Python class) — Squares counter-based PRNG"><code class="xref py py-class docutils literal notranslate"><span class="pre">Squares</span></code></a>. This function can be used to pre-generate
+keys for used with <a class="reference internal" href="bit_generators/squares.html#randomgen.squares.Squares" title="randomgen.squares.Squares (Python class) — Squares counter-based PRNG"><code class="xref py py-class docutils literal notranslate"><span class="pre">Squares</span></code></a>.</p></li>
+<li><p>Additional code clean-up.</p></li>
 </ul>
 <h2 id="v2-0-0">v2.0.0<a class="headerlink" href="#v2-0-0" title="Link to this heading">¶</a></h2>
 <ul class="simple">

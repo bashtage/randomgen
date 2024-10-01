@@ -3,11 +3,19 @@
 Change Log
 ----------
 
-v2.1.0 (Unreleased)
-===================
+v2.1.0
+======
 - Added the :class:`~randomgen.tyche.Tyche` PRNG of Neves and Araujo. Supports
   two variants. One is the original implementation in the 2012 paper. The
   second matches the version in ``OpenRand``.
+- Added the :class:`~randomgen.squares.Squares` PRNG of Widynski. Supports
+  two variants. The default uses 5 rounds of the middle square algorithm and outputs
+  a 64-bit value. If ``variant=32``, then 4 rounds are sued but only 32 bits
+  returned.
+- Added the helper function :func:`~randomgen.squares.generate_keys` for
+  :class:`~randomgen.squares.Squares`. This function can be used to pre-generate
+  keys for used with :class:`~randomgen.squares.Squares`.
+- Additional code clean-up.
 
 v2.0.0
 ======

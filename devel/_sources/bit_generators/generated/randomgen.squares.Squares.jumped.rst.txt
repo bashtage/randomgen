@@ -1,0 +1,6 @@
+﻿randomgen.squares.Squares.jumped
+================================
+
+.. currentmodule:: randomgen.squares
+
+.. automethod:: Squares.jumped

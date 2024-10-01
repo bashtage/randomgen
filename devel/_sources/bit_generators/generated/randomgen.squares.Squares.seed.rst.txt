@@ -1,0 +1,6 @@
+﻿randomgen.squares.Squares.seed
+==============================
+
+.. currentmodule:: randomgen.squares
+
+.. automethod:: Squares.seed

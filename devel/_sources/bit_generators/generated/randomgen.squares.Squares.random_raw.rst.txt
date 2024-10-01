@@ -1,0 +1,6 @@
+﻿randomgen.squares.Squares.random\_raw
+=====================================
+
+.. currentmodule:: randomgen.squares
+
+.. automethod:: Squares.random_raw

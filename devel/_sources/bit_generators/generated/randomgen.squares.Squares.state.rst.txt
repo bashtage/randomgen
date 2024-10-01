@@ -1,0 +1,6 @@
+﻿randomgen.squares.Squares.state
+===============================
+
+.. currentmodule:: randomgen.squares
+
+.. autoattribute:: Squares.state

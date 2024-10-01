@@ -1,0 +1,6 @@
+﻿randomgen.squares.Squares.advance
+=================================
+
+.. currentmodule:: randomgen.squares
+
+.. automethod:: Squares.advance
