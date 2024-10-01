@@ -2021,13 +2021,6 @@ class TestPCG64DXSM(Base):
         state = bg.state["state"]
         assert state["state"] == self.large_advance_final
 
-    def test_numpy_mode_error(self):
-        with pytest.raises(ValueError):
-            with pytest.warns(FutureWarning):
-                self.bit_generator(mode="numpy")
-        with pytest.raises(ValueError):
-            self.bit_generator(numpy_seed=True)
-
 
 class TestPCG64CMDXSM(TestPCG64DXSM):
     @classmethod
@@ -2225,3 +2218,16 @@ class TestRomuTrio(TestLXM):
         cls.invalid_seed_values = [(-2,), ([-2],)]
         cls.invalid_seed_types += [("apple",)]
         cls.seed_sequence_only = True
+
+
+def test_numpy_mode_error_pcg64():
+    with pytest.raises(ValueError):
+        with pytest.warns(FutureWarning):
+            PCG64(variant="dxsm-128", mode="numpy")
+    with pytest.raises(ValueError):
+        PCG64(variant="dxsm-128", numpy_seed=True)
+    with pytest.raises(ValueError):
+        PCG64(0, inc=1, numpy_seed=True)
+    with pytest.raises(ValueError):
+        with pytest.warns(FutureWarning):
+            PCG64(0, inc=1, mode="numpy")
