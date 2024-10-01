@@ -33,6 +33,7 @@ from randomgen import (
     ChaCha,
     Philox,
     Romu,
+    Squares,
     ThreeFry,
     Tyche,
     Xoroshiro128,
@@ -43,6 +44,7 @@ from randomgen import (
 from randomgen._deprecated_value import _DeprecatedValue
 from randomgen.common import interface
 from randomgen.seed_sequence import ISeedSequence
+from randomgen.squares import generate_keys
 
 MISSING_RDRAND = False
 try:
@@ -55,7 +57,7 @@ aes = AESCounter()
 HAS_AESNI = aes.use_aesni
 
 USE_AESNI = [True, False] if HAS_AESNI else [False]
-NO_MODE_SUPPORT = [EFIIX64, LXM, Romu, RDRAND, Tyche]
+NO_MODE_SUPPORT = [EFIIX64, LXM, Romu, RDRAND, Tyche, Squares]
 
 try:
     import cffi  # noqa: F401
@@ -177,6 +179,9 @@ def gauss_from_uint(x, n, bits):
         doubles = uniform_from_uint32(x)
     elif bits == "dsfmt":
         doubles = uniform_from_dsfmt(x)
+    elif bits == "squares32":
+        x = x.view(np.uint32)
+        doubles = uniform_from_uint32(x)
     gauss = []
     loc = 0
     x1 = x2 = 0.0
@@ -648,6 +653,16 @@ class TestJSF64(Base):
             self.bit_generator(seed_size=4)
         with pytest.raises(ValueError, match="seed size must be one"):
             self.bit_generator(seed_size=1.0)
+
+    def test_bad_init(self):
+        with pytest.raises(ValueError):
+            self.bit_generator(size=33)
+        with pytest.raises(ValueError):
+            self.bit_generator(size=0.0 + self.bits)
+        with pytest.raises(ValueError):
+            self.bit_generator(p=-1)
+        with pytest.raises(ValueError):
+            self.bit_generator(p=31.7)
 
 
 class TestJSF32(TestJSF64):
@@ -1941,6 +1956,10 @@ class TestTyche(TestLXM):
         bg1 = self.bit_generator(0, idx=0)
         bg2 = self.bit_generator(0, idx=1)
         assert np.all(bg1.random_raw(10) != bg2.random_raw(10))
+        with pytest.raises(ValueError):
+            self.bit_generator(0, idx=sum(2**i for i in range(43)))
+        with pytest.raises(ValueError):
+            self.bit_generator(0, idx=-73)
 
 
 class TestTycheOpenRand(TestTyche):
@@ -2014,6 +2033,139 @@ class TestPCG64CMDXSM(TestPCG64DXSM):
         cls.large_advance_final = 43406923282132296644520456716700203596
 
 
+class TestSquares(TestPCG64DXSM):
+    @classmethod
+    def setup_class(cls):
+        super().setup_class()
+        cls.bit_generator = Squares
+        cls.data1 = cls._read_csv(join(pwd, "./data/squares-testset-1.csv"))
+        cls.data2 = cls._read_csv(join(pwd, "./data/squares-testset-2.csv"))
+        cls.large_advance_initial = 11400714819323198485
+        cls.large_advance_final = 2177342782468422676
+
+    def setup_bitgenerator(self, seed, counter=None, key=None):
+        return self.bit_generator(*seed, counter=counter, key=key)
+
+    def test_large_advance(self):
+        bg = self.setup_bitgenerator([0], counter=11400714819323198485)
+        state = bg.state["state"]
+        assert state["counter"] == self.large_advance_initial
+        bg.advance(sum(2**i for i in range(63)))
+        state = bg.state["state"]
+        assert state["counter"] == self.large_advance_final
+
+    def test_generate_keys(self):
+        a = generate_keys(0, 1)
+        b = generate_keys(SeedSequence(0), 1)
+        assert_equal(a, b)
+
+    def test_generate_keys_errors(self):
+        with pytest.raises(ValueError):
+            generate_keys(0, -1)
+
+    def test_generate_keys_unique(self):
+        a = generate_keys(0, 100, unique=True)
+        from randomgen.squares import _test_sentinal
+
+        _test_sentinal.set_testing(True)
+        b = generate_keys(0, 100, unique=True)
+        _test_sentinal.set_testing(False)
+        assert np.any(a != b)
+        c = generate_keys(0, 100)
+        assert_equal(a, c)
+
+    def test_generate_keys_quality(self):
+        keys = generate_keys(0, 1000)
+        # First odd
+        assert np.all(keys & np.uint64(0x1))
+        hexes = np.array([[s for s in hex(v)] for v in keys])[:, 2:]
+        for i in range(8):
+            assert np.all(hexes[:, i] != hexes[:, i + 1])
+        for i in range(len(hexes)):
+            assert len(set([str(s) for s in hexes[i, 8:]])) == 8
+
+    def test_sentinal(self):
+        from randomgen.squares import _test_sentinal
+
+        assert not _test_sentinal.get_testing()
+        _test_sentinal.set_testing(True)
+        assert _test_sentinal.get_testing()
+        _test_sentinal.set_testing(False)
+        assert not _test_sentinal.get_testing()
+
+    def test_get_words(self):
+        from randomgen.squares import _get_words
+
+        assert isinstance(_get_words(), np.ndarray)
+        assert_equal(np.arange(16), np.sort(_get_words()))
+
+    def test_errors(self):
+        with pytest.raises(ValueError):
+            self.bit_generator(variant=48)
+        with pytest.raises(ValueError):
+            self.bit_generator(variant="32")
+        with pytest.raises(ValueError):
+            self.bit_generator(counter=-1)
+        with pytest.raises(ValueError):
+            self.bit_generator(key=sum(2**i for i in range(65)))
+        with pytest.raises(ValueError):
+            self.bit_generator(key=sum(2**i for i in range(4, 62)))
+
+    def test_invalid_state(self):
+        bg = self.bit_generator()
+        state = bg.state
+        state["variant"] = 48
+        with pytest.raises(ValueError):
+            bg.state = state
+
+    def test_bad_jump(self):
+        bg = self.bit_generator()
+        with pytest.raises(ValueError):
+            bg.jumped(-1)
+
+
+class TestSquares32(TestSquares):
+    @classmethod
+    def setup_class(cls):
+        super().setup_class()
+        cls.bit_generator = partial(Squares, variant=32)
+        cls.data1 = cls._read_csv(join(pwd, "./data/squares-32-testset-1.csv"))
+        cls.data2 = cls._read_csv(join(pwd, "./data/squares-32-testset-2.csv"))
+
+    def test_uniform_double(self):
+        # Special case since this ia a 32-bit generator that returns 2 32-bit per pass
+        # but uses the better formula discarding the lower bits of both 32 bit
+        # values when generating doubles
+        rs = np.random.Generator(self.setup_bitgenerator(self.data1["seed"]))
+        transformed = self.data1["data"].view(np.uint32)
+        vals = uniform_from_uint(transformed, 32)
+        uniforms = rs.random(len(vals))
+        assert_allclose(uniforms, vals, atol=1e-8)
+        assert_equal(uniforms.dtype, np.float64)
+
+        rs = np.random.Generator(self.setup_bitgenerator(self.data2["seed"]))
+        transformed = self.data2["data"].view(np.uint32)
+        vals = uniform_from_uint(transformed, 32)
+        uniforms = rs.random(len(vals))
+        assert_allclose(uniforms, vals, atol=1e-8)
+        assert_equal(uniforms.dtype, np.float64)
+
+    def test_gauss_inv(self):
+        # Special case since this ia a 32-bit generator that returns 2 32-bit per pass
+        # but uses the better formula discarding the lower bits of both 32 bit
+        # values when generating doubles
+        n = 25
+        rs = np.random.RandomState(self.setup_bitgenerator(self.data1["seed"]))
+        gauss = rs.standard_normal(n)
+        assert_allclose(gauss, gauss_from_uint(self.data1["data"], n, "squares32"))
+
+        rs = np.random.RandomState(self.setup_bitgenerator(self.data2["seed"]))
+        gauss = rs.standard_normal(25)
+        assert_allclose(
+            gauss, gauss_from_uint(self.data2["data"], n, "squares32"), rtol=3e-6
+        )
+
+
 class TestEFIIX64(TestLXM):
     @classmethod
     def setup_class(cls):
@@ -2066,3 +2218,16 @@ class TestRomuTrio(TestLXM):
         cls.invalid_seed_values = [(-2,), ([-2],)]
         cls.invalid_seed_types += [("apple",)]
         cls.seed_sequence_only = True
+
+
+def test_numpy_mode_error_pcg64():
+    with pytest.raises(ValueError):
+        with pytest.warns(FutureWarning):
+            PCG64(variant="dxsm-128", mode="numpy")
+    with pytest.raises(ValueError):
+        PCG64(variant="dxsm-128", numpy_seed=True)
+    with pytest.raises(ValueError):
+        PCG64(0, inc=1, numpy_seed=True)
+    with pytest.raises(ValueError):
+        with pytest.warns(FutureWarning):
+            PCG64(0, inc=1, mode="numpy")

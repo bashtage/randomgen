@@ -21,6 +21,7 @@ from randomgen.romu import Romu
 from randomgen.sfc import SFC64
 from randomgen.sfmt import SFMT
 from randomgen.speck128 import SPECK128
+from randomgen.squares import Squares
 from randomgen.threefry import ThreeFry
 from randomgen.tyche import Tyche
 from randomgen.xoroshiro128 import Xoroshiro128
@@ -31,11 +32,11 @@ from randomgen.xoshiro512 import Xoshiro512
 BitGenerators: dict[str, type[BitGenerator]] = {
     "AESCounter": AESCounter,
     "ChaCha": ChaCha,
-    "LCG128Mix": LCG128Mix,
     "DSFMT": DSFMT,
     "EFIIX64": EFIIX64,
     "HC128": HC128,
     "JSF": JSF,
+    "LCG128Mix": LCG128Mix,
     "LXM": LXM,
     "MT19937": MT19937,
     "MT64": MT64,
@@ -43,17 +44,18 @@ BitGenerators: dict[str, type[BitGenerator]] = {
     "PCG64": PCG64,
     "PCG64DXSM": PCG64DXSM,
     "Philox": Philox,
+    "RDRAND": RDRAND,
     "Romu": Romu,
-    "ThreeFry": ThreeFry,
-    "Xorshift1024": Xorshift1024,
-    "Xoroshiro128": Xoroshiro128,
-    "Xoshiro256": Xoshiro256,
-    "Xoshiro512": Xoshiro512,
-    "SPECK128": SPECK128,
     "SFC64": SFC64,
     "SFMT": SFMT,
-    "RDRAND": RDRAND,
+    "SPECK128": SPECK128,
+    "Squares": Squares,
+    "ThreeFry": ThreeFry,
     "Tyche": Tyche,
+    "Xoroshiro128": Xoroshiro128,
+    "Xorshift1024": Xorshift1024,
+    "Xoshiro256": Xoshiro256,
+    "Xoshiro512": Xoshiro512,
 }
 
 # Assign the fully qualified name for future proofness

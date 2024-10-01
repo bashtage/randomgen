@@ -1,6 +1,5 @@
 # .coveragerc to control coverage.py
 [run]
-source = randomgen
 branch = True
 include = */randomgen/*
 omit =

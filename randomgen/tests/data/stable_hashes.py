@@ -472,6 +472,36 @@ known_hashes = {
         "initial_state_hash": "7e791460df316124a938692059628ea9535a6cf2458356f97b40033c2fc0a814",
         "final_state_hash": "e90d55a406e6f1f564b3e0aff522fee8d7b20dbdffc4e77192d154d0a06de481",
     },
+    ("Squares", "seed"): {
+        "random_values": "257f666a260f087755ec02382fff13f783f415d2aec57750db0ea30e45257f5b",
+        "initial_state_hash": "df0b21306fd5e699cf45100ea248def589cc6b54efce9bd6117bd431511d9381",
+        "final_state_hash": "e548e4397a39a1360677d722e209685361e98758387f31ddaf86e78ccb3715ca",
+    },
+    ("Squares", "key"): {
+        "random_values": "77421fad378ded5182ba2f22c76cfd80ef6d8318ca37f13655e678bec675139c",
+        "initial_state_hash": "9c8ef7151336489d1633bee09dbc95667d86d0188e6feeea739c27883716f6b4",
+        "final_state_hash": "ac94e5cd7cae9c5e7caba1edfa74d9defb6ec38428b51bd54ce4cd5cd4b259e9",
+    },
+    ("Squares", "seed", "variant", 32): {
+        "random_values": "f69a2f3c41ee4795c0980d3107a941202bf58f9a0ac8af24c1ec4190ebee13a0",
+        "initial_state_hash": "da4054b0052c5c0e49750de27ce24d0b824dacc67c3fbce30585c8401d24cf00",
+        "final_state_hash": "9ffcfe41c4a795db39705957d2f2026f38011ac4fdbb9366a23ade6446907a11",
+    },
+    ("Squares", "seed", "variant", 64): {
+        "random_values": "257f666a260f087755ec02382fff13f783f415d2aec57750db0ea30e45257f5b",
+        "initial_state_hash": "df0b21306fd5e699cf45100ea248def589cc6b54efce9bd6117bd431511d9381",
+        "final_state_hash": "e548e4397a39a1360677d722e209685361e98758387f31ddaf86e78ccb3715ca",
+    },
+    ("Squares", "key", "variant", 32): {
+        "random_values": "d34dce8ba61764eb48ad5cc2c6afe89d95d68301191fda10d98b088bd54688ab",
+        "initial_state_hash": "01abd37ff9e6ef902678fabc4e490a6298533ba2bd130e74f05a5892efcb3341",
+        "final_state_hash": "13841ac1c65b009fe05751a8b538d2e06f30d9406abad3538ed6ed4c21240864",
+    },
+    ("Squares", "key", "variant", 64): {
+        "random_values": "77421fad378ded5182ba2f22c76cfd80ef6d8318ca37f13655e678bec675139c",
+        "initial_state_hash": "9c8ef7151336489d1633bee09dbc95667d86d0188e6feeea739c27883716f6b4",
+        "final_state_hash": "ac94e5cd7cae9c5e7caba1edfa74d9defb6ec38428b51bd54ce4cd5cd4b259e9",
+    },
     ("ThreeFry", "seed"): {
         "random_values": "6a0ce1a57c1d7fdc91efcc519176b7f8fb7553d684ff07038a659862fbb877e9",
         "initial_state_hash": "f0f91d48d6dadb538169345970a6f46004ee595c046d49a2db77e58b4316266f",
