@@ -83,6 +83,27 @@ def test_seed_array():
     np.testing.assert_equal(result, expected)
 
 
+def test_seed_array_errors():
+    with pytest.raises(TypeError):
+        seed_by_array(np.array([0.0 + 1j]), 1)
+    with pytest.raises(TypeError):
+        seed_by_array("1", 1)
+    with pytest.raises(ValueError):
+        seed_by_array(-1, 1)
+    with pytest.raises(ValueError):
+        seed_by_array(2**65, 1)
+    with pytest.raises(ValueError):
+        seed_by_array([[1, 2], [3, 4]], 1)
+    with pytest.raises(TypeError):
+        seed_by_array(np.array([1, 2 + 1j]), 1)
+    with pytest.raises(ValueError):
+        seed_by_array([2**65], 1)
+    with pytest.raises(ValueError):
+        seed_by_array([-1], 1)
+    with pytest.raises(TypeError):
+        seed_by_array([1.2], 1)
+
+
 def test_byteswap_little_endian():
     a = np.array([9241421688590303745], dtype=np.uint64)
     result = byteswap_little_endian_shim(a).view(np.uint8)
