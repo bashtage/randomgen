@@ -654,6 +654,16 @@ class TestJSF64(Base):
         with pytest.raises(ValueError, match="seed size must be one"):
             self.bit_generator(seed_size=1.0)
 
+    def test_bad_init(self):
+        with pytest.raises(ValueError):
+            self.bit_generator(size=33)
+        with pytest.raises(ValueError):
+            self.bit_generator(size=0.0 + self.bits)
+        with pytest.raises(ValueError):
+            self.bit_generator(p=-1)
+        with pytest.raises(ValueError):
+            self.bit_generator(p=31.7)
+
 
 class TestJSF32(TestJSF64):
     @classmethod
@@ -2069,6 +2079,45 @@ class TestSquares(TestPCG64DXSM):
             assert np.all(hexes[:, i] != hexes[:, i + 1])
         for i in range(len(hexes)):
             assert len(set([str(s) for s in hexes[i, 8:]])) == 8
+
+    def test_sentinal(self):
+        from randomgen.squares import _test_sentinal
+
+        assert not _test_sentinal.get_testing()
+        _test_sentinal.set_testing(True)
+        assert _test_sentinal.get_testing()
+        _test_sentinal.set_testing(False)
+        assert not _test_sentinal.get_testing()
+
+    def test_get_words(self):
+        from randomgen.squares import _get_words
+
+        assert isinstance(_get_words(), np.ndarray)
+        assert_equal(np.arange(16), np.sort(_get_words()))
+
+    def test_errors(self):
+        with pytest.raises(ValueError):
+            self.bit_generator(variant=48)
+        with pytest.raises(ValueError):
+            self.bit_generator(variant="32")
+        with pytest.raises(ValueError):
+            self.bit_generator(counter=-1)
+        with pytest.raises(ValueError):
+            self.bit_generator(key=sum(2**i for i in range(65)))
+        with pytest.raises(ValueError):
+            self.bit_generator(key=sum(2**i for i in range(4, 62)))
+
+    def test_invalid_state(self):
+        bg = self.bit_generator()
+        state = bg.state
+        state["variant"] = 48
+        with pytest.raises(ValueError):
+            bg.state = state
+
+    def test_bad_jump(self):
+        bg = self.bit_generator()
+        with pytest.raises(ValueError):
+            bg.jumped(-1)
 
 
 class TestSquares32(TestSquares):
