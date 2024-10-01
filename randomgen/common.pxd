@@ -91,8 +91,6 @@ ctypedef uint32_t (*random_uint_1_i_32)(bitgen_t *state, uint32_t a) noexcept no
 ctypedef int32_t (*random_int_2_i_32)(bitgen_t *state, int32_t a, int32_t b) noexcept nogil
 ctypedef int64_t (*random_int_2_i)(bitgen_t *state, int64_t a, int64_t b) noexcept nogil
 
-cdef double kahan_sum(double *darr, np.npy_intp n)
-
 cdef inline double uint64_to_double(uint64_t rnd) noexcept nogil:
     return (rnd >> 11) * (1.0 / 9007199254740992.0)
 

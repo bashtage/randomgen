@@ -1,6 +1,7 @@
 import numpy as np
 import pytest
 
+from randomgen.aes import AESCounter
 from randomgen.common import BitGenerator, interface
 from randomgen.entropy import seed_by_array
 from randomgen.romu import Romu
@@ -142,3 +143,9 @@ def test_object_to_int():
         allowed_sizes=(32, 64),
     )
     assert isinstance(res, int)
+
+
+def test_uncupported_mode():
+    with pytest.raises(ValueError, match="mode must be"):
+        with pytest.warns(FutureWarning):
+            AESCounter(mode="unsupported")
