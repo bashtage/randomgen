@@ -27,9 +27,13 @@ jobs:
           NUMPY: 1.26.4
         python310_latest:
           python.version: '3.10'
-        python311_latest_numpy_2:
-          python.version: '3.11'
-          NUMPY: 2.0.0
+          NUMPY: 2.0.2
+        python311_numpy_numba:
+          python.version: '3.12'
+          NUMPY: 2.0.2
+          NUMBA: 0.60.0
+          USE_NUMBA: true
+          USE_SCIPY: true
         python311_latest:
           python.version: '3.11'
         python312_latest:
