@@ -27,12 +27,11 @@ cdef Py_ssize_t compute_numel(size):
     return n
 
 cdef class TestSentinel(object):
-    cdef bint _testing_auto, _testing_system, _testing_fallback
-    def __init__(self, object auto=False, system=False, fallback=False):
-        self._testing_auto = auto
-        self._testing_system = system
-        self._testing_fallback = fallback
+    cdef bint _testing_auto, _testing_fallback
 
+    def __init__(self, object auto=False, fallback=False):
+        self._testing_auto = auto
+        self._testing_fallback = fallback
 
     @property
     def testing_auto(self):
@@ -41,14 +40,6 @@ cdef class TestSentinel(object):
     @testing_auto.setter
     def testing_auto(self, object value):
         self._testing_auto = value
-
-    @property
-    def testing_system(self):
-        return self._testing_system
-
-    @testing_system.setter
-    def testing_system(self, object value):
-        self._testing_system = value
 
     @property
     def testing_fallback(self):
