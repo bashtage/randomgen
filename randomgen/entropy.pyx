@@ -191,8 +191,6 @@ def random_entropy(size=None, source="system"):
             success = entropy_fallback_getbytes(<void *>(&randoms[0]), 4 * n)
     if _test_sentinel.testing_auto and source == "auto":
         success = False
-    if _test_sentinel.testing_system and source in ("auto", "system"):
-        success = False
     if _test_sentinel.testing_fallback and source == "fallback":
         success = False
     if not success:
