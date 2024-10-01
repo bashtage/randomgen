@@ -44,6 +44,7 @@ from randomgen import (
 from randomgen._deprecated_value import _DeprecatedValue
 from randomgen.common import interface
 from randomgen.seed_sequence import ISeedSequence
+from randomgen.squares import generate_keys
 
 MISSING_RDRAND = False
 try:
@@ -2038,6 +2039,36 @@ class TestSquares(TestPCG64DXSM):
         bg.advance(sum(2**i for i in range(63)))
         state = bg.state["state"]
         assert state["counter"] == self.large_advance_final
+
+    def test_generate_keys(self):
+        a = generate_keys(0, 1)
+        b = generate_keys(SeedSequence(0), 1)
+        assert_equal(a, b)
+
+    def test_generate_keys_errors(self):
+        with pytest.raises(ValueError):
+            generate_keys(0, -1)
+
+    def test_generate_keys_unique(self):
+        a = generate_keys(0, 100, unique=True)
+        from randomgen.squares import _test_sentinal
+
+        _test_sentinal.set_testing(True)
+        b = generate_keys(0, 100, unique=True)
+        _test_sentinal.set_testing(False)
+        assert np.any(a != b)
+        c = generate_keys(0, 100)
+        assert_equal(a, c)
+
+    def test_generate_keys_quality(self):
+        keys = generate_keys(0, 1000)
+        # First odd
+        assert np.all(keys & np.uint64(0x1))
+        hexes = np.array([[s for s in hex(v)] for v in keys])[:, 2:]
+        for i in range(8):
+            assert np.all(hexes[:, i] != hexes[:, i + 1])
+        for i in range(len(hexes)):
+            assert len(set([str(s) for s in hexes[i, 8:]])) == 8
 
 
 class TestSquares32(TestSquares):
