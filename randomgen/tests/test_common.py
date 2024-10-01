@@ -1,12 +1,21 @@
 import numpy as np
 import pytest
 
+from randomgen.common import BitGenerator, interface
 from randomgen.entropy import seed_by_array
+from randomgen.romu import Romu
 from randomgen.tests._shims import (
     byteswap_little_endian_shim,
     int_to_array_shim,
+    object_to_int_shim,
     view_little_endian_shim,
 )
+
+MISSING_CFFI = False
+try:
+    import cffi  # noqa: F401
+except ImportError:
+    MISSING_CFFI = True
 
 
 def test_view_little_endian():
@@ -79,3 +88,36 @@ def test_byteswap_little_endian():
     result = byteswap_little_endian_shim(a).view(np.uint8)
     expected = np.array([1, 2, 4, 8, 16, 32, 64, 128], dtype=np.uint8)
     np.testing.assert_equal(result, expected)
+
+
+def test_bitgenerator_error():
+    with pytest.raises(NotImplementedError, match="BitGenerator is a base class"):
+        BitGenerator(1)
+
+
+@pytest.mark.skipif(MISSING_CFFI, reason="Requires CFFI")
+def test_cffi():
+
+    tpl = Romu().cffi
+    assert isinstance(tpl, interface)
+    assert hasattr(tpl, "state_address")
+    assert hasattr(tpl, "state")
+    assert hasattr(tpl, "next_uint64")
+    assert hasattr(tpl, "next_uint32")
+    assert hasattr(tpl, "next_double")
+    assert hasattr(tpl, "bit_generator")
+
+
+def test_object_to_int():
+    res = object_to_int_shim(1, 32, "test", allowed_sizes=(32, 64))
+    assert isinstance(res, int)
+    res = object_to_int_shim(1, 32, "test", default_bits=32, allowed_sizes=(32, 64))
+    assert isinstance(res, int)
+    res = object_to_int_shim(
+        np.array(1, dtype=np.uint64),
+        32,
+        "test",
+        default_bits=32,
+        allowed_sizes=(32, 64),
+    )
+    assert isinstance(res, int)
