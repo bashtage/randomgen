@@ -26,6 +26,32 @@ cdef Py_ssize_t compute_numel(size):
         n = size
     return n
 
+cdef class TestSentinel(object):
+    cdef bint _testing_auto, _testing_fallback
+
+    def __init__(self, object auto=False, fallback=False):
+        self._testing_auto = auto
+        self._testing_fallback = fallback
+
+    @property
+    def testing_auto(self):
+        return self._testing_auto
+
+    @testing_auto.setter
+    def testing_auto(self, object value):
+        self._testing_auto = value
+
+    @property
+    def testing_fallback(self):
+        return self._testing_fallback
+
+    @testing_fallback.setter
+    def testing_fallback(self, object value):
+        self._testing_fallback = value
+
+
+_test_sentinel = TestSentinel()
+
 
 def seed_by_array(object seed, Py_ssize_t n):
     """
@@ -150,10 +176,14 @@ def random_entropy(size=None, source="system"):
     else:
         n = compute_numel(size)
         randoms = np.zeros(n, dtype=np.uint32)
-        if source == "system":
+        if source in ("system", "auto"):
             success = entropy_getbytes(<void *>(&randoms[0]), 4 * n)
         else:
             success = entropy_fallback_getbytes(<void *>(&randoms[0]), 4 * n)
+    if _test_sentinel.testing_auto and source == "auto":
+        success = False
+    if _test_sentinel.testing_fallback and source == "fallback":
+        success = False
     if not success:
         if source == "auto":
             import warnings
@@ -162,7 +192,7 @@ def random_entropy(size=None, source="system"):
             return random_entropy(size=size, source="fallback")
         else:
             raise RuntimeError("Unable to read from system cryptographic "
-                               "provider")
+                               "provider or use fallback")
 
     if n == 0:
         return random

@@ -1238,6 +1238,26 @@ class TestEntropy:
         e2 = entropy.random_entropy(source="fallback")
         assert_(e1 != e2)
 
+    def test_not_success(self):
+        from randomgen.entropy import _test_sentinel
+
+        _test_sentinel.testing_auto = True
+        with pytest.warns(RuntimeWarning):
+            e1 = entropy.random_entropy(source="auto")
+            assert isinstance(e1, int)
+        _test_sentinel.testing_auto = False
+        _test_sentinel.testing_fallback = True
+        time.sleep(0.1)
+        with pytest.raises(RuntimeError, match="Unable"):
+            entropy.random_entropy(1, source="fallback")
+        _test_sentinel.testing_fallback = False
+        e3 = entropy.random_entropy((2, 2), source="auto")
+        assert isinstance(e3, np.ndarray)
+
+    def test_invalid_source(self):
+        with pytest.raises(ValueError):
+            entropy.random_entropy(source="invalid")
+
 
 class TestPCG32(TestPCG64):
     @classmethod

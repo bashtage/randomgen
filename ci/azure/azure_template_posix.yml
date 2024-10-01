@@ -37,7 +37,7 @@ jobs:
         python312_prerelease:
           python.version: '3.12'
           pip.pre: true
-        python_312_coverage:
+        python_312_no_coverage:
           python.version: '3.12'
           PYPI: true
           coverage: false

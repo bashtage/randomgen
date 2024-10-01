@@ -9,7 +9,7 @@ if [[ ${USE_CONDA} == "true" ]]; then
   which python
   CMD="conda install numpy"
 else
-  CMD="python -m pip install numpy"
+  CMD="python -m pip install cffi numpy"
 fi
 
 # Not all available in conda
