@@ -18,16 +18,20 @@ exclude_lines =
     raise NotImplementedError
     except NotImplementedError
     except RuntimeError
+    raise NotImplemented\(\"subclasses must implement\"\)
     # Ignore pass
     pass
     # Ignore failure messages
     pytest.xfail
     # Ignore ImportError protection
     except ImportError
+    raise ImportError
     # Cython function declarations
     cdef
     cdef inline
     ctypedef
+    # Ignore dummy thread
+    from dummy_threading import Lock
 
 include = */randomgen/*
 omit =

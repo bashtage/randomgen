@@ -4,6 +4,7 @@ import pytest
 from randomgen.aes import AESCounter
 from randomgen.common import BitGenerator, interface
 from randomgen.entropy import seed_by_array
+from randomgen.lxm import LXM
 from randomgen.romu import Romu
 from randomgen.tests._shims import (
     byteswap_little_endian_shim,
@@ -60,6 +61,23 @@ def test_int_to_array():
         [3, 2147483650, 536870914, 0, 2, 0, 0, 2147483648], dtype=np.uint32
     )
     np.testing.assert_equal(result, expected)
+
+
+def test_int_to_array_errors():
+    with pytest.raises(ValueError):
+        int_to_array_shim(1, "a", 64, 31)
+    with pytest.raises(TypeError):
+        int_to_array_shim("1", "a", 64, 64)
+    with pytest.raises(ValueError):
+        int_to_array_shim(-1, "a", 64, 64)
+    with pytest.raises(ValueError):
+        int_to_array_shim(2**96, "a", 64, 64)
+    with pytest.raises(ValueError):
+        int_to_array_shim([-1], "a", 64, 64)
+    with pytest.raises(ValueError):
+        int_to_array_shim([1, 2**96], "a", 64, 32)
+    with pytest.raises(ValueError):
+        int_to_array_shim(np.array([1], dtype=np.uint32), "a", 64, 32)
 
 
 def test_seed_array():
@@ -143,9 +161,43 @@ def test_object_to_int():
         allowed_sizes=(32, 64),
     )
     assert isinstance(res, int)
+    res = object_to_int_shim([1], 32, "test", allowed_sizes=(32, 64))
+    assert isinstance(res, int)
+    res = object_to_int_shim(
+        np.array(1, dtype=np.uint32), 32, "test", allowed_sizes=(32, 64)
+    )
+    assert isinstance(res, int)
+
+
+def test_object_to_int_errors():
+    with pytest.raises(TypeError):
+        object_to_int_shim(np.array([1.2]), 32, "test", allowed_sizes=(32, 64))
+    with pytest.raises(ValueError):
+        object_to_int_shim(["a"], 32, "test", allowed_sizes=(32, 64))
+    with pytest.raises(TypeError):
+        object_to_int_shim([1.2], 32, "test", allowed_sizes=(32, 64))
+    with pytest.raises(ValueError):
+        object_to_int_shim(
+            np.array([[1, 2], [3, 4]], dtype=np.uint32),
+            32,
+            "test",
+            allowed_sizes=(32, 64),
+        )
+
+    # res = object_to_int_shim(1, 32, "test", allowed_sizes=(32, 64))
 
 
 def test_uncupported_mode():
     with pytest.raises(ValueError, match="mode must be"):
         with pytest.warns(FutureWarning):
             AESCounter(mode="unsupported")
+
+
+def test_check_state_array_no_array():
+    bg = LXM()
+    state = bg.state
+    state["state"]["x"] = state["state"]["x"].tolist()
+    bg.state = state
+    with pytest.raises(ValueError):
+        state["state"]["x"] = state["state"]["x"][:2]
+        bg.state = state
