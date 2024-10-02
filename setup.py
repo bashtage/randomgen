@@ -149,6 +149,7 @@ for name in (
     "entropy",
     "generator",
     "_seed_sequence",
+    "broadcasting",
 ):
     extra_source = []
     extra_macros = []
