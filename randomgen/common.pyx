@@ -460,7 +460,7 @@ cdef np.ndarray int_to_array(object value, object name, object bits, object uint
                 np.all(value <= np.iinfo(dtype).max)):
             raise ValueError("value is out of range for dtype "
                              "{0}".format(str(dtype)))
-        out = value.astype(dtype, casting="safe")
+        out = value.astype(dtype, casting="unsafe")
         if req_len is not None and out.shape != (req_len,):
             raise ValueError("{name} must have {len} elements when using array"
                              " form".format(name=name, len=len))
