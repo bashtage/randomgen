@@ -131,3 +131,20 @@ def test_cont_3_alt_cons(config):
         assert_allclose(res, 3.5 * np.ones_like(res))
     else:
         assert_allclose(res, 3.5)
+
+
+@pytest.mark.parametrize("config", CONFIGS[1])
+def test_cont_1(config):
+    if isinstance(config.a, np.ndarray):
+        a = config.a.astype(np.float32)
+    else:
+        a = config.a
+    out = None
+    if config.out is not None:
+        out = np.empty(config.out.shape, dtype=np.float32)
+
+    res = generator.cont_1_float(a, size=config.size, out=out)
+    if isinstance(res, np.ndarray):
+        assert_allclose(res, 0.5 * np.ones_like(res))
+    else:
+        assert_allclose(res, 0.5)

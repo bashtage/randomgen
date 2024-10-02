@@ -1,17 +1,4 @@
-from numpy.random cimport bitgen_t
-
-from randomgen.common cimport (
-    byteswap_little_endian,
-    int_to_array,
-    object_to_int,
-    view_little_endian,
-)
-
 import numpy as np
-
-from cpython.pycapsule cimport PyCapsule_GetPointer, PyCapsule_IsValid
-
-from randomgen.broadcasting cimport constraint_type, cont
 
 
 def view_little_endian_shim(arr, dtype):
@@ -79,3 +66,7 @@ cdef class ShimGenerator:
                     b, "b", constraint_type.CONS_POISSON,
                     c, "c", constraint_type.LEGACY_CONS_POISSON,
                     out)
+
+    def cont_1_float(self, a, size=None, out=None):
+        return cont_f(&float_1, &self._bitgen, size, self.lock,
+                      a, "a", constraint_type.CONS_NONE, out)
