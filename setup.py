@@ -296,7 +296,7 @@ extensions.append(
 extensions.append(
     Extension(
         "randomgen.tests._shims",
-        ["randomgen/tests/_shims.pyx"],
+        ["randomgen/tests/_shims.pyx", "randomgen/tests/_shim_dist.c"],
         include_dirs=EXTRA_INCLUDE_DIRS,
         libraries=EXTRA_LIBRARIES,
         extra_compile_args=EXTRA_COMPILE_ARGS,

@@ -346,7 +346,7 @@ cdef class ExtendedGenerator:
                [-2.99091858, -0.79479508],
                [-1.23204345, -1.75224494]])
         """
-        cdef np.ndarray out_arr
+        cdef np.ndarray out_array
         cdef long double *out_data
         cdef np.npy_intp out_size
 
@@ -613,14 +613,20 @@ cdef class ExtendedGenerator:
         """
         cdef np.ndarray ogamma, orelation, oloc, randoms, v_real, v_imag, rho
         cdef double *randoms_data
-        cdef double fgamma_r, fgamma_i, frelation_r, frelation_i, frho, \
-            fvar_r, fvar_i, floc_r, floc_i, f_real, f_imag, f_rho
+        cdef double fgamma_r, fgamma_i, frelation_r, frelation_i
+        cdef double fvar_r, fvar_i, floc_r, floc_i, f_real, f_imag, f_rho
         cdef np.npy_intp i, j, n, n2
         cdef np.broadcast it
 
-        oloc = <np.ndarray>np.PyArray_FROM_OTF(loc, np.NPY_COMPLEX128, api.NPY_ARRAY_ALIGNED)
-        ogamma = <np.ndarray>np.PyArray_FROM_OTF(gamma, np.NPY_COMPLEX128, api.NPY_ARRAY_ALIGNED)
-        orelation = <np.ndarray>np.PyArray_FROM_OTF(relation, np.NPY_COMPLEX128, api.NPY_ARRAY_ALIGNED)
+        oloc = <np.ndarray>np.PyArray_FROM_OTF(
+            loc, np.NPY_COMPLEX128, api.NPY_ARRAY_ALIGNED
+        )
+        ogamma = <np.ndarray>np.PyArray_FROM_OTF(
+            gamma, np.NPY_COMPLEX128, api.NPY_ARRAY_ALIGNED
+        )
+        orelation = <np.ndarray>np.PyArray_FROM_OTF(
+            relation, np.NPY_COMPLEX128, api.NPY_ARRAY_ALIGNED
+        )
 
         if np.PyArray_NDIM(ogamma) == np.PyArray_NDIM(orelation) == np.PyArray_NDIM(oloc) == 0:
             floc_r = PyComplex_RealAsDouble(loc)
@@ -717,9 +723,11 @@ cdef class ExtendedGenerator:
 
         return randoms
 
-    cdef object random_wishart_small_df(self, int64_t df, np.npy_intp dim, np.npy_intp num, object n):
+    cdef object random_wishart_small_df(
+            self, int64_t df, np.npy_intp dim, np.npy_intp num, object n
+    ):
         double_fill(&random_standard_normal_fill, &self._bitgen, None, self.lock, n)
-        return np.matmul(np.transpose(n,(0, 2, 1)),n)
+        return np.matmul(np.transpose(n,(0, 2, 1)), n)
 
     def standard_wishart(self, int64_t df, np.npy_intp dim, size=None, rescale=True):
         """
@@ -774,7 +782,7 @@ cdef class ExtendedGenerator:
            Journal of Multivariate Analysis, 63(1), 73-87.
         """
         cdef np.npy_intp num
-        cdef np.ndarray n, w
+        cdef np.ndarray n
         cdef double *n_data
         cdef double *out_data
 
@@ -917,7 +925,9 @@ cdef class ExtendedGenerator:
         if not shape_size:
             shape_dummy = np.zeros(1, dtype=np.int64)
         else:
-            shape_dummy = np.arange(np.prod(shape_size), dtype=np.int64).reshape(shape_size)
+            shape_dummy = np.arange(
+                np.prod(shape_size), dtype=np.int64
+            ).reshape(shape_size)
         if not df_size:
             df_dummy = np.zeros(1, dtype=np.int64)
         else:
@@ -951,7 +961,7 @@ and the trailing dimensions must match exactly so that
         _factors = np.empty_like(scale)
         for loc in np.ndindex(*scale.shape[:len(scale.shape) - 2]):
             _factors[loc] = _factorize(scale[loc], method, check_valid, tol, rank_val)
-        _factors = _factors.reshape((-1,dim,dim))
+        _factors = _factors.reshape((-1, dim, dim))
 
         large_values = np.empty((block_size, dim, dim), dtype=np.float64)
         large_value_data = <double *>np.PyArray_DATA(large_values)
@@ -978,11 +988,10 @@ and the trailing dimensions must match exactly so that
             factor = _factors[shape_loc]
             np.matmul(factor, temp, out=temp)
             np.matmul(temp, factor.T, out=temp)
-            out[...,i,:,:] = temp.reshape(temp_shape)
+            out[..., i, :, :] = temp.reshape(temp_shape)
 
             np.PyArray_MultiIter_NEXT(it)
         return out.reshape(out_shape)
-
 
     def multivariate_complex_normal(self, loc, gamma=None, relation=None, size=None, *,
                                     check_valid="warn", tol=1e-8, method="svd"):
@@ -1153,7 +1162,7 @@ and the trailing dimensions must match exactly so that
                 f" {dim}."
             )
         if relation is None:
-            rarr = <np.ndarray>np.zeros((dim,dim), dtype=complex)
+            rarr = <np.ndarray>np.zeros((dim, dim), dtype=complex)
         else:
             rarr = <np.ndarray>np.PyArray_FROM_OTF(relation,
                                                    np.NPY_CDOUBLE,

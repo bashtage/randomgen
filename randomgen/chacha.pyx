@@ -59,7 +59,7 @@ cdef class ChaCha(BitGenerator):
         lock.
     seed_seq : {None, SeedSequence}
         The SeedSequence instance used to initialize the generator if mode is
-        "sequence" or is seed is a SeedSequence. 
+        "sequence" or is seed is a SeedSequence.
 
     Notes
     -----
@@ -133,7 +133,9 @@ cdef class ChaCha(BitGenerator):
     .. [1] Bernstein, D. J.. ChaCha, a variant of Salsa20.
          http://cr.yp.to/papers.html#chacha. 2008.01.28.
     """
-    def __init__(self, seed=None, *, counter=None, key=None, rounds=20, mode=_DeprecatedValue):
+    def __init__(
+            self, seed=None, *, counter=None, key=None, rounds=20, mode=_DeprecatedValue
+    ):
         BitGenerator.__init__(self, seed, mode=mode)
         self.rng_state = <chacha_state_t *>PyArray_malloc_aligned(
             sizeof(chacha_state_t)

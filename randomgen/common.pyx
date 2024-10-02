@@ -3,21 +3,11 @@ from collections import namedtuple
 import sys
 import warnings
 
+import numpy as np
 from numpy.random import SeedSequence
 
-try:
-    from threading import Lock
-except ImportError:
-    from dummy_threading import Lock
-
-import numpy as np
-
 cimport numpy as np
-from cpython cimport PyFloat_AsDouble
 from numpy.random.bit_generator cimport BitGenerator as _BitGenerator
-
-from randomgen cimport api
-
 
 from randomgen._deprecated_value import _DeprecatedValue
 from randomgen.seed_sequence import ISeedSequence
@@ -52,13 +42,18 @@ cdef class BitGenerator(_BitGenerator):
             if len(self._supported_modes()) == 1:
                 msg = f"mode must be {self._supported_modes()[0]}"
             else:
-                msg = ("mode must be one of: " + ", ".join(f"\"{mode}\"" for mode in self._supported_modes()))
+                msg = (
+                        "mode must be one of: " +
+                        ", ".join(f"\"{mode}\"" for mode in self._supported_modes())
+                )
             raise ValueError(msg)
         mode = mode.lower() if isinstance(mode, str) else mode
         self.mode = "numpy" if (numpy_seed or mode == "numpy") else "sequence"
         super().__init__(seed)
         if type(self) is BitGenerator:
-            raise NotImplementedError('BitGenerator is a base class and cannot be instantized')
+            raise NotImplementedError(
+                'BitGenerator is a base class and cannot be instantized'
+            )
 
     def _supported_modes(self):
         return ("sequence",)

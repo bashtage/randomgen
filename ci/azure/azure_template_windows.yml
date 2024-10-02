@@ -48,7 +48,7 @@ jobs:
     displayName: 'Build Cython Extensions'
 
   - script: |
-      pytest randomgen --junitxml=junit/test-results.xml --durations=25
+      pytest randomgen --junitxml=junit/test-results.xml --durations=25 -v
     displayName: 'pytest'
 
   - task: PublishTestResults@2

@@ -39,11 +39,11 @@ struct TYCHE_STATE_T {
 
 typedef struct TYCHE_STATE_T tyche_state_t;
 
-inline uint32_t rotl(uint32_t value, unsigned int x) {
+static inline uint32_t rotl(uint32_t value, unsigned int x) {
   return (value << x) | (value >> (32 - x));
 }
 
-inline void mix(tyche_state_t *state) {
+static inline void mix(tyche_state_t *state) {
   state->a += state->b;
   state->d = rotl(state->d ^ state->a, 16);
   state->c += state->d;
@@ -73,7 +73,7 @@ static inline double tyche_next_double(tyche_state_t *state) {
 }
 
 
-inline void mix_openrand(tyche_state_t *state) {
+static inline void mix_openrand(tyche_state_t *state) {
   state->b = rotl(state->b, 7) ^ state->c;
   state->c -= state->d;
   state->d = rotl(state->d, 8) ^ state->a;
