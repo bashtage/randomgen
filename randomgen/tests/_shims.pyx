@@ -30,22 +30,6 @@ def object_to_int_shim(val, bits, name, default_bits=64, allowed_sizes=(64,)):
     return object_to_int(val, bits, name, default_bits, allowed_sizes)
 
 
-cdef double double0_func(void *state):
-    return 3.141592
-
-
-cdef double double1_func(void *state, double a):
-    return a
-
-
-cdef double double2_func(void *state, double a, double b):
-    return a+b
-
-
-cdef double double3_func(void *state, double a, double b, double c):
-    return a+b+c
-
-
 cdef class ShimGenerator:
     cdef bitgen_t _bitgen
     cdef object _bit_generator
