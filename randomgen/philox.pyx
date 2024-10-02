@@ -101,7 +101,7 @@ cdef class Philox(BitGenerator):
         lock.
     seed_seq : {None, SeedSequence}
         The SeedSequence instance used to initialize the generator if mode is
-        "sequence" or is seed is a SeedSequence. 
+        "sequence" or is seed is a SeedSequence.
 
     Notes
     -----

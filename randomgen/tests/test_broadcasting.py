@@ -5,7 +5,8 @@ import numpy as np
 from numpy.testing import assert_allclose
 import pytest
 
-from randomgen.tests._shims import cont_0, cont_1, cont_2, cont_3, cont_3_alt_cons
+from randomgen.pcg64 import PCG64
+from randomgen.tests._shims import ShimGenerator
 
 
 class Config(NamedTuple):
@@ -14,6 +15,7 @@ class Config(NamedTuple):
     c: float | np.ndarray | None
     size: tuple[int, ...] | None
     out: np.ndarray | None
+    generator: ShimGenerator
 
 
 CONFIGS = defaultdict(list)
@@ -74,12 +76,13 @@ for a in (None, 0.5, 0.5 * np.ones((1, 2)), 0.5 * np.ones((3, 2))):
                     else:
                         _out = None
                     print(_size, _out.shape if isinstance(_out, np.ndarray) else _out)
-                    CONFIGS[count_params(a, b, c)].append(Config(a, b, c, _size, _out))
+                    generator = ShimGenerator(PCG64())
+                    CONFIGS[count_params(a, b, c)].append(Config(a, b, c, _size, _out, generator))
 
 
 @pytest.mark.parametrize("config", CONFIGS[0])
 def test_cont_0(config):
-    res = cont_0(size=config.size, out=config.out)
+    res = generator.cont_0(size=config.size, out=config.out)
     if isinstance(res, np.ndarray):
         assert_allclose(res, 3.141592 * np.ones_like(res))
     else:
@@ -88,7 +91,7 @@ def test_cont_0(config):
 
 @pytest.mark.parametrize("config", CONFIGS[1])
 def test_cont_1(config):
-    res = cont_1(config.a, size=config.size, out=config.out)
+    res = generator.cont_1(config.a, size=config.size, out=config.out)
     if isinstance(res, np.ndarray):
         assert_allclose(res, 0.5 * np.ones_like(res))
     else:
@@ -97,7 +100,7 @@ def test_cont_1(config):
 
 @pytest.mark.parametrize("config", CONFIGS[2])
 def test_cont_2(config):
-    res = cont_2(config.a, config.b, size=config.size, out=config.out)
+    res = generator.cont_2(config.a, config.b, size=config.size, out=config.out)
     if isinstance(res, np.ndarray):
         assert_allclose(res, np.ones_like(res))
     else:
@@ -106,7 +109,7 @@ def test_cont_2(config):
 
 @pytest.mark.parametrize("config", CONFIGS[3])
 def test_cont_3(config):
-    res = cont_3(config.a, config.b, config.c, size=config.size, out=config.out)
+    res = generator.cont_3(config.a, config.b, config.c, size=config.size, out=config.out)
     if isinstance(res, np.ndarray):
         assert_allclose(res, 2.5 * np.ones_like(res))
     else:
@@ -115,7 +118,7 @@ def test_cont_3(config):
 
 @pytest.mark.parametrize("config", CONFIGS[3])
 def test_cont_3_alt_cons(config):
-    res = cont_3_alt_cons(
+    res = generator.cont_3_alt_cons(
         1.0 + config.a, config.b, config.c, size=config.size, out=config.out
     )
     if isinstance(res, np.ndarray):
