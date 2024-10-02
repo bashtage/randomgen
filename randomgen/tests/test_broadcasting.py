@@ -77,7 +77,9 @@ for a in (None, 0.5, 0.5 * np.ones((1, 2)), 0.5 * np.ones((3, 2))):
                         _out = None
                     print(_size, _out.shape if isinstance(_out, np.ndarray) else _out)
                     generator = ShimGenerator(PCG64())
-                    CONFIGS[count_params(a, b, c)].append(Config(a, b, c, _size, _out, generator))
+                    CONFIGS[count_params(a, b, c)].append(
+                        Config(a, b, c, _size, _out, generator)
+                    )
 
 
 @pytest.mark.parametrize("config", CONFIGS[0])
@@ -109,7 +111,9 @@ def test_cont_2(config):
 
 @pytest.mark.parametrize("config", CONFIGS[3])
 def test_cont_3(config):
-    res = generator.cont_3(config.a, config.b, config.c, size=config.size, out=config.out)
+    res = generator.cont_3(
+        config.a, config.b, config.c, size=config.size, out=config.out
+    )
     if isinstance(res, np.ndarray):
         assert_allclose(res, 2.5 * np.ones_like(res))
     else:
