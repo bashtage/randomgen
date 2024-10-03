@@ -1,5 +1,4 @@
 #!python
-#cython: binding=True
 
 import warnings
 
@@ -129,7 +128,6 @@ cdef class SFC64(BitGenerator):
         self.k = k
         self.seed(seed)
 
-
         self._bitgen.state = <void *>&self.rng_state
         self._bitgen.next_uint64 = &sfc_uint64
         self._bitgen.next_uint32 = &sfc_uint32
@@ -144,15 +142,12 @@ cdef class SFC64(BitGenerator):
         return "sequence", "numpy"
 
     def _seed_from_seq(self):
-        cdef int i, loc, cnt
+        cdef int  loc, cnt
         cdef uint64_t *state_arr
         cdef uint64_t k, w
         cnt = 3 + (self.k is None) + (self.w is None)
 
-        try:
-            state = self.seed_seq.generate_state(cnt, np.uint64)
-        except:
-            state = self._seed_seq.generate_state(cnt, np.uint64)
+        state = self._get_seed_seq().generate_state(cnt, np.uint64)
         state_arr = <np.uint64_t *>np.PyArray_DATA(state)
         w = self.w if self.w is not None else state[3]
         loc = 3 if self.w is not None else 4
@@ -253,7 +248,6 @@ cdef class SFC64(BitGenerator):
         cdef int8_t *bits_arr
         cdef int8_t nonzero_bits
         cdef int _min_bits
-        cdef bint inverse
         cdef set values = set()
 
         min_bits = min_bits if min_bits is not None else max_bits
@@ -281,7 +275,6 @@ cdef class SFC64(BitGenerator):
             )
         _min_bits = min_bits
         nbits = max_bits - _min_bits + 1
-        table = np.zeros((nbits, 2), dtype=np.uint64)
         bits = np.arange(_min_bits, max_bits+1, dtype=np.int8)
         bits_arr = <int8_t *>np.PyArray_DATA(bits)
         cum_count = np.zeros(nbits, dtype=np.uint64)
@@ -350,10 +343,10 @@ cdef class SFC64(BitGenerator):
         """
         return {"bit_generator": fully_qualified_name(self),
                 "state": {"a": self.rng_state.a,
-                          "b":self.rng_state.b,
-                          "c":self.rng_state.c,
-                          "w":self.rng_state.w,
-                          "k":self.rng_state.k
+                          "b": self.rng_state.b,
+                          "c": self.rng_state.c,
+                          "w": self.rng_state.w,
+                          "k": self.rng_state.k
                           },
                 "has_uint32": self.rng_state.has_uint32,
                 "uinteger": self.rng_state.uinteger}

@@ -1,4 +1,4 @@
-#cython: language_level=3
+# cython: language_level=3
 from cpython.pycapsule cimport PyCapsule_GetPointer, PyCapsule_IsValid
 from libc.stdint cimport uint32_t
 

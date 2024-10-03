@@ -1,5 +1,4 @@
 #!python
-#cython: binding=True
 
 import numpy as np
 
@@ -139,10 +138,20 @@ cdef class SPECK128(BitGenerator):
        National Security Agency. January 15, 2019. from
        https://nsacyber.github.io/simon-speck/implementations/ImplementationGuide1.1.pdf
     """
-    def __init__(self, seed=None, *, counter=None, key=None, rounds=SPECK_MAX_ROUNDS, mode=_DeprecatedValue):
+    def __init__(
+            self,
+            seed=None,
+            *,
+            counter=None,
+            key=None,
+            rounds=SPECK_MAX_ROUNDS,
+            mode=_DeprecatedValue
+    ):
         BitGenerator.__init__(self, seed, mode=mode)
         # Calloc since ctr needs to be 0
-        self.rng_state = <speck_state_t *>PyArray_calloc_aligned(sizeof(speck_state_t), 1)
+        self.rng_state = <speck_state_t *>PyArray_calloc_aligned(
+            sizeof(speck_state_t), 1
+        )
         if (rounds <= 0) or rounds > SPECK_MAX_ROUNDS or int(rounds) != rounds:
             raise ValueError("rounds must be an integer in [1, 34]")
         self.rng_state.rounds = int(rounds)
@@ -163,10 +172,7 @@ cdef class SPECK128(BitGenerator):
         self.rng_state.uinteger = 0
 
     def _seed_from_seq(self, counter=None):
-        try:
-            state = self.seed_seq.generate_state(4, np.uint64)
-        except AttributeError:
-            state = self._seed_seq.generate_state(4, np.uint64)
+        state = self._get_seed_seq().generate_state(4, np.uint64)
         self.seed(key=state, counter=counter)
         self._reset_state_variables()
 
@@ -263,7 +269,7 @@ cdef class SPECK128(BitGenerator):
             Dictionary containing the information required to describe the
             state of the PRNG
         """
-        cdef int i, j
+        cdef int i
         cdef uint8_t *arr8
         cdef uint64_t *arr
 

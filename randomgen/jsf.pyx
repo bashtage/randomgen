@@ -231,10 +231,7 @@ cdef class JSF(BitGenerator):
 
     def _seed_from_seq(self):
         dtype = np.uint64 if self.size == 64 else np.uint32
-        try:
-            state = self.seed_seq.generate_state(self.seed_size, dtype)
-        except AttributeError:
-            state = self._seed_seq.generate_state(self.seed_size, dtype)
+        state = self._get_seed_seq().generate_state(self.seed_size, dtype)
         if self.size == 64:
             jsf64_seed(&self.rng_state,
                        <uint64_t*>np.PyArray_DATA(state),

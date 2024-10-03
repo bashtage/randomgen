@@ -27,7 +27,7 @@ int main() {
   clock_t t1, t2;
   uint64_t store[N];
   uint64_t seedval = 15793235383387715774ULL;
-  uint32_t idx = 2968811710UL;
+  uint32_t idx = 745650761UL;
   auto tyche = openrand::Tyche(seedval, idx);
   std::ofstream ofile;
   ofile.open (OUTPUT_FILE "-testset-1.csv");
@@ -40,7 +40,7 @@ int main() {
   cout << std::endl;
 
   seedval = 5778446405158232650ULL;
-  idx =  3575046730UL;
+  idx =  3393510519UL;
   tyche = openrand::Tyche(seedval, idx);
   ofile.open (OUTPUT_FILE "-testset-2.csv");
   ofile << "seed, " << 0xDEADBEAF <<endl;

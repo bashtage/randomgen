@@ -1,5 +1,5 @@
 #!python
-#cython: wraparound=False, nonecheck=False, boundscheck=False, cdivision=True, language_level=3
+# cython: wraparound=False, nonecheck=False, boundscheck=False, cdivision=True
 
 from typing import Any, Callable
 
@@ -22,7 +22,7 @@ cdef class RandomState:
     """
 
 
-def _removed(name: str) -> Callable[[Any,...],None]:
+def _removed(name: str) -> Callable[[Any, ...], None]:
     def f(*args, **kwargs):
         raise NotImplementedError(
             f"{name} has been removed. Use NumPy's Generator"
@@ -79,7 +79,7 @@ wald = _removed("wald")
 weibull = _removed("weibull")
 zipf = _removed("zipf")
 sample = _removed("sample")
-ranf  = _removed("ranf")
+ranf = _removed("ranf")
 
 
 __all__ = [

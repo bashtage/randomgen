@@ -4,7 +4,7 @@ from collections import defaultdict
 from typing import NamedTuple
 
 import numpy as np
-from numpy.testing import assert_allclose
+from numpy.testing import assert_allclose, assert_array_equal
 import pytest
 
 from randomgen.pcg64 import PCG64
@@ -86,7 +86,7 @@ for a in (None, 0.5, 0.5 * np.ones((1, 2)), 0.5 * np.ones((3, 2))):
 
 @pytest.mark.parametrize("config", CONFIGS[0])
 def test_cont_0(config):
-    res = generator.cont_0(size=config.size, out=config.out)
+    res = config.generator.cont_0(size=config.size, out=config.out)
     if isinstance(res, np.ndarray):
         assert_allclose(res, 3.141592 * np.ones_like(res))
     else:
@@ -95,7 +95,7 @@ def test_cont_0(config):
 
 @pytest.mark.parametrize("config", CONFIGS[1])
 def test_cont_1(config):
-    res = generator.cont_1(config.a, size=config.size, out=config.out)
+    res = config.generator.cont_1(config.a, size=config.size, out=config.out)
     if isinstance(res, np.ndarray):
         assert_allclose(res, 0.5 * np.ones_like(res))
     else:
@@ -104,7 +104,7 @@ def test_cont_1(config):
 
 @pytest.mark.parametrize("config", CONFIGS[2])
 def test_cont_2(config):
-    res = generator.cont_2(config.a, config.b, size=config.size, out=config.out)
+    res = config.generator.cont_2(config.a, config.b, size=config.size, out=config.out)
     if isinstance(res, np.ndarray):
         assert_allclose(res, np.ones_like(res))
     else:
@@ -113,7 +113,7 @@ def test_cont_2(config):
 
 @pytest.mark.parametrize("config", CONFIGS[3])
 def test_cont_3(config):
-    res = generator.cont_3(
+    res = config.generator.cont_3(
         config.a, config.b, config.c, size=config.size, out=config.out
     )
     if isinstance(res, np.ndarray):
@@ -124,7 +124,7 @@ def test_cont_3(config):
 
 @pytest.mark.parametrize("config", CONFIGS[3])
 def test_cont_3_alt_cons(config):
-    res = generator.cont_3_alt_cons(
+    res = config.generator.cont_3_alt_cons(
         1.0 + config.a, config.b, config.c, size=config.size, out=config.out
     )
     if isinstance(res, np.ndarray):
@@ -134,7 +134,7 @@ def test_cont_3_alt_cons(config):
 
 
 @pytest.mark.parametrize("config", CONFIGS[1])
-def test_cont_1(config):
+def test_cont_1_float(config):
     if isinstance(config.a, np.ndarray):
         a = config.a.astype(np.float32)
     else:
@@ -143,8 +143,72 @@ def test_cont_1(config):
     if config.out is not None:
         out = np.empty(config.out.shape, dtype=np.float32)
 
-    res = generator.cont_1_float(a, size=config.size, out=out)
+    res = config.generator.cont_1_float(a, size=config.size, out=out)
     if isinstance(res, np.ndarray):
         assert_allclose(res, 0.5 * np.ones_like(res))
     else:
         assert_allclose(res, 0.5)
+
+
+@pytest.mark.parametrize("config", CONFIGS[1])
+def test_disc_0(config):
+    res = config.generator.disc_0(size=config.size)
+    if isinstance(res, int):
+        assert res == 3
+    else:
+        assert_array_equal(res, np.full_like(res, 3))
+
+
+@pytest.mark.parametrize("config", CONFIGS[1])
+def test_disc_d(config):
+    res = config.generator.disc_d(config.a, size=config.size)
+    if isinstance(res, int):
+        assert res == 5
+    else:
+        assert_array_equal(res, np.full_like(res, 5))
+
+
+@pytest.mark.parametrize("config", CONFIGS[2])
+def test_disc_dd(config):
+    res = config.generator.disc_dd(config.a, config.b, size=config.size)
+    if isinstance(res, int):
+        assert res == 2
+    else:
+        assert_array_equal(res, np.full_like(res, 2))
+
+
+@pytest.mark.parametrize("config", CONFIGS[2])
+def test_disc_di(config):
+    b = 10 * config.b
+    b = int(b) if isinstance(b, float) else b.astype(np.int64)
+    res = config.generator.disc_di(config.a, b, size=config.size)
+    if isinstance(res, int):
+        assert res == 5
+    else:
+        assert_array_equal(res, np.full_like(res, 5))
+
+
+@pytest.mark.parametrize("config", CONFIGS[1])
+def test_disc_i(config):
+    a = 10 * config.a
+    a = int(a) if isinstance(a, float) else a.astype(np.int64)
+    res = config.generator.disc_i(a, size=config.size)
+    if isinstance(res, int):
+        assert res == 5
+    else:
+        assert_array_equal(res, np.full_like(res, 5))
+
+
+@pytest.mark.parametrize("config", CONFIGS[3])
+def test_disc_iii(config):
+    a = 10 * config.a
+    a = int(a) if isinstance(a, float) else a.astype(np.int64)
+    b = 10 * config.b
+    b = int(b) if isinstance(b, float) else b.astype(np.int64)
+    c = 10 * config.c
+    c = int(c) if isinstance(c, float) else c.astype(np.int64)
+    res = config.generator.disc_iii(a, b, c, size=config.size)
+    if isinstance(res, int):
+        assert res == 25
+    else:
+        assert_array_equal(res, np.full_like(res, 25))

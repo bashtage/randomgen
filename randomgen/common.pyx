@@ -58,6 +58,13 @@ cdef class BitGenerator(_BitGenerator):
     def _supported_modes(self):
         return ("sequence",)
 
+    def _get_seed_seq(self):
+        try:
+            return self.seed_seq
+        except AttributeError:
+            # Older versions of numpy have _seed_seq
+            return self._seed_seq
+
     def _seed_from_seq(self):
         raise NotImplementedError("Subclass must override")
 

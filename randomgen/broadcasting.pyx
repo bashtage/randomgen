@@ -44,7 +44,6 @@ cdef int check_array_constraint(np.ndarray val, object name, constraint_type con
 
 
 cdef int check_constraint(double val, object name, constraint_type cons) except -1:
-    cdef bint is_nan
     if cons == CONS_NON_NEGATIVE:
         if not np.isnan(val) and np.signbit(val):
             raise ValueError(name + " < 0")
@@ -81,7 +80,6 @@ cdef int check_constraint(double val, object name, constraint_type cons) except 
 cdef validate_output_shape(iter_shape, np.ndarray output):
     cdef np.npy_intp *dims
     cdef np.npy_intp ndim, i
-    cdef bint error
     dims = np.PyArray_DIMS(output)
     ndim = np.PyArray_NDIM(output)
     output_shape = tuple((dims[i] for i in range(ndim)))
@@ -135,7 +133,7 @@ cdef object double_fill(void *func, bitgen_t *state, object size, object lock, o
     cdef double out_val
     cdef double *out_array_data
     cdef np.ndarray out_array
-    cdef np.npy_intp i, n
+    cdef np.npy_intp n
 
     if size is None and out is None:
         with lock:
@@ -515,7 +513,7 @@ cdef object discrete_broadcast_di(void *func, void *state, object size, object l
         for i in range(n):
             a_val = (<double*>np.PyArray_MultiIter_DATA(it, 1))[0]
             b_val = (<int64_t*>np.PyArray_MultiIter_DATA(it, 2))[0]
-            (<int64_t*>np.PyArray_MultiIter_DATA(it, 0))[0] = f(state, a_val, b_val)
+            randoms_data[i] = f(state, a_val, b_val)
 
             np.PyArray_MultiIter_NEXT(it)
 
@@ -641,6 +639,11 @@ cdef object disc(void *func, void *state, object size, object lock,
                 return discrete_broadcast_di(func, state, size, lock,
                                              a_arr, a_name, a_constraint,
                                              b_arr, b_name, b_constraint)
+        elif narg_int64 == 3:
+            return discrete_broadcast_iii(func, state, size, lock,
+                                          a_arr, a_name, a_constraint,
+                                          b_arr, b_name, b_constraint,
+                                          c_arr, c_name, c_constraint)
         else:
             raise NotImplementedError("No vector path available")
 
@@ -773,7 +776,7 @@ cdef object cont_f(void *func, bitgen_t *state, object size, object lock,
                    object a, object a_name, constraint_type a_constraint,
                    object out):
 
-    cdef np.ndarray a_arr, b_arr, c_arr
+    cdef np.ndarray a_arr
     cdef float _a
     cdef bint is_scalar = True
     cdef int requirements = api.NPY_ARRAY_ALIGNED | api.NPY_ARRAY_FORCECAST

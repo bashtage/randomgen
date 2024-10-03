@@ -1,5 +1,5 @@
 #!python
-#cython: wraparound=False, nonecheck=False, boundscheck=False, cdivision=True
+# cython: wraparound=False, nonecheck=False, boundscheck=False, cdivision=True
 
 import numpy as np
 
@@ -44,7 +44,7 @@ cdef object _rand_{{nptype}}_broadcast(np.ndarray low, np.ndarray high, object s
     this type for checking and the recast to {{nptype}} when producing the
     random integers.
     """
-    cdef {{utype}}_t rng, last_rng, off, val, mask, out_val, is_open
+    cdef {{utype}}_t rng, last_rng, off, mask, is_open
     cdef uint32_t buf
     cdef {{utype}}_t *out_data
     cdef {{nptype_up}}_t low_v, high_v
@@ -131,7 +131,7 @@ cdef object _rand_{{nptype}}_broadcast(object low, object high, object size,
     cdef uint64_t *out_data
     cdef {{nptype}}_t *highm1_data
     cdef {{nptype}}_t low_v, high_v
-    cdef uint64_t rng, last_rng, val, mask, off, out_val
+    cdef uint64_t rng, last_rng, mask, off
 
     low_arr = <np.ndarray>low
     high_arr = <np.ndarray>high
@@ -264,7 +264,7 @@ cdef object _rand_{{nptype}}(object low, object high, object size,
     cdef np.ndarray out_arr, low_arr, high_arr
     cdef {{utype}}_t rng, off, out_val
     cdef {{utype}}_t *out_data
-    cdef np.npy_intp i, n, cnt
+    cdef np.npy_intp cnt
 
     if size is not None:
         if (np.prod(size) == 0):

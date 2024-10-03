@@ -1,7 +1,7 @@
 from cpython.pycapsule cimport PyCapsule_GetPointer, PyCapsule_IsValid
 from numpy.random cimport bitgen_t
 
-from randomgen.broadcasting cimport constraint_type, cont, cont_f
+from randomgen.broadcasting cimport constraint_type, cont, cont_f, disc
 from randomgen.common cimport (
     byteswap_little_endian,
     int_to_array,

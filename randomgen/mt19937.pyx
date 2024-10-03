@@ -1,8 +1,5 @@
 #!python
-#cython: binding=True
 # coding=utf-8
-
-import operator
 
 import numpy as np
 
@@ -133,20 +130,14 @@ cdef class MT19937(BitGenerator):
         return "sequence", "numpy"
 
     def _seed_from_seq(self):
-        try:
-            state = self.seed_seq.generate_state(RK_STATE_LEN, np.uint32)
-        except AttributeError:
-            state = self._seed_seq.generate_state(RK_STATE_LEN, np.uint32)
+        state = self._get_seed_seq().generate_state(RK_STATE_LEN, np.uint32)
         mt19937_init_by_array(&self.rng_state,
                               <uint32_t*>np.PyArray_DATA(state),
                               RK_STATE_LEN)
 
     def _seed_from_seq_numpy_compat(self, inc=None):
         # MSB is 1; assuring non-zero initial array
-        try:
-            val = self.seed_seq.generate_state(RK_STATE_LEN, np.uint32)
-        except AttributeError:
-            val = self._seed_seq.generate_state(RK_STATE_LEN, np.uint32)
+        val = self._get_seed_seq().generate_state(RK_STATE_LEN, np.uint32)
         # MSB is 1; assuring non-zero initial array
         self.rng_state.key[0] = 0x80000000UL
         for i in range(1, RK_STATE_LEN):

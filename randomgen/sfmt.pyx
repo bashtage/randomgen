@@ -1,5 +1,4 @@
 #!python
-#cython: binding=True
 
 import numpy as np
 
@@ -117,7 +116,9 @@ cdef class SFMT(BitGenerator):
     def __init__(self, seed=None, *, mode=_DeprecatedValue):
         BitGenerator.__init__(self, seed, mode=mode)
         self.rng_state.state = <sfmt_t *>PyArray_malloc_aligned(sizeof(sfmt_t))
-        self.rng_state.buffered_uint64 = <uint64_t *>PyArray_calloc_aligned(SFMT_N64, sizeof(uint64_t))
+        self.rng_state.buffered_uint64 = <uint64_t *>PyArray_calloc_aligned(
+            SFMT_N64, sizeof(uint64_t)
+        )
         self.rng_state.buffer_loc = SFMT_N64
         self.seed(seed)
 
@@ -139,10 +140,7 @@ cdef class SFMT(BitGenerator):
         self.rng_state.uinteger = 0
 
     def _seed_from_seq(self):
-        try:
-            state = self.seed_seq.generate_state(2 * SFMT_N64, np.uint32)
-        except AttributeError:
-            state = self._seed_seq.generate_state(2 * SFMT_N64, np.uint32)
+        state = self._get_seed_seq().generate_state(2 * SFMT_N64, np.uint32)
         sfmt_init_by_array(self.rng_state.state,
                            <uint32_t *>np.PyArray_DATA(state),
                            2 * SFMT_N64)

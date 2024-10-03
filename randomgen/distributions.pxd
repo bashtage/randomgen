@@ -1,4 +1,4 @@
-#cython: language_level=3
+# cython: language_level=3
 
 from libc.stdint cimport (
     int8_t,

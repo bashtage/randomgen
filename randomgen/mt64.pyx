@@ -1,8 +1,6 @@
 #!python
 
 # coding=utf-8
-import operator
-
 import numpy as np
 
 from randomgen._deprecated_value import _DeprecatedValue
@@ -108,10 +106,7 @@ cdef class MT64(BitGenerator):
         self.rng_state.uinteger = 0
 
     def _seed_from_seq(self):
-        try:
-            state = self.seed_seq.generate_state(312, np.uint64)
-        except AttributeError:
-            state = self._seed_seq.generate_state(312, np.uint64)
+        state = self._get_seed_seq().generate_state(312, np.uint64)
         mt64_init_by_array(&self.rng_state,
                            <uint64_t*>np.PyArray_DATA(state),
                            312)

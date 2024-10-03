@@ -1,5 +1,4 @@
 #!python
-#cython: binding=True
 
 import numpy as np
 
@@ -113,18 +112,8 @@ cdef class PCG32(BitGenerator):
 
     def _seed_from_seq(self, inc=None):
         cdef uint64_t _inc
-        if inc is None:
-            try:
-                state = self.seed_seq.generate_state(2, np.uint64)
-            except AttributeError:
-                state = self._seed_seq.generate_state(2, np.uint64)
-            _inc = state[1]
-        else:
-            try:
-                state = self.seed_seq.generate_state(1, np.uint64)
-            except AttributeError:
-                state = self._seed_seq.generate_state(1, np.uint64)
-            _inc = <uint64_t>inc
+        state = self._get_seed_seq().generate_state(2, np.uint64)
+        _inc = state[1] if inc is None else <uint64_t>inc
         pcg32_set_seed(&self.rng_state, <uint64_t>state[0], _inc)
 
     def seed(self, seed=None, inc=None):

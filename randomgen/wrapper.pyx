@@ -1,7 +1,6 @@
 #!python
-#cython: binding=True
 
-from libc.stdint cimport uint32_t, uint64_t
+from libc.stdint cimport uint32_t
 
 from randomgen.common cimport BitGenerator
 from randomgen.distributions cimport next_double_t, next_uint32_t, next_uint64_t
@@ -118,7 +117,7 @@ cdef class UserBitGenerator(BitGenerator):
         self.state_setter = state_setter
 
         self.next_64_ptr = self.next_32_ptr = 0
-        self.next_raw_ptr = self.next_double_ptr =  0
+        self.next_raw_ptr = self.next_double_ptr = 0
         self.state_ptr = 0
         self.input_type = "Python"
 
@@ -172,7 +171,8 @@ cdef class UserBitGenerator(BitGenerator):
             return self.next_raw
         if self.funcs["next_64"] is None:
             self.funcs["next_64"] = raw_32_to_64(self.funcs["next_raw"])
-        return ctypes.CFUNCTYPE(ctypes.c_uint64, ctypes.c_void_p)(self.funcs["next_64"])
+        c_func_type = ctypes.CFUNCTYPE(ctypes.c_uint64, ctypes.c_void_p)
+        return c_func_type(self.funcs["next_64"])
 
     cdef _setup_32(self):
         if self.bits == 32 and self.funcs["next_32"] is None:
@@ -180,7 +180,8 @@ cdef class UserBitGenerator(BitGenerator):
             return self.next_raw
         if self.funcs["next_32"] is None:
             self.funcs["next_32"] = raw_64_to_32(self.funcs["next_raw"])
-        return ctypes.CFUNCTYPE(ctypes.c_uint32, ctypes.c_void_p)(self.funcs["next_32"])
+        c_func_type = ctypes.CFUNCTYPE(ctypes.c_uint32, ctypes.c_void_p)
+        return c_func_type(self.funcs["next_32"])
 
     cdef _setup_double(self):
         if self.funcs["next_double"] is None:
@@ -188,7 +189,8 @@ cdef class UserBitGenerator(BitGenerator):
                 self.funcs["next_double"] = raw_64_to_double(self.funcs["next_raw"])
             else:
                 self.funcs["next_double"] = raw_32_to_double(self.funcs["next_raw"])
-        return ctypes.CFUNCTYPE(ctypes.c_double, ctypes.c_void_p)(self.funcs["next_double"])
+        c_func_type = ctypes.CFUNCTYPE(ctypes.c_double, ctypes.c_void_p)
+        return c_func_type(self.funcs["next_double"])
 
     @classmethod
     def from_cfunc(cls, next_raw, next_64, next_32, next_double, state,
@@ -298,7 +300,7 @@ cdef class UserBitGenerator(BitGenerator):
         """
         input_names = ("next_raw", "next_64", "next_32", "next_double")
         inputs = (next_raw, next_64, next_32, next_double)
-        restypes = (ctypes.c_uint64,ctypes.c_uint64,ctypes.c_uint32,ctypes.c_double)
+        restypes = (ctypes.c_uint64, ctypes.c_uint64, ctypes.c_uint32, ctypes.c_double)
         for i_n, inp, r in zip(input_names, inputs, restypes):
             valid = hasattr(inp, "argtypes")
             valid = valid and hasattr(inp, "restype")

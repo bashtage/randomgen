@@ -1,5 +1,4 @@
 #!python
-#cython: binding=True
 
 import numpy as np
 
@@ -128,10 +127,7 @@ cdef class Romu(BitGenerator):
 
         self._setup_bitgen()
 
-        try:
-            state = self.seed_seq.generate_state(4, np.uint64)
-        except:
-            state = self._seed_seq.generate_state(4, np.uint64)
+        state = self._get_seed_seq().generate_state(4, np.uint64)
         if (state == 0).all():
             # Ensure at least one non-zero, exceedingly unlikely
             state[3] |= np.uint64(0x1)
@@ -174,9 +170,9 @@ cdef class Romu(BitGenerator):
         """
         return {"bit_generator": fully_qualified_name(self),
                 "state": {"w": self.rng_state.w,
-                          "x":self.rng_state.x,
-                          "y":self.rng_state.y,
-                          "z":self.rng_state.z,
+                          "x": self.rng_state.x,
+                          "y": self.rng_state.y,
+                          "z": self.rng_state.z,
                           "variant": self.variant
                           },
                 "has_uint32": self.rng_state.has_uint32,

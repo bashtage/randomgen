@@ -126,18 +126,14 @@ cdef class Tyche(BitGenerator):
             self._bitgen.next_double = &tyche_openrand_double
             self._bitgen.next_raw = &tyche_openrand_uint64
 
-
     def _seed_from_seq(self, idx=None):
         cdef uint64_t state
         cdef uint32_t _idx
 
-        try:
-            seed_seq = self.seed_seq
-        except AttributeError:
-            seed_seq = self._seed_seq
-        state = seed_seq.generate_state(1, np.uint64)[0]
+        full_state = self._get_seed_seq().generate_state(3, np.uint32)
+        state = full_state[:2].view(np.uint64)[0]
         if idx is None:
-            _idx = seed_seq.generate_state(1, np.uint32)[0]
+            _idx = <uint32_t>full_state[2]
         else:
             if not 0 <= idx <= np.iinfo(np.uint32).max:
                 raise ValueError("idx must be in the interval [0, 2**32).")
@@ -204,4 +200,3 @@ cdef class Tyche(BitGenerator):
         self.rng_state.c = state["c"]
         self.rng_state.d = state["d"]
         self._setup_bitgen()
-
