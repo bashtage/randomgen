@@ -1,5 +1,4 @@
 #!python
-#cython: binding=True
 
 import numpy as np
 
@@ -27,7 +26,7 @@ increase the number of retries to slow down the generation on contested CPUs.
 cdef uint64_t rdrand_uint64(void* st) noexcept nogil:
     cdef PyObject *err
     cdef rdrand_state *state
-    cdef int status, prev_status
+    cdef int status
     cdef uint64_t val
     state = <rdrand_state*>st
     status = 1
@@ -83,10 +82,6 @@ cdef class RaisingLock:
         return self.lock.acquire(blocking, timeout)
 
     def release(self):
-        cdef PyObject *typ
-        cdef PyObject *val
-        cdef PyObject *tb
-
         self.err = PyErr_Occurred()
         if self.err != NULL:
             try:
@@ -241,8 +236,8 @@ cdef class RDRAND(BitGenerator):
        Available at:
        <https://software.intel.com/sites/landingpage/IntrinsicsGuide/#text=_mm_pause&expand=4141>
        [Accessed 10 July 2020].
-    .. [2] Intel. 2020. Intel® Digital Random Number Generator (DRNG) Software Implementation.
-       (online) Available at:
+    .. [2] Intel. 2020. Intel® Digital Random Number Generator (DRNG)
+       Software Implementation. (online) Available at:
        <https://software.intel.com/content/www/us/en/develop/articles/intel-digital-random-number-generator-drng-software-implementation-guide.html>
        [Accessed 10 July 2020].
     """
@@ -255,7 +250,9 @@ cdef class RDRAND(BitGenerator):
         BitGenerator.__init__(self, seed)
         self.lock = RaisingLock()
         if not rdrand_capable():
-            raise RuntimeError("The RDRAND instruction is not available")   # pragma: no cover
+            raise RuntimeError(  # pragma: no cover
+                "The RDRAND instruction is not available"  # pragma: no cover
+            )   # pragma: no cover
         self.rng_state.status = 1
         if retries < 0:
             raise ValueError("retries must be a non-negative integer.")
@@ -275,25 +272,25 @@ cdef class RDRAND(BitGenerator):
 
     def _seed_from_seq(self):
         pass
-    
+
     @property
     def success(self):
         """
         Gets the flag indicating that all calls to RDRAND succeeded
-        
+
         Returns
         -------
         bool
             True indicates success, false indicates failure
-        
+
         Notes
         -----
         Once status is set to 0, it remains 0 unless manually reset.
         This happens to ensure that it is possible to manually verify
-        the status flag.  
+        the status flag.
         """
         return bool(self.rng_state.status)
-    
+
     def _reset(self):
         """
         Not part of the public API
@@ -314,7 +311,6 @@ cdef class RDRAND(BitGenerator):
         Allows a seed sequence to be set even though it is ignored
         """
         self._seed_seq = seed_seq
-
 
     def seed(self, seed=None):
         """

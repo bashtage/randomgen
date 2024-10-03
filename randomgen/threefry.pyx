@@ -1,5 +1,4 @@
 #!python
-#cython: binding=True
 
 import numpy as np
 
@@ -166,7 +165,16 @@ cdef class ThreeFry(BitGenerator):
     cdef int n
     cdef int w
 
-    def __init__(self, seed=None, *, counter=None, key=None, number=4, width=64, mode=_DeprecatedValue):
+    def __init__(
+            self,
+            seed=None,
+            *,
+            counter=None,
+            key=None,
+            number=4,
+            width=64,
+            mode=_DeprecatedValue
+    ):
         BitGenerator.__init__(self, seed, mode=mode)
         if number not in (2, 4):
             raise ValueError("number must be either 2 or 4")
@@ -277,7 +285,6 @@ cdef class ThreeFry(BitGenerator):
         counter = object_to_int(counter, nxw, "counter")
 
         # Number of uint32 values in the seed
-        cdef int u32_size = nxw // 32
         _seed = int_to_array(key, "key", nxw, self.w)
         dtype = np.uint64 if self.w==64 else np.uint32
         _seed = view_little_endian(_seed, dtype)
@@ -517,16 +524,23 @@ cdef class ThreeFry(BitGenerator):
 
         cdef np.ndarray delta_a
         delta_a = int_to_array(delta, "step", (self.n + 1) * self.w, self.w)
-        orig_buffer_pos = self.rng_state.buffer_pos
 
         if self.n == 2 and self.w == 32:
-            threefry2x32_advance(&self.rng_state, <uint32_t *>np.PyArray_DATA(delta_a), not counter)
+            threefry2x32_advance(
+                &self.rng_state, <uint32_t *>np.PyArray_DATA(delta_a), not counter
+            )
         elif self.n == 4 and self.w == 32:
-            threefry4x32_advance(&self.rng_state, <uint32_t *>np.PyArray_DATA(delta_a), not counter)
+            threefry4x32_advance(
+                &self.rng_state, <uint32_t *>np.PyArray_DATA(delta_a), not counter
+            )
         elif self.n == 2 and self.w == 64:
-            threefry2x64_advance(&self.rng_state, <uint64_t *>np.PyArray_DATA(delta_a), not counter)
+            threefry2x64_advance(
+                &self.rng_state, <uint64_t *>np.PyArray_DATA(delta_a), not counter
+            )
         else:  # self.n == 4 and self.w == 64:
-            threefry4x64_advance(&self.rng_state, <uint64_t *>np.PyArray_DATA(delta_a), not counter)
+            threefry4x64_advance(
+                &self.rng_state, <uint64_t *>np.PyArray_DATA(delta_a), not counter
+            )
         # Reset uint32 so if needed is drawn from the advanced state
         self.rng_state.uinteger = 0
         self.rng_state.has_uint32 = 0

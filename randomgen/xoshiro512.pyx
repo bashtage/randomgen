@@ -1,5 +1,4 @@
 #!python
-#cython: binding=True
 
 import numpy as np
 
@@ -129,13 +128,11 @@ cdef class Xoshiro512(BitGenerator):
 
     def _seed_from_seq(self):
         cdef int i
-        cdef uint64_t *state_arr
 
         try:
             state = self.seed_seq.generate_state(8, np.uint64)
         except AttributeError:
             state = self._seed_seq.generate_state(8, np.uint64)
-        state_arr = <np.uint64_t *>np.PyArray_DATA(state)
         for i in range(8):
             self.rng_state.s[i] = state[i]
         self._reset_state_variables()
@@ -229,7 +226,6 @@ cdef class Xoshiro512(BitGenerator):
         bit_generator : Xoshiro512
             New instance of generator jumped iter times
         """
-        import copy
         cdef Xoshiro512 bit_generator
 
         bit_generator = self.__class__(seed=self._copy_seed())

@@ -1,5 +1,4 @@
 #!python
-#cython: binding=True
 
 import numpy as np
 

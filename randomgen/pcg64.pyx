@@ -1,5 +1,4 @@
 #!python
-#cython: binding=True
 
 import numpy as np
 
@@ -40,7 +39,7 @@ cdef double lcg128mix_double(void* st) noexcept nogil:
 
 
 cdef class PCG64(BitGenerator):
-    """
+    r"""
     PCG64(seed=None, inc=0, *, variant="xsl-rr", numpy_seed=False, mode="sequence")
 
     Container for the PCG-64 pseudo-random number generator.
@@ -155,26 +154,41 @@ cdef class PCG64(BitGenerator):
     .. [2] O'Neill, Melissa E. "PCG: A Family of Simple Fast Space-Efficient
            Statistically Good Algorithms for Random Number Generation"
     """
-    def __init__(self, seed=None, inc=None, *, variant="xsl-rr", numpy_seed=False, mode=_DeprecatedValue):
+    def __init__(
+            self,
+            seed=None,
+            inc=None,
+            *,
+            variant="xsl-rr",
+            numpy_seed=False,
+            mode=_DeprecatedValue
+    ):
         BitGenerator.__init__(self, seed, mode=mode, numpy_seed=numpy_seed)
 
-        self.rng_state.pcg_state = <pcg64_random_t *>PyArray_malloc_aligned(sizeof(pcg64_random_t))
+        self.rng_state.pcg_state = <pcg64_random_t *>PyArray_malloc_aligned(
+            sizeof(pcg64_random_t)
+        )
         inc = None if seed is None else inc
 
         variant = "dxsm" if variant is None else variant
-        if not (isinstance(variant, (str,int, np.integer))):
+        if not (isinstance(variant, (str, int, np.integer))):
             raise TypeError("variant must be a string")
         orig_variant = variant = str(variant)
         variant = variant.lower().replace("-", "")
-        if variant not in ("xslrr", "1.0", "1", "cmdxsm", "dxsm", "dxsm128", "2.0", "2"):
+        if variant not in (
+                "xslrr", "1.0", "1", "cmdxsm", "dxsm", "dxsm128", "2.0", "2"
+        ):
             raise ValueError(f"variant {orig_variant} is not known.")
         if self.mode == "numpy":
             if orig_variant != "xsl-rr":
                 raise ValueError(
-                    f"variant must be 'xsl-rr' when using numpy-matching seeding. Got '{orig_variant}'"
+                    "variant must be 'xsl-rr' when using numpy-matching seeding. "
+                    f"Got '{orig_variant}'."
                 )
             if inc is not None:
-                raise ValueError("inc much be none when using numpy-matching seeding.")
+                raise ValueError(
+                    "inc much be none when using numpy-matching seeding."
+                )
 
         self.variant = variant
         self._setup_rng_state()
@@ -317,7 +331,7 @@ cdef class PCG64(BitGenerator):
     @state.setter
     def state(self, value):
         cdef np.ndarray state_vec
-        cdef int has_uint32, use_dxsm
+        cdef int has_uint32
         cdef uint32_t uinteger
         if not isinstance(value, dict):
             raise TypeError("state must be a dict")
@@ -383,7 +397,9 @@ cdef class PCG64(BitGenerator):
         cdef np.ndarray d = np.empty(2, dtype=np.uint64)
         d[0] = delta // 2**64
         d[1] = delta % 2**64
-        pcg64_advance(&self.rng_state, <uint64_t *>np.PyArray_DATA(d), self.cheap_multiplier)
+        pcg64_advance(
+            &self.rng_state, <uint64_t *>np.PyArray_DATA(d), self.cheap_multiplier
+        )
         self._reset_state_variables()
         return self
 
@@ -469,14 +485,16 @@ cdef class PCG64(BitGenerator):
         cdef PCG64 bit_generator
 
         kwargs = {"numpy_seed": True} if self.mode == "numpy" else {}
-        bit_generator = self.__class__(seed=self._copy_seed(), variant=self.variant, **kwargs)
+        bit_generator = self.__class__(
+            seed=self._copy_seed(), variant=self.variant, **kwargs
+        )
         bit_generator.state = self.state
         bit_generator.jump_inplace(iter)
 
         return bit_generator
 
 cdef class LCG128Mix(BitGenerator):
-    """
+    r"""
     LCG128Mix(seed=None, inc=None, *, multiplier=47026247687942121848144207491837523525, output="xsl-rr", dxsm_multiplier=15750249268501108917, post=True)
 
     Customizable 128-bit LCG bit generator with output mixing
@@ -626,7 +644,9 @@ cdef class LCG128Mix(BitGenerator):
         self._inv_output_lookup = {v: k for k, v in self._output_lookup.items()}
         self._cfunc = None
         BitGenerator.__init__(self, seed)
-        self.rng_state.pcg_state = <lcg128mix_random_t *>PyArray_malloc_aligned(sizeof(lcg128mix_random_t))
+        self.rng_state.pcg_state = <lcg128mix_random_t *>PyArray_malloc_aligned(
+            sizeof(lcg128mix_random_t)
+        )
         if hasattr(output, "argtypes") and hasattr(output, "restype"):
             from ctypes import c_ulonglong
             if output.argtypes != (c_ulonglong, c_ulonglong):
@@ -659,9 +679,13 @@ cdef class LCG128Mix(BitGenerator):
         else:
             import ctypes
             self.output_function = -1
-            self.output_function_address = ctypes.cast(self._cfunc, ctypes.c_void_p).value
+            self.output_function_address = ctypes.cast(
+                self._cfunc, ctypes.c_void_p
+            ).value
             self.rng_state.pcg_state.output_idx = -1
-            self.rng_state.pcg_state.output_func = <pcg_output_func_t>self.output_function_address
+            self.rng_state.pcg_state.output_func = (
+                <pcg_output_func_t>self.output_function_address
+            )
 
         self._bitgen.state = <void *>&self.rng_state
         self._bitgen.next_uint64 = &lcg128mix_uint64
@@ -703,9 +727,9 @@ cdef class LCG128Mix(BitGenerator):
 
         size = 4 if inc is None else 2
         try:
-            state = np.array(self.seed_seq.generate_state(2, np.uint64))
+            state = np.array(self.seed_seq.generate_state(size, np.uint64))
         except AttributeError:
-            state = np.array(self._seed_seq.generate_state(2, np.uint64))
+            state = np.array(self._seed_seq.generate_state(size, np.uint64))
         mult_vec = np.empty(2, dtype=np.uint64)
         mult_vec[0] = self.multiplier >> 64
         mult_vec[1] = self.multiplier & 0xFFFFFFFFFFFFFFFF
@@ -716,9 +740,10 @@ cdef class LCG128Mix(BitGenerator):
             _inc[0] = int(inc) // 2**64
             _inc[1] = int(inc) % 2**64
         lcg128mix_seed(self.rng_state.pcg_state,
-                           <uint64_t *>np.PyArray_DATA(state),
-                           <uint64_t *>np.PyArray_DATA(_inc),
-                           <uint64_t *>np.PyArray_DATA(mult_vec))
+                       <uint64_t *>np.PyArray_DATA(state),
+                       <uint64_t *>np.PyArray_DATA(_inc),
+                       <uint64_t *>np.PyArray_DATA(mult_vec)
+                       )
         self._reset_state_variables()
 
     def seed(self, seed=None, inc=None):
@@ -759,7 +784,7 @@ cdef class LCG128Mix(BitGenerator):
             state of the PRNG
         """
         cdef np.ndarray state_vec, inc_vec, mult_vec
-        cdef int has_uint32, post, output_func
+        cdef int has_uint32, post
         cdef uint64_t dxsm_multiplier
         cdef uint32_t uinteger
 
@@ -768,14 +793,16 @@ cdef class LCG128Mix(BitGenerator):
         inc_vec = <np.ndarray>np.empty(2, dtype=np.uint64)
         mult_vec = <np.ndarray>np.empty(2, dtype=np.uint64)
         lcg128mix_get_state(self.rng_state.pcg_state,
-                                <uint64_t *>np.PyArray_DATA(state_vec),
-                                <uint64_t *>np.PyArray_DATA(inc_vec),
-                                <uint64_t *>np.PyArray_DATA(mult_vec),
-                                )
+                            <uint64_t *>np.PyArray_DATA(state_vec),
+                            <uint64_t *>np.PyArray_DATA(inc_vec),
+                            <uint64_t *>np.PyArray_DATA(mult_vec)
+                            )
         dxsm_multiplier = self.rng_state.pcg_state.dxsm_multiplier
         post = self.rng_state.pcg_state.post
         if self._cfunc is None:
-            output_function = self._inv_output_lookup[self.rng_state.pcg_state.output_idx]
+            output_function = self._inv_output_lookup[
+                self.rng_state.pcg_state.output_idx
+            ]
         else:
             output_function = self._cfunc
         has_uint32 = self.rng_state.has_uint32
@@ -788,8 +815,8 @@ cdef class LCG128Mix(BitGenerator):
                 "state": {"state": state,
                           "inc": inc,
                           "multiplier": mult,
-                          "dxsm_multiplier":dxsm_multiplier,
-                          "post":bool(post),
+                          "dxsm_multiplier": dxsm_multiplier,
+                          "post": bool(post),
                           "output_func": output_function,
                           },
                 "has_uint32": has_uint32,
@@ -821,9 +848,10 @@ cdef class LCG128Mix(BitGenerator):
 
         # Default False for backward compat
         lcg128mix_set_state(self.rng_state.pcg_state,
-                                <uint64_t *>np.PyArray_DATA(state_vec),
-                                <uint64_t *>np.PyArray_DATA(inc_vec),
-                                <uint64_t *>np.PyArray_DATA(mult_vec))
+                            <uint64_t *>np.PyArray_DATA(state_vec),
+                            <uint64_t *>np.PyArray_DATA(inc_vec),
+                            <uint64_t *>np.PyArray_DATA(mult_vec)
+                            )
         self.rng_state.has_uint32 = has_uint32
         self.rng_state.uinteger = uinteger
         self.rng_state.pcg_state.dxsm_multiplier = value["state"]["dxsm_multiplier"]
@@ -836,9 +864,13 @@ cdef class LCG128Mix(BitGenerator):
 
             self._cfunc = output_func
             self.output_function = -1
-            self.output_function_address = ctypes.cast(self._cfunc, ctypes.c_void_p).value
+            self.output_function_address = (
+                ctypes.cast(self._cfunc, ctypes.c_void_p).value
+            )
             self.rng_state.pcg_state.output_idx = -1
-            self.rng_state.pcg_state.output_func = <pcg_output_func_t>self.output_function_address
+            self.rng_state.pcg_state.output_func = (
+                <pcg_output_func_t>self.output_function_address
+            )
 
     def advance(self, delta):
         """
@@ -940,7 +972,7 @@ cdef class LCG128Mix(BitGenerator):
 
 
 cdef class PCG64DXSM(PCG64):
-    """
+    r"""
     PCG64DXSM(seed=None, inc=None)
 
     Container for the PCG-64 updated with a 64-bit mult using DXSM output func.
@@ -1073,7 +1105,7 @@ cdef class PCG64DXSM(PCG64):
     @state.setter
     def state(self, value):
         cdef np.ndarray state_vec
-        cdef int has_uint32, use_dxsm
+        cdef int has_uint32
         cdef uint32_t uinteger
         if not isinstance(value, dict):
             raise TypeError("state must be a dict")

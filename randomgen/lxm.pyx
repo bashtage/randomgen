@@ -144,15 +144,13 @@ cdef class LXM(BitGenerator):
     def _seed_from_seq(self):
         cdef int i
         cdef uint64_t bits = 0
-        cdef uint64_t *state_arr
 
         # Protect against negligible prob of all 0 in Xorshift
         while bits == 0:
             try:
                 state = self.seed_seq.generate_state(5, np.uint64)
-            except:
+            except AttributeError:
                 state = self._seed_seq.generate_state(5, np.uint64)
-            state_arr = <np.uint64_t *>np.PyArray_DATA(state)
             for i in range(4):
                 self.rng_state.x[i] = state[i]
                 bits |= <uint64_t>state[i]

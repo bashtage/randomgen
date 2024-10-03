@@ -354,7 +354,11 @@ setup(
     classifiers=classifiers,
     ext_modules=cythonize(
         extensions,
-        compiler_directives={"language_level": "3", "linetrace": CYTHON_COVERAGE},
+        compiler_directives={
+            "language_level": "3",
+            "binding": True,
+            "linetrace": CYTHON_COVERAGE,
+        },
         force=CYTHON_COVERAGE or DEBUG,
         gdb_debug=DEBUG,
     ),

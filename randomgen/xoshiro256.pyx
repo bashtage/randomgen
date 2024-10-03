@@ -1,5 +1,4 @@
 #!python
-#cython: binding=True
 
 import numpy as np
 
@@ -132,13 +131,11 @@ cdef class Xoshiro256(BitGenerator):
 
     def _seed_from_seq(self):
         cdef int i
-        cdef uint64_t *state_arr
 
         try:
             state = self.seed_seq.generate_state(4, np.uint64)
         except AttributeError:
             state = self._seed_seq.generate_state(4, np.uint64)
-        state_arr = <np.uint64_t *>np.PyArray_DATA(state)
         for i in range(4):
             self.rng_state.s[i] = state[i]
         self._reset_state_variables()

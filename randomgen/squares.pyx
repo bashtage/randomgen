@@ -1,7 +1,5 @@
 #!python
-# cython: binding=True, language_level=3, boundscheck=False, wraparound=False, nonecheck=False, cdivision=True
-import os
-
+# cython: boundscheck=False, wraparound=False, nonecheck=False, cdivision=True
 from numpy.random.bit_generator import ISeedSequence
 
 from libc.stdint cimport intptr_t, uint8_t, uint32_t, uint64_t
@@ -26,7 +24,7 @@ cdef class _TestSeninal:
         return self.testing
 
     def set_testing(self, bint value):
-         self.testing = value
+        self.testing = value
 
 _test_sentinal = _TestSeninal()
 
@@ -40,8 +38,10 @@ cdef void _reset_words():
     for i in range(16):
         WORDS[i] = i
 
+
 def _get_words():
     return np.asarray(WORDS)
+
 
 cdef uint64_t squares_uint64(void* st) noexcept nogil:
     return squares_next64(<squares_state_t *>st)
@@ -75,7 +75,9 @@ cdef class _SequenceSampler:
     def __init__(self, seed_seq: SeedSequence, int initial_draw=10):
         self.seed_seq = seed_seq
         self.randoms_drawm = initial_draw
-        self.random_well = self.seed_seq.generate_state(self.randoms_drawm, dtype=np.uint64)
+        self.random_well = self.seed_seq.generate_state(
+            self.randoms_drawm, dtype=np.uint64
+        )
         self.bit_well = 0
         self.bit_well_loc = 0
         self.index = 0
@@ -88,7 +90,9 @@ cdef class _SequenceSampler:
         self.index += 1
         if self.index > self.randoms_drawm:
             self.randoms_drawm *= 2
-            self.random_well = self.seed_seq.generate_state(self.randoms_drawm, dtype=np.uint64)
+            self.random_well = self.seed_seq.generate_state(
+                self.randoms_drawm, dtype=np.uint64
+            )
 
     cdef uint64_t gen_bits(self, int nbits):
         """Generate a fixed number of bits from the bit well"""
@@ -147,10 +151,9 @@ cdef uint64_t generate_key(_SequenceSampler seq_sampler):
     """
     The core key generation implementation
     """
-    cdef intptr_t pos
-    cdef uint64_t out, first, i
+    cdef uint64_t out, i
     cdef uint8_t[::1] tmp = WORDS
-    cdef uint8_t last_value, next_value, k, old
+    cdef uint8_t last_value, next_value, old
 
     out = 0
     _reset_words()
@@ -158,7 +161,7 @@ cdef uint64_t generate_key(_SequenceSampler seq_sampler):
     if not (tmp[0] & 0x1):
         old = tmp[0]
         tmp[0] += 1
-        for i in range(1,8):
+        for i in range(1, 8):
             if tmp[i] == tmp[0]:
                 tmp[i] = old
     for i in range(8):
@@ -185,7 +188,7 @@ cdef uint64_t generate_key(_SequenceSampler seq_sampler):
 
 
 def generate_keys(seed=None, intptr_t n=1, bint unique=False):
-    """
+    r"""
     generate_keys(seed=None, n=1, unique=False)
 
     Pre-generate keys for use with Squares
@@ -265,7 +268,7 @@ def generate_keys(seed=None, intptr_t n=1, bint unique=False):
     """
     cdef intptr_t i, nunique, iter, start = 0
     cdef uint64_t[::1] out, tmp, index
-    cdef np.ndarray out_arr, tmp_arr, index_arr
+    cdef np.ndarray out_arr, index_arr
     cdef _TestSeninal _internal_senintal = _test_sentinal
     cdef _SequenceSampler seq_sampler
     cdef bint incomplete = True
@@ -291,7 +294,6 @@ def generate_keys(seed=None, intptr_t n=1, bint unique=False):
         index = index_arr = index_arr.astype(np.uint64)
         nunique = index_arr.shape[0]
         if  iter < 2 and _internal_senintal.testing:
-            orig = nunique
             nunique = nunique - max(min(10, nunique // 2), 1)
 
         if nunique == n:
@@ -409,7 +411,9 @@ cdef class Squares(BitGenerator):
     ``counter`` values.
 
     >>> from randomgen import SeedSequence
-    >>> bit_gens = [Squares(SeedSequence(entropy), counter=1_000_000_000 * i) for i in range(1024)]
+    >>> bit_gens = []
+    >>> for i in range(1024):
+    ...     bit_gens.append(Squares(SeedSequence(entropy), counter=1_000_000_000 * i))
 
     See also
     --------
@@ -465,8 +469,6 @@ cdef class Squares(BitGenerator):
         return <uint64_t>val
 
     def _seed_from_seq(self, uint64_t counter=0):
-        cdef uint64_t key
-
         try:
             seed_seq = self.seed_seq
         except AttributeError:

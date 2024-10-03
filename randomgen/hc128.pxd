@@ -1,4 +1,4 @@
-# cython: binding=True, language_level=3
+
 # coding=utf-8
 cimport numpy as np
 from libc.stdint cimport uint32_t, uint64_t

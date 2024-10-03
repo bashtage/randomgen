@@ -1,5 +1,4 @@
 #!python
-#cython: binding=True
 
 import numpy as np
 
@@ -248,7 +247,6 @@ cdef class Philox(BitGenerator):
             raise ValueError("n must be 4 and w must br 64 when using mode='numpy'")
         return self._seed_from_seq()
 
-
     def seed(self, seed=None, counter=None, key=None):
         """
         seed(seed=None, counter=None, key=None)
@@ -297,7 +295,6 @@ cdef class Philox(BitGenerator):
         key = object_to_int(key, self.n // 2 * self.w, "key")
         counter = object_to_int(counter, self.n * self.w, "counter")
 
-        cdef int u32_size = (self.n // 2) * (self.w // 32)
         _seed = int_to_array(key, "key", self.n // 2 * self.w, self.w)
         dtype = np.uint64 if self.w==64 else np.uint32
         _seed = view_little_endian(_seed, dtype)
@@ -548,16 +545,23 @@ cdef class Philox(BitGenerator):
 
         cdef np.ndarray delta_a
         delta_a = int_to_array(delta, "step", (self.n + 1) * self.w, self.w)
-        orig_buffer_pos = self.rng_state.buffer_pos
 
         if self.n == 2 and self.w == 32:
-            philox2x32_advance(&self.rng_state, <uint32_t *>np.PyArray_DATA(delta_a), not counter)
+            philox2x32_advance(
+                &self.rng_state, <uint32_t *>np.PyArray_DATA(delta_a), not counter
+            )
         elif self.n == 4 and self.w == 32:
-            philox4x32_advance(&self.rng_state, <uint32_t *>np.PyArray_DATA(delta_a), not counter)
+            philox4x32_advance(
+                &self.rng_state, <uint32_t *>np.PyArray_DATA(delta_a), not counter
+            )
         elif self.n == 2 and self.w == 64:
-            philox2x64_advance(&self.rng_state, <uint64_t *>np.PyArray_DATA(delta_a), not counter)
+            philox2x64_advance(
+                &self.rng_state, <uint64_t *>np.PyArray_DATA(delta_a), not counter
+            )
         else:  # self.n == 4 and self.w == 64:
-            philox4x64_advance(&self.rng_state, <uint64_t *>np.PyArray_DATA(delta_a), not counter)
+            philox4x64_advance(
+                &self.rng_state, <uint64_t *>np.PyArray_DATA(delta_a), not counter
+            )
         # Reset uint32 so if needed is drawn from the advanced state
         self.rng_state.uinteger = 0
         self.rng_state.has_uint32 = 0

@@ -1,5 +1,5 @@
 #!python
-#cython: wraparound=False, nonecheck=False, boundscheck=False, cdivision=True, language_level=3, binding=True
+# cython: wraparound=False, nonecheck=False, boundscheck=False, cdivision=True
 import warnings
 
 from libc.math cimport sqrt
@@ -336,8 +336,8 @@ cdef class ExtendedGenerator:
         0.47108547995356098 # random
         >>> type(randomgen.generator.random())
         <class 'float'>
-        >>> randomgen.generator.random((5,))
-        array([ 0.30220482,  0.86820401,  0.1654503 ,  0.11659149,  0.54323428]) # random
+        >>> randomgen.generator.random((3,))
+        array([ 0.30220482,  0.86820401,  0.1654503]) # random
 
         Three-by-two array of random numbers from [-5, 0):
 
@@ -628,7 +628,9 @@ cdef class ExtendedGenerator:
             relation, np.NPY_COMPLEX128, api.NPY_ARRAY_ALIGNED
         )
 
-        if np.PyArray_NDIM(ogamma) == np.PyArray_NDIM(orelation) == np.PyArray_NDIM(oloc) == 0:
+        if (np.PyArray_NDIM(ogamma) ==
+                np.PyArray_NDIM(orelation) ==
+                np.PyArray_NDIM(oloc) == 0):
             floc_r = PyComplex_RealAsDouble(loc)
             floc_i = PyComplex_ImagAsDouble(loc)
             fgamma_r = PyComplex_RealAsDouble(gamma)
@@ -727,7 +729,7 @@ cdef class ExtendedGenerator:
             self, int64_t df, np.npy_intp dim, np.npy_intp num, object n
     ):
         double_fill(&random_standard_normal_fill, &self._bitgen, None, self.lock, n)
-        return np.matmul(np.transpose(n,(0, 2, 1)), n)
+        return np.matmul(np.transpose(n, (0, 2, 1)), n)
 
     def standard_wishart(self, int64_t df, np.npy_intp dim, size=None, rescale=True):
         """

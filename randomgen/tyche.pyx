@@ -126,7 +126,6 @@ cdef class Tyche(BitGenerator):
             self._bitgen.next_double = &tyche_openrand_double
             self._bitgen.next_raw = &tyche_openrand_uint64
 
-
     def _seed_from_seq(self, idx=None):
         cdef uint64_t state
         cdef uint32_t _idx
@@ -204,4 +203,3 @@ cdef class Tyche(BitGenerator):
         self.rng_state.c = state["c"]
         self.rng_state.d = state["d"]
         self._setup_bitgen()
-

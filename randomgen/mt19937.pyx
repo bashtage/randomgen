@@ -1,8 +1,5 @@
 #!python
-#cython: binding=True
 # coding=utf-8
-
-import operator
 
 import numpy as np
 
