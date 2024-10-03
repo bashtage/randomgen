@@ -252,13 +252,29 @@ def test_constraint_violations():
     with pytest.raises(ValueError):
         generator.cont_3_alt_cons(1.5, poisson_lam_max + 10000, 1)
     with pytest.raises(ValueError):
+        generator.cont_3_alt_cons(1.5, np.nan, 1)
+    with pytest.raises(ValueError):
+        generator.cont_3_alt_cons(1.5, -0.01, 1)
+    with pytest.raises(ValueError):
         generator.cont_3_alt_cons(1.5, 1, legacy_poisson_lam_max + 10000)
+    with pytest.raises(ValueError):
+        generator.cont_3_alt_cons(1.5, 1, np.nan)
+    with pytest.raises(ValueError):
+        generator.cont_3_alt_cons(1.5, 1, -1)
     with pytest.raises(ValueError):
         generator.cont_3_alt_cons([1.5, 0.5], [1], [1])
     with pytest.raises(ValueError):
         generator.cont_3_alt_cons([1.5], [1, poisson_lam_max + 10000], [1])
     with pytest.raises(ValueError):
+        generator.cont_3_alt_cons([1.5], [1, np.nan], [1])
+    with pytest.raises(ValueError):
+        generator.cont_3_alt_cons([1.5], [1, -1], [1])
+    with pytest.raises(ValueError):
         generator.cont_3_alt_cons([1.5], [1], [1, legacy_poisson_lam_max + 10000])
+    with pytest.raises(ValueError):
+        generator.cont_3_alt_cons([1.5], [1], [1, -1])
+    with pytest.raises(ValueError):
+        generator.cont_3_alt_cons([1.5], [1], [1, np.nan])
 
     with pytest.raises(ValueError):
         generator.cont_1_float(-2.0)
@@ -350,3 +366,10 @@ def test_float_fill():
     res = generator.cont_f_fill(size=out.shape, out=out)
     assert_allclose(res, np.full_like(res, 3.141592))
     assert res is out
+
+
+def test_validate_output():
+    with pytest.raises(ValueError):
+        generator.cont_1(np.array([0.1, 0.2, 0.3]), out=np.empty((7, 5)))
+    with pytest.raises(ValueError):
+        generator.cont_1(np.array([0.1, 0.2, 0.3]), size=(7, 11))

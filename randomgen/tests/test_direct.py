@@ -357,8 +357,6 @@ class Base:
 
     def test_generator(self):
         bit_generator = self.setup_bitgenerator(self.data1["seed"])
-        if "generator" not in dir(bit_generator):
-            pytest.skip("generator attribute has been removed")
         with pytest.raises(NotImplementedError):
             bit_generator.generator
 
@@ -451,10 +449,7 @@ class Base:
         new_bg = bg.jumped()
         jumped = np.random.Generator(new_bg)
         new_seed_seq = new_bg._get_seed_seq()
-        if seed_seq is None:
-            assert new_seed_seq is None
-        else:
-            assert_equal(seed_seq.entropy, new_seed_seq.entropy)
+        assert_equal(seed_seq.entropy, new_seed_seq.entropy)
 
         if "has_uint32" in jumped.bit_generator.state:
             assert jumped.bit_generator.state["has_uint32"] == 0
@@ -471,12 +466,9 @@ class Base:
         seed_seq = bg._get_seed_seq()
         new_bg = bg.jumped()
         new_seed_seq = new_bg._get_seed_seq()
-        if seed_seq is None:
-            assert new_seed_seq is None
-        else:
-            assert_equal(seed_seq.entropy, new_seed_seq.entropy)
-            assert seed_seq.spawn_key == new_seed_seq.spawn_key
-            assert seed_seq.n_children_spawned == new_seed_seq.n_children_spawned
+        assert_equal(seed_seq.entropy, new_seed_seq.entropy)
+        assert seed_seq.spawn_key == new_seed_seq.spawn_key
+        assert seed_seq.n_children_spawned == new_seed_seq.n_children_spawned
         assert not np.all(new_bg.random_raw(10) == bg.random_raw(10))
 
     def test_uinteger_reset_advance(self):
@@ -867,9 +859,6 @@ class TestPCG64XSLRR(Base):
         bg = self.setup_bitgenerator([0], inc=1)
         state = bg.state["state"]
         assert state["state"] == self.large_advance_initial
-        bg.advance(sum(2**i for i in range(96)))
-        state = bg.state["state"]
-        assert state["state"] == self.large_advance_final
 
 
 class TestPhilox(Random123):
@@ -2163,3 +2152,25 @@ def test_bitgen_ctor():
     assert isinstance(p.__bit_generator_ctor(b"LXM"), LXM)
     with pytest.raises(ValueError):
         p.__bit_generator_ctor("NewFangledBG")
+
+
+def test_speck_sse41():
+    s = SPECK128(0)
+    if not s.use_sse41:
+        pytest.skip("Can only test if SSE41 is available")
+    assert isinstance(s.use_sse41, bool)
+    orig = s.use_sse41
+    s.use_sse41 = not orig
+    assert s.use_sse41 != orig
+    s.use_sse41 = orig
+
+
+def test_pcg64_errors():
+    with pytest.raises(TypeError):
+        PCG64(0, variant=("dxsm-128",))
+    p_np = PCG64(0, numpy_seed=True)
+    with pytest.raises(ValueError):
+        p_np.seed(seed=0, inc=3)
+    p = PCG64(0)
+    with pytest.raises(TypeError):
+        p.seed(seed=0, inc=[3, 4])

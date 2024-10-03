@@ -381,8 +381,6 @@ cpdef object object_to_int(object val, object bits, object name, int default_bit
         if val.ndim != 1 or val.size == 0:
             raise ValueError("{0} must be 1-d and non-empty".format(name))
         power = 32 if val.dtype == np.uint32 else 64
-        if val.ndim == 0:
-            return int(val.item())
         out = sum([int(val[i]) * 2**(power * i) for i in range(len(val))])
     if out < 0 or (bits is not None and out >= (int(2)**bits)):
         raise ValueError("{0} is out-of-range for "

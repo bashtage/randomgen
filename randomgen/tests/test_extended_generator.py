@@ -45,11 +45,6 @@ def extended_gen():
     return ExtendedGenerator(pcg)
 
 
-@pytest.fixture(scope="function")
-def extended_gen_legacy():
-    return ExtendedGenerator(MT19937())
-
-
 _mt19937 = MT19937(SEED)
 random = ExtendedGenerator(_mt19937)
 
