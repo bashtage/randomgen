@@ -723,7 +723,7 @@ cdef class LCG128Mix(BitGenerator):
         cdef np.ndarray mult_vec, state, _inc
 
         size = 4 if inc is None else 2
-        state = np.array(self.seed_seq.generate_state(size, np.uint64))
+        state = np.array(self._get_seed_seq().generate_state(size, np.uint64))
         mult_vec = np.empty(2, dtype=np.uint64)
         mult_vec[0] = self.multiplier >> 64
         mult_vec[1] = self.multiplier & 0xFFFFFFFFFFFFFFFF
