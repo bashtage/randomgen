@@ -69,7 +69,7 @@ cdef class ShimGenerator:
 
     def cont_1_float(self, a, size=None, out=None):
         return cont_f(&float_1, &self._bitgen, size, self.lock,
-                      a, "a", constraint_type.CONS_NONE, out)
+                      a, "a", constraint_type.CONS_POSITIVE, out)
 
     def disc_0(self, size=None):
         return disc(&int_0, &self._bitgen, size, self.lock,
@@ -81,34 +81,39 @@ cdef class ShimGenerator:
     def disc_d(self, a, size=None):
         return disc(&int_d, &self._bitgen, size, self.lock,
                     1, 0,
-                    a, "a", constraint_type.CONS_NONE,
+                    a, "a", constraint_type.CONS_POSITIVE,
                     0, "", constraint_type.CONS_NONE,
                     0, "", constraint_type.CONS_NONE)
 
     def disc_dd(self, a, b, size=None):
         return disc(&int_dd, &self._bitgen, size, self.lock,
                     2, 0,
-                    a, "a", constraint_type.CONS_NONE,
-                    b, "b", constraint_type.CONS_NONE,
+                    a, "a", constraint_type.CONS_POSITIVE,
+                    b, "b", constraint_type.CONS_NON_NEGATIVE,
                     0, "", constraint_type.CONS_NONE)
 
     def disc_di(self, a, b, size=None):
         return disc(&int_di, &self._bitgen, size, self.lock,
                     1, 1,
-                    a, "a", constraint_type.CONS_NONE,
-                    b, "b", constraint_type.CONS_NONE,
+                    a, "a", constraint_type.CONS_POSITIVE,
+                    b, "b", constraint_type.CONS_NON_NEGATIVE,
                     0, "", constraint_type.CONS_NONE)
 
     def disc_i(self, a, size=None):
         return disc(&int_i, &self._bitgen, size, self.lock,
                     0, 1,
-                    a, "a", constraint_type.CONS_NONE,
+                    a, "a", constraint_type.CONS_NON_NEGATIVE,
                     0, "", constraint_type.CONS_NONE,
                     0, "", constraint_type.CONS_NONE)
 
     def disc_iii(self, a, b, c, size=None):
         return disc(&int_iii, &self._bitgen, size, self.lock,
                     0, 3,
-                    a, "a", constraint_type.CONS_NONE,
-                    b, "b", constraint_type.CONS_NONE,
-                    c, "c", constraint_type.CONS_NONE)
+                    a, "a", constraint_type.CONS_POSITIVE,
+                    b, "b", constraint_type.CONS_NON_NEGATIVE,
+                    c, "c", constraint_type.CONS_POSITIVE)
+
+    def cont_f_fill(self, size=None, out=None):
+        return float_fill_from_double(
+            &double0_func, &self._bitgen, size, self.lock, out
+        )
