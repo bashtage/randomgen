@@ -13,7 +13,7 @@
     
     
       
-        <title>Middle Square with Weyl increment (64-bit, Squares) - RandomGen v2.0.2 (+53)</title>
+        <title>Middle Square with Weyl increment (64-bit, Squares) - RandomGen v2.0.2 (+58)</title>
       
     
     
@@ -80,7 +80,7 @@
 
 <header class="md-header" data-md-component="header">
   <nav class="md-header__inner md-grid" aria-label="Header">
-    <a href="../index.html" title="RandomGen v2.0.2 (+53)" class="md-header__button md-logo" aria-label="RandomGen v2.0.2 (+53)" data-md-component="logo">
+    <a href="../index.html" title="RandomGen v2.0.2 (+58)" class="md-header__button md-logo" aria-label="RandomGen v2.0.2 (+58)" data-md-component="logo">
       <img src="../_static/casino.svg" alt="logo">
     </a>
     <label class="md-header__button md-icon" for="__drawer">
@@ -90,7 +90,7 @@
       <div class="md-header__ellipsis">
         <div class="md-header__topic">
           <span class="md-ellipsis">
-            RandomGen v2.0.2 (+53)
+            RandomGen v2.0.2 (+58)
           </span>
         </div>
         <div class="md-header__topic" data-md-component="header-topic">
@@ -177,10 +177,10 @@
 
 <nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
   <label class="md-nav__title" for="__drawer">
-    <a href="../index.html" title="RandomGen v2.0.2 (+53)" class="md-nav__button md-logo" aria-label="RandomGen v2.0.2 (+53)" data-md-component="logo">
+    <a href="../index.html" title="RandomGen v2.0.2 (+58)" class="md-nav__button md-logo" aria-label="RandomGen v2.0.2 (+58)" data-md-component="logo">
       <img src="../_static/casino.svg" alt="logo">
     </a>
-    RandomGen v2.0.2 (+53)
+    RandomGen v2.0.2 (+58)
   </label>
   
     <div class="md-nav__source">
@@ -1804,7 +1804,9 @@ using <code class="docutils literal notranslate"><span class="pre">spawn</span><
 <p>The final options uses the same <code class="docutils literal notranslate"><span class="pre">seed</span></code> value along with different
 <code class="docutils literal notranslate"><span class="pre">counter</span></code> values.</p>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><code><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">randomgen</span> <span class="kn">import</span> <span class="n">SeedSequence</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">bit_gens</span> <span class="o">=</span> <span class="p">[</span><span class="n">Squares</span><span class="p">(</span><span class="n">SeedSequence</span><span class="p">(</span><span class="n">entropy</span><span class="p">),</span> <span class="n">counter</span><span class="o">=</span><span class="mi">1_000_000_000</span> <span class="o">*</span> <span class="n">i</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1024</span><span class="p">)]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">bit_gens</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1024</span><span class="p">):</span>
+<span class="gp">... </span>    <span class="n">bit_gens</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">Squares</span><span class="p">(</span><span class="n">SeedSequence</span><span class="p">(</span><span class="n">entropy</span><span class="p">),</span> <span class="n">counter</span><span class="o">=</span><span class="mi">1_000_000_000</span> <span class="o">*</span> <span class="n">i</span><span class="p">))</span>
 </code></pre></div>
 </div>
 <div class="seealso admonition">
