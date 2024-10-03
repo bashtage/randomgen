@@ -140,10 +140,7 @@ cdef class SFMT(BitGenerator):
         self.rng_state.uinteger = 0
 
     def _seed_from_seq(self):
-        try:
-            state = self.seed_seq.generate_state(2 * SFMT_N64, np.uint32)
-        except AttributeError:
-            state = self._seed_seq.generate_state(2 * SFMT_N64, np.uint32)
+        state = self._get_seed_seq().generate_state(2 * SFMT_N64, np.uint32)
         sfmt_init_by_array(self.rng_state.state,
                            <uint32_t *>np.PyArray_DATA(state),
                            2 * SFMT_N64)

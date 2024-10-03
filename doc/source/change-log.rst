@@ -5,6 +5,8 @@ Change Log
 
 v2.1.0
 ======
+- Fixed a bug in :class:`~randomgen.pcg64.LCG128Mix` that resultsed in ``inc``
+  not being correctly set when initialized without a user-provided ``inc``.
 - Added the :class:`~randomgen.tyche.Tyche` PRNG of Neves and Araujo. Supports
   two variants. One is the original implementation in the 2012 paper. The
   second matches the version in ``OpenRand``.

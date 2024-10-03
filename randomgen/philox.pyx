@@ -232,10 +232,7 @@ cdef class Philox(BitGenerator):
 
     def _seed_from_seq(self, counter=None):
         seed_seq_size = max(self.n * self.w // 128, 1)
-        try:
-            state = self.seed_seq.generate_state(seed_seq_size, np.uint64)
-        except AttributeError:
-            state = self._seed_seq.generate_state(seed_seq_size, np.uint64)
+        state = self._get_seed_seq().generate_state(seed_seq_size, np.uint64)
         # Special case 2x32 which needs max 32 bits
         if self.n == 2 and self.w == 32:
             state %= np.uint64(2**32)

@@ -117,10 +117,7 @@ cdef class EFIIX64(BitGenerator):
     def _seed_from_seq(self):
         cdef uint64_t *state_arr
 
-        try:
-            state = self.seed_seq.generate_state(4, np.uint64)
-        except AttributeError:
-            state = self._seed_seq.generate_state(4, np.uint64)
+        state = self._get_seed_seq().generate_state(4, np.uint64)
         state_arr = <np.uint64_t *>np.PyArray_DATA(state)
         efiix64_seed(&self.rng_state, state_arr)
         self._reset_state_variables()

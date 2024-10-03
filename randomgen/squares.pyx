@@ -469,10 +469,7 @@ cdef class Squares(BitGenerator):
         return <uint64_t>val
 
     def _seed_from_seq(self, uint64_t counter=0):
-        try:
-            seed_seq = self.seed_seq
-        except AttributeError:
-            seed_seq = self._seed_seq
+        seed_seq = self._get_seed_seq()
         self.rng_state.key = generate_key(_SequenceSampler(seed_seq))
         self.rng_state.counter = counter
 

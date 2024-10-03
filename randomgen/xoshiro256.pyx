@@ -132,10 +132,7 @@ cdef class Xoshiro256(BitGenerator):
     def _seed_from_seq(self):
         cdef int i
 
-        try:
-            state = self.seed_seq.generate_state(4, np.uint64)
-        except AttributeError:
-            state = self._seed_seq.generate_state(4, np.uint64)
+        state = self._get_seed_seq().generate_state(4, np.uint64)
         for i in range(4):
             self.rng_state.s[i] = state[i]
         self._reset_state_variables()

@@ -130,13 +130,10 @@ cdef class Tyche(BitGenerator):
         cdef uint64_t state
         cdef uint32_t _idx
 
-        try:
-            seed_seq = self.seed_seq
-        except AttributeError:
-            seed_seq = self._seed_seq
-        state = seed_seq.generate_state(1, np.uint64)[0]
+        full_state = self._get_seed_seq().generate_state(3, np.uint32)
+        state = full_state[:2].view(np.uint64)[0]
         if idx is None:
-            _idx = seed_seq.generate_state(1, np.uint32)[0]
+            _idx = <uint32_t>full_state[2]
         else:
             if not 0 <= idx <= np.iinfo(np.uint32).max:
                 raise ValueError("idx must be in the interval [0, 2**32).")

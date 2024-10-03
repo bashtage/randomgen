@@ -513,7 +513,7 @@ cdef object discrete_broadcast_di(void *func, void *state, object size, object l
         for i in range(n):
             a_val = (<double*>np.PyArray_MultiIter_DATA(it, 1))[0]
             b_val = (<int64_t*>np.PyArray_MultiIter_DATA(it, 2))[0]
-            (<int64_t*>np.PyArray_MultiIter_DATA(it, 0))[0] = f(state, a_val, b_val)
+            randoms_data[i] = f(state, a_val, b_val)
 
             np.PyArray_MultiIter_NEXT(it)
 

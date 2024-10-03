@@ -147,10 +147,7 @@ cdef class LXM(BitGenerator):
 
         # Protect against negligible prob of all 0 in Xorshift
         while bits == 0:
-            try:
-                state = self.seed_seq.generate_state(5, np.uint64)
-            except AttributeError:
-                state = self._seed_seq.generate_state(5, np.uint64)
+            state = self._get_seed_seq().generate_state(5, np.uint64)
             for i in range(4):
                 self.rng_state.x[i] = state[i]
                 bits |= <uint64_t>state[i]

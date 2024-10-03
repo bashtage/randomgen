@@ -172,10 +172,7 @@ cdef class SPECK128(BitGenerator):
         self.rng_state.uinteger = 0
 
     def _seed_from_seq(self, counter=None):
-        try:
-            state = self.seed_seq.generate_state(4, np.uint64)
-        except AttributeError:
-            state = self._seed_seq.generate_state(4, np.uint64)
+        state = self._get_seed_seq().generate_state(4, np.uint64)
         self.seed(key=state, counter=counter)
         self._reset_state_variables()
 
