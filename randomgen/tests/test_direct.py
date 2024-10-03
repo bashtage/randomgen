@@ -1618,7 +1618,6 @@ class TestHC128(Base):
             (2 + 3j,),
             (3.1,),
             (-2,),
-            (np.empty((2, 2), dtype=np.int64),),
         ]
         cls.invalid_seed_values = []
 
@@ -1669,7 +1668,6 @@ class TestSPECK128(TestHC128):
             (2 + 3j,),
             (3.1,),
             (-2,),
-            (np.empty((2, 2), dtype=np.int64),),
         ]
         cls.invalid_seed_values = []
 

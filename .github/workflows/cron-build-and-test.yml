@@ -19,12 +19,12 @@ jobs:
       fail-fast: false
       matrix:
         python: [cp312]
-        os: [ubuntu-latest, windows-latest, macos-latest]
+        os: [ubuntu-latest, windows-latest, macos-latest, macos-13]
     env:
       BUILD_COMMIT: "main"
       CIBW_BUILD: ${{ matrix.python }}-*
       CIBW_ARCHS_LINUX: "x86_64"
-      CIBW_ARCHS_MACOS: "arm64"
+      CIBW_ARCHS_MACOS: "auto"
       CIBW_SKIP: "pp* *-musllinux_* *-win32"
       CIBW_TEST_REQUIRES: pytest pytest-xdist
       CIBW_TEST_COMMAND: python -c "import randomgen; randomgen.test(['--skip-slow','-n','2'])"
