@@ -5,7 +5,7 @@ Change Log
 
 v2.1.0
 ======
-- Fixed a bug in :class:`~randomgen.pcg64.LCG128Mix` that resultsed in ``inc``
+- Fixed a bug in :class:`~randomgen.pcg64.LCG128Mix` that resulted in ``inc``
   not being correctly set when initialized without a user-provided ``inc``.
 - Added the :class:`~randomgen.tyche.Tyche` PRNG of Neves and Araujo. Supports
   two variants. One is the original implementation in the 2012 paper. The
@@ -17,6 +17,10 @@ v2.1.0
 - Added the helper function :func:`~randomgen.squares.generate_keys` for
   :class:`~randomgen.squares.Squares`. This function can be used to pre-generate
   keys for used with :class:`~randomgen.squares.Squares`.
+- Refactored the broadcasting helper functions out of ``randomgen.common``
+  to ``randomgen.broadcast``. Tests have been added and some edge case bugs
+  have been found and fixed.
+- Improve test coverage.
 - Additional code clean-up.
 
 v2.0.0
