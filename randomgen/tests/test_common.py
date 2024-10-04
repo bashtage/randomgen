@@ -107,6 +107,8 @@ def test_seed_array_errors():
         seed_by_array(np.array([0.0 + 1j]), 1)
     with pytest.raises(TypeError):
         seed_by_array("1", 1)
+    with pytest.raises(TypeError):
+        seed_by_array(1.2, 1)
     with pytest.raises(ValueError):
         seed_by_array(-1, 1)
     with pytest.raises(ValueError):

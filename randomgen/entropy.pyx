@@ -97,14 +97,11 @@ def seed_by_array(object seed, Py_ssize_t n):
         obj = np.asarray(seed).astype(object)
         if obj.ndim != 1:
             raise ValueError("Array-valued seeds must be 1-dimensional")
-        if not np.isreal(obj).all():
+        if not all((np.isscalar(v) and np.isreal(v)) for v in obj):
             raise TypeError(err_msg)
         if ((obj > int(2**64 - 1)) | (obj < 0)).any():
             raise ValueError(err_msg)
-        try:
-            obj_int = obj.astype(np.uint64, casting="unsafe")
-        except ValueError:
-            raise ValueError(err_msg)
+        obj_int = obj.astype(np.uint64, casting="unsafe")
         if not (obj == obj_int).all():
             raise TypeError(err_msg)
         seed_array = obj_int

@@ -291,10 +291,10 @@ cdef class PCG64(BitGenerator):
         if inc is not None:
             err_msg = "inc must be a scalar integer between 0 and " \
                       "{ub}".format(ub=ub)
-            if inc < 0 or inc > ub or int(np.squeeze(inc)) != inc:
-                raise ValueError(err_msg)
             if not np.isscalar(inc):
                 raise TypeError(err_msg)
+            if inc < 0 or inc > ub or int(np.squeeze(inc)) != inc:
+                raise ValueError(err_msg)
         BitGenerator._seed_with_seed_sequence(self, seed, inc=inc)
 
     @property

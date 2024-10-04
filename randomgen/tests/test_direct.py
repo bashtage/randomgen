@@ -2174,3 +2174,7 @@ def test_pcg64_errors():
     p = PCG64(0)
     with pytest.raises(TypeError):
         p.seed(seed=0, inc=[3, 4])
+    with pytest.raises(ValueError):
+        p.seed(seed=0, inc=-1)
+    with pytest.raises(ValueError):
+        p.seed(seed=0, inc=sum(2**i for i in range(129)))
