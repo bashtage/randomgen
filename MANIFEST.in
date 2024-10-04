@@ -6,3 +6,5 @@ include README.md
 include LICENSE.md
 recursive-include randomgen  *.py *.pyx *.px[di] *.h *.in *.csv *.md
 graft randomgen/src
+include randomgen/tests/_shim_dist.h
+include randomgen/tests/_shim_dist.c
