@@ -561,11 +561,29 @@ def test_mv_complex_normal(extended_gen, ex_gamma, ex_rel, ex_loc, size):
     loc = np.zeros(2)
     if ex_loc:
         loc = np.tile(loc, (4, 1, 1, 1))
-    extended_gen.multivariate_complex_normal(np.zeros(2), size=size)
-    extended_gen.multivariate_complex_normal(np.zeros(2), size=size)
-    extended_gen.multivariate_complex_normal(np.zeros(2), gamma, size=size)
-    extended_gen.multivariate_complex_normal(np.zeros(2), gamma, rel, size=size)
-    extended_gen.multivariate_complex_normal(np.zeros(2), gamma, rel, size=size)
+    extended_gen.multivariate_complex_normal(loc, size=size)
+    extended_gen.multivariate_complex_normal(loc, gamma, size=size)
+    extended_gen.multivariate_complex_normal(loc, gamma, rel, size=size)
+
+
+def test_mv_complex_normal_scalar_size(extended_gen):
+    gamma = np.array([[2, 0 + 1.0j], [-0 - 1.0j, 2]])
+    rel = np.array([[0.22, 0 + 0.1j], [+0 + 0.1j, 0.22]])
+    loc = np.zeros(2)
+    extended_gen.multivariate_complex_normal(loc, size=4)
+    extended_gen.multivariate_complex_normal(loc, gamma, size=4)
+    extended_gen.multivariate_complex_normal(loc, gamma, rel, size=4)
+
+
+def test_extended_gen_state(extended_gen):
+    def _assert_state_equal(actual, target):
+        for key in actual:
+            if isinstance(actual[key], dict):
+                _assert_state_equal(actual[key], target[key])
+            assert actual[key] == target[key]
+
+    val = extended_gen.__getstate__()
+    _assert_state_equal(val, extended_gen.state)
 
 
 def test_mv_complex_normal_exceptions(extended_gen):

@@ -99,11 +99,11 @@ def params_1(f, bounded=False):
 
 def comp_state(state1, state2):
     identical = True
+    if type(state1) is not type(state2):
+        return False
     if isinstance(state1, dict):
         for key in state1:
             identical &= comp_state(state1[key], state2[key])
-    elif type(state1) is not type(state2):
-        identical &= type(state1) is type(state2)
     else:
         if isinstance(state1, (list, tuple, np.ndarray)) and isinstance(
             state2, (list, tuple, np.ndarray)
@@ -903,6 +903,7 @@ class TestMT19937(RNG):
         state2 = self.rg.bit_generator.state
         assert_((state[1] == state2["state"]["key"]).all())
         assert_(state[2] == state2["state"]["pos"])
+        assert not comp_state(state, state2)
 
 
 class TestMT64(RNG):
