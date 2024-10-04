@@ -1,0 +1,6 @@
+﻿randomgen.tyche.Tyche.cffi
+==========================
+
+.. currentmodule:: randomgen.tyche
+
+.. autoattribute:: Tyche.cffi

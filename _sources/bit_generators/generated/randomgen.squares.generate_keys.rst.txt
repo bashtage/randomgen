@@ -1,0 +1,6 @@
+﻿randomgen.squares.generate\_keys
+================================
+
+.. currentmodule:: randomgen.squares
+
+.. autofunction:: generate_keys

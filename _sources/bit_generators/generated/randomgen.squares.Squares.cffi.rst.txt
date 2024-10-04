@@ -1,0 +1,6 @@
+﻿randomgen.squares.Squares.cffi
+==============================
+
+.. currentmodule:: randomgen.squares
+
+.. autoattribute:: Squares.cffi

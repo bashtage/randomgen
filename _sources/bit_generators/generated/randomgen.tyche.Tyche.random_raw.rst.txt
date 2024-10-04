@@ -1,0 +1,6 @@
+﻿randomgen.tyche.Tyche.random\_raw
+=================================
+
+.. currentmodule:: randomgen.tyche
+
+.. automethod:: Tyche.random_raw

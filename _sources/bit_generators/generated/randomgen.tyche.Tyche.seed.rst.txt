@@ -1,0 +1,6 @@
+﻿randomgen.tyche.Tyche.seed
+==========================
+
+.. currentmodule:: randomgen.tyche
+
+.. automethod:: Tyche.seed
