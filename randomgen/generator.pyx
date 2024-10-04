@@ -24,12 +24,7 @@ from numpy.random.c_distributions cimport (
 )
 
 from randomgen cimport api
-from randomgen.broadcasting cimport (
-    check_output,
-    double_fill,
-    float_fill,
-    validate_output_shape,
-)
+from randomgen.broadcasting cimport check_output, double_fill, float_fill
 from randomgen.common cimport compute_complex
 from randomgen.distributions cimport (
     random_double_fill,
@@ -705,7 +700,6 @@ cdef class ExtendedGenerator:
         n = np.PyArray_SIZE(randoms)
 
         it = np.PyArray_MultiIterNew5(randoms, oloc, v_real, v_imag, rho)
-        validate_output_shape(it.shape, randoms)
         with self.lock, nogil:
             n2 = 2 * n  # Avoid compiler noise for cast
             for i in range(n2):

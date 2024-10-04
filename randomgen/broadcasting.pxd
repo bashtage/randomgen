@@ -27,7 +27,6 @@ cdef int check_constraint(double val, object name, constraint_type cons) except 
 cdef int check_array_constraint(
         np.ndarray val, object name, constraint_type cons
 ) except -1
-cdef validate_output_shape(iter_shape, np.ndarray output)
 cdef check_output(object out, object dtype, object size, bint require_c_array)
 
 ctypedef double (*random_double_fill)(

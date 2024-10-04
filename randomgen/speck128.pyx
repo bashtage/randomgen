@@ -249,14 +249,14 @@ cdef class SPECK128(BitGenerator):
         ValueError
             If SSE 4.1 is not supported
         """
-        return RANDOMGEN_USE_SSE41
+        return bool(RANDOMGEN_USE_SSE41)
 
     @use_sse41.setter
     def use_sse41(self, value):
         capable = speck_sse41_capable()
         if value and not capable:
             raise ValueError("CPU does not support SSE41")
-        speck_use_sse41(value)
+        speck_use_sse41(int(value))
 
     @property
     def state(self):

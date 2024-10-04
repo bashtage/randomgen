@@ -183,8 +183,14 @@ def test_object_to_int_errors():
             "test",
             allowed_sizes=(32, 64),
         )
-
-    # res = object_to_int_shim(1, 32, "test", allowed_sizes=(32, 64))
+    with pytest.raises(ValueError):
+        object_to_int_shim(
+            [sum(2**i for i in range(63))],
+            128,
+            "test",
+            default_bits=32,
+            allowed_sizes=(32, 64),
+        )
 
 
 def test_uncupported_mode():
