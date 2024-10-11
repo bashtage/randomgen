@@ -72,6 +72,16 @@ cdef class UserBitGenerator(BitGenerator):
         a single input. If not provided, getting the ``state`` property
         will raise NotImplementedError.
 
+    Notes
+    -----
+    There is one key caveat when using a UserBitGenerator. The callable must run without
+    exceptions.
+
+    .. warning::
+       It is essential that the callable function runs without producing an Exception.
+       Exceptions will be silently ignored and the generator will produce incorrect
+       results.
+
     Examples
     --------
     A generator that rotates across 4 values from random.org.
