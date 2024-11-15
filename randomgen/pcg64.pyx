@@ -187,7 +187,7 @@ cdef class PCG64(BitGenerator):
                 )
             if inc is not None:
                 raise ValueError(
-                    "inc much be none when using numpy-matching seeding."
+                    "inc must be none when using numpy-matching seeding."
                 )
 
         self.variant = variant
