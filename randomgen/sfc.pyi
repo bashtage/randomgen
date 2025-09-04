@@ -12,7 +12,7 @@ class SFC64(BitGenerator):
         w: int = ...,
         k: int = ...,
         *,
-        mode: Literal["sequence", "numpy"] | None
+        mode: Literal["sequence", "numpy"] | None,
     ) -> None: ...
     def weyl_increments(
         self, n: int, max_bits: int = ..., min_bits: int | None = ...

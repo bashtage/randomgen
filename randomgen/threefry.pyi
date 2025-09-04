@@ -12,7 +12,7 @@ class ThreeFry(BitGenerator):
         key: int | np.ndarray | None = ...,
         number: int = ...,
         width: int = ...,
-        mode: SeedMode | None = ...
+        mode: SeedMode | None = ...,
     ) -> None: ...
     def seed(
         self,

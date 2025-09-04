@@ -318,6 +318,7 @@ extensions.append(
     )
 )
 
+
 class BinaryDistribution(Distribution):
     def is_pure(self):
         return False

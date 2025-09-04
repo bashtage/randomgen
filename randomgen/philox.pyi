@@ -14,7 +14,7 @@ class Philox(BitGenerator):
         key: int | np.ndarray | None = ...,
         number: int = ...,
         width: int = ...,
-        mode: Literal["sequence", "numpy"] | None = ...
+        mode: Literal["sequence", "numpy"] | None = ...,
     ) -> None: ...
     def seed(
         self,

@@ -11,7 +11,7 @@ class HC128(BitGenerator):
         seed: IntegerSequenceSeed | None = ...,
         *,
         key: int | Sequence[int] | None = ...,
-        mode: SeedMode = ...
+        mode: SeedMode = ...,
     ) -> None: ...
     def seed(
         self,
