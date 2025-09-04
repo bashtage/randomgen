@@ -1,14 +1,14 @@
 # Build
-cython>=3.0.10
+cython>=3.0.10,<4
 # Testing
-pytest>=7
+pytest>=8.4.1
 pytest-cov
 pytest-xdist
 scipy>=1.13.1
 # Lint
-black[jupyter]~=24.8.0
+black[jupyter]~=25.1.0
 isort~=5.0
-setuptools_scm[toml]>=8.0.0,<9.0.0
+setuptools_scm[toml]>=9.2.0,<10
 ruff
 flake8
 flake8-pyi

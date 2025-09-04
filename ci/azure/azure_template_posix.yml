@@ -38,8 +38,10 @@ jobs:
           python.version: '3.11'
         python312_latest:
           python.version: '3.12'
-        python312_prerelease:
-          python.version: '3.12'
+        python313_latest:
+          python.version: '3.13'
+        python314_prerelease:
+          python.version: '3.13'
           pip.pre: true
         python_312_no_coverage:
           python.version: '3.12'

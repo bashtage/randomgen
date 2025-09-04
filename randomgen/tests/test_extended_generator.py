@@ -468,7 +468,7 @@ def test_wishart_size(size, df, tile):
         expected_shape = shape + base_shape
         if size:
             if len(sz) < len(shape):
-                with pytest.raises(ValueError, match=""):
+                with pytest.raises(ValueError, match="size "):
                     eg.wishart(df, scale, size=size)
                 return
     if size:

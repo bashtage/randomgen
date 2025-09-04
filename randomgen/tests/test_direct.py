@@ -631,7 +631,7 @@ class TestJSF32(TestJSF64):
     def setup_class(cls):
         super().setup_class()
         cls.bit_generator_base = JSF
-        cls.bit_generator = partial(JSF, size=32)
+        cls.bit_generator = staticmethod(partial(JSF, size=32))
         cls.size = 32
         cls.bits = 32
         cls.dtype = np.uint32
@@ -676,7 +676,7 @@ class TestXoroshiro128PlusPlus(TestXoroshiro128):
     @classmethod
     def setup_class(cls):
         super().setup_class()
-        cls.bit_generator = partial(Xoroshiro128, plusplus=True)
+        cls.bit_generator = staticmethod(partial(Xoroshiro128, plusplus=True))
         cls.bits = 64
         cls.dtype = np.uint64
         cls.data1 = cls._read_csv(
@@ -906,7 +906,7 @@ class TestPhilox4x32(Random123):
     def setup_class(cls):
         super().setup_class()
         cls.bit_generator_base = Philox
-        cls.bit_generator = partial(Philox, number=4, width=32)
+        cls.bit_generator = staticmethod(partial(Philox, number=4, width=32))
         cls.number = 4
         cls.width = 32
         cls.bits = 32
@@ -1281,7 +1281,7 @@ class TestThreeFry4x32(Random123):
     def setup_class(cls):
         super().setup_class()
         cls.bit_generator_base = ThreeFry
-        cls.bit_generator = partial(ThreeFry, number=4, width=32)
+        cls.bit_generator = staticmethod(partial(ThreeFry, number=4, width=32))
         cls.number = 4
         cls.width = 32
         cls.bits = 32
@@ -1868,7 +1868,7 @@ class TestTycheOpenRand(TestTyche):
     @classmethod
     def setup_class(cls):
         super().setup_class()
-        cls.bit_generator = partial(Tyche, original=False)
+        cls.bit_generator = staticmethod(partial(Tyche, original=False))
         cls.data1 = cls._read_csv(join(pwd, "./data/tyche-openrand-testset-1.csv"))
         cls.data2 = cls._read_csv(join(pwd, "./data/tyche-openrand-testset-2.csv"))
 
@@ -1899,7 +1899,7 @@ class TestPCG64DXSM(Base):
     @classmethod
     def setup_class(cls):
         super().setup_class()
-        cls.bit_generator = partial(PCG64, variant="dxsm-128")
+        cls.bit_generator = staticmethod(partial(PCG64, variant="dxsm-128"))
         cls.bits = 64
         cls.dtype = np.uint64
         cls.data1 = cls._read_csv(join(pwd, "./data/pcg64-dxsm-testset-1.csv"))
@@ -1928,7 +1928,7 @@ class TestPCG64CMDXSM(TestPCG64DXSM):
     @classmethod
     def setup_class(cls):
         super().setup_class()
-        cls.bit_generator = partial(PCG64, variant="dxsm")
+        cls.bit_generator = staticmethod(partial(PCG64, variant="dxsm"))
         cls.data1 = cls._read_csv(join(pwd, "./data/pcg64-cm-dxsm-testset-1.csv"))
         cls.data2 = cls._read_csv(join(pwd, "./data/pcg64-cm-dxsm-testset-2.csv"))
         cls.large_advance_initial = 159934576226003702342121456273047082943
@@ -2030,7 +2030,7 @@ class TestSquares32(TestSquares):
     @classmethod
     def setup_class(cls):
         super().setup_class()
-        cls.bit_generator = partial(Squares, variant=32)
+        cls.bit_generator = staticmethod(partial(Squares, variant=32))
         cls.data1 = cls._read_csv(join(pwd, "./data/squares-32-testset-1.csv"))
         cls.data2 = cls._read_csv(join(pwd, "./data/squares-32-testset-2.csv"))
 
@@ -2110,7 +2110,7 @@ class TestRomuTrio(TestLXM):
     @classmethod
     def setup_class(cls):
         super().setup_class()
-        cls.bit_generator = partial(Romu, variant="trio")
+        cls.bit_generator = staticmethod(partial(Romu, variant="trio"))
         cls.bits = 64
         cls.dtype = np.uint64
         cls.data1 = cls._read_csv(join(pwd, "./data/romutrio-testset-1.csv"))

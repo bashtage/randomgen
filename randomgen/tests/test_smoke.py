@@ -295,13 +295,17 @@ class RNG:
         randoms = self.rg.standard_exponential(10, dtype="float32")
         assert_(len(randoms) == 10)
         assert randoms.dtype == np.float32
-        params_0(partial(self.rg.standard_exponential, dtype="float32"))
+        params_0(staticmethod(partial(self.rg.standard_exponential, dtype="float32")))
 
     def test_standard_exponential_float_log(self):
         randoms = self.rg.standard_exponential(10, dtype="float32", method="inv")
         assert_(len(randoms) == 10)
         assert randoms.dtype == np.float32
-        params_0(partial(self.rg.standard_exponential, dtype="float32", method="inv"))
+        params_0(
+            staticmethod(
+                partial(self.rg.standard_exponential, dtype="float32", method="inv")
+            )
+        )
 
     def test_standard_cauchy(self):
         assert_(len(self.rg.standard_cauchy(10)) == 10)
@@ -924,7 +928,7 @@ class TestJSF64(RNG):
     @classmethod
     def setup_class(cls):
         super().setup_class()
-        cls.bit_generator = partial(JSF, seed_size=3)
+        cls.bit_generator = staticmethod(partial(JSF, seed_size=3))
         cls.advance = None
         cls.seed = [12345]
         cls.rg = np.random.Generator(cls.bit_generator(*cls.seed))
@@ -937,7 +941,7 @@ class TestJSF32(RNG):
     @classmethod
     def setup_class(cls):
         super().setup_class()
-        cls.bit_generator = partial(JSF, size=32, seed_size=3)
+        cls.bit_generator = staticmethod(partial(JSF, size=32, seed_size=3))
         cls.advance = None
         cls.seed = [12345]
         cls.rg = np.random.Generator(cls.bit_generator(*cls.seed))
@@ -983,7 +987,7 @@ class TestPCG64VariantDXSM(TestPCG64):
     @classmethod
     def setup_class(cls):
         super().setup_class()
-        cls.bit_generator = partial(PCG64, variant="dxsm-128")
+        cls.bit_generator = staticmethod(partial(PCG64, variant="dxsm-128"))
         cls.rg = np.random.Generator(cls.bit_generator(*cls.seed))
         cls.initial_state = cls.rg.bit_generator.state
         cls._extra_setup()
@@ -993,7 +997,7 @@ class TestPCG64CMDXSM(TestPCG64):
     @classmethod
     def setup_class(cls):
         super().setup_class()
-        cls.bit_generator = partial(PCG64, variant="dxsm")
+        cls.bit_generator = staticmethod(partial(PCG64, variant="dxsm"))
         cls.rg = np.random.Generator(cls.bit_generator(*cls.seed))
         cls.initial_state = cls.rg.bit_generator.state
         cls._extra_setup()
@@ -1006,7 +1010,9 @@ class TestPhilox4x64(RNG):
         cls.number = 4
         cls.width = 64
         cls.bit_generator_base = Philox
-        cls.bit_generator = partial(Philox, number=cls.number, width=cls.width)
+        cls.bit_generator = staticmethod(
+            partial(Philox, number=cls.number, width=cls.width)
+        )
         cls.advance = 2**63 + 2**31 + 2**15 + 1
         cls.seed = [12345]
         cls.rg = np.random.Generator(cls.bit_generator(*cls.seed))
@@ -1032,7 +1038,9 @@ class TestPhilox2x64(TestPhilox4x64):
         super().setup_class()
         cls.number = 2
         cls.width = 64
-        cls.bit_generator = partial(Philox, number=cls.number, width=cls.width)
+        cls.bit_generator = staticmethod(
+            partial(Philox, number=cls.number, width=cls.width)
+        )
         cls.advance = 2**63 + 2**31 + 2**15 + 1
         cls.seed = [12345]
         cls.rg = np.random.Generator(cls.bit_generator(*cls.seed))
@@ -1048,7 +1056,9 @@ class TestPhilox2x32(TestPhilox4x64):
         super().setup_class()
         cls.number = 2
         cls.width = 32
-        cls.bit_generator = partial(Philox, number=cls.number, width=cls.width)
+        cls.bit_generator = staticmethod(
+            partial(Philox, number=cls.number, width=cls.width)
+        )
         cls.advance = 2**63 + 2**31 + 2**15 + 1
         cls.seed = [12345]
         cls.rg = np.random.Generator(cls.bit_generator(*cls.seed))
@@ -1063,7 +1073,9 @@ class TestPhilox4x32(TestPhilox4x64):
         super().setup_class()
         cls.number = 4
         cls.width = 32
-        cls.bit_generator = partial(Philox, number=cls.number, width=cls.width)
+        cls.bit_generator = staticmethod(
+            partial(Philox, number=cls.number, width=cls.width)
+        )
         cls.advance = 2**63 + 2**31 + 2**15 + 1
         cls.seed = [12345]
         cls.rg = np.random.Generator(cls.bit_generator(*cls.seed))
@@ -1079,7 +1091,9 @@ class TestThreeFry4x64(TestPhilox4x64):
         cls.number = 4
         cls.width = 64
         cls.bit_generator_base = ThreeFry
-        cls.bit_generator = partial(ThreeFry, number=cls.number, width=cls.width)
+        cls.bit_generator = staticmethod(
+            partial(ThreeFry, number=cls.number, width=cls.width)
+        )
         cls.advance = 2**63 + 2**31 + 2**15 + 1
         cls.seed = [12345]
         cls.rg = np.random.Generator(cls.bit_generator(*cls.seed))
@@ -1094,7 +1108,9 @@ class TestThreeFry2x64(TestPhilox4x64):
         super().setup_class()
         cls.number = 2
         cls.width = 64
-        cls.bit_generator = partial(ThreeFry, number=cls.number, width=cls.width)
+        cls.bit_generator = staticmethod(
+            partial(ThreeFry, number=cls.number, width=cls.width)
+        )
         cls.advance = 2**63 + 2**31 + 2**15 + 1
         cls.seed = [12345]
         cls.rg = np.random.Generator(cls.bit_generator(*cls.seed))
@@ -1109,7 +1125,9 @@ class TestThreeFry2x32(TestPhilox4x64):
         super().setup_class()
         cls.number = 2
         cls.width = 32
-        cls.bit_generator = partial(ThreeFry, number=cls.number, width=cls.width)
+        cls.bit_generator = staticmethod(
+            partial(ThreeFry, number=cls.number, width=cls.width)
+        )
         cls.advance = 2**63 + 2**31 + 2**15 + 1
         cls.seed = [12345]
         cls.rg = np.random.Generator(cls.bit_generator(*cls.seed))
@@ -1124,7 +1142,9 @@ class TestThreeFry4x32(TestPhilox4x64):
         super().setup_class()
         cls.number = 4
         cls.width = 32
-        cls.bit_generator = partial(ThreeFry, number=cls.number, width=cls.width)
+        cls.bit_generator = staticmethod(
+            partial(ThreeFry, number=cls.number, width=cls.width)
+        )
         cls.advance = 2**63 + 2**31 + 2**15 + 1
         cls.seed = [12345]
         cls.rg = np.random.Generator(cls.bit_generator(*cls.seed))
@@ -1150,7 +1170,7 @@ class TestXoroshiro128PlusPlus(RNG):
     @classmethod
     def setup_class(cls):
         super().setup_class()
-        cls.bit_generator = partial(Xoroshiro128, plusplus=True)
+        cls.bit_generator = staticmethod(partial(Xoroshiro128, plusplus=True))
         cls.rg = np.random.Generator(cls.bit_generator(*cls.seed))
         cls.initial_state = cls.rg.bit_generator.state
         cls._extra_setup()
