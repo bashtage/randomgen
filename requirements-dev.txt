@@ -8,7 +8,7 @@ scipy>=1.13.1
 # Lint
 black[jupyter]~=25.1.0
 isort~=5.0
-setuptools_scm[toml]>=9.2.0,<10
+setuptools_scm>=9.2.0,<10
 ruff
 flake8
 flake8-pyi

@@ -17,10 +17,6 @@ jobs:
   strategy:
     matrix:
       ${{ if eq(parameters.name, 'Linux') }}:
-        python39_legacy:
-          python.version: '3.9'
-          test.isolation: true
-          NUMPY: 1.22.3
         python310_last_numpy_1:
           python.version: '3.10'
           test.isolation: true

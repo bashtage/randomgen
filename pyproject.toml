@@ -1,3 +1,66 @@
+[project]
+name = "randomgen"
+readme = "README.md"
+license = "NCSA"
+license-files = [ "LICENSE.md" ]
+dynamic = ["dependencies", "version"]
+authors = [{ name = "Kevin Sheppard", email = "kevin.k.sheppard@gmail.com" }]
+maintainers = [
+  { name = "Kevin Sheppard", email = "kevin.k.sheppard@gmail.com" },
+]
+
+description = "Random generator supporting multiple PRNGs"
+requires-python = ">=3.10"
+keywords = [
+    "pseudo random numbers",
+    "PRNG",
+    "RNG",
+    "RandomState",
+    "random",
+    "random numbers",
+    "parallel random numbers",
+    "PCG",
+    "XorShift",
+    "dSFMT",
+    "MT19937",
+    "Random123",
+    "ThreeFry",
+    "Philox",
+    "ChaCha",
+    "AES",
+    "SPECK",
+    "RDRAND",
+]
+classifiers = [
+    "Development Status :: 5 - Production/Stable",
+    "Environment :: Console",
+    "Intended Audience :: End Users/Desktop",
+    "Intended Audience :: Financial and Insurance Industry",
+    "Intended Audience :: Information Technology",
+    "Intended Audience :: Science/Research",
+    "Operating System :: MacOS :: MacOS X",
+    "Operating System :: Microsoft :: Windows",
+    "Operating System :: POSIX :: Linux",
+    "Operating System :: Unix",
+    "Programming Language :: C",
+    "Programming Language :: Cython",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Topic :: Adaptive Technologies",
+    "Topic :: Artistic Software",
+    "Topic :: Office/Business :: Financial",
+    "Topic :: Scientific/Engineering",
+    "Topic :: Security :: Cryptography",
+]
+
+[project.urls]
+homepage = "https://github.com/bashtage/randomgen"
+documentation = "https://bashtage.github.io/randomgen/"
+repository = "https://github.com/bashtage/randomgen"
+changelog = "https://bashtage.github.io/randomgen/change-log.html"
+
 [build-system]
 requires = [
     "packaging>=21.0",
@@ -5,7 +68,7 @@ requires = [
     "wheel",
     "Cython>=3.0.10,<4",
     "numpy>=2.0.0rc1,<3",
-    "setuptools_scm[toml]>=8.0.0,<9.0.0",
+    "setuptools_scm>=9.2.0,<10",
 ]
 build-backend = "setuptools.build_meta"
 
