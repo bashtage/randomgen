@@ -24,8 +24,16 @@ print(incdir)
     check: true,
 ).stdout().strip()
 
+incdir_numpy_abs = run_command(py,
+['-c', 'import os; os.chdir(".."); import numpy; print(numpy.get_include())'],
+check: true
+).stdout().strip()
 inc_np = include_directories(incdir_numpy)
 inc_np_random = include_directories(incdir_numpy / 'numpy' / 'random')
+npymath_path = incdir_numpy_abs / '..' / 'lib'
+npyrandom_path = incdir_numpy_abs / '..' / '..' / 'random' / 'lib'
+npymath_lib = cc.find_library('npymath', dirs: npymath_path)
+npyrandom_lib = cc.find_library('npyrandom', dirs: npyrandom_path)
 # Copy the main __init__.py to the build dir.
 # Some submodules (linalg, special, optimize) add pxd files to this.
 # Needed to trick Cython, it won't do a relative import outside a package
@@ -47,7 +55,7 @@ cython_args = [
 #            EXTRA_COMPILE_ARGS += ['/arch:SSE2']
 #            SSSE3_COMPILE_ARGS = EXTRA_COMPILE_ARGS[:]
 
-cython_c_args =  ['-DNPY_NO_DEPRECATED_API=NPY_1_7_API_VERSION', '/Zp16','/wd4146', '/GL','/arch:SSE2']
+cython_c_args =  ['-DNPY_NO_DEPRECATED_API=NPY_1_7_API_VERSION', '/Zp16','/wd4146', '/GL','/arch:SSE4.2']
 if get_option('cython-coverage')
   message('Building with Cython coverage support')
   cython_args += ['-X linetrace=True']
@@ -81,8 +89,9 @@ else
   )
 endif
 
-#subdir('legacy')
 
+
+inc_aligned_malloc = include_directories('src' / 'aligned_malloc')
 CPU_FEATURES = ['src/common/cpu_features.c']
 ALIGNED_MALLOC = ['src/aligned_malloc/aligned_malloc.c']
 
@@ -138,16 +147,15 @@ py.extension_module(
     c_args: cython_c_args,
     link_args: version_link_args,
 )
-# TODO: Fix
-#py.extension_module(
-#    'chacha',
-#    ['chacha.pyx', 'src/chacha/chacha.c'] + CPU_FEATURES + ALIGNED_MALLOC,
-#    install: true,
-#    include_directories: [inc_np, include_directories('src/chacha')],
-#    subdir: 'randomgen',
-#    cython_args: cython_args,
-#    c_args: cython_c_args,
-#)
+py.extension_module(
+    'chacha',
+    ['chacha.pyx', 'src/chacha/chacha.c'] + CPU_FEATURES + ALIGNED_MALLOC,
+    install: true,
+    include_directories: [inc_np, include_directories('src/chacha')],
+    subdir: 'randomgen',
+    cython_args: cython_args,
+    c_args: cython_c_args,
+)
 # bit_generator(
 #     'chacha', cpu_features=True, aligned=True, compile_args=SSSE3_COMPILE_ARGS
 # )
@@ -243,6 +251,17 @@ py.extension_module(
     link_args: version_link_args,
 )
 py.extension_module(
+    'generator',
+    ['generator.pyx', 'src/distributions/rg-distributions.c'] + CPU_FEATURES + ALIGNED_MALLOC,
+    install: true,
+    include_directories: [inc_np, inc_np_random],
+    subdir: 'randomgen',
+    cython_args: cython_args,
+    c_args: cython_c_args,
+    link_args: version_link_args,
+    dependencies: [npymath_lib, npyrandom_lib],
+)
+py.extension_module(
     'entropy',
     ['entropy.pyx', 'src/entropy/entropy.c'],
     install: true,
@@ -252,25 +271,40 @@ py.extension_module(
     c_args: cython_c_args,
     link_args: version_link_args,
 )
+py.extension_module(
+    'wrapper',
+    ['wrapper.pyx'],
+    install: true,
+    include_directories: [inc_np, inc_np_random],
+    subdir: 'randomgen',
+    cython_args: cython_args,
+    c_args: cython_c_args,
+    link_args: version_link_args,
+)
+py.extension_module(
+    'pcg64',
+    ['pcg64.pyx','src/pcg64/pcg64-common.c','src/pcg64/pcg64-v2.c','src/pcg64/lcg128mix.c'],
+    install: true,
+    include_directories: [inc_np, inc_np_random],
+    subdir: 'randomgen',
+    cython_args: cython_args,
+    c_args: cython_c_args,
+    link_args: version_link_args,
+)
+py.extension_module(
+    'squares',
+    ['squares.pyx'],
+    install: true,
+    include_directories: [inc_np, inc_np_random],
+    subdir: 'randomgen',
+    cython_args: cython_args,
+    c_args: cython_c_args,
+    link_args: version_link_args,
+)
 
-# # PCG requires special treatment since it contains multiple bit gens
-# ext = Extension(
-#     'randomgen.pcg64',
-#     ['randomgen/pcg64.pyx']
-#     + [
-#         src_join('pcg64', 'pcg64-common.c'),
-#         src_join('pcg64', 'pcg64-v2.c'),
-#         src_join('pcg64', 'lcg128mix.c'),
-#     ],
-#     libraries=EXTRA_LIBRARIES,
-#     include_dirs=EXTRA_INCLUDE_DIRS,
-#     extra_compile_args=EXTRA_COMPILE_ARGS,
-#     extra_link_args=EXTRA_LINK_ARGS,
-#     define_macros=DEFS,
-#     undef_macros=UNDEF_MACROS,
-# )
-# extensions.append(ext)
-#
+
+
+# subdir('tests')
 
 top_level_py_list = [
     '__init__.py',

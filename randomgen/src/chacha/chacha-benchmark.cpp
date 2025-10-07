@@ -6,7 +6,7 @@
 // ./-benchmark.exe
 //
 
-#include ".orig.h"
+#include "chacha-orig.h"
 #include <time.h>
 using namespace std;
 
