@@ -30,6 +30,7 @@ check: true
 ).stdout().strip()
 inc_np = include_directories(incdir_numpy)
 inc_np_random = include_directories(incdir_numpy / 'numpy' / 'random')
+inc_aligned_malloc = include_directories('src/aligned_malloc')
 npymath_path = incdir_numpy_abs / '..' / 'lib'
 npyrandom_path = incdir_numpy_abs / '..' / '..' / 'random' / 'lib'
 npymath_lib = cc.find_library('npymath', dirs: npymath_path)
@@ -38,6 +39,7 @@ npyrandom_lib = cc.find_library('npyrandom', dirs: npyrandom_path)
 # Some submodules (linalg, special, optimize) add pxd files to this.
 # Needed to trick Cython, it won't do a relative import outside a package
 _cython_tree = [fs.copyfile('__init__.py')]
+
 cython_args = [
     '-X cpow=True',
     '-X boundscheck=False',
@@ -116,7 +118,7 @@ foreach gen: standard_bit_generators
         gen[0],
         gen[1],
         install: true,
-        include_directories: [inc_np, include_directories(gen[2])],
+        include_directories: [inc_np, inc_aligned_malloc, include_directories(gen[2])],
         subdir: 'randomgen',
         cython_args: cython_args,
         c_args: cython_c_args,
@@ -133,7 +135,7 @@ subdirs_list = [
 ]
 
 foreach subdir : subdirs_list
-    install_subdir(subdir, install_dir: py.get_install_dir() / 'arch')
+    install_subdir(subdir, install_dir: py.get_install_dir() / 'randomgen')
 endforeach
 
 
@@ -141,7 +143,7 @@ py.extension_module(
     'aes',
     ['aes.pyx', 'src/aesctr/aesctr.c'] + CPU_FEATURES + ALIGNED_MALLOC,
     install: true,
-    include_directories: [inc_np, include_directories('src/aesctr')],
+    include_directories: [inc_np, inc_aligned_malloc, include_directories('src/aesctr')],
     subdir: 'randomgen',
     cython_args: cython_args,
     c_args: cython_c_args,
@@ -151,20 +153,17 @@ py.extension_module(
     'chacha',
     ['chacha.pyx', 'src/chacha/chacha.c'] + CPU_FEATURES + ALIGNED_MALLOC,
     install: true,
-    include_directories: [inc_np, include_directories('src/chacha')],
+    include_directories: [inc_np, inc_aligned_malloc, include_directories('src/chacha')],
     subdir: 'randomgen',
     cython_args: cython_args,
     c_args: cython_c_args,
+    link_args: version_link_args,
 )
-# bit_generator(
-#     'chacha', cpu_features=True, aligned=True, compile_args=SSSE3_COMPILE_ARGS
-# )
-
 py.extension_module(
     'dsfmt',
     ['dsfmt.pyx', 'src/dsfmt/dsfmt.c', 'src/dsfmt/dSFMT-jump.c'] + ALIGNED_MALLOC,
     install: true,
-    include_directories: [inc_np, include_directories('src/dsfmt')],
+    include_directories: [inc_np, inc_aligned_malloc, include_directories('src/dsfmt')],
     subdir: 'randomgen',
     cython_args: cython_args,
     c_args: cython_c_args + ['-DDSFMT_MEXP=19937'],
@@ -174,7 +173,7 @@ py.extension_module(
     'mt19937',
     ['mt19937.pyx', 'src/mt19937/mt19937.c', 'src/mt19937/mt19937-jump.c'],
     install: true,
-    include_directories: [inc_np, include_directories('src/mt19937')],
+    include_directories: [inc_np, inc_aligned_malloc, include_directories('src/mt19937')],
     subdir: 'randomgen',
     cython_args: cython_args,
     c_args: cython_c_args,
@@ -184,7 +183,7 @@ py.extension_module(
     'philox',
     ['philox.pyx', 'src/philox/philox.c'],
     install: true,
-    include_directories: [inc_np, include_directories('src/philox')],
+    include_directories: [inc_np, inc_aligned_malloc, include_directories('src/philox')],
     subdir: 'randomgen',
     cython_args: cython_args,
     c_args: cython_c_args + ['-DR123_USE_PHILOX_64BIT=1'],
@@ -194,7 +193,7 @@ py.extension_module(
     'rdrand',
     ['rdrand.pyx', 'src/rdrand/rdrand.c'] + CPU_FEATURES,
     install: true,
-    include_directories: [inc_np, include_directories('src/rdrand')],
+    include_directories: [inc_np, inc_aligned_malloc, include_directories('src/rdrand')],
     subdir: 'randomgen',
     cython_args: cython_args,
     c_args: cython_c_args,
@@ -204,7 +203,7 @@ py.extension_module(
     'sfmt',
     ['sfmt.pyx', 'src/sfmt/sfmt.c', 'src/sfmt/sfmt-jump.c'] + ALIGNED_MALLOC,
     install: true,
-    include_directories: [inc_np, include_directories('src/sfmt')],
+    include_directories: [inc_np, inc_aligned_malloc, include_directories('src/sfmt')],
     subdir: 'randomgen',
     cython_args: cython_args,
     c_args: cython_c_args + ['-DDSFMT_MEXP=19937'],
@@ -214,7 +213,7 @@ py.extension_module(
     'speck128',
     ['speck128.pyx', 'src/speck-128/speck-128.c'] + ALIGNED_MALLOC + CPU_FEATURES,
     install: true,
-    include_directories: [inc_np, include_directories('src/speck-128')],
+    include_directories: [inc_np, inc_aligned_malloc, include_directories('src/speck-128')],
     subdir: 'randomgen',
     cython_args: cython_args,
     c_args: cython_c_args + ['-DDSFMT_MEXP=19937'],
@@ -224,7 +223,7 @@ py.extension_module(
     'common',
     ['common.pyx'] + CPU_FEATURES + ALIGNED_MALLOC,
     install: true,
-    include_directories: [inc_np, inc_np_random],
+    include_directories: [inc_np, inc_np_random, inc_aligned_malloc],
     subdir: 'randomgen',
     cython_args: cython_args,
     c_args: cython_c_args,
@@ -254,7 +253,7 @@ py.extension_module(
     'generator',
     ['generator.pyx', 'src/distributions/rg-distributions.c'] + CPU_FEATURES + ALIGNED_MALLOC,
     install: true,
-    include_directories: [inc_np, inc_np_random],
+    include_directories: [inc_np, inc_np_random, inc_aligned_malloc],
     subdir: 'randomgen',
     cython_args: cython_args,
     c_args: cython_c_args,
@@ -275,7 +274,7 @@ py.extension_module(
     'wrapper',
     ['wrapper.pyx'],
     install: true,
-    include_directories: [inc_np, inc_np_random],
+    include_directories: [inc_np, inc_np_random, inc_aligned_malloc],
     subdir: 'randomgen',
     cython_args: cython_args,
     c_args: cython_c_args,
@@ -285,7 +284,7 @@ py.extension_module(
     'pcg64',
     ['pcg64.pyx','src/pcg64/pcg64-common.c','src/pcg64/pcg64-v2.c','src/pcg64/lcg128mix.c'],
     install: true,
-    include_directories: [inc_np, inc_np_random],
+    include_directories: [inc_np, inc_aligned_malloc, inc_np_random],
     subdir: 'randomgen',
     cython_args: cython_args,
     c_args: cython_c_args,
@@ -295,16 +294,14 @@ py.extension_module(
     'squares',
     ['squares.pyx'],
     install: true,
-    include_directories: [inc_np, inc_np_random],
+    include_directories: [inc_np, inc_np_random, inc_aligned_malloc],
     subdir: 'randomgen',
     cython_args: cython_args,
     c_args: cython_c_args,
     link_args: version_link_args,
 )
 
-
-
-# subdir('tests')
+subdir('tests')
 
 top_level_py_list = [
     '__init__.py',

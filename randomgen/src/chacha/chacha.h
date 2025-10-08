@@ -46,11 +46,12 @@ typedef struct CHACHA_STATE_T chacha_state_t;
 
 
 #if defined(__SSE2__) && __SSE2__
-// Get an efficient _mm_roti_epi32 based on enabled features.
+// Get an efficient mm_roti_epi32 based on enabled features.
 #if !defined(__XOP__)
     #if defined(__SSSE3__) && __SSSE3__
-        #undef _mm_roti_epi32 /* Silence warnings on some compiler */
-        #define _mm_roti_epi32(r, c) (                              \
+        /* Renamed _mm_roti_epi32 to _chacha_mm_roti_epi32 to avoid issues on MSVC */
+        #undef _chacha_mm_roti_epi32 /* Silence warnings on some compiler */
+        #define _chacha_mm_roti_epi32(r, c) (                              \
             ((c) == 8) ?                                            \
                 _mm_shuffle_epi8((r), _mm_set_epi8(14, 13, 12, 15,  \
                                                    10,  9,  8, 11,  \
@@ -71,12 +72,13 @@ typedef struct CHACHA_STATE_T chacha_state_t;
                               _mm_srli_epi32((r), 32-(c)))          \
         )
     #else
-        #undef _mm_roti_epi32 /* Silence warnings on some compiler */
-        #define _mm_roti_epi32(r, c) _mm_xor_si128(_mm_slli_epi32((r), (c)), \
+        #undef _chacha_mm_roti_epi32 /* Silence warnings on some compiler */
+        #define _chacha_mm_roti_epi32(r, c) _mm_xor_si128(_mm_slli_epi32((r), (c)), \
                                                    _mm_srli_epi32((r), 32-(c)))
     #endif
 #else
     #include <xopintrin.h>
+    #define _chacha_mm_roti_epi32 _mm_roti_epi32
 #endif
 
 static INLINE void chacha_core_ssse3(chacha_state_t *state) {
@@ -95,16 +97,16 @@ static INLINE void chacha_core_ssse3(chacha_state_t *state) {
     for (i = 0; i < state->rounds; i += 2) {
         a = _mm_add_epi32(a, b);
         d = _mm_xor_si128(d, a);
-        d = _mm_roti_epi32(d, 16);
+        d = _chacha_mm_roti_epi32(d, 16);
         c = _mm_add_epi32(c, d);
         b = _mm_xor_si128(b, c);
-        b = _mm_roti_epi32(b, 12);
+        b = _chacha_mm_roti_epi32(b, 12);
         a = _mm_add_epi32(a, b);
         d = _mm_xor_si128(d, a);
-        d = _mm_roti_epi32(d, 8);
+        d = _chacha_mm_roti_epi32(d, 8);
         c = _mm_add_epi32(c, d);
         b = _mm_xor_si128(b, c);
-        b = _mm_roti_epi32(b, 7);
+        b = _chacha_mm_roti_epi32(b, 7);
 
         b = CHACHA_ROTV1(b);
         c = CHACHA_ROTV2(c);
@@ -112,16 +114,16 @@ static INLINE void chacha_core_ssse3(chacha_state_t *state) {
 
         a = _mm_add_epi32(a, b);
         d = _mm_xor_si128(d, a);
-        d = _mm_roti_epi32(d, 16);
+        d = _chacha_mm_roti_epi32(d, 16);
         c = _mm_add_epi32(c, d);
         b = _mm_xor_si128(b, c);
-        b = _mm_roti_epi32(b, 12);
+        b = _chacha_mm_roti_epi32(b, 12);
         a = _mm_add_epi32(a, b);
         d = _mm_xor_si128(d, a);
-        d = _mm_roti_epi32(d, 8);
+        d = _chacha_mm_roti_epi32(d, 8);
         c = _mm_add_epi32(c, d);
         b = _mm_xor_si128(b, c);
-        b = _mm_roti_epi32(b, 7);
+        b = _chacha_mm_roti_epi32(b, 7);
 
         b = CHACHA_ROTV3(b);
         c = CHACHA_ROTV2(c);
