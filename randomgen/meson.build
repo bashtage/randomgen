@@ -48,16 +48,20 @@ cython_args = [
     '-X binding=True'
 ]
 
-# TODO: Platform specific
-#EXTRA_COMPILE_ARGS = (
-#    ['/Zp16'] if os.name == 'nt' else ['-std=c99', '-U__GNUC_GNU_INLINE__']
-#)
-#        EXTRA_COMPILE_ARGS += ['/wd4146', '/GL']
-#        if struct.calcsize('P') < 8:
-#            EXTRA_COMPILE_ARGS += ['/arch:SSE2']
-#            SSSE3_COMPILE_ARGS = EXTRA_COMPILE_ARGS[:]
+cython_c_args =  ['-DNPY_NO_DEPRECATED_API=NPY_1_7_API_VERSION']
+cython_libs = []
+if cc.get_id() == 'msvc' or cc.get_id() == 'clang-cl'
+  cython_c_args += ['/Zp16','/wd4146', '/GL','/arch:SSE4.2']
+else
+  cython_c_args += ['-std=c99', '-U__GNUC_GNU_INLINE__']
+  add_project_link_arguments('-lm', language : 'c')
+  cython_libs += [m_dep]
+  cython_c_args += ['-msse2']
+  cython_c_args += ['-mrdrnd']
+  cython_c_args += ['-mssse3']
+  cython_c_args += ['-maes']
+endif
 
-cython_c_args =  ['-DNPY_NO_DEPRECATED_API=NPY_1_7_API_VERSION', '/Zp16','/wd4146', '/GL','/arch:SSE4.2']
 if get_option('cython-coverage')
   message('Building with Cython coverage support')
   cython_args += ['-X linetrace=True']
