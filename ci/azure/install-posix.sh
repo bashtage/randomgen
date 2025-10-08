@@ -19,7 +19,7 @@ EXTRA="pytest pytest-xdist coverage pytest-cov colorama"
 
 if [[ -n ${NUMPY} ]]; then CMD="$CMD~=${NUMPY}"; fi;
 CMD="$CMD cython"
-if [[ -n ${CYTHON} ]]; then CMD="$CMD~=${CYTHON}"; fi;
+if [[ -n ${CYTHON_VER} ]]; then CMD="$CMD~=${CYTHON_VER}"; fi;
 CMD="$CMD pandas"
 CMD="$CMD $EXTRA"
 if [[ ${USE_CONDA} == "true" ]]; then CMD="$CMD numba"; fi;
