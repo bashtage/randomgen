@@ -6,5 +6,4 @@ py.extension_module(
     subdir: 'randomgen/tests',
     cython_args: cython_args,
     c_args: cython_c_args,
-    link_args: version_link_args,
 )

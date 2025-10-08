@@ -52,10 +52,13 @@ cython_c_args =  ['-DNPY_NO_DEPRECATED_API=NPY_1_7_API_VERSION']
 cython_libs = []
 if cc.get_id() == 'msvc' or cc.get_id() == 'clang-cl'
   cython_c_args += ['/Zp16','/wd4146', '/GL','/arch:SSE4.2']
+  add_project_link_arguments('/LTCG', language : 'c')
+  add_project_link_arguments('/OPT:REF', language : 'c')
+  add_project_link_arguments('Advapi32.lib', language : 'c')
+  add_project_link_arguments('Kernel32.lib', language : 'c')
 else
   cython_c_args += ['-std=c99', '-U__GNUC_GNU_INLINE__']
   add_project_link_arguments('-lm', language : 'c')
-  cython_libs += [m_dep]
   cython_c_args += ['-msse2']
   cython_c_args += ['-mrdrnd']
   cython_c_args += ['-mssse3']
@@ -67,7 +70,7 @@ if get_option('cython-coverage')
   cython_args += ['-X linetrace=True']
   cython_c_args += ['-DCYTHON_TRACE=1']
 endif
-version_link_args = ['/LTCG', '/OPT:REF', 'Advapi32.lib', 'Kernel32.lib']
+
 
 rg_dir = py.get_install_dir() / 'randomgen'
 # Generate version.py for sdist
@@ -126,7 +129,6 @@ foreach gen: standard_bit_generators
         subdir: 'randomgen',
         cython_args: cython_args,
         c_args: cython_c_args,
-        link_args: version_link_args,
     )
 endforeach
 
@@ -151,7 +153,6 @@ py.extension_module(
     subdir: 'randomgen',
     cython_args: cython_args,
     c_args: cython_c_args,
-    link_args: version_link_args,
 )
 py.extension_module(
     'chacha',
@@ -161,7 +162,6 @@ py.extension_module(
     subdir: 'randomgen',
     cython_args: cython_args,
     c_args: cython_c_args,
-    link_args: version_link_args,
 )
 py.extension_module(
     'dsfmt',
@@ -171,7 +171,6 @@ py.extension_module(
     subdir: 'randomgen',
     cython_args: cython_args,
     c_args: cython_c_args + ['-DDSFMT_MEXP=19937'],
-    link_args: version_link_args,
 )
 py.extension_module(
     'mt19937',
@@ -181,7 +180,6 @@ py.extension_module(
     subdir: 'randomgen',
     cython_args: cython_args,
     c_args: cython_c_args,
-    link_args: version_link_args,
 )
 py.extension_module(
     'philox',
@@ -191,7 +189,6 @@ py.extension_module(
     subdir: 'randomgen',
     cython_args: cython_args,
     c_args: cython_c_args + ['-DR123_USE_PHILOX_64BIT=1'],
-    link_args: version_link_args,
 )
 py.extension_module(
     'rdrand',
@@ -201,7 +198,6 @@ py.extension_module(
     subdir: 'randomgen',
     cython_args: cython_args,
     c_args: cython_c_args,
-    link_args: version_link_args,
 )
 py.extension_module(
     'sfmt',
@@ -210,8 +206,7 @@ py.extension_module(
     include_directories: [inc_np, inc_aligned_malloc, include_directories('src/sfmt')],
     subdir: 'randomgen',
     cython_args: cython_args,
-    c_args: cython_c_args + ['-DDSFMT_MEXP=19937'],
-    link_args: version_link_args,
+    c_args: cython_c_args + ['-DSFMT_MEXP=19937'],
 )
 py.extension_module(
     'speck128',
@@ -221,7 +216,6 @@ py.extension_module(
     subdir: 'randomgen',
     cython_args: cython_args,
     c_args: cython_c_args + ['-DDSFMT_MEXP=19937'],
-    link_args: version_link_args,
 )
 py.extension_module(
     'common',
@@ -231,7 +225,6 @@ py.extension_module(
     subdir: 'randomgen',
     cython_args: cython_args,
     c_args: cython_c_args,
-    link_args: version_link_args,
 )
 py.extension_module(
     '_seed_sequence',
@@ -241,7 +234,6 @@ py.extension_module(
     subdir: 'randomgen',
     cython_args: cython_args,
     c_args: cython_c_args,
-    link_args: version_link_args,
 )
 py.extension_module(
     'broadcasting',
@@ -251,7 +243,6 @@ py.extension_module(
     subdir: 'randomgen',
     cython_args: cython_args,
     c_args: cython_c_args,
-    link_args: version_link_args,
 )
 py.extension_module(
     'generator',
@@ -261,7 +252,6 @@ py.extension_module(
     subdir: 'randomgen',
     cython_args: cython_args,
     c_args: cython_c_args,
-    link_args: version_link_args,
     dependencies: [npymath_lib, npyrandom_lib],
 )
 py.extension_module(
@@ -272,7 +262,6 @@ py.extension_module(
     subdir: 'randomgen',
     cython_args: cython_args,
     c_args: cython_c_args,
-    link_args: version_link_args,
 )
 py.extension_module(
     'wrapper',
@@ -282,7 +271,6 @@ py.extension_module(
     subdir: 'randomgen',
     cython_args: cython_args,
     c_args: cython_c_args,
-    link_args: version_link_args,
 )
 py.extension_module(
     'pcg64',
@@ -292,7 +280,6 @@ py.extension_module(
     subdir: 'randomgen',
     cython_args: cython_args,
     c_args: cython_c_args,
-    link_args: version_link_args,
 )
 py.extension_module(
     'squares',
@@ -302,7 +289,6 @@ py.extension_module(
     subdir: 'randomgen',
     cython_args: cython_args,
     c_args: cython_c_args,
-    link_args: version_link_args,
 )
 
 subdir('tests')
