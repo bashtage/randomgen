@@ -73,7 +73,7 @@ def test_multivariate_normal_method(seed, method):
                 [0.7130260107430003, 9.551628690083056],
                 [0.7127098726541128, 11.991709234143173],
             ],
-        ]
+        ],
     )
 
     assert_array_almost_equal(actual, desired, decimal=15)
@@ -93,7 +93,11 @@ def test_multivariate_normal_method(seed, method):
     mean = [0, 0]
     cov = [[1, 2], [1, 2]]
     assert_raises(
-        ValueError, random.multivariate_normal, mean, cov, check_valid="raise"
+        ValueError,
+        random.multivariate_normal,
+        mean,
+        cov,
+        check_valid="raise",
     )
 
     # Check that non positive-semidefinite covariance warns with
@@ -111,7 +115,11 @@ def test_multivariate_normal_method(seed, method):
 
     # and that it raises with RuntimeWarning check_valid='raises'
     assert_raises(
-        ValueError, random.multivariate_normal, mean, cov, check_valid="raise"
+        ValueError,
+        random.multivariate_normal,
+        mean,
+        cov,
+        check_valid="raise",
     )
     assert_raises(
         ValueError,
@@ -129,7 +137,11 @@ def test_multivariate_normal_method(seed, method):
         assert_array_almost_equal(samples[..., 0], samples[..., 1], decimal=6)
     else:
         assert_raises(
-            LinAlgError, random.multivariate_normal, mean, cov, method="cholesky"
+            LinAlgError,
+            random.multivariate_normal,
+            mean,
+            cov,
+            method="cholesky",
         )
 
     cov = np.array([[1, 0.1], [0.1, 1]], dtype=np.float32)
@@ -141,7 +153,11 @@ def test_multivariate_normal_method(seed, method):
     cov = np.eye(2)
     assert random.multivariate_normal(mu, cov, size=3).shape == (3, 2)
     assert_raises(
-        ValueError, random.multivariate_normal, mean, cov, check_valid="other"
+        ValueError,
+        random.multivariate_normal,
+        mean,
+        cov,
+        check_valid="other",
     )
     assert_raises(ValueError, random.multivariate_normal, np.zeros((2, 1, 1)), cov)
     assert_raises(ValueError, random.multivariate_normal, mu, np.empty((3, 2)))
@@ -198,7 +214,7 @@ def test_multivariate_normal(seed):
                 [0.950123388279074, 10.055774500309264],
                 [0.13457049786723752, 9.803457241505443],
             ],
-        ]
+        ],
     )
 
     assert_array_almost_equal(actual, desired, decimal=15)
@@ -220,7 +236,11 @@ def test_multivariate_normal(seed):
 
     # and that it raises with RuntimeWarning check_valid="raises"
     assert_raises(
-        ValueError, random.multivariate_normal, mean, cov, check_valid="raise"
+        ValueError,
+        random.multivariate_normal,
+        mean,
+        cov,
+        check_valid="raise",
     )
 
     cov = np.array([[1, 0.1], [0.1, 1]], dtype=np.float32)
@@ -231,7 +251,11 @@ def test_multivariate_normal(seed):
     mu = np.zeros(2)
     cov = np.eye(2)
     assert_raises(
-        ValueError, random.multivariate_normal, mean, cov, check_valid="other"
+        ValueError,
+        random.multivariate_normal,
+        mean,
+        cov,
+        check_valid="other",
     )
     assert_raises(ValueError, random.multivariate_normal, np.zeros((2, 1, 1)), cov)
     assert_raises(ValueError, random.multivariate_normal, mu, np.empty((3, 2)))
@@ -255,7 +279,7 @@ def test_complex_normal(seed):
                 1.7159142754357688 + 0.027887250154631615j,
                 1.009624754209292 - 0.09827137924727837j,
             ],
-        ]
+        ],
     )
     assert_array_almost_equal(actual, desired, decimal=15)
 
@@ -336,7 +360,7 @@ def test_complex_normal_size(mv_seed):
                 1.088126576683737 + 0.5544754121023469j,
                 0.8485995861109008 - 0.047090051743345455j,
             ],
-        ]
+        ],
     )
     assert_array_almost_equal(actual, desired, decimal=15)
 
@@ -346,11 +370,11 @@ def test_complex_normal_size(mv_seed):
 
 
 def test_invalid_capsule():
-    class fake:
+    class Fake:
         capsule = "capsule"
 
     with pytest.raises(ValueError, match="Invalid bit generator"):
-        ExtendedGenerator(fake())
+        ExtendedGenerator(Fake())
 
 
 def test_default_pcg64():
@@ -603,11 +627,14 @@ def test_mv_complex_normal_exceptions(extended_gen):
         extended_gen.multivariate_complex_normal([0.0, 0.0], relation=0.0)
     with pytest.raises(ValueError, match="The covariance matrix implied"):
         extended_gen.multivariate_complex_normal(
-            [0.0, 0.0], np.array([[1.0, 0 + 1.0j], [0 + 1.0j, 1]])
+            [0.0, 0.0],
+            np.array([[1.0, 0 + 1.0j], [0 + 1.0j, 1]]),
         )
     with pytest.raises(ValueError, match="The leading dimensions"):
         extended_gen.multivariate_complex_normal(
-            [0.0, 0.0], np.ones((4, 1, 3, 2, 2)), np.ones((1, 1, 2, 2, 2))
+            [0.0, 0.0],
+            np.ones((4, 1, 3, 2, 2)),
+            np.ones((1, 1, 2, 2, 2)),
         )
 
 
@@ -669,7 +696,7 @@ def test_random():
             [0.840045643478751, 0.526812305612705],
             [0.390476663670696, 0.373221178199718],
             [0.144160402211855, 0.255532529630851],
-        ]
+        ],
     )
     assert_array_almost_equal(actual, desired, decimal=15)
 
@@ -682,7 +709,7 @@ def test_random_float(seed):
     random = ExtendedGenerator(MT19937(seed))
     actual = random.random((3, 2))
     desired = np.array(
-        [[0.7165936, 0.6035045], [0.4473828, 0.359537], [0.7954794, 0.1942982]]
+        [[0.7165936, 0.6035045], [0.4473828, 0.359537], [0.7954794, 0.1942982]],
     )
     assert_array_almost_equal(actual, desired, decimal=7)
 

@@ -4,6 +4,9 @@ import numba as nb
 import numpy as np
 
 from randomgen import Xoroshiro128
+import pytz
+
+tz = pytz.timezone("UTC")
 
 x = Xoroshiro128()
 f = x.ctypes.next_uint32
@@ -65,15 +68,14 @@ print(normals(10, cffi_state).var())
 normalsj = nb.jit(normals, nopython=True)
 normalsj(1, state_addr)
 
-start = dt.datetime.now()
+start = dt.datetime.now(tz=tz)
 normalsj(1000000, state_addr)
-ms = 1000 * (dt.datetime.now() - start).total_seconds()
+ms = 1000 * (dt.datetime.now(tz=tz) - start).total_seconds()
 print(
-    "1,000,000 Polar-transform (numba/Xoroshiro128) randoms in "
-    "{ms:0.1f}ms".format(ms=ms)
+    "1,000,000 Polar-transform (numba/Xoroshiro128) randoms in " f"{ms:0.1f}ms",
 )
 
-start = dt.datetime.now()
+start = dt.datetime.now(tz=tz)
 np.random.standard_normal(1000000)
-ms = 1000 * (dt.datetime.now() - start).total_seconds()
+ms = 1000 * (dt.datetime.now(tz=tz) - start).total_seconds()
 print(f"1,000,000 Polar-transform (NumPy) randoms in {ms:0.1f}ms")

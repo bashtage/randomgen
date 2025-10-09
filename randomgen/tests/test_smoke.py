@@ -107,7 +107,8 @@ def comp_state(state1, state2):
         for key in state1:
             identical &= comp_state(state1[key], state2[key])
     elif isinstance(state1, (list, tuple, np.ndarray)) and isinstance(
-        state2, (list, tuple, np.ndarray)
+        state2,
+        (list, tuple, np.ndarray),
     ):
         for s1, s2 in compat.zip(state1, state2, strict=True):
             identical &= comp_state(s1, s2)
@@ -186,7 +187,8 @@ class RNG:
     def test_jump(self):
         state = self.rg.bit_generator.state
         if hasattr(self.rg.bit_generator, "jump") and not isinstance(
-            self.rg.bit_generator, PCG64DXSM
+            self.rg.bit_generator,
+            PCG64DXSM,
         ):
             with pytest.deprecated_call():
                 self.rg.bit_generator.jump()
@@ -303,7 +305,7 @@ class RNG:
         assert len(randoms) == 10
         assert randoms.dtype == np.float32
         params_0(
-            CustomPartial(self.rg.standard_exponential, dtype="float32", method="inv")
+            CustomPartial(self.rg.standard_exponential, dtype="float32", method="inv"),
         )
 
     def test_standard_cauchy(self):
@@ -324,11 +326,11 @@ class RNG:
         self.rg.bit_generator.state = state
         int_2 = self.rg.integers(2**31)
         assert int_1 == int_2
-        with pytest.raises(TypeError):
+        with pytest.raises(TypeError, match="state must be a dic"):
             self.rg.bit_generator.state = [(k, v) for k, v in state.items()]
         wrong_state = state.copy()
         wrong_state["bit_generator"] = "WrongClass"
-        with pytest.raises(ValueError):
+        with pytest.raises(ValueError, match="state must be for a"):
             self.rg.bit_generator.state = wrong_state
 
     def test_entropy_init(self):
@@ -605,7 +607,7 @@ class RNG:
 
     def test_seed_array_error(self):
         seed = -1
-        with pytest.raises(ValueError):
+        with pytest.raises(ValueError, match="expected non-negative"):
             self.rg.bit_generator.seed(seed)
 
         seed = np.array([-1], dtype=np.int32)
@@ -771,23 +773,23 @@ class RNG:
         rg = self.rg
         size = (31, 7, 97)
         existing = np.empty(size)
-        with pytest.raises(TypeError):
+        with pytest.raises(TypeError, match="Supplied output array ha"):
             rg.standard_normal(out=existing, dtype=np.float32)
-        with pytest.raises(ValueError):
+        with pytest.raises(ValueError, match="Supplied output array must"):
             rg.standard_normal(out=existing[::3])
         existing = np.empty(size, dtype=np.float32)
-        with pytest.raises(TypeError):
+        with pytest.raises(TypeError, match="Supplied output array has the wrong"):
             rg.standard_normal(out=existing, dtype=np.float64)
 
         existing = np.zeros(size, dtype=np.float32)
-        with pytest.raises(TypeError):
+        with pytest.raises(TypeError, match="Supplied output array has the wrong"):
             rg.standard_gamma(1.0, out=existing, dtype=np.float64)
-        with pytest.raises(ValueError):
+        with pytest.raises(ValueError, match="Supplied output array must be C"):
             rg.standard_gamma(1.0, out=existing[::3], dtype=np.float32)
         existing = np.zeros(size, dtype=np.float64)
-        with pytest.raises(TypeError):
+        with pytest.raises(TypeError, match="Supplied output array has the wrong type"):
             rg.standard_gamma(1.0, out=existing, dtype=np.float32)
-        with pytest.raises(ValueError):
+        with pytest.raises(ValueError, match="Supplied output array must be C"):
             rg.standard_gamma(1.0, out=existing[::3])
 
     def test_integers_broadcast(self, dtype):
@@ -816,7 +818,10 @@ class RNG:
         assert_equal(a, d)
         self._reset_state()
         e = self.rg.integers(
-            np.array([lower] * 10), np.array([upper] * 10), size=10, dtype=dtype
+            np.array([lower] * 10),
+            np.array([upper] * 10),
+            size=10,
+            dtype=dtype,
         )
         assert_equal(a, e)
 
@@ -847,13 +852,13 @@ class RNG:
             info = np.iinfo(dtype)
             upper = int(info.max) + 1
             lower = info.min
-        with pytest.raises(ValueError):
+        with pytest.raises(ValueError, match="high is out of bounds"):
             self.rg.integers(lower, [upper + 1] * 10, dtype=dtype)
-        with pytest.raises(ValueError):
+        with pytest.raises(ValueError, match="low is out of bounds"):
             self.rg.integers(lower - 1, [upper] * 10, dtype=dtype)
-        with pytest.raises(ValueError):
+        with pytest.raises(ValueError, match="low is out of bounds"):
             self.rg.integers([lower - 1], [upper] * 10, dtype=dtype)
-        with pytest.raises(ValueError):
+        with pytest.raises(ValueError, match="high <= 0"):
             self.rg.integers([0], [0], dtype=dtype)
 
     def test_bit_generator_raw_large(self):
@@ -965,15 +970,15 @@ class TestPCG64(RNG):
     def test_seed_array_error(self):
         # GH #82 for error type changes
         seed = -1
-        with pytest.raises(ValueError):
+        with pytest.raises(ValueError, match="expected non-negative"):
             self.rg.bit_generator.seed(seed)
 
         seed = np.array([-1], dtype=np.int32)
-        with pytest.raises(ValueError):
+        with pytest.raises(ValueError, match="expected non-negative"):
             self.rg.bit_generator.seed(seed)
 
         seed = np.array([1, 2, 3, -5], dtype=np.int32)
-        with pytest.raises(ValueError):
+        with pytest.raises(ValueError, match="expected non-negative"):
             self.rg.bit_generator.seed(seed)
 
     def test_array_scalar_seed_diff(self):
@@ -1256,7 +1261,7 @@ class TestEntropy:
         assert isinstance(e3, np.ndarray)
 
     def test_invalid_source(self):
-        with pytest.raises(ValueError):
+        with pytest.raises(ValueError, match="Unknown value in source"):
             entropy.random_entropy(source="invalid")
 
 

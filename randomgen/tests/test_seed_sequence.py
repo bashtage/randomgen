@@ -61,7 +61,10 @@ def test_reference_data():
         [18305404959516669237, 14103312907920476776],
     ]
     for seed, _expected, expected64 in compat.zip(
-        inputs, outputs, outputs64, strict=True
+        inputs,
+        outputs,
+        outputs64,
+        strict=True,
     ):
         expected = np.array(_expected, dtype=np.uint32)
         ss = SeedSequence(seed)
@@ -221,12 +224,15 @@ def test_zero_padding():
     # Ensure backwards compatibility with the original 0.17 release for small
     # integers and no spawn key.
     expected42 = np.array(
-        [3444837047, 2669555309, 2046530742, 3581440988], dtype=np.uint32
+        [3444837047, 2669555309, 2046530742, 3581440988],
+        dtype=np.uint32,
     )
     assert_array_equal(SeedSequence(42).generate_state(4), expected42)
 
     # Regression test for gh-16539 to ensure that the implicit 0s don't
     # conflict with spawn keys.
     assert_array_compare(
-        np.not_equal, SeedSequence(42, spawn_key=(0,)).generate_state(4), expected42
+        np.not_equal,
+        SeedSequence(42, spawn_key=(0,)).generate_state(4),
+        expected42,
     )

@@ -5,7 +5,10 @@ from randomgen.typing import IntegerSequenceSeed
 
 class LXM(BitGenerator):
     def __init__(
-        self, seed: IntegerSequenceSeed | None = ..., *, b: int = ...
+        self,
+        seed: IntegerSequenceSeed | None = ...,
+        *,
+        b: int = ...,
     ) -> None: ...
     def seed(self, seed: IntegerSequenceSeed | None = ...) -> None: ...
     def jump(self, iter: int = ...) -> LXM: ...
@@ -16,5 +19,6 @@ class LXM(BitGenerator):
     ) -> dict[str, str | int | dict[str, int | np.ndarray]]: ...
     @state.setter
     def state(
-        self, value: dict[str, str | int | dict[str, int | np.ndarray]]
+        self,
+        value: dict[str, str | int | dict[str, int | np.ndarray]],
     ) -> None: ...

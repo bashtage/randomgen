@@ -44,7 +44,7 @@ from randomgen import (
 )
 from randomgen._deprecated_value import _DeprecatedValue
 import randomgen._pickle as rg_pkl
-from randomgen.common import interface
+from randomgen.common import Interface
 from randomgen.seed_sequence import ISeedSequence
 from randomgen.squares import _get_words, _test_sentinal, generate_keys
 from randomgen.tests._utility import CustomPartial
@@ -222,7 +222,8 @@ class Base:
 
     def test_deprecated_mode(self):
         if self.bit_generator in NO_MODE_SUPPORT or isinstance(
-            self.bit_generator, CustomPartial
+            self.bit_generator,
+            CustomPartial,
         ):
             pytest.skip("Never supported mode")
         with pytest.warns(FutureWarning):
@@ -371,7 +372,8 @@ class Base:
         orig_gen = np.random.Generator(bit_generator)
         reloaded_gen = np.random.Generator(reloaded)
         assert_array_equal(
-            orig_gen.standard_normal(1000), reloaded_gen.standard_normal(1000)
+            orig_gen.standard_normal(1000),
+            reloaded_gen.standard_normal(1000),
         )
         assert bit_generator is not reloaded
         assert_state_equal(reloaded.state, bit_generator.state)
@@ -391,6 +393,7 @@ class Base:
     def test_invalid_seed_type(self):
         bit_generator = self.setup_bitgenerator(self.data1["seed"])
         for st in self.invalid_seed_types:
+            # No match here as reasons vary by bit gen
             with pytest.raises(TypeError):
                 bit_generator.seed(*st)
 
@@ -411,7 +414,7 @@ class Base:
     def test_cffi(self):
         bit_generator = self.setup_bitgenerator(self.data1["seed"])
         cffi_interface = bit_generator.cffi
-        assert isinstance(cffi_interface, interface)
+        assert isinstance(cffi_interface, Interface)
         other_cffi_interface = bit_generator.cffi
         assert other_cffi_interface is cffi_interface
 
@@ -419,7 +422,7 @@ class Base:
     def test_ctypes(self):
         bit_generator = self.setup_bitgenerator(self.data1["seed"])
         ctypes_interface = bit_generator.ctypes
-        assert isinstance(ctypes_interface, interface)
+        assert isinstance(ctypes_interface, Interface)
         other_ctypes_interface = bit_generator.ctypes
         assert other_ctypes_interface is ctypes_interface
 
@@ -563,7 +566,8 @@ class Random123(Base):
         state = bg.state
         size_max = np.iinfo(dtype).max
         assert_equal(
-            state["state"]["counter"], np.array([size_max, 0, 0, 0], dtype=dtype)
+            state["state"]["counter"],
+            np.array([size_max, 0, 0, 0], dtype=dtype),
         )
 
         bg = self.bit_generator()
@@ -577,7 +581,8 @@ class Random123(Base):
         bg.advance(step, True)
         state = bg.state
         assert_equal(
-            state["state"]["counter"], np.array([size_max, size_max, 0, 0], dtype=dtype)
+            state["state"]["counter"],
+            np.array([size_max, size_max, 0, 0], dtype=dtype),
         )
 
     def test_advance_deprecated(self):
@@ -682,10 +687,10 @@ class TestXoroshiro128PlusPlus(TestXoroshiro128):
         cls.bits = 64
         cls.dtype = np.uint64
         cls.data1 = cls._read_csv(
-            join(pwd, "./data/xoroshiro128plusplus-testset-1.csv")
+            join(pwd, "./data/xoroshiro128plusplus-testset-1.csv"),
         )
         cls.data2 = cls._read_csv(
-            join(pwd, "./data/xoroshiro128plusplus-testset-2.csv")
+            join(pwd, "./data/xoroshiro128plusplus-testset-2.csv"),
         )
 
 
@@ -754,7 +759,8 @@ class TestThreeFry(Random123):
         bit_generator = self.setup_bitgenerator(self.data1["seed"])
         state = bit_generator.state
         keyed = self.bit_generator(
-            counter=state["state"]["counter"], key=state["state"]["key"]
+            counter=state["state"]["counter"],
+            key=state["state"]["key"],
         )
         assert_state_equal(bit_generator.state, keyed.state)
 
@@ -763,20 +769,24 @@ class TestThreeFry(Random123):
         state0 = bg.state
         bg.advance(1, True)
         assert_equal(
-            bg.state["state"]["counter"], np.array([1, 0, 0, 0], dtype=np.uint64)
+            bg.state["state"]["counter"],
+            np.array([1, 0, 0, 0], dtype=np.uint64),
         )
         bg.advance(1, True)
         assert_equal(
-            bg.state["state"]["counter"], np.array([2, 0, 0, 0], dtype=np.uint64)
+            bg.state["state"]["counter"],
+            np.array([2, 0, 0, 0], dtype=np.uint64),
         )
         bg.advance(2**64, True)
         assert_equal(
-            bg.state["state"]["counter"], np.array([2, 1, 0, 0], dtype=np.uint64)
+            bg.state["state"]["counter"],
+            np.array([2, 1, 0, 0], dtype=np.uint64),
         )
         bg.state = state0
         bg.advance(2**128, True)
         assert_equal(
-            bg.state["state"]["counter"], np.array([0, 0, 1, 0], dtype=np.uint64)
+            bg.state["state"]["counter"],
+            np.array([0, 0, 1, 0], dtype=np.uint64),
         )
 
 
@@ -805,7 +815,9 @@ class TestPCG64XSLRR(Base):
         assert_raises(self.seed_error_type, rs.bit_generator.seed, np.array([np.pi]))
         assert_raises(self.seed_error_type, rs.bit_generator.seed, np.array([-np.pi]))
         assert_raises(
-            self.seed_error_type, rs.bit_generator.seed, np.array([np.pi, -np.pi])
+            self.seed_error_type,
+            rs.bit_generator.seed,
+            np.array([np.pi, -np.pi]),
         )
         assert_raises(self.seed_error_type, rs.bit_generator.seed, np.array([0, np.pi]))
         assert_raises(self.seed_error_type, rs.bit_generator.seed, [np.pi])
@@ -884,7 +896,8 @@ class TestPhilox(Random123):
         bit_generator = self.setup_bitgenerator(self.data1["seed"])
         state = bit_generator.state
         keyed = self.bit_generator(
-            counter=state["state"]["counter"], key=state["state"]["key"]
+            counter=state["state"]["counter"],
+            key=state["state"]["key"],
         )
         assert_state_equal(bit_generator.state, keyed.state)
 
@@ -984,7 +997,9 @@ class TestAESCounter(TestPhilox):
         assert_raises(self.seed_error_type, rs.bit_generator.seed, np.array([np.pi]))
         assert_raises(self.seed_error_type, rs.bit_generator.seed, np.array([-np.pi]))
         assert_raises(
-            self.seed_error_type, rs.bit_generator.seed, np.array([np.pi, -np.pi])
+            self.seed_error_type,
+            rs.bit_generator.seed,
+            np.array([np.pi, -np.pi]),
         )
         assert_raises(TypeError, rs.bit_generator.seed, np.array([0, np.pi]))
         assert_raises(TypeError, rs.bit_generator.seed, [np.pi])
@@ -1029,7 +1044,8 @@ class TestAESCounter(TestPhilox):
         bg.advance(step)
         state = bg.state
         assert_equal(
-            state["s"]["counter"], np.array([4, 1, 5, 1, 6, 1, 7, 1], dtype=np.uint64)
+            state["s"]["counter"],
+            np.array([4, 1, 5, 1, 6, 1, 7, 1], dtype=np.uint64),
         )
 
         bg = self.bit_generator()
@@ -1037,7 +1053,8 @@ class TestAESCounter(TestPhilox):
         bg.advance(step)
         state = bg.state
         assert_equal(
-            state["s"]["counter"], np.array([0, 1, 1, 1, 2, 1, 3, 1], dtype=np.uint64)
+            state["s"]["counter"],
+            np.array([0, 1, 1, 1, 2, 1, 3, 1], dtype=np.uint64),
         )
 
         bg = self.bit_generator()
@@ -1052,7 +1069,8 @@ class TestAESCounter(TestPhilox):
         bg.random_raw(9)
         state = bg.state
         assert_equal(
-            state["s"]["counter"], np.array([0, 0, 1, 0, 2, 0, 3, 0], dtype=np.uint64)
+            state["s"]["counter"],
+            np.array([0, 0, 1, 0, 2, 0, 3, 0], dtype=np.uint64),
         )
 
         bg = self.bit_generator()
@@ -1085,7 +1103,8 @@ class TestAESCounter(TestPhilox):
         bg = self.bit_generator(counter=2**128 - 2)
         state = bg.state
         assert_equal(
-            state["s"]["counter"][-4:], np.array([0, 0, 1, 0], dtype=np.uint64)
+            state["s"]["counter"][-4:],
+            np.array([0, 0, 1, 0], dtype=np.uint64),
         )
 
 
@@ -1614,7 +1633,9 @@ class TestHC128(Base):
         assert_raises(self.seed_error_type, rs.bit_generator.seed, np.array([np.pi]))
         assert_raises(self.seed_error_type, rs.bit_generator.seed, np.array([-np.pi]))
         assert_raises(
-            self.seed_error_type, rs.bit_generator.seed, np.array([np.pi, -np.pi])
+            self.seed_error_type,
+            rs.bit_generator.seed,
+            np.array([np.pi, -np.pi]),
         )
         assert_raises(TypeError, rs.bit_generator.seed, np.array([0, np.pi]))
         assert_raises(TypeError, rs.bit_generator.seed, [np.pi])
@@ -2060,7 +2081,9 @@ class TestSquares32(TestSquares):
         rs = np.random.RandomState(self.setup_bitgenerator(self.data2["seed"]))
         gauss = rs.standard_normal(25)
         assert_allclose(
-            gauss, gauss_from_uint(self.data2["data"], n, "squares32"), rtol=3e-6
+            gauss,
+            gauss_from_uint(self.data2["data"], n, "squares32"),
+            rtol=3e-6,
         )
 
 

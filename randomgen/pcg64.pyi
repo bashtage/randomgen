@@ -13,12 +13,21 @@ class PCG64(BitGenerator):
         inc: int | None = ...,
         *,
         variant: Literal[
-            "xsl-rr", "1.0", 1, "dxsm", "cm-dxsm", 2, "2.0", "dxsm-128"
+            "xsl-rr",
+            "1.0",
+            1,
+            "dxsm",
+            "cm-dxsm",
+            2,
+            "2.0",
+            "dxsm-128",
         ] = ...,
         mode: SeedMode | None = ...,
     ) -> None: ...
     def seed(
-        self, seed: IntegerSequenceSeed | None = ..., inc: int | None = ...
+        self,
+        seed: IntegerSequenceSeed | None = ...,
+        inc: int | None = ...,
     ) -> None: ...
     @property
     def state(self) -> dict[str, str | int | dict[str, int]]: ...
@@ -40,20 +49,25 @@ class LCG128Mix(BitGenerator):
         post: bool = ...,
     ) -> None: ...
     def seed(
-        self, seed: IntegerSequenceSeed | None = ..., inc: int | None = ...
+        self,
+        seed: IntegerSequenceSeed | None = ...,
+        inc: int | None = ...,
     ) -> None: ...
     @property
     def state(self) -> dict[str, str | int | dict[str, bool | int | str]]: ...
     @state.setter
     def state(
-        self, value: dict[str, str | int | dict[str, bool | int | str]]
+        self,
+        value: dict[str, str | int | dict[str, bool | int | str]],
     ) -> None: ...
     def advance(self, delta: int) -> LCG128Mix: ...
     def jumped(self, iter: int = ...) -> LCG128Mix: ...
 
 class PCG64DXSM(PCG64):
     def __init__(
-        self, seed: IntegerSequenceSeed | None = ..., inc: int | None = ...
+        self,
+        seed: IntegerSequenceSeed | None = ...,
+        inc: int | None = ...,
     ) -> None: ...
     @property
     def state(self) -> dict[str, str | int | dict[str, int]]: ...

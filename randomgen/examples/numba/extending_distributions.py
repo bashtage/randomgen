@@ -38,7 +38,7 @@ else:
 ffi.cdef(
     """
 double random_gauss_zig(void *bitgen_state);
-"""
+""",
 )
 x = Xoroshiro128()
 xffi = x.cffi

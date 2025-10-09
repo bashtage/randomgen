@@ -176,12 +176,13 @@ exclude = [
 [tool.ruff]
 line-length = 88
 fix = false
-target-version = "py310"
+target-version = "py38"
 
 [tool.ruff.lint]
 typing-modules = []
 
 select = [
+  "ALL",
   # pyflakes
   "F",
   # pycodestyle
@@ -233,7 +234,6 @@ select = [
 ]
 
 ignore = [
-    "PT011", # TODO: Temporary
   # Required to allow black formatting
   # Whitespace before ':' (Needed for black)
   "E203",
@@ -249,6 +249,7 @@ ignore = [
   "TC002",
   # Move standard library import `...` into a type-checking block
   "TC003",
+  # TODO: enable "PTH"
 
   #  ### Intentionally disabled
   # Too many arguments to function call
@@ -261,6 +262,35 @@ ignore = [
   "PLR2004",
   # Like to suggest use [a, *b] instead of [a] + b
   "RUF005",
+  # Logging issues with f-strings
+  "G",
+  # Commas interfere with black
+  "COM",
+  # Complains about asserts which are used in typing
+  "S",
+  # New temp ignores
+
+  "FBT",
+  "ANN",
+  "D",
+  "I",
+  "RET",
+  "BLE",
+  "INP",
+  "T",
+  "SIM",
+  "PD",
+  "C901",
+  "ERA",
+  "LOG",
+  "TRY",
+  "EM",
+  "A",
+  "ARG",
+  "SLF001",
+  "NPY",
+  "FIX",
+  "TD"
 ]
 
 [tool.ruff.lint.per-file-ignores]

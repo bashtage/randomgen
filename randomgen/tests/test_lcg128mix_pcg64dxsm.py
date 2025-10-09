@@ -133,7 +133,7 @@ def test_ctypes():
             raise FileNotFoundError(f"{so_loc} does not exist")
     except Exception as exc:
         pytest.skip(
-            "GCC unavailable or other error compiling the test library" + str(exc)
+            "GCC unavailable or other error compiling the test library" + str(exc),
         )
     libtesting = ctypes.CDLL(so_loc)
     libtesting.output_upper.argtypes = (ctypes.c_uint64, ctypes.c_uint64)

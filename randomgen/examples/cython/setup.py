@@ -7,7 +7,9 @@ from setuptools import setup
 from setuptools.extension import Extension
 
 extending = Extension(
-    "extending", sources=["extending.pyx"], include_dirs=[np.get_include()]
+    "extending",
+    sources=["extending.pyx"],
+    include_dirs=[np.get_include()],
 )
 distributions = Extension(
     "extending_distributions",
@@ -26,7 +28,9 @@ distributions = Extension(
     include_dirs=[np.get_include()],
 )
 low_level = Extension(
-    "low_level", sources=["low_level.pyx"], include_dirs=[np.get_include()]
+    "low_level",
+    sources=["low_level.pyx"],
+    include_dirs=[np.get_include()],
 )
 
 extensions = [extending, distributions, low_level]

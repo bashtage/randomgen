@@ -160,8 +160,8 @@ def timer_bounded(bits=8, max=95, use_masked=True):
         command,
         command_numpy,
         SETUP,
-        "{bits}-bit bounded unsigned integers (max={max}, "
-        "use_masked={use_masked})".format(max=max, use_masked=use_masked, bits=bits),
+        f"{bits}-bit bounded unsigned integers (max={max}, "
+        f"use_masked={use_masked})",
     )
 
 

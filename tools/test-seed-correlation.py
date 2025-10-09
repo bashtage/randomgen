@@ -33,7 +33,7 @@ def setup_configuration_files(num_streams=8, sequential=False):
                 kwargs = dict(zip(config.keys(), arg_set, strict=False))
                 key = "-".join(
                     [bit_generator]
-                    + [f"{key}-{value}" for key, value in kwargs.items()]
+                    + [f"{key}-{value}" for key, value in kwargs.items()],
                 )
                 parameters[key] = (bitgen, kwargs)
         else:
@@ -133,7 +133,7 @@ if __name__ == "__main__":
 
     results_file = args.results_file
     configurations = setup_configuration_files(
-        num_streams=args.num_streams, sequential=args.sequential
+        num_streams=args.num_streams, sequential=args.sequential,
     )
     logger.info(f"Storing results to {results_file}")
     results = defaultdict(dict)

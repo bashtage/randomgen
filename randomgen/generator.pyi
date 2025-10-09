@@ -30,7 +30,10 @@ class ExtendedGenerator:
     def random(self, size: None) -> float: ...
     @overload
     def random(
-        self, size: RequiredSize, dtype: str = ..., out: ndarray | None = ...
+        self,
+        size: RequiredSize,
+        dtype: str = ...,
+        out: ndarray | None = ...,
     ) -> ndarray: ...
     def multivariate_normal(
         self,
@@ -52,7 +55,10 @@ class ExtendedGenerator:
     def complex_normal(self, *, gamma: complex, relation: complex) -> complex: ...
     @overload
     def complex_normal(
-        self, loc: complex, gamma: complex, relation: complex
+        self,
+        loc: complex,
+        gamma: complex,
+        relation: complex,
     ) -> complex: ...
     @overload
     def complex_normal(self, loc: ndarray) -> ndarray: ...
@@ -62,15 +68,25 @@ class ExtendedGenerator:
     def complex_normal(self, loc: complex | ndarray, gamma: ndarray) -> ndarray: ...
     @overload
     def complex_normal(
-        self, *, gamma: ndarray, relation: complex | ndarray
+        self,
+        *,
+        gamma: ndarray,
+        relation: complex | ndarray,
     ) -> ndarray: ...
     @overload
     def complex_normal(
-        self, loc: complex | ndarray, *, relation: ndarray
+        self,
+        loc: complex | ndarray,
+        *,
+        relation: ndarray,
     ) -> ndarray: ...
     @overload
     def complex_normal(
-        self, loc: complex | ndarray, gamma: complex | ndarray, *, relation: ndarray
+        self,
+        loc: complex | ndarray,
+        gamma: complex | ndarray,
+        *,
+        relation: ndarray,
     ) -> ndarray: ...
     @overload
     def complex_normal(self, *, relation: ndarray) -> ndarray: ...
@@ -83,7 +99,12 @@ class ExtendedGenerator:
         size: RequiredSize,
     ) -> ndarray: ...
     def standard_wishart(
-        self, df: int, dim: int, size: Size = ..., *, rescale: bool = ...
+        self,
+        df: int,
+        dim: int,
+        size: Size = ...,
+        *,
+        rescale: bool = ...,
     ) -> ndarray: ...
     def wishart(
         self,

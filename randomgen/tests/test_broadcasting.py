@@ -80,7 +80,7 @@ for a in (None, 0.5, 0.5 * np.ones((1, 2)), 0.5 * np.ones((3, 2))):
                     print(_size, _out.shape if isinstance(_out, np.ndarray) else _out)
                     generator = ShimGenerator(PCG64())
                     CONFIGS[count_params(a, b, c)].append(
-                        Config(a, b, c, _size, _out, generator)
+                        Config(a, b, c, _size, _out, generator),
                     )
 
 
@@ -114,7 +114,11 @@ def test_cont_2(config):
 @pytest.mark.parametrize("config", CONFIGS[3])
 def test_cont_3(config):
     res = config.generator.cont_3(
-        config.a, config.b, config.c, size=config.size, out=config.out
+        config.a,
+        config.b,
+        config.c,
+        size=config.size,
+        out=config.out,
     )
     if isinstance(res, np.ndarray):
         assert_allclose(res, 2.5 * np.ones_like(res))
@@ -125,7 +129,11 @@ def test_cont_3(config):
 @pytest.mark.parametrize("config", CONFIGS[3])
 def test_cont_3_alt_cons(config):
     res = config.generator.cont_3_alt_cons(
-        1.0 + config.a, config.b, config.c, size=config.size, out=config.out
+        1.0 + config.a,
+        config.b,
+        config.c,
+        size=config.size,
+        out=config.out,
     )
     if isinstance(res, np.ndarray):
         assert_allclose(res, 3.5 * np.ones_like(res))
@@ -249,82 +257,82 @@ def test_constraint_violations():
         generator.cont_3_alt_cons(0.5, 1, 1)
     poisson_lam_max = np.iinfo("int64").max - np.sqrt(np.iinfo("int64").max) * 10
     legacy_poisson_lam_max = np.iinfo("l").max - np.sqrt(np.iinfo("l").max) * 10
-    with pytest.raises(ValueError):
+    with pytest.raises(ValueError, match="b value too large"):
         generator.cont_3_alt_cons(1.5, poisson_lam_max + 10000, 1)
-    with pytest.raises(ValueError):
+    with pytest.raises(ValueError, match="b < 0 or b is NaN"):
         generator.cont_3_alt_cons(1.5, np.nan, 1)
-    with pytest.raises(ValueError):
+    with pytest.raises(ValueError, match="b < 0 or b is NaN"):
         generator.cont_3_alt_cons(1.5, -0.01, 1)
-    with pytest.raises(ValueError):
+    with pytest.raises(ValueError, match="c value too large"):
         generator.cont_3_alt_cons(1.5, 1, legacy_poisson_lam_max + 10000)
-    with pytest.raises(ValueError):
+    with pytest.raises(ValueError, match="c < 0 or c is NaN"):
         generator.cont_3_alt_cons(1.5, 1, np.nan)
-    with pytest.raises(ValueError):
+    with pytest.raises(ValueError, match="c < 0 or c is NaN"):
         generator.cont_3_alt_cons(1.5, 1, -1)
-    with pytest.raises(ValueError):
+    with pytest.raises(ValueError, match="a < 1 or a contains NaNs"):
         generator.cont_3_alt_cons([1.5, 0.5], [1], [1])
-    with pytest.raises(ValueError):
+    with pytest.raises(ValueError, match="b value too large"):
         generator.cont_3_alt_cons([1.5], [1, poisson_lam_max + 10000], [1])
-    with pytest.raises(ValueError):
+    with pytest.raises(ValueError, match="b value too large"):
         generator.cont_3_alt_cons([1.5], [1, np.nan], [1])
-    with pytest.raises(ValueError):
+    with pytest.raises(ValueError, match="b < 0 or b contains NaNs"):
         generator.cont_3_alt_cons([1.5], [1, -1], [1])
-    with pytest.raises(ValueError):
+    with pytest.raises(ValueError, match="c value too large"):
         generator.cont_3_alt_cons([1.5], [1], [1, legacy_poisson_lam_max + 10000])
-    with pytest.raises(ValueError):
+    with pytest.raises(ValueError, match="c < 0 or c contains NaNs"):
         generator.cont_3_alt_cons([1.5], [1], [1, -1])
-    with pytest.raises(ValueError):
+    with pytest.raises(ValueError, match="c value too large"):
         generator.cont_3_alt_cons([1.5], [1], [1, np.nan])
 
-    with pytest.raises(ValueError):
+    with pytest.raises(ValueError, match="a <= 0"):
         generator.cont_1_float(-2.0)
-    with pytest.raises(ValueError):
+    with pytest.raises(ValueError, match="a <= 0"):
         generator.cont_1_float([-2.0])
-    with pytest.raises(ValueError):
+    with pytest.raises(ValueError, match="a <= 0"):
         generator.cont_1_float([3, 4, 5, -2.0])
-    with pytest.raises(ValueError):
+    with pytest.raises(ValueError, match="a <= 0"):
         generator.disc_d(-1.0)
-    with pytest.raises(ValueError):
+    with pytest.raises(ValueError, match="a <= 0"):
         generator.disc_d([-1.0])
-    with pytest.raises(ValueError):
+    with pytest.raises(ValueError, match="a <= 0"):
         generator.disc_d([100, -1.0])
 
-    with pytest.raises(ValueError):
+    with pytest.raises(ValueError, match="a <= 0"):
         generator.disc_dd(0.0, 4)
-    with pytest.raises(ValueError):
+    with pytest.raises(ValueError, match="b < 0"):
         generator.disc_dd(1.0, -1)
-    with pytest.raises(ValueError):
+    with pytest.raises(ValueError, match="a <= 0"):
         generator.disc_dd([1.0, 0.0], [0.0, 0.0])
-    with pytest.raises(ValueError):
+    with pytest.raises(ValueError, match="b < 0"):
         generator.disc_dd([1.0, 1.0], [0.0, -0.1])
 
-    with pytest.raises(ValueError):
+    with pytest.raises(ValueError, match="a <= 0"):
         generator.disc_di(0.0, 0)
-    with pytest.raises(ValueError):
+    with pytest.raises(ValueError, match="b < 0"):
         generator.disc_di(1.0, -1)
-    with pytest.raises(ValueError):
+    with pytest.raises(ValueError, match="a <= 0"):
         generator.disc_di([3, 0.0], 0)
-    with pytest.raises(ValueError):
+    with pytest.raises(ValueError, match="b < 0"):
         generator.disc_di([4.5, 3.2], [3, -1])
 
-    with pytest.raises(ValueError):
+    with pytest.raises(ValueError, match="a < 0"):
         generator.disc_i(-1)
     generator.disc_i(0)
-    with pytest.raises(ValueError):
+    with pytest.raises(ValueError, match="a < 0"):
         generator.disc_i([0, -1])
 
-    with pytest.raises(ValueError):
+    with pytest.raises(ValueError, match="a <= 0"):
         generator.disc_iii(0, 1, 1)
-    with pytest.raises(ValueError):
+    with pytest.raises(ValueError, match="b < 0"):
         generator.disc_iii(1, -1, 1)
-    with pytest.raises(ValueError):
+    with pytest.raises(ValueError, match="c <= 0"):
         generator.disc_iii(1, 0, 0)
 
-    with pytest.raises(ValueError):
+    with pytest.raises(ValueError, match="a <= 0"):
         generator.disc_iii([0], [1], [1])
-    with pytest.raises(ValueError):
+    with pytest.raises(ValueError, match="b < 0"):
         generator.disc_iii([1], [-1], [1])
-    with pytest.raises(ValueError):
+    with pytest.raises(ValueError, match="c <= 0"):
         generator.disc_iii([1], [0], [0])
 
 

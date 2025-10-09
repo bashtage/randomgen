@@ -13,6 +13,8 @@ poly-128 is the 2**128 poly computed using the original author's code
 clist_mt19937 is the polynomial shipped by the original author
 """
 
+from __future__ import annotations
+
 import hashlib
 import os
 import platform
@@ -40,8 +42,7 @@ def save_state(bit_gen: MT19937, file_name: str) -> None:
     state_key = cast("np.ndarray", bit_gen_state["key"])
     state_pos = bit_gen_state["pos"]
     with open(file_name, "w") as f:
-        for k in state_key:
-            f.write(f"{k}\n")
+        f.writelines(f"{k}\n" for k in state_key)
         f.write(f"{state_pos}\n")
 
 
@@ -104,7 +105,7 @@ for poly in ("poly-128", "clist_mt19937"):
 
 txt = "JUMP_TEST_DATA=" + pprint.pformat(values)
 fm = black.FileMode(
-    target_versions={black.TargetVersion.PY37, black.TargetVersion.PY38}
+    target_versions={black.TargetVersion.PY37, black.TargetVersion.PY38},
 )
 with open("jump-test-values.txt", "w") as jt:
     jt.write(black.format_file_contents(txt, fast=False, mode=fm))

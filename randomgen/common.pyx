@@ -462,8 +462,9 @@ cdef np.ndarray int_to_array(object value, object name, object bits, object uint
                              "{0}".format(str(dtype)))
         out = value.astype(dtype, casting="unsafe")
         if req_len is not None and out.shape != (req_len,):
-            raise ValueError("{name} must have {len} elements when using array"
-                             " form".format(name=name, len=len))
+            raise ValueError(
+                f"{name} must have {req_len} elements when using array form"
+            )
     return out
 
 cdef view_little_endian(arr, dtype):

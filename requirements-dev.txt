@@ -7,6 +7,7 @@ cython>=3.0.10
 pytest>=7
 pytest-cov
 pytest-xdist
+pytest-randomly
 scipy>=1.13.1
 # Lint
 black[jupyter]~=25.9.0

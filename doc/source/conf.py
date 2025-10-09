@@ -169,7 +169,7 @@ html_logo = "images/casino.svg"
 # html_sidebars = {}
 html_show_sourcelink = True
 html_sidebars = {
-    "**": ["logo-text.html", "globaltoc.html", "localtoc.html", "searchbox.html"]
+    "**": ["logo-text.html", "globaltoc.html", "localtoc.html", "searchbox.html"],
 }
 
 # If false, no module index is generated.

@@ -12,5 +12,6 @@ class EFIIX64(BitGenerator):
     ) -> dict[str, str | int | dict[str, int | np.ndarray]]: ...
     @state.setter
     def state(
-        self, value: dict[str, str | int | dict[str, int | np.ndarray]]
+        self,
+        value: dict[str, str | int | dict[str, int | np.ndarray]],
     ) -> None: ...

@@ -71,7 +71,7 @@ def _get_bitgenerator(bit_generator_name: str) -> type[BitGenerator]:
         bit_generator = BitGenerators[bit_generator_name]
     else:
         raise ValueError(
-            str(bit_generator_name) + " is not a known BitGenerator module."
+            str(bit_generator_name) + " is not a known BitGenerator module.",
         )
     return bit_generator
 

@@ -5,7 +5,10 @@ from randomgen.typing import IntegerSequenceSeed, SeedMode
 
 class Xorshift1024(BitGenerator):
     def __init__(
-        self, seed: IntegerSequenceSeed | None = ..., *, mode: SeedMode = ...
+        self,
+        seed: IntegerSequenceSeed | None = ...,
+        *,
+        mode: SeedMode = ...,
     ) -> None: ...
     def seed(self, seed: IntegerSequenceSeed | None = ...) -> None: ...
     def jump(self, iter: int = ...) -> Xorshift1024: ...
@@ -16,5 +19,6 @@ class Xorshift1024(BitGenerator):
     ) -> dict[str, str | dict[str, int | np.ndarray] | int]: ...
     @state.setter
     def state(
-        self, value: dict[str, str | dict[str, int | np.ndarray] | int]
+        self,
+        value: dict[str, str | dict[str, int | np.ndarray] | int],
     ) -> None: ...

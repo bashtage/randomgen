@@ -55,7 +55,8 @@ PCG64_INITIAL_STATE = PCG64_NATIVE.state
 @pytest.fixture
 def python_pcg(request):
     bit_gen = _PCG64(
-        PCG64_INITIAL_STATE["state"]["state"], PCG64_INITIAL_STATE["state"]["inc"]
+        PCG64_INITIAL_STATE["state"]["state"],
+        PCG64_INITIAL_STATE["state"]["inc"],
     )
     return bit_gen.next_64()
 
@@ -68,7 +69,8 @@ def pcg_native(request):
 @pytest.fixture
 def pcg_python(request):
     bit_gen = _PCG64(
-        PCG64_INITIAL_STATE["state"]["state"], PCG64_INITIAL_STATE["state"]["inc"]
+        PCG64_INITIAL_STATE["state"]["state"],
+        PCG64_INITIAL_STATE["state"]["inc"],
     )
     return UserBitGenerator(bit_gen.next_64(), 64, next_32=bit_gen.next_32())
 
