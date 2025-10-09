@@ -34,10 +34,10 @@ def test_view_little_endian_err():
     with pytest.raises(ValueError, match="Only support conversion between uint"):
         view_little_endian_shim(a, np.uint32)
     a = np.uint64([2**63])
-    with pytest.raises(ValueError, match="ASDF"):
+    with pytest.raises(ValueError):
         view_little_endian_shim(a, np.uint16)
     a = np.array([[2**63]], np.uint64)
-    with pytest.raises(ValueError, match="ASDF"):
+    with pytest.raises(ValueError):
         view_little_endian_shim(a, np.uint32)
 
 
@@ -67,15 +67,15 @@ def test_int_to_array_errors():
         int_to_array_shim(1, "a", 64, 31)
     with pytest.raises(TypeError, match="value must be an"):
         int_to_array_shim("1", "a", 64, 64)
-    with pytest.raises(ValueError, match="ASDF"):
+    with pytest.raises(ValueError):
         int_to_array_shim(-1, "a", 64, 64)
-    with pytest.raises(ValueError, match="ASDF"):
+    with pytest.raises(ValueError):
         int_to_array_shim(2**96, "a", 64, 64)
-    with pytest.raises(ValueError, match="ASDF"):
+    with pytest.raises(ValueError):
         int_to_array_shim([-1], "a", 64, 64)
-    with pytest.raises(ValueError, match="ASDF"):
+    with pytest.raises(ValueError):
         int_to_array_shim([1, 2**96], "a", 64, 32)
-    with pytest.raises(ValueError, match="ASDF"):
+    with pytest.raises(ValueError):
         int_to_array_shim(np.array([1], dtype=np.uint32), "a", 64, 32)
 
 
@@ -106,21 +106,21 @@ def test_seed_array_errors():
         seed_by_array(np.array([0.0 + 1j]), 1)
     with pytest.raises(TypeError, match="Scalar seeds must be integer"):
         seed_by_array("1", 1)
-    with pytest.raises(TypeError, match="ASDF"):
+    with pytest.raises(TypeError):
         seed_by_array(1.2, 1)
-    with pytest.raises(ValueError, match="ASDF"):
+    with pytest.raises(ValueError):
         seed_by_array(-1, 1)
-    with pytest.raises(ValueError, match="ASDF"):
+    with pytest.raises(ValueError):
         seed_by_array(2**65, 1)
-    with pytest.raises(ValueError, match="ASDF"):
+    with pytest.raises(ValueError):
         seed_by_array([[1, 2], [3, 4]], 1)
-    with pytest.raises(TypeError, match="ASDF"):
+    with pytest.raises(TypeError):
         seed_by_array(np.array([1, 2 + 1j]), 1)
-    with pytest.raises(ValueError, match="ASDF"):
+    with pytest.raises(ValueError):
         seed_by_array([2**65], 1)
-    with pytest.raises(ValueError, match="ASDF"):
+    with pytest.raises(ValueError):
         seed_by_array([-1], 1)
-    with pytest.raises(TypeError, match="ASDF"):
+    with pytest.raises(TypeError):
         seed_by_array([1.2], 1)
 
 

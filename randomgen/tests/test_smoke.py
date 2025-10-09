@@ -27,6 +27,7 @@ from randomgen import (
     Xorshift1024,
     Xoshiro256,
     Xoshiro512,
+    compat,
     entropy,
 )
 from randomgen.entropy import _test_sentinel
@@ -107,7 +108,7 @@ def comp_state(state1, state2):
     elif isinstance(state1, (list, tuple, np.ndarray)) and isinstance(
         state2, (list, tuple, np.ndarray)
     ):
-        for s1, s2 in zip(state1, state2, strict=True):
+        for s1, s2 in compat.zip(state1, state2, strict=True):
             identical &= comp_state(s1, s2)
     else:
         identical &= state1 == state2
@@ -322,11 +323,11 @@ class RNG:
         self.rg.bit_generator.state = state
         int_2 = self.rg.integers(2**31)
         assert int_1 == int_2
-        with pytest.raises(TypeError, match="ASDF"):
+        with pytest.raises(TypeError):
             self.rg.bit_generator.state = [(k, v) for k, v in state.items()]
         wrong_state = state.copy()
         wrong_state["bit_generator"] = "WrongClass"
-        with pytest.raises(ValueError, match="ASDF"):
+        with pytest.raises(ValueError):
             self.rg.bit_generator.state = wrong_state
 
     def test_entropy_init(self):
@@ -603,7 +604,7 @@ class RNG:
 
     def test_seed_array_error(self):
         seed = -1
-        with pytest.raises(ValueError, match="ASDF"):
+        with pytest.raises(ValueError):
             self.rg.bit_generator.seed(seed)
 
         seed = np.array([-1], dtype=np.int32)
@@ -769,23 +770,23 @@ class RNG:
         rg = self.rg
         size = (31, 7, 97)
         existing = np.empty(size)
-        with pytest.raises(TypeError, match="ASDF"):
+        with pytest.raises(TypeError):
             rg.standard_normal(out=existing, dtype=np.float32)
-        with pytest.raises(ValueError, match="ASDF"):
+        with pytest.raises(ValueError):
             rg.standard_normal(out=existing[::3])
         existing = np.empty(size, dtype=np.float32)
-        with pytest.raises(TypeError, match="ASDF"):
+        with pytest.raises(TypeError):
             rg.standard_normal(out=existing, dtype=np.float64)
 
         existing = np.zeros(size, dtype=np.float32)
-        with pytest.raises(TypeError, match="ASDF"):
+        with pytest.raises(TypeError):
             rg.standard_gamma(1.0, out=existing, dtype=np.float64)
-        with pytest.raises(ValueError, match="ASDF"):
+        with pytest.raises(ValueError):
             rg.standard_gamma(1.0, out=existing[::3], dtype=np.float32)
         existing = np.zeros(size, dtype=np.float64)
-        with pytest.raises(TypeError, match="ASDF"):
+        with pytest.raises(TypeError):
             rg.standard_gamma(1.0, out=existing, dtype=np.float32)
-        with pytest.raises(ValueError, match="ASDF"):
+        with pytest.raises(ValueError):
             rg.standard_gamma(1.0, out=existing[::3])
 
     def test_integers_broadcast(self, dtype):
@@ -845,13 +846,13 @@ class RNG:
             info = np.iinfo(dtype)
             upper = int(info.max) + 1
             lower = info.min
-        with pytest.raises(ValueError, match="ASDF"):
+        with pytest.raises(ValueError):
             self.rg.integers(lower, [upper + 1] * 10, dtype=dtype)
-        with pytest.raises(ValueError, match="ASDF"):
+        with pytest.raises(ValueError):
             self.rg.integers(lower - 1, [upper] * 10, dtype=dtype)
-        with pytest.raises(ValueError, match="ASDF"):
+        with pytest.raises(ValueError):
             self.rg.integers([lower - 1], [upper] * 10, dtype=dtype)
-        with pytest.raises(ValueError, match="ASDF"):
+        with pytest.raises(ValueError):
             self.rg.integers([0], [0], dtype=dtype)
 
     def test_bit_generator_raw_large(self):
@@ -963,15 +964,15 @@ class TestPCG64(RNG):
     def test_seed_array_error(self):
         # GH #82 for error type changes
         seed = -1
-        with pytest.raises(ValueError, match="ASDF"):
+        with pytest.raises(ValueError):
             self.rg.bit_generator.seed(seed)
 
         seed = np.array([-1], dtype=np.int32)
-        with pytest.raises(ValueError, match="ASDF"):
+        with pytest.raises(ValueError):
             self.rg.bit_generator.seed(seed)
 
         seed = np.array([1, 2, 3, -5], dtype=np.int32)
-        with pytest.raises(ValueError, match="ASDF"):
+        with pytest.raises(ValueError):
             self.rg.bit_generator.seed(seed)
 
     def test_array_scalar_seed_diff(self):
@@ -1254,7 +1255,7 @@ class TestEntropy:
         assert isinstance(e3, np.ndarray)
 
     def test_invalid_source(self):
-        with pytest.raises(ValueError, match="ASDF"):
+        with pytest.raises(ValueError):
             entropy.random_entropy(source="invalid")
 
 

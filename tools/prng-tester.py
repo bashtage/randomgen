@@ -80,7 +80,7 @@ def setup_configuration_files(
             config = SPECIALS[bitgen]
             args = list(config.values())
             for arg_set in itertools.product(*args):
-                kwargs =dict(zip(config.keys(), arg_set, strict=False))
+                kwargs = dict(zip(config.keys(), arg_set, strict=False))
                 key = "-".join(
                     [name] + [f"{key}-{value}" for key, value in kwargs.items()]
                 )

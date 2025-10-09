@@ -1,6 +1,7 @@
 import numpy as np
 from numpy.testing import assert_array_compare, assert_array_equal
 import pytest
+from randomgen import compat
 from randomgen._seed_sequence import SeedlessSeedSequence, SeedSequence
 
 HAS_NP_SEED_SEQUENCE = False
@@ -58,7 +59,9 @@ def test_reference_data():
         [1857481142255628931, 596584038813451439],
         [18305404959516669237, 14103312907920476776],
     ]
-    for seed, _expected, expected64 in zip(inputs, outputs, outputs64, strict=True):
+    for seed, _expected, expected64 in compat.zip(
+        inputs, outputs, outputs64, strict=True
+    ):
         expected = np.array(_expected, dtype=np.uint32)
         ss = SeedSequence(seed)
         state = ss.generate_state(len(expected))
@@ -72,7 +75,7 @@ def test_spawn_equiv():
     children = ss.spawn(2)
     direct = [SeedSequence(0, spawn_key=(0,)), SeedSequence(0, spawn_key=(1,))]
     assert len(children) == 2
-    for c, d in zip(children, direct, strict=True):
+    for c, d in compat.zip(children, direct, strict=True):
         assert_array_equal(c.generate_state(4), d.generate_state(4))
 
 
@@ -202,7 +205,7 @@ def test_against_numpy_spawn():
     ss_children = ss.spawn(2)
     np_ss_children = np_ss.spawn(2)
     assert ss.n_children_spawned == np_ss.n_children_spawned
-    for child, np_child in zip(ss_children, np_ss_children, strict=True):
+    for child, np_child in compat.zip(ss_children, np_ss_children, strict=True):
         assert_array_equal(child.generate_state(10), np_child.generate_state(10))
 
 

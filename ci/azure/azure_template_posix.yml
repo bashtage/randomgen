@@ -86,9 +86,10 @@ jobs:
     displayName: 'Install dependencies'
 
   - script: |
-     flake8 randomgen
-     black --check randomgen
-     isort --check randomgen
+      ruff check
+      flake8 .
+      black --check .
+      isort --check randomgen
     displayName: 'Check style and formatting'
 
   - script: |

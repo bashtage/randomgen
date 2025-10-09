@@ -134,6 +134,7 @@ endforeach
 
 subdirs_list = [
     '_build',
+    'compat',
     'examples',
     'legacy',
     'src',

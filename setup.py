@@ -20,7 +20,9 @@ except ImportError:
     try:
         import tempita
     except ImportError as err:
-        raise ImportError("tempita required to install, use pip install tempita") from err
+        raise ImportError(
+            "tempita required to install, use pip install tempita"
+        ) from err
 
 install_required = ["numpy >= 1.17"]
 
@@ -40,9 +42,9 @@ Cython.Compiler.Options.annotate = True
 
 # Make a guess as to whether SSE2 is present for now, TODO: Improve
 INTEL_LIKE = any(
-        val in k.lower()
-        for k in platform.uname()
-        for val in ("x86", "i686", "i386", "amd64")
+    val in k.lower()
+    for k in platform.uname()
+    for val in ("x86", "i686", "i386", "amd64")
 )
 machine_processor = platform.machine() + platform.processor()
 ARM_LIKE = any(machine_processor.startswith(name) for name in ("arm", "aarch"))

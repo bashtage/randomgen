@@ -2,8 +2,9 @@ from __future__ import annotations
 
 import os
 from os.path import join
+import pickle
 from typing import Any, ClassVar
-from randomgen import test as rg_tester
+
 import numpy as np
 from numpy.random import SeedSequence
 from numpy.testing import (
@@ -38,11 +39,13 @@ from randomgen import (
     Xorshift1024,
     Xoshiro256,
     Xoshiro512,
+    test as rg_tester,
 )
 from randomgen._deprecated_value import _DeprecatedValue
+import randomgen._pickle as rg_pkl
 from randomgen.common import interface
 from randomgen.seed_sequence import ISeedSequence
-from randomgen.squares import generate_keys
+from randomgen.squares import _get_words, _test_sentinal, generate_keys
 from randomgen.tests._utility import CustomPartial
 
 MISSING_RDRAND = False
@@ -300,7 +303,9 @@ class Base:
     def test_seed_float(self):
         # GH #82
         rs = np.random.Generator(self.setup_bitgenerator(self.data1["seed"]))
-        match = "seed cannot" if isinstance(rs.bit_generator, RDRAND) else "SeedSequence"
+        match = (
+            "seed cannot" if isinstance(rs.bit_generator, RDRAND) else "SeedSequence"
+        )
         with pytest.raises(TypeError, match=match):
             rs.bit_generator.seed(np.pi)
         with pytest.raises(TypeError, match=match):
@@ -359,8 +364,6 @@ class Base:
             _ = bit_generator.generator
 
     def test_pickle(self):
-        import pickle
-
         bit_generator = self.setup_bitgenerator(self.data1["seed"])
         bit_generator_pkl = pickle.dumps(bit_generator)
         reloaded = pickle.loads(bit_generator_pkl)
@@ -1494,8 +1497,6 @@ class TestRDRAND(Base):
         pass
 
     def test_pickle(self):
-        import pickle
-
         bit_generator = self.setup_bitgenerator(self.data1["seed"])
         bit_generator_pkl = pickle.dumps(bit_generator)
         reloaded = pickle.loads(bit_generator_pkl)
@@ -1963,7 +1964,6 @@ class TestSquares(TestPCG64DXSM):
 
     def test_generate_keys_unique(self):
         a = generate_keys(0, 100, unique=True)
-        from randomgen.squares import _test_sentinal
 
         _test_sentinal.set_testing(True)
         b = generate_keys(0, 100, unique=True)
@@ -1983,8 +1983,6 @@ class TestSquares(TestPCG64DXSM):
             assert len({str(s) for s in hexes[i, 8:]}) == 8
 
     def test_sentinal(self):
-        from randomgen.squares import _test_sentinal
-
         assert not _test_sentinal.get_testing()
         _test_sentinal.set_testing(True)
         assert _test_sentinal.get_testing()
@@ -1992,8 +1990,6 @@ class TestSquares(TestPCG64DXSM):
         assert not _test_sentinal.get_testing()
 
     def test_get_words(self):
-        from randomgen.squares import _get_words
-
         assert isinstance(_get_words(), np.ndarray)
         assert_equal(np.arange(16), np.sort(_get_words()))
 
@@ -2139,13 +2135,11 @@ def test_test_runner():
 
 
 def test_bitgen_ctor():
-    import randomgen._pickle as p
-
-    assert isinstance(p.__bit_generator_ctor(), MT19937)
-    assert isinstance(p.__bit_generator_ctor("LXM"), LXM)
-    assert isinstance(p.__bit_generator_ctor(b"LXM"), LXM)
+    assert isinstance(rg_pkl.__bit_generator_ctor(), MT19937)
+    assert isinstance(rg_pkl.__bit_generator_ctor("LXM"), LXM)
+    assert isinstance(rg_pkl.__bit_generator_ctor(b"LXM"), LXM)
     with pytest.raises(ValueError, match="NewFangledBG"):
-        p.__bit_generator_ctor("NewFangledBG")
+        rg_pkl.__bit_generator_ctor("NewFangledBG")
 
 
 def test_speck_sse41():

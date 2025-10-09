@@ -30,6 +30,7 @@ from randomgen import (
     Xorshift1024,
     Xoshiro256,
     Xoshiro512,
+    compat,
 )
 
 warnings.filterwarnings("error", "The default value of inc")
@@ -115,7 +116,7 @@ def expand_kwargs(kwargs: dict):
             new_expanded_keys.append(a + (key, b))
         expanded = new_expanded
         expanded_keys = new_expanded_keys
-    return [(e, k) for e, k in zip(expanded, expanded_keys, strict=True)]
+    return [(e, k) for e, k in compat.zip(expanded, expanded_keys, strict=True)]
 
 
 configs = {

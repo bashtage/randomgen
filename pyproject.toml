@@ -233,6 +233,7 @@ select = [
 ]
 
 ignore = [
+    "PT011", # TODO: Temporary
   # Required to allow black formatting
   # Whitespace before ':' (Needed for black)
   "E203",

@@ -109,7 +109,7 @@ new_table = df[keys]
 
 columns = new_table.columns
 header = ["Bit Generator", "1", "4", "8196", "4", "8196"]
-widths = [2 + len(s) for s in  header]
+widths = [2 + len(s) for s in header]
 widths[0] = max(widths[0], max([2 + len(s) for s in new_table.index]) + 1)
 widths = [max(w, 15) for w in widths]
 

@@ -23,7 +23,7 @@ from typing import cast
 
 import black
 import numpy as np
-from randomgen import MT19937
+from randomgen import MT19937, compat
 
 SEEDS = [0, 384908324, [839438204, 980239840, 859048019, 821]]
 STEPS = [10, 312, 511]
@@ -69,7 +69,7 @@ values: dict[tuple[str, tuple[int, ...], int], dict] = {}
 for poly in ("poly-128", "clist_mt19937"):
     shutil.copy(f"{poly}.txt", "jump-poly.txt")
     fn = "_jump_tester" if poly == "clist_mt19937" else "jumped"
-    for seed, step in zip(SEEDS, STEPS, strict=True):
+    for seed, step in compat.zip(SEEDS, STEPS, strict=True):
         seed_tpl = (seed,) if isinstance(seed, int) else tuple(seed)
         key = (fn, seed_tpl, step)
         values[key] = {}
