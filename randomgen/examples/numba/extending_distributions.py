@@ -24,7 +24,6 @@ import os
 from cffi import FFI
 import numba as nb
 import numpy as np
-
 from randomgen import Xoroshiro128
 
 ffi = FFI()

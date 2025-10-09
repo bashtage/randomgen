@@ -67,7 +67,9 @@ for key in results:
                 failed_result = res[1]
         lines = failed_result.split("\n")
         lines = lines[::-1]
-        for line in lines:
+        line = lines[0]
+        for _line in lines:
+            line = _line
             if "length=" in line:
                 line = line.split("(")[0].split("=")[-1].strip()
                 break
@@ -107,8 +109,8 @@ new_table = df[keys]
 
 columns = new_table.columns
 header = ["Bit Generator", "1", "4", "8196", "4", "8196"]
-widths = list(map(lambda s: 2 + len(s), header))
-widths[0] = max(widths[0], max(map(lambda s: 2 + len(s), new_table.index)) + 1)
+widths = [2 + len(s) for s in header]
+widths[0] = max(widths[0], max([2 + len(s) for s in new_table.index]) + 1)
 widths = [max(w, 15) for w in widths]
 
 first = "| Method"
@@ -116,7 +118,7 @@ first += " " * (widths[0] - len(first))
 last_col = None
 temp = ""
 cum_width = 0
-for c, w in zip(columns.droplevel(1), widths[1:]):
+for c, w in zip(columns.droplevel(1), widths[1:], strict=False):
     if c != last_col:
         if last_col is not None:
             first += temp + " " * (cum_width - len(temp))
@@ -132,7 +134,7 @@ second = "| Streams" + " " * (widths[0] - 9)
 last_col = None
 temp = ""
 cum_width = 0
-for c, w in zip(columns.droplevel(0), widths[1:]):
+for c, w in zip(columns.droplevel(0), widths[1:], strict=False):
     if c != last_col:
         if last_col is not None:
             second += temp + " " * (cum_width - len(temp))
@@ -149,8 +151,8 @@ for row in new_table.T:
     s = list(new_table.T[row])
     parts = second.split("|")
     new_parts = []
-    for i, (p, val) in enumerate(zip(list(parts[2:-1]), s)):
-        val = val + " "
+    for p, _val in zip(list(parts[2:-1]), s, strict=False):
+        val = _val + " "
         val = " " * (len(p) - len(val)) + val
         assert len(val) == len(p)
         new_parts.append(val)
@@ -172,7 +174,7 @@ for i in range(len(rows)):
         out.append(temp)
     out.append(before)
     temp = ""
-    for c1, c2 in zip(before, after):
+    for c1, c2 in zip(before, after, strict=False):
         temp += "+" if c1 == "|" or c2 == "|" else "-"
     out.append(temp)
 

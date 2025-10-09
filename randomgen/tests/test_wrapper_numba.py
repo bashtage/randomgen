@@ -3,7 +3,6 @@ import ctypes
 import numpy as np
 from numpy.random import Generator
 import pytest
-
 from randomgen.wrapper import UserBitGenerator
 
 HAS_NUMBA = False
@@ -195,9 +194,9 @@ def test_no_setter_getter(split_mix):
     gen.standard_normal(size=10, dtype=np.float32)
     gen.integers(0, 2**63, dtype=np.uint64, size=10)
     with pytest.raises(NotImplementedError):
-        bgf.state
+        _ = bgf.state
     with pytest.raises(NotImplementedError):
-        bgf.state = {"apple"}
+        _ = bgf.state = {"apple"}
 
     bgf = UserBitGenerator.from_cfunc(
         split_mix.next_raw,

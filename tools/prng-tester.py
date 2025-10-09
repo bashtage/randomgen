@@ -20,9 +20,8 @@ from configuration import (
     TEMPLATE,
 )
 from joblib import Parallel, cpu_count, delayed
-from shared import get_logger, test_single
-
 from randomgen import DSFMT, SFC64
+from shared import get_logger, test_single
 
 DEFAULT_STREAMS = (4, 8196)
 
@@ -79,9 +78,9 @@ def setup_configuration_files(
                 )
         else:
             config = SPECIALS[bitgen]
-            args = [value for value in config.values()]
+            args = list(config.values())
             for arg_set in itertools.product(*args):
-                kwargs = {key: arg for key, arg in zip(config.keys(), arg_set)}
+                kwargs = dict(zip(config.keys(), arg_set, strict=False))
                 key = "-".join(
                     [name] + [f"{key}-{value}" for key, value in kwargs.items()]
                 )
@@ -239,21 +238,20 @@ if __name__ == "__main__":
     if args.max_jobs:
         configuration_keys = configuration_keys[: args.max_jobs]
     if args.parallel:
-        test_args = []
-        for key in configuration_keys:
-            test_args.append(
-                [
-                    key,
-                    configurations,
-                    args.size,
-                    args.multithreaded,
-                    args.folding,
-                    args.expanded,
-                    args.run_tests,
-                    lock,
-                    results_file,
-                ]
-            )
+        test_args = [
+            [
+                key,
+                configurations,
+                args.size,
+                args.multithreaded,
+                args.folding,
+                args.expanded,
+                args.run_tests,
+                lock,
+                results_file,
+            ]
+            for key in configuration_keys
+        ]
 
         cpu_per_job = 2 + args.multithreaded + args.expanded + (args.folding - 1)
         n_jobs = args.n_jobs if args.n_jobs else (cpu_count() - 1) // cpu_per_job

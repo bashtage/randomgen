@@ -22,8 +22,8 @@ except (ImportError, AttributeError):
         )
 
 __all__ = [
-    "SeedSequence",
-    "SeedlessSeedSequence",
     "ISeedSequence",
     "ISpawnableSeedSequence",
+    "SeedSequence",
+    "SeedlessSeedSequence",
 ]

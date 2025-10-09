@@ -95,7 +95,7 @@ for i in range(1, 8):
 #    and byte[i] != 0
 for i in range(8, 16):
     next_val = 0
-    while next_val == last_value or next_val == 0:
+    while next_val in (last_value, 0):
         next_val = ss.next_word()
     last_value = next_val
     out |= np.uint64(next_val) << np.uint64(4 * i)

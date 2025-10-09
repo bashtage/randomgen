@@ -23,8 +23,7 @@ from typing import cast
 
 import black
 import numpy as np
-
-from randomgen import MT19937
+from randomgen import MT19937, compat
 
 SEEDS = [0, 384908324, [839438204, 980239840, 859048019, 821]]
 STEPS = [10, 312, 511]
@@ -36,8 +35,8 @@ else:
 
 
 def save_state(bit_gen: MT19937, file_name: str) -> None:
-    bit_gen_state = cast(dict[str, int | np.ndarray], bit_gen.state["state"])
-    state_key = cast(np.ndarray, bit_gen_state["key"])
+    bit_gen_state = cast("dict[str, int | np.ndarray]", bit_gen.state["state"])
+    state_key = cast("np.ndarray", bit_gen_state["key"])
     state_pos = bit_gen_state["pos"]
     with open(file_name, "w") as f:
         for k in state_key:
@@ -70,7 +69,7 @@ values: dict[tuple[str, tuple[int, ...], int], dict] = {}
 for poly in ("poly-128", "clist_mt19937"):
     shutil.copy(f"{poly}.txt", "jump-poly.txt")
     fn = "_jump_tester" if poly == "clist_mt19937" else "jumped"
-    for seed, step in zip(SEEDS, STEPS):
+    for seed, step in compat.zip(SEEDS, STEPS, strict=True):
         seed_tpl = (seed,) if isinstance(seed, int) else tuple(seed)
         key = (fn, seed_tpl, step)
         values[key] = {}
@@ -88,7 +87,7 @@ for poly in ("poly-128", "clist_mt19937"):
         if os.path.exists("state.txt"):
             os.unlink("state.txt")
         shutil.copy(file_name, "state.txt")
-        out = subprocess.run(EXECUTABLE, stdout=subprocess.PIPE)
+        out = subprocess.run(EXECUTABLE, check=False, stdout=subprocess.PIPE)
         parsed, pf = parse_output(out.stdout.decode("utf8"))
         hash = hashlib.md5(parsed[-1]["key"])
         values[key]["jumped"] = {"key_md5": hash.hexdigest(), "pos": parsed[-1]["pos"]}

@@ -1,4 +1,7 @@
 # Build
+meson-python
+ninja
+meson
 cython>=3.0.10
 # Testing
 pytest>=7
@@ -6,9 +9,9 @@ pytest-cov
 pytest-xdist
 scipy>=1.13.1
 # Lint
-black[jupyter]~=24.8.0
+black[jupyter]~=25.9.0
 isort~=5.0
-setuptools_scm[toml]>=8.0.0,<9.0.0
+setuptools_scm[toml]>=9.2.0,<10
 ruff
 flake8
 flake8-pyi

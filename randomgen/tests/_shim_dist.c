@@ -10,7 +10,7 @@ double double3_func(bitgen_t *state, double a, double b, double c) {
   return a + b + c;
 }
 
-float float_0(bitgen_t *state) { return 3.141592; }
+float float_0(bitgen_t *state) { return 3.141592F; }
 
 float float_1(bitgen_t *state, float a) { return a; }
 
@@ -23,7 +23,7 @@ int64_t int_dd(void *state, double a, double b) {
 };
 
 int64_t int_di(void *state, double a, uint64_t b) {
-  return (int64_t)2 * a * b;
+  return (int64_t)(2 * a * b);
 };
 
 int64_t int_i(void *state, int64_t a) { return a; };

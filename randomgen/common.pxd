@@ -29,7 +29,7 @@ cdef object check_state_array(object arr, np.npy_intp required_len,
 cpdef object object_to_int(object val, object bits, object name,
                            int default_bits=*, object allowed_sizes=*)
 
-cdef extern from "src/aligned_malloc/aligned_malloc.h":
+cdef extern from "aligned_malloc.h":
     cdef void *PyArray_realloc_aligned(void *p, size_t n)
     cdef void *PyArray_malloc_aligned(size_t n)
     cdef void *PyArray_calloc_aligned(size_t n, size_t s)

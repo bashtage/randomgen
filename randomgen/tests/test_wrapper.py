@@ -1,7 +1,6 @@
 import numpy as np
 from numpy.random import Generator
 import pytest
-
 from randomgen.pcg64 import PCG64
 from randomgen.wrapper import UserBitGenerator
 
@@ -52,7 +51,7 @@ PCG64_NATIVE = PCG64(0, None, variant="xsl-rr")
 PCG64_INITIAL_STATE = PCG64_NATIVE.state
 
 
-@pytest.fixture(scope="function")
+@pytest.fixture
 def python_pcg(request):
     bit_gen = _PCG64(
         PCG64_INITIAL_STATE["state"]["state"], PCG64_INITIAL_STATE["state"]["inc"]
@@ -60,12 +59,12 @@ def python_pcg(request):
     return bit_gen.next_64()
 
 
-@pytest.fixture(scope="function")
+@pytest.fixture
 def pcg_native(request):
     return PCG64(0, None, variant="xsl-rr")
 
 
-@pytest.fixture(scope="function")
+@pytest.fixture
 def pcg_python(request):
     bit_gen = _PCG64(
         PCG64_INITIAL_STATE["state"]["state"], PCG64_INITIAL_STATE["state"]["inc"]

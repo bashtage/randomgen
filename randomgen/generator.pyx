@@ -22,7 +22,6 @@ from numpy.random.c_distributions cimport (
     random_standard_normal,
     random_standard_normal_fill,
 )
-
 from randomgen cimport api
 from randomgen.broadcasting cimport check_output, double_fill, float_fill
 from randomgen.common cimport compute_complex
@@ -507,7 +506,7 @@ cdef class ExtendedGenerator:
         cov_dim = cov.ndim
         if not (cov.shape[cov_dim - 1] == cov.shape[cov_dim - 2] == n):
             raise ValueError(
-                f"The final two dimension of cov "
+                f"The final two dimensions of cov "
                 f"({cov.shape[cov_dim - 1], cov.shape[cov_dim - 2]}) must match "
                 f"the final dimension of mean ({n}). mean must be 1 dimensional"
             )

@@ -4,7 +4,6 @@ import numpy as np
 cimport cython
 cimport numpy as np
 from cpython.pycapsule cimport PyCapsule_GetPointer, PyCapsule_IsValid
-
 from randomgen.common cimport *
 from randomgen.distributions cimport random_gauss_zig
 

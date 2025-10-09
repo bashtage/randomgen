@@ -6,7 +6,6 @@ from typing import NamedTuple
 import numpy as np
 from numpy.testing import assert_allclose, assert_array_equal
 import pytest
-
 from randomgen.pcg64 import PCG64
 from randomgen.tests._shims import ShimGenerator
 
@@ -24,7 +23,7 @@ CONFIGS = defaultdict(list)
 
 
 def all_scalar(*args):
-    return all([(arg is None or np.isscalar(arg)) for arg in args])
+    return all((arg is None or np.isscalar(arg)) for arg in args)
 
 
 def get_broadcastable_size(a, b, c):
@@ -216,36 +215,36 @@ def test_disc_iii(config):
 
 def test_constraint_violations():
     generator = ShimGenerator(PCG64())
-    with pytest.raises(ValueError):
+    with pytest.raises(ValueError, match="a < 0"):
         generator.cont_1(-1.0)
-    with pytest.raises(ValueError):
+    with pytest.raises(ValueError, match="a < 0"):
         generator.cont_1([-1.0])
-    with pytest.raises(ValueError):
+    with pytest.raises(ValueError, match="a < 0"):
         generator.cont_1(np.array([1.0, -1.0]))
-    with pytest.raises(ValueError):
+    with pytest.raises(ValueError, match="a <= 0"):
         generator.cont_2(0, 1)
-    with pytest.raises(ValueError):
+    with pytest.raises(ValueError, match="a <= 0"):
         generator.cont_2(np.array([0.0]), 1)
-    with pytest.raises(ValueError):
+    with pytest.raises(ValueError, match="b must not"):
         generator.cont_2(1, np.nan)
-    with pytest.raises(ValueError):
+    with pytest.raises(ValueError, match="b must not"):
         generator.cont_2(np.array([1.0]), np.array([2.0, np.nan]))
-    with pytest.raises(ValueError):
+    with pytest.raises(ValueError, match="b must not"):
         generator.cont_2([1.0], [2.0, np.nan])
-    with pytest.raises(ValueError):
+    with pytest.raises(ValueError, match="a < 0, a > 1 or a is NaN"):
         generator.cont_3(2.0, 0.5, 1.5)
-    with pytest.raises(ValueError):
+    with pytest.raises(ValueError, match="b <= 0, b > 1 or b contains NaN"):
         generator.cont_3(0.5, 0.0, 1.5)
-    with pytest.raises(ValueError):
+    with pytest.raises(ValueError, match="c <= 1 or c is NaN"):
         generator.cont_3(0.5, 0.5, 0.5)
-    with pytest.raises(ValueError):
+    with pytest.raises(ValueError, match="a < 0, a > 1 or a contains"):
         generator.cont_3(np.array([0.5, 2.0]), [0.5], np.array([1.5]))
-    with pytest.raises(ValueError):
+    with pytest.raises(ValueError, match="b <= 0, b > 1 or b contains NaNs"):
         generator.cont_3([0.5], [0.5, 0.0], [1.5])
-    with pytest.raises(ValueError):
+    with pytest.raises(ValueError, match="c <= 1 or c contains NaNs"):
         generator.cont_3([0.5], [0.5], np.array([1.5, 0.5]))
 
-    with pytest.raises(ValueError):
+    with pytest.raises(ValueError, match="a < 1 or a is Na"):
         generator.cont_3_alt_cons(0.5, 1, 1)
     poisson_lam_max = np.iinfo("int64").max - np.sqrt(np.iinfo("int64").max) * 10
     legacy_poisson_lam_max = np.iinfo("l").max - np.sqrt(np.iinfo("l").max) * 10
@@ -329,28 +328,28 @@ def test_constraint_violations():
 
 
 def test_bad_output():
-    with pytest.raises(ValueError):
+    with pytest.raises(ValueError, match="size must match"):
         generator.cont_1(0.5, size=(10, 10), out=np.empty((11, 11)))
-    with pytest.raises(ValueError):
+    with pytest.raises(ValueError, match="shape mismatch"):
         generator.cont_2([[0.5, 1.5]], [[3.0], [4.0]], size=(3, 3))
 
 
 def test_bad_output_params():
     out = np.zeros((2, 2), order="F")
-    with pytest.raises(ValueError):
+    with pytest.raises(ValueError, match="Supplied output array"):
         generator.cont_2([[0.5, 1.5]], [[3.0], [4.0]], out=out)
 
     out = np.zeros((4, 4))
     out = out[::2, ::2]
-    with pytest.raises(ValueError):
+    with pytest.raises(ValueError, match="Supplied output array"):
         generator.cont_2([[0.5, 1.5]], [[3.0], [4.0]], out=out)
 
     out = np.zeros((2, 2), dtype=np.uint64)
-    with pytest.raises(TypeError):
+    with pytest.raises(TypeError, match="Supplied output array"):
         generator.cont_2([[0.5, 1.5]], [[3.0], [4.0]], out=out)
 
     out = np.zeros(10)
-    with pytest.raises(ValueError):
+    with pytest.raises(ValueError, match="size must match"):
         generator.cont_2(0.5, [3.0], size=11, out=out)
 
 
@@ -369,7 +368,7 @@ def test_float_fill():
 
 
 def test_validate_output():
-    with pytest.raises(ValueError):
+    with pytest.raises(ValueError, match="shape mismatch"):
         generator.cont_1(np.array([0.1, 0.2, 0.3]), out=np.empty((7, 5)))
-    with pytest.raises(ValueError):
+    with pytest.raises(ValueError, match="shape mismatch"):
         generator.cont_1(np.array([0.1, 0.2, 0.3]), size=(7, 11))

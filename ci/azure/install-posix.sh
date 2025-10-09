@@ -13,13 +13,13 @@ else
 fi
 
 # Not all available in conda
-python -m pip install setuptools "setuptools_scm[toml]>=8,<9"  wheel pip black==24.8.0 isort flake8 threadpoolctl --upgrade
+python -m pip install "setuptools_scm[toml]>=9.2.0,<10"  wheel pip black~=25.9.0 isort flake8 threadpoolctl meson-python ninja meson --upgrade
 
-EXTRA="pytest pytest-xdist coverage pytest-cov colorama"
+EXTRA="pytest pytest-xdist coverage pytest-cov pytest-randomly colorama"
 
 if [[ -n ${NUMPY} ]]; then CMD="$CMD~=${NUMPY}"; fi;
 CMD="$CMD cython"
-if [[ -n ${CYTHON} ]]; then CMD="$CMD~=${CYTHON}"; fi;
+if [[ -n ${CYTHON_VER} ]]; then CMD="$CMD~=${CYTHON_VER}"; fi;
 CMD="$CMD pandas"
 CMD="$CMD $EXTRA"
 if [[ ${USE_CONDA} == "true" ]]; then CMD="$CMD numba"; fi;

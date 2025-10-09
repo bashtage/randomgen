@@ -19,8 +19,10 @@ try:
 except ImportError:
     try:
         import tempita
-    except ImportError:
-        raise ImportError("tempita required to install, use pip install tempita")
+    except ImportError as err:
+        raise ImportError(
+            "tempita required to install, use pip install tempita"
+        ) from err
 
 install_required = ["numpy >= 1.17"]
 
@@ -40,18 +42,16 @@ Cython.Compiler.Options.annotate = True
 
 # Make a guess as to whether SSE2 is present for now, TODO: Improve
 INTEL_LIKE = any(
-    [
-        val in k.lower()
-        for k in platform.uname()
-        for val in ("x86", "i686", "i386", "amd64")
-    ]
+    val in k.lower()
+    for k in platform.uname()
+    for val in ("x86", "i686", "i386", "amd64")
 )
 machine_processor = platform.machine() + platform.processor()
-ARM_LIKE = any([machine_processor.startswith(name) for name in ("arm", "aarch")])
+ARM_LIKE = any(machine_processor.startswith(name) for name in ("arm", "aarch"))
 if ARM_LIKE:
     print("Processor appears to be ARM")
 USE_SSE2 = INTEL_LIKE
-NO_SSE2 = os.environ.get("RANDOMGEN_NO_SSE2", False) in (1, "1", "True", "true")
+NO_SSE2 = os.environ.get("RANDOMGEN_NO_SSE2", "") in (1, "1", "True", "true")
 NO_SSE2 = NO_SSE2 or "--no-sse2" in sys.argv
 if NO_SSE2:
     USE_SSE2 = False
@@ -66,14 +66,14 @@ def src_join(*fname):
     return join(MOD_DIR, "src", join(*fname))
 
 
-DEBUG = os.environ.get("RANDOMGEN_DEBUG", False) in (1, "1", "True", "true")
+DEBUG = os.environ.get("RANDOMGEN_DEBUG", "") in (1, "1", "True", "true")
 if DEBUG:
     print("Debug build, RANDOMGEN_DEBUG=" + os.environ["RANDOMGEN_DEBUG"])
 
 NUMPY_INCLUDE = np.get_include()
 NUMPY_RANDOM_INCLUDE = os.path.join(NUMPY_INCLUDE, "random")
 EXTRA_INCLUDE_DIRS = [NUMPY_INCLUDE, NUMPY_RANDOM_INCLUDE]
-EXTRA_LINK_ARGS = [] if os.name == "nt" else []
+EXTRA_LINK_ARGS = []
 EXTRA_LIBRARIES = ["m"] if os.name != "nt" else []
 # Undef for manylinux
 EXTRA_COMPILE_ARGS = (

@@ -2,7 +2,6 @@
 # coding=utf-8
 
 import numpy as np
-
 from randomgen._deprecated_value import _DeprecatedValue
 
 __all__ = ["MT19937"]
@@ -168,7 +167,7 @@ cdef class MT19937(BitGenerator):
         """
         BitGenerator._seed_with_seed_sequence(self, seed)
 
-    cdef jump_inplace(self, int jumps):
+    cdef jump_inplace(self, int iter):
         """
         Jump state in-place
 
@@ -176,12 +175,12 @@ cdef class MT19937(BitGenerator):
 
         Parameters
         ----------
-        jumps : integer, positive
+        iter : integer, positive
             Number of times to jump the state of the rng.
         """
-        if jumps < 0:
-            raise ValueError("jumps must be positive")
-        mt19937_jump_n(&self.rng_state, jumps)
+        if iter < 0:
+            raise ValueError("iter must be a positive integer")
+        mt19937_jump_n(&self.rng_state, iter)
 
     def _jump_tester(self):
         """
@@ -205,47 +204,47 @@ cdef class MT19937(BitGenerator):
 
         return bit_generator
 
-    def jump(self, int jumps=1):
+    def jump(self, int iter=1):
         """
-        jump(jumps=1)
+        jump(iter=1)
 
         Jumps the state as-if 2**128 random numbers have been generated.
 
         Parameters
         ----------
-        jumps : integer, positive
+        iter : integer, positive
             Number of times to jump the state of the bit generator.
 
         Returns
         -------
         self : MT19937
-            PRNG jumped jumps times
+            PRNG jumped iter times
         """
         import warnings
         warnings.warn("jump (in-place) has been deprecated in favor of jumped"
                       ", which returns a new instance", DeprecationWarning)
 
-        self.jump_inplace(jumps)
+        self.jump_inplace(iter)
         return self
 
-    def jumped(self, int jumps=1):
+    def jumped(self, int iter=1):
         """
-        jumped(jumps=1)
+        jumped(iter=1)
 
         Returns a new bit generator with the state jumped
 
         The state of the returned big generator is jumped as-if
-        2**(128 * jumps) random numbers have been generated.
+        2**(128 * iter) random numbers have been generated.
 
         Parameters
         ----------
-        jumps : integer, positive
+        iter : integer, positive
             Number of times to jump the state of the bit generator returned
 
         Returns
         -------
         bit_generator : MT19937
-            New instance of generator jumped jumps times
+            New instance of generator jumped iter times
 
         Notes
         -----
@@ -272,7 +271,7 @@ cdef class MT19937(BitGenerator):
         kwargs = {} if self.mode != "numpy" else {"numpy_seed": True}
         bit_generator = self.__class__(seed=self._copy_seed(), **kwargs)
         bit_generator.state = self.state
-        bit_generator.jump_inplace(jumps)
+        bit_generator.jump_inplace(iter)
 
         return bit_generator
 

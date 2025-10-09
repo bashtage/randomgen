@@ -1,13 +1,412 @@
 [build-system]
+build-backend = 'mesonpy'
 requires = [
-    "packaging>=21.0",
-    "setuptools",
-    "wheel",
-    "Cython>=3.0.10,<4",
-    "numpy>=2.0.0rc1,<3",
-    "setuptools_scm[toml]>=8.0.0,<9.0.0",
+    'meson-python',
+    "cython>=3.0.13,<4",  # Sync with CYTHON_MIN_VER in setup
+    "numpy>=2.0.0,<3",
+    "setuptools_scm[toml]>=9.2.0,<10",
 ]
-build-backend = "setuptools.build_meta"
+
+[project]
+name = "randomgen"
+# Keep syned with requirements.txt
+dependencies = [
+  "numpy>=1.22.3,<3",
+]
+authors = [{ name = "Kevin Sheppard", email = "kevin.k.sheppard@gmail.com" }]
+classifiers = [
+    "Development Status :: 5 - Production/Stable",
+    "Environment :: Console",
+    "Intended Audience :: End Users/Desktop",
+    "Intended Audience :: Financial and Insurance Industry",
+    "Intended Audience :: Information Technology",
+    "Intended Audience :: Science/Research",
+    "Operating System :: MacOS :: MacOS X",
+    "Operating System :: Microsoft :: Windows",
+    "Operating System :: POSIX :: Linux",
+    "Operating System :: Unix",
+    "Programming Language :: C",
+    "Programming Language :: Cython",
+    "Programming Language :: Python :: 3.8",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Topic :: Adaptive Technologies",
+    "Topic :: Artistic Software",
+    "Topic :: Office/Business :: Financial",
+    "Topic :: Scientific/Engineering",
+    "Topic :: Security :: Cryptography",
+]
+description = "Random generator supporting multiple PRNGs"
+dynamic = [
+  'version'
+]
+keywords = [
+    "pseudo random numbers",
+    "PRNG",
+    "RNG",
+    "RandomState",
+    "random",
+    "random numbers",
+    "parallel random numbers",
+    "PCG",
+    "XorShift",
+    "dSFMT",
+    "MT19937",
+    "Random123",
+    "ThreeFry",
+    "Philox",
+    "ChaCha",
+    "AES",
+    "SPECK",
+    "RDRAND",
+]
+license = "NCSA"
+license-files = [ "LICENSE.md" ]
+maintainers = [
+  { name = "Kevin Sheppard", email = "kevin.k.sheppard@gmail.com" },
+]
+readme = "README.md"
+requires-python = ">=3.8"
+
+[project.optional-dependencies]
+test = [
+  # test
+  "pytest>=8.4.1,<9",
+  "pytest-randomly",
+  "pytest-xdist",
+  "pytest-cov",
+  "coverage[toml]",
+  "meson",
+  "ninja",
+]
+doc = [
+  # Documentation
+  "setuptools>=61",
+  "wheel",
+  "setuptools_scm[toml]>=8.0.3,<9",
+  "oldest-supported-numpy",
+  "cython>=3.0.13,<4",  # Sync with CYTHON_MIN_VER in setup
+  "numpy >=1.22",
+  "scipy >=1.5.0",
+  "ipython >=8.0.1",
+  "matplotlib >=3.0",
+  "patsy >=0.5.3",
+  "statsmodels >=0.13.5",
+  "jinja2",
+  "sphinx>=7",
+  "seaborn",
+  "numpydoc>=1.0.0",
+  "nbsphinx",
+  "sphinx-immaterial",
+  "jupyter",
+  "notebook",
+  "sphinx-autodoc-typehints",
+  "fonttools>=4.43.0", # not directly required, pinned by Snyk to avoid a vulnerability
+  "jupyterlab>=4.4.8", # not directly required, pinned by Snyk to avoid a vulnerability
+  "ipython>=7",
+  "sphinx_immaterial",
+  "nbconvert",
+  "pickleshare",
+  # Requirements for doc build, in addition to requirements.txt
+  "pandas~=2.3.3",
+]
+dev = [
+  # versioning
+  "setuptools_scm[toml]>=9.2.0,<10",
+  "packaging",
+  # Performance
+  "cython>=3.0.10",
+  "numba>=0.55",
+  # Graphics
+  "matplotlib>=3",
+  "seaborn",
+  # Tests
+  "pytest>=8.4.1,<9",
+  "pytest-randomly",
+  "pytest-xdist",
+  "pytest-cov",
+  # formatting
+  "black[jupyter]~=25.9.0",
+  "isort~=6.0",
+  "colorama",
+  "flake8",
+  "flake8-bugbear",
+  "mypy>=1.3",
+  "ruff>=0.8.6",
+  "pyupgrade>=3.4.0",
+  "jupyterlab-code-formatter",
+  "jupyterlab>=4.4.8",  # not directly required, pinned by Snyk to avoid a vulnerability
+  "zipp>=3.19.1", # not directly required, pinned by Snyk to avoid a vulnerability
+]
+
+
+[project.urls]
+homepage = "https://github.com/bashtage/randomgen"
+documentation = "https://bashtage.github.io/randomgen/"
+repository = "https://github.com/bashtage/randomgen"
+changelog = "https://bashtage.github.io/randomgen/change-log.html"
+
+[tool.meson-python.args]
+setup = ['--vsenv']
 
 [tool.setuptools_scm]
-write_to = "randomgen/_version.py"
+version_file = "randomgen/_version.py"
+
+[tool.black]
+target-version = ['py38', 'py39', 'py310', 'py311', 'py312', 'py313']
+exclude = '''
+(
+  \.egg
+  | \.git
+  | \.mypy_cache
+  | \.oytest_cache
+  | _build
+  | buck-out
+  | build
+  | dist
+)
+'''
+
+[tool.pyright]
+exclude = [
+  "**/tests/**",
+]
+
+[tool.ruff]
+line-length = 88
+fix = false
+target-version = "py310"
+
+[tool.ruff.lint]
+typing-modules = []
+
+select = [
+  # pyflakes
+  "F",
+  # pycodestyle
+  "E", "W",
+  # flake8-2020
+  "YTT",
+  # flake8-bugbear
+  "B",
+  # flake8-quotes
+  "Q",
+  # flake8-debugger
+  "T10",
+  # flake8-gettext
+  "INT",
+  # pylint
+  "PL",
+  # flake8-pytest-style
+  "PT",
+  # misc lints
+  "PIE",
+  # flake8-pyi
+  "PYI",
+  # tidy imports
+  "TID",
+  # implicit string concatenation
+  "ISC",
+  # flake8-type-checking
+  "TC",
+  # comprehensions
+  "C4",
+  # pygrep-hooks
+  "PGH",
+  # Ruff-specific rules
+  "RUF",
+  # flake8-bandit: exec-builtin
+  "S102",
+  # Perflint
+  "PERF",
+  # flynt
+  "FLY",
+  # flake8-future-annotations
+  "FA",
+  # unconventional-import-alias
+  "ICN001",
+  # flake8-slots
+  "SLOT",
+  # flake8-raise
+  "RSE"
+]
+
+ignore = [
+    "PT011", # TODO: Temporary
+  # Required to allow black formatting
+  # Whitespace before ':' (Needed for black)
+  "E203",
+  # Line too long (### > 88 characters) (Needed for black)
+  "E501",
+  # Multiple statements on one line (colon) (E701)
+  "E701",
+  # Always ignore
+  # TC do not work with doc building
+  # Move application import `linearmodels....` into a type-checking block
+  "TC001",
+  # Move third-party import `...` into a type-checking block
+  "TC002",
+  # Move standard library import `...` into a type-checking block
+  "TC003",
+
+  #  ### Intentionally disabled
+  # Too many arguments to function call
+  "PLR0913", # 55
+  # Too many branches
+  "PLR0912", # 14
+  # Too many statements
+  "PLR0915", # 21
+  # Magic number
+  "PLR2004",
+  # Like to suggest use [a, *b] instead of [a] + b
+  "RUF005",
+]
+
+[tool.ruff.lint.per-file-ignores]
+"tools/shared.py" = ["PT028"]
+
+
+[tool.pytest.ini_options]
+minversion = "8.4.1"
+testpaths = "arch"
+xfail_strict = true
+addopts = "--strict"
+empty_parameter_set_mark = "xfail"
+filterwarnings = [
+  "ignore:`formatargspec`:DeprecationWarning:statsmodels",
+  "ignore:Using or importing:DeprecationWarning",
+  "ignore:Session._key_changed is deprecated:DeprecationWarning",
+  "error:Support for multi-dimensional:DeprecationWarning",
+  "error:Mutating unit root tests is deprecated:FutureWarning",
+  "error:invalid value encountered in cos:RuntimeWarning",
+  "error:invalid value encountered in log:RuntimeWarning",
+  "error:divide by zero encountered in double_scalars:RuntimeWarning",
+  "error:Lag selection has changed:DeprecationWarning",
+  "error:More than 20 figures have been opened:RuntimeWarning:",
+  "error:invalid value encountered in sqrt:RuntimeWarning:",
+  "error:Inequality constraints incompatible::",
+  "error:Parameters are not consistent with a::",
+  "error:overflow encountered in double_scalars:RuntimeWarning:",
+  "error:overflow encountered in multiply:RuntimeWarning:",
+  "ignore:The --strict option is deprecated:pytest.PytestDeprecationWarning",
+  "error:The default for reindex:FutureWarning:",
+  "error:overflow encountered in square:RuntimeWarning",
+  "error:Values in x were outside bounds:RuntimeWarning:",
+  "error:The random_state property is deprecated:FutureWarning",
+  "error:random_state is deprecated:FutureWarning",
+  "error:seed is deprecated:FutureWarning",
+  "error:get_state is deprecated:FutureWarning",
+  "error:Conversion of an array with ndim:DeprecationWarning:arch",
+]
+junit_family = "xunit2"
+markers = [
+  "slow: mark a test as slow"
+]
+
+
+[tool.isort]
+profile = "black"
+src_paths = ["arch"]
+sections = ["FUTURE","COMPAT","STDLIB","THIRDPARTY","FIRSTPARTY","LOCALFOLDER"]
+known_first_party = ["arch"]
+known_compat = ["arch.compat.*"]
+known_third_party=["Cython","numpy","matplotlib","pandas","pytest","cython","scipy","seaborn"]
+line_length=88
+force_grid_wrap=0
+multi_line_output=3
+combine_as_imports=true
+force_sort_within_sections=true
+include_trailing_comma=true
+use_parentheses=true
+
+[tool.coverage.run]
+source = [ "arch" ]
+branch = true
+plugins = [ "Cython.Coverage" ]
+omit = [
+  # Version file
+  "*/_version.py",
+  # Compatibility code
+  "*/compat/*",
+  "*/conftest.py",
+]
+
+[tool.coverage.report]
+show_missing = true
+ignore_errors = false
+# Regexes for lines to exclude from consideration
+exclude_also = [
+  # Have to re-enable the standard pragma
+  "pragma: no cover",
+
+  # Do not complain about missing debug-only code:
+  "def __repr__",
+  "if self\\.debug",
+
+  # Don't complain if tests don't hit defensive assertion code:
+  "raise NotImplementedError",
+  "except NotImplementedError",
+  "raise AssertionError",
+  # Ignore pass
+  "pass",
+  # Ignore failure messages
+  "pytest.xfail",
+  # Ignore ImportError protection
+  "raise ImportError",
+  "except ImportError",
+  # Ignore type checking code
+  "if TYPE_CHECKING",
+  "elif TYPE_CHECKING",
+  # Cython function declarations
+  "cdef",
+  # Cython functions with void
+  "cdef void",
+  # Numba jit decorators
+  "@jit",
+  # Do not complain if non-runnable code is not run:
+  "if 0:",
+  "if __name__ == .__main__.:",
+]
+include = [ "*/arch/*" ]
+omit = [
+  "*/_version.py",
+  "*/compat/*",
+  "*recursions.py",
+  "*samplers.py",
+]
+
+[tool.coverage.html]
+directory = "coverage_html_report"
+
+[tool.mypy]
+plugins="numpy.typing.mypy_plugin"
+exclude = [
+  "tests",
+]
+ignore_missing_imports=true
+no_implicit_optional=true
+strict_equality=true
+disallow_untyped_defs=true
+disallow_incomplete_defs=true
+show_error_context=true
+
+[tool.mypy-arch.conftest]
+check_untyped_defs=false
+disallow_untyped_defs=false
+
+[tool.mypy-arch._version]
+check_untyped_defs=false
+disallow_untyped_defs=false
+
+[[tool.mypy.overrides]]
+module = "arch.tests.*"
+check_untyped_defs=false
+disallow_untyped_defs=false
+disallow_incomplete_defs=false
+
+[[tool.mypy.overrides]]
+module = "unitroot.critical_values.simulation.*"
+check_untyped_defs=false
+disallow_untyped_defs=false
+disallow_incomplete_defs=false

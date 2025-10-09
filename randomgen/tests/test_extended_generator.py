@@ -1,21 +1,19 @@
 import copy
 import pickle
+import warnings
 
 import numpy as np
 from numpy.linalg import LinAlgError
-from numpy.random import Generator
+from numpy.random import MT19937 as NPMT19937, Generator
 from numpy.testing import (
     assert_allclose,
     assert_array_almost_equal,
     assert_equal,
     assert_no_warnings,
     assert_raises,
-    assert_warns,
-    suppress_warnings,
 )
 from packaging.version import parse
 import pytest
-
 from randomgen import MT19937, PCG64, ExtendedGenerator
 
 try:
@@ -39,7 +37,7 @@ def mv_seed():
     return MV_SEED
 
 
-@pytest.fixture(scope="function")
+@pytest.fixture
 def extended_gen():
     pcg = PCG64(0)
     return ExtendedGenerator(pcg)
@@ -54,7 +52,6 @@ NP_LT_118 = parse(np.__version__) < parse("1.18.0")
 @pytest.mark.skipif(NP_LT_118, reason="Can only test with NumPy >= 1.18")
 @pytest.mark.parametrize("method", ["svd", "eigh", "cholesky"])
 def test_multivariate_normal_method(seed, method):
-    from numpy.random import MT19937 as NPMT19937
 
     random = ExtendedGenerator(NPMT19937(seed))
     mean = (0.123456789, 10)
@@ -101,9 +98,12 @@ def test_multivariate_normal_method(seed, method):
     # Check that non positive-semidefinite covariance warns with
     # RuntimeWarning
     cov = [[1, 2], [2, 1]]
-    assert_warns(RuntimeWarning, random.multivariate_normal, mean, cov)
-    assert_warns(RuntimeWarning, random.multivariate_normal, mean, cov, method="eigh")
-    assert_raises(LinAlgError, random.multivariate_normal, mean, cov, method="cholesky")
+    with pytest.warns(RuntimeWarning):
+        random.multivariate_normal(mean, cov)
+    with pytest.warns(RuntimeWarning):
+        random.multivariate_normal(mean, cov, method="eigh")
+    with pytest.raises(LinAlgError, match="Matrix is not positive"):
+        random.multivariate_normal(mean, cov, method="cholesky")
 
     # and that it doesn't warn with RuntimeWarning check_valid='ignore'
     assert_no_warnings(random.multivariate_normal, mean, cov, check_valid="ignore")
@@ -132,10 +132,9 @@ def test_multivariate_normal_method(seed, method):
         )
 
     cov = np.array([[1, 0.1], [0.1, 1]], dtype=np.float32)
-    with suppress_warnings() as sup:
+    with warnings.catch_warnings(record=True) as cw:
         random.multivariate_normal(mean, cov, method=method)
-        w = sup.record(RuntimeWarning)
-        assert len(w) == 0
+        assert len(cw) == 0
 
     mu = np.zeros(2)
     cov = np.eye(2)
@@ -166,15 +165,15 @@ def test_multivariate_normal_basic_stats(seed, method):
 @pytest.mark.parametrize("mean", [np.zeros(2), np.zeros((3, 3))])
 def test_multivariate_normal_bad_size(mean, size):
     cov = np.eye(4)
-    with pytest.raises(ValueError):
+    with pytest.raises(ValueError, match="The final two dimensions"):
         random.multivariate_normal(mean, cov)
     mean = np.zeros((2, 3, 4))
-    with pytest.raises(ValueError):
+    with pytest.raises(ValueError, match="The desired out size"):
         random.multivariate_normal(mean, cov, size=size)
 
-    with pytest.raises(ValueError):
+    with pytest.raises(ValueError, match="mean must"):
         random.multivariate_normal(0, [[1]], size=size)
-    with pytest.raises(ValueError):
+    with pytest.raises(ValueError, match="cov must have at l"):
         random.multivariate_normal([0], [1], size=size)
 
 
@@ -212,7 +211,8 @@ def test_multivariate_normal(seed):
     # RuntimeWarning
     mean = [0, 0]
     cov = [[1, 2], [2, 1]]
-    assert_warns(RuntimeWarning, random.multivariate_normal, mean, cov)
+    with pytest.warns(RuntimeWarning):
+        random.multivariate_normal(mean, cov)
 
     # and that it doesn"t warn with RuntimeWarning check_valid="ignore"
     assert_no_warnings(random.multivariate_normal, mean, cov, check_valid="ignore")
@@ -223,10 +223,9 @@ def test_multivariate_normal(seed):
     )
 
     cov = np.array([[1, 0.1], [0.1, 1]], dtype=np.float32)
-    with suppress_warnings() as sup:
+    with warnings.catch_warnings(record=True) as cw:
         random.multivariate_normal(mean, cov)
-        w = sup.record(RuntimeWarning)
-        assert len(w) == 0
+        assert len(cw) == 0
 
     mu = np.zeros(2)
     cov = np.eye(2)
@@ -285,7 +284,7 @@ def test_random_uintegers():
     assert len(random.uintegers(10, bits=32)) == 10
     assert isinstance(random.uintegers(), int)
     assert isinstance(random.uintegers(bits=32), int)
-    with pytest.raises(ValueError):
+    with pytest.raises(ValueError, match="Unknown value of bits"):
         random.uintegers(bits=128)
 
 
@@ -349,7 +348,7 @@ def test_invalid_capsule():
     class fake:
         capsule = "capsule"
 
-    with pytest.raises(ValueError):
+    with pytest.raises(ValueError, match="Invalid bit generator"):
         ExtendedGenerator(fake())
 
 
@@ -441,9 +440,9 @@ def test_wishart_exceptions():
         eg.wishart([], np.eye(2))
     with pytest.raises(ValueError, match="df must contain strictly"):
         eg.wishart(-1, np.eye(2))
+    df = np.ones((3, 4, 5))
+    df[-1, -1, -1] = -1
     with pytest.raises(ValueError, match="df must contain strictly"):
-        df = np.ones((3, 4, 5))
-        df[-1, -1, -1] = -1
         eg.wishart(df, np.eye(2))
     with pytest.raises(ValueError, match="cannot convert float"):
         eg.wishart(np.nan, np.eye(2))
@@ -468,7 +467,7 @@ def test_wishart_size(size, df, tile):
         expected_shape = shape + base_shape
         if size:
             if len(sz) < len(shape):
-                with pytest.raises(ValueError, match=""):
+                with pytest.raises(ValueError, match="size"):
                     eg.wishart(df, scale, size=size)
                 return
     if size:

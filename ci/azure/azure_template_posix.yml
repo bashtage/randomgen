@@ -19,11 +19,10 @@ jobs:
       ${{ if eq(parameters.name, 'Linux') }}:
         python39_legacy:
           python.version: '3.9'
-          test.isolation: true
           NUMPY: 1.22.3
         python310_last_numpy_1:
           python.version: '3.10'
-          test.isolation: true
+          test.wheel: true
           NUMPY: 1.26.4
         python310_latest:
           python.version: '3.10'
@@ -38,6 +37,10 @@ jobs:
           python.version: '3.11'
         python312_latest:
           python.version: '3.12'
+        python313_latest:
+          python.version: '3.13'
+        python314_latest:
+          python.version: '3.14'
         python312_prerelease:
           python.version: '3.12'
           pip.pre: true
@@ -47,19 +50,19 @@ jobs:
           coverage: false
           RANDOMGEN_CYTHON_COVERAGE: false
           RANDOMGEN_DEBUG: true
-          test.install: true
+          test.wheel: true
       ${{ if eq(parameters.name, 'macOS') }}:
         python310_macos:
           python.version: '3.10'
-          CYTHON: 3.0.10
+          CYTHON_VER: 3.0.10
           ARCHFLAGS: "-arch x86_64"
         python311_macos:
           python.version: '3.11'
-          CYTHON: 3.0.11
+          CYTHON_VER: 3.0.11
           ARCHFLAGS: "-arch x86_64"
         python312_latest_macos:
           python.version: '3.12'
-          CYTHON: 3.0.11
+          CYTHON_VER: 3.0.11
           ARCHFLAGS: "-arch x86_64"
 
     maxParallel: 10
@@ -83,9 +86,10 @@ jobs:
     displayName: 'Install dependencies'
 
   - script: |
-     flake8 randomgen
-     black --check randomgen
-     isort --check randomgen
+      ruff check
+      flake8 .
+      black --check .
+      isort --check randomgen
     displayName: 'Check style and formatting'
 
   - script: |
@@ -109,17 +113,12 @@ jobs:
       WHL=$(ls -t wheelhouse/randomgen-*.whl | head -n1)
       pip install ${WHL}
     displayName: 'Install randomgen (site-packages)'
-    condition: eq(variables['test.install'], 'true')
-
-  - script: |
-      python -m pip install -e . -v
-    displayName: 'Install randomgen (editable)'
-    condition: eq(variables['test.isolation'], 'true')
+    condition: eq(variables['test.wheel'], 'true')
 
   - script: |
       python -m pip install -e . -v --no-build-isolation
     displayName: 'Install randomgen (editable, no-build-isolation)'
-    condition: and(ne(variables['test.install'], 'true'), ne(variables['test.isolation'], 'true'))
+    condition: ne(variables['test.wheel'], 'true')
 
   - script: |
       echo "Testing site packages"
@@ -128,7 +127,7 @@ jobs:
       python -c "import randomgen; randomgen.test(['-n', 'auto', '--junitxml=../junit/test-results.xml'])"
       popd
     displayName: 'Run tests (site-packages)'
-    condition: and(ne(variables['pip.pre'], 'true'), eq(variables['test.install'], 'true'))
+    condition: and(ne(variables['pip.pre'], 'true'), eq(variables['test.wheel'], 'true'))
 
   - script: |
       echo "Testing editable install"
@@ -138,7 +137,7 @@ jobs:
       echo pytest -m "${PYTEST_PATTERN}" --junitxml=junit/test-results.xml -n auto --durations=25 ${COVERAGE_OPTS} randomgen/tests
       pytest -m "${PYTEST_PATTERN}" --junitxml=junit/test-results.xml -n auto --durations=25 ${COVERAGE_OPTS} randomgen/tests
     displayName: 'Run tests (editable)'
-    condition: and(ne(variables['pip.pre'], 'true'), ne(variables['test.install'], 'true'))
+    condition: and(ne(variables['pip.pre'], 'true'), ne(variables['test.wheel'], 'true'))
 
   - script: |
       echo "Testing prerelease"
@@ -160,8 +159,8 @@ jobs:
   - task: PublishCodeCoverageResults@2
     inputs:
       summaryFileLocation: '$(System.DefaultWorkingDirectory)/**/coverage.xml'
-    condition: and(eq(variables['coverage'], 'true'), ne(variables['test.install'], 'true'))
+    condition: and(eq(variables['coverage'], 'true'), ne(variables['test.wheel'], 'true'))
 
   - bash: bash <(curl -s https://codecov.io/bash)
     displayName: 'CodeCov upload'
-    condition: and(eq(variables['coverage'], 'true'), ne(variables['test.install'], 'true'))
+    condition: and(eq(variables['coverage'], 'true'), ne(variables['test.wheel'], 'true'))

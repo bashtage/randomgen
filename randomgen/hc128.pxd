@@ -2,7 +2,6 @@
 # coding=utf-8
 cimport numpy as np
 from libc.stdint cimport uint32_t, uint64_t
-
 from randomgen.common cimport (
     BitGenerator,
     check_state_array,

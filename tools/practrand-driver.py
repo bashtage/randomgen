@@ -36,8 +36,9 @@ import os
 import sys
 
 import numpy as np
-
 import randomgen as rg
+import argparse
+import importlib.machinery
 
 BUFFER_SIZE = 256 * 2**20
 
@@ -147,7 +148,7 @@ def jumped_state(bit_generator, n_streams=2, entropy=None):
         elif config["seed_size"] == 128:
             entropy = int(entropy[0]) + int(entropy[1]) * 2**64
         elif config["seed_size"] == 256:
-            base = int(0)
+            base = 0
             for i in range(4):
                 base += int(entropy[i]) * (2 ** (64 * i))
             entropy = base
@@ -170,7 +171,7 @@ def jumped_state(bit_generator, n_streams=2, entropy=None):
 
     bg = bitgen(entropy)
     bitgens = [bg]
-    for i in range(n_streams - 1):
+    for _ in range(n_streams - 1):
         bg = bg.jumped()
         bitgens.append(bg)
     return bitgens
@@ -197,7 +198,6 @@ def import_from_file(filename):
     if not os.path.exists(filename):
         raise ValueError(f"{filename} cannot be read")
     _locals = locals()
-    import importlib.machinery
 
     loader = importlib.machinery.SourceFileLoader("_local", os.path.abspath(filename))
     mod = loader.load_module()
@@ -227,7 +227,6 @@ def from_json(filename):
 
 def main():
     logging.basicConfig(level=logging.INFO)
-    import argparse
 
     parser = argparse.ArgumentParser(
         description=DESCRIPTION, formatter_class=argparse.ArgumentDefaultsHelpFormatter

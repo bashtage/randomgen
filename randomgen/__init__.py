@@ -39,27 +39,27 @@ PKG = os.path.join(os.path.dirname(__file__))
 
 
 __all__ = [
-    "AESCounter",
-    "BitGenerators",
-    "ChaCha",
     "DSFMT",
     "EFIIX64",
-    "ExtendedGenerator",
     "HC128",
     "JSF",
-    "LCG128Mix",
     "LXM",
-    "MT19937",
     "MT64",
+    "MT19937",
     "PCG32",
     "PCG64",
     "PCG64DXSM",
-    "Philox",
     "RDRAND",
-    "Romu",
     "SFC64",
     "SFMT",
     "SPECK128",
+    "AESCounter",
+    "BitGenerators",
+    "ChaCha",
+    "ExtendedGenerator",
+    "LCG128Mix",
+    "Philox",
+    "Romu",
     "SeedSequence",
     "SeedlessSeedSequence",
     "Squares",
@@ -70,15 +70,15 @@ __all__ = [
     "Xorshift1024",
     "Xoshiro256",
     "Xoshiro512",
-    "random_entropy",
     "__version__",
     "__version_info__",
+    "random_entropy",
 ]
 
 
-def test(extra_args: str | list[str] | None = None, exit=True) -> None:
+def test(extra_args: str | list[str] | None = None, exit=True) -> None:  # noqa: PT028
     try:
-        import pytest
+        import pytest  # noqa: PLC0415
     except ImportError as err:
         raise ImportError("Need pytest>=5.0.1 to run tests") from err
     cmd = ["--skip-slow"]

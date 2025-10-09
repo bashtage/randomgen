@@ -92,7 +92,7 @@ def run_timer(command, numpy_command=None, setup="", random_type=""):
     print_legend(random_type + " per second")
     print(p)
 
-    baseline = [k for k in p.index if "numpy" in k][0]
+    baseline = next(k for k in p.index if "numpy" in k)[0]
     p = 1000.0 / s
     p = p / p[baseline] * 100 - 100
     p = p.drop(baseline, 0)
