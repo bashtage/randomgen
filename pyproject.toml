@@ -300,7 +300,7 @@ ignore = [
 
 [tool.pytest.ini_options]
 minversion = "8.4.1"
-testpaths = "arch"
+testpaths = "randomgen"
 xfail_strict = true
 addopts = "--strict"
 empty_parameter_set_mark = "xfail"
@@ -338,7 +338,7 @@ include_trailing_comma=true
 use_parentheses=true
 
 [tool.coverage.run]
-source = [ "arch" ]
+source = [ "randomgen" ]
 branch = true
 plugins = [ "Cython.Coverage" ]
 omit = [
@@ -385,7 +385,7 @@ exclude_also = [
   "if 0:",
   "if __name__ == .__main__.:",
 ]
-include = [ "*/arch/*" ]
+include = [ "*/randomgen/*" ]
 omit = [
   "*/_version.py",
   "*/compat/*",
@@ -407,11 +407,11 @@ disallow_untyped_defs=true
 disallow_incomplete_defs=true
 show_error_context=true
 
-[tool.mypy-arch.conftest]
+[tool.mypy-randomgen.conftest]
 check_untyped_defs=false
 disallow_untyped_defs=false
 
-[tool.mypy-arch._version]
+[tool.mypy-randomgen._version]
 check_untyped_defs=false
 disallow_untyped_defs=false
 
