@@ -9,7 +9,6 @@ python practrand-driver.py -if practrand-driver-config.py | \
     ./RNG_test stdin64 -tlmax 1TB -multithreaded
 """
 import numpy as np
-
 import randomgen as rg
 
 ENTROPY = 86316980830225721106033794313786972513572058861498566720023788662568817403978
@@ -23,7 +22,5 @@ while remaining:
     seen.update(vals.tolist())
     remaining = NUM - len(seen)
 
-bitgens = []
-for k in seen:
-    bitgens.append(rg.SFC64(rg.SeedSequence(ENTROPY), k=k))
+bitgens = [rg.SFC64(rg.SeedSequence(ENTROPY), k=k) for k in seen]
 output = 64

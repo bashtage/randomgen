@@ -1,6 +1,5 @@
 import numpy as np
 import pytest
-
 from randomgen import SFC64, SeedSequence
 
 
@@ -40,15 +39,15 @@ def test_smoke():
 
 def test_invalid_weyl():
     sfc = SFC64(SeedSequence(0))
-    with pytest.raises(ValueError):
+    with pytest.raises(ValueError, match="The number of draws"):
         sfc.weyl_increments(1000, 1, 1)
-    with pytest.raises(ValueError):
+    with pytest.raises(ValueError, match="min_bits must satisfy"):
         sfc.weyl_increments(1, 32, 33)
-    with pytest.raises(ValueError):
+    with pytest.raises(ValueError, match="min_bits must satisfy"):
         sfc.weyl_increments(1, 32, -1)
-    with pytest.raises(ValueError):
+    with pytest.raises(ValueError, match="max_bits must be an"):
         sfc.weyl_increments(1, 128)
-    with pytest.raises(ValueError):
+    with pytest.raises(ValueError, match="n must be a"):
         sfc.weyl_increments(0)
     with pytest.warns(RuntimeWarning):
         sfc.weyl_increments(40, 2)

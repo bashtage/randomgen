@@ -1,5 +1,4 @@
 from numpy.random._pickle import BitGenerators
-
 from randomgen.aes import AESCounter
 from randomgen.chacha import ChaCha
 from randomgen.dsfmt import DSFMT

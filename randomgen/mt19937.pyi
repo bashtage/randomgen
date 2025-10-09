@@ -1,7 +1,6 @@
 from typing import Literal
 
 import numpy as np
-
 from randomgen.common import BitGenerator
 from randomgen.typing import IntegerSequenceSeed
 
@@ -10,7 +9,7 @@ class MT19937(BitGenerator):
         self,
         seed: IntegerSequenceSeed | None = ...,
         *,
-        mode: Literal["numpy", "sequence"] | None = ...
+        mode: Literal["numpy", "sequence"] | None = ...,
     ) -> None: ...
     def seed(self, seed: IntegerSequenceSeed | None = ...) -> None: ...
     def jump(self, jumps: int = ...) -> MT19937: ...

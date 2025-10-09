@@ -1,5 +1,4 @@
 import pytest
-
 from randomgen import (
     DSFMT,
     MT19937,
@@ -40,4 +39,4 @@ def endpoint(request):
 def test_generator_raises(bit_generator):
     bg = bit_generator()
     with pytest.raises(NotImplementedError):
-        bg.generator
+        _ = bg.generator

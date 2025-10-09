@@ -1,6 +1,10 @@
+import ctypes
+from itertools import combinations
+import os
+import subprocess
+
 import numpy as np
 import pytest
-
 from randomgen import PCG64, PCG64DXSM, LCG128Mix, SeedSequence
 from randomgen.pcg64 import DEFAULT_DXSM_MULTIPLIER, DEFAULT_MULTIPLIER
 
@@ -64,7 +68,6 @@ def test_output_functions_distinct():
     for of in fns:
         cpcg = LCG128Mix(SEED, output=of)
         results[of] = cpcg.random_raw()
-    from itertools import combinations
 
     for comb in combinations(results.keys(), 2):
         assert np.all(results[comb[0]] != results[comb[1]])
@@ -112,9 +115,6 @@ def test_ouput_ctypes():
 
 
 def test_ctypes():
-    import ctypes
-    import os
-    import subprocess
 
     base = os.path.split(os.path.abspath(__file__))[0]
 
@@ -147,11 +147,11 @@ def test_ctypes():
     assert c.random_raw() == rg.random_raw()
 
     libtesting.output_upper.argtypes = (ctypes.c_uint32, ctypes.c_uint32)
-    with pytest.raises(ValueError):
+    with pytest.raises(ValueError, match="output must take two"):
         LCG128Mix(SEED, output=libtesting.output_upper)
     libtesting.output_upper.argtypes = (ctypes.c_uint64, ctypes.c_uint64)
     libtesting.output_upper.restype = ctypes.c_uint32
-    with pytest.raises(ValueError):
+    with pytest.raises(ValueError, match="output must return a uint64"):
         LCG128Mix(SEED, output=libtesting.output_upper)
 
 
@@ -179,21 +179,21 @@ def test_repr():
 def test_bad_state():
     a = LCG128Mix()
     st = a.state
-    with pytest.raises(TypeError):
+    with pytest.raises(TypeError, match="state must be a"):
         a.state = ((k, v) for k, v in st.items())
-    with pytest.raises(ValueError):
-        st["bit_generator"] = "AnotherBG"
+    st["bit_generator"] = "AnotherBG"
+    with pytest.raises(ValueError, match="state must be for a LCG128Mix RNG"):
         a.state = st
 
 
 def test_exceptions():
-    with pytest.raises(ValueError):
+    with pytest.raises(ValueError, match="multiplier must be an od"):
         LCG128Mix(multiplier=DEFAULT_MULTIPLIER + 1)
-    with pytest.raises(ValueError):
+    with pytest.raises(ValueError, match="multiplier must be an od"):
         LCG128Mix(dxsm_multiplier=DEFAULT_MULTIPLIER + 1)
-    with pytest.raises(ValueError):
+    with pytest.raises(ValueError, match="not-implemented not supported"):
         LCG128Mix(SEED, output="not-implemented")
-    with pytest.raises(TypeError):
+    with pytest.raises(TypeError, match="post must be a bool"):
         LCG128Mix(SEED, post=3)
 
 

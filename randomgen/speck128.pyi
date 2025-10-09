@@ -1,5 +1,4 @@
 import numpy as np
-
 from randomgen.common import BitGenerator
 from randomgen.typing import IntegerSequenceSeed, SeedMode
 
@@ -13,7 +12,7 @@ class SPECK128(BitGenerator):
         counter: int | np.ndarray | None = ...,
         key: int | np.ndarray | None = ...,
         rounds: int = ...,
-        mode: SeedMode | None = ...
+        mode: SeedMode | None = ...,
     ) -> None: ...
     def seed(
         self,

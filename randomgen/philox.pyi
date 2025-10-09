@@ -1,7 +1,6 @@
 from typing import Literal
 
 import numpy as np
-
 from randomgen.common import BitGenerator
 from randomgen.typing import IntegerSequenceSeed
 
@@ -14,7 +13,7 @@ class Philox(BitGenerator):
         key: int | np.ndarray | None = ...,
         number: int = ...,
         width: int = ...,
-        mode: Literal["sequence", "numpy"] | None = ...
+        mode: Literal["sequence", "numpy"] | None = ...,
     ) -> None: ...
     def seed(
         self,

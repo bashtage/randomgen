@@ -1,9 +1,8 @@
 cimport numpy as np
+cimport randomgen.api as api
 from cpython cimport PyFloat_AsDouble
 from libc.stdint cimport int32_t, int64_t, uint32_t, uint64_t
 from numpy.random cimport bitgen_t
-
-cimport randomgen.api as api
 
 
 cdef double POISSON_LAM_MAX

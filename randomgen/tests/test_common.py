@@ -1,6 +1,5 @@
 import numpy as np
 import pytest
-
 from randomgen.aes import AESCounter
 from randomgen.common import BitGenerator, interface
 from randomgen.entropy import seed_by_array
@@ -32,13 +31,13 @@ def test_view_little_endian():
 
 def test_view_little_endian_err():
     a = np.double([2**51])
-    with pytest.raises(ValueError):
+    with pytest.raises(ValueError, match="Only support conversion between uint"):
         view_little_endian_shim(a, np.uint32)
     a = np.uint64([2**63])
-    with pytest.raises(ValueError):
+    with pytest.raises(ValueError, match="ASDF"):
         view_little_endian_shim(a, np.uint16)
     a = np.array([[2**63]], np.uint64)
-    with pytest.raises(ValueError):
+    with pytest.raises(ValueError, match="ASDF"):
         view_little_endian_shim(a, np.uint32)
 
 
@@ -64,19 +63,19 @@ def test_int_to_array():
 
 
 def test_int_to_array_errors():
-    with pytest.raises(ValueError):
+    with pytest.raises(ValueError, match="Unknown uint"):
         int_to_array_shim(1, "a", 64, 31)
-    with pytest.raises(TypeError):
+    with pytest.raises(TypeError, match="value must be an"):
         int_to_array_shim("1", "a", 64, 64)
-    with pytest.raises(ValueError):
+    with pytest.raises(ValueError, match="ASDF"):
         int_to_array_shim(-1, "a", 64, 64)
-    with pytest.raises(ValueError):
+    with pytest.raises(ValueError, match="ASDF"):
         int_to_array_shim(2**96, "a", 64, 64)
-    with pytest.raises(ValueError):
+    with pytest.raises(ValueError, match="ASDF"):
         int_to_array_shim([-1], "a", 64, 64)
-    with pytest.raises(ValueError):
+    with pytest.raises(ValueError, match="ASDF"):
         int_to_array_shim([1, 2**96], "a", 64, 32)
-    with pytest.raises(ValueError):
+    with pytest.raises(ValueError, match="ASDF"):
         int_to_array_shim(np.array([1], dtype=np.uint32), "a", 64, 32)
 
 
@@ -103,25 +102,25 @@ def test_seed_array():
 
 
 def test_seed_array_errors():
-    with pytest.raises(TypeError):
+    with pytest.raises(TypeError, match="Scalar seeds must"):
         seed_by_array(np.array([0.0 + 1j]), 1)
-    with pytest.raises(TypeError):
+    with pytest.raises(TypeError, match="Scalar seeds must be integer"):
         seed_by_array("1", 1)
-    with pytest.raises(TypeError):
+    with pytest.raises(TypeError, match="ASDF"):
         seed_by_array(1.2, 1)
-    with pytest.raises(ValueError):
+    with pytest.raises(ValueError, match="ASDF"):
         seed_by_array(-1, 1)
-    with pytest.raises(ValueError):
+    with pytest.raises(ValueError, match="ASDF"):
         seed_by_array(2**65, 1)
-    with pytest.raises(ValueError):
+    with pytest.raises(ValueError, match="ASDF"):
         seed_by_array([[1, 2], [3, 4]], 1)
-    with pytest.raises(TypeError):
+    with pytest.raises(TypeError, match="ASDF"):
         seed_by_array(np.array([1, 2 + 1j]), 1)
-    with pytest.raises(ValueError):
+    with pytest.raises(ValueError, match="ASDF"):
         seed_by_array([2**65], 1)
-    with pytest.raises(ValueError):
+    with pytest.raises(ValueError, match="ASDF"):
         seed_by_array([-1], 1)
-    with pytest.raises(TypeError):
+    with pytest.raises(TypeError, match="ASDF"):
         seed_by_array([1.2], 1)
 
 
@@ -172,20 +171,20 @@ def test_object_to_int():
 
 
 def test_object_to_int_errors():
-    with pytest.raises(TypeError):
+    with pytest.raises(TypeError, match="test arrays must"):
         object_to_int_shim(np.array([1.2]), 32, "test", allowed_sizes=(32, 64))
-    with pytest.raises(ValueError):
+    with pytest.raises(ValueError, match="test contains non-numeric"):
         object_to_int_shim(["a"], 32, "test", allowed_sizes=(32, 64))
-    with pytest.raises(TypeError):
+    with pytest.raises(TypeError, match="test contains floating point"):
         object_to_int_shim([1.2], 32, "test", allowed_sizes=(32, 64))
-    with pytest.raises(ValueError):
+    with pytest.raises(ValueError, match="test must be 1-d and n"):
         object_to_int_shim(
             np.array([[1, 2], [3, 4]], dtype=np.uint32),
             32,
             "test",
             allowed_sizes=(32, 64),
         )
-    with pytest.raises(ValueError):
+    with pytest.raises(ValueError, match="test has elements that"):
         object_to_int_shim(
             [sum(2**i for i in range(63))],
             128,
@@ -206,6 +205,6 @@ def test_check_state_array_no_array():
     state = bg.state
     state["state"]["x"] = state["state"]["x"].tolist()
     bg.state = state
-    with pytest.raises(ValueError):
-        state["state"]["x"] = state["state"]["x"][:2]
+    state["state"]["x"] = state["state"]["x"][:2]
+    with pytest.raises(ValueError, match="State element x must"):
         bg.state = state

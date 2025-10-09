@@ -2,7 +2,6 @@ from threading import Lock
 from typing import Any, Literal, overload
 
 from numpy import ndarray
-
 from randomgen.common import BitGenerator
 from randomgen.typing import RequiredSize, Size
 
@@ -40,7 +39,7 @@ class ExtendedGenerator:
         check_valid: Literal["raise", "ignore", "warn"] = ...,
         tol: float = ...,
         *,
-        method: Literal["svd", "eigh", "cholesky", "factor"] = ...
+        method: Literal["svd", "eigh", "cholesky", "factor"] = ...,
     ) -> ndarray: ...
     @overload
     def complex_normal(self, loc: complex) -> complex: ...
@@ -94,7 +93,7 @@ class ExtendedGenerator:
         check_valid: Literal["raise", "ignore", "warn"] = ...,
         tol: float = ...,
         rank: int | None = ...,
-        method: Literal["svd", "eigh", "cholesky", "factor"] = ...
+        method: Literal["svd", "eigh", "cholesky", "factor"] = ...,
     ) -> ndarray: ...
     def multivariate_complex_normal(
         self,
@@ -105,7 +104,7 @@ class ExtendedGenerator:
         *,
         check_valid: Literal["raise", "ignore", "warn"] = ...,
         tol: float = ...,
-        method: Literal["svd", "eigh", "cholesky", "factor"] = ...
+        method: Literal["svd", "eigh", "cholesky", "factor"] = ...,
     ) -> ndarray: ...
 
 def _raises_not_implemented(*args: Any, **kwargs: Any) -> None: ...

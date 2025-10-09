@@ -2,7 +2,6 @@ from threading import Lock
 from types import TracebackType
 
 import numpy as np
-
 from randomgen.common import BitGenerator
 
 class RaisingLock:

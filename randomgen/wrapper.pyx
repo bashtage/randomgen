@@ -1,7 +1,6 @@
 #!python
 
 from libc.stdint cimport uint32_t
-
 from randomgen.common cimport BitGenerator
 from randomgen.distributions cimport next_double_t, next_uint32_t, next_uint64_t
 

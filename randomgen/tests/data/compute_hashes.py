@@ -4,7 +4,6 @@ import sys
 import warnings
 
 import numpy as np
-
 from randomgen import (
     DSFMT,
     EFIIX64,
@@ -81,7 +80,8 @@ def int_to_array(int_val):
 def hash_state(state, hasher=None, exclude_keys=()):
     if hasher is None:
         hasher = hashlib.sha256()
-    for key, value in state.items():
+    for key, _value in state.items():
+        value = _value
         if isinstance(value, int):
             value = int_to_array(value)
 
@@ -115,7 +115,7 @@ def expand_kwargs(kwargs: dict):
             new_expanded_keys.append(a + (key, b))
         expanded = new_expanded
         expanded_keys = new_expanded_keys
-    return [(e, k) for e, k in zip(expanded, expanded_keys)]
+    return [(e, k) for e, k in zip(expanded, expanded_keys, strict=True)]
 
 
 configs = {
@@ -229,8 +229,7 @@ BIT_GEN = {
 }
 
 final_configurations = {}
-for gen in configs:
-    args = configs[gen]
+for gen, args in configs.items():
     bg = BIT_GEN[gen]
     blocked = args.get("BLOCKED", ())
     required = args.get("REQUIRED", ("seed",))
@@ -241,14 +240,15 @@ for gen in configs:
         for comb in itertools.combinations(keys, i):
             found = False
             for block in blocked:
-                found = found or set(block).issubset(set(list(comb)))
+                found = found or set(block).issubset(set(comb))
             if found:
                 continue
-            diff = set(list(required)).difference(set(list(comb)))
+            diff = set(required).difference(set(comb))
             if len(diff) == len(required):
                 continue
             kwargs = {key: args[key] for key in comb}
-            for ex_kwargs, ex_key in expand_kwargs(kwargs):
+            for _ex_kwargs, ex_key in expand_kwargs(kwargs):
+                ex_kwargs = _ex_kwargs
                 if "seed" in ex_kwargs:
                     ex_kwargs["seed"] = seed_seq()
                 ex_kwargs = fix_random_123(gen, ex_kwargs)

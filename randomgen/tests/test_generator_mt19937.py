@@ -5,7 +5,6 @@ import numpy as np
 from numpy.testing import assert_raises
 from packaging.version import parse
 import pytest
-
 from randomgen import MT19937
 
 NP_LT_118 = parse(np.__version__) < parse("1.18.0")

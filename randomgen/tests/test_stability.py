@@ -1,7 +1,6 @@
 import numpy as np
 from numpy.testing import assert_allclose, assert_equal
 import pytest
-
 import randomgen as rg
 from randomgen.tests.data import stability_results
 from randomgen.tests.data.compute_hashes import (
@@ -16,7 +15,7 @@ all_ids = ["-".join(map(str, key)) for key in known_hashes]
 
 minimal_keys = [all_keys[0]]
 minimal_ids = [all_ids[0]]
-for key, test_id in zip(all_keys, all_ids):
+for key, test_id in zip(all_keys, all_ids, strict=True):
     if key[0] != minimal_keys[-1][0]:
         minimal_keys.append(key)
         minimal_ids.append(test_id)

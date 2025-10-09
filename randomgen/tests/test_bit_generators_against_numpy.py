@@ -1,7 +1,6 @@
 import numpy as np
 from packaging.version import parse
 import pytest
-
 import randomgen
 from randomgen import PCG64, SFC64, Philox, SeedSequence
 
@@ -23,7 +22,7 @@ def test_against_numpy(bg):
 
 
 def test_pcg_numpy_mode_exception():
-    with pytest.raises(ValueError):
+    with pytest.raises(ValueError, match="inc must be none"):
         PCG64(SeedSequence(0), numpy_seed=True, inc=3)
 
 
@@ -32,7 +31,7 @@ def test_pcg_numpy_mode_exception():
 def test_sfc_numpy_mode_exception(k, w):
     if k == w == 1:
         return
-    with pytest.raises(ValueError):
+    with pytest.raises(ValueError, match="w and k"):
         SFC64(SeedSequence(0), numpy_seed=True, w=w, k=k)
 
 
@@ -41,5 +40,5 @@ def test_sfc_numpy_mode_exception(k, w):
 def test_philox_numpy_mode_exception(number, width):
     if number == 4 and width == 64:
         return
-    with pytest.raises(ValueError):
+    with pytest.raises(ValueError, match="n must be"):
         Philox(SeedSequence(0), numpy_seed=True, number=number, width=width)

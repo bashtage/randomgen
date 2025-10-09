@@ -1,10 +1,9 @@
 from __future__ import annotations
 
-from functools import partial
 import os
 from os.path import join
-from typing import Any
-
+from typing import Any, ClassVar
+from randomgen import test as rg_tester
 import numpy as np
 from numpy.random import SeedSequence
 from numpy.testing import (
@@ -14,7 +13,6 @@ from numpy.testing import (
     assert_raises,
 )
 import pytest
-
 from randomgen import (
     DSFMT,
     EFIIX64,
@@ -45,6 +43,7 @@ from randomgen._deprecated_value import _DeprecatedValue
 from randomgen.common import interface
 from randomgen.seed_sequence import ISeedSequence
 from randomgen.squares import generate_keys
+from randomgen.tests._utility import CustomPartial
 
 MISSING_RDRAND = False
 try:
@@ -195,8 +194,8 @@ def gauss_from_uint(x, n, bits):
 
 class Base:
     dtype = np.uint64
-    data2: dict[str, int | np.ndarray] = {}
-    data1: dict[str, int | np.ndarray] = {}
+    data2: ClassVar[dict[str, int | np.ndarray]] = {}
+    data1: ClassVar[dict[str, int | np.ndarray]] = {}
 
     @classmethod
     def setup_class(cls):
@@ -214,14 +213,12 @@ class Base:
             seed = csv.readline()
             seed = seed.split(",")
             seed = [int(s.strip(), 0) for s in seed[1:]]
-            data = []
-            for line in csv:
-                data.append(int(line.split(",")[-1].strip(), 0))
+            data = [int(line.split(",")[-1].strip(), 0) for line in csv]
             return {"seed": seed, "data": np.array(data, dtype=cls.dtype)}
 
     def test_deprecated_mode(self):
         if self.bit_generator in NO_MODE_SUPPORT or isinstance(
-            self.bit_generator, partial
+            self.bit_generator, CustomPartial
         ):
             pytest.skip("Never supported mode")
         with pytest.warns(FutureWarning):
@@ -303,9 +300,10 @@ class Base:
     def test_seed_float(self):
         # GH #82
         rs = np.random.Generator(self.setup_bitgenerator(self.data1["seed"]))
-        with pytest.raises(TypeError):
+        match = "seed cannot" if isinstance(rs.bit_generator, RDRAND) else "SeedSequence"
+        with pytest.raises(TypeError, match=match):
             rs.bit_generator.seed(np.pi)
-        with pytest.raises(TypeError):
+        with pytest.raises(TypeError, match=match):
             rs.bit_generator.seed(-np.pi)
 
     def test_seed_float_array(self):
@@ -319,9 +317,9 @@ class Base:
             rs.bit_generator.seed(np.array([np.pi, -np.pi]))
         with pytest.raises((ValueError, TypeError)):
             rs.bit_generator.seed(np.array([0, np.pi]))
-        with pytest.raises(TypeError):
+        with pytest.raises(TypeError, match="seed must be"):
             rs.bit_generator.seed([np.pi])
-        with pytest.raises(TypeError):
+        with pytest.raises(TypeError, match="seed must be"):
             rs.bit_generator.seed([0, np.pi])
 
     def test_seed_out_of_range(self):
@@ -331,7 +329,7 @@ class Base:
             return
         rs = np.random.Generator(self.setup_bitgenerator(self.data1["seed"]))
         rs.bit_generator.seed(2 ** (4 * self.bits + 1))
-        with pytest.raises(ValueError):
+        with pytest.raises(ValueError, match="expected"):
             rs.bit_generator.seed(-1)
 
     def test_seed_out_of_range_array(self):
@@ -341,7 +339,7 @@ class Base:
             return
         rs = np.random.Generator(self.setup_bitgenerator(self.data1["seed"]))
         rs.bit_generator.seed([2 ** (2 * self.bits + 1)])
-        with pytest.raises(ValueError):
+        with pytest.raises(ValueError, match="expected non-negative"):
             rs.bit_generator.seed([-1])
 
     def test_repr(self):
@@ -358,7 +356,7 @@ class Base:
     def test_generator(self):
         bit_generator = self.setup_bitgenerator(self.data1["seed"])
         with pytest.raises(NotImplementedError):
-            bit_generator.generator
+            _ = bit_generator.generator
 
     def test_pickle(self):
         import pickle
@@ -376,14 +374,14 @@ class Base:
 
     def test_invalid_state_type(self):
         bit_generator = self.setup_bitgenerator(self.data1["seed"])
-        with pytest.raises(TypeError):
+        with pytest.raises(TypeError, match="state must be"):
             bit_generator.state = {"1"}
 
     def test_invalid_state_value(self):
         bit_generator = self.setup_bitgenerator(self.data1["seed"])
         state = bit_generator.state
-        state["bit_generator"] = "otherBitnp.random.Generator"
-        with pytest.raises(ValueError):
+        state["bit_generator"] = "otherBitGenerator"
+        with pytest.raises(ValueError, match="state must be"):
             bit_generator.state = state
 
     def test_invalid_seed_type(self):
@@ -402,7 +400,7 @@ class Base:
         bit_generator = self.setup_bitgenerator(self.data1["seed"])
         bit_generator._benchmark(1)
         bit_generator._benchmark(1, "double")
-        with pytest.raises(ValueError):
+        with pytest.raises(ValueError, match="Unknown"):
             bit_generator._benchmark(1, "int32")
 
     @pytest.mark.skipif(MISSING_CFFI, reason="cffi not available")
@@ -495,14 +493,14 @@ class Base:
         bg = self.setup_bitgenerator([None])
         typ = (
             self.bit_generator.func
-            if isinstance(self.bit_generator, partial)
+            if isinstance(self.bit_generator, CustomPartial)
             else self.bit_generator
         )
         assert isinstance(bg, typ)
         assert isinstance(bg._get_seed_seq(), SeedSequence)
 
         bg = self.setup_bitgenerator([0])
-        bg._get_seed_seq().entropy == 0
+        assert bg._get_seed_seq().entropy == 0
 
         ss = SeedSequence(0)
         bg = self.bit_generator(ss)
@@ -616,13 +614,13 @@ class TestJSF64(Base):
             self.bit_generator(seed_size=1.0)
 
     def test_bad_init(self):
-        with pytest.raises(ValueError):
+        with pytest.raises(ValueError, match="size must be"):
             self.bit_generator(size=33)
-        with pytest.raises(ValueError):
+        with pytest.raises(ValueError, match="size must be"):
             self.bit_generator(size=0.0 + self.bits)
-        with pytest.raises(ValueError):
+        with pytest.raises(ValueError, match="p must be"):
             self.bit_generator(p=-1)
-        with pytest.raises(ValueError):
+        with pytest.raises(ValueError, match="p must be"):
             self.bit_generator(p=31.7)
 
 
@@ -631,7 +629,7 @@ class TestJSF32(TestJSF64):
     def setup_class(cls):
         super().setup_class()
         cls.bit_generator_base = JSF
-        cls.bit_generator = partial(JSF, size=32)
+        cls.bit_generator = CustomPartial(JSF, size=32)
         cls.size = 32
         cls.bits = 32
         cls.dtype = np.uint32
@@ -676,7 +674,7 @@ class TestXoroshiro128PlusPlus(TestXoroshiro128):
     @classmethod
     def setup_class(cls):
         super().setup_class()
-        cls.bit_generator = partial(Xoroshiro128, plusplus=True)
+        cls.bit_generator = CustomPartial(Xoroshiro128, plusplus=True)
         cls.bits = 64
         cls.dtype = np.uint64
         cls.data1 = cls._read_csv(
@@ -796,9 +794,7 @@ class TestPCG64XSLRR(Base):
         cls.large_advance_final = 32639015182640331666105117402520879107
 
     def setup_bitgenerator(self, seed, mode=_DeprecatedValue, inc: int | None = None):
-        return self.bit_generator(
-            *seed, mode=mode, variant="xsl-rr", inc=inc  # type: ignore
-        )
+        return self.bit_generator(*seed, mode=mode, variant="xsl-rr", inc=inc)
 
     def test_seed_float_array(self):
         rs = np.random.Generator(self.setup_bitgenerator(self.data1["seed"]))
@@ -814,7 +810,7 @@ class TestPCG64XSLRR(Base):
     def test_seed_out_of_range_array(self):
         rs = np.random.Generator(self.setup_bitgenerator(self.data1["seed"]))
         rs.bit_generator.seed([2 ** (2 * self.bits + 1)])
-        with pytest.raises(ValueError):
+        with pytest.raises(ValueError, match="expected non"):
             rs.bit_generator.seed([-1])
 
     def test_advance_symmetry(self):
@@ -849,9 +845,9 @@ class TestPCG64XSLRR(Base):
         assert bg2.state["state"]["inc"] != 1
 
     def test_unknown_variant(self):
-        with pytest.raises(ValueError):
+        with pytest.raises(ValueError, match="variant"):
             PCG64(0, variant="unknown")
-        with pytest.raises(ValueError):
+        with pytest.raises(ValueError, match="variant"):
             PCG64(0, variant=3)
 
     @pytest.mark.xfail(reason="Seeding changed")
@@ -906,7 +902,7 @@ class TestPhilox4x32(Random123):
     def setup_class(cls):
         super().setup_class()
         cls.bit_generator_base = Philox
-        cls.bit_generator = partial(Philox, number=4, width=32)
+        cls.bit_generator = CustomPartial(Philox, number=4, width=32)
         cls.number = 4
         cls.width = 32
         cls.bits = 32
@@ -994,11 +990,11 @@ class TestAESCounter(TestPhilox):
         bg = self.bit_generator()
         state = bg.state
         state["s"]["seed"] = np.empty((2, 11), dtype=np.uint64)
-        with pytest.raises(ValueError):
+        with pytest.raises(ValueError, match="seed must be"):
             bg.state = state
         state = bg.state
         state["s"]["counter"] = 4
-        with pytest.raises(ValueError):
+        with pytest.raises(ValueError, match="counter must be a"):
             bg.state = state
 
     def test_advance(self, step, warmup):
@@ -1155,17 +1151,17 @@ class TestMT19937(Base):
         rs = np.random.Generator(self.setup_bitgenerator(self.data1["seed"]))
         state = rs.bit_generator.state
         state["state"][self.state_name] = state["state"][self.state_name][:10]
-        with pytest.raises(ValueError):
+        with pytest.raises(ValueError, match="State element"):
             rs.bit_generator.state = state
 
     def test_negative_jump(self):
         bg = self.setup_bitgenerator(self.data1["seed"])
-        with pytest.raises(ValueError):
+        with pytest.raises(ValueError, match="iter must be"):
             bg.jumped(-1)
 
     def test_bad_legacy_state(self):
         bg = self.setup_bitgenerator(self.data1["seed"])
-        with pytest.raises(ValueError):
+        with pytest.raises(ValueError, match="state is not"):
             bg.state = ("UNKNOWN",)
 
 
@@ -1281,7 +1277,7 @@ class TestThreeFry4x32(Random123):
     def setup_class(cls):
         super().setup_class()
         cls.bit_generator_base = ThreeFry
-        cls.bit_generator = partial(ThreeFry, number=4, width=32)
+        cls.bit_generator = CustomPartial(ThreeFry, number=4, width=32)
         cls.number = 4
         cls.width = 32
         cls.bits = 32
@@ -1380,15 +1376,15 @@ class TestMT64(Base):
         # GH #82
         rs = np.random.Generator(self.setup_bitgenerator(self.data1["seed"]))
         bit_generator = rs.bit_generator
-        with pytest.raises(TypeError):
+        with pytest.raises(TypeError, match="seed must be"):
             bit_generator.seed(np.array([-np.pi]))
-        with pytest.raises(TypeError):
+        with pytest.raises(TypeError, match="seed must be"):
             bit_generator.seed(np.array([np.pi, -np.pi]))
-        with pytest.raises(TypeError):
+        with pytest.raises(TypeError, match="seed must be"):
             bit_generator.seed(np.array([0, np.pi]))
-        with pytest.raises(TypeError):
+        with pytest.raises(TypeError, match="seed must be"):
             bit_generator.seed([np.pi])
-        with pytest.raises(TypeError):
+        with pytest.raises(TypeError, match="seed must be"):
             bit_generator.seed([0, np.pi])
 
     def test_empty_seed(self):
@@ -1447,7 +1443,7 @@ class TestRDRAND(Base):
         assert bit_generator.success is True
 
     def test_exception(self):
-        with pytest.raises(ValueError):
+        with pytest.raises(ValueError, match="retries must be"):
             RDRAND(retries=-1)
 
     def test_runtimerror(self):
@@ -1529,11 +1525,11 @@ class TestRDRAND(Base):
         assert isinstance(bg, self.bit_generator)
         assert isinstance(bg._get_seed_seq(), SeedSequence)
 
-        with pytest.raises(TypeError):
+        with pytest.raises(TypeError, match="seed cannot be set"):
             self.bit_generator(0)
 
         ss = SeedSequence(0)
-        with pytest.raises(TypeError):
+        with pytest.raises(TypeError, match="seed cannot be set"):
             self.bit_generator(ss)
 
     def test_default_sequence(self):
@@ -1580,7 +1576,7 @@ class TestChaCha(Base):
     def test_use_simd(self):
         bg = self.bit_generator(0)
         if not bg.use_simd:
-            with pytest.raises(ValueError):
+            with pytest.raises(ValueError, match="CPU does not support SIMD"):
                 bg.use_simd = True
             return
         bg2 = self.bit_generator(0)
@@ -1634,11 +1630,11 @@ class TestHC128(Base):
                 bit_generator.seed(*st)
 
     def test_key_init(self):
-        with pytest.raises(ValueError):
+        with pytest.raises(ValueError, match="key is out"):
             self.bit_generator(key=-1)
-        with pytest.raises(ValueError):
+        with pytest.raises(ValueError, match="key is out"):
             self.bit_generator(key=2**256)
-        with pytest.raises(ValueError):
+        with pytest.raises(ValueError, match="seed and key"):
             self.bit_generator(seed=1, key=1)
 
 
@@ -1664,7 +1660,7 @@ class TestSPECK128(TestHC128):
         # GH #82
         rs = np.random.Generator(self.setup_bitgenerator(self.data1["seed"]))
         rs.bit_generator.seed(2**257)
-        with pytest.raises(ValueError):
+        with pytest.raises(ValueError, match="expected"):
             rs.bit_generator.seed(-1)
 
     def test_invalid_seed_type(self):
@@ -1674,18 +1670,18 @@ class TestSPECK128(TestHC128):
                 bit_generator.seed(*st)
 
     def test_key_init(self):
-        with pytest.raises(ValueError):
+        with pytest.raises(ValueError, match="key is out"):
             self.bit_generator(key=-1)
-        with pytest.raises(ValueError):
+        with pytest.raises(ValueError, match="key is out"):
             self.bit_generator(key=2**256)
-        with pytest.raises(ValueError):
+        with pytest.raises(ValueError, match="seed and key"):
             self.bit_generator(seed=1, key=1)
 
     def test_seed_out_of_range_array(self):
         # GH #82
         rs = np.random.Generator(self.setup_bitgenerator(self.data1["seed"]))
         rs.bit_generator.seed([2 ** (4 * self.bits + 1)])
-        with pytest.raises(ValueError):
+        with pytest.raises(ValueError, match="expected non"):
             rs.bit_generator.seed([-1])
 
     def test_advance(self, step, warmup):
@@ -1756,11 +1752,11 @@ class TestSPECK128(TestHC128):
         assert_state_equal(state0, state)
 
     def test_invalid_rounds(self):
-        with pytest.raises(ValueError):
+        with pytest.raises(ValueError, match="rounds must be"):
             self.bit_generator(rounds=-1)
-        with pytest.raises(ValueError):
+        with pytest.raises(ValueError, match="rounds must be"):
             self.bit_generator(rounds=35)
-        with pytest.raises(ValueError):
+        with pytest.raises(ValueError, match="rounds must be"):
             self.bit_generator(rounds=27.5)
 
 
@@ -1801,7 +1797,7 @@ class TestLXM(Base):
         bg = self.setup_bitgenerator([None])
         typ = (
             self.bit_generator.func
-            if isinstance(self.bit_generator, partial)
+            if isinstance(self.bit_generator, CustomPartial)
             else self.bit_generator
         )
         assert isinstance(bg, typ)
@@ -1858,9 +1854,9 @@ class TestTyche(TestLXM):
         bg1 = self.bit_generator(0, idx=0)
         bg2 = self.bit_generator(0, idx=1)
         assert np.all(bg1.random_raw(10) != bg2.random_raw(10))
-        with pytest.raises(ValueError):
+        with pytest.raises(ValueError, match="idx must be in"):
             self.bit_generator(0, idx=sum(2**i for i in range(43)))
-        with pytest.raises(ValueError):
+        with pytest.raises(ValueError, match="idx must be in"):
             self.bit_generator(0, idx=-73)
 
 
@@ -1868,7 +1864,7 @@ class TestTycheOpenRand(TestTyche):
     @classmethod
     def setup_class(cls):
         super().setup_class()
-        cls.bit_generator = partial(Tyche, original=False)
+        cls.bit_generator = CustomPartial(Tyche, original=False)
         cls.data1 = cls._read_csv(join(pwd, "./data/tyche-openrand-testset-1.csv"))
         cls.data2 = cls._read_csv(join(pwd, "./data/tyche-openrand-testset-2.csv"))
 
@@ -1899,7 +1895,7 @@ class TestPCG64DXSM(Base):
     @classmethod
     def setup_class(cls):
         super().setup_class()
-        cls.bit_generator = partial(PCG64, variant="dxsm-128")
+        cls.bit_generator = CustomPartial(PCG64, variant="dxsm-128")
         cls.bits = 64
         cls.dtype = np.uint64
         cls.data1 = cls._read_csv(join(pwd, "./data/pcg64-dxsm-testset-1.csv"))
@@ -1928,7 +1924,7 @@ class TestPCG64CMDXSM(TestPCG64DXSM):
     @classmethod
     def setup_class(cls):
         super().setup_class()
-        cls.bit_generator = partial(PCG64, variant="dxsm")
+        cls.bit_generator = CustomPartial(PCG64, variant="dxsm")
         cls.data1 = cls._read_csv(join(pwd, "./data/pcg64-cm-dxsm-testset-1.csv"))
         cls.data2 = cls._read_csv(join(pwd, "./data/pcg64-cm-dxsm-testset-2.csv"))
         cls.large_advance_initial = 159934576226003702342121456273047082943
@@ -1962,7 +1958,7 @@ class TestSquares(TestPCG64DXSM):
         assert_equal(a, b)
 
     def test_generate_keys_errors(self):
-        with pytest.raises(ValueError):
+        with pytest.raises(ValueError, match="n must be a"):
             generate_keys(0, -1)
 
     def test_generate_keys_unique(self):
@@ -1980,11 +1976,11 @@ class TestSquares(TestPCG64DXSM):
         keys = generate_keys(0, 1000)
         # First odd
         assert np.all(keys & np.uint64(0x1))
-        hexes = np.array([[s for s in hex(v)] for v in keys])[:, 2:]
+        hexes = np.array([list(hex(v)) for v in keys])[:, 2:]
         for i in range(8):
             assert np.all(hexes[:, i] != hexes[:, i + 1])
         for i in range(len(hexes)):
-            assert len(set([str(s) for s in hexes[i, 8:]])) == 8
+            assert len({str(s) for s in hexes[i, 8:]}) == 8
 
     def test_sentinal(self):
         from randomgen.squares import _test_sentinal
@@ -2002,27 +1998,27 @@ class TestSquares(TestPCG64DXSM):
         assert_equal(np.arange(16), np.sort(_get_words()))
 
     def test_errors(self):
-        with pytest.raises(ValueError):
+        with pytest.raises(ValueError, match="variant must be either"):
             self.bit_generator(variant=48)
-        with pytest.raises(ValueError):
+        with pytest.raises(ValueError, match="variant must be either"):
             self.bit_generator(variant="32")
-        with pytest.raises(ValueError):
+        with pytest.raises(ValueError, match="counter must be"):
             self.bit_generator(counter=-1)
-        with pytest.raises(ValueError):
+        with pytest.raises(ValueError, match="key must be"):
             self.bit_generator(key=sum(2**i for i in range(65)))
-        with pytest.raises(ValueError):
+        with pytest.raises(ValueError, match="key must be odd"):
             self.bit_generator(key=sum(2**i for i in range(4, 62)))
 
     def test_invalid_state(self):
         bg = self.bit_generator()
         state = bg.state
         state["variant"] = 48
-        with pytest.raises(ValueError):
+        with pytest.raises(ValueError, match="variant must be"):
             bg.state = state
 
     def test_bad_jump(self):
         bg = self.bit_generator()
-        with pytest.raises(ValueError):
+        with pytest.raises(ValueError, match="iter must be"):
             bg.jumped(-1)
 
 
@@ -2030,7 +2026,7 @@ class TestSquares32(TestSquares):
     @classmethod
     def setup_class(cls):
         super().setup_class()
-        cls.bit_generator = partial(Squares, variant=32)
+        cls.bit_generator = CustomPartial(Squares, variant=32)
         cls.data1 = cls._read_csv(join(pwd, "./data/squares-32-testset-1.csv"))
         cls.data2 = cls._read_csv(join(pwd, "./data/squares-32-testset-2.csv"))
 
@@ -2100,9 +2096,9 @@ class TestRomuQuad(TestLXM):
         cls.seed_sequence_only = True
 
     def test_bad_varainte(self):
-        with pytest.raises(TypeError):
+        with pytest.raises(TypeError, match="variant must be"):
             self.bit_generator(variant=3)
-        with pytest.raises(ValueError):
+        with pytest.raises(ValueError, match="variant must be"):
             self.bit_generator(variant="both")
 
 
@@ -2110,7 +2106,7 @@ class TestRomuTrio(TestLXM):
     @classmethod
     def setup_class(cls):
         super().setup_class()
-        cls.bit_generator = partial(Romu, variant="trio")
+        cls.bit_generator = CustomPartial(Romu, variant="trio")
         cls.bits = 64
         cls.dtype = np.uint64
         cls.data1 = cls._read_csv(join(pwd, "./data/romutrio-testset-1.csv"))
@@ -2123,24 +2119,22 @@ class TestRomuTrio(TestLXM):
 
 
 def test_numpy_mode_error_pcg64():
-    with pytest.raises(ValueError):
+    with pytest.raises(ValueError, match="variant must be"):
         with pytest.warns(FutureWarning):
             PCG64(variant="dxsm-128", mode="numpy")
-    with pytest.raises(ValueError):
+    with pytest.raises(ValueError, match="variant must be"):
         PCG64(variant="dxsm-128", numpy_seed=True)
-    with pytest.raises(ValueError):
+    with pytest.raises(ValueError, match="inc must be"):
         PCG64(0, inc=1, numpy_seed=True)
-    with pytest.raises(ValueError):
+    with pytest.raises(ValueError, match="inc must be none"):
         with pytest.warns(FutureWarning):
             PCG64(0, inc=1, mode="numpy")
 
 
 def test_test_runner():
-    from randomgen import test
-
-    val = test(["--collect-only"], exit=False)
+    val = rg_tester(["--collect-only"], exit=False)
     assert val == 0
-    val = test("--collect-only", exit=False)
+    val = rg_tester("--collect-only", exit=False)
     assert val == 0
 
 
@@ -2150,7 +2144,7 @@ def test_bitgen_ctor():
     assert isinstance(p.__bit_generator_ctor(), MT19937)
     assert isinstance(p.__bit_generator_ctor("LXM"), LXM)
     assert isinstance(p.__bit_generator_ctor(b"LXM"), LXM)
-    with pytest.raises(ValueError):
+    with pytest.raises(ValueError, match="NewFangledBG"):
         p.__bit_generator_ctor("NewFangledBG")
 
 
@@ -2166,15 +2160,15 @@ def test_speck_sse41():
 
 
 def test_pcg64_errors():
-    with pytest.raises(TypeError):
+    with pytest.raises(TypeError, match="variant must be"):
         PCG64(0, variant=("dxsm-128",))
     p_np = PCG64(0, numpy_seed=True)
-    with pytest.raises(ValueError):
+    with pytest.raises(ValueError, match="inc must be"):
         p_np.seed(seed=0, inc=3)
     p = PCG64(0)
-    with pytest.raises(TypeError):
+    with pytest.raises(TypeError, match="inc must be a scalar"):
         p.seed(seed=0, inc=[3, 4])
-    with pytest.raises(ValueError):
+    with pytest.raises(ValueError, match="inc must be a scalar"):
         p.seed(seed=0, inc=-1)
-    with pytest.raises(ValueError):
+    with pytest.raises(ValueError, match="inc must be a scalar"):
         p.seed(seed=0, inc=sum(2**i for i in range(129)))

@@ -1,5 +1,4 @@
 import numpy as np
-
 from randomgen.common import BitGenerator
 from randomgen.typing import IntegerSequenceSeed, SeedMode
 
@@ -9,7 +8,7 @@ class Xoroshiro128(BitGenerator):
         seed: IntegerSequenceSeed | None = ...,
         *,
         mode: SeedMode = ...,
-        plusplus: bool = ...
+        plusplus: bool = ...,
     ) -> None: ...
     def seed(self, seed: IntegerSequenceSeed | None = ...) -> None: ...
     def jump(self, iter: int = ...) -> Xoroshiro128: ...

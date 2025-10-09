@@ -6,7 +6,6 @@ import numpy as np
 
 cimport cython
 cimport numpy as np
-
 from randomgen.common cimport bitgen_t
 
 from randomgen.xoroshiro128 import Xoroshiro128

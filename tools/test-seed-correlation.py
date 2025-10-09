@@ -13,9 +13,8 @@ import os
 from configuration import ALL_BIT_GENS, DSFMT_WRAPPER, OUTPUT, SPECIALS
 import jinja2
 from joblib import Parallel, cpu_count, delayed
-from shared import get_logger, test_single
-
 from randomgen import DSFMT
+from shared import get_logger, test_single
 
 with open("templates/seed-correlation.jinja") as tmpl:
     TEMPLATE = jinja2.Template(tmpl.read())
@@ -28,9 +27,9 @@ def setup_configuration_files(num_streams=8, sequential=False):
         key = bit_generator = bitgen.__name__
         if bitgen in SPECIALS:
             config = SPECIALS[bitgen]
-            args = [value for value in config.values()]
+            args = list(config.values())
             for arg_set in itertools.product(*args):
-                kwargs = {key: arg for key, arg in zip(config.keys(), arg_set)}
+                kwargs = dict(zip(config.keys(), arg_set, strict=False))
                 key = "-".join(
                     [bit_generator]
                     + [f"{key}-{value}" for key, value in kwargs.items()]
@@ -38,9 +37,9 @@ def setup_configuration_files(num_streams=8, sequential=False):
                 parameters[key] = (bitgen, kwargs)
         else:
             parameters[key] = (bitgen, {})
-    for key in parameters:
+    for key, bg_kwargs in parameters.items():
         extra_initialization = ""
-        bitgen, kwargs = parameters[key]
+        bitgen, kwargs = bg_kwargs
         bit_generator = bitgen.__name__
         kwargs_repr = repr(kwargs)
         if bitgen == DSFMT:
@@ -153,21 +152,20 @@ if __name__ == "__main__":
             continue
         final_configuration_keys.append(key)
     configuration_keys = final_configuration_keys
-    test_args = []
-    for key in configuration_keys:
-        test_args.append(
-            [
-                key,
-                configurations,
-                args.size,
-                args.multithreaded,
-                args.folding,
-                args.expanded,
-                args.run_tests,
-                lock,
-                results_file,
-            ]
-        )
+    test_args = [
+        [
+            key,
+            configurations,
+            args.size,
+            args.multithreaded,
+            args.folding,
+            args.expanded,
+            args.run_tests,
+            lock,
+            results_file,
+        ]
+        for key in configuration_keys
+    ]
     cpu_per_job = 2 + args.multithreaded + args.expanded + (args.folding - 1)
     n_jobs = args.n_jobs if args.n_jobs else (cpu_count() - 1) // cpu_per_job
     n_jobs = max(n_jobs, 1)

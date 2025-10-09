@@ -32,15 +32,13 @@ class ChaCha8(ChaCha):
     canonical_repr = "ChaCha(rounds=8)"
 
     def __init__(self, *args, **kwargs):
-        if "rounds" in kwargs:
-            del kwargs["rounds"]
+        kwargs.pop("rounds", None)
         super().__init__(*args, rounds=8, **kwargs)
 
 
 class JSF32(JSF):
     def __init__(self, *args, **kwargs):
-        if "size" in kwargs:
-            del kwargs["size"]
+        kwargs.pop("size", None)
         super().__init__(*args, size=32, **kwargs)
 
 
@@ -48,8 +46,7 @@ class Philox4x32(Philox):
     canonical_repr = "Philox(n=4, w=32)"
 
     def __init__(self, *args, **kwargs):
-        if "width" in kwargs:
-            del kwargs["width"]
+        kwargs.pop("width", None)
         super().__init__(*args, width=32, **kwargs)
 
 
@@ -57,8 +54,7 @@ class Philox2x64(Philox):
     canonical_repr = "Philox(n=2, w=64)"
 
     def __init__(self, *args, **kwargs):
-        if "number" in kwargs:
-            del kwargs["number"]
+        kwargs.pop("number", None)
         super().__init__(*args, number=2, **kwargs)
 
 
@@ -66,8 +62,7 @@ class RomuTrio(Romu):
     canonical_repr = 'Romu(variant="trio")'
 
     def __init__(self, *args, **kwargs):
-        if "variant" in kwargs:
-            del kwargs["variant"]
+        kwargs.pop("variant", None)
         super().__init__(*args, variant="trio")
 
 
@@ -75,8 +70,7 @@ class ThreeFry4x32(ThreeFry):
     canonical_repr = "ThreeFry(n=4, w=32)"
 
     def __init__(self, *args, **kwargs):
-        if "width" in kwargs:
-            del kwargs["width"]
+        kwargs.pop("width", None)
         super().__init__(*args, width=32, **kwargs)
 
 
@@ -84,8 +78,7 @@ class ThreeFry2x64(ThreeFry):
     canonical_repr = "ThreeFry(n=2, w=64)"
 
     def __init__(self, *args, **kwargs):
-        if "number" in kwargs:
-            del kwargs["number"]
+        kwargs.pop("number", None)
         super().__init__(*args, number=2, **kwargs)
 
 
@@ -93,8 +86,7 @@ class PCG64DXSM128(PCG64):
     canonical_repr = 'PCG64(variant="dxsm-128")'
 
     def __init__(self, *args, **kwargs):
-        if "variant" in kwargs:
-            del kwargs["variant"]
+        kwargs.pop("variant", None)
         super().__init__(*args, variant="dxsm-128", **kwargs)
 
 

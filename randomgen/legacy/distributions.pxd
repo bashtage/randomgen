@@ -15,7 +15,6 @@ from libc.stdint cimport (
 import numpy as np
 
 cimport numpy as np
-
 from randomgen.distributions cimport binomial_t, bitgen_t
 
 
