@@ -46,6 +46,11 @@ _cython_tree = [fs.copyfile('__init__.py')]
 # "binding": True,
 # "linetrace": CYTHON_COVERAGE,
 
+_pcg64_def = []
+if get_option('pcg64-force-emulated')
+  _pcg64_def += ['-DPCG_FORCE_EMULATED_128BIT_MATH=1']
+endif
+
 cython_args = [
     '-X cpow=True',
     '-X boundscheck=False',
@@ -56,7 +61,7 @@ cython_args = [
 cython_c_args =  ['-DNPY_NO_DEPRECATED_API=NPY_1_7_API_VERSION']
 cython_libs = []
 if cc.get_id() == 'msvc' or cc.get_id() == 'clang-cl'
-  cython_c_args += ['/Zp16','/wd4146', '/GL','/arch:SSE4.2']
+  cython_c_args += cc.get_supported_arguments(['/Zp16','/wd4146', '/GL','/arch:SSE4.2'])
   add_project_link_arguments('/LTCG', language : 'c')
   add_project_link_arguments('/OPT:REF', language : 'c')
   add_project_link_arguments('Advapi32.lib', language : 'c')
@@ -64,10 +69,7 @@ if cc.get_id() == 'msvc' or cc.get_id() == 'clang-cl'
 else
   cython_c_args += ['-std=c99', '-U__GNUC_GNU_INLINE__']
   add_project_link_arguments('-lm', language : 'c')
-  cython_c_args += ['-msse2']
-  cython_c_args += ['-mrdrnd']
-  cython_c_args += ['-mssse3']
-  cython_c_args += ['-maes']
+  cython_c_args += cc.get_supported_arguments(['-msse2', '-mrdrnd', '-mssse3', '-maes'])
 endif
 
 if get_option('cython-coverage')
@@ -76,6 +78,9 @@ if get_option('cython-coverage')
   cython_c_args += ['-DCYTHON_TRACE=1']
 endif
 
+# TODO: Check if SSE2 is available
+#       For now, always define it
+SSE2_DEF = ['-DHAVE_SSE2=1']
 
 rg_dir = py.get_install_dir() / 'randomgen'
 # Generate version.py for sdist
@@ -212,7 +217,7 @@ py.extension_module(
     include_directories: [inc_np, inc_aligned_malloc, include_directories('src/sfmt')],
     subdir: 'randomgen',
     cython_args: cython_args,
-    c_args: cython_c_args + ['-DSFMT_MEXP=19937'],
+    c_args: cython_c_args + ['-DSFMT_MEXP=19937'] + SSE2_DEF,
 )
 py.extension_module(
     'speck128',
