@@ -60,8 +60,12 @@ cython_args = [
 ]
 cython_c_args =  ['-DNPY_NO_DEPRECATED_API=NPY_1_7_API_VERSION']
 cython_libs = []
+sse2_def = []
 if cc.get_id() == 'msvc' or cc.get_id() == 'clang-cl'
   cython_c_args += cc.get_supported_arguments(['/Zp16','/wd4146', '/GL','/arch:SSE4.2'])
+  if cc.has_argument('/arch:SSE4.2')
+    sse2_def += ['-DHAVE_SSE2=1']
+  endif
   add_project_link_arguments('/LTCG', language : 'c')
   add_project_link_arguments('/OPT:REF', language : 'c')
   add_project_link_arguments('Advapi32.lib', language : 'c')
@@ -70,6 +74,9 @@ else
   cython_c_args += ['-std=c99', '-U__GNUC_GNU_INLINE__']
   add_project_link_arguments('-lm', language : 'c')
   cython_c_args += cc.get_supported_arguments(['-msse2', '-mrdrnd', '-mssse3', '-maes'])
+  if cc.has_argument('-msse2')
+    sse2_def += ['-DHAVE_SSE2=1']
+  endif
 endif
 
 if get_option('cython-coverage')
@@ -78,9 +85,6 @@ if get_option('cython-coverage')
   cython_c_args += ['-DCYTHON_TRACE=1']
 endif
 
-# TODO: Check if SSE2 is available
-#       For now, always define it
-SSE2_DEF = ['-DHAVE_SSE2=1']
 
 rg_dir = py.get_install_dir() / 'randomgen'
 # Generate version.py for sdist
@@ -181,7 +185,7 @@ py.extension_module(
     include_directories: [inc_np, inc_aligned_malloc, include_directories('src/dsfmt')],
     subdir: 'randomgen',
     cython_args: cython_args,
-    c_args: cython_c_args + ['-DDSFMT_MEXP=19937'],
+    c_args: cython_c_args + ['-DDSFMT_MEXP=19937'] + sse2_def,
 )
 py.extension_module(
     'mt19937',
@@ -217,7 +221,7 @@ py.extension_module(
     include_directories: [inc_np, inc_aligned_malloc, include_directories('src/sfmt')],
     subdir: 'randomgen',
     cython_args: cython_args,
-    c_args: cython_c_args + ['-DSFMT_MEXP=19937'] + SSE2_DEF,
+    c_args: cython_c_args + ['-DSFMT_MEXP=19937'] + sse2_def,
 )
 py.extension_module(
     'speck128',
