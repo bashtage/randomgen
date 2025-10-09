@@ -3,6 +3,7 @@
 from numpy.random.bit_generator import ISeedSequence
 
 from libc.stdint cimport intptr_t, uint8_t, uint32_t, uint64_t
+
 from randomgen.common cimport BitGenerator
 
 import numpy as np

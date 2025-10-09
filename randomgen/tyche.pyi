@@ -3,10 +3,16 @@ from randomgen.typing import IntegerSequenceSeed
 
 class Tyche(BitGenerator):
     def __init__(
-        self, seed: IntegerSequenceSeed | None = ..., *, idx: int | None = ...
+        self,
+        seed: IntegerSequenceSeed | None = ...,
+        *,
+        idx: int | None = ...,
     ) -> None: ...
     def seed(
-        self, seed: IntegerSequenceSeed | None = ..., *, idx: int | None = ...
+        self,
+        seed: IntegerSequenceSeed | None = ...,
+        *,
+        idx: int | None = ...,
     ) -> None: ...
     @property
     def state(

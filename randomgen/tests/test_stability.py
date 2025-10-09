@@ -1,6 +1,9 @@
+from __future__ import annotations
+
 import numpy as np
 from numpy.testing import assert_allclose, assert_equal
 import pytest
+
 import randomgen as rg
 from randomgen import compat
 from randomgen.tests.data import stability_results
@@ -80,7 +83,8 @@ def test_aes():
     bit_gen.random_raw(1)
     state = bit_gen.state
     assert_equal(
-        state["s"]["counter"], np.array([4, 0, 5, 0, 6, 0, 7, 0], dtype=np.uint64)
+        state["s"]["counter"],
+        np.array([4, 0, 5, 0, 6, 0, 7, 0], dtype=np.uint64),
     )
     assert_equal(state["s"]["offset"], 8)
     assert_equal(
@@ -255,6 +259,8 @@ def test_dsfmt():
     assert_equal(state["state"]["idx"], stability_results.dsfmt_idx)
     assert_equal(state["buffer_loc"], stability_results.dsfmt_buffer_loc)
     assert_allclose(
-        state["buffered_uniforms"], stability_results.dsfmt_buffered_uniforms, rtol=1e-5
+        state["buffered_uniforms"],
+        stability_results.dsfmt_buffered_uniforms,
+        rtol=1e-5,
     )
     assert_equal(state["state"]["state"], stability_results.dsfmt_state)

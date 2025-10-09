@@ -1,4 +1,5 @@
 import numpy as np
+
 from randomgen.common import BitGenerator
 from randomgen.typing import IntegerSequenceSeed, SeedMode
 
@@ -25,7 +26,8 @@ class ThreeFry(BitGenerator):
     ) -> dict[str, str | int | np.ndarray | dict[str, np.ndarray]]: ...
     @state.setter
     def state(
-        self, value: dict[str, str | int | np.ndarray | dict[str, np.ndarray]]
+        self,
+        value: dict[str, str | int | np.ndarray | dict[str, np.ndarray]],
     ) -> None: ...
     def jump(self, iter: int = ...) -> ThreeFry: ...
     def jumped(self, iter: int = ...) -> ThreeFry: ...

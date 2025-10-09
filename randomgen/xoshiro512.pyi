@@ -1,10 +1,14 @@
 import numpy as np
+
 from randomgen.common import BitGenerator
 from randomgen.typing import IntegerSequenceSeed, SeedMode
 
 class Xoshiro512(BitGenerator):
     def __init__(
-        self, seed: IntegerSequenceSeed | None = ..., *, mode: SeedMode = ...
+        self,
+        seed: IntegerSequenceSeed | None = ...,
+        *,
+        mode: SeedMode = ...,
     ) -> None: ...
     def seed(self, seed: IntegerSequenceSeed | None = ...) -> None: ...
     def jump(self, iter: int = ...) -> Xoshiro512: ...

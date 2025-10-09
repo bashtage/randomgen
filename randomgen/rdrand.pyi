@@ -2,6 +2,7 @@ from threading import Lock
 from types import TracebackType
 
 import numpy as np
+
 from randomgen.common import BitGenerator
 
 class RaisingLock:
@@ -22,7 +23,9 @@ class RDRAND(BitGenerator):
     def success(self) -> bool: ...
     def seed(self, seed: None = ...) -> None: ...
     def random_raw(
-        self, size: int | None = ..., output: bool = ...
+        self,
+        size: int | None = ...,
+        output: bool = ...,
     ) -> int | np.ndarray | None: ...
     def jumped(self, iter: int = ...) -> RDRAND: ...
     @property

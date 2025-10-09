@@ -20,14 +20,19 @@ from configuration import (
     TEMPLATE,
 )
 from joblib import Parallel, cpu_count, delayed
-from randomgen import DSFMT, SFC64
 from shared import get_logger, test_single
+
+from randomgen import DSFMT, SFC64
 
 DEFAULT_STREAMS = (4, 8196)
 
 
 def configure_stream(
-    bit_gen, kwargs=None, jumped=False, streams=8196, entropy=DEFAULT_ENTOPY
+    bit_gen,
+    kwargs=None,
+    jumped=False,
+    streams=8196,
+    entropy=DEFAULT_ENTOPY,
 ):
     bit_generator = bit_gen.__name__
     extra_code = extra_initialization = ""
@@ -56,7 +61,9 @@ bitgens = [rg.SFC64(seed_seq, k=k) for k in retain]
 
 
 def setup_configuration_files(
-    entropy=DEFAULT_ENTOPY, skip_single=False, num_streams=DEFAULT_STREAMS
+    entropy=DEFAULT_ENTOPY,
+    skip_single=False,
+    num_streams=DEFAULT_STREAMS,
 ):
     streams = {}
     for bitgen in ALL_BIT_GENS:
@@ -67,14 +74,19 @@ def setup_configuration_files(
             for num_stream in num_streams:
                 key = name + f"-streams-{num_stream}"
                 streams[key] = configure_stream(
-                    bitgen, streams=num_stream, entropy=entropy
+                    bitgen,
+                    streams=num_stream,
+                    entropy=entropy,
                 )
             if bitgen not in JUMPABLE:
                 continue
             for num_stream in num_streams:
                 key = name + f"-jumped-streams-{num_stream}"
                 streams[key] = configure_stream(
-                    bitgen, streams=num_stream, jumped=True, entropy=entropy
+                    bitgen,
+                    streams=num_stream,
+                    jumped=True,
+                    entropy=entropy,
                 )
         else:
             config = SPECIALS[bitgen]
@@ -82,16 +94,21 @@ def setup_configuration_files(
             for arg_set in itertools.product(*args):
                 kwargs = dict(zip(config.keys(), arg_set, strict=False))
                 key = "-".join(
-                    [name] + [f"{key}-{value}" for key, value in kwargs.items()]
+                    [name] + [f"{key}-{value}" for key, value in kwargs.items()],
                 )
                 if not skip_single:
                     streams[key] = configure_stream(
-                        bitgen, kwargs=kwargs, entropy=entropy
+                        bitgen,
+                        kwargs=kwargs,
+                        entropy=entropy,
                     )
                 for num_stream in num_streams:
                     full_key = key + f"-streams-{num_stream}"
                     streams[full_key] = configure_stream(
-                        bitgen, kwargs=kwargs, streams=num_stream, entropy=entropy
+                        bitgen,
+                        kwargs=kwargs,
+                        streams=num_stream,
+                        entropy=entropy,
                     )
                 if bitgen not in JUMPABLE:
                     continue
@@ -210,7 +227,9 @@ if __name__ == "__main__":
     streams = [int(s) for s in args.streams.split(",")]
 
     configurations = setup_configuration_files(
-        entropy=args.entropy, skip_single=args.skip_single, num_streams=streams
+        entropy=args.entropy,
+        skip_single=args.skip_single,
+        num_streams=streams,
     )
     if args.run_tests:
         print("Running tests...")

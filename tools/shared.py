@@ -12,7 +12,8 @@ def get_logger(name=None):
         logger = logging.getLogger(name)
     logger.setLevel(logging.DEBUG)
     formatter = logging.Formatter(
-        "[%(levelname)s] [%(asctime)s] %(name)-16s : %(message)s ", "%Y-%m-%d %H:%M:%S"
+        "[%(levelname)s] [%(asctime)s] %(name)-16s : %(message)s ",
+        "%Y-%m-%d %H:%M:%S",
     )
     handler = logging.StreamHandler(sys.stdout)
     handler.setFormatter(formatter)

@@ -7,7 +7,8 @@ def pytest_configure(config):
     config.addinivalue_line("filterwarnings", "ignore:Generator:FutureWarning")
     config.addinivalue_line("filterwarnings", "ignore:RandomState:FutureWarning")
     config.addinivalue_line(
-        "filterwarnings", "ignore:The default value of inc:FutureWarning"
+        "filterwarnings",
+        "ignore:The default value of inc:FutureWarning",
     )
 
 

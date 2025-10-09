@@ -1,6 +1,7 @@
 from typing import Literal
 
 import numpy as np
+
 from randomgen.common import BitGenerator
 from randomgen.typing import IntegerSequenceSeed
 
@@ -27,7 +28,8 @@ class Philox(BitGenerator):
     ) -> dict[str, str | int | np.ndarray | dict[str, np.ndarray]]: ...
     @state.setter
     def state(
-        self, value: dict[str, str | int | np.ndarray | dict[str, np.ndarray]]
+        self,
+        value: dict[str, str | int | np.ndarray | dict[str, np.ndarray]],
     ) -> None: ...
     def jump(self, iter: int = ...) -> Philox: ...
     def jumped(self, iter: int = ...) -> Philox: ...

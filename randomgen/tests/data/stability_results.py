@@ -1725,5 +1725,5 @@ dsfmt_buffered_uniforms = np.array(
         1.87287144,
         1.73887975,
         1.6737538,
-    ]
+    ],
 )

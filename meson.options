@@ -5,3 +5,7 @@
 #     coverage html
 option('cython-coverage', type: 'boolean', value: false,
         description: 'Compile and build cython modules with coverage support')
+option('pcg64-force-emulated', type: 'boolean', value: false,
+        description: 'Force emulated 64-bit math on PCG64')
+option('disable-sse2', type: 'boolean', value: false,
+        description: 'Disable use of SSE2+ instructions')

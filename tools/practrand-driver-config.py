@@ -9,6 +9,7 @@ python practrand-driver.py -if practrand-driver-config.py | \
     ./RNG_test stdin64 -tlmax 1TB -multithreaded
 """
 import numpy as np
+
 import randomgen as rg
 
 ENTROPY = 86316980830225721106033794313786972513572058861498566720023788662568817403978

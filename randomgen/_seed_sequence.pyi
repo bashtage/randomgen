@@ -9,7 +9,9 @@ DEFAULT_POOL_SIZE: int
 class ISeedSequence(metaclass=ABCMeta):
     @abstractmethod
     def generate_state(
-        self, n_words: int, dtype: type[unsignedinteger[Any]] = ...
+        self,
+        n_words: int,
+        dtype: type[unsignedinteger[Any]] = ...,
     ) -> Sequence[int]: ...
 
 class ISpawnableSeedSequence(ISeedSequence, metaclass=ABCMeta):
@@ -28,12 +30,16 @@ class SeedSequence(ISpawnableSeedSequence):
     @property
     def state(self) -> dict[str, int | Sequence[int]]: ...
     def generate_state(
-        self, n_words: int, dtype: type[unsignedinteger[Any]] = ...
+        self,
+        n_words: int,
+        dtype: type[unsignedinteger[Any]] = ...,
     ) -> Sequence[int]: ...
     def spawn(self, n_children: int) -> list[SeedSequence]: ...
 
 class SeedlessSeedSequence(ISeedSequence):
     def generate_state(
-        self, n_words: int, dtype: type[unsignedinteger[Any]] = ...
+        self,
+        n_words: int,
+        dtype: type[unsignedinteger[Any]] = ...,
     ) -> Sequence[int]: ...
     def spawn(self, n_children: int) -> list[SeedlessSeedSequence]: ...

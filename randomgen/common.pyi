@@ -1,10 +1,11 @@
 from typing import Any, NamedTuple
 
 from numpy import ndarray
+
 from randomgen.seed_sequence import SeedSequence
 from randomgen.typing import IntegerSequenceSeed, SeedMode
 
-class interface(NamedTuple):
+class Interface(NamedTuple):
     state_address: int
     state: int
     next_uint64: int
@@ -20,7 +21,9 @@ class BitGenerator:
         mode: SeedMode | None = ...,
     ) -> None: ...
     def random_raw(
-        self, size: int | None = ..., output: bool = ...
+        self,
+        size: int | None = ...,
+        output: bool = ...,
     ) -> int | ndarray | None: ...
     def _benchmark(self, cnt: int, method: str = ...) -> None: ...
     @property

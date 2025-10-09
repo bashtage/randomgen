@@ -3,6 +3,7 @@ from ctypes import c_void_p
 from typing import Any, Literal
 
 from numba.core.ccallback import CFunc
+
 from randomgen.common import BitGenerator
 
 class UserBitGenerator(BitGenerator):

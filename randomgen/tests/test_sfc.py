@@ -1,5 +1,6 @@
 import numpy as np
 import pytest
+
 from randomgen import SFC64, SeedSequence
 
 

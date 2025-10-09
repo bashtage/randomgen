@@ -1,6 +1,7 @@
 #!python
 
 import numpy as np
+
 from randomgen._deprecated_value import _DeprecatedValue
 
 __all__ = ["Xoroshiro128"]

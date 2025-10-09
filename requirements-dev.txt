@@ -7,10 +7,11 @@ cython>=3.0.10
 pytest>=7
 pytest-cov
 pytest-xdist
+pytest-randomly
 scipy>=1.13.1
 # Lint
 black[jupyter]~=25.9.0
-isort~=5.0
+isort~=6.0
 setuptools_scm[toml]>=9.2.0,<10
 ruff
 flake8

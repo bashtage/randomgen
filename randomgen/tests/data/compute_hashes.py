@@ -4,6 +4,7 @@ import sys
 import warnings
 
 import numpy as np
+
 from randomgen import (
     DSFMT,
     EFIIX64,

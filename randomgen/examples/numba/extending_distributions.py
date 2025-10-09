@@ -24,6 +24,7 @@ import os
 from cffi import FFI
 import numba as nb
 import numpy as np
+
 from randomgen import Xoroshiro128
 
 ffi = FFI()
@@ -37,7 +38,7 @@ else:
 ffi.cdef(
     """
 double random_gauss_zig(void *bitgen_state);
-"""
+""",
 )
 x = Xoroshiro128()
 xffi = x.cffi

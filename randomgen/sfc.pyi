@@ -1,6 +1,7 @@
 from typing import Literal
 
 import numpy as np
+
 from randomgen.common import BitGenerator
 from randomgen.typing import IntegerSequenceSeed
 
@@ -14,7 +15,10 @@ class SFC64(BitGenerator):
         mode: Literal["sequence", "numpy"] | None,
     ) -> None: ...
     def weyl_increments(
-        self, n: int, max_bits: int = ..., min_bits: int | None = ...
+        self,
+        n: int,
+        max_bits: int = ...,
+        min_bits: int | None = ...,
     ) -> np.ndarray: ...
     def seed(self, seed: IntegerSequenceSeed | None = ...) -> None: ...
     @property

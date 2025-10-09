@@ -14,13 +14,21 @@ from randomgen.seed_sequence import ISeedSequence
 
 ISEED_SEQUENCES = (ISeedSequence, np.random.bit_generator.ISeedSequence)
 
-__all__ = ["interface"]
+__all__ = ["Interface"]
 
 np.import_array()
 
-interface = namedtuple("interface", ["state_address", "state", "next_uint64",
-                                     "next_uint32", "next_double",
-                                     "bit_generator"])
+Interface = namedtuple(
+    "Interface",
+    [
+        "state_address",
+        "state",
+        "next_uint64",
+        "next_uint32",
+        "next_double",
+        "bit_generator"
+    ]
+)
 
 cdef bint RANDOMGEN_BIG_ENDIAN = sys.byteorder == "big"
 cdef bint RANDOMGEN_LITTLE_ENDIAN = not RANDOMGEN_BIG_ENDIAN
@@ -135,7 +143,7 @@ cdef class BitGenerator(_BitGenerator):
 
         Returns
         -------
-        interface : NamedTuple
+        Interface
             Named tuple containing ctypes wrapper
 
             * state_address - Memory address of the state struct
@@ -157,7 +165,7 @@ cdef class BitGenerator(_BitGenerator):
 
         Returns
         -------
-        interface : NamedTuple
+        Interface
             Named tuple containing CFFI wrapper
 
             * state_address - Memory address of the state struct
@@ -264,7 +272,7 @@ cdef object prepare_cffi(bitgen_t *bitgen):
 
     Returns
     -------
-    interface : NamedTuple
+    Interface
         The functions required to interface with the bit generator using cffi
 
         * state_address - Memory address of the state struct
@@ -280,7 +288,7 @@ cdef object prepare_cffi(bitgen_t *bitgen):
         raise ImportError("cffi cannot be imported.") from exc
 
     ffi = cffi.FFI()
-    _cffi = interface(<uintptr_t>bitgen.state,
+    _cffi = Interface(<uintptr_t>bitgen.state,
                       ffi.cast("void *", <uintptr_t>bitgen.state),
                       ffi.cast("uint64_t (*)(void *)", <uintptr_t>bitgen.next_uint64),
                       ffi.cast("uint32_t (*)(void *)", <uintptr_t>bitgen.next_uint32),
@@ -299,7 +307,7 @@ cdef object prepare_ctypes(bitgen_t *bitgen):
 
     Returns
     -------
-    interface : namedtuple
+    Interface
         The functions required to interface with the bit generator using ctypes:
 
         * state_address - Memory address of the state struct
@@ -311,7 +319,7 @@ cdef object prepare_ctypes(bitgen_t *bitgen):
     """
     import ctypes
 
-    _ctypes = interface(<uintptr_t>bitgen.state,
+    _ctypes = Interface(<uintptr_t>bitgen.state,
                         ctypes.c_void_p(<uintptr_t>bitgen.state),
                         ctypes.cast(<uintptr_t>bitgen.next_uint64,
                                     ctypes.CFUNCTYPE(ctypes.c_uint64,
@@ -462,8 +470,9 @@ cdef np.ndarray int_to_array(object value, object name, object bits, object uint
                              "{0}".format(str(dtype)))
         out = value.astype(dtype, casting="unsafe")
         if req_len is not None and out.shape != (req_len,):
-            raise ValueError("{name} must have {len} elements when using array"
-                             " form".format(name=name, len=len))
+            raise ValueError(
+                f"{name} must have {req_len} elements when using array form"
+            )
     return out
 
 cdef view_little_endian(arr, dtype):

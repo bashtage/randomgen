@@ -1,6 +1,7 @@
 from collections.abc import Sequence
 
 from numpy import ndarray
+
 from randomgen.common import BitGenerator
 from randomgen.typing import IntegerSequenceSeed, SeedMode
 

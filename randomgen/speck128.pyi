@@ -1,4 +1,5 @@
 import numpy as np
+
 from randomgen.common import BitGenerator
 from randomgen.typing import IntegerSequenceSeed, SeedMode
 
@@ -30,7 +31,8 @@ class SPECK128(BitGenerator):
     ) -> dict[str, str | int | dict[str, int | np.ndarray]]: ...
     @state.setter
     def state(
-        self, value: dict[str, str | int | dict[str, int | np.ndarray]]
+        self,
+        value: dict[str, str | int | dict[str, int | np.ndarray]],
     ) -> None: ...
     def jump(self, iter: int = ...) -> SPECK128: ...
     def jumped(self, iter: int = ...) -> SPECK128: ...

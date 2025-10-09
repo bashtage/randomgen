@@ -30,15 +30,16 @@ for k in seen:
     bitgens.append(rg.SFC64(rg.SeedSequence(ENTROPY), k=k))
 output = 64
 """
+import argparse
+import importlib.machinery
 import json
 import logging
 import os
 import sys
 
 import numpy as np
+
 import randomgen as rg
-import argparse
-import importlib.machinery
 
 BUFFER_SIZE = 256 * 2**20
 
@@ -75,7 +76,7 @@ def pack_bits(a, bits):
     block = a[: 64 * block_rows].reshape((block_rows, -1))
     if a.shape[0] != 64 * (nitems // 64):
         raise ValueError(
-            "Packing bits produces a shape change. Must use a multiple of bits"
+            "Packing bits produces a shape change. Must use a multiple of bits",
         )
     current = 0
     to_fill = 64
@@ -103,7 +104,10 @@ def pack_bits(a, bits):
 
 
 def gen_interleaved_bytes(
-    bitgens, buffer_size=BUFFER_SIZE, output=32, interleave_bytes=False
+    bitgens,
+    buffer_size=BUFFER_SIZE,
+    output=32,
+    interleave_bytes=False,
 ):
     astype = np.uint32 if output == 32 else np.uint64
     n_per_gen = buffer_size // 8 // len(bitgens)
@@ -187,7 +191,9 @@ def dump_states(bitgens, file=sys.stderr, disp=False):
         return d
 
     text = json.dumps(
-        [array_to_list(g.state) for g in bitgens], indent=2, separators=(",", ":")
+        [array_to_list(g.state) for g in bitgens],
+        indent=2,
+        separators=(",", ":"),
     )
     if disp:
         print(text, file=file)
@@ -204,7 +210,7 @@ def import_from_file(filename):
     if not hasattr(mod, "bitgens") or not hasattr(mod, "output"):
         raise RuntimeError(
             f"Either bitgens or output could not be found after"
-            f"importing {filename}. These must be available."
+            f"importing {filename}. These must be available.",
         )
     return mod.bitgens, mod.output
 
@@ -229,19 +235,31 @@ def main():
     logging.basicConfig(level=logging.INFO)
 
     parser = argparse.ArgumentParser(
-        description=DESCRIPTION, formatter_class=argparse.ArgumentDefaultsHelpFormatter
+        description=DESCRIPTION,
+        formatter_class=argparse.ArgumentDefaultsHelpFormatter,
     )
     parser.add_argument(
-        "-bg", "--bit_generator", type=str, default="PCG64", help="BitGenerator to use."
+        "-bg",
+        "--bit_generator",
+        type=str,
+        default="PCG64",
+        help="BitGenerator to use.",
     )
     parser.add_argument(
-        "--load", action="store_true", help="Load BitGenerators from JSON file."
+        "--load",
+        action="store_true",
+        help="Load BitGenerators from JSON file.",
     )
     parser.add_argument(
-        "--save", action="store_true", help="Save BitGenerators to JSON file."
+        "--save",
+        action="store_true",
+        help="Save BitGenerators to JSON file.",
     )
     parser.add_argument(
-        "-j", "--jumped", action="store_true", help="Use jumped() to get new streams."
+        "-j",
+        "--jumped",
+        action="store_true",
+        help="Use jumped() to get new streams.",
     )
     parser.add_argument(
         "-ss",
@@ -311,15 +329,17 @@ Interleave generators byte-by-byte rather than output-by-output (i.e., in 8-byte
         )
         logging.log(logging.INFO, msg)
         bitgens = seed_sequence_state(
-            args.bit_generator, n_streams=args.n_streams, entropy=args.seed
+            args.bit_generator,
+            n_streams=args.n_streams,
+            entropy=args.seed,
         )
     elif args.jumped:
-        msg = "Creating {n} bit generators of {bg_type}".format(
-            n=args.n_streams, bg_type=args.bit_generator
-        )
+        msg = f"Creating {args.n_streams} bit generators of {args.bit_generator}"
         logging.log(logging.INFO, msg)
         bitgens = jumped_state(
-            args.bit_generator, n_streams=args.n_streams, entropy=args.seed
+            args.bit_generator,
+            n_streams=args.n_streams,
+            entropy=args.seed,
         )
     else:
         logging.log(logging.WARN, "You are only testing a single stream")
@@ -334,7 +354,9 @@ Interleave generators byte-by-byte rather than output-by-output (i.e., in 8-byte
         output = CONFIG[bitgens[0].__class__]["output"]
     logging.log(logging.INFO, f"Output bit size is {output}")
     for chunk in gen_interleaved_bytes(
-        bitgens, output=output, interleave_bytes=args.interleave_bytes
+        bitgens,
+        output=output,
+        interleave_bytes=args.interleave_bytes,
     ):
         sys.stdout.buffer.write(chunk)
 

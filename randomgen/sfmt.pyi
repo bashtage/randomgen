@@ -1,10 +1,14 @@
 import numpy as np
+
 from randomgen.common import BitGenerator
 from randomgen.typing import IntegerSequenceSeed, SeedMode
 
 class SFMT(BitGenerator):
     def __init__(
-        self, seed: IntegerSequenceSeed | None = ..., *, mode: SeedMode | None = ...
+        self,
+        seed: IntegerSequenceSeed | None = ...,
+        *,
+        mode: SeedMode | None = ...,
     ) -> None: ...
     def seed(self, seed: IntegerSequenceSeed | None = ...) -> None: ...
     def jump(self, iter: int = ...) -> SFMT: ...

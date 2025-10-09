@@ -20,7 +20,8 @@ class SequenceSampled:
         if self.index > self.random_well.shape[0]:
             self.randoms_drawm *= 2
             self.random_well = self.seed_seq.generate_state(
-                self.randoms_drawm, dtype=np.uint64
+                self.randoms_drawm,
+                dtype=np.uint64,
             )
 
     def gen_bits(self, nbits):

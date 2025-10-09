@@ -1,7 +1,8 @@
 import numpy as np
 import pytest
+
 from randomgen.aes import AESCounter
-from randomgen.common import BitGenerator, interface
+from randomgen.common import BitGenerator, Interface
 from randomgen.entropy import seed_by_array
 from randomgen.lxm import LXM
 from randomgen.romu import Romu
@@ -34,10 +35,10 @@ def test_view_little_endian_err():
     with pytest.raises(ValueError, match="Only support conversion between uint"):
         view_little_endian_shim(a, np.uint32)
     a = np.uint64([2**63])
-    with pytest.raises(ValueError):
+    with pytest.raises(ValueError, match="Only support conversion between"):
         view_little_endian_shim(a, np.uint16)
     a = np.array([[2**63]], np.uint64)
-    with pytest.raises(ValueError):
+    with pytest.raises(ValueError, match="arr must be 1 dimensional"):
         view_little_endian_shim(a, np.uint32)
 
 
@@ -52,12 +53,14 @@ def test_int_to_array():
         seed += 2**pow
     result = int_to_array_shim(seed, "seed", None, 64)
     expected = np.array(
-        [9223372045444710403, 536870914, 2, 9223372036854775808], dtype=np.uint64
+        [9223372045444710403, 536870914, 2, 9223372036854775808],
+        dtype=np.uint64,
     )
     np.testing.assert_equal(result, expected)
     result = int_to_array_shim(seed, "seed", None, 32)
     expected = np.array(
-        [3, 2147483650, 536870914, 0, 2, 0, 0, 2147483648], dtype=np.uint32
+        [3, 2147483650, 536870914, 0, 2, 0, 0, 2147483648],
+        dtype=np.uint32,
     )
     np.testing.assert_equal(result, expected)
 
@@ -67,15 +70,15 @@ def test_int_to_array_errors():
         int_to_array_shim(1, "a", 64, 31)
     with pytest.raises(TypeError, match="value must be an"):
         int_to_array_shim("1", "a", 64, 64)
-    with pytest.raises(ValueError):
+    with pytest.raises(ValueError, match="a must be positive"):
         int_to_array_shim(-1, "a", 64, 64)
-    with pytest.raises(ValueError):
+    with pytest.raises(ValueError, match="a must be positive and"):
         int_to_array_shim(2**96, "a", 64, 64)
-    with pytest.raises(ValueError):
+    with pytest.raises(ValueError, match="value is out of range"):
         int_to_array_shim([-1], "a", 64, 64)
-    with pytest.raises(ValueError):
+    with pytest.raises(ValueError, match="value is out of range for dtype"):
         int_to_array_shim([1, 2**96], "a", 64, 32)
-    with pytest.raises(ValueError):
+    with pytest.raises(ValueError, match="a must have"):
         int_to_array_shim(np.array([1], dtype=np.uint32), "a", 64, 32)
 
 
@@ -86,7 +89,8 @@ def test_seed_array():
     np.testing.assert_equal(result, expected)
 
     seed_arr = np.array(
-        [9223372045444710403, 536870914, 2, 9223372036854775808], dtype=np.uint64
+        [9223372045444710403, 536870914, 2, 9223372036854775808],
+        dtype=np.uint64,
     )
     result = seed_by_array(seed_arr, 4)
     expected = np.array(
@@ -106,21 +110,21 @@ def test_seed_array_errors():
         seed_by_array(np.array([0.0 + 1j]), 1)
     with pytest.raises(TypeError, match="Scalar seeds must be integer"):
         seed_by_array("1", 1)
-    with pytest.raises(TypeError):
+    with pytest.raises(TypeError, match="Scalar seeds must be integers"):
         seed_by_array(1.2, 1)
-    with pytest.raises(ValueError):
+    with pytest.raises(ValueError, match="Scalar seeds must be integers"):
         seed_by_array(-1, 1)
-    with pytest.raises(ValueError):
+    with pytest.raises(ValueError, match="Scalar seeds must be integers"):
         seed_by_array(2**65, 1)
-    with pytest.raises(ValueError):
+    with pytest.raises(ValueError, match="Array-valued seeds must be"):
         seed_by_array([[1, 2], [3, 4]], 1)
-    with pytest.raises(TypeError):
+    with pytest.raises(TypeError, match="Seed values must be integers"):
         seed_by_array(np.array([1, 2 + 1j]), 1)
-    with pytest.raises(ValueError):
+    with pytest.raises(ValueError, match="Seed values must be integers"):
         seed_by_array([2**65], 1)
-    with pytest.raises(ValueError):
+    with pytest.raises(ValueError, match="Seed values must be integers"):
         seed_by_array([-1], 1)
-    with pytest.raises(TypeError):
+    with pytest.raises(TypeError, match="Seed values must be integers"):
         seed_by_array([1.2], 1)
 
 
@@ -140,7 +144,7 @@ def test_bitgenerator_error():
 def test_cffi():
 
     tpl = Romu().cffi
-    assert isinstance(tpl, interface)
+    assert isinstance(tpl, Interface)
     assert hasattr(tpl, "state_address")
     assert hasattr(tpl, "state")
     assert hasattr(tpl, "next_uint64")
@@ -165,7 +169,10 @@ def test_object_to_int():
     res = object_to_int_shim([1], 32, "test", allowed_sizes=(32, 64))
     assert isinstance(res, int)
     res = object_to_int_shim(
-        np.array(1, dtype=np.uint32), 32, "test", allowed_sizes=(32, 64)
+        np.array(1, dtype=np.uint32),
+        32,
+        "test",
+        allowed_sizes=(32, 64),
     )
     assert isinstance(res, int)
 

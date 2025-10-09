@@ -3,6 +3,7 @@ import ctypes
 import numpy as np
 from numpy.random import Generator
 import pytest
+
 from randomgen.wrapper import UserBitGenerator
 
 HAS_NUMBA = False
@@ -224,9 +225,17 @@ def test_no_setter_getter(split_mix):
 def test_invalid():
     with pytest.raises(TypeError, match="next_raw must be"):
         UserBitGenerator.from_cfunc(
-            "next_raw", "next_64", "next_32", "next_double", "state"
+            "next_raw",
+            "next_64",
+            "next_32",
+            "next_double",
+            "state",
         )
     with pytest.raises(TypeError, match="next_raw must be"):
         UserBitGenerator.from_ctypes(
-            "next_raw", "next_64", "next_32", "next_double", "state"
+            "next_raw",
+            "next_64",
+            "next_32",
+            "next_double",
+            "state",
         )

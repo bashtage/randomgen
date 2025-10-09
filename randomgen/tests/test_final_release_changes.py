@@ -1,4 +1,5 @@
 import pytest
+
 from randomgen import (
     DSFMT,
     MT19937,
