@@ -133,7 +133,8 @@ if __name__ == "__main__":
 
     results_file = args.results_file
     configurations = setup_configuration_files(
-        num_streams=args.num_streams, sequential=args.sequential,
+        num_streams=args.num_streams,
+        sequential=args.sequential,
     )
     logger.info(f"Storing results to {results_file}")
     results = defaultdict(dict)

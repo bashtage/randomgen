@@ -250,7 +250,7 @@ ignore = [
   # Move standard library import `...` into a type-checking block
   "TC003",
   # TODO: enable "PTH"
-
+  "PTH",
   #  ### Intentionally disabled
   # Too many arguments to function call
   "PLR0913", # 55
@@ -290,7 +290,8 @@ ignore = [
   "SLF001",
   "NPY",
   "FIX",
-  "TD"
+  "TD",
+  "EXE"
 ]
 
 [tool.ruff.lint.per-file-ignores]

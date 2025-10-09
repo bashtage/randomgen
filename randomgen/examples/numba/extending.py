@@ -2,9 +2,9 @@ import datetime as dt
 
 import numba as nb
 import numpy as np
+import pytz
 
 from randomgen import Xoroshiro128
-import pytz
 
 tz = pytz.timezone("UTC")
 
@@ -72,7 +72,7 @@ start = dt.datetime.now(tz=tz)
 normalsj(1000000, state_addr)
 ms = 1000 * (dt.datetime.now(tz=tz) - start).total_seconds()
 print(
-    "1,000,000 Polar-transform (numba/Xoroshiro128) randoms in " f"{ms:0.1f}ms",
+    f"1,000,000 Polar-transform (numba/Xoroshiro128) randoms in {ms:0.1f}ms",
 )
 
 start = dt.datetime.now(tz=tz)
