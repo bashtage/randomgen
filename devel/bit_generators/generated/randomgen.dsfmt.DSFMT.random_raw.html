@@ -1,5 +1,6 @@
 
 
+
 <!doctype html>
 <html lang="en" class="no-js">
   <head>
@@ -9,25 +10,30 @@
       
       
       
+      
+        <link rel="prev" href="randomgen.dsfmt.DSFMT.ctypes.html">
+      
+      
+        <link rel="next" href="../efiix64.html">
+      
+      
       <link rel="icon" href="../../_static/favicon.ico">
     
     
       
-        <title>randomgen.dsfmt.DSFMT.random_raw - RandomGen v2.1.2 (+4)</title>
+        <title>randomgen.dsfmt.DSFMT.random_raw - RandomGen v2.1.2 (+18)</title>
       
     
     
       
-        
-        
-          
-          
-          <meta name="theme-color" content="#7e56c2">
         
       
       
 
+
     
+    
+      
     
     
       
@@ -36,8 +42,8 @@
         <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
       
     
-        <link rel="stylesheet" type="text/css" href="../../_static/sphinx_immaterial_theme.4b4a8c74e2ff2ab5b.min.css?v=afa97f93" />
-    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce((e,_)=>(e<<5)-e+_.charCodeAt(0),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+        <link rel="stylesheet" type="text/css" href="../../_static/sphinx_immaterial_theme.acf80fe7f4d9ef9e2.min.css?v=9e56d0d2" />
+    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
     
       
 
@@ -52,9 +58,8 @@
     
     
     
-    <body dir="ltr" data-md-color-scheme="" data-md-color-primary="deep-purple" data-md-color-accent="purple">
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="deep-purple" data-md-color-accent="purple">
   
-    
     
     <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
     <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
@@ -71,26 +76,29 @@
       
     </div>
     
-      <div data-md-component="outdated" hidden>
+      <div data-md-color-scheme="default" data-md-component="outdated" hidden>
         
       </div>
     
     
       
 
-<header class="md-header" data-md-component="header">
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
   <nav class="md-header__inner md-grid" aria-label="Header">
-    <a href="../../index.html" title="RandomGen v2.1.2 (+4)" class="md-header__button md-logo" aria-label="RandomGen v2.1.2 (+4)" data-md-component="logo">
+    <a href="../../index.html" title="RandomGen v2.1.2 (+18)" class="md-header__button md-logo" aria-label="RandomGen v2.1.2 (+18)" data-md-component="logo">
       <img src="../../_static/casino.svg" alt="logo">
     </a>
     <label class="md-header__button md-icon" for="__drawer">
-      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3V6m0 5h18v2H3v-2m0 5h18v2H3v-2Z"/></svg>
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
     </label>
     <div class="md-header__title" data-md-component="header-title">
       <div class="md-header__ellipsis">
         <div class="md-header__topic">
           <span class="md-ellipsis">
-            RandomGen v2.1.2 (+4)
+            RandomGen v2.1.2 (+18)
           </span>
         </div>
         <div class="md-header__topic" data-md-component="header-topic">
@@ -103,10 +111,14 @@
       </div>
     </div>
     
+      
+    
+    
     
     
       <label class="md-header__button md-icon" for="__search">
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5Z"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
       </label>
       <div class="md-search" data-md-component="search" role="dialog">
   <label class="md-search__overlay" for="__search"></label>
@@ -114,24 +126,27 @@
     <form class="md-search__form" name="search">
       <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
       <label class="md-search__icon md-icon" for="__search">
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5Z"/></svg>
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12Z"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
       </label>
       <nav class="md-search__options" aria-label="Search">
         
         <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
-          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41Z"/></svg>
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
         </button>
       </nav>
       
     </form>
     <div class="md-search__output">
-      <div class="md-search__scrollwrap" data-md-scrollfix>
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
         <div class="md-search-result" data-md-component="search-result">
           <div class="md-search-result__meta">
             Initializing search
           </div>
-          <ol class="md-search-result__list"></ol>
+          <ol class="md-search-result__list" role="presentation"></ol>
         </div>
       </div>
     </div>
@@ -143,7 +158,7 @@
         <a href="https://github.com/bashtage/randomgen/" title="Go to repository" class="md-source" data-md-component="source">
   <div class="md-source__icon md-icon">
     
-    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 496 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc.--><path d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6zm-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3zm44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9zM244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8zM97.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1zm-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7zm32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1zm-11.4-14.7c-1.6 1-1.6 3.6 0 5.9 1.6 2.3 4.3 3.3 5.6 2.3 1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2z"/></svg>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 496 512"><!--! Font Awesome Free 6.7.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2024 Fonticons, Inc.--><path d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6m-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3m44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9M244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8M97.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1m-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7m32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1m-11.4-14.7c-1.6 1-1.6 3.6 0 5.9s4.3 3.3 5.6 2.3c1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2"/></svg>
   </div>
   <div class="md-source__repository">
     randomgen
@@ -175,19 +190,20 @@
                     
 
 
+
 <nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
   <label class="md-nav__title" for="__drawer">
-    <a href="../../index.html" title="RandomGen v2.1.2 (+4)" class="md-nav__button md-logo" aria-label="RandomGen v2.1.2 (+4)" data-md-component="logo">
+    <a href="../../index.html" title="RandomGen v2.1.2 (+18)" class="md-nav__button md-logo" aria-label="RandomGen v2.1.2 (+18)" data-md-component="logo">
       <img src="../../_static/casino.svg" alt="logo">
     </a>
-    RandomGen v2.1.2 (+4)
+    RandomGen v2.1.2 (+18)
   </label>
   
     <div class="md-nav__source">
       <a href="https://github.com/bashtage/randomgen/" title="Go to repository" class="md-source" data-md-component="source">
   <div class="md-source__icon md-icon">
     
-    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 496 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc.--><path d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6zm-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3zm44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9zM244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8zM97.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1zm-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7zm32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1zm-11.4-14.7c-1.6 1-1.6 3.6 0 5.9 1.6 2.3 4.3 3.3 5.6 2.3 1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2z"/></svg>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 496 512"><!--! Font Awesome Free 6.7.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2024 Fonticons, Inc.--><path d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6m-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3m44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9M244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8M97.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1m-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7m32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1m-11.4-14.7c-1.6 1-1.6 3.6 0 5.9s4.3 3.3 5.6 2.3c1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2"/></svg>
   </div>
   <div class="md-source__repository">
     randomgen
@@ -199,15 +215,22 @@
     
       
       
-      
-
+  
   
   
   
   
     <li class="md-nav__item">
       <a href="../../extended-generator.html" class="md-nav__link">
-        <span title="/extended-generator.rst (reference label)" class="md-ellipsis">Extended Generator</span>
+        
+  
+  
+  <span class="md-ellipsis">
+    <span title="/extended-generator.rst (reference label)"><span>Extended Generator</span></span>
+    
+  </span>
+  
+
       </a>
     </li>
   
@@ -215,15 +238,22 @@
     
       
       
-      
-
+  
   
   
   
   
     <li class="md-nav__item">
       <a href="../../new-or-different.html" class="md-nav__link">
-        <span title="/new-or-different.rst (reference label)" class="md-ellipsis">What’s New or Different</span>
+        
+  
+  
+  <span class="md-ellipsis">
+    <span title="/new-or-different.rst (reference label)"><span>What’s New or Different</span></span>
+    
+  </span>
+  
+
       </a>
     </li>
   
@@ -231,15 +261,22 @@
     
       
       
-      
-
+  
   
   
   
   
     <li class="md-nav__item">
       <a href="../../future.html" class="md-nav__link">
-        <span title="/future.rst (reference label)" class="md-ellipsis">Future Plans</span>
+        
+  
+  
+  <span class="md-ellipsis">
+    <span title="/future.rst (reference label)"><span>Future Plans</span></span>
+    
+  </span>
+  
+
       </a>
     </li>
   
@@ -247,230 +284,342 @@
     
       
       
+  
+  
+    
+  
+  
+  
+    
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
       
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4" checked>
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../index.html" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    <span title="/bit_generators/index.rst (reference label)"><span>Bit Generators</span></span>
+    
+  </span>
+  
 
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_4" id="__nav_4_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_4">
+            <span class="md-nav__icon md-icon"></span>
+            <span title="/bit_generators/index.rst (reference label)"><span>Bit Generators</span></span>
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
   
   
     
   
   
+  
+    
+    
     
     <li class="md-nav__item md-nav__item--active md-nav__item--nested">
       
-      
-        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_4" type="checkbox" id="__nav_4" checked>
-      
-      
-      
         
-        <div class="md-nav__link md-nav__link--index ">
-          <a href="../index.html"><span title="/bit_generators/index.rst (reference label)" class="md-ellipsis">Bit Generators</span></a>
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4_1" checked>
+        
           
-            <label for="__nav_4">
-              <span class="md-nav__icon md-icon"></span>
-            </label>
-          
-        </div>
-      
-      <nav class="md-nav" aria-label="Bit Generators" data-md-level="1">
-        <label class="md-nav__title" for="__nav_4">
-          <span class="md-nav__icon md-icon"></span>
-          <span title="/bit_generators/index.rst (reference label)" class="md-ellipsis">Bit Generators</span>
-        </label>
-        <ul class="md-nav__list" data-md-scrollfix>
-          
-            
+          <div class="md-nav__link md-nav__container">
+            <a href="../index.html#stable-rngs" class="md-nav__link ">
               
   
   
+  <span class="md-ellipsis">
+    <span title="/bit_generators/index.rst#stable-rngs (reference label)"><span>Stable RNGs</span></span>
     
+  </span>
   
-  
-    
-    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
-      
-      
-        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_4_1" type="checkbox" id="__nav_4_1" checked>
-      
-      
-      
-        
-        <div class="md-nav__link md-nav__link--index ">
-          <a href="../index.html#stable-rngs"><span title="/bit_generators/index.rst#stable-rngs (reference label)" class="md-ellipsis">Stable RNGs</span></a>
-          
-            <label for="__nav_4_1">
-              <span class="md-nav__icon md-icon"></span>
-            </label>
-          
-        </div>
-      
-      <nav class="md-nav" aria-label="Stable RNGs" data-md-level="2">
-        <label class="md-nav__title" for="__nav_4_1">
-          <span class="md-nav__icon md-icon"></span>
-          <span title="/bit_generators/index.rst#stable-rngs (reference label)" class="md-ellipsis">Stable RNGs</span>
-        </label>
-        <ul class="md-nav__list" data-md-scrollfix>
-          
+
+            </a>
             
               
+              <label class="md-nav__link " for="__nav_4_1" id="__nav_4_1_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_4_1_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_4_1">
+            <span class="md-nav__icon md-icon"></span>
+            <span title="/bit_generators/index.rst#stable-rngs (reference label)"><span>Stable RNGs</span></span>
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
   
   
   
   
     <li class="md-nav__item">
       <a href="../aesctr.html" class="md-nav__link">
-        <span title="/bit_generators/aesctr.rst (reference label)" class="md-ellipsis">AES Counter</span>
+        
+  
+  
+  <span class="md-ellipsis">
+    <span title="/bit_generators/aesctr.rst (reference label)"><span>AES Counter</span></span>
+    
+  </span>
+  
+
       </a>
     </li>
   
 
-            
-          
+              
             
               
+                
+  
   
   
   
   
     <li class="md-nav__item">
       <a href="../chacha.html" class="md-nav__link">
-        <span title="/bit_generators/chacha.rst (reference label)" class="md-ellipsis">Cha<wbr>Cha</span>
+        
+  
+  
+  <span class="md-ellipsis">
+    <span title="/bit_generators/chacha.rst (reference label)"><span>Cha<wbr>Cha</span></span>
+    
+  </span>
+  
+
       </a>
     </li>
   
 
-            
-          
+              
             
               
+                
   
   
     
   
   
+  
+    
+    
     
     <li class="md-nav__item md-nav__item--active md-nav__item--nested">
       
-      
-        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_4_1_3" type="checkbox" id="__nav_4_1_3" checked>
-      
-      
-      
         
-        <div class="md-nav__link md-nav__link--index ">
-          <a href="../dsfmt.html"><span title="/bit_generators/dsfmt.rst (reference label)" class="md-ellipsis">DSFMT</span></a>
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4_1_3" checked>
+        
           
-            <label for="__nav_4_1_3">
-              <span class="md-nav__icon md-icon"></span>
-            </label>
-          
-        </div>
-      
-      <nav class="md-nav" aria-label="DSFMT" data-md-level="3">
-        <label class="md-nav__title" for="__nav_4_1_3">
-          <span class="md-nav__icon md-icon"></span>
-          <span title="/bit_generators/dsfmt.rst (reference label)" class="md-ellipsis">DSFMT</span>
-        </label>
-        <ul class="md-nav__list" data-md-scrollfix>
-          
+          <div class="md-nav__link md-nav__container">
+            <a href="../dsfmt.html" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    <span title="/bit_generators/dsfmt.rst (reference label)"><span>DSFMT</span></span>
+    
+  </span>
+  
+
+            </a>
             
               
+              <label class="md-nav__link " for="__nav_4_1_3" id="__nav_4_1_3_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_4_1_3_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_4_1_3">
+            <span class="md-nav__icon md-icon"></span>
+            <span title="/bit_generators/dsfmt.rst (reference label)"><span>DSFMT</span></span>
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
   
   
   
   
     <li class="md-nav__item">
       <a href="../dsfmt.html#seeding-and-state" class="md-nav__link">
-        <span title="/bit_generators/dsfmt.rst#seeding-and-state (reference label)" class="md-ellipsis">Seeding and State</span>
+        
+  
+  
+  <span class="md-ellipsis">
+    <span title="/bit_generators/dsfmt.rst#seeding-and-state (reference label)"><span>Seeding and State</span></span>
+    
+  </span>
+  
+
       </a>
     </li>
   
 
-            
-          
+              
             
               
+                
+  
   
   
   
   
     <li class="md-nav__item">
       <a href="../dsfmt.html#parallel-generation" class="md-nav__link">
-        <span title="/bit_generators/dsfmt.rst#parallel-generation (reference label)" class="md-ellipsis">Parallel generation</span>
+        
+  
+  
+  <span class="md-ellipsis">
+    <span title="/bit_generators/dsfmt.rst#parallel-generation (reference label)"><span>Parallel generation</span></span>
+    
+  </span>
+  
+
       </a>
     </li>
   
 
-            
-          
+              
             
               
+                
+  
   
   
   
   
     <li class="md-nav__item">
       <a href="../dsfmt.html#extending" class="md-nav__link">
-        <span title="/bit_generators/dsfmt.rst#extending (reference label)" class="md-ellipsis">Extending</span>
+        
+  
+  
+  <span class="md-ellipsis">
+    <span title="/bit_generators/dsfmt.rst#extending (reference label)"><span>Extending</span></span>
+    
+  </span>
+  
+
       </a>
     </li>
   
 
-            
-          
+              
             
               
+                
   
   
     
   
   
+  
+    
+    
     
     <li class="md-nav__item md-nav__item--active md-nav__item--nested">
       
-      
-        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_4_1_3_4" type="checkbox" id="__nav_4_1_3_4" checked>
-      
-      
-      
         
-        <div class="md-nav__link md-nav__link--index ">
-          <a href="../dsfmt.html#testing"><span title="/bit_generators/dsfmt.rst#testing (reference label)" class="md-ellipsis">Testing</span></a>
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4_1_3_4" checked>
+        
           
-            <label for="__nav_4_1_3_4">
-              <span class="md-nav__icon md-icon"></span>
-            </label>
-          
-        </div>
-      
-      <nav class="md-nav" aria-label="Testing" data-md-level="4">
-        <label class="md-nav__title" for="__nav_4_1_3_4">
-          <span class="md-nav__icon md-icon"></span>
-          <span title="/bit_generators/dsfmt.rst#testing (reference label)" class="md-ellipsis">Testing</span>
-        </label>
-        <ul class="md-nav__list" data-md-scrollfix>
-          
-            
+          <div class="md-nav__link md-nav__container">
+            <a href="../dsfmt.html#testing" class="md-nav__link ">
               
   
   
+  <span class="md-ellipsis">
+    <span title="/bit_generators/dsfmt.rst#testing (reference label)"><span>Testing</span></span>
+    
+  </span>
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_4_1_3_4" id="__nav_4_1_3_4_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="4" aria-labelledby="__nav_4_1_3_4_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_4_1_3_4">
+            <span class="md-nav__icon md-icon"></span>
+            <span title="/bit_generators/dsfmt.rst#testing (reference label)"><span>Testing</span></span>
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
     
   
     
+  
   
   
     <li class="md-nav__item md-nav__item--active">
       
       
-      <input class="md-nav__toggle md-toggle" data-md-toggle="toc" type="checkbox" id="__toc">
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
       
         <label class="md-nav__link md-nav__link--active" for="__toc">
-          <span title="/bit_generators/generated/randomgen.dsfmt.dsfmt.random_raw.rst (reference label)" class="md-ellipsis">randomgen.<wbr>dsfmt.<wbr>DSFMT.<wbr>random_<wbr>raw</span>
+          
+  
+  
+  <span class="md-ellipsis">
+    <span title="/bit_generators/generated/randomgen.dsfmt.dsfmt.random_raw.rst (reference label)"><span>randomgen.<wbr>dsfmt.<wbr>DSFMT.<wbr>random_<wbr>raw</span></span>
+    
+  </span>
+  
+
           <span class="md-nav__icon md-icon"></span>
         </label>
       
       <a href="#" class="md-nav__link md-nav__link--active">
-        <span title="/bit_generators/generated/randomgen.dsfmt.dsfmt.random_raw.rst (reference label)" class="md-ellipsis">randomgen.<wbr>dsfmt.<wbr>DSFMT.<wbr>random_<wbr>raw</span>
+        
+  
+  
+  <span class="md-ellipsis">
+    <span title="/bit_generators/generated/randomgen.dsfmt.dsfmt.random_raw.rst (reference label)"><span>randomgen.<wbr>dsfmt.<wbr>DSFMT.<wbr>random_<wbr>raw</span></span>
+    
+  </span>
+  
+
       </a>
       
         
@@ -491,7 +640,12 @@
       
         <li class="md-nav__item">
   <a href="#randomgen.dsfmt.DSFMT.random_raw" class="md-nav__link">
-    <span aria-label="Python method" class="objinfo-icon objinfo-icon__procedure" title="Python method">M</span><span title="randomgen.dsfmt.DSFMT.random_raw (Python method) — Return randoms as generated by the underlying BitGenerator" class="md-ellipsis">DSFMT.<wbr>random_<wbr>raw</span>
+    
+      <span aria-label="Python method" class="objinfo-icon objinfo-icon__procedure" title="Python method">M</span>
+    
+    <span class="md-ellipsis">
+      <span title="randomgen.dsfmt.DSFMT.random_raw (Python method) — Return randoms as generated by the underlying BitGenerator"><span>DSFMT.<wbr>random_<wbr>raw</span></span>
+    </span>
   </a>
   
     <nav class="md-nav" aria-label="DSFMT.random_raw">
@@ -499,7 +653,10 @@
         
           <li class="md-nav__item">
   <a href="#randomgen.dsfmt.DSFMT.random_raw-parameters" class="md-nav__link">
-    <span class="md-ellipsis">Parameters</span>
+    
+    <span class="md-ellipsis">
+      <span>Parameters</span>
+    </span>
   </a>
   
     <nav class="md-nav" aria-label="Parameters">
@@ -507,14 +664,24 @@
         
           <li class="md-nav__item">
   <a href="#randomgen.dsfmt.DSFMT.random_raw.size" class="md-nav__link">
-    <span aria-label="Python parameter" class="objinfo-icon objinfo-icon__sub-data" title="Python parameter">p</span><span title="randomgen.dsfmt.DSFMT.random_raw.size (Python parameter) — Output shape." class="md-ellipsis">size</span>
+    
+      <span aria-label="Python parameter" class="objinfo-icon objinfo-icon__sub-data" title="Python parameter">p</span>
+    
+    <span class="md-ellipsis">
+      <span title="randomgen.dsfmt.DSFMT.random_raw.size (Python parameter) — Output shape."><span>size</span></span>
+    </span>
   </a>
   
 </li>
         
           <li class="md-nav__item">
   <a href="#randomgen.dsfmt.DSFMT.random_raw.output" class="md-nav__link">
-    <span aria-label="Python parameter" class="objinfo-icon objinfo-icon__sub-data" title="Python parameter">p</span><span title="randomgen.dsfmt.DSFMT.random_raw.output (Python parameter) — Output values." class="md-ellipsis">output</span>
+    
+      <span aria-label="Python parameter" class="objinfo-icon objinfo-icon__sub-data" title="Python parameter">p</span>
+    
+    <span class="md-ellipsis">
+      <span title="randomgen.dsfmt.DSFMT.random_raw.output (Python parameter) — Output values."><span>output</span></span>
+    </span>
   </a>
   
 </li>
@@ -526,14 +693,20 @@
         
           <li class="md-nav__item">
   <a href="#randomgen.dsfmt.DSFMT.random_raw-returns" class="md-nav__link">
-    <span class="md-ellipsis">Returns</span>
+    
+    <span class="md-ellipsis">
+      <span>Returns</span>
+    </span>
   </a>
   
 </li>
         
           <li class="md-nav__item">
   <a href="#randomgen.dsfmt.DSFMT.random_raw-return-type" class="md-nav__link">
-    <span class="md-ellipsis">Return type</span>
+    
+    <span class="md-ellipsis">
+      <span>Return type</span>
+    </span>
   </a>
   
 </li>
@@ -550,394 +723,614 @@
     </li>
   
 
+              
             
-          
-        </ul>
-      </nav>
+          </ul>
+        </nav>
+      
     </li>
   
   
 
+              
             
-          
-        </ul>
-      </nav>
+          </ul>
+        </nav>
+      
     </li>
   
   
 
-            
-          
+              
             
               
+                
+  
   
   
   
   
     <li class="md-nav__item">
       <a href="../efiix64.html" class="md-nav__link">
-        <span title="/bit_generators/efiix64.rst (reference label)" class="md-ellipsis">EFIIX64</span>
+        
+  
+  
+  <span class="md-ellipsis">
+    <span title="/bit_generators/efiix64.rst (reference label)"><span>EFIIX64</span></span>
+    
+  </span>
+  
+
       </a>
     </li>
   
 
-            
-          
+              
             
               
+                
+  
   
   
   
   
     <li class="md-nav__item">
       <a href="../hc128.html" class="md-nav__link">
-        <span title="/bit_generators/hc128.rst (reference label)" class="md-ellipsis">HC128</span>
+        
+  
+  
+  <span class="md-ellipsis">
+    <span title="/bit_generators/hc128.rst (reference label)"><span>HC128</span></span>
+    
+  </span>
+  
+
       </a>
     </li>
   
 
-            
-          
+              
             
               
+                
+  
   
   
   
   
     <li class="md-nav__item">
       <a href="../jsf.html" class="md-nav__link">
-        <span title="/bit_generators/jsf.rst (reference label)" class="md-ellipsis">JSF</span>
+        
+  
+  
+  <span class="md-ellipsis">
+    <span title="/bit_generators/jsf.rst (reference label)"><span>JSF</span></span>
+    
+  </span>
+  
+
       </a>
     </li>
   
 
-            
-          
+              
             
               
+                
+  
   
   
   
   
     <li class="md-nav__item">
       <a href="../lxm.html" class="md-nav__link">
-        <span title="/bit_generators/lxm.rst (reference label)" class="md-ellipsis">LXM</span>
+        
+  
+  
+  <span class="md-ellipsis">
+    <span title="/bit_generators/lxm.rst (reference label)"><span>LXM</span></span>
+    
+  </span>
+  
+
       </a>
     </li>
   
 
-            
-          
+              
             
               
+                
+  
   
   
   
   
     <li class="md-nav__item">
       <a href="../mt19937.html" class="md-nav__link">
-        <span title="/bit_generators/mt19937.rst (reference label)" class="md-ellipsis">MT19937</span>
+        
+  
+  
+  <span class="md-ellipsis">
+    <span title="/bit_generators/mt19937.rst (reference label)"><span>MT19937</span></span>
+    
+  </span>
+  
+
       </a>
     </li>
   
 
-            
-          
+              
             
               
+                
+  
   
   
   
   
     <li class="md-nav__item">
       <a href="../mt64.html" class="md-nav__link">
-        <span title="/bit_generators/mt64.rst (reference label)" class="md-ellipsis">MT64</span>
+        
+  
+  
+  <span class="md-ellipsis">
+    <span title="/bit_generators/mt64.rst (reference label)"><span>MT64</span></span>
+    
+  </span>
+  
+
       </a>
     </li>
   
 
-            
-          
+              
             
               
+                
+  
   
   
   
   
     <li class="md-nav__item">
       <a href="../pcg32.html" class="md-nav__link">
-        <span title="/bit_generators/pcg32.rst (reference label)" class="md-ellipsis">PCG32</span>
+        
+  
+  
+  <span class="md-ellipsis">
+    <span title="/bit_generators/pcg32.rst (reference label)"><span>PCG32</span></span>
+    
+  </span>
+  
+
       </a>
     </li>
   
 
-            
-          
+              
             
               
+                
+  
   
   
   
   
     <li class="md-nav__item">
       <a href="../pcg64.html" class="md-nav__link">
-        <span title="/bit_generators/pcg64.rst (reference label)" class="md-ellipsis">PCG64</span>
+        
+  
+  
+  <span class="md-ellipsis">
+    <span title="/bit_generators/pcg64.rst (reference label)"><span>PCG64</span></span>
+    
+  </span>
+  
+
       </a>
     </li>
   
 
-            
-          
+              
             
               
+                
+  
   
   
   
   
     <li class="md-nav__item">
       <a href="../pcg64dxsm.html" class="md-nav__link">
-        <span title="/bit_generators/pcg64dxsm.rst (reference label)" class="md-ellipsis">PCG64 2.<wbr>0 <wbr>(64-<wbr>bit multiplier, DXSM mixing)</span>
+        
+  
+  
+  <span class="md-ellipsis">
+    <span title="/bit_generators/pcg64dxsm.rst (reference label)"><span>PCG64 2.<wbr>0 <wbr>(64-<wbr>bit multiplier, DXSM mixing)</span></span>
+    
+  </span>
+  
+
       </a>
     </li>
   
 
-            
-          
+              
             
               
+                
+  
   
   
   
   
     <li class="md-nav__item">
       <a href="../lcg128mix.html" class="md-nav__link">
-        <span title="/bit_generators/lcg128mix.rst (reference label)" class="md-ellipsis">128-<wbr>bit LCG with output mixing</span>
+        
+  
+  
+  <span class="md-ellipsis">
+    <span title="/bit_generators/lcg128mix.rst (reference label)"><span>128-<wbr>bit LCG with output mixing</span></span>
+    
+  </span>
+  
+
       </a>
     </li>
   
 
-            
-          
+              
             
               
+                
+  
   
   
   
   
     <li class="md-nav__item">
       <a href="../philox.html" class="md-nav__link">
-        <span title="/bit_generators/philox.rst (reference label)" class="md-ellipsis">Philox</span>
+        
+  
+  
+  <span class="md-ellipsis">
+    <span title="/bit_generators/philox.rst (reference label)"><span>Philox</span></span>
+    
+  </span>
+  
+
       </a>
     </li>
   
 
-            
-          
+              
             
               
+                
+  
   
   
   
   
     <li class="md-nav__item">
       <a href="../rdrand.html" class="md-nav__link">
-        <span title="/bit_generators/rdrand.rst (reference label)" class="md-ellipsis">RDRAND</span>
+        
+  
+  
+  <span class="md-ellipsis">
+    <span title="/bit_generators/rdrand.rst (reference label)"><span>RDRAND</span></span>
+    
+  </span>
+  
+
       </a>
     </li>
   
 
-            
-          
+              
             
               
+                
+  
   
   
   
   
     <li class="md-nav__item">
       <a href="../romu.html" class="md-nav__link">
-        <span title="/bit_generators/romu.rst (reference label)" class="md-ellipsis">Romu</span>
+        
+  
+  
+  <span class="md-ellipsis">
+    <span title="/bit_generators/romu.rst (reference label)"><span>Romu</span></span>
+    
+  </span>
+  
+
       </a>
     </li>
   
 
-            
-          
+              
             
               
+                
+  
   
   
   
   
     <li class="md-nav__item">
       <a href="../sfc.html" class="md-nav__link">
-        <span title="/bit_generators/sfc.rst (reference label)" class="md-ellipsis">SFC64</span>
+        
+  
+  
+  <span class="md-ellipsis">
+    <span title="/bit_generators/sfc.rst (reference label)"><span>SFC64</span></span>
+    
+  </span>
+  
+
       </a>
     </li>
   
 
-            
-          
+              
             
               
+                
+  
   
   
   
   
     <li class="md-nav__item">
       <a href="../sfmt.html" class="md-nav__link">
-        <span title="/bit_generators/sfmt.rst (reference label)" class="md-ellipsis">SFMT</span>
+        
+  
+  
+  <span class="md-ellipsis">
+    <span title="/bit_generators/sfmt.rst (reference label)"><span>SFMT</span></span>
+    
+  </span>
+  
+
       </a>
     </li>
   
 
-            
-          
+              
             
               
+                
+  
   
   
   
   
     <li class="md-nav__item">
       <a href="../speck128.html" class="md-nav__link">
-        <span title="/bit_generators/speck128.rst (reference label)" class="md-ellipsis">SPECK128</span>
+        
+  
+  
+  <span class="md-ellipsis">
+    <span title="/bit_generators/speck128.rst (reference label)"><span>SPECK128</span></span>
+    
+  </span>
+  
+
       </a>
     </li>
   
 
-            
-          
+              
             
               
+                
+  
   
   
   
   
     <li class="md-nav__item">
       <a href="../squares.html" class="md-nav__link">
-        <span title="/bit_generators/squares.rst (reference label)" class="md-ellipsis">Squares</span>
+        
+  
+  
+  <span class="md-ellipsis">
+    <span title="/bit_generators/squares.rst (reference label)"><span>Squares</span></span>
+    
+  </span>
+  
+
       </a>
     </li>
   
 
-            
-          
+              
             
               
+                
+  
   
   
   
   
     <li class="md-nav__item">
       <a href="../threefry.html" class="md-nav__link">
-        <span title="/bit_generators/threefry.rst (reference label)" class="md-ellipsis">Three<wbr>Fry</span>
+        
+  
+  
+  <span class="md-ellipsis">
+    <span title="/bit_generators/threefry.rst (reference label)"><span>Three<wbr>Fry</span></span>
+    
+  </span>
+  
+
       </a>
     </li>
   
 
-            
-          
+              
             
               
+                
+  
   
   
   
   
     <li class="md-nav__item">
       <a href="../tyche.html" class="md-nav__link">
-        <span title="/bit_generators/tyche.rst (reference label)" class="md-ellipsis">Tyche</span>
+        
+  
+  
+  <span class="md-ellipsis">
+    <span title="/bit_generators/tyche.rst (reference label)"><span>Tyche</span></span>
+    
+  </span>
+  
+
       </a>
     </li>
   
 
-            
-          
+              
             
               
+                
+  
   
   
   
   
     <li class="md-nav__item">
       <a href="../xoroshiro128.html" class="md-nav__link">
-        <span title="/bit_generators/xoroshiro128.rst (reference label)" class="md-ellipsis">Xoro<wbr>Shiro128+/++</span>
+        
+  
+  
+  <span class="md-ellipsis">
+    <span title="/bit_generators/xoroshiro128.rst (reference label)"><span>Xoro<wbr>Shiro128+/++</span></span>
+    
+  </span>
+  
+
       </a>
     </li>
   
 
-            
-          
+              
             
               
+                
+  
   
   
   
   
     <li class="md-nav__item">
       <a href="../xoshiro256.html" class="md-nav__link">
-        <span title="/bit_generators/xoshiro256.rst (reference label)" class="md-ellipsis">Xoshiro256**</span>
+        
+  
+  
+  <span class="md-ellipsis">
+    <span title="/bit_generators/xoshiro256.rst (reference label)"><span>Xoshiro256**</span></span>
+    
+  </span>
+  
+
       </a>
     </li>
   
 
-            
-          
+              
             
               
+                
+  
   
   
   
   
     <li class="md-nav__item">
       <a href="../xoshiro512.html" class="md-nav__link">
-        <span title="/bit_generators/xoshiro512.rst (reference label)" class="md-ellipsis">Xoshiro512**</span>
+        
+  
+  
+  <span class="md-ellipsis">
+    <span title="/bit_generators/xoshiro512.rst (reference label)"><span>Xoshiro512**</span></span>
+    
+  </span>
+  
+
       </a>
     </li>
   
 
+              
             
-          
-        </ul>
-      </nav>
+          </ul>
+        </nav>
+      
     </li>
   
   
 
-            
-          
+              
             
               
+                
+  
   
   
   
   
     <li class="md-nav__item">
       <a href="../index.html#experimental-rngs" class="md-nav__link">
-        <span title="/bit_generators/index.rst#experimental-rngs (reference label)" class="md-ellipsis">Experimental RNGs</span>
+        
+  
+  
+  <span class="md-ellipsis">
+    <span title="/bit_generators/index.rst#experimental-rngs (reference label)"><span>Experimental RNGs</span></span>
+    
+  </span>
+  
+
       </a>
     </li>
   
 
-            
-          
+              
             
               
+                
+  
   
   
   
   
     <li class="md-nav__item">
       <a href="../index.html#user-defined-bit-generators" class="md-nav__link">
-        <span title="/bit_generators/index.rst#user-defined-bit-generators (reference label)" class="md-ellipsis">User-<wbr>defined Bit Generators</span>
+        
+  
+  
+  <span class="md-ellipsis">
+    <span title="/bit_generators/index.rst#user-defined-bit-generators (reference label)"><span>User-<wbr>defined Bit Generators</span></span>
+    
+  </span>
+  
+
       </a>
     </li>
   
 
+              
             
-          
-        </ul>
-      </nav>
+          </ul>
+        </nav>
+      
     </li>
   
   
@@ -945,15 +1338,22 @@
     
       
       
-      
-
+  
   
   
   
   
     <li class="md-nav__item">
       <a href="../../seed_sequence.html" class="md-nav__link">
-        <span title="/seed_sequence.rst (reference label)" class="md-ellipsis">Seed Sequences</span>
+        
+  
+  
+  <span class="md-ellipsis">
+    <span title="/seed_sequence.rst (reference label)"><span>Seed Sequences</span></span>
+    
+  </span>
+  
+
       </a>
     </li>
   
@@ -961,15 +1361,22 @@
     
       
       
-      
-
+  
   
   
   
   
     <li class="md-nav__item">
       <a href="../../parallel.html" class="md-nav__link">
-        <span title="/parallel.rst (reference label)" class="md-ellipsis">Parallel Applications</span>
+        
+  
+  
+  <span class="md-ellipsis">
+    <span title="/parallel.rst (reference label)"><span>Parallel Applications</span></span>
+    
+  </span>
+  
+
       </a>
     </li>
   
@@ -977,15 +1384,22 @@
     
       
       
-      
-
+  
   
   
   
   
     <li class="md-nav__item">
       <a href="../../multithreading.html" class="md-nav__link">
-        <span title="/multithreading.rst (reference label)" class="md-ellipsis">Multithreaded Generation</span>
+        
+  
+  
+  <span class="md-ellipsis">
+    <span title="/multithreading.rst (reference label)"><span>Multithreaded Generation</span></span>
+    
+  </span>
+  
+
       </a>
     </li>
   
@@ -993,15 +1407,22 @@
     
       
       
-      
-
+  
   
   
   
   
     <li class="md-nav__item">
       <a href="../../testing.html" class="md-nav__link">
-        <span title="/testing.rst (reference label)" class="md-ellipsis">Quality Assurance</span>
+        
+  
+  
+  <span class="md-ellipsis">
+    <span title="/testing.rst (reference label)"><span>Quality Assurance</span></span>
+    
+  </span>
+  
+
       </a>
     </li>
   
@@ -1009,15 +1430,22 @@
     
       
       
-      
-
+  
   
   
   
   
     <li class="md-nav__item">
       <a href="../../performance.html" class="md-nav__link">
-        <span title="/performance.rst (reference label)" class="md-ellipsis">Comparing Performance</span>
+        
+  
+  
+  <span class="md-ellipsis">
+    <span title="/performance.rst (reference label)"><span>Comparing Performance</span></span>
+    
+  </span>
+  
+
       </a>
     </li>
   
@@ -1025,15 +1453,22 @@
     
       
       
-      
-
+  
   
   
   
   
     <li class="md-nav__item">
       <a href="../../extending.html" class="md-nav__link">
-        <span title="/extending.rst (reference label)" class="md-ellipsis">Extending</span>
+        
+  
+  
+  <span class="md-ellipsis">
+    <span title="/extending.rst (reference label)"><span>Extending</span></span>
+    
+  </span>
+  
+
       </a>
     </li>
   
@@ -1041,15 +1476,22 @@
     
       
       
-      
-
+  
   
   
   
   
     <li class="md-nav__item">
       <a href="../../custom-bit-generators.html" class="md-nav__link">
-        <span title="/custom-bit-generators.ipynb (reference label)" class="md-ellipsis">Writing a Bit<wbr>Generator</span>
+        
+  
+  
+  <span class="md-ellipsis">
+    <span title="/custom-bit-generators.ipynb (reference label)"><span>Writing a Bit<wbr>Generator</span></span>
+    
+  </span>
+  
+
       </a>
     </li>
   
@@ -1057,15 +1499,22 @@
     
       
       
-      
-
+  
   
   
   
   
     <li class="md-nav__item">
       <a href="../../entropy.html" class="md-nav__link">
-        <span title="/entropy.rst (reference label)" class="md-ellipsis">Reading System Entropy</span>
+        
+  
+  
+  <span class="md-ellipsis">
+    <span title="/entropy.rst (reference label)"><span>Reading System Entropy</span></span>
+    
+  </span>
+  
+
       </a>
     </li>
   
@@ -1073,15 +1522,22 @@
     
       
       
-      
-
+  
   
   
   
   
     <li class="md-nav__item">
       <a href="../../references.html" class="md-nav__link">
-        <span title="/references.rst (reference label)" class="md-ellipsis">References</span>
+        
+  
+  
+  <span class="md-ellipsis">
+    <span title="/references.rst (reference label)"><span>References</span></span>
+    
+  </span>
+  
+
       </a>
     </li>
   
@@ -1089,15 +1545,22 @@
     
       
       
-      
-
+  
   
   
   
   
     <li class="md-nav__item">
       <a href="../../generator.html" class="md-nav__link">
-        <span title="/generator.rst (reference label)" class="md-ellipsis">Random Generation</span>
+        
+  
+  
+  <span class="md-ellipsis">
+    <span title="/generator.rst (reference label)"><span>Random Generation</span></span>
+    
+  </span>
+  
+
       </a>
     </li>
   
@@ -1105,15 +1568,22 @@
     
       
       
-      
-
+  
   
   
   
   
     <li class="md-nav__item">
       <a href="../../legacy.html" class="md-nav__link">
-        <span title="/legacy.rst (reference label)" class="md-ellipsis">Legacy Random Generation</span>
+        
+  
+  
+  <span class="md-ellipsis">
+    <span title="/legacy.rst (reference label)"><span>Legacy Random Generation</span></span>
+    
+  </span>
+  
+
       </a>
     </li>
   
@@ -1121,15 +1591,22 @@
     
       
       
-      
-
+  
   
   
   
   
     <li class="md-nav__item">
       <a href="../../evolution.html" class="md-nav__link">
-        <span title="/evolution.rst (reference label)" class="md-ellipsis">Evolution of randomgen</span>
+        
+  
+  
+  <span class="md-ellipsis">
+    <span title="/evolution.rst (reference label)"><span>Evolution of randomgen</span></span>
+    
+  </span>
+  
+
       </a>
     </li>
   
@@ -1137,15 +1614,22 @@
     
       
       
-      
-
+  
   
   
   
   
     <li class="md-nav__item">
       <a href="../../change-log.html" class="md-nav__link">
-        <span title="/change-log.rst (reference label)" class="md-ellipsis">Change Log</span>
+        
+  
+  
+  <span class="md-ellipsis">
+    <span title="/change-log.rst (reference label)"><span>Change Log</span></span>
+    
+  </span>
+  
+
       </a>
     </li>
   
@@ -1178,7 +1662,12 @@
       
         <li class="md-nav__item">
   <a href="#randomgen.dsfmt.DSFMT.random_raw" class="md-nav__link">
-    <span aria-label="Python method" class="objinfo-icon objinfo-icon__procedure" title="Python method">M</span><span title="randomgen.dsfmt.DSFMT.random_raw (Python method) — Return randoms as generated by the underlying BitGenerator" class="md-ellipsis">DSFMT.<wbr>random_<wbr>raw</span>
+    
+      <span aria-label="Python method" class="objinfo-icon objinfo-icon__procedure" title="Python method">M</span>
+    
+    <span class="md-ellipsis">
+      <span title="randomgen.dsfmt.DSFMT.random_raw (Python method) — Return randoms as generated by the underlying BitGenerator"><span>DSFMT.<wbr>random_<wbr>raw</span></span>
+    </span>
   </a>
   
     <nav class="md-nav" aria-label="DSFMT.random_raw">
@@ -1186,7 +1675,10 @@
         
           <li class="md-nav__item">
   <a href="#randomgen.dsfmt.DSFMT.random_raw-parameters" class="md-nav__link">
-    <span class="md-ellipsis">Parameters</span>
+    
+    <span class="md-ellipsis">
+      <span>Parameters</span>
+    </span>
   </a>
   
     <nav class="md-nav" aria-label="Parameters">
@@ -1194,14 +1686,24 @@
         
           <li class="md-nav__item">
   <a href="#randomgen.dsfmt.DSFMT.random_raw.size" class="md-nav__link">
-    <span aria-label="Python parameter" class="objinfo-icon objinfo-icon__sub-data" title="Python parameter">p</span><span title="randomgen.dsfmt.DSFMT.random_raw.size (Python parameter) — Output shape." class="md-ellipsis">size</span>
+    
+      <span aria-label="Python parameter" class="objinfo-icon objinfo-icon__sub-data" title="Python parameter">p</span>
+    
+    <span class="md-ellipsis">
+      <span title="randomgen.dsfmt.DSFMT.random_raw.size (Python parameter) — Output shape."><span>size</span></span>
+    </span>
   </a>
   
 </li>
         
           <li class="md-nav__item">
   <a href="#randomgen.dsfmt.DSFMT.random_raw.output" class="md-nav__link">
-    <span aria-label="Python parameter" class="objinfo-icon objinfo-icon__sub-data" title="Python parameter">p</span><span title="randomgen.dsfmt.DSFMT.random_raw.output (Python parameter) — Output values." class="md-ellipsis">output</span>
+    
+      <span aria-label="Python parameter" class="objinfo-icon objinfo-icon__sub-data" title="Python parameter">p</span>
+    
+    <span class="md-ellipsis">
+      <span title="randomgen.dsfmt.DSFMT.random_raw.output (Python parameter) — Output values."><span>output</span></span>
+    </span>
   </a>
   
 </li>
@@ -1213,14 +1715,20 @@
         
           <li class="md-nav__item">
   <a href="#randomgen.dsfmt.DSFMT.random_raw-returns" class="md-nav__link">
-    <span class="md-ellipsis">Returns</span>
+    
+    <span class="md-ellipsis">
+      <span>Returns</span>
+    </span>
   </a>
   
 </li>
         
           <li class="md-nav__item">
   <a href="#randomgen.dsfmt.DSFMT.random_raw-return-type" class="md-nav__link">
-    <span class="md-ellipsis">Return type</span>
+    
+    <span class="md-ellipsis">
+      <span>Return type</span>
+    </span>
   </a>
   
 </li>
@@ -1241,6 +1749,8 @@
           
             <div class="md-content" data-md-component="content">
               <article class="md-content__inner md-typeset" role="main">
+                
+                
                   
 
 
@@ -1281,6 +1791,14 @@ values irrespective of the number of bits produced by the PRNG.</p>
 
 
 
+  
+  
+
+
+
+
+
+
                 
               </article>
             </div>
@@ -1291,42 +1809,6 @@ values irrespective of the number of bits produced by the PRNG.</p>
       </main>
       
         <footer class="md-footer">
-  
-    
-    <nav class="md-footer__inner md-grid" aria-label="Footer" >
-      
-        
-        <a href="randomgen.dsfmt.DSFMT.ctypes.html" class="md-footer__link md-footer__link--prev" aria-label="Previous: randomgen.dsfmt.DSFMT.ctypes" rel="prev">
-          <div class="md-footer__button md-icon">
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12Z"/></svg>
-          </div>
-          <div class="md-footer__title">
-            <div class="md-ellipsis">
-              <span class="md-footer__direction">
-                Previous
-              </span>
-              randomgen.dsfmt.DSFMT.ctypes
-            </div>
-          </div>
-        </a>
-      
-      
-        
-        <a href="../efiix64.html" class="md-footer__link md-footer__link--next" aria-label="Next: Entropy From Iteration, Indirection, Xor (EFIIX) Generator" rel="next">
-          <div class="md-footer__title">
-            <div class="md-ellipsis">
-              <span class="md-footer__direction">
-                Next
-              </span>
-              Entropy From Iteration, Indirection, Xor (EFIIX) Generator
-            </div>
-          </div>
-          <div class="md-footer__button md-icon">
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M4 11v2h12l-5.5 5.5 1.42 1.42L19.84 12l-7.92-7.92L10.5 5.5 16 11H4Z"/></svg>
-          </div>
-        </a>
-      
-    </nav>
   
   
   
@@ -1352,26 +1834,32 @@ values irrespective of the number of bits produced by the PRNG.</p>
   
     
     
+    
+    
     <a href="https://github.com/bashtage/randomgen" target="_blank" rel="noopener" title="Source on github.com" class="md-social__link">
-      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 496 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc.--><path d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6zm-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3zm44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9zM244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8zM97.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1zm-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7zm32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1zm-11.4-14.7c-1.6 1-1.6 3.6 0 5.9 1.6 2.3 4.3 3.3 5.6 2.3 1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2z"/></svg>
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 496 512"><!--! Font Awesome Free 6.7.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2024 Fonticons, Inc.--><path d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6m-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3m44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9M244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8M97.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1m-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7m32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1m-11.4-14.7c-1.6 1-1.6 3.6 0 5.9s4.3 3.3 5.6 2.3c1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2"/></svg>
     </a>
   
+    
+    
     
     
       
       
     
     <a href="https://pypi.org/project/randomgen/" target="_blank" rel="noopener" title="pypi.org" class="md-social__link">
-      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc.--><path d="M439.8 200.5c-7.7-30.9-22.3-54.2-53.4-54.2h-40.1v47.4c0 36.8-31.2 67.8-66.8 67.8H172.7c-29.2 0-53.4 25-53.4 54.3v101.8c0 29 25.2 46 53.4 54.3 33.8 9.9 66.3 11.7 106.8 0 26.9-7.8 53.4-23.5 53.4-54.3v-40.7H226.2v-13.6h160.2c31.1 0 42.6-21.7 53.4-54.2 11.2-33.5 10.7-65.7 0-108.6zM286.2 404c11.1 0 20.1 9.1 20.1 20.3 0 11.3-9 20.4-20.1 20.4-11 0-20.1-9.2-20.1-20.4.1-11.3 9.1-20.3 20.1-20.3zM167.8 248.1h106.8c29.7 0 53.4-24.5 53.4-54.3V91.9c0-29-24.4-50.7-53.4-55.6-35.8-5.9-74.7-5.6-106.8.1-45.2 8-53.4 24.7-53.4 55.6v40.7h106.9v13.6h-147c-31.1 0-58.3 18.7-66.8 54.2-9.8 40.7-10.2 66.1 0 108.6 7.6 31.6 25.7 54.2 56.8 54.2H101v-48.8c0-35.3 30.5-66.4 66.8-66.4zm-6.7-142.6c-11.1 0-20.1-9.1-20.1-20.3.1-11.3 9-20.4 20.1-20.4 11 0 20.1 9.2 20.1 20.4s-9 20.3-20.1 20.3z"/></svg>
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 6.7.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2024 Fonticons, Inc.--><path d="M439.8 200.5c-7.7-30.9-22.3-54.2-53.4-54.2h-40.1v47.4c0 36.8-31.2 67.8-66.8 67.8H172.7c-29.2 0-53.4 25-53.4 54.3v101.8c0 29 25.2 46 53.4 54.3 33.8 9.9 66.3 11.7 106.8 0 26.9-7.8 53.4-23.5 53.4-54.3v-40.7H226.2v-13.6h160.2c31.1 0 42.6-21.7 53.4-54.2 11.2-33.5 10.7-65.7 0-108.6M286.2 404c11.1 0 20.1 9.1 20.1 20.3 0 11.3-9 20.4-20.1 20.4-11 0-20.1-9.2-20.1-20.4.1-11.3 9.1-20.3 20.1-20.3M167.8 248.1h106.8c29.7 0 53.4-24.5 53.4-54.3V91.9c0-29-24.4-50.7-53.4-55.6-35.8-5.9-74.7-5.6-106.8.1-45.2 8-53.4 24.7-53.4 55.6v40.7h106.9v13.6h-147c-31.1 0-58.3 18.7-66.8 54.2-9.8 40.7-10.2 66.1 0 108.6 7.6 31.6 25.7 54.2 56.8 54.2H101v-48.8c0-35.3 30.5-66.4 66.8-66.4m-6.7-142.6c-11.1 0-20.1-9.1-20.1-20.3.1-11.3 9-20.4 20.1-20.4 11 0 20.1 9.2 20.1 20.4s-9 20.3-20.1 20.3"/></svg>
     </a>
   
+    
+    
     
     
       
       
     
     <a href="https://doi.org/10.5281/zenodo.2591973" target="_blank" rel="noopener" title="doi.org" class="md-social__link">
-      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc.--><path d="M0 216C0 149.7 53.7 96 120 96h8c17.7 0 32 14.3 32 32s-14.3 32-32 32h-8c-30.9 0-56 25.1-56 56v8h64c35.3 0 64 28.7 64 64v64c0 35.3-28.7 64-64 64H64c-35.3 0-64-28.7-64-64V216zm256 0c0-66.3 53.7-120 120-120h8c17.7 0 32 14.3 32 32s-14.3 32-32 32h-8c-30.9 0-56 25.1-56 56v8h64c35.3 0 64 28.7 64 64v64c0 35.3-28.7 64-64 64h-64c-35.3 0-64-28.7-64-64V216z"/></svg>
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 6.7.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2024 Fonticons, Inc.--><path d="M0 216C0 149.7 53.7 96 120 96h8c17.7 0 32 14.3 32 32s-14.3 32-32 32h-8c-30.9 0-56 25.1-56 56v8h64c35.3 0 64 28.7 64 64v64c0 35.3-28.7 64-64 64H64c-35.3 0-64-28.7-64-64V216m256 0c0-66.3 53.7-120 120-120h8c17.7 0 32 14.3 32 32s-14.3 32-32 32h-8c-30.9 0-56 25.1-56 56v8h64c35.3 0 64 28.7 64 64v64c0 35.3-28.7 64-64 64h-64c-35.3 0-64-28.7-64-64V216"/></svg>
     </a>
   
 </div>
@@ -1386,10 +1874,11 @@ values irrespective of the number of bits produced by the PRNG.</p>
       <div class="md-dialog__inner md-typeset"></div>
     </div>
     
-    <script id="__config" type="application/json">{"base": "../..", "features": [], "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.config.lang": "en", "search.config.pipeline": "trimmer, stopWordFilter", "search.config.separator": "[\\s\\-]+", "search.placeholder": "Search", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version.title": "Select version"}, "version": {"provider": "mike", "staticVersions": [{"aliases": [], "title": "Release", "version": "https://bashtage.github.io/randomgen"}, {"aliases": [], "title": "Development", "version": "https://bashtage.github.io/randomgen/devel"}], "versionPath": null}}</script>
+    
+    <script id="__config" type="application/json">{"base": "../..", "features": [], "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": {"provider": "mike", "staticVersions": [{"aliases": [], "title": "Release", "version": "https://bashtage.github.io/randomgen"}, {"aliases": [], "title": "Development", "version": "https://bashtage.github.io/randomgen/devel"}], "versionPath": null}}</script>
     
       
-        <script src="../../_static/sphinx_immaterial_theme.f9d9eeeb247ace16c.min.js?v=8ec58cb5"></script>
+        <script src="../../_static/sphinx_immaterial_theme.32136f45f91ae6956.min.js?v=a7a9472a"></script>
         <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
     
   </body>
