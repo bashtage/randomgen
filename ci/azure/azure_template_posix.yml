@@ -7,6 +7,7 @@ parameters:
   # defaults for any parameters that are not specified
   name: ''
   vmImage: ''
+  BUILD_FLAGS: ''
 
 
 jobs:
@@ -37,8 +38,10 @@ jobs:
           python.version: '3.11'
         python312_latest:
           python.version: '3.12'
-        python313_latest:
+        python313_latest_coverage:
           python.version: '3.13'
+          BUILD_FLAGS: '-Csetup-args=-Dcython-coverage=true'
+          cython.coverage: true
         python314_latest:
           python.version: '3.14'
         python312_prerelease:
@@ -48,7 +51,7 @@ jobs:
           python.version: '3.12'
           PYPI: true
           coverage: false
-          RANDOMGEN_CYTHON_COVERAGE: false
+          # TODO: Enable debug
           RANDOMGEN_DEBUG: true
           test.wheel: true
       ${{ if eq(parameters.name, 'macOS') }}:

@@ -1,0 +1,36 @@
+[flake8]
+max-line-length = 97
+extend-ignore = E203, E501, E701
+
+per-file-ignores =
+    randomgen/tests/data/stable_hashes.py: E501
+    randomgen/_seed_sequence.pyi: E301, E302
+    randomgen/aes.pyi: E301, E302
+    randomgen/chacha.pyi: E301, E302
+    randomgen/common.pyi: E301, E302
+    randomgen/dsfmt.pyi: E301, E302
+    randomgen/efiix64.pyi: E301, E302
+    randomgen/entropy.pyi: E301, E302
+    randomgen/generator.pyi: E301, E302, E305
+    randomgen/hc128.pyi: E301, E302
+    randomgen/jsf.pyi: E301, E302
+    randomgen/lxm.pyi: E301, E302
+    randomgen/mt19937.pyi: E301, E302
+    randomgen/mt64.pyi: E301, E302
+    randomgen/mtrand.pyi: E301, E302, E305
+    randomgen/pcg32.pyi: E301, E302
+    randomgen/pcg64.pyi: E301, E302
+    randomgen/philox.pyi: E301, E302
+    randomgen/rdrand.pyi: E301, E302
+    randomgen/romu.pyi: E301, E302
+    randomgen/sfc.pyi: E301, E302
+    randomgen/sfmt.pyi: E301, E302
+    randomgen/speck128.pyi: E301, E302
+    randomgen/tests/_shims.pyi: E301, E302
+    randomgen/threefry.pyi: E301, E302
+    randomgen/tyche.pyi: E301, E302
+    randomgen/wrapper.pyi: E301, E302
+    randomgen/xoroshiro128.pyi: E301, E302
+    randomgen/xorshift1024.pyi: E301, E302
+    randomgen/xoshiro256.pyi: E301, E302
+    randomgen/xoshiro512.pyi: E301, E302

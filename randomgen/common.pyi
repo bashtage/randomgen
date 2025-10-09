@@ -1,6 +1,7 @@
 from typing import Any, NamedTuple
 
 from numpy import ndarray
+
 from randomgen.seed_sequence import SeedSequence
 from randomgen.typing import IntegerSequenceSeed, SeedMode
 

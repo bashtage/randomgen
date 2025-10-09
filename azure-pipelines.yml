@@ -13,8 +13,7 @@ trigger:
 
 variables:
   PYTHONHASHSEED: 12345678
-  coverage: true
-  RANDOMGEN_CYTHON_COVERAGE: true
+  BUILD_FLAGS: ''
 
 jobs:
 - template: ci/azure/azure_template_posix.yml

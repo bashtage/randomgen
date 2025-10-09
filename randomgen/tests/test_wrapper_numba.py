@@ -3,6 +3,7 @@ import ctypes
 import numpy as np
 from numpy.random import Generator
 import pytest
+
 from randomgen.wrapper import UserBitGenerator
 
 HAS_NUMBA = False

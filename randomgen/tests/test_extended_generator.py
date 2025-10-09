@@ -14,6 +14,7 @@ from numpy.testing import (
 )
 from packaging.version import parse
 import pytest
+
 from randomgen import MT19937, PCG64, ExtendedGenerator
 
 try:

@@ -30,15 +30,16 @@ for k in seen:
     bitgens.append(rg.SFC64(rg.SeedSequence(ENTROPY), k=k))
 output = 64
 """
+import argparse
+import importlib.machinery
 import json
 import logging
 import os
 import sys
 
 import numpy as np
+
 import randomgen as rg
-import argparse
-import importlib.machinery
 
 BUFFER_SIZE = 256 * 2**20
 

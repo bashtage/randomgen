@@ -1,6 +1,7 @@
 from typing import Literal
 
 import numpy as np
+
 from randomgen.common import BitGenerator
 from randomgen.typing import IntegerSequenceSeed
 

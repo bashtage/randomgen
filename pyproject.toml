@@ -274,43 +274,29 @@ xfail_strict = true
 addopts = "--strict"
 empty_parameter_set_mark = "xfail"
 filterwarnings = [
-  "ignore:`formatargspec`:DeprecationWarning:statsmodels",
-  "ignore:Using or importing:DeprecationWarning",
-  "ignore:Session._key_changed is deprecated:DeprecationWarning",
-  "error:Support for multi-dimensional:DeprecationWarning",
-  "error:Mutating unit root tests is deprecated:FutureWarning",
-  "error:invalid value encountered in cos:RuntimeWarning",
-  "error:invalid value encountered in log:RuntimeWarning",
-  "error:divide by zero encountered in double_scalars:RuntimeWarning",
-  "error:Lag selection has changed:DeprecationWarning",
-  "error:More than 20 figures have been opened:RuntimeWarning:",
-  "error:invalid value encountered in sqrt:RuntimeWarning:",
-  "error:Inequality constraints incompatible::",
-  "error:Parameters are not consistent with a::",
-  "error:overflow encountered in double_scalars:RuntimeWarning:",
-  "error:overflow encountered in multiply:RuntimeWarning:",
-  "ignore:The --strict option is deprecated:pytest.PytestDeprecationWarning",
-  "error:The default for reindex:FutureWarning:",
-  "error:overflow encountered in square:RuntimeWarning",
-  "error:Values in x were outside bounds:RuntimeWarning:",
-  "error:The random_state property is deprecated:FutureWarning",
-  "error:random_state is deprecated:FutureWarning",
-  "error:seed is deprecated:FutureWarning",
-  "error:get_state is deprecated:FutureWarning",
-  "error:Conversion of an array with ndim:DeprecationWarning:arch",
+   "error:covariance is not positive-semidefinite:RuntimeWarning",
+   "ignore:Generator:FutureWarning",
+   "ignore:RandomState:FutureWarning",
+   "ignore:the imp module:DeprecationWarning",
+   "ignore:The default value of inc:FutureWarning",
+   "ignore:`np.long` is a deprecated:DeprecationWarning:numba.core.types",
+   "error:`np.bool` is a deprecated alias:DeprecationWarning:",
+   "error:Passing None into shape:DeprecationWarning:",
+   "error:overflow encountered in scalar negative:RuntimeWarning",
+   "error:mode is deprecated and will be removed:FutureWarning",
+   "error:matching against an empty::",
 ]
 junit_family = "xunit2"
 markers = [
   "slow: mark a test as slow"
 ]
 
-
 [tool.isort]
 profile = "black"
-src_paths = ["arch"]
+src_paths = ["randomgen"]
 sections = ["FUTURE","COMPAT","STDLIB","THIRDPARTY","FIRSTPARTY","LOCALFOLDER"]
-known_first_party = ["arch"]
-known_compat = ["arch.compat.*"]
+known_first_party = ["randomgen"]
+known_compat = ["randomgen.compat.*"]
 known_third_party=["Cython","numpy","matplotlib","pandas","pytest","cython","scipy","seaborn"]
 line_length=88
 force_grid_wrap=0
@@ -380,7 +366,6 @@ omit = [
 directory = "coverage_html_report"
 
 [tool.mypy]
-plugins="numpy.typing.mypy_plugin"
 exclude = [
   "tests",
 ]
@@ -400,13 +385,7 @@ check_untyped_defs=false
 disallow_untyped_defs=false
 
 [[tool.mypy.overrides]]
-module = "arch.tests.*"
-check_untyped_defs=false
-disallow_untyped_defs=false
-disallow_incomplete_defs=false
-
-[[tool.mypy.overrides]]
-module = "unitroot.critical_values.simulation.*"
+module = "randomgen.tests.*"
 check_untyped_defs=false
 disallow_untyped_defs=false
 disallow_incomplete_defs=false

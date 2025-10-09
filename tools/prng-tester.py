@@ -20,8 +20,9 @@ from configuration import (
     TEMPLATE,
 )
 from joblib import Parallel, cpu_count, delayed
-from randomgen import DSFMT, SFC64
 from shared import get_logger, test_single
+
+from randomgen import DSFMT, SFC64
 
 DEFAULT_STREAMS = (4, 8196)
 

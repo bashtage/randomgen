@@ -2,6 +2,7 @@ import datetime as dt
 
 import numba as nb
 import numpy as np
+
 from randomgen import Xoroshiro128
 
 x = Xoroshiro128()

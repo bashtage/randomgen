@@ -14,6 +14,7 @@ from numpy.testing import (
     assert_raises,
 )
 import pytest
+
 from randomgen import (
     DSFMT,
     EFIIX64,

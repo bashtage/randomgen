@@ -1,6 +1,7 @@
 import numpy as np
 from packaging.version import parse
 import pytest
+
 import randomgen
 from randomgen import PCG64, SFC64, Philox, SeedSequence
 

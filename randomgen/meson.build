@@ -40,6 +40,12 @@ npyrandom_lib = cc.find_library('npyrandom', dirs: npyrandom_path)
 # Needed to trick Cython, it won't do a relative import outside a package
 _cython_tree = [fs.copyfile('__init__.py')]
 
+# TODO: Check these flags
+# TODO: Enable cython coverage in CI
+# "language_level": "3",
+# "binding": True,
+# "linetrace": CYTHON_COVERAGE,
+
 cython_args = [
     '-X cpow=True',
     '-X boundscheck=False',
@@ -47,7 +53,6 @@ cython_args = [
     '-X cdivision=True',
     '-X binding=True'
 ]
-
 cython_c_args =  ['-DNPY_NO_DEPRECATED_API=NPY_1_7_API_VERSION']
 cython_libs = []
 if cc.get_id() == 'msvc' or cc.get_id() == 'clang-cl'

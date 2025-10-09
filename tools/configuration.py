@@ -1,6 +1,7 @@
 from collections import defaultdict
 
 import jinja2
+
 from randomgen import (
     DSFMT,
     EFIIX64,

@@ -2,6 +2,7 @@ from threading import Lock
 from typing import Any, Literal, overload
 
 from numpy import ndarray
+
 from randomgen.common import BitGenerator
 from randomgen.typing import RequiredSize, Size
 

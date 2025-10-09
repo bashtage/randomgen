@@ -1,4 +1,4 @@
-from setuptools import Distribution, find_namespace_packages, setup
+from setuptools import Distribution, setup
 from setuptools.extension import Extension
 
 import glob
@@ -362,41 +362,7 @@ setup(
         force=CYTHON_COVERAGE or DEBUG,
         gdb_debug=DEBUG,
     ),
-    packages=["randomgen"] + find_namespace_packages(include=["randomgen.*"]),
-    package_dir={"randomgen": "./randomgen"},
-    package_data={
-        "": ["*.h", "*.pxi", "*.pyx", "*.pxd", "*.in", "py.typed"],
-        "randomgen.tests.data": ["*.csv"],
-    },
-    include_package_data=True,
-    license="NCSA",
-    author="Kevin Sheppard",
-    author_email="kevin.k.sheppard@gmail.com",
     distclass=BinaryDistribution,
-    long_description=LONG_DESCRIPTION,
-    long_description_content_type="text/markdown",
-    description="Random generator supporting multiple PRNGs",
-    url="https://github.com/bashtage/randomgen",
-    keywords=[
-        "pseudo random numbers",
-        "PRNG",
-        "RNG",
-        "RandomState",
-        "random",
-        "random numbers",
-        "parallel random numbers",
-        "PCG",
-        "XorShift",
-        "dSFMT",
-        "MT19937",
-        "Random123",
-        "ThreeFry",
-        "Philox",
-        "ChaCha",
-        "AES",
-        "SPECK",
-        "RDRAND",
-    ],
     zip_safe=False,
     install_requires=install_required,
     python_requires=">=3.8",

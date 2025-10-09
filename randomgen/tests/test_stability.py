@@ -1,6 +1,7 @@
 import numpy as np
 from numpy.testing import assert_allclose, assert_equal
 import pytest
+
 import randomgen as rg
 from randomgen import compat
 from randomgen.tests.data import stability_results

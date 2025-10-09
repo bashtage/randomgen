@@ -4,6 +4,7 @@
 import numpy as np
 
 cimport numpy as np
+
 from randomgen cimport api
 from randomgen.distributions cimport *
 

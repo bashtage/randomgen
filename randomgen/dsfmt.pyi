@@ -1,9 +1,10 @@
 from collections.abc import Sequence
 
 import numpy as np
+from typing_extensions import TypeAlias
+
 from randomgen.common import BitGenerator
 from randomgen.typing import IntegerSequenceSeed, SeedMode
-from typing_extensions import TypeAlias
 
 DSFMTState: TypeAlias = dict[str, str | int | np.ndarray | dict[str, int | np.ndarray]]
 

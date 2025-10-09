@@ -1,5 +1,6 @@
 cimport numpy as np
 from libc.stdint cimport int8_t, uint8_t, uint32_t, uint64_t
+
 from randomgen.common cimport BitGenerator, fully_qualified_name, uint64_to_double
 
 

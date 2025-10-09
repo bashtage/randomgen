@@ -23,6 +23,7 @@ from typing import cast
 
 import black
 import numpy as np
+
 from randomgen import MT19937, compat
 
 SEEDS = [0, 384908324, [839438204, 980239840, 859048019, 821]]

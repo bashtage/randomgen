@@ -1,5 +1,6 @@
 import numpy as np
 import pytest
+
 from randomgen.aes import AESCounter
 from randomgen.common import BitGenerator, interface
 from randomgen.entropy import seed_by_array

@@ -5,6 +5,7 @@ import subprocess
 
 import numpy as np
 import pytest
+
 from randomgen import PCG64, PCG64DXSM, LCG128Mix, SeedSequence
 from randomgen.pcg64 import DEFAULT_DXSM_MULTIPLIER, DEFAULT_MULTIPLIER
 

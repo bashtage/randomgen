@@ -6,6 +6,7 @@ from typing import NamedTuple
 import numpy as np
 from numpy.testing import assert_allclose, assert_array_equal
 import pytest
+
 from randomgen.pcg64 import PCG64
 from randomgen.tests._shims import ShimGenerator
 
