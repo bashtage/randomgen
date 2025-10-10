@@ -42,6 +42,7 @@ jobs:
         python313_latest_coverage:
           python.version: '3.13'
           BUILD_FLAGS: '-Csetup-args=-Dcython-coverage=true'
+          PYTEST_PATTERN: "(not slow)"
           cython.coverage: true
         python314_latest:
           python.version: '3.14'

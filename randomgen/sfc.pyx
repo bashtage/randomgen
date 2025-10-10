@@ -163,7 +163,7 @@ cdef class SFC64(BitGenerator):
     cdef uint64_t generate_bits(self, int8_t bits):
         """Generate a random integer with ``bits`` non-zero bits"""
         cdef int bits_filled, buffer_cnt
-        cdef uint64_t candidate, buffer
+        cdef uint64_t candidate, buffer = 0
         cdef uint64_t next_bit
 
         bits_filled = 1
