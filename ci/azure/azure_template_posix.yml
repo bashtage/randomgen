@@ -179,4 +179,4 @@ jobs:
       chmod +x codecov
       ./codecov -f coverage.xml -F adder -F subtractor
     displayName: 'Codecov upload'
-    condition: and(eq(variables['coverage'], 'true'))
+    condition: eq(variables['coverage'], 'true')
