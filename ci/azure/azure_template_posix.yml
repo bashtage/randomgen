@@ -177,4 +177,4 @@ jobs:
       chmod +x codecov
       ./codecov -f coverage.xml -F adder -F subtractor
     displayName: 'Codecov upload'
-    condition: eq(variables['coverage'], 'true')
+    condition: and(eq(variables['coverage'], 'true'), ne(variables['Agent.OS'], 'Darwin'))
