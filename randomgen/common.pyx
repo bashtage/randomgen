@@ -1,6 +1,7 @@
 #!python
 from collections import namedtuple
 import sys
+from typing import NamedTuple
 import warnings
 
 import numpy as np
@@ -18,17 +19,33 @@ __all__ = ["Interface"]
 
 np.import_array()
 
-Interface = namedtuple(
-    "Interface",
-    [
-        "state_address",
-        "state",
-        "next_uint64",
-        "next_uint32",
-        "next_double",
-        "bit_generator"
-    ]
-)
+
+class Interface(NamedTuple):
+    """
+    Interface for interacting with a BitGenerator using ctypes or cffi
+
+    Attributes
+    ----------
+    state_address
+        The state memoty address
+    state
+        Void pointer to the state struct
+    next_uint64
+        Function type the returns psuedo-random uint64 values
+    next_uint32
+        Function type the returns psuedo-random uint32 values
+    next_double
+        Function type the returns psuedo-random double values
+    bit_generator
+        Void pointer to the bit generator struct
+    """
+    state_address: int
+    state: int
+    next_uint64: int
+    next_uint32: int
+    next_double: int
+    bit_generator: int
+
 
 cdef bint RANDOMGEN_BIG_ENDIAN = sys.byteorder == "big"
 cdef bint RANDOMGEN_LITTLE_ENDIAN = not RANDOMGEN_BIG_ENDIAN
@@ -143,7 +160,7 @@ cdef class BitGenerator(_BitGenerator):
 
         Returns
         -------
-        Interface
+        randomgen.common.Interface
             Named tuple containing ctypes wrapper
 
             * state_address - Memory address of the state struct
@@ -165,7 +182,7 @@ cdef class BitGenerator(_BitGenerator):
 
         Returns
         -------
-        Interface
+        randomgen.common.Interface
             Named tuple containing CFFI wrapper
 
             * state_address - Memory address of the state struct
