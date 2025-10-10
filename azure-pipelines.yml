@@ -11,9 +11,21 @@ schedules:
 trigger:
 - main
 
+
 variables:
-  PYTHONHASHSEED: 12345678
+  MKL_NUM_THREADS: 1
+  NUMEXPR_NUM_THREADS: 1
+  OMP_NUM_THREADS: 1
+  VML_NUM_THREADS: 1
+  OPENBLAS_NUM_THREADS: 1
+  JUPYTER_PLATFORM_DIRS: 1
+  PYTHONHASHSEED: 12345678 # Ensure tests are correctly gathered by xdist
+  TEST_INSTALL: false
+  MPLBACKEND: agg
+  test.install: false
+  pip.pre: false
   BUILD_FLAGS: ''
+  coverage: true
 
 jobs:
 - template: ci/azure/azure_template_posix.yml

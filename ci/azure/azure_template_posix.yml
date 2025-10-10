@@ -25,6 +25,7 @@ jobs:
         python310_last_numpy_1:
           python.version: '3.10'
           test.wheel: true
+          coverage: false
           NUMPY: 1.26.4
         python310_latest:
           python.version: '3.10'
@@ -52,10 +53,10 @@ jobs:
         python_312_no_coverage:
           python.version: '3.12'
           PYPI: true
-          coverage: false
           # TODO: Enable debug
           RANDOMGEN_DEBUG: true
           test.wheel: true
+          coverage: false
       ${{ if eq(parameters.name, 'macOS') }}:
         python310_macos:
           python.version: '3.10'
@@ -165,11 +166,11 @@ jobs:
   - task: PublishCodeCoverageResults@2
     inputs:
       summaryFileLocation: '$(System.DefaultWorkingDirectory)/**/coverage.xml'
-    condition: and(eq(variables['coverage'], 'true'), ne(variables['test.wheel'], 'true'))
+    condition: eq(variables['coverage'], 'true')
 
   - script: |
       curl -Os https://uploader.codecov.io/latest/linux/codecov
       chmod +x codecov
       ./codecov -f coverage.xml -F adder -F subtractor
     displayName: 'Codecov upload'
-    condition: and(eq(variables['coverage'], 'true'), ne(variables['test.wheel'], 'true'))
+    condition: eq(variables['coverage'], 'true')
