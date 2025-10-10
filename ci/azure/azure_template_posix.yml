@@ -7,6 +7,7 @@ parameters:
   # defaults for any parameters that are not specified
   name: ''
   vmImage: ''
+  coverage: true
   BUILD_FLAGS: ''
 
 
@@ -42,7 +43,6 @@ jobs:
           python.version: '3.13'
           BUILD_FLAGS: '-Csetup-args=-Dcython-coverage=true'
           cython.coverage: true
-          coverage: true
         python314_latest:
           python.version: '3.14'
         python312_prerelease:
@@ -134,6 +134,11 @@ jobs:
     condition: and(ne(variables['pip.pre'], 'true'), eq(variables['test.wheel'], 'true'))
 
   - script: |
+      python ci/azure/cythonize-pyx.py
+    displayName: Cythonize pyx files for coverage
+    condition: eq(variables['cython.coverage'], 'true')
+
+  - script: |
       echo "Testing editable install"
       export COVERAGE_OPTS="--cov=randomgen --cov-branch --cov-report xml:coverage.xml --cov-report term"
       echo pytest -m "${PYTEST_PATTERN}" --junitxml=junit/test-results.xml -n auto --durations=25 ${COVERAGE_OPTS} randomgen/tests
@@ -161,6 +166,9 @@ jobs:
       summaryFileLocation: '$(System.DefaultWorkingDirectory)/**/coverage.xml'
     condition: and(eq(variables['coverage'], 'true'), ne(variables['test.wheel'], 'true'))
 
-  - bash: bash <(curl -s https://codecov.io/bash)
-    displayName: 'CodeCov upload'
+  - script: |
+      curl -Os https://uploader.codecov.io/latest/linux/codecov
+      chmod +x codecov
+      ./codecov -f coverage.xml -F adder -F subtractor
+    displayName: 'Codecov upload'
     condition: and(eq(variables['coverage'], 'true'), ne(variables['test.wheel'], 'true'))
