@@ -167,13 +167,7 @@ jobs:
     condition: eq(variables['coverage'], 'true')
 
   - script: |
-      echo "Agent.OS: $(Agent.OS) agent"
-      export URL=https://uploader.codecov.io/latest/linux/codecov
-      if [ "$(Agent.OS)" = "Darwin" ]; then
-        echo "macOS detected"
-        export URL=https://uploader.codecov.io/latest/macos/codecov
-      fi
-      curl -Os ${URL}
+      curl -Os https://uploader.codecov.io/latest/linux/codecov
       chmod +x codecov
       ./codecov -f coverage.xml -F adder -F subtractor
     displayName: 'Codecov upload'

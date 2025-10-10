@@ -24,6 +24,10 @@ jobs:
         python.version: '3.11'
       python312_win_latest:
         python.version: '3.12'
+      python313_win_latest:
+        python.version: '3.13'
+      python3124win_latest:
+        python.version: '3.14'
     maxParallel: 10
 
   steps:
@@ -34,9 +38,9 @@ jobs:
     displayName: 'Use Python $(python.version)'
 
   - script: |
-      python -m pip install --upgrade pip setuptools wheel
-      python -m pip install -r requirements.txt
-      python -m pip install -r requirements-dev.txt
+      python -m pip install --upgrade pip wheel -U
+      python -m pip install -r requirements.txt -U
+      python -m pip install -r requirements-dev.txt  -U
     displayName: 'Install dependencies'
 
   - script: |
@@ -48,7 +52,7 @@ jobs:
     displayName: 'Build Cython Extensions'
 
   - script: |
-      pytest randomgen --junitxml=junit/test-results.xml --durations=25 -v
+      pytest --junitxml=junit/test-results.xml --durations=25 -v --cov=randomgen --cov-branch --cov-report xml:coverage.xml --cov-report term randomgen
     displayName: 'pytest'
 
   - task: PublishTestResults@2
@@ -56,3 +60,8 @@ jobs:
       testResultsFiles: '**/test-results.xml'
       testRunTitle: 'Python $(python.version)'
     condition: succeededOrFailed()
+
+  - pwsh: |
+      Invoke-WebRequest https://uploader.codecov.io/latest/windows/codecov.exe -OutFile codecov.exe
+      ./codecov -f coverage.xml -F adder -F subtractor
+    displayName: 'Codecov upload'
