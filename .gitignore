@@ -8,6 +8,7 @@ build/
 *.html
 *.obj
 *.exe
+**/*.c.dep
 **/Random123
 settings.json
 *.so

@@ -161,6 +161,8 @@ cdef class EFIIX64(BitGenerator):
         """
         cdef Py_ssize_t i
         cdef uint64_t *arr
+        cdef np.ndarray[np.uint64_t, ndim=1] indirection_table
+        cdef np.ndarray[np.uint64_t, ndim=1] iteration_table
         indirection_table = np.empty(INDIRECTION_SIZE, dtype=np.uint64)
         arr = <np.uint64_t *>np.PyArray_DATA(indirection_table)
         for i in range(0, INDIRECTION_SIZE):

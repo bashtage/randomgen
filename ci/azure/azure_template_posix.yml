@@ -7,6 +7,7 @@ parameters:
   # defaults for any parameters that are not specified
   name: ''
   vmImage: ''
+  coverage: true
   BUILD_FLAGS: ''
 
 
@@ -24,6 +25,7 @@ jobs:
         python310_last_numpy_1:
           python.version: '3.10'
           test.wheel: true
+          coverage: false
           NUMPY: 1.26.4
         python310_latest:
           python.version: '3.10'
@@ -41,6 +43,7 @@ jobs:
         python313_latest_coverage:
           python.version: '3.13'
           BUILD_FLAGS: '-Csetup-args=-Dcython-coverage=true'
+          PYTEST_PATTERN: "(not slow)"
           cython.coverage: true
         python314_latest:
           python.version: '3.14'
@@ -50,23 +53,21 @@ jobs:
         python_312_no_coverage:
           python.version: '3.12'
           PYPI: true
-          coverage: false
           # TODO: Enable debug
           RANDOMGEN_DEBUG: true
           test.wheel: true
+          coverage: false
       ${{ if eq(parameters.name, 'macOS') }}:
         python310_macos:
           python.version: '3.10'
           CYTHON_VER: 3.0.10
-          ARCHFLAGS: "-arch x86_64"
         python311_macos:
           python.version: '3.11'
           CYTHON_VER: 3.0.11
-          ARCHFLAGS: "-arch x86_64"
         python312_latest_macos:
           python.version: '3.12'
-          CYTHON_VER: 3.0.11
-          ARCHFLAGS: "-arch x86_64"
+        python313_latest_macos:
+          python.version: '3.13'
 
     maxParallel: 10
 
@@ -133,10 +134,13 @@ jobs:
     condition: and(ne(variables['pip.pre'], 'true'), eq(variables['test.wheel'], 'true'))
 
   - script: |
+      python ci/azure/cythonize-pyx.py
+    displayName: Cythonize pyx files for coverage
+    condition: eq(variables['cython.coverage'], 'true')
+
+  - script: |
       echo "Testing editable install"
-      if [[ ${COVERAGE} == "true" ]]; then
-        export COVERAGE_OPTS="--cov-config .coveragerc --cov=randomgen --cov-report xml:coverage.xml --cov-report term"
-      fi
+      export COVERAGE_OPTS="--cov=randomgen --cov-branch --cov-report xml:coverage.xml --cov-report term"
       echo pytest -m "${PYTEST_PATTERN}" --junitxml=junit/test-results.xml -n auto --durations=25 ${COVERAGE_OPTS} randomgen/tests
       pytest -m "${PYTEST_PATTERN}" --junitxml=junit/test-results.xml -n auto --durations=25 ${COVERAGE_OPTS} randomgen/tests
     displayName: 'Run tests (editable)'
@@ -144,9 +148,7 @@ jobs:
 
   - script: |
       echo "Testing prerelease"
-      if [[ ${COVERAGE} == "true" ]]; then
-        export COVERAGE_OPTS="--cov-config .coveragerc --cov=randomgen --cov-report xml:coverage.xml --cov-report term"
-      fi
+      export COVERAGE_OPTS="--cov=randomgen --cov-branch --cov-report xml:coverage.xml --cov-report term"
       echo pytest -m "${PYTEST_PATTERN}" --junitxml=junit/test-results.xml -n auto --durations=25 ${COVERAGE_OPTS} randomgen/tests
       pytest -m "${PYTEST_PATTERN}" --junitxml=junit/test-results.xml -n auto --durations=25 ${COVERAGE_OPTS} randomgen/tests
     displayName: 'Run tests (pip pre)'
@@ -162,8 +164,11 @@ jobs:
   - task: PublishCodeCoverageResults@2
     inputs:
       summaryFileLocation: '$(System.DefaultWorkingDirectory)/**/coverage.xml'
-    condition: and(eq(variables['coverage'], 'true'), ne(variables['test.wheel'], 'true'))
+    condition: eq(variables['coverage'], 'true')
 
-  - bash: bash <(curl -s https://codecov.io/bash)
-    displayName: 'CodeCov upload'
-    condition: and(eq(variables['coverage'], 'true'), ne(variables['test.wheel'], 'true'))
+  - script: |
+      curl -Os https://uploader.codecov.io/latest/linux/codecov
+      chmod +x codecov
+      ./codecov -f coverage.xml -F adder -F subtractor
+    displayName: 'Codecov upload'
+    condition: and(eq(variables['coverage'], 'true'), ne(variables['Agent.OS'], 'Darwin'))
