@@ -61,15 +61,13 @@ jobs:
         python310_macos:
           python.version: '3.10'
           CYTHON_VER: 3.0.10
-          ARCHFLAGS: "-arch x86_64"
         python311_macos:
           python.version: '3.11'
           CYTHON_VER: 3.0.11
-          ARCHFLAGS: "-arch x86_64"
         python312_latest_macos:
           python.version: '3.12'
-          CYTHON_VER: 3.0.11
-          ARCHFLAGS: "-arch x86_64"
+        python313_latest_macos:
+          python.version: '3.13'
 
     maxParallel: 10
 
