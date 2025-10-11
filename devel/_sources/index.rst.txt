@@ -150,6 +150,7 @@ New Features
    Comparing Performance <performance>
    extending
    custom-bit-generators.ipynb
+   Shared functionality <common>
    Reading System Entropy <entropy>
    references
 
