@@ -23,7 +23,7 @@
 #endif
 
 #if (defined(__SSSE3__) && __SSSE3__) || (defined(__AES__) && __AES__) ||      \
-    (defined(__RDRND__) && __RDRND__)
+    (defined(__RDRND__) && __RDRND__) || (defined(__AVX2__) && __AVX2__)
 #include <immintrin.h>
 #endif
 

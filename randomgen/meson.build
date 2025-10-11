@@ -62,7 +62,7 @@ cython_c_args =  ['-DNPY_NO_DEPRECATED_API=NPY_1_7_API_VERSION']
 cython_libs = []
 sse2_def = []
 if cc.get_id() == 'msvc' or cc.get_id() == 'clang-cl'
-  cython_c_args += cc.get_supported_arguments(['/Zp16','/wd4146', '/GL','/arch:SSE4.2'])
+  cython_c_args += cc.get_supported_arguments(['/Zp16','/wd4146', '/GL','/arch:SSE4.2','/arch:AVX2'])
   if cc.has_argument('/arch:SSE4.2')
     sse2_def += ['-DHAVE_SSE2=1']
   endif
@@ -73,7 +73,7 @@ if cc.get_id() == 'msvc' or cc.get_id() == 'clang-cl'
 else
   cython_c_args += ['-std=c99', '-U__GNUC_GNU_INLINE__']
   add_project_link_arguments('-lm', language : 'c')
-  cython_c_args += cc.get_supported_arguments(['-msse2', '-mrdrnd', '-mssse3', '-maes'])
+  cython_c_args += cc.get_supported_arguments(['-msse2', '-mrdrnd', '-mssse3', '-maes', '-mavx2'])
   if cc.has_argument('-msse2')
     sse2_def += ['-DHAVE_SSE2=1']
   endif
@@ -174,6 +174,15 @@ py.extension_module(
     ['chacha.pyx', 'src/chacha/chacha.c'] + CPU_FEATURES + ALIGNED_MALLOC,
     install: true,
     include_directories: [inc_np, inc_aligned_malloc, include_directories('src/chacha')],
+    subdir: 'randomgen',
+    cython_args: cython_args,
+    c_args: cython_c_args,
+)
+py.extension_module(
+    'blabla',
+    ['blabla.pyx', 'src/blabla/blabla.c'] + CPU_FEATURES + ALIGNED_MALLOC,
+    install: true,
+    include_directories: [inc_np, inc_aligned_malloc, include_directories('src/blabla')],
     subdir: 'randomgen',
     cython_args: cython_args,
     c_args: cython_c_args,
