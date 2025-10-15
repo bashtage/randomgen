@@ -51,7 +51,7 @@ extern void blabla_advance(blabla_state_t* state, uint64_t delta[2]);
 static inline void blabla_core(blabla_state_t* state);
 static inline void blabla_core_avx2(blabla_state_t* state);
 
-
+#if defined(__AVX2__) && __AVX2__
 static inline void blabla_core_avx2(blabla_state_t* state) {
 	#define _mm256_roti_epi64(r, c) _mm256_xor_si256(_mm256_srli_epi64((r), (c)), _mm256_slli_epi64((r), 64-(c)))
 
@@ -110,7 +110,7 @@ static inline void blabla_core_avx2(blabla_state_t* state) {
 	#undef CHACHA_ROTV1
 	#undef _mm256_roti_epi64
 }
-
+#endif
 
 
 inline void blabla_core(blabla_state_t* state) {
