@@ -5,6 +5,7 @@ import sys
 
 from randomgen._register import BitGenerators
 from randomgen.aes import AESCounter
+from randomgen.blabla import BlaBla
 from randomgen.chacha import ChaCha
 from randomgen.dsfmt import DSFMT
 from randomgen.efiix64 import EFIIX64
@@ -50,6 +51,7 @@ __all__ = [
     "PCG64",
     "PCG64DXSM",
     "RDRAND",
+    "BlaBla",
     "SFC64",
     "SFMT",
     "SPECK128",

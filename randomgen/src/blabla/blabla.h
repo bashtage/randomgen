@@ -49,72 +49,75 @@ extern int blabla_avx2_capable(void);
 extern void blabla_seed(blabla_state_t* state, uint64_t seedval[2], uint64_t stream[2], uint64_t ctr[2]);
 extern void blabla_advance(blabla_state_t* state, uint64_t delta[2]);
 static inline void blabla_core(blabla_state_t* state);
+#if defined(__AVX2__) && __AVX2__
 static inline void blabla_core_avx2(blabla_state_t* state);
+#endif
 
 #if defined(__AVX2__) && __AVX2__
-static inline void blabla_core_avx2(blabla_state_t* state) {
-	#define _mm256_roti_epi64(r, c) _mm256_xor_si256(_mm256_srli_epi64((r), (c)), _mm256_slli_epi64((r), 64-(c)))
+static inline void blabla_core_avx2(blabla_state_t* state)
+{
+#define _mm256_roti_epi64(r, c) _mm256_xor_si256(_mm256_srli_epi64((r), (c)), _mm256_slli_epi64((r), 64 - (c)))
 
-	// ROTVn rotates the elements in the given vector n places to the left.
-	#define CHACHA_ROTV1(x) _mm256_permute4x64_epi64(x, 0x39)
-	#define CHACHA_ROTV2(x) _mm256_permute4x64_epi64(x, 0x4e)
-	#define CHACHA_ROTV3(x) _mm256_permute4x64_epi64(x, 0x93)
-    uint64_t *block = &state->block[0];
-	__m256i a = _mm256_load_si256((__m256i*) (block));
-	__m256i b = _mm256_load_si256((__m256i*) (block + 4));
-	__m256i c = _mm256_load_si256((__m256i*) (block + 8));
-	__m256i d = _mm256_load_si256((__m256i*) (block + 12));
+// ROTVn rotates the elements in the given vector n places to the left.
+#define CHACHA_ROTV1(x) _mm256_permute4x64_epi64(x, 0x39)
+#define CHACHA_ROTV2(x) _mm256_permute4x64_epi64(x, 0x4e)
+#define CHACHA_ROTV3(x) _mm256_permute4x64_epi64(x, 0x93)
+    uint64_t* block = &state->block[0];
+    __m256i a = _mm256_load_si256((__m256i*)(block));
+    __m256i b = _mm256_load_si256((__m256i*)(block + 4));
+    __m256i c = _mm256_load_si256((__m256i*)(block + 8));
+    __m256i d = _mm256_load_si256((__m256i*)(block + 12));
 
-	for (uint32_t i = 0; i < state->rounds; ++i) {
-		a = _mm256_add_epi64(a, b);
-		d = _mm256_xor_si256(d, a);
-		d = _mm256_roti_epi64(d, 32);
-		c = _mm256_add_epi64(c, d);
-		b = _mm256_xor_si256(b, c);
-		b = _mm256_roti_epi64(b, 24);
-		a = _mm256_add_epi64(a, b);
-		d = _mm256_xor_si256(d, a);
-		d = _mm256_roti_epi64(d, 16);
-		c = _mm256_add_epi64(c, d);
-		b = _mm256_xor_si256(b, c);
-		b = _mm256_roti_epi64(b, 63);
+    for (uint32_t i = 0; i < state->rounds; ++i) {
+        a = _mm256_add_epi64(a, b);
+        d = _mm256_xor_si256(d, a);
+        d = _mm256_roti_epi64(d, 32);
+        c = _mm256_add_epi64(c, d);
+        b = _mm256_xor_si256(b, c);
+        b = _mm256_roti_epi64(b, 24);
+        a = _mm256_add_epi64(a, b);
+        d = _mm256_xor_si256(d, a);
+        d = _mm256_roti_epi64(d, 16);
+        c = _mm256_add_epi64(c, d);
+        b = _mm256_xor_si256(b, c);
+        b = _mm256_roti_epi64(b, 63);
 
-		b = CHACHA_ROTV1(b);
-		c = CHACHA_ROTV2(c);
-		d = CHACHA_ROTV3(d);
+        b = CHACHA_ROTV1(b);
+        c = CHACHA_ROTV2(c);
+        d = CHACHA_ROTV3(d);
 
-		a = _mm256_add_epi64(a, b);
-		d = _mm256_xor_si256(d, a);
-		d = _mm256_roti_epi64(d, 32);
-		c = _mm256_add_epi64(c, d);
-		b = _mm256_xor_si256(b, c);
-		b = _mm256_roti_epi64(b, 24);
-		a = _mm256_add_epi64(a, b);
-		d = _mm256_xor_si256(d, a);
-		d = _mm256_roti_epi64(d, 16);
-		c = _mm256_add_epi64(c, d);
-		b = _mm256_xor_si256(b, c);
-		b = _mm256_roti_epi64(b, 63);
+        a = _mm256_add_epi64(a, b);
+        d = _mm256_xor_si256(d, a);
+        d = _mm256_roti_epi64(d, 32);
+        c = _mm256_add_epi64(c, d);
+        b = _mm256_xor_si256(b, c);
+        b = _mm256_roti_epi64(b, 24);
+        a = _mm256_add_epi64(a, b);
+        d = _mm256_xor_si256(d, a);
+        d = _mm256_roti_epi64(d, 16);
+        c = _mm256_add_epi64(c, d);
+        b = _mm256_xor_si256(b, c);
+        b = _mm256_roti_epi64(b, 63);
 
-		b = CHACHA_ROTV3(b);
-		c = CHACHA_ROTV2(c);
-		d = CHACHA_ROTV1(d);
-	}
-	_mm256_store_si256((__m256i*) (block), a);
-	_mm256_store_si256((__m256i*) (block + 4), b);
-	_mm256_store_si256((__m256i*) (block + 8), c);
-	_mm256_store_si256((__m256i*) (block + 12), d);
+        b = CHACHA_ROTV3(b);
+        c = CHACHA_ROTV2(c);
+        d = CHACHA_ROTV1(d);
+    }
+    _mm256_store_si256((__m256i*)(block), a);
+    _mm256_store_si256((__m256i*)(block + 4), b);
+    _mm256_store_si256((__m256i*)(block + 8), c);
+    _mm256_store_si256((__m256i*)(block + 12), d);
 
-	#undef CHACHA_ROTV3
-	#undef CHACHA_ROTV2
-	#undef CHACHA_ROTV1
-	#undef _mm256_roti_epi64
+#undef CHACHA_ROTV3
+#undef CHACHA_ROTV2
+#undef CHACHA_ROTV1
+#undef _mm256_roti_epi64
 }
 #endif
 
-
-inline void blabla_core(blabla_state_t* state) {
-	#define rotate_right(x, n) ((x >> n) | (x << (64 - n)))
+inline void blabla_core(blabla_state_t* state)
+{
+#define rotate_right(x, n) ((x >> n) | (x << (64 - n)))
 
 #define mix_func(a, b, c, d)                             \
     state->block[a] += state->block[b];                  \
@@ -165,17 +168,14 @@ static inline void generate_block(blabla_state_t* state)
     for (uint32_t i = 0; i < 16; ++i)
         state->block[i] = input[i];
 #if defined(__AVX2__) && __AVX2__
-    if LIKELY(RANDOMGEN_USE_AVX2 > 0) {
-         blabla_core_avx2(state);
+    if LIKELY (RANDOMGEN_USE_AVX2 > 0) {
+        blabla_core_avx2(state);
     } else {
 #endif
         blabla_core(state);
 #if defined(__AVX2__) && __AVX2__
     }
 #endif
-
-
-
 
     for (uint32_t i = 0; i < 16; ++i)
         state->block[i] += input[i];

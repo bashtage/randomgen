@@ -7,6 +7,7 @@ base = "cython --verbose -M --fast-fail -3 -X cpow=True -X boundscheck=False -X 
 pyx_files = [
     "randomgen/aes.pyx",
     "randomgen/broadcasting.pyx",
+    "randomgen/blabla.pyx",
     "randomgen/chacha.pyx",
     "randomgen/common.pyx",
     "randomgen/dsfmt.pyx",
