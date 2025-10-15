@@ -61,7 +61,7 @@ aes = AESCounter()
 HAS_AESNI = aes.use_aesni
 
 USE_AESNI = [True, False] if HAS_AESNI else [False]
-NO_MODE_SUPPORT = [EFIIX64, LXM, Romu, RDRAND, Tyche, Squares]
+NO_MODE_SUPPORT = [EFIIX64, LXM, Romu, RDRAND, Tyche, Squares, BlaBla]
 
 try:
     import cffi  # noqa: F401
@@ -2195,6 +2195,7 @@ def test_pcg64_errors():
     with pytest.raises(ValueError, match="inc must be a scalar"):
         p.seed(seed=0, inc=sum(2**i for i in range(129)))
 
+
 class TestBlaBla(Base):
     @classmethod
     def setup_class(cls):
@@ -2203,7 +2204,7 @@ class TestBlaBla(Base):
         cls.bits = 64
         cls.seed_bits = 64
         cls.dtype = np.uint64
-        cls.data1 = cls._read_csv(join(pwd, "./data/blabla-testset-1-avx.csv"))
+        cls.data1 = cls._read_csv(join(pwd, "./data/blabla-testset-1-avx2.csv"))
         cls.data2 = cls._read_csv(join(pwd, "./data/blabla-testset-2.csv"))
         cls.seed_error_type = TypeError
         cls.invalid_seed_types = []
@@ -2229,7 +2230,7 @@ class TestBlaBla(Base):
         bg = self.bit_generator(0)
         if not bg.use_avx2:
             with pytest.raises(ValueError, match="CPU does not support AVX2"):
-                bg.use_simd = True
+                bg.use_avx2 = True
             return
         bg2 = self.bit_generator(0)
         bg2.use_avx2 = not bg.use_avx2

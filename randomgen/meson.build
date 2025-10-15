@@ -47,10 +47,13 @@ _cython_tree = [fs.copyfile('__init__.py')]
 # "linetrace": CYTHON_COVERAGE,
 
 _pcg64_def = []
+_blabla_def = []
 if get_option('pcg64-force-emulated')
   _pcg64_def += ['-DPCG_FORCE_EMULATED_128BIT_MATH=1']
 endif
-
+if get_option('disable-avx2')
+  _blabla_def += ['-DRG_DISABLE_BLABLA_AVX2=1']
+endif
 cython_args = [
     '-X cpow=True',
     '-X boundscheck=False',
@@ -185,7 +188,7 @@ py.extension_module(
     include_directories: [inc_np, inc_aligned_malloc, include_directories('src/blabla')],
     subdir: 'randomgen',
     cython_args: cython_args,
-    c_args: cython_c_args,
+    c_args: cython_c_args + _blabla_def,
 )
 py.extension_module(
     'dsfmt',

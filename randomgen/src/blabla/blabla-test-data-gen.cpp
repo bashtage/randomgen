@@ -22,7 +22,7 @@ int main() {
   uint64_t store[N];
   uint64_t seedval[2] = {15793235383387715774ULL, 12390638538380655177ULL};
   uint64_t stream[2] = {2361836109651742017ULL,3188717715514472916ULL};
-  auto blabla = BlaBlaPRNG::BlaBla<20>(seedval, stream);
+  auto blabla = BlaBlaPRNG::BlaBla<10>(seedval, stream);
   std::ofstream ofile;
   std::string filename = "blabla-testset-1";
   #if (defined(__AVX2__) && __AVX2__)
@@ -46,7 +46,7 @@ int main() {
   seedval[1] = 4639759349701729399ULL;
   stream[0] =  13222832537653397986ULL;
   stream[1] = 2330059127936092250ULL;
-  blabla = BlaBlaPRNG::BlaBla<20>(seedval, stream);
+  blabla = BlaBlaPRNG::BlaBla<10>(seedval, stream);
   filename = "blabla-testset-2";
   #if (defined(__AVX2__) && __AVX2__)
   filename += "-avx2";

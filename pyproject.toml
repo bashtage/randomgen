@@ -269,7 +269,6 @@ ignore = [
   # Complains about asserts which are used in typing
   "S",
   # New temp ignores
-
   "FBT",
   "ANN",
   "D",

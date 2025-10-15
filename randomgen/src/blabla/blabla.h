@@ -36,12 +36,12 @@ ALIGN_WINDOWS32 struct BLABLA_STATE_T {
     uint64_t ctr[2];
     int rounds;
     int has_uint32;
-    uint32_t next_uint32;
+    uint32_t uinteger;
 } ALIGN_GCC_CLANG32;
 
 typedef struct BLABLA_STATE_T blabla_state_t;
 
-#define R 20 /* Use 20 for now */
+#define R 10
 
 extern int RANDOMGEN_USE_AVX2;
 extern void blabla_use_avx2(int flag);
@@ -49,11 +49,11 @@ extern int blabla_avx2_capable(void);
 extern void blabla_seed(blabla_state_t* state, uint64_t seedval[2], uint64_t stream[2], uint64_t ctr[2]);
 extern void blabla_advance(blabla_state_t* state, uint64_t delta[2]);
 static inline void blabla_core(blabla_state_t* state);
-#if defined(__AVX2__) && __AVX2__
+#if defined(__AVX2__) && __AVX2__ && !defined(RG_DISABLE_BLABLA_AVX2)
 static inline void blabla_core_avx2(blabla_state_t* state);
 #endif
 
-#if defined(__AVX2__) && __AVX2__
+#if defined(__AVX2__) && __AVX2__ && !defined(RG_DISABLE_BLABLA_AVX2)
 static inline void blabla_core_avx2(blabla_state_t* state)
 {
 #define _mm256_roti_epi64(r, c) _mm256_xor_si256(_mm256_srli_epi64((r), (c)), _mm256_slli_epi64((r), 64 - (c)))
@@ -167,13 +167,13 @@ static inline void generate_block(blabla_state_t* state)
 
     for (uint32_t i = 0; i < 16; ++i)
         state->block[i] = input[i];
-#if defined(__AVX2__) && __AVX2__
+#if defined(__AVX2__) && __AVX2__ && !defined(RG_DISABLE_BLABLA_AVX2)
     if LIKELY (RANDOMGEN_USE_AVX2 > 0) {
         blabla_core_avx2(state);
     } else {
 #endif
         blabla_core(state);
-#if defined(__AVX2__) && __AVX2__
+#if defined(__AVX2__) && __AVX2__ && !defined(RG_DISABLE_BLABLA_AVX2)
     }
 #endif
 
@@ -202,13 +202,15 @@ static INLINE uint64_t blabla_next64(blabla_state_t* state)
 
 static INLINE uint32_t blabla_next32(blabla_state_t* state)
 {
-    if (state->has_uint32 == 1) {
+      uint64_t next;
+      if (state->has_uint32) {
         state->has_uint32 = 0;
-        return state->next_uint32;
-    }
-    uint64_t val = blabla_next64(state);
-    state->next_uint32 = (uint32_t)(val >> 32);
-    return (uint32_t)(val & 0xFFFFFFFF);
+        return state->uinteger;
+      }
+      next = blabla_next64(state);
+      state->has_uint32 = 1;
+      state->uinteger = (uint32_t)(next >> 32);
+      return (uint32_t)(next & 0xffffffff);
 }
 
 static INLINE double blabla_next_double(blabla_state_t* state)

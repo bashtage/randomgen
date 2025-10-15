@@ -3,6 +3,7 @@ from __future__ import annotations
 import warnings
 
 from randomgen.aes import AESCounter
+from randomgen.blabla import BlaBla
 from randomgen.chacha import ChaCha
 from randomgen.common import BitGenerator
 from randomgen.dsfmt import DSFMT
@@ -31,6 +32,7 @@ from randomgen.xoshiro512 import Xoshiro512
 
 BitGenerators: dict[str, type[BitGenerator]] = {
     "AESCounter": AESCounter,
+    "BlaBla": BlaBla,
     "ChaCha": ChaCha,
     "DSFMT": DSFMT,
     "EFIIX64": EFIIX64,

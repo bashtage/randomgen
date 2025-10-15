@@ -3,7 +3,7 @@ from collections.abc import Sequence
 from numpy import ndarray
 
 from randomgen.common import BitGenerator
-from randomgen.typing import IntegerSequenceSeed, SeedMode
+from randomgen.typing import IntegerSequenceSeed
 
 class BlaBla(BitGenerator):
     def __init__(

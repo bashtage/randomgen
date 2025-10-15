@@ -17,7 +17,11 @@ double blabla_next_double(blabla_state_t* state);
 
 extern int blabla_avx2_capable(void)
 {
+#if !defined(RG_DISABLE_BLABLA_AVX2)
     RANDOMGEN_USE_AVX2 = avx2_capable();
+#else
+    RANDOMGEN_USE_AVX2 = 0;
+#endif
     return RANDOMGEN_USE_AVX2;
 }
 
@@ -38,7 +42,10 @@ void blabla_seed(blabla_state_t* state, uint64_t seedval[2], uint64_t stream[2],
     state->keysetup[3] = stream[1];
     state->rounds = R;
     state->has_uint32 = 0;
-    state->next_uint32 = -1;
+    state->uinteger = -1;
+    for (int i = 0; i < 16; i++) {
+        state->block[i] = 0;
+    }
 }
 
 void blabla_advance(blabla_state_t* state, uint64_t delta[2])

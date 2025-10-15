@@ -25,7 +25,7 @@ cdef extern from "src/blabla/blabla.h":
         uint64_t ctr[2]
         int rounds
         int has_uint32
-        uint32_t next_uint32
+        uint32_t uinteger
 
 
     ctypedef BLABLA_STATE_T blabla_state_t
@@ -47,3 +47,5 @@ cdef extern from "src/blabla/blabla.h":
 cdef class BlaBla(BitGenerator):
 
     cdef blabla_state_t *rng_state
+    cdef _reset_state_variables(self)
+    cdef jump_inplace(self, object iter)

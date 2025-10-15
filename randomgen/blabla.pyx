@@ -14,7 +14,7 @@ cdef double blabla_double(void* st) noexcept nogil:
 
 cdef class BlaBla(BitGenerator):
     """
-    BlaBla(seed=None, *, counter=None, key=None, rounds=20, mode="sequence")
+    BlaBla(seed=None, *, counter=None, key=None, rounds=10, mode="sequence")
 
     Container for the BlaBla family of Counter pseudo-random number generators
 
@@ -38,9 +38,7 @@ cdef class BlaBla(BitGenerator):
         key and seed cannot both be used.
     rounds : int, optional
         Number of rounds to run the BlaBla mixer. Must be an even integer.
-        The standard number of rounds in 20. Smaller values, usually 8 or
-        more, can be used to reduce security properties of the random stream
-        while improving performance.
+        The standard number of rounds in 10.
 
     Attributes
     ----------
@@ -76,7 +74,7 @@ cdef class BlaBla(BitGenerator):
     uint32s holding the seed, and an 2-element array of uint64 that holds the
     counter ([low, high]). The elements of the seed are the value provided by
     the user (or from the entropy pool). The final value rounds contains the
-    number of rounds used. Typical values are  8, 12, or 20 (for high security).
+    number of rounds used. Typical values are 10 or 12-16 (for high security).
 
     ``BlaBla`` is seeded using either a single 256-bit unsigned integer
     or a vector of 4 64-bit unsigned integers. In either case, the seed is
@@ -116,7 +114,7 @@ cdef class BlaBla(BitGenerator):
     --------
     >>> from numpy.random import Generator
     >>> from randomgen import BlaBla
-    >>> rg = Generator(BlaBla(1234, rounds=8))
+    >>> rg = Generator(BlaBla(1234, rounds=16))
     >>> rg.standard_normal()
     0.123  # random
 
@@ -126,7 +124,7 @@ cdef class BlaBla(BitGenerator):
          http://cr.yp.to/papers.html#blabla. 2008.01.28.
     """
     def __init__(
-            self, seed=None, *, counter=None, key=None, rounds=20
+            self, seed=None, *, counter=None, key=None, rounds=10
     ):
         BitGenerator.__init__(self, seed)
         self.rng_state = <blabla_state_t *>PyArray_malloc_aligned(
@@ -134,8 +132,8 @@ cdef class BlaBla(BitGenerator):
         )
         if rounds % 2 != 0 or rounds <= 0:
             raise ValueError("rounds must be even and >= 2")
-        self.rng_state.rounds = rounds
         self.seed(seed, counter, key)
+        self.rng_state.rounds = rounds
 
         self._bitgen.state = <void *>self.rng_state
         self._bitgen.next_uint64 = &blabla_uint64
@@ -150,6 +148,11 @@ cdef class BlaBla(BitGenerator):
     def _seed_from_seq(self, counter=None):
         state = self._get_seed_seq().generate_state(4, np.uint64)
         self.seed(key=state, counter=counter)
+        self._reset_state_variables()
+
+    cdef _reset_state_variables(self):
+        self.rng_state.has_uint32 = 0
+        self.rng_state.uinteger = 0
 
     @property
     def use_avx2(self):
@@ -177,7 +180,7 @@ cdef class BlaBla(BitGenerator):
     def use_avx2(self, value):
         capable = blabla_avx2_capable()
         if value and not capable:
-            raise ValueError("CPU does not support SIMD implementation")
+            raise ValueError("CPU does not support AVX2")
         blabla_use_avx2(bool(value))
 
     def seed(self, seed=None, counter=None, key=None):
@@ -237,6 +240,7 @@ cdef class BlaBla(BitGenerator):
                     <uint64_t *>np.PyArray_DATA(_seed),
                     <uint64_t *>np.PyArray_DATA(_stream),
                     <uint64_t *>np.PyArray_DATA(_counter))
+        self._reset_state_variables()
 
     @property
     def state(self):
@@ -264,17 +268,18 @@ cdef class BlaBla(BitGenerator):
         for i in range(2):
             ctr[i] = self.rng_state.ctr[i]
 
-        return {"bit_generator": fully_qualified_name(self),
-                "state": {
-                    "block": block,
-                    "keysetup": keysetup,
-                    "block_idx": block_idx,
-                    "ctr": ctr,
-                    "rounds": self.rng_state.rounds,
-                    "has_uint32": self.rng_state.has_uint32,
-                    "next_uint32": self.rng_state.next_uint32
-                }
-                }
+        return {
+            "bit_generator": fully_qualified_name(self),
+            "state": {
+                "block": block,
+                "keysetup": keysetup,
+                "block_idx": block_idx,
+                "ctr": ctr,
+                "rounds": self.rng_state.rounds,
+                "has_uint32": self.rng_state.has_uint32,
+                "uinteger": self.rng_state.uinteger
+            }
+        }
 
     @state.setter
     def state(self, value):
@@ -300,7 +305,47 @@ cdef class BlaBla(BitGenerator):
             self.rng_state.ctr[i] = ctr[i]
         self.rng_state.rounds = state["rounds"]
         self.rng_state.has_uint32 = state["has_uint32"]
-        self.rng_state.next_uint32 = state["next_uint32"]
+        self.rng_state.uinteger = state["uinteger"]
+
+    cdef jump_inplace(self, object iter):
+        """
+        Jump state in-place
+
+        Not part of public API
+
+        Parameters
+        ----------
+        iter : integer, positive
+            Number of times to jump the state of the rng.
+        """
+        self.advance(iter * int(2 ** 64))
+
+    def jumped(self, iter=1):
+        """
+        jumped(iter=1)
+
+        Returns a new bit generator with the state jumped
+
+        The state of the returned big generator is jumped as-if
+        iter * 2**64 random numbers have been generated.
+
+        Parameters
+        ----------
+        iter : integer, positive
+            Number of times to jump the state of the bit generator returned
+
+        Returns
+        -------
+        bit_generator : BlaBla
+            New instance of generator jumped iter times
+        """
+        cdef BlaBla bit_generator
+
+        bit_generator = self.__class__(seed=self._copy_seed())
+        bit_generator.state = self.state
+        bit_generator.jump_inplace(iter)
+
+        return bit_generator
 
     def advance(self, delta):
         """
@@ -317,3 +362,5 @@ cdef class BlaBla(BitGenerator):
         d[0] = delta & 0xFFFFFFFFFFFFFFFF
         d[1] = <uint64_t>(delta >> 64)
         blabla_advance(self.rng_state, d)
+        self.rng_state.has_uint32 = 0
+        self.rng_state.uinteger = 0

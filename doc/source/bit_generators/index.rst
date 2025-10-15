@@ -18,6 +18,7 @@ These RNGs will be included in future releases.
    :maxdepth: 1
 
    AES Counter <aesctr>
+   BlaBla <blabla>
    ChaCha <chacha>
    DSFMT <dsfmt>
    EFIIX64 <efiix64>
