@@ -38,6 +38,9 @@ jobs:
           USE_SCIPY: true
         python311_latest:
           python.version: '3.11'
+        python312_options:
+          python.version: '3.12'
+          BUILD_FLAGS: '-Csetup-args=-Dpcg64-force-emulated=true -Csetup-args=-Ddisable-sse2=true -Csetup-args=-Ddisable-avx2=true'
         python312_latest:
           python.version: '3.12'
           BUILD_FLAGS: '-Csetup-args=-Dcython-coverage=true'

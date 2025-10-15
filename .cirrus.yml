@@ -2,4 +2,4 @@ linux_arm_task:
   name: Linux-ARM
   arm_container: {image: python:slim}
   install_script: . ./ci/cirrus/cirrus-install-arm.sh
-  test_script: mkdir test_dir && cd test_dir && echo $PWD && python3 -c "import randomgen; randomgen.test(['-n', '2'])"
+  test_script: echo $PWD && ls && . ./ci/cirrus/cirrus-test-arm.sh
