@@ -20,6 +20,7 @@ from randomgen import (
     SFMT,
     SPECK128,
     AESCounter,
+    BlaBla,
     ChaCha,
     LCG128Mix,
     Philox,
@@ -128,6 +129,13 @@ configs = {
         "BLOCKED": (("seed", "key"),),
         "REQUIRED": ("seed", "key"),
     },
+    "BlaBla": {
+        "seed": seed_seq(),
+        "counter": UINT128,
+        "key": UINT128_2,
+        "BLOCKED": (("seed", "key"),),
+        "REQUIRED": ("seed", "key"),
+    },
     "Xoroshiro128": {"seed": seed_seq(), "plusplus": [True, False]},
     "Xorshift1024": {"seed": seed_seq()},
     "Xoshiro256": {"seed": seed_seq()},
@@ -203,6 +211,7 @@ configs = {
 }
 
 BIT_GEN = {
+    "BlaBla": BlaBla,
     "ChaCha": ChaCha,
     "Xoroshiro128": Xoroshiro128,
     "Xorshift1024": Xorshift1024,

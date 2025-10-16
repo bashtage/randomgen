@@ -1,6 +1,7 @@
 from numpy.random._pickle import BitGenerators
 
 from randomgen.aes import AESCounter
+from randomgen.blabla import BlaBla
 from randomgen.chacha import ChaCha
 from randomgen.dsfmt import DSFMT
 from randomgen.efiix64 import EFIIX64
@@ -28,6 +29,7 @@ from randomgen.xoshiro512 import Xoshiro512
 
 bit_generators = [
     AESCounter,
+    BlaBla,
     ChaCha,
     DSFMT,
     EFIIX64,

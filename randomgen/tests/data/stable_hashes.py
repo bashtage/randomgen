@@ -1,5 +1,3 @@
-import numpy as np
-
 known_hashes = {
     ("ChaCha", "seed"): {
         "random_values": "0dda65c819197b3ca467f053869aa1f4a4123cb2e55a290453651916dd7002bd",
@@ -20,6 +18,26 @@ known_hashes = {
         "random_values": "8e773b7ff72ef03fe692bd7e9fcfd0b03830d430309204e1319ed4033c9b4f2d",
         "initial_state_hash": "1e2d43ed43dbebbe9fb0dc0ab6c1d4a9e4004dac5d95340a9e0f039f64b1f4b7",
         "final_state_hash": "291e79b08b208006138169258eae8b4ab30c900b767e9f36b2885e6de4554d60",
+    },
+    ("BlaBla", "seed"): {
+        "random_values": "6af28f93b0ac256c189f00b292e95a4f0b5b1e53f80f3d06d0499ff06b6593d3",
+        "initial_state_hash": "8238e57a744752fcd10b99188302a20af0d050bdff5cb6ad6d319ce7feecc688",
+        "final_state_hash": "0002f2e419cf346168be39f39b9d6b6d11ba80558f1a1c7f649f18603e089def",
+    },
+    ("BlaBla", "key"): {
+        "random_values": "1edf563885c9b316c6cffba6fccdcf6eb6f88867933750c1886a5a448fe540d6",
+        "initial_state_hash": "5ac682ae99d190ff253b7d675bd314d85691d41e987aad15b380bc1f0b03318b",
+        "final_state_hash": "f43029f14242f9880117146479d667b450107a368b49fc07939b15d66be9958e",
+    },
+    ("BlaBla", "seed", "counter"): {
+        "random_values": "4a502f7bdb5c412221261f790a621e30dd3139824e5a9bc216d906096034f006",
+        "initial_state_hash": "86985ccc4f69d69523be0db74ec624f7b6c85d08f1c3524720bf389f07ea9234",
+        "final_state_hash": "1ff49e7e2e48984226a6c68d5a45df51053c2fe58845406a07a90c280a6664c0",
+    },
+    ("BlaBla", "counter", "key"): {
+        "random_values": "5bd44dee3340d06a0bb693a4d5386efd72a7296897595dd70d06949cedab4b01",
+        "initial_state_hash": "f70b7f65e7193f4ea91ce0fe395f04ec289af3642f876a936f06c964a5893e82",
+        "final_state_hash": "5096d80377c22c7c20dbfc3fb0789392f500c08d376ba57dd0dd751ebb23a170",
     },
     ("Xoroshiro128", "seed"): {
         "random_values": "3ff37d80a806de5f21fb31d05897caa5e59a186d7aca1b81efc5c1ba53cfa64b",
@@ -86,7 +104,7 @@ known_hashes = {
         "initial_state_hash": "b6df29635bf448c80384f97af3b3d2664ad65d84043093a0d0fb8453d91013d3",
         "final_state_hash": "9dd127ae1c4e58ee17cefe44a0c51b1c9ee9d94adf36d38f97c20b6be76fa7be",
     },
-    ("SFC64", "seed", "k", np.uint64(10998731014437268875)): {
+    ("SFC64", "seed", "k", 10998731014437268875): {
         "random_values": "51f5f6960004fd3efd0ece422d46040e97a0d558af17d3cbc428960fd1e993a1",
         "initial_state_hash": "48d052873fd8877566e9b194e1856952b5873c4708e8299ba094d4e7934ae037",
         "final_state_hash": "05feec2e5bc065320805ca3cb6e4ba2f2a90a5ac211fd77c3cb16d78b6ef7195",

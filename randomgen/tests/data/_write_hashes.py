@@ -10,9 +10,18 @@ if __name__ == "__main__":
 
     import black
 
-    fm = black.FileMode({black.TargetVersion.PY37, black.TargetVersion.PY38})
+    fm = black.FileMode(
+        {
+            black.TargetVersion.PY38,
+            black.TargetVersion.PY39,
+            black.TargetVersion.PY310,
+            black.TargetVersion.PY311,
+            black.TargetVersion.PY312,
+            black.TargetVersion.PY313,
+        }
+    )
     out = black.format_file_contents(
-        "import numpy as np\n\n" + "known_hashes = " + str(dict(computed_hashes)),
+        "known_hashes = " + str(dict(computed_hashes)),
         fast=True,
         mode=fm,
     )

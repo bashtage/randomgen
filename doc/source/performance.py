@@ -5,6 +5,7 @@ import numpy as np
 import pandas as pd
 
 from randomgen import (
+    BlaBla,
     DSFMT,
     EFIIX64,
     HC128,
@@ -22,7 +23,9 @@ from randomgen import (
     ChaCha,
     Philox,
     Romu,
+    Squares,
     ThreeFry,
+    Tyche,
     Xoshiro256,
     Xoshiro512,
 )
@@ -89,6 +92,11 @@ class PCG64DXSM128(PCG64):
         kwargs.pop("variant", None)
         super().__init__(*args, variant="dxsm-128", **kwargs)
 
+class TycheOpenRand(Tyche):
+    def __init__(self, *args, **kwargs):
+        kwargs.pop("original", None)
+        super().__init__(*args, original=False, **kwargs)
+
 
 try:
     RDRAND()
@@ -100,6 +108,7 @@ NUMBER = 100
 REPEAT = 10
 SIZE = 25000
 PRNGS = [
+    BlaBla,
     ChaCha8,
     JSF32,
     Philox4x32,
@@ -127,6 +136,9 @@ PRNGS = [
     SPECK128,
     SFC64,
     EFIIX64,
+    Squares,
+    Tyche,
+    TycheOpenRand,
 ]
 
 if HAS_RDRND:

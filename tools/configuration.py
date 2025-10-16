@@ -3,6 +3,7 @@ from collections import defaultdict
 import jinja2
 
 from randomgen import (
+    BlaBla,
     DSFMT,
     EFIIX64,
     HC128,
@@ -25,6 +26,7 @@ from randomgen import (
 
 ALL_BIT_GENS = [
     AESCounter,
+    BlaBla,
     ChaCha,
     DSFMT,
     EFIIX64,
@@ -47,6 +49,7 @@ JUMPABLE = [bg for bg in ALL_BIT_GENS if hasattr(bg, "jumped")]
 
 SPECIALS = {
     ChaCha: {"rounds": [8, 20]},
+    BlaBla: {"rounds": [10, 16]},
     JSF: {"seed_size": [1, 3]},
     SFC64: {"k": [1, 3394385948627484371, "weyl"]},
     LCG128Mix: {"output": ["upper"]},

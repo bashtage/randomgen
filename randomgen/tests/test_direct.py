@@ -30,6 +30,7 @@ from randomgen import (
     SFMT,
     SPECK128,
     AESCounter,
+    BlaBla,
     ChaCha,
     Philox,
     Romu,
@@ -60,7 +61,7 @@ aes = AESCounter()
 HAS_AESNI = aes.use_aesni
 
 USE_AESNI = [True, False] if HAS_AESNI else [False]
-NO_MODE_SUPPORT = [EFIIX64, LXM, Romu, RDRAND, Tyche, Squares]
+NO_MODE_SUPPORT = [EFIIX64, LXM, Romu, RDRAND, Tyche, Squares, BlaBla]
 
 try:
     import cffi  # noqa: F401
@@ -2193,3 +2194,48 @@ def test_pcg64_errors():
         p.seed(seed=0, inc=-1)
     with pytest.raises(ValueError, match="inc must be a scalar"):
         p.seed(seed=0, inc=sum(2**i for i in range(129)))
+
+
+class TestBlaBla(Base):
+    @classmethod
+    def setup_class(cls):
+        super().setup_class()
+        cls.bit_generator = BlaBla
+        cls.bits = 64
+        cls.seed_bits = 64
+        cls.dtype = np.uint64
+        cls.data1 = cls._read_csv(join(pwd, "./data/blabla-testset-1-avx2.csv"))
+        cls.data2 = cls._read_csv(join(pwd, "./data/blabla-testset-2.csv"))
+        cls.seed_error_type = TypeError
+        cls.invalid_seed_types = []
+        cls.invalid_seed_values = [(-1,)]
+        cls.state_name = "key"
+
+    def setup_bitgenerator(self, seed, **kwargs):
+        seed = [0] if None in seed else seed
+        bg = self.bit_generator(*seed, **kwargs)
+        return bg
+
+    def test_set_key(self):
+        with pytest.raises(ValueError, match="seed and key cannot"):
+            self.bit_generator(seed=0, key=0)
+
+    def test_invalid_rounds(self):
+        with pytest.raises(ValueError, match="rounds must be even and"):
+            self.bit_generator(rounds=3)
+        with pytest.raises(ValueError, match="rounds must be even and"):
+            self.bit_generator(rounds=-4)
+
+    def test_use_avx2(self):
+        bg = self.bit_generator(0)
+        if not bg.use_avx2:
+            with pytest.raises(ValueError, match="CPU does not support AVX2"):
+                bg.use_avx2 = True
+            return
+        bg2 = self.bit_generator(0)
+        bg2.use_avx2 = not bg.use_avx2
+        assert_equal(bg.random_raw(100), bg2.random_raw(100))
+
+    def test_seed_key(self):
+        with pytest.raises(ValueError, match="seed and key"):
+            self.setup_bitgenerator([0], key=0, counter=0)

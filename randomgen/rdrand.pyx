@@ -359,7 +359,7 @@ cdef class RDRAND(BitGenerator):
         """
         cdef np.ndarray randoms
         cdef uint64_t *randoms_data
-        cdef uint64_t value
+        cdef uint64_t value = -1
         cdef Py_ssize_t i, n
         cdef int status
 
