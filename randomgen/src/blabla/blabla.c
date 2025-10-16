@@ -1,6 +1,5 @@
 #include "blabla.h"
 #include "../common/cpu_features.h"
-#include "stdio.h"
 
 int RANDOMGEN_USE_AVX2;
 uint64_t blabla_next64(blabla_state_t* state);
@@ -54,40 +53,4 @@ void blabla_advance(blabla_state_t* state, uint64_t delta[2])
     state->ctr[0] += delta[0];
     carry = (state->ctr[0] < ctr_0) ? 1 : 0;
     state->ctr[1] += delta[1] + carry;
-}
-
-int main(void)
-{
-    uint64_t val = 0;
-    blabla_state_t state;
-    blabla_seed(&state,
-        (uint64_t[]) { 15793235383387715774ULL, 12390638538380655177ULL },
-        (uint64_t[]) { 2361836109651742017ULL, 3188717715514472916ULL },
-        (uint64_t[]) { 0ULL, 0ULL });
-    for (int i = 0; i < 1000; i++) {
-        val = blabla_next64(&state);
-        if (i == 999) {
-            printf("%d: ", i);
-            printf("%" PRIu64 "\n", val);
-        }
-    }
-    blabla_seed(&state,
-        (uint64_t[]) { 15793235383387715774ULL, 12390638538380655177ULL },
-        (uint64_t[]) { 2361836109651742017ULL, 3188717715514472916ULL },
-        (uint64_t[]) { 0ULL, 0ULL });
-    blabla_advance(&state, (uint64_t[]) { 999ULL, 0ULL });
-    val = blabla_next64(&state);
-    printf("%" PRIu64 "\n", val);
-
-    blabla_seed(&state,
-        (uint64_t[]) { 15793235383387715774ULL, 12390638538380655177ULL },
-        (uint64_t[]) { 2361836109651742017ULL, 3188717715514472916ULL },
-        (uint64_t[]) { 0ULL, 0ULL });
-    blabla_advance(&state, (uint64_t[]) { 999ULL, 1ULL });
-    val = blabla_next64(&state);
-    printf("%" PRIu64 "\n", val);
-
-    printf("AVX2 capable: %d\n", RANDOMGEN_USE_AVX2);
-
-    return 0;
 }

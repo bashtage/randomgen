@@ -22,7 +22,6 @@ Parallel generation
    :toctree: generated/
 
    ~BlaBla.advance
-   ~BlaBla.jump
    ~BlaBla.jumped
 
 Extending

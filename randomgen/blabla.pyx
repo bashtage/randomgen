@@ -16,7 +16,7 @@ cdef class BlaBla(BitGenerator):
     """
     BlaBla(seed=None, *, counter=None, key=None, rounds=10, mode="sequence")
 
-    Container for the BlaBla family of Counter pseudo-random number generators
+    Container for the BlaBla family of counter pseudo-random number generators
 
     Parameters
     ----------
@@ -24,9 +24,8 @@ cdef class BlaBla(BitGenerator):
         Random seed initializing the pseudo-random number generator.
         Can be an integer in [0, 2**256), an array of 4 uint64 values,
         a SeedSequence instance or ``None`` (the default). If `seed` is
-        ``None``, then  data is read from ``/dev/urandom`` (or the Windows
-        analog) if available. If unavailable, a hash of the time and
-        process ID is used.
+        ``None``, then a new SeedSequence is created usign data is read
+        from ``/dev/urandom`` .
     counter : {None, int, array_like[uint64]}, optional
         Counter to use in the BlaBla state. Can be either
         a Python int in [0, 2**128) or a 2-element uint64 array.
@@ -54,9 +53,11 @@ cdef class BlaBla(BitGenerator):
     Notes
     -----
     BlaBla is a 64-bit PRNG that uses a counter-based design based on
-    the BlaBla cipher [1]_. Instances using different values
-    of the key produce distinct sequences. ``BlaBla`` has a period
-    of :math:`2^{128}` and supports arbitrary advancing and
+    the Blake2b hash function [1]_. The idea was first implemented in
+    Swift in [2]_, and later reimplemented in C++ in [3]_. The C
+    implementation is dervied from the C++ version. Instances using
+    different values of the key produce distinct sequences. ``BlaBla`` has
+    a period of :math:`2^{128}` and supports arbitrary advancing and
     jumping the sequence in increments of :math:`2^{64}`. These features allow
     multiple non-overlapping sequences to be generated.
 
@@ -65,39 +66,38 @@ cdef class BlaBla(BitGenerator):
     directly consumable in Python and must be consumed by a ``Generator``
     or similar object that supports low-level access.
 
-    See ``AESCounter`` a related counter-based PRNG.
+    See ``AESCounter`` and ``ChaCha`` for related counter-based PRNGs.
 
     **State and Seeding**
 
-    The ``BlaBla`` state vector consists of a 16-element array of uint32
-    that capture buffered draws from the distribution, an 8-element array of
-    uint32s holding the seed, and an 2-element array of uint64 that holds the
+    The ``BlaBla`` state vector consists of a 16-element array of uint64s
+    that capture buffered draws from the distribution, an 4-element array of
+    uint64s holding the seed, and an 2-element array of uint64 that holds the
     counter ([low, high]). The elements of the seed are the value provided by
     the user (or from the entropy pool). The final value rounds contains the
-    number of rounds used. Typical values are 10 or 12-16 (for high security).
+    number of rounds used (typically 10). More rounds can be used to improve
+    security (12-16).
 
     ``BlaBla`` is seeded using either a single 256-bit unsigned integer
     or a vector of 4 64-bit unsigned integers. In either case, the seed is
-    used as an input for a second random number generator,
-    SplitMix64, and the output of this PRNG function is used as the initial
+    used as an input for a second random number generator provided by a
+    SeedSequence, and the output of this PRNG function is used as the initial
     state. Using a single 64-bit value for the seed can only initialize a small
     range of the possible initial state values.
 
     **Parallel Features**
 
-    ``BlaBla`` can be used in parallel applications by calling the ``jump``
+    ``BlaBla`` can be used in parallel applications by calling the ``jumped``
     method  to advances the state as-if :math:`2^{64}` random numbers have
     been generated. Alternatively, ``advance`` can be used to advance the
-    counter for any positive step in [0, 2**128). When using ``jump``, all
+    counter for any positive step in [0, 2**128). When using ``jumped``, all
     generators should be initialized with the same seed to ensure that the
     segments come from the same sequence.
 
     >>> from numpy.random import Generator
     >>> from randomgen import BlaBla
-    >>> rg = [Generator(BlaBla(1234)) for _ in range(10)]
     # Advance each BlaBla instances by i jumps
-    >>> for i in range(10):
-    ...     rg[i].bit_generator.jump(i)
+    >>> rg = [Generator(BlaBla(1234).jumped(i)) for i in range(10)]
 
     Alternatively, ``BlaBla`` can be used in parallel applications by using
     a sequence of distinct keys where each instance uses different key.
@@ -114,14 +114,16 @@ cdef class BlaBla(BitGenerator):
     --------
     >>> from numpy.random import Generator
     >>> from randomgen import BlaBla
-    >>> rg = Generator(BlaBla(1234, rounds=16))
+    >>> rg = Generator(BlaBla(1234))
     >>> rg.standard_normal()
-    0.123  # random
+    -0.8632  # random
 
     References
     ----------
-    .. [1] Bernstein, D. J.. BlaBla, a variant of Salsa20.
-         http://cr.yp.to/papers.html#blabla. 2008.01.28.
+    .. [1] https://en.wikipedia.org/wiki/BLAKE_(hash_function)
+    .. [2] Aumasson, JP. Swift implrmentation of BlaBla PRNG.
+         2017. https://github.com/veorq/blabla/blob/master/BlaBla.swift
+    .. [3] Nahdi, Gahtan. BlaBla PRNG. https://github.com/gahtan-syarif/blabla.h
     """
     def __init__(
             self, seed=None, *, counter=None, key=None, rounds=10
