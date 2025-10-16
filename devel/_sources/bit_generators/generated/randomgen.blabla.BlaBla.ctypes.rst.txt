@@ -1,0 +1,6 @@
+﻿randomgen.blabla.BlaBla.ctypes
+==============================
+
+.. currentmodule:: randomgen.blabla
+
+.. autoattribute:: BlaBla.ctypes

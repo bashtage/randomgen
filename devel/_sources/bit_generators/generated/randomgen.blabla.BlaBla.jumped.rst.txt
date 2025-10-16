@@ -1,0 +1,6 @@
+﻿randomgen.blabla.BlaBla.jumped
+==============================
+
+.. currentmodule:: randomgen.blabla
+
+.. automethod:: BlaBla.jumped

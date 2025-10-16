@@ -1,0 +1,6 @@
+﻿randomgen.blabla.BlaBla.cffi
+============================
+
+.. currentmodule:: randomgen.blabla
+
+.. autoattribute:: BlaBla.cffi
