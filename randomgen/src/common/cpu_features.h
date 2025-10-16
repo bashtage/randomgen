@@ -3,6 +3,10 @@
 
 #include "randomgen_config.h"
 
+#if defined(__APPLE__) && defined(__x86_64__)
+#include <cpuid.h>
+#endif
+
 #if defined(__x86_64__) || defined(_M_X64)
   #if defined(_MSC_VER)
     /* MSVC on Windows uses <intrin.h> for __cpuidex and _xgetbv */
