@@ -19,7 +19,7 @@
     
     
       
-        <title>Change Log - RandomGen v2.1.2 (+64)</title>
+        <title>Change Log - RandomGen v2.1.2 (+67)</title>
       
     
     
@@ -65,7 +65,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#v2-1-0" class="md-skip">
+        <a href="#v2-3-0" class="md-skip">
           Skip to content
         </a>
       
@@ -85,7 +85,7 @@
 
 <header class="md-header md-header--shadow" data-md-component="header">
   <nav class="md-header__inner md-grid" aria-label="Header">
-    <a href="index.html" title="RandomGen v2.1.2 (+64)" class="md-header__button md-logo" aria-label="RandomGen v2.1.2 (+64)" data-md-component="logo">
+    <a href="index.html" title="RandomGen v2.1.2 (+67)" class="md-header__button md-logo" aria-label="RandomGen v2.1.2 (+67)" data-md-component="logo">
       <img src="_static/casino.svg" alt="logo">
     </a>
     <label class="md-header__button md-icon" for="__drawer">
@@ -96,7 +96,7 @@
       <div class="md-header__ellipsis">
         <div class="md-header__topic">
           <span class="md-ellipsis">
-            RandomGen v2.1.2 (+64)
+            RandomGen v2.1.2 (+67)
           </span>
         </div>
         <div class="md-header__topic" data-md-component="header-topic">
@@ -191,10 +191,10 @@
 
 <nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
   <label class="md-nav__title" for="__drawer">
-    <a href="index.html" title="RandomGen v2.1.2 (+64)" class="md-nav__button md-logo" aria-label="RandomGen v2.1.2 (+64)" data-md-component="logo">
+    <a href="index.html" title="RandomGen v2.1.2 (+67)" class="md-nav__button md-logo" aria-label="RandomGen v2.1.2 (+67)" data-md-component="logo">
       <img src="_static/casino.svg" alt="logo">
     </a>
-    RandomGen v2.1.2 (+64)
+    RandomGen v2.1.2 (+67)
   </label>
   
     <div class="md-nav__source">
@@ -659,6 +659,16 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
+  <a href="#v2-3-0" class="md-nav__link">
+    
+    <span class="md-ellipsis">
+      <span title="/change-log.rst#v2-3-0 (reference label)"><span>v2.<wbr>3.<wbr>0</span></span>
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#v2-1-0" class="md-nav__link">
     
     <span class="md-ellipsis">
@@ -932,6 +942,16 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
+  <a href="#v2-3-0" class="md-nav__link">
+    
+    <span class="md-ellipsis">
+      <span title="/change-log.rst#v2-3-0 (reference label)"><span>v2.<wbr>3.<wbr>0</span></span>
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#v2-1-0" class="md-nav__link">
     
     <span class="md-ellipsis">
@@ -1188,6 +1208,28 @@
 
 
 <h1 id="change-log"><span id="id1"></span>Change Log<a class="headerlink" href="#change-log" title="Link to this heading">¶</a></h1>
+<h2 id="v2-3-0">v2.3.0<a class="headerlink" href="#v2-3-0" title="Link to this heading">¶</a></h2>
+<ul class="simple">
+<li><p>Added the <a class="reference internal" href="bit_generators/blabla.html#randomgen.blabla.BlaBla" title="randomgen.blabla.BlaBla (Python class) — Container for the BlaBla family of counter pseudo-random number generators"><code class="xref py py-class docutils literal notranslate"><span class="pre">BlaBla</span></code></a> PRNG which is based on the Blake 2b
+hash function.  <a class="reference internal" href="bit_generators/blabla.html#randomgen.blabla.BlaBla" title="randomgen.blabla.BlaBla (Python class) — Container for the BlaBla family of counter pseudo-random number generators"><code class="xref py py-class docutils literal notranslate"><span class="pre">BlaBla</span></code></a> is a counter-based PRNG like
+<a class="reference internal" href="bit_generators/aesctr.html#randomgen.aes.AESCounter" title="randomgen.aes.AESCounter (Python class) — Container for the AES Counter pseudo-random number generator."><code class="xref py py-class docutils literal notranslate"><span class="pre">AESCounter</span></code></a> and supports both <a class="reference internal" href="bit_generators/generated/randomgen.blabla.BlaBla.advance.html#randomgen.blabla.BlaBla.advance" title="randomgen.blabla.BlaBla.advance (Python method) — Advance the state by delta steps."><code class="xref py py-meth docutils literal notranslate"><span class="pre">advance()</span></code></a>
+and <a class="reference internal" href="bit_generators/generated/randomgen.blabla.BlaBla.jumped.html#randomgen.blabla.BlaBla.jumped" title="randomgen.blabla.BlaBla.jumped (Python method) — Returns a new bit generator with the state jumped"><code class="xref py py-meth docutils literal notranslate"><span class="pre">jumped()</span></code></a>.</p></li>
+<li><p>Removed <code class="docutils literal notranslate"><span class="pre">mode</span></code> from bit generator initialization. This argument has been deprecated since release 2.0.0.</p></li>
+</ul>
+<div class="warning admonition">
+<p class="admonition-title">Warning</p>
+<p>This change is backward incompatible. If <code class="docutils literal notranslate"><span class="pre">mode</span></code> is essential, you should continue to use legacy
+versions.</p>
+</div>
+<ul class="simple">
+<li><p>Moved to the build system to meson which improves build time.</p></li>
+<li><p>Fixed a breaking change that affected the use of <a class="reference external" href="https://docs.python.org/3/library/functools.html#functools.partial" title="(in Python v3.14)"><code class="xref py py-func docutils literal notranslate"><span class="pre">functools.partial()</span></code></a> test suite in
+Python 3.14.</p></li>
+</ul>
+<div class="note admonition">
+<p class="admonition-title">Note</p>
+<p>There was no version 2.2.0.</p>
+</div>
 <h2 id="v2-1-0">v2.1.0<a class="headerlink" href="#v2-1-0" title="Link to this heading">¶</a></h2>
 <ul class="simple">
 <li><p>Fixed a bug in <a class="reference internal" href="bit_generators/lcg128mix.html#randomgen.pcg64.LCG128Mix" title="randomgen.pcg64.LCG128Mix (Python class) — Customizable 128-bit LCG bit generator with output mixing"><code class="xref py py-class docutils literal notranslate"><span class="pre">LCG128Mix</span></code></a> that resulted in <code class="docutils literal notranslate"><span class="pre">inc</span></code>
