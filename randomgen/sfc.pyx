@@ -6,9 +6,6 @@ import numpy as np
 
 cimport cython
 
-
-from randomgen._deprecated_value import _DeprecatedValue
-
 __all__ = ["SFC64"]
 
 cdef uint64_t sfc_uint64(void* st) noexcept nogil:
@@ -37,7 +34,7 @@ cdef uint64_t choosek(uint64_t k):
 
 cdef class SFC64(BitGenerator):
     """
-    SFC64(seed=None, w=1, k=1, *, numpy_seed=False, mode="sequence")
+    SFC64(seed=None, w=1, k=1, *, numpy_seed=False)
 
     Chris Doty-Humphrey's Small Fast Chaotic PRNG with optional Weyl Sequence
 
@@ -61,15 +58,6 @@ cdef class SFC64(BitGenerator):
         checks that both w and k are 1.
 
         .. versionadded: 2.0.0
-
-    mode : {"sequence", "numpy"}
-        The default uses a seed sequence to initialize all unspecified values.
-        When using "numpy" uses the seed sequence to initialize three values
-        and checks that both w and k are 1.
-
-        .. deprecated: 2.0.0
-           mode is deprecated. Use numpy_seed tp enforce numpy-matching seeding
-
 
     Notes
     -----
@@ -122,8 +110,8 @@ cdef class SFC64(BitGenerator):
     _seed_seq_len = 4
     _seed_seq_dtype = np.uint64
 
-    def __init__(self, seed=None, w=1, k=1, *, numpy_seed=False, mode=_DeprecatedValue):
-        BitGenerator.__init__(self, seed, numpy_seed=numpy_seed, mode=mode)
+    def __init__(self, seed=None, w=1, k=1, *, numpy_seed=False):
+        BitGenerator.__init__(self, seed, numpy_seed=numpy_seed)
         self.w = w
         self.k = k
         self.seed(seed)

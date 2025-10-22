@@ -2,8 +2,6 @@
 
 import numpy as np
 
-from randomgen._deprecated_value import _DeprecatedValue
-
 __all__ = ["PCG32"]
 
 cdef uint64_t pcg32_uint64(void* st) noexcept nogil:
@@ -21,7 +19,7 @@ cdef uint64_t pcg32_raw(void* st) noexcept nogil:
 
 cdef class PCG32(BitGenerator):
     """
-    PCG32(seed=None, inc=0, *, mode="sequence")
+    PCG32(seed=None, inc=0)
 
     Container for the PCG-32 pseudo-random number generator.
 
@@ -37,12 +35,6 @@ cdef class PCG32(BitGenerator):
         The increment in the LCG. Can be an integer in [0, 2**64] or ``None``.
         The default is 0. If `inc` is ``None``, then it is initialized using
         entropy.
-    mode : {None, "sequence"}
-        Deprecated parameter. Do not use.
-
-        .. deprecated: 2.0.0
-
-           Starting in version 2, only seed sequences are supported.
 
     Attributes
     ----------
@@ -101,8 +93,8 @@ cdef class PCG32(BitGenerator):
     .. [2] O'Neill, Melissa E. "PCG: A Family of Simple Fast Space-Efficient
            Statistically Good Algorithms for Random Number Generation"
     """
-    def __init__(self, seed=None, inc=None, *, mode=_DeprecatedValue):
-        BitGenerator.__init__(self, seed, mode=mode)
+    def __init__(self, seed=None, inc=None):
+        BitGenerator.__init__(self, seed)
         self.seed(seed, inc)
         self._bitgen.state = <void *>&self.rng_state
         self._bitgen.next_uint64 = &pcg32_uint64

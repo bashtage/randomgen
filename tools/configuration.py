@@ -3,7 +3,6 @@ from collections import defaultdict
 import jinja2
 
 from randomgen import (
-    BlaBla,
     DSFMT,
     EFIIX64,
     HC128,
@@ -15,15 +14,16 @@ from randomgen import (
     SFMT,
     SPECK128,
     AESCounter,
+    BlaBla,
     ChaCha,
     LCG128Mix,
     Philox,
     Romu,
+    Squares,
     ThreeFry,
+    Tyche,
     Xoshiro256,
     Xoshiro512,
-    Squares,
-    Tyche,
 )
 
 ALL_BIT_GENS = [

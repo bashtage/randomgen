@@ -152,12 +152,11 @@ class RNG:
         cls.mat = np.arange(2.0, 102.0, 0.01).reshape((100, 100))
         cls.seed_error = TypeError
 
-    def init_generator(self, seed=None, mode="sequence"):
-        kwargs = {} if mode == "sequence" else {"mode": mode}
+    def init_generator(self, seed=None):
         if seed is not None:
-            return np.random.Generator(self.bit_generator(*seed, **kwargs))
+            return np.random.Generator(self.bit_generator(*seed))
         else:
-            return np.random.Generator(self.bit_generator(seed=seed, **kwargs))
+            return np.random.Generator(self.bit_generator(seed=seed))
 
     def _reset_state(self):
         self.rg.bit_generator.state = self.initial_state

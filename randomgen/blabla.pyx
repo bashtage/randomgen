@@ -14,7 +14,7 @@ cdef double blabla_double(void* st) noexcept nogil:
 
 cdef class BlaBla(BitGenerator):
     """
-    BlaBla(seed=None, *, counter=None, key=None, rounds=10, mode="sequence")
+    BlaBla(seed=None, *, counter=None, key=None, rounds=10)
 
     Container for the BlaBla family of counter pseudo-random number generators
 

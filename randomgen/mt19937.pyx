@@ -3,8 +3,6 @@
 
 import numpy as np
 
-from randomgen._deprecated_value import _DeprecatedValue
-
 __all__ = ["MT19937"]
 
 cdef uint64_t mt19937_uint64(void *st) noexcept nogil:
@@ -21,7 +19,7 @@ cdef uint64_t mt19937_raw(void *st) noexcept nogil:
 
 cdef class MT19937(BitGenerator):
     """
-    MT19937(seed=None, *, numpy_seed=False, mode="sequence")
+    MT19937(seed=None, *, numpy_seed=False)
 
     Container for the Mersenne Twister pseudo-random number generator.
 
@@ -40,14 +38,6 @@ cdef class MT19937(BitGenerator):
         so matches NumPy exactly.
 
         .. versionadded: 2.0.0
-
-    mode : {None, "sequence", "numpy"}, optional
-        "sequence" uses a SeedSequence to transforms the seed into an initial
-        state. None defaults to "sequence". "numpy" uses the same seeding
-        mechanism as NumPy and so matches NumPy exactly.
-
-        .. deprecated: 2.0.0
-           mode is deprecated. Use numpy_seed tp enforce numpy-matching seeding
 
     Attributes
     ----------
@@ -117,8 +107,8 @@ cdef class MT19937(BitGenerator):
         No. 3, Summer 2008, pp. 385-390.
 
     """
-    def __init__(self, seed=None, *, numpy_seed=False, mode=_DeprecatedValue):
-        BitGenerator.__init__(self, seed, numpy_seed=numpy_seed, mode=mode)
+    def __init__(self, seed=None, *, numpy_seed=False):
+        BitGenerator.__init__(self, seed, numpy_seed=numpy_seed)
         self.seed(seed)
         self._bitgen.state = &self.rng_state
         self._bitgen.next_uint64 = &mt19937_uint64

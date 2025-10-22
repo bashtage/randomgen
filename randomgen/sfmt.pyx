@@ -2,8 +2,6 @@
 
 import numpy as np
 
-from randomgen._deprecated_value import _DeprecatedValue
-
 __all__ = ["SFMT"]
 
 DEF SFMT_MEXP = 19937
@@ -25,7 +23,7 @@ cdef double sfmt_double(void* st) noexcept nogil:
 
 cdef class SFMT(BitGenerator):
     """
-    SFMT(seed=None, *, mode="sequence")
+    SFMT(seed=None)
 
     Container for the SIMD-based Mersenne Twister pseudo RNG.
 
@@ -39,12 +37,6 @@ cdef class SFMT(BitGenerator):
         unsigned integers are read from ``/dev/urandom`` (or the Windows
         analog) if available. If unavailable, a hash of the time and process
         ID is used.
-    mode : {None, "sequence"}
-        Deprecated parameter. Do not use.
-
-        .. deprecated: 2.0.0
-
-           Starting in version 2, only seed sequences are supported.
 
     Attributes
     ----------
@@ -113,8 +105,8 @@ cdef class SFMT(BitGenerator):
            Jump Ahead Algorithm for Linear Recurrences in a Polynomial Space",
            Sequences and Their Applications - SETA, 290--298, 2008.
     """
-    def __init__(self, seed=None, *, mode=_DeprecatedValue):
-        BitGenerator.__init__(self, seed, mode=mode)
+    def __init__(self, seed=None):
+        BitGenerator.__init__(self, seed)
         self.rng_state.state = <sfmt_t *>PyArray_malloc_aligned(sizeof(sfmt_t))
         self.rng_state.buffered_uint64 = <uint64_t *>PyArray_calloc_aligned(
             SFMT_N64, sizeof(uint64_t)

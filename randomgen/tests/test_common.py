@@ -1,7 +1,6 @@
 import numpy as np
 import pytest
 
-from randomgen.aes import AESCounter
 from randomgen.common import BitGenerator, Interface
 from randomgen.entropy import seed_by_array
 from randomgen.lxm import LXM
@@ -199,12 +198,6 @@ def test_object_to_int_errors():
             default_bits=32,
             allowed_sizes=(32, 64),
         )
-
-
-def test_uncupported_mode():
-    with pytest.raises(ValueError, match="mode must be"):
-        with pytest.warns(FutureWarning):
-            AESCounter(mode="unsupported")
 
 
 def test_check_state_array_no_array():

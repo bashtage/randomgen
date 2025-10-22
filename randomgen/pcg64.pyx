@@ -2,8 +2,6 @@
 
 import numpy as np
 
-from randomgen._deprecated_value import _DeprecatedValue
-
 __all__ = ["PCG64", "LCG128Mix", "PCG64DXSM"]
 
 DEFAULT_MULTIPLIER = 47026247687942121848144207491837523525
@@ -40,7 +38,7 @@ cdef double lcg128mix_double(void* st) noexcept nogil:
 
 cdef class PCG64(BitGenerator):
     r"""
-    PCG64(seed=None, inc=0, *, variant="xsl-rr", numpy_seed=False, mode="sequence")
+    PCG64(seed=None, inc=0, *, variant="xsl-rr", numpy_seed=False)
 
     Container for the PCG-64 pseudo-random number generator.
 
@@ -69,17 +67,6 @@ cdef class PCG64(BitGenerator):
         When using "numpy", ``inc`` must be ``None``.
 
         .. versionadded: 2.0.0
-
-    mode : {None, "sequence", "numpy"}, optional
-        "sequence" uses a SeedSequence to transforms the seed into an initial
-        state. "numpy" also uses a SeedSequence but seeds the generator in a
-        way that is identical to NumPy. When using "numpy", ``inc`` must be
-        ``None``. Additionally, to match NumPy, variant must be ``xsl-rr``
-        (this is not checked).
-
-        .. deprecated: 2.0.0
-           mode is deprecated. Use numpy_seed tp enforce numpy-matching seeding
-
 
     Attributes
     ----------
@@ -161,9 +148,8 @@ cdef class PCG64(BitGenerator):
             *,
             variant="xsl-rr",
             numpy_seed=False,
-            mode=_DeprecatedValue
     ):
-        BitGenerator.__init__(self, seed, mode=mode, numpy_seed=numpy_seed)
+        BitGenerator.__init__(self, seed, numpy_seed=numpy_seed)
 
         self.rng_state.pcg_state = <pcg64_random_t *>PyArray_malloc_aligned(
             sizeof(pcg64_random_t)
@@ -971,9 +957,8 @@ cdef class PCG64DXSM(PCG64):
 
     Container for the PCG-64 updated with a 64-bit mult using DXSM output func.
 
-    Pre-configured alias for PCG64 with variant="dxsm" and mode="sequence".
-    This bit generator will likely become the default in NumPy in the near
-    future ([3]_).
+    Pre-configured alias for PCG64 with variant="dxsm". This bit generator will
+    likely become the default in NumPy in the near future ([3]_).
 
     Parameters
     ----------

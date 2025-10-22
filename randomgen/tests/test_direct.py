@@ -43,7 +43,6 @@ from randomgen import (
     Xoshiro512,
     test as rg_tester,
 )
-from randomgen._deprecated_value import _DeprecatedValue
 import randomgen._pickle as rg_pkl
 from randomgen.common import Interface
 from randomgen.seed_sequence import ISeedSequence
@@ -61,7 +60,6 @@ aes = AESCounter()
 HAS_AESNI = aes.use_aesni
 
 USE_AESNI = [True, False] if HAS_AESNI else [False]
-NO_MODE_SUPPORT = [EFIIX64, LXM, Romu, RDRAND, Tyche, Squares, BlaBla]
 
 try:
     import cffi  # noqa: F401
@@ -221,18 +219,8 @@ class Base:
             data = [int(line.split(",")[-1].strip(), 0) for line in csv]
             return {"seed": seed, "data": np.array(data, dtype=cls.dtype)}
 
-    def test_deprecated_mode(self):
-        if self.bit_generator in NO_MODE_SUPPORT or isinstance(
-            self.bit_generator,
-            CustomPartial,
-        ):
-            pytest.skip("Never supported mode")
-        with pytest.warns(FutureWarning):
-            self.setup_bitgenerator([0], mode="sequence")
-
-    def setup_bitgenerator(self, seed, mode=None):
-        kwargs = {} if mode is None else {"mode": mode}
-        return self.bit_generator(*seed, **kwargs)
+    def setup_bitgenerator(self, seed):
+        return self.bit_generator(*seed)
 
     def test_default(self):
         bg = self.setup_bitgenerator([None])
@@ -808,8 +796,8 @@ class TestPCG64XSLRR(Base):
         cls.large_advance_initial = 141078743063826365544432622475512570578
         cls.large_advance_final = 32639015182640331666105117402520879107
 
-    def setup_bitgenerator(self, seed, mode=_DeprecatedValue, inc: int | None = None):
-        return self.bit_generator(*seed, mode=mode, variant="xsl-rr", inc=inc)
+    def setup_bitgenerator(self, seed, inc: int | None = None):
+        return self.bit_generator(*seed, variant="xsl-rr", inc=inc)
 
     def test_seed_float_array(self):
         rs = np.random.Generator(self.setup_bitgenerator(self.data1["seed"]))
@@ -905,8 +893,6 @@ class TestPhilox(Random123):
     def test_numpy_mode(self):
         ss = SeedSequence(0)
         bg = self.setup_bitgenerator([ss], numpy_seed=True)
-        with pytest.warns(FutureWarning):
-            self.setup_bitgenerator([ss], mode="numpy")
         assert isinstance(bg, Philox)
 
     def test_seed_key(self):
@@ -1363,8 +1349,8 @@ class TestPCG32(TestPCG64XSLRR):
         cls.large_advance_initial = 645664597830827402
         cls.large_advance_final = 3
 
-    def setup_bitgenerator(self, seed, mode=_DeprecatedValue, inc=None):
-        return self.bit_generator(*seed, inc=inc, mode=mode)
+    def setup_bitgenerator(self, seed, inc=None):
+        return self.bit_generator(*seed, inc=inc)
 
     def test_advance_symmetry(self):
         rs = np.random.Generator(self.setup_bitgenerator(self.data1["seed"]))
@@ -1428,7 +1414,7 @@ class TestRDRAND(Base):
         cls.invalid_seed_types = [1, np.array([1])]
         cls.invalid_seed_values = []
 
-    def setup_bitgenerator(self, seed, mode=None):
+    def setup_bitgenerator(self, seed):
         return self.bit_generator(*seed)
 
     def test_initialization(self):
@@ -1784,12 +1770,6 @@ class TestSPECK128(TestHC128):
             self.bit_generator(rounds=27.5)
 
 
-def test_mode():
-    with pytest.raises(ValueError, match="mode must be one of:"):
-        with pytest.warns(FutureWarning):
-            MT19937(mode="unknown")
-
-
 class TestLXM(Base):
     @classmethod
     def setup_class(cls):
@@ -1932,7 +1912,7 @@ class TestPCG64DXSM(Base):
         cls.large_advance_initial = 262626489767919729675955844831248137855
         cls.large_advance_final = 326675794918500479020985263602132957772
 
-    def setup_bitgenerator(self, seed, mode=None, inc=0):
+    def setup_bitgenerator(self, seed, inc=0):
         return self.bit_generator(*seed, inc=inc)
 
     def test_large_advance(self):
@@ -2144,15 +2124,9 @@ class TestRomuTrio(TestLXM):
 
 def test_numpy_mode_error_pcg64():
     with pytest.raises(ValueError, match="variant must be"):
-        with pytest.warns(FutureWarning):
-            PCG64(variant="dxsm-128", mode="numpy")
-    with pytest.raises(ValueError, match="variant must be"):
         PCG64(variant="dxsm-128", numpy_seed=True)
     with pytest.raises(ValueError, match="inc must be"):
         PCG64(0, inc=1, numpy_seed=True)
-    with pytest.raises(ValueError, match="inc must be none"):
-        with pytest.warns(FutureWarning):
-            PCG64(0, inc=1, mode="numpy")
 
 
 def test_test_runner():

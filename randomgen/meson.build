@@ -322,7 +322,6 @@ subdir('tests')
 
 top_level_py_list = [
     '__init__.py',
-    '_deprecated_value.py',
     '_pickle.py',
     '_register.py',
     'conftest.py',
