@@ -17,3 +17,5 @@ ruff
 flake8
 flake8-pyi
 zipp>=3.19.1 # not directly required, pinned by Snyk to avoid a vulnerability
+jinja2
+joblib

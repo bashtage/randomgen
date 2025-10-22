@@ -22,6 +22,8 @@ from randomgen import (
     ThreeFry,
     Xoshiro256,
     Xoshiro512,
+    Squares,
+    Tyche,
 )
 
 ALL_BIT_GENS = [
@@ -44,6 +46,8 @@ ALL_BIT_GENS = [
     Xoshiro256,
     Xoshiro512,
     Romu,
+    Squares,
+    Tyche,
 ]
 JUMPABLE = [bg for bg in ALL_BIT_GENS if hasattr(bg, "jumped")]
 
@@ -55,6 +59,7 @@ SPECIALS = {
     LCG128Mix: {"output": ["upper"]},
     PCG64: {"variant": ["dxsm", "dxsm-128", "xsl-rr"]},
     Romu: {"variant": ["quad", "trio"]},
+    Tyche: {"original": [True, False]},
 }
 OUTPUT = defaultdict(lambda: 64)
 OUTPUT.update({MT19937: 32, DSFMT: 32})
