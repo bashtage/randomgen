@@ -15,6 +15,14 @@ v2.3.0
     This change is backward incompatible. If ``mode`` is essential, you should continue to use legacy
     versions.
 
+- Moved to the build system to meson which improves build time.
+- Fixed a breaking change that affected the use of :func:`functools.partial` test suite in
+  Python 3.14.
+
+.. note::
+
+   There was no version 2.2.0.
+
 v2.1.0
 ======
 - Fixed a bug in :class:`~randomgen.pcg64.LCG128Mix` that resulted in ``inc``

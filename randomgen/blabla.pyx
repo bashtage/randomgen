@@ -351,12 +351,13 @@ cdef class BlaBla(BitGenerator):
 
     def advance(self, delta):
         """
-        Advance the state by delta steps
+        Advance the state by delta steps.
 
         Parameters
         ----------
         delta : int
-            Number of steps to advance the state.
+            Number of steps to advance the state. Delta can be any integer value,
+            but is wrapped to be in [0, 2**128) which is the size of the counter.
         """
         # Squeeze with wrap into [0, 2**128)
         delta = delta % (1 << 128)
