@@ -14,7 +14,7 @@ cdef double blabla_double(void* st) noexcept nogil:
 
 cdef class BlaBla(BitGenerator):
     """
-    BlaBla(seed=None, *, counter=None, key=None, rounds=10, mode="sequence")
+    BlaBla(seed=None, *, counter=None, key=None, rounds=10)
 
     Container for the BlaBla family of counter pseudo-random number generators
 
@@ -351,12 +351,13 @@ cdef class BlaBla(BitGenerator):
 
     def advance(self, delta):
         """
-        Advance the state by delta steps
+        Advance the state by delta steps.
 
         Parameters
         ----------
         delta : int
-            Number of steps to advance the state.
+            Number of steps to advance the state. Delta can be any integer value,
+            but is wrapped to be in [0, 2**128) which is the size of the counter.
         """
         # Squeeze with wrap into [0, 2**128)
         delta = delta % (1 << 128)

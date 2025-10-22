@@ -2,8 +2,6 @@
 
 import numpy as np
 
-from randomgen._deprecated_value import _DeprecatedValue
-
 __all__ = ["Xoroshiro128"]
 
 cdef uint64_t xoroshiro128_uint64(void* st) noexcept nogil:
@@ -26,7 +24,7 @@ cdef double xoroshiro128plusplus_double(void* st) noexcept nogil:
 
 cdef class Xoroshiro128(BitGenerator):
     """
-    Xoroshiro128(seed=None, *, plusplus=False, mode="sequence")
+    Xoroshiro128(seed=None, *, plusplus=False)
 
     Container for the xoroshiro128+/++ pseudo-random number generator.
 
@@ -42,13 +40,6 @@ cdef class Xoroshiro128(BitGenerator):
     plusplus : bool, default False
         Whether to use the ++ version (xoroshiro128++). The default is False
         which uses the xoroshiro128+ PRNG which
-    mode : {None, "sequence"}
-        Deprecated parameter. Do not use.
-
-        .. deprecated: 2.0.0
-
-           Starting in version 2, only seed sequences are supported.
-
 
     Attributes
     ----------
@@ -128,8 +119,8 @@ cdef class Xoroshiro128(BitGenerator):
     .. [1] "xoroshiro+ / xorshift* / xorshift+ generators and the PRNG shootout",
            https://prng.di.unimi.it/
     """
-    def __init__(self, seed=None, *, plusplus=False, mode=_DeprecatedValue):
-        BitGenerator.__init__(self, seed, mode=mode)
+    def __init__(self, seed=None, *, plusplus=False):
+        BitGenerator.__init__(self, seed)
         self.seed(seed)
         self._plusplus = plusplus
         self._set_generators()

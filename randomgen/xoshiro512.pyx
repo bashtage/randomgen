@@ -2,8 +2,6 @@
 
 import numpy as np
 
-from randomgen._deprecated_value import _DeprecatedValue
-
 __all__ = ["Xoshiro512"]
 
 cdef uint64_t xoshiro512_uint64(void* st) noexcept nogil:
@@ -17,7 +15,7 @@ cdef double xoshiro512_double(void* st) noexcept nogil:
 
 cdef class Xoshiro512(BitGenerator):
     """
-    Xoshiro512(seed=None, *, mode="sequence")
+    Xoshiro512(seed=None)
 
     Container for the xoshiro512** pseudo-random number generator.
 
@@ -30,12 +28,6 @@ cdef class Xoshiro512(BitGenerator):
         is ``None``, then  data is read from ``/dev/urandom`` (or the
         Windows analog) if available. If unavailable, a hash of the time
         and process ID is used.
-    mode : {None, "sequence"}
-        Deprecated parameter. Do not use.
-
-        .. deprecated: 2.0.0
-
-           Starting in version 2, only seed sequences are supported.
 
 
     Attributes
@@ -112,8 +104,8 @@ cdef class Xoshiro512(BitGenerator):
     .. [1] "xoroshiro+ / xorshift* / xorshift+ generators and the PRNG shootout",
            https://prng.di.unimi.it/
     """
-    def __init__(self, seed=None, *, mode=_DeprecatedValue):
-        BitGenerator.__init__(self, seed, mode=mode)
+    def __init__(self, seed=None):
+        BitGenerator.__init__(self, seed)
         self.seed(seed)
 
         self._bitgen.state = <void *>&self.rng_state

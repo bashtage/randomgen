@@ -2,8 +2,6 @@
 
 import numpy as np
 
-from randomgen._deprecated_value import _DeprecatedValue
-
 __all__ = ["Philox"]
 
 DEF PHILOX_BUFFER_SIZE=4
@@ -43,7 +41,7 @@ cdef uint64_t philox2x32_raw(void *st) noexcept nogil:
 
 cdef class Philox(BitGenerator):
     """
-    Philox(seed=None, *, counter=None, key=None, number=4, width=64, numpy_seed=False, mode="sequence")
+    Philox(seed=None, *, counter=None, key=None, number=4, width=64, numpy_seed=False)
 
     Container for the Philox family of pseudo-random number generators.
 
@@ -80,16 +78,6 @@ cdef class Philox(BitGenerator):
         When using "numpy", ``inc`` must be ``None``.
 
         .. versionadded: 2.0.0
-
-    mode : {None, "sequence", "numpy"}, optional
-        "sequence" uses a SeedSequence to transforms the seed into an initial
-        state. "numpy" also uses a SeedSequence but seeds the generator in a
-        way that is identical to NumPy. When using "numpy", ``inc`` must be
-        ``None``. Additionally, to match NumPy, variant must be ``xsl-rr``
-        (this is not checked).
-
-        .. deprecated: 2.0.0
-           mode is deprecated. Use numpy_seed tp enforce numpy-matching seeding
 
     Attributes
     ----------
@@ -176,8 +164,8 @@ cdef class Philox(BitGenerator):
     cdef int w
 
     def __init__(self, seed=None, *, counter=None, key=None, number=4,
-                 width=64, numpy_seed=False, mode=_DeprecatedValue):
-        BitGenerator.__init__(self, seed, mode=mode, numpy_seed=numpy_seed)
+                 width=64, numpy_seed=False):
+        BitGenerator.__init__(self, seed, numpy_seed=numpy_seed)
         if number not in (2, 4):
             raise ValueError("number must be either 2 or 4")
         if width not in (32, 64):

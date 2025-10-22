@@ -5,7 +5,6 @@ import numpy as np
 import pandas as pd
 
 from randomgen import (
-    BlaBla,
     DSFMT,
     EFIIX64,
     HC128,
@@ -20,6 +19,7 @@ from randomgen import (
     SFMT,
     SPECK128,
     AESCounter,
+    BlaBla,
     ChaCha,
     Philox,
     Romu,
@@ -91,6 +91,7 @@ class PCG64DXSM128(PCG64):
     def __init__(self, *args, **kwargs):
         kwargs.pop("variant", None)
         super().__init__(*args, variant="dxsm-128", **kwargs)
+
 
 class TycheOpenRand(Tyche):
     def __init__(self, *args, **kwargs):

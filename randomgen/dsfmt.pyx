@@ -2,8 +2,6 @@
 
 import numpy as np
 
-from randomgen._deprecated_value import _DeprecatedValue
-
 __all__ = ["DSFMT"]
 
 DEF DSFMT_MEXP = 19937
@@ -25,7 +23,7 @@ cdef uint64_t dsfmt_raw(void *st) noexcept nogil:
 
 cdef class DSFMT(BitGenerator):
     """
-    DSFMT(seed=None, *, mode="sequence")
+    DSFMT(seed=None)
 
     Container for the SIMD-based Mersenne Twister pseudo RNG.
 
@@ -38,12 +36,6 @@ cdef class DSFMT(BitGenerator):
         ``None`` (the default). If `seed` is ``None``, then 764 32-bit unsigned
         integers are read from ``/dev/urandom`` (or the Windows analog) if
         available. If unavailable, a hash of the time and process ID is used.
-    mode : {None, "sequence"}
-        Deprecated parameter. Do not use.
-
-        .. deprecated: 2.0.0
-
-           Starting in version 2, only seed sequences are supported.
 
     Attributes
     ----------
@@ -114,8 +106,8 @@ cdef class DSFMT(BitGenerator):
            Sequences and Their Applications - SETA, 290--298, 2008.
     """
 
-    def __init__(self, seed=None, *, mode=_DeprecatedValue):
-        BitGenerator.__init__(self, seed, mode=mode)
+    def __init__(self, seed=None):
+        BitGenerator.__init__(self, seed)
         self.rng_state.state = <dsfmt_t *>PyArray_malloc_aligned(sizeof(dsfmt_t))
         self.rng_state.buffered_uniforms = <double *>PyArray_calloc_aligned(
             DSFMT_N64, sizeof(double)

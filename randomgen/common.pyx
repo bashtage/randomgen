@@ -10,7 +10,6 @@ from numpy.random import SeedSequence
 cimport numpy as np
 from numpy.random.bit_generator cimport BitGenerator as _BitGenerator
 
-from randomgen._deprecated_value import _DeprecatedValue
 from randomgen.seed_sequence import ISeedSequence
 
 ISEED_SEQUENCES = (ISeedSequence, np.random.bit_generator.ISeedSequence)
@@ -54,26 +53,8 @@ cdef class BitGenerator(_BitGenerator):
     """
     Abstract class for all BitGenerators
     """
-    def __init__(self, seed, *, numpy_seed=False, mode=_DeprecatedValue):
-        if mode is not _DeprecatedValue:
-            msg = ("mode is deprecated and will be removed in a future version. "
-                   "Seeding defaults to a numpy.random.SeedSequence instance.")
-            if "numpy" in self._supported_modes():
-                msg += " Use numpy_seed=True to enforce numpy-compatible seeding."
-            warnings.warn(msg, FutureWarning)
-        if mode is not _DeprecatedValue and (
-                not isinstance(mode, str) or mode.lower() not in self._supported_modes()
-        ):
-            if len(self._supported_modes()) == 1:
-                msg = f"mode must be {self._supported_modes()[0]}"
-            else:
-                msg = (
-                        "mode must be one of: " +
-                        ", ".join(f"\"{mode}\"" for mode in self._supported_modes())
-                )
-            raise ValueError(msg)
-        mode = mode.lower() if isinstance(mode, str) else mode
-        self.mode = "numpy" if (numpy_seed or mode == "numpy") else "sequence"
+    def __init__(self, seed, *, numpy_seed=False):
+        self.mode = "numpy" if numpy_seed else "sequence"
         super().__init__(seed)
         if type(self) is BitGenerator:
             raise NotImplementedError(
