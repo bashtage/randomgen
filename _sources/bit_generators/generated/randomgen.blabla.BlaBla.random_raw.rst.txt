@@ -1,0 +1,6 @@
+﻿randomgen.blabla.BlaBla.random\_raw
+===================================
+
+.. currentmodule:: randomgen.blabla
+
+.. automethod:: BlaBla.random_raw

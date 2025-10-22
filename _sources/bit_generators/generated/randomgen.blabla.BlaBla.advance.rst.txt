@@ -1,0 +1,6 @@
+﻿randomgen.blabla.BlaBla.advance
+===============================
+
+.. currentmodule:: randomgen.blabla
+
+.. automethod:: BlaBla.advance

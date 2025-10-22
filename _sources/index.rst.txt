@@ -100,8 +100,8 @@ generators, 'in addition' to the standard PRNG in NumPy.  The included PRNGs are
   arbitrary number of steps or generating independent streams. See the
   `Random123`_ page for more details about this class of PRNG.
 * Other cryptographic-based generators: :class:`~randomgen.aes.AESCounter`,
-  :class:`~randomgen.speck128.SPECK128`, :class:`~randomgen.chacha.ChaCha`, and
-  :class:`~randomgen.hc128.HC128`.
+  :class:`~randomgen.speck128.SPECK128`, :class:`~randomgen.chacha.ChaCha`,
+  :class:`~randomgen.hc128.HC128`, and :class:`~randomgen.blabla.BlaBla`.
 * XoroShiro128+/++ - Improved version of XorShift128+ with better performance
   and statistical quality. Like the XorShift generators, it can be jumped
   to produce multiple streams in parallel applications. See
@@ -114,6 +114,8 @@ generators, 'in addition' to the standard PRNG in NumPy.  The included PRNGs are
   :meth:`~randomgen.xorshift1024.Xorshift1024.jumped` for details. More information
   about these PRNGs is available at the
   `xorshift, xoroshiro and xoshiro authors' page`_.
+* Other PRNGs including :class:`~randomgen.romu.Romu`, :class:`~randomgen.tyche.Tyche`,
+  and :class:`~randomgen.squares.Squares`.
 
 .. _`NumPy's documentation`: https://docs.scipy.org/doc/numpy/reference/routines.random.html
 .. _`dSFMT authors' page`: http://www.math.sci.hiroshima-u.ac.jp/~m-mat/MT/SFMT/
@@ -150,6 +152,7 @@ New Features
    Comparing Performance <performance>
    extending
    custom-bit-generators.ipynb
+   Shared functionality <common>
    Reading System Entropy <entropy>
    references
 

@@ -2,6 +2,26 @@
 
 Change Log
 ----------
+v2.3.0
+======
+- Added the :class:`~randomgen.blabla.BlaBla` PRNG which is based on the Blake 2b
+  hash function.  :class:`~randomgen.blabla.BlaBla` is a counter-based PRNG like
+  :class:`~randomgen.aes.AESCounter` and supports both :meth:`~randomgen.blabla.BlaBla.advance`
+  and :meth:`~randomgen.blabla.BlaBla.jumped`.
+- Removed ``mode`` from bit generator initialization. This argument has been deprecated since release 2.0.0.
+
+.. warning::
+
+    This change is backward incompatible. If ``mode`` is essential, you should continue to use legacy
+    versions.
+
+- Moved to the build system to meson which improves build time.
+- Fixed a breaking change that affected the use of :func:`functools.partial` test suite in
+  Python 3.14.
+
+.. note::
+
+   There was no version 2.2.0.
 
 v2.1.0
 ======

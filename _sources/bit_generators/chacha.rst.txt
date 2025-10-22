@@ -1,4 +1,4 @@
-ChaCha Cipher-based RNG
+ChaCha cipher-based RNG
 -----------------------
 
 .. module:: randomgen.chacha

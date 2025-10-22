@@ -1,0 +1,6 @@
+﻿randomgen.blabla.BlaBla.seed
+============================
+
+.. currentmodule:: randomgen.blabla
+
+.. automethod:: BlaBla.seed

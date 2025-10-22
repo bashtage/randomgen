@@ -1,0 +1,6 @@
+﻿randomgen.blabla.BlaBla.state
+=============================
+
+.. currentmodule:: randomgen.blabla
+
+.. autoattribute:: BlaBla.state
