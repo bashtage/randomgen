@@ -50,7 +50,7 @@ jobs:
     displayName: 'List Configuration'
 
   - pwsh: |
-      python -m pip install -ve . --no-build-isolation -Csetup-args=-vsenv
+      python -m pip install -ve . --no-build-isolation -Csetup-args=--vsenv
     displayName: 'Install (editable)'
     condition: ne(variables['cython.coverage'], 'true')
 
