@@ -8,8 +8,8 @@ on:
 
 jobs:
   build_wheels:
-    runs-on: ubuntu-latest
-    name: ${{ matrix.os }}, Python ${{ matrix.python }}
+    runs-on: windows-latest
+    name: Build wheel using clang-cl on Windows
     strategy:
       fail-fast: false
       matrix:
