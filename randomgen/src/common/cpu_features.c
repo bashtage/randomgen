@@ -4,7 +4,7 @@ void feature_flags(int flags[32], int major)
 {
     int i;
 #if defined(HAVE_CPUID) && HAVE_CPUID
-#if defined(__clang__) || defined(__GNUC__)
+#if (defined(__clang__) || defined(__GNUC__)) && !defined(_MSC_VER)
     uint32_t num_ids = 0, reg  = 0, eax = 0, ebx = 0, ecx = 0, edx = 0;
     num_ids = __get_cpuid_max(0, &ebx);
     ebx = 0;

@@ -11,7 +11,7 @@
 /* windows msvc */
 
 #ifndef MSVCFORCEINLINE
-#ifndef _DEBUG
+#if !defined(_DEBUG) && !defined(__clang__)
 #define MSVCFORCEINLINE __forceinline
 #else
 #define MSVCFORCEINLINE
