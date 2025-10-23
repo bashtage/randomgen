@@ -55,7 +55,7 @@ jobs:
     condition: ne(variables['cython.coverage'], 'true')
 
   - pwsh: |
-      python -m pip install -ve .  --no-build-isolation -Csetup-args=-Dcython-coverage=true -Csetup-args=-vsenv
+      python -m pip install -ve .  --no-build-isolation -Csetup-args=-Dcython-coverage=true -Csetup-args=--vsenv
       python .\ci\azure\cythonize-pyx.py
     displayName: 'Install  (editable) and Transpile pyx to C for coverage'
     condition: eq(variables['cython.coverage'], 'true')

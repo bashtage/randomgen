@@ -29,6 +29,7 @@ jobs:
       CIBW_TEST_REQUIRES: pytest pytest-xdist
       CIBW_TEST_COMMAND: python -c "import randomgen; randomgen.test(['--skip-slow','-n','2'])"
       CIBW_REPAIR_WHEEL_COMMAND_LINUX: 'auditwheel repair --strip -w {dest_dir} {wheel}'
+      CIBW_BUILD_FRONTEND: 'build; args: --config-setting=setup-args=--vsenv'
       MKL_NUM_THREADS: 1
       OMP_NUM_THREADS: 1
       OPENLAS_NUM_THREADS: 1
