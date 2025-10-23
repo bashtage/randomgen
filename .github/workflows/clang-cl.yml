@@ -1,25 +1,22 @@
-name: Build wheels
+name: Build using clang-cl on Windows
 
 on:
   push:
     branches: [ main ]
   pull_request:
     branches: [ main ]
-  schedule:
-    - cron: '37 0 * * 2' # 2/weekly
 
 jobs:
   build_wheels:
+    runs-on: ubuntu-latest
     name: ${{ matrix.os }}, Python ${{ matrix.python }}
-    runs-on: ${{ matrix.os }}
-    defaults:
-      run:
-        shell: bash
     strategy:
       fail-fast: false
       matrix:
         python: [cp312]
-        os: [ubuntu-latest, windows-latest, macos-latest, macos-15-intel]
+    defaults:
+      run:
+        shell: bash
     env:
       BUILD_COMMIT: "main"
       CIBW_BUILD: ${{ matrix.python }}-*
@@ -28,8 +25,7 @@ jobs:
       CIBW_SKIP: "pp* *-musllinux_* *-win32"
       CIBW_TEST_REQUIRES: pytest pytest-xdist
       CIBW_TEST_COMMAND: python -c "import randomgen; randomgen.test(['--skip-slow','-n','2'])"
-      CIBW_REPAIR_WHEEL_COMMAND_LINUX: 'auditwheel repair --strip -w {dest_dir} {wheel}'
-      CIBW_BUILD_FRONTEND: 'build; args: --config-setting=setup-args=--vsenv'
+      CIBW_ENVIRONMENT: 'CC="clang-cl"'
       MKL_NUM_THREADS: 1
       OMP_NUM_THREADS: 1
       OPENLAS_NUM_THREADS: 1
@@ -37,7 +33,11 @@ jobs:
     steps:
       - uses: actions/checkout@v5
 
+      - name: Get clang-cl version
+        run: clang-cl --version
+
       - name: Build wheels
         uses: pypa/cibuildwheel@v3.2
         with:
           output-dir: wheelhouse
+
