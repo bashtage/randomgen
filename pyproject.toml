@@ -148,7 +148,7 @@ repository = "https://github.com/bashtage/randomgen"
 changelog = "https://bashtage.github.io/randomgen/change-log.html"
 
 [tool.meson-python.args]
-setup = ['--vsenv']
+
 
 [tool.setuptools_scm]
 version_file = "randomgen/_version.py"

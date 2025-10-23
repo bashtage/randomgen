@@ -7,7 +7,7 @@ parameters:
   # defaults for any parameters that are not specified
   name: ''
   vmImage: ''
-  BUILD_FLAGS: ''
+  BUILD_FLAGS: '-Csetup-args=-vsenv'
 
 
 jobs:

@@ -65,7 +65,16 @@ cython_c_args =  ['-DNPY_NO_DEPRECATED_API=NPY_1_7_API_VERSION']
 cython_libs = []
 sse2_def = []
 if cc.get_id() == 'msvc' or cc.get_id() == 'clang-cl'
-  cython_c_args += cc.get_supported_arguments(['/Zp16','/wd4146', '/GL','/arch:SSE4.2','/arch:AVX2'])
+  cython_c_args += cc.get_supported_arguments(['/Zp16','/wd4146', '/arch:SSE4.2','/arch:AVX2'])
+
+  if cc.get_id() == 'msvc'
+    cython_c_args += cc.get_supported_arguments(['/GL'])
+   endif
+
+  if cc.get_id() == 'clang-cl'
+    cython_c_args += cc.get_supported_arguments(['-maes', '-Wno-unused-but-set-variable', '-Wno-unused-function'])
+  endif
+
   if cc.has_argument('/arch:SSE4.2')
     sse2_def += ['-DHAVE_SSE2=1']
   endif
