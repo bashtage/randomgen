@@ -37,6 +37,10 @@ jobs:
     steps:
       - uses: actions/checkout@v5
 
+      - name: Check Clang-cl
+        run: clang-cl --version
+        if: runner.os == 'Windows'
+
       - name: Build wheels
         uses: pypa/cibuildwheel@v3.2
         with:
