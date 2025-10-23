@@ -46,7 +46,11 @@ jobs:
           BUILD_FLAGS: '-Csetup-args=-Dcython-coverage=true'
           cython.coverage: true
           PYTEST_PATTERN: "(not slow)"
-        python313_latest_coverage:
+        python313_clang:
+          python.version: '3.13'
+          CC: clang-20
+          use.clang: true
+        python313_latest:
           python.version: '3.13'
         python314_latest:
           python.version: '3.14'
@@ -106,6 +110,12 @@ jobs:
       python -m pip list
     displayName: 'List Configuration (PyPI)'
     condition: ne(variables['use.conda'], 'true')
+
+  - script: |
+      sudo apt update
+      sudo apt install clang-20 lldb-20 clangd-20
+    displayName: 'Install Clang'
+    condition: eq(variables['use.clang'], 'true')
 
   - script: |
       python -m pip install pip --upgrade
