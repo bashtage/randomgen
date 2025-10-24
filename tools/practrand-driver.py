@@ -364,7 +364,7 @@ Interleave generators byte-by-byte rather than output-by-output (i.e., in 8-byte
 if __name__ == "__main__":
     try:
         main()
-    except (BrokenPipeError, OSError):
+    except OSError:
         logging.log(logging.INFO, "Pipe broken, assuming complete")
 
     sys.stderr.close()

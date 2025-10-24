@@ -50,6 +50,9 @@ jobs:
           python.version: '3.13'
           CC: clang-20
           use.clang: true
+        python313_debug:
+          python.version: '3.13'
+          BUILD_FLAGS: '-Csetup-args=-Dbuildtype=debug -Cbuild-dir=build-dbg'
         python313_latest:
           python.version: '3.13'
         python314_latest:
@@ -60,8 +63,6 @@ jobs:
         python_312_no_coverage:
           python.version: '3.12'
           PYPI: true
-          # TODO: Enable debug
-          RANDOMGEN_DEBUG: true
           test.wheel: true
           coverage: false
       ${{ if eq(parameters.name, 'macOS') }}:

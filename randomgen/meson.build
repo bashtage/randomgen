@@ -40,12 +40,6 @@ npyrandom_lib = cc.find_library('npyrandom', dirs: npyrandom_path)
 # Needed to trick Cython, it won't do a relative import outside a package
 _cython_tree = [fs.copyfile('__init__.py')]
 
-# TODO: Check these flags
-# TODO: Enable cython coverage in CI
-# "language_level": "3",
-# "binding": True,
-# "linetrace": CYTHON_COVERAGE,
-
 _pcg64_def = []
 _blabla_def = []
 if get_option('pcg64-force-emulated')
