@@ -84,7 +84,3 @@ void random_wishart_large_df(bitgen_t *bitgen_state, int64_t df, npy_intp dim,
     }
   }
 }
-
-int main() {
-return 0;
-}
