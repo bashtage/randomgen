@@ -365,7 +365,7 @@ cdef class Squares(BitGenerator):
       position.
     - The remaining 8 words are selected at random (with replacement)
       from the set {1, 2, 3, ..., D, E, F} with the run that the word
-      in position i must differ from the work in position j.
+      in position i must differ from the word in position j.
 
     The ``SeedSequence`` used in the initialization of the bit generator is
     used as the source of randomness for
