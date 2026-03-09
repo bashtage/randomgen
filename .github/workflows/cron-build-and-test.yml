@@ -38,6 +38,6 @@ jobs:
       - uses: actions/checkout@v6
 
       - name: Build wheels
-        uses: pypa/cibuildwheel@v3.3
+        uses: pypa/cibuildwheel@v3.4
         with:
           output-dir: wheelhouse
