@@ -21,7 +21,7 @@
     
     
       
-        <title>128-bit Linear Congruential Generator (LCG) with Output Mixing - RandomGen v2.3.1 (+20)</title>
+        <title>128-bit Linear Congruential Generator (LCG) with Output Mixing - RandomGen v2.3.1 (+22)</title>
       
     
     
@@ -42,7 +42,7 @@
         <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
       
     
-        <link rel="stylesheet" type="text/css" href="../_static/sphinx_immaterial_theme.acf80fe7f4d9ef9e2.min.css?v=9e56d0d2" />
+        <link rel="stylesheet" type="text/css" href="../_static/sphinx_immaterial_theme.74c816e3f9967dd6e.min.css?v=6cfe2491" />
     <script>__md_scope=new URL("..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
     
       
@@ -87,7 +87,7 @@
 
 <header class="md-header md-header--shadow" data-md-component="header">
   <nav class="md-header__inner md-grid" aria-label="Header">
-    <a href="../index.html" title="RandomGen v2.3.1 (+20)" class="md-header__button md-logo" aria-label="RandomGen v2.3.1 (+20)" data-md-component="logo">
+    <a href="../index.html" title="RandomGen v2.3.1 (+22)" class="md-header__button md-logo" aria-label="RandomGen v2.3.1 (+22)" data-md-component="logo">
       <img src="../_static/casino.svg" alt="logo">
     </a>
     <label class="md-header__button md-icon" for="__drawer">
@@ -98,7 +98,7 @@
       <div class="md-header__ellipsis">
         <div class="md-header__topic">
           <span class="md-ellipsis">
-            RandomGen v2.3.1 (+20)
+            RandomGen v2.3.1 (+22)
           </span>
         </div>
         <div class="md-header__topic" data-md-component="header-topic">
@@ -193,10 +193,10 @@
 
 <nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
   <label class="md-nav__title" for="__drawer">
-    <a href="../index.html" title="RandomGen v2.3.1 (+20)" class="md-nav__button md-logo" aria-label="RandomGen v2.3.1 (+20)" data-md-component="logo">
+    <a href="../index.html" title="RandomGen v2.3.1 (+22)" class="md-nav__button md-logo" aria-label="RandomGen v2.3.1 (+22)" data-md-component="logo">
       <img src="../_static/casino.svg" alt="logo">
     </a>
-    RandomGen v2.3.1 (+20)
+    RandomGen v2.3.1 (+22)
   </label>
   
     <div class="md-nav__source">
@@ -2385,7 +2385,7 @@
 <h1 id="bit-linear-congruential-generator-lcg-with-output-mixing">128-bit Linear Congruential Generator (LCG) with Output Mixing<a class="headerlink" href="#bit-linear-congruential-generator-lcg-with-output-mixing" title="Link to this heading">¶</a></h1>
 <dl class="py class objdesc">
 <dt class="sig sig-object highlight sig-wrap py" id="randomgen.pcg64.LCG128Mix">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">randomgen.pcg64.</span></span><span class="sig-name descname"><span class="pre">LCG128Mix</span></span><span class="sig-paren">(</span><span class="sig-param-decl"><em class="sig-param"><a class="n reference internal" href="#randomgen.pcg64.LCG128Mix.__init__.seed" title="randomgen.pcg64.LCG128Mix.__init__.seed (Python parameter) — Random seed initializing the pseudo-random number generator. Can be an integer, a sequence of integers, a SeedSequence instance or None (the default)."><span class="n"><span class="pre">seed</span></span></a><span class="o"><span class="pre">=</span></span><code class="code python default_value docutils literal highlight highlight-python"><span class="kc">None</span></code></em>, </span><span class="sig-param-decl"><em class="sig-param"><a class="n reference internal" href="#randomgen.pcg64.LCG128Mix.__init__.inc" title="randomgen.pcg64.LCG128Mix.__init__.inc (Python parameter) — The increment in the LCG."><span class="n"><span class="pre">inc</span></span></a><span class="o"><span class="pre">=</span></span><code class="code python default_value docutils literal highlight highlight-python"><span class="kc">None</span></code></em>, </span><span class="sig-param-decl"><em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, </span><span class="sig-param-decl"><em class="sig-param"><a class="n reference internal" href="#randomgen.pcg64.LCG128Mix.__init__.multiplier" title="randomgen.pcg64.LCG128Mix.__init__.multiplier (Python parameter) — The multipler to use in the LCG."><span class="n"><span class="pre">multiplier</span></span></a><span class="o"><span class="pre">=</span></span><code class="code python default_value docutils literal highlight highlight-python"><span class="mi">47026247687942121848144207491837523525</span></code></em>, </span><span class="sig-param-decl"><em class="sig-param"><a class="n reference internal" href="#randomgen.pcg64.LCG128Mix.__init__.output" title="randomgen.pcg64.LCG128Mix.__init__.output (Python parameter) — The name of the output function or a ctypes function or function pointer with a signature uint64(uint64, uint64)."><span class="n"><span class="pre">output</span></span></a><span class="o"><span class="pre">=</span></span><code class="code python default_value docutils literal highlight highlight-python"><span class="s1">&#39;xsl-rr&#39;</span></code></em>, </span><span class="sig-param-decl"><em class="sig-param"><a class="n reference internal" href="#randomgen.pcg64.LCG128Mix.__init__.dxsm_multiplier" title="randomgen.pcg64.LCG128Mix.__init__.dxsm_multiplier (Python parameter) — The multiplier to use in the DXSM output function."><span class="n"><span class="pre">dxsm_multiplier</span></span></a><span class="o"><span class="pre">=</span></span><code class="code python default_value docutils literal highlight highlight-python"><span class="mi">15750249268501108917</span></code></em>, </span><span class="sig-param-decl"><em class="sig-param"><a class="n reference internal" href="#randomgen.pcg64.LCG128Mix.__init__.post" title="randomgen.pcg64.LCG128Mix.__init__.post (Python parameter) — Whether the mix the output before or after the next increment of the LCG is computed."><span class="n"><span class="pre">post</span></span></a><span class="o"><span class="pre">=</span></span><code class="code python default_value docutils literal highlight highlight-python"><span class="kc">True</span></code></em></span><span class="sig-paren">)</span><a class="headerlink" href="#randomgen.pcg64.LCG128Mix" title="Link to this definition">¶</a></dt>
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">randomgen.pcg64.</span></span><span class="sig-name descname"><span class="pre">LCG128Mix</span></span><span class="sig-paren">(</span><span class="sig-param-decl"><em class="sig-param"><a class="n reference internal" href="#randomgen.pcg64.LCG128Mix.__init__.seed" title="randomgen.pcg64.LCG128Mix.__init__.seed (Python parameter) — Random seed initializing the pseudo-random number generator. Can be an integer, a sequence of integers, a SeedSequence instance or None (the default)."><span class="n"><span class="pre">seed</span></span></a><span class="o"><span class="pre">=</span></span><code class="code python default_value docutils literal highlight highlight-python"><span class="kc">None</span></code></em>, </span><span class="sig-param-decl"><em class="sig-param"><a class="n reference internal" href="#randomgen.pcg64.LCG128Mix.__init__.inc" title="randomgen.pcg64.LCG128Mix.__init__.inc (Python parameter) — The increment in the LCG."><span class="n"><span class="pre">inc</span></span></a><span class="o"><span class="pre">=</span></span><code class="code python default_value docutils literal highlight highlight-python"><span class="kc">None</span></code></em>, </span><span class="sig-param-decl"><em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, </span><span class="sig-param-decl"><em class="sig-param"><a class="n reference internal" href="#randomgen.pcg64.LCG128Mix.__init__.multiplier" title="randomgen.pcg64.LCG128Mix.__init__.multiplier (Python parameter) — The multipler to use in the LCG."><span class="n"><span class="pre">multiplier</span></span></a><span class="o"><span class="pre">=</span></span><code class="code python default_value docutils literal highlight highlight-python"><span class="mi">47026247687942121848144207491837523525</span></code></em>, </span><span class="sig-param-decl"><em class="sig-param"><a class="n reference internal" href="#randomgen.pcg64.LCG128Mix.__init__.output" title="randomgen.pcg64.LCG128Mix.__init__.output (Python parameter) — The name of the output function or a ctypes function or function pointer with a signature uint64(uint64, uint64)."><span class="n"><span class="pre">output</span></span></a><span class="o"><span class="pre">=</span></span><code class="code python default_value docutils literal highlight highlight-python"><span class="s1">&#39;xsl-rr&#39;</span></code></em>, </span><span class="sig-param-decl"><em class="sig-param"><a class="n reference internal" href="#randomgen.pcg64.LCG128Mix.__init__.dxsm_multiplier" title="randomgen.pcg64.LCG128Mix.__init__.dxsm_multiplier (Python parameter) — The multiplier to use in the DXSM output function."><span class="n"><span class="pre">dxsm_multiplier</span></span></a><span class="o"><span class="pre">=</span></span><code class="code python default_value docutils literal highlight highlight-python"><span class="mi">15750249268501108917</span></code></em>, </span><span class="sig-param-decl"><em class="sig-param"><a class="n reference internal" href="#randomgen.pcg64.LCG128Mix.__init__.post" title="randomgen.pcg64.LCG128Mix.__init__.post (Python parameter) — Whether the mix the output before or after the next increment of the LCG is computed."><span class="n"><span class="pre">post</span></span></a><span class="o"><span class="pre">=</span></span><code class="code python default_value docutils literal highlight highlight-python"><span class="kc">True</span></code></em></span><span class="sig-paren">)</span><a class="headerlink" href="#randomgen.pcg64.LCG128Mix" title="Link to this definition">¶</a></dt>
 <dd><p>Customizable 128-bit LCG bit generator with output mixing</p>
 <p>Support changing the LCG’s multiplier and the output function,
 including support for user-defined output functions. This big generator
@@ -2623,7 +2623,7 @@ Available at: &lt;<a class="reference external" href="https://github.com/numpy/n
   
     Created using
     <a href="https://www.sphinx-doc.org/" target="_blank" rel="noopener">Sphinx</a>
-    8.1.3.
+    9.0.4.
      and
     <a href="https://github.com/jbms/sphinx-immaterial/" target="_blank" rel="noopener">Sphinx-Immaterial</a>
   
