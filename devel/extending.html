@@ -21,7 +21,7 @@
     
     
       
-        <title>Extending - RandomGen v2.3.1 (+22)</title>
+        <title>Extending - RandomGen v2.3.1 (+24)</title>
       
     
     
@@ -87,7 +87,7 @@
 
 <header class="md-header md-header--shadow" data-md-component="header">
   <nav class="md-header__inner md-grid" aria-label="Header">
-    <a href="index.html" title="RandomGen v2.3.1 (+22)" class="md-header__button md-logo" aria-label="RandomGen v2.3.1 (+22)" data-md-component="logo">
+    <a href="index.html" title="RandomGen v2.3.1 (+24)" class="md-header__button md-logo" aria-label="RandomGen v2.3.1 (+24)" data-md-component="logo">
       <img src="_static/casino.svg" alt="logo">
     </a>
     <label class="md-header__button md-icon" for="__drawer">
@@ -98,7 +98,7 @@
       <div class="md-header__ellipsis">
         <div class="md-header__topic">
           <span class="md-ellipsis">
-            RandomGen v2.3.1 (+22)
+            RandomGen v2.3.1 (+24)
           </span>
         </div>
         <div class="md-header__topic" data-md-component="header-topic">
@@ -193,10 +193,10 @@
 
 <nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
   <label class="md-nav__title" for="__drawer">
-    <a href="index.html" title="RandomGen v2.3.1 (+22)" class="md-nav__button md-logo" aria-label="RandomGen v2.3.1 (+22)" data-md-component="logo">
+    <a href="index.html" title="RandomGen v2.3.1 (+24)" class="md-nav__button md-logo" aria-label="RandomGen v2.3.1 (+24)" data-md-component="logo">
       <img src="_static/casino.svg" alt="logo">
     </a>
-    RandomGen v2.3.1 (+22)
+    RandomGen v2.3.1 (+24)
   </label>
   
     <div class="md-nav__source">
@@ -858,12 +858,12 @@ removing bounds checks and wrap around, providing array alignment information
  <span class="k">from</span><span class="w"> </span><span class="nn">randomgen.xoroshiro128</span><span class="w"> </span><span class="k">import</span> <span class="n">Xoroshiro128</span>
 
 
-<span class="nd">@cython</span><span class="o">.</span><span class="n">boundscheck</span><span class="p">(</span><span class="bp">False</span><span class="p">)</span>
-<span class="nd">@cython</span><span class="o">.</span><span class="n">wraparound</span><span class="p">(</span><span class="bp">False</span><span class="p">)</span>
+<span class="nd">@cython</span><span class="o">.</span><span class="n">boundscheck</span><span class="p">(</span><span class="kc">False</span><span class="p">)</span>
+<span class="nd">@cython</span><span class="o">.</span><span class="n">wraparound</span><span class="p">(</span><span class="kc">False</span><span class="p">)</span>
 <span class="k">def</span><span class="w"> </span><span class="nf">normals_zig</span><span class="p">(</span><span class="nb">Py_ssize_t</span> <span class="n">n</span><span class="p">):</span>
-    <span class="k">cdef</span><span class="w"> </span><span class="kt">Py_ssize_t</span> <span class="nf">i</span>
-    <span class="k">cdef</span><span class="w"> </span><span class="kt">bitgen_t</span> *<span class="nf">rng</span>
-    <span class="k">cdef</span><span class="w"> </span><span class="kt">const</span> <span class="kt">char</span> *<span class="nf">capsule_name</span><span class="w"> </span><span class="o">=</span> <span class="s">&quot;BitGenerator&quot;</span>
+    <span class="k">cdef</span><span class="w"> </span><span class="kt">Py_ssize_t</span> <span class="nv">i</span>
+    <span class="k">cdef</span><span class="w"> </span><span class="kt">bitgen_t</span> *<span class="nv">rng</span>
+    <span class="k">cdef</span><span class="w"> </span><span class="kt">const</span> <span class="kt">char</span> *<span class="nv">capsule_name</span><span class="w"> </span><span class="o">=</span> <span class="s">&quot;BitGenerator&quot;</span>
     <span class="k">cdef</span><span class="w"> </span><span class="kt">double</span>[<span class="p">::</span><span class="mf">1</span><span class="p">]</span> <span class="n">random_values</span>
 
     <span class="n">x</span> <span class="o">=</span> <span class="n">Xoroshiro128</span><span class="p">()</span>
@@ -883,12 +883,12 @@ removing bounds checks and wrap around, providing array alignment information
 </div>
 <p>The bit generator can also be directly accessed using the members of the bit
 generator’s structure.</p>
-<div class="highlight-cython notranslate"><div class="highlight"><pre><span></span><code><span class="nd">@cython</span><span class="o">.</span><span class="n">boundscheck</span><span class="p">(</span><span class="bp">False</span><span class="p">)</span>
-<span class="nd">@cython</span><span class="o">.</span><span class="n">wraparound</span><span class="p">(</span><span class="bp">False</span><span class="p">)</span>
+<div class="highlight-cython notranslate"><div class="highlight"><pre><span></span><code><span class="nd">@cython</span><span class="o">.</span><span class="n">boundscheck</span><span class="p">(</span><span class="kc">False</span><span class="p">)</span>
+<span class="nd">@cython</span><span class="o">.</span><span class="n">wraparound</span><span class="p">(</span><span class="kc">False</span><span class="p">)</span>
 <span class="k">def</span><span class="w"> </span><span class="nf">uniforms</span><span class="p">(</span><span class="nb">Py_ssize_t</span> <span class="n">n</span><span class="p">):</span>
-    <span class="k">cdef</span><span class="w"> </span><span class="kt">Py_ssize_t</span> <span class="nf">i</span>
-    <span class="k">cdef</span><span class="w"> </span><span class="kt">bitgen_t</span> *<span class="nf">rng</span>
-    <span class="k">cdef</span><span class="w"> </span><span class="kt">const</span> <span class="kt">char</span> *<span class="nf">capsule_name</span><span class="w"> </span><span class="o">=</span> <span class="s">&quot;BitGenerator&quot;</span>
+    <span class="k">cdef</span><span class="w"> </span><span class="kt">Py_ssize_t</span> <span class="nv">i</span>
+    <span class="k">cdef</span><span class="w"> </span><span class="kt">bitgen_t</span> *<span class="nv">rng</span>
+    <span class="k">cdef</span><span class="w"> </span><span class="kt">const</span> <span class="kt">char</span> *<span class="nv">capsule_name</span><span class="w"> </span><span class="o">=</span> <span class="s">&quot;BitGenerator&quot;</span>
     <span class="k">cdef</span><span class="w"> </span><span class="kt">double</span>[<span class="p">::</span><span class="mf">1</span><span class="p">]</span> <span class="n">random_values</span>
 
     <span class="n">x</span> <span class="o">=</span> <span class="n">Xoroshiro128</span><span class="p">()</span>
