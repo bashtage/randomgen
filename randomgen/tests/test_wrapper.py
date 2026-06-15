@@ -102,6 +102,18 @@ def test_random_raw(pcg_python, pcg_native):
         lambda bg: bg.integers(0, 2**64, dtype=np.uint64),
         lambda bg: bg.integers(0, 2**32, dtype=np.uint64, size=(7, 5, 3, 2)),
     ],
+    ids=[
+        "base",
+        "size-10",
+        "standard-normal",
+        "standard-normal-size-20-3",
+        "standard-normal-float32",
+        "standard-normal-size-20-3-float32",
+        "integers-32",
+        "integers-32-size-7-5-3-2",
+        "integers-64",
+        "integers-64-size-7-5-3-2",
+    ],
 )
 def test_against_ref(func, pcg_python, pcg_native):
     a = func(Generator(pcg_python))
