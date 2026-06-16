@@ -800,9 +800,15 @@ cdef class ExtendedGenerator:
             with self.lock, nogil:
                 random_wishart_large_df(&self._bitgen, df, dim, num, out_data, n_data)
         if size is None or size == ():
-            out.shape = (dim, dim)
+            try:
+                out = np.reshape(out, (dim, dim), copy=False)
+            except TypeError:
+                out.shape = (dim, dim)
         else:
-            out.shape = sz + (dim, dim)
+            try:
+                out = np.reshape(out, sz + (dim, dim), copy=False)
+            except TypeError:
+                out.shape = sz + (dim, dim)
         if rescale:
             out /= df
         return out
