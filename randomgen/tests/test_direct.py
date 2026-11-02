@@ -23,6 +23,10 @@ from randomgen import (
     LXM,
     MT64,
     MT19937,
+    MWC64X32,
+    MWC128X,
+    MWC128X32,
+    MWC192X,
     PCG32,
     PCG64,
     RDRAND,
@@ -2213,3 +2217,127 @@ class TestBlaBla(Base):
     def test_seed_key(self):
         with pytest.raises(ValueError, match="seed and key"):
             self.setup_bitgenerator([0], key=0, counter=0)
+
+
+class TestMWC192X(Base):
+    @classmethod
+    def setup_class(cls):
+        super().setup_class()
+        cls.bit_generator = MWC192X
+        cls.bits = 64
+        cls.dtype = np.uint64
+        cls.data1 = cls._read_csv(join(pwd, "./data/mwc192x-testset-1.csv"))
+        cls.data2 = cls._read_csv(join(pwd, "./data/mwc192x-testset-2.csv"))
+        cls.seed_error_type = TypeError
+        cls.invalid_seed_types = [("apple",), (2 + 3j,), (3.1,)]
+        cls.invalid_seed_values = [(-2,)]
+        # log2 of the jump and long-jump distances of the reference code
+        cls.jump_log2 = 96
+        cls.long_jump_log2 = 144
+        cls.jump_n = 0x9E3779B97F4A7C15 + (0x0123456789ABCDEF << 64)
+        # States reached from SeedSequence(0xDEADBEAF) by jump(), jump()
+        # twice, long_jump() and jump_n(jump_n) of the reference C code
+        # (see src/mwcx/mwcx-test-data-gen.c)
+        cls.ref_jump = [0x378C18A9317CEFEC, 0xA3122FCAD13E3A74, 0x4CCF8DE02AF05A17]
+        cls.ref_jump2 = [0xA402F4824C96FD18, 0x89FE66B5AE1C0A1C, 0x3C7769471B035208]
+        cls.ref_long_jump = [
+            0x766F5F67BFC844D6,
+            0x79E26C48292E3CAE,
+            0x738B12B17C7634E1,
+        ]
+        cls.ref_jump_n = [0x1296749179EBA3A7, 0x1B6682F57E9C91C7, 0x3EB11682E8DEF27]
+        # A seed whose SeedSequence output is not a valid state
+        cls.fallback_seed = 61
+
+    def words(self, bg):
+        return [bg.state["state"][name] for name in bg._names]
+
+    def set_words(self, bg, words):
+        state = bg.state
+        state["state"] = dict(zip(bg._names, words))
+        bg.state = state
+
+    def test_reference_jumps(self):
+        seed = self.data1["seed"][0]
+        bg = self.bit_generator(seed)
+        assert self.words(bg.jumped()) == self.ref_jump
+        assert self.words(bg.jumped(2)) == self.ref_jump2
+        bg.advance(2**self.long_jump_log2)
+        assert self.words(bg) == self.ref_long_jump
+        bg = self.bit_generator(seed).advance(self.jump_n)
+        assert self.words(bg) == self.ref_jump_n
+
+    def test_advance_symmetry(self):
+        bg = self.bit_generator(self.data1["seed"][0])
+        bg.random_raw(1000)
+        state = self.words(bg)
+        bg.advance(-1000)
+        assert_equal(bg.random_raw(1000), self.data1["data"])
+        assert self.words(bg.jumped(-1).advance(2**self.jump_log2)) == state
+
+    def test_seed_fallback(self):
+        bg = self.bit_generator(self.fallback_seed)
+        assert bg.state["state"]["c"] == 1
+
+    def test_invalid_state(self):
+        bg = self.bit_generator(self.data1["seed"][0])
+        words = self.words(bg)
+        with pytest.raises(ValueError, match="state is not valid"):
+            self.set_words(bg, [0] * len(words))
+        with pytest.raises(ValueError, match="state is not valid"):
+            self.set_words(bg, words[:-1] + [bg._a])
+        with pytest.raises(ValueError, match="must be in"):
+            self.set_words(bg, [2**bg._word_bits] + words[1:])
+
+
+class TestMWC128X(TestMWC192X):
+    @classmethod
+    def setup_class(cls):
+        super().setup_class()
+        cls.bit_generator = MWC128X
+        cls.data1 = cls._read_csv(join(pwd, "./data/mwc128x-testset-1.csv"))
+        cls.data2 = cls._read_csv(join(pwd, "./data/mwc128x-testset-2.csv"))
+        cls.jump_log2 = 64
+        cls.long_jump_log2 = 96
+        cls.jump_n = 0x9E3779B97F4A7C15 + (0x0123456789ABCDEF << 64)
+        cls.ref_jump = [0x817813F49D3ED2D1, 0xAA3D8684C281159D]
+        cls.ref_jump2 = [0xC607BC0DB8C92DCA, 0x814F18F907E73B2A]
+        cls.ref_long_jump = [0x8A0A18B33375C8AC, 0x198ACB1ED1AD5560]
+        cls.ref_jump_n = [0x54807E33BCFCCC66, 0xA72CE4A567B8A02E]
+        cls.fallback_seed = 920
+
+
+class TestMWC128X32(TestMWC192X):
+    @classmethod
+    def setup_class(cls):
+        super().setup_class()
+        cls.bit_generator = MWC128X32
+        cls.bits = 32
+        cls.dtype = np.uint32
+        cls.data1 = cls._read_csv(join(pwd, "./data/mwc128x32-testset-1.csv"))
+        cls.data2 = cls._read_csv(join(pwd, "./data/mwc128x32-testset-2.csv"))
+        cls.jump_log2 = 64
+        cls.long_jump_log2 = 96
+        cls.jump_n = 0x9E3779B97F4A7C15 + (0x0123456789ABCDEF << 64)
+        cls.ref_jump = [0x7A1F8053, 0x11635201, 0xCE3AF6B1, 0x1B6BFF72]
+        cls.ref_jump2 = [0x8CF33DEA, 0x866F4BD7, 0x0C8DAB7A, 0x2BA18B81]
+        cls.ref_long_jump = [0xA9D9C54D, 0xB4B948C1, 0x2190E965, 0x616E0173]
+        cls.ref_jump_n = [0x8ED6AB73, 0x26158A35, 0x59D83BCE, 0x51A9EB84]
+        cls.fallback_seed = 1226
+
+
+class TestMWC64X32(TestMWC128X32):
+    @classmethod
+    def setup_class(cls):
+        super().setup_class()
+        cls.bit_generator = MWC64X32
+        cls.data1 = cls._read_csv(join(pwd, "./data/mwc64x32-testset-1.csv"))
+        cls.data2 = cls._read_csv(join(pwd, "./data/mwc64x32-testset-2.csv"))
+        cls.jump_log2 = 32
+        cls.long_jump_log2 = 48
+        cls.jump_n = 0x9E3779B97F4A7C15
+        cls.ref_jump = [0x524EACF3, 0x72C5D1CA]
+        cls.ref_jump2 = [0x9A80E78A, 0xB041A5D8]
+        cls.ref_long_jump = [0x919D6B6A, 0x685C7E2B]
+        cls.ref_jump_n = [0xBAA48E47, 0xA7823455]
+        cls.fallback_seed = 176

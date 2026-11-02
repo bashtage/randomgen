@@ -115,7 +115,9 @@ generators, 'in addition' to the standard PRNG in NumPy.  The included PRNGs are
   about these PRNGs is available at the
   `xorshift, xoroshiro and xoshiro authors' page`_.
 * Other PRNGs including :class:`~randomgen.romu.Romu`, :class:`~randomgen.tyche.Tyche`,
-  and :class:`~randomgen.squares.Squares`.
+  :class:`~randomgen.squares.Squares`, and the scrambled multiply-with-carry
+  generators :class:`~randomgen.mwcx.MWC192X`, :class:`~randomgen.mwcx.MWC128X`,
+  :class:`~randomgen.mwcx.MWC128X32`, and :class:`~randomgen.mwcx.MWC64X32`.
 
 .. _`NumPy's documentation`: https://docs.scipy.org/doc/numpy/reference/routines.random.html
 .. _`dSFMT authors' page`: http://www.math.sci.hiroshima-u.ac.jp/~m-mat/MT/SFMT/

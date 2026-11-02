@@ -20,6 +20,7 @@ pyx_files = [
     "randomgen/mt19937.pyx",
     "randomgen/mt64.pyx",
     "randomgen/mtrand.pyx",
+    "randomgen/mwcx.pyx",
     "randomgen/pcg32.pyx",
     "randomgen/pcg64.pyx",
     "randomgen/philox.pyx",
