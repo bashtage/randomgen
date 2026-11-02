@@ -84,6 +84,38 @@ def test_smoke(python_pcg):
     assert isinstance(gen.integers(0, 2**64, dtype=np.uint64), np.integer)
 
 
+def test_state_getter_setter():
+    bit_gen = _PCG64(
+        PCG64_INITIAL_STATE["state"]["state"],
+        PCG64_INITIAL_STATE["state"]["inc"],
+    )
+
+    def state_getter():
+        return {"state": bit_gen._state, "inc": bit_gen._inc}
+
+    def state_setter(value):
+        bit_gen._state = value["state"]
+        bit_gen._inc = value["inc"]
+
+    bg = UserBitGenerator(
+        bit_gen.next_64(),
+        64,
+        next_32=bit_gen.next_32(),
+        state_getter=state_getter,
+        state_setter=state_setter,
+    )
+    state = bg.state
+    first = bg.random_raw(10)
+    bg.state = state
+    np.testing.assert_equal(bg.random_raw(10), first)
+    # The lock is re-entrant, so the state can be used while it is held
+    with bg.lock:
+        bg.state = bg.state
+    native = PCG64(0, None, variant="xsl-rr")
+    np.testing.assert_equal(bg.random_raw(), native.random_raw(11)[-1])
+
+
+@pytest.mark.thread_unsafe(reason="compares draws from shared fixtures")
 def test_random_raw(pcg_python, pcg_native):
     np.testing.assert_equal(pcg_python.random_raw(1000), pcg_native.random_raw(1000))
 
@@ -115,6 +147,7 @@ def test_random_raw(pcg_python, pcg_native):
         "integers-64-size-7-5-3-2",
     ],
 )
+@pytest.mark.thread_unsafe(reason="compares draws from shared fixtures")
 def test_against_ref(func, pcg_python, pcg_native):
     a = func(Generator(pcg_python))
     b = func(Generator(pcg_native))

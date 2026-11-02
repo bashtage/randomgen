@@ -171,7 +171,8 @@ cdef class MT19937(BitGenerator):
         """
         if iter < 0:
             raise ValueError("iter must be a positive integer")
-        mt19937_jump_n(&self.rng_state, iter)
+        with self.lock:
+            mt19937_jump_n(&self.rng_state, iter)
 
     def _jump_tester(self):
         """
@@ -278,11 +279,12 @@ cdef class MT19937(BitGenerator):
             state of the PRNG
         """
         key = np.zeros(RK_STATE_LEN, dtype=np.uint32)
-        for i in range(RK_STATE_LEN):
-            key[i] = self.rng_state.key[i]
+        with self.lock:
+            for i in range(RK_STATE_LEN):
+                key[i] = self.rng_state.key[i]
 
-        return {"bit_generator": fully_qualified_name(self),
-                "state": {"key": key, "pos": self.rng_state.pos}}
+            return {"bit_generator": fully_qualified_name(self),
+                    "state": {"key": key, "pos": self.rng_state.pos}}
 
     @state.setter
     def state(self, value):
@@ -299,6 +301,7 @@ cdef class MT19937(BitGenerator):
             raise ValueError("state must be for a {0} "
                              "PRNG".format(type(self).__name__))
         key = check_state_array(value["state"]["key"], RK_STATE_LEN, 32, "key")
-        for i in range(RK_STATE_LEN):
-            self.rng_state.key[i] = key[i]
-        self.rng_state.pos = value["state"]["pos"]
+        with self.lock:
+            for i in range(RK_STATE_LEN):
+                self.rng_state.key[i] = key[i]
+            self.rng_state.pos = value["state"]["pos"]

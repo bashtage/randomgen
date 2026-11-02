@@ -28,20 +28,6 @@ cdef class _TestSeninal:
 
 _test_sentinal = _TestSeninal()
 
-# Module level variables to save small allocations
-cdef np.ndarray WORDS_ARR = np.arange(16, dtype=np.uint8)
-cdef uint8_t[::1] WORDS = WORDS_ARR
-
-
-cdef void _reset_words():
-    cdef int i
-    for i in range(16):
-        WORDS[i] = i
-
-
-def _get_words():
-    return np.asarray(WORDS)
-
 
 cdef uint64_t squares_uint64(void* st) noexcept nogil:
     return squares_next64(<squares_state_t *>st)
@@ -128,14 +114,13 @@ cdef class _SequenceSampler:
             if out < max_value:
                 return out
 
-    cdef void shuffle(self, uint8_t[::1] array):
+    cdef void shuffle(self, uint8_t *array, intptr_t n):
         """
         Shuffle an array in place. Maximum size is
         16 due to the dependence on random_interval.
         """
-        cdef intptr_t i, n
+        cdef intptr_t i
         cdef uint64_t j
-        n = array.shape[0]
         for i in range(n - 1):
             j = i + self.random_inverval(n - i)
             tmp = array[i]
@@ -152,12 +137,14 @@ cdef uint64_t generate_key(_SequenceSampler seq_sampler):
     The core key generation implementation
     """
     cdef uint64_t out, i
-    cdef uint8_t[::1] tmp = WORDS
+    # Local so that concurrent calls do not share the buffer
+    cdef uint8_t tmp[16]
     cdef uint8_t last_value, next_value, old
 
     out = 0
-    _reset_words()
-    seq_sampler.shuffle(tmp)
+    for i in range(16):
+        tmp[i] = <uint8_t>i
+    seq_sampler.shuffle(tmp, 16)
     if not (tmp[0] & 0x1):
         old = tmp[0]
         tmp[0] += 1
@@ -502,15 +489,16 @@ cdef class Squares(BitGenerator):
             If seed values are out of range for the PRNG.
         """
 
-        if counter is not None:
-            self.rng_state.counter = self._check_value(counter, "counter", False)
-        else:
-            self.rng_state.counter = counter = 0
+        counter = 0 if counter is None else self._check_value(counter, "counter", False)
         if key is not None:
-            self.rng_state.key = self._check_value(key, "key", True)
-        else:
-            BitGenerator._seed_with_seed_sequence(self, seed, counter=counter)
-        self._reset_state_variables()
+            key = self._check_value(key, "key", True)
+        with self.lock:
+            self.rng_state.counter = counter
+            if key is not None:
+                self.rng_state.key = key
+            else:
+                BitGenerator._seed_with_seed_sequence(self, seed, counter=counter)
+            self._reset_state_variables()
 
     @property
     def state(self):
@@ -523,12 +511,14 @@ cdef class Squares(BitGenerator):
             Dictionary containing the information required to describe the
             state of the PRNG
         """
-        return {"bit_generator": fully_qualified_name(self),
-                "state": {"key": self.rng_state.key, "counter": self.rng_state.counter},
-                "variant": self.variant,
-                "has_uint32": self.rng_state.has_uint32,
-                "uinteger": self.rng_state.uinteger,
-                }
+        with self.lock:
+            return {"bit_generator": fully_qualified_name(self),
+                    "state": {"key": self.rng_state.key,
+                              "counter": self.rng_state.counter},
+                    "variant": self.variant,
+                    "has_uint32": self.rng_state.has_uint32,
+                    "uinteger": self.rng_state.uinteger,
+                    }
 
     @state.setter
     def state(self, value):
@@ -539,14 +529,15 @@ cdef class Squares(BitGenerator):
             raise ValueError("state must be for a {0} "
                              "PRNG".format(type(self).__name__))
         state = value["state"]
-        self.rng_state.key = state["key"]
-        self.rng_state.counter = state["counter"]
         variant = value["variant"]
         if variant not in (64, 32):
             raise ValueError("variant must be either 64 or 32.")
-        self.variant = variant
-        self._use64 = variant == 64
-        self._setup_bitgen()
+        with self.lock:
+            self.rng_state.key = state["key"]
+            self.rng_state.counter = state["counter"]
+            self.variant = variant
+            self._use64 = variant == 64
+            self._setup_bitgen()
 
     def advance(self, uint64_t delta):
         """
@@ -565,8 +556,9 @@ cdef class Squares(BitGenerator):
         self : Squares
             The PRNG advanced by delta steps.
         """
-        self.rng_state.counter += delta
-        self._reset_state_variables()
+        with self.lock:
+            self.rng_state.counter += delta
+            self._reset_state_variables()
         return self
 
     def jumped(self, intptr_t iter=1):

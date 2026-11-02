@@ -38,6 +38,11 @@ def mv_seed():
     return MV_SEED
 
 
+# Tests that restore the state of this fixture and then compare draws cannot
+# run in several threads at once (pytest-run-parallel)
+restores_state = pytest.mark.thread_unsafe(reason="restores the fixture's state")
+
+
 @pytest.fixture
 def extended_gen():
     pcg = PCG64(0)
@@ -559,6 +564,7 @@ def test_wishart_list_integer_scale():
     assert_allclose(w[:, 1].mean(0) / 10, scale[1], atol=0.1)
 
 
+@restores_state
 def test_wishart_chi2(extended_gen):
     state = extended_gen.state
     w = extended_gen.standard_wishart(10, 1, 10, rescale=False)
@@ -568,6 +574,7 @@ def test_wishart_chi2(extended_gen):
     assert_allclose(np.squeeze(w), c)
 
 
+@restores_state
 @pytest.mark.parametrize("df", [3, 5])
 def test_standard_vs_full_wishart(extended_gen, df):
     state = extended_gen.state
@@ -577,6 +584,7 @@ def test_standard_vs_full_wishart(extended_gen, df):
     assert_allclose(sw, w)
 
 
+@restores_state
 def test_standard_wishart_direct_small(extended_gen):
     bg = extended_gen.bit_generator
     state = bg.state
@@ -590,6 +598,7 @@ def test_standard_wishart_direct_small(extended_gen):
         assert_allclose(direct, w[i])
 
 
+@restores_state
 def test_standard_wishart_direct_large(extended_gen):
     bg = extended_gen.bit_generator
     state = bg.state
@@ -713,6 +722,7 @@ def test_random_long_double(extended_gen):
     assert out.dtype == expected_type
 
 
+@restores_state
 def test_random_long_double_out(extended_gen):
     state = extended_gen.state
     out = np.empty((10, 10), dtype=np.longdouble)
@@ -774,6 +784,7 @@ def test_random_float_out(seed):
     assert_allclose(actual, other)
 
 
+@restores_state
 def test_random_long_double_direct(extended_gen):
     state = extended_gen.state
     actual = extended_gen.random(10, dtype=np.longdouble)

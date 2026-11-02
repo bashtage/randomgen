@@ -283,28 +283,29 @@ cdef class Philox(BitGenerator):
         _seed = int_to_array(key, "key", self.n // 2 * self.w, self.w)
         dtype = np.uint64 if self.w==64 else np.uint32
         _seed = view_little_endian(_seed, dtype)
-        for i in range(self.n // 2):
-            if self.w == 32 and self.n == 2:
-                self.rng_state.state.state2x32.key.v[i] = _seed[i]
-            elif self.w == 32 and self.n == 4:
-                self.rng_state.state.state4x32.key.v[i] = _seed[i]
-            elif self.w == 64 and self.n == 2:
-                self.rng_state.state.state2x64.key.v[i] = _seed[i]
-            else:  # self.w == 64 and self.n == 4:
-                self.rng_state.state.state4x64.key.v[i] = _seed[i]
-
         counter = 0 if counter is None else counter
         counter = int_to_array(counter, "counter", self.n * self.w, self.w)
-        for i in range(self.n):
-            if self.w == 32 and self.n == 2:
-                self.rng_state.state.state2x32.ctr.v[i] = counter[i]
-            elif self.w == 32 and self.n == 4:
-                self.rng_state.state.state4x32.ctr.v[i] = counter[i]
-            elif self.w == 64 and self.n == 2:
-                self.rng_state.state.state2x64.ctr.v[i] = counter[i]
-            else:  # self.w == 64 and self.n == 4:
-                self.rng_state.state.state4x64.ctr.v[i] = counter[i]
-        self._reset_state_variables()
+        with self.lock:
+            for i in range(self.n // 2):
+                if self.w == 32 and self.n == 2:
+                    self.rng_state.state.state2x32.key.v[i] = _seed[i]
+                elif self.w == 32 and self.n == 4:
+                    self.rng_state.state.state4x32.key.v[i] = _seed[i]
+                elif self.w == 64 and self.n == 2:
+                    self.rng_state.state.state2x64.key.v[i] = _seed[i]
+                else:  # self.w == 64 and self.n == 4:
+                    self.rng_state.state.state4x64.key.v[i] = _seed[i]
+
+            for i in range(self.n):
+                if self.w == 32 and self.n == 2:
+                    self.rng_state.state.state2x32.ctr.v[i] = counter[i]
+                elif self.w == 32 and self.n == 4:
+                    self.rng_state.state.state4x32.ctr.v[i] = counter[i]
+                elif self.w == 64 and self.n == 2:
+                    self.rng_state.state.state2x64.ctr.v[i] = counter[i]
+                else:  # self.w == 64 and self.n == 4:
+                    self.rng_state.state.state4x64.ctr.v[i] = counter[i]
+            self._reset_state_variables()
 
     @property
     def state(self):
@@ -317,42 +318,43 @@ cdef class Philox(BitGenerator):
             Dictionary containing the information required to describe the
             state of the PRNG
         """
-        dtype = np.uint64 if self.w == 64 else np.uint32
-        ctr = np.empty(self.n, dtype=dtype)
-        key = np.empty(self.n // 2, dtype=dtype)
-        buffer = np.empty(self.n, dtype=dtype)
-        for i in range(self.n):
-            if self.n == 2 and self.w == 32:
-                ctr[i] = self.rng_state.state.state2x32.ctr.v[i]
-            elif self.n == 4 and self.w == 32:
-                ctr[i] = self.rng_state.state.state4x32.ctr.v[i]
-            elif self.n == 2 and self.w == 64:
-                ctr[i] = self.rng_state.state.state2x64.ctr.v[i]
-            else:  # self.n == 4 and self.w == 64
-                ctr[i] = self.rng_state.state.state4x64.ctr.v[i]
+        with self.lock:
+            dtype = np.uint64 if self.w == 64 else np.uint32
+            ctr = np.empty(self.n, dtype=dtype)
+            key = np.empty(self.n // 2, dtype=dtype)
+            buffer = np.empty(self.n, dtype=dtype)
+            for i in range(self.n):
+                if self.n == 2 and self.w == 32:
+                    ctr[i] = self.rng_state.state.state2x32.ctr.v[i]
+                elif self.n == 4 and self.w == 32:
+                    ctr[i] = self.rng_state.state.state4x32.ctr.v[i]
+                elif self.n == 2 and self.w == 64:
+                    ctr[i] = self.rng_state.state.state2x64.ctr.v[i]
+                else:  # self.n == 4 and self.w == 64
+                    ctr[i] = self.rng_state.state.state4x64.ctr.v[i]
 
-            if self.w == 64:
-                buffer[i] = self.rng_state.buffer[i].u64
-            else:
-                buffer[i] = self.rng_state.buffer[i].u32
-        for i in range(self.n // 2):
-            if self.n == 2 and self.w == 32:
-                key[i] = self.rng_state.state.state2x32.key.v[i]
-            elif self.n == 4 and self.w == 32:
-                key[i] = self.rng_state.state.state4x32.key.v[i]
-            elif self.n == 2 and self.w == 64:
-                key[i] = self.rng_state.state.state2x64.key.v[i]
-            else:  # self.n == 4 and self.w == 64
-                key[i] = self.rng_state.state.state4x64.key.v[i]
+                if self.w == 64:
+                    buffer[i] = self.rng_state.buffer[i].u64
+                else:
+                    buffer[i] = self.rng_state.buffer[i].u32
+            for i in range(self.n // 2):
+                if self.n == 2 and self.w == 32:
+                    key[i] = self.rng_state.state.state2x32.key.v[i]
+                elif self.n == 4 and self.w == 32:
+                    key[i] = self.rng_state.state.state4x32.key.v[i]
+                elif self.n == 2 and self.w == 64:
+                    key[i] = self.rng_state.state.state2x64.key.v[i]
+                else:  # self.n == 4 and self.w == 64
+                    key[i] = self.rng_state.state.state4x64.key.v[i]
 
-        return {"bit_generator": fully_qualified_name(self),
-                "state": {"counter": ctr, "key": key},
-                "buffer": buffer,
-                "buffer_pos": self.rng_state.buffer_pos,
-                "has_uint32": self.rng_state.has_uint32,
-                "uinteger": self.rng_state.uinteger,
-                "number": self.rng_state.number,
-                "width": self.rng_state.width}
+            return {"bit_generator": fully_qualified_name(self),
+                    "state": {"counter": ctr, "key": key},
+                    "buffer": buffer,
+                    "buffer_pos": self.rng_state.buffer_pos,
+                    "has_uint32": self.rng_state.has_uint32,
+                    "uinteger": self.rng_state.uinteger,
+                    "number": self.rng_state.number,
+                    "width": self.rng_state.width}
 
     @state.setter
     def state(self, value):
@@ -363,42 +365,44 @@ cdef class Philox(BitGenerator):
             raise ValueError("state must be for a {0} "
                              "PRNG".format(type(self).__name__))
         # Default for previous version
-        self.rng_state.number = self.n = value.get("number", 4)
-        self.rng_state.width = self.w = value.get("width", 64)
-        self._setup_generator()
-
+        n = value.get("number", 4)
+        w = value.get("width", 64)
         state = value["state"]
-        ctr = check_state_array(state["counter"], self.n, self.w, "counter")
-        key = check_state_array(state["key"], self.n // 2, self.w, "key")
-        buffer = check_state_array(value["buffer"], self.n, self.w, "buffer")
-        # Reset to make sure buffer is 0ed
-        self._reset_state_variables()
-        for i in range(self.n):
-            if self.w == 32:
-                self.rng_state.buffer[i].u32 = buffer[i]
-                if self.n == 2:
-                    self.rng_state.state.state2x32.ctr.v[i] = ctr[i]
-                else:  # self.n == 4 :
-                    self.rng_state.state.state4x32.ctr.v[i] = ctr[i]
-            else:
-                self.rng_state.buffer[i].u64 = buffer[i]
-                if self.n == 2:
-                    self.rng_state.state.state2x64.ctr.v[i] = ctr[i]
-                else:  # self.n == 4
-                    self.rng_state.state.state4x64.ctr.v[i] = ctr[i]
-        for i in range(self.n // 2):
-            if self.n == 2 and self.w == 32:
-                self.rng_state.state.state2x32.key.v[i] = key[i]
-            elif self.n == 4 and self.w == 32:
-                self.rng_state.state.state4x32.key.v[i] = key[i]
-            elif self.n == 2 and self.w == 64:
-                self.rng_state.state.state2x64.key.v[i] = key[i]
-            else:  # self.n == 4 and self.w == 64
-                self.rng_state.state.state4x64.key.v[i] = key[i]
+        ctr = check_state_array(state["counter"], n, w, "counter")
+        key = check_state_array(state["key"], n // 2, w, "key")
+        buffer = check_state_array(value["buffer"], n, w, "buffer")
+        with self.lock:
+            self.rng_state.number = self.n = n
+            self.rng_state.width = self.w = w
+            self._setup_generator()
+            # Reset to make sure buffer is 0ed
+            self._reset_state_variables()
+            for i in range(self.n):
+                if self.w == 32:
+                    self.rng_state.buffer[i].u32 = buffer[i]
+                    if self.n == 2:
+                        self.rng_state.state.state2x32.ctr.v[i] = ctr[i]
+                    else:  # self.n == 4 :
+                        self.rng_state.state.state4x32.ctr.v[i] = ctr[i]
+                else:
+                    self.rng_state.buffer[i].u64 = buffer[i]
+                    if self.n == 2:
+                        self.rng_state.state.state2x64.ctr.v[i] = ctr[i]
+                    else:  # self.n == 4
+                        self.rng_state.state.state4x64.ctr.v[i] = ctr[i]
+            for i in range(self.n // 2):
+                if self.n == 2 and self.w == 32:
+                    self.rng_state.state.state2x32.key.v[i] = key[i]
+                elif self.n == 4 and self.w == 32:
+                    self.rng_state.state.state4x32.key.v[i] = key[i]
+                elif self.n == 2 and self.w == 64:
+                    self.rng_state.state.state2x64.key.v[i] = key[i]
+                else:  # self.n == 4 and self.w == 64
+                    self.rng_state.state.state4x64.key.v[i] = key[i]
 
-        self.rng_state.has_uint32 = value["has_uint32"]
-        self.rng_state.uinteger = value["uinteger"]
-        self.rng_state.buffer_pos = value["buffer_pos"]
+            self.rng_state.has_uint32 = value["has_uint32"]
+            self.rng_state.uinteger = value["uinteger"]
+            self.rng_state.buffer_pos = value["buffer_pos"]
 
     cdef jump_inplace(self, object iter):
         """
@@ -524,33 +528,34 @@ cdef class Philox(BitGenerator):
             counter = True
         if delta == 0:
             return self
-        if counter:
-            delta *= self.n
-        delta = wrap_int(delta, self.n * self.w + self.n // 2)
 
         cdef np.ndarray delta_a
-        delta_a = int_to_array(delta, "step", (self.n + 1) * self.w, self.w)
+        with self.lock:
+            if counter:
+                delta *= self.n
+            delta = wrap_int(delta, self.n * self.w + self.n // 2)
+            delta_a = int_to_array(delta, "step", (self.n + 1) * self.w, self.w)
 
-        if self.n == 2 and self.w == 32:
-            philox2x32_advance(
-                &self.rng_state, <uint32_t *>np.PyArray_DATA(delta_a), not counter
-            )
-        elif self.n == 4 and self.w == 32:
-            philox4x32_advance(
-                &self.rng_state, <uint32_t *>np.PyArray_DATA(delta_a), not counter
-            )
-        elif self.n == 2 and self.w == 64:
-            philox2x64_advance(
-                &self.rng_state, <uint64_t *>np.PyArray_DATA(delta_a), not counter
-            )
-        else:  # self.n == 4 and self.w == 64:
-            philox4x64_advance(
-                &self.rng_state, <uint64_t *>np.PyArray_DATA(delta_a), not counter
-            )
-        # Reset uint32 so if needed is drawn from the advanced state
-        self.rng_state.uinteger = 0
-        self.rng_state.has_uint32 = 0
-        if counter:
-            self._reset_state_variables()
+            if self.n == 2 and self.w == 32:
+                philox2x32_advance(
+                    &self.rng_state, <uint32_t *>np.PyArray_DATA(delta_a), not counter
+                )
+            elif self.n == 4 and self.w == 32:
+                philox4x32_advance(
+                    &self.rng_state, <uint32_t *>np.PyArray_DATA(delta_a), not counter
+                )
+            elif self.n == 2 and self.w == 64:
+                philox2x64_advance(
+                    &self.rng_state, <uint64_t *>np.PyArray_DATA(delta_a), not counter
+                )
+            else:  # self.n == 4 and self.w == 64:
+                philox4x64_advance(
+                    &self.rng_state, <uint64_t *>np.PyArray_DATA(delta_a), not counter
+                )
+            # Reset uint32 so if needed is drawn from the advanced state
+            self.rng_state.uinteger = 0
+            self.rng_state.has_uint32 = 0
+            if counter:
+                self._reset_state_variables()
 
         return self

@@ -659,8 +659,9 @@ cdef class ExtendedGenerator:
                 raise ValueError("Im(relation) ** 2 > Re(gamma ** 2 - relation** 2)")
 
             if size is None:
-                f_real = random_standard_normal(&self._bitgen)
-                f_imag = random_standard_normal(&self._bitgen)
+                with self.lock:
+                    f_real = random_standard_normal(&self._bitgen)
+                    f_imag = random_standard_normal(&self._bitgen)
 
                 compute_complex(&f_real, &f_imag, floc_r, floc_i, fvar_r,
                                 fvar_i, f_rho)

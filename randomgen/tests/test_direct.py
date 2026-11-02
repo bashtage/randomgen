@@ -46,7 +46,7 @@ from randomgen import (
 import randomgen._pickle as rg_pkl
 from randomgen.common import Interface
 from randomgen.seed_sequence import ISeedSequence
-from randomgen.squares import _get_words, _test_sentinal, generate_keys
+from randomgen.squares import _test_sentinal, generate_keys
 from randomgen.tests._utility import CustomPartial
 
 MISSING_RDRAND = False
@@ -1581,6 +1581,7 @@ class TestChaCha(Base):
         with pytest.raises(ValueError, match="rounds must be even and"):
             self.bit_generator(rounds=-4)
 
+    @pytest.mark.thread_unsafe(reason="toggles a process-wide SIMD flag")
     def test_use_simd(self):
         bg = self.bit_generator(0)
         if not bg.use_simd:
@@ -1965,6 +1966,7 @@ class TestSquares(TestPCG64DXSM):
         with pytest.raises(ValueError, match="n must be a"):
             generate_keys(0, -1)
 
+    @pytest.mark.thread_unsafe(reason="changes a module-level test flag")
     def test_generate_keys_unique(self):
         a = generate_keys(0, 100, unique=True)
 
@@ -1985,19 +1987,13 @@ class TestSquares(TestPCG64DXSM):
         for i in range(len(hexes)):
             assert len({str(s) for s in hexes[i, 8:]}) == 8
 
+    @pytest.mark.thread_unsafe(reason="changes a module-level test flag")
     def test_sentinal(self):
         assert not _test_sentinal.get_testing()
         _test_sentinal.set_testing(True)
         assert _test_sentinal.get_testing()
         _test_sentinal.set_testing(False)
         assert not _test_sentinal.get_testing()
-
-    def test_get_words(self):
-        words = _get_words()
-        assert isinstance(words, np.ndarray)
-        assert words.min() >= 0
-        assert words.max() <= 15
-        assert np.diff(np.sort(words)).max() <= 2
 
     def test_errors(self):
         with pytest.raises(ValueError, match="variant must be either"):
@@ -2129,6 +2125,7 @@ def test_numpy_mode_error_pcg64():
         PCG64(0, inc=1, numpy_seed=True)
 
 
+@pytest.mark.thread_unsafe(reason="runs pytest")
 def test_test_runner():
     val = rg_tester(["--collect-only"], exit=False)
     assert val == 0
@@ -2144,6 +2141,7 @@ def test_bitgen_ctor():
         rg_pkl.__bit_generator_ctor("NewFangledBG")
 
 
+@pytest.mark.thread_unsafe(reason="toggles a process-wide SIMD flag")
 def test_speck_sse41():
     s = SPECK128(0)
     if not s.use_sse41:
@@ -2200,6 +2198,7 @@ class TestBlaBla(Base):
         with pytest.raises(ValueError, match="rounds must be even and"):
             self.bit_generator(rounds=-4)
 
+    @pytest.mark.thread_unsafe(reason="toggles a process-wide SIMD flag")
     def test_use_avx2(self):
         bg = self.bit_generator(0)
         if not bg.use_avx2:

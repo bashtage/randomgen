@@ -168,9 +168,10 @@ cdef class Xorshift1024(BitGenerator):
             Number of times to jump the state of the rng.
         """
         cdef np.npy_intp i
-        for i in range(iter):
-            xorshift1024_jump(&self.rng_state)
-        self._reset_state_variables()
+        with self.lock:
+            for i in range(iter):
+                xorshift1024_jump(&self.rng_state)
+            self._reset_state_variables()
 
     def jump(self, np.npy_intp iter=1):
         """
@@ -238,12 +239,13 @@ cdef class Xorshift1024(BitGenerator):
             state of the PRNG
         """
         s = np.empty(16, dtype=np.uint64)
-        for i in range(16):
-            s[i] = self.rng_state.s[i]
-        return {"bit_generator": fully_qualified_name(self),
-                "state": {"s": s, "p": self.rng_state.p},
-                "has_uint32": self.rng_state.has_uint32,
-                "uinteger": self.rng_state.uinteger}
+        with self.lock:
+            for i in range(16):
+                s[i] = self.rng_state.s[i]
+            return {"bit_generator": fully_qualified_name(self),
+                    "state": {"s": s, "p": self.rng_state.p},
+                    "has_uint32": self.rng_state.has_uint32,
+                    "uinteger": self.rng_state.uinteger}
 
     @state.setter
     def state(self, value):
@@ -254,8 +256,9 @@ cdef class Xorshift1024(BitGenerator):
             raise ValueError("state must be for a {0} "
                              "PRNG".format(type(self).__name__))
         state = check_state_array(value["state"]["s"], 16, 64, "s")
-        for i in range(16):
-            self.rng_state.s[i] = <uint64_t>state[i]
-        self.rng_state.p = value["state"]["p"]
-        self.rng_state.has_uint32 = value["has_uint32"]
-        self.rng_state.uinteger = value["uinteger"]
+        with self.lock:
+            for i in range(16):
+                self.rng_state.s[i] = <uint64_t>state[i]
+            self.rng_state.p = value["state"]["p"]
+            self.rng_state.has_uint32 = value["has_uint32"]
+            self.rng_state.uinteger = value["uinteger"]

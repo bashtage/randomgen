@@ -238,11 +238,12 @@ cdef class BlaBla(BitGenerator):
         counter = 0 if counter is None else counter
         _counter = int_to_array(counter, "counter", 128, 64)
 
-        blabla_seed(self.rng_state,
-                    <uint64_t *>np.PyArray_DATA(_seed),
-                    <uint64_t *>np.PyArray_DATA(_stream),
-                    <uint64_t *>np.PyArray_DATA(_counter))
-        self._reset_state_variables()
+        with self.lock:
+            blabla_seed(self.rng_state,
+                        <uint64_t *>np.PyArray_DATA(_seed),
+                        <uint64_t *>np.PyArray_DATA(_stream),
+                        <uint64_t *>np.PyArray_DATA(_counter))
+            self._reset_state_variables()
 
     @property
     def state(self):
@@ -261,27 +262,28 @@ cdef class BlaBla(BitGenerator):
         block_idx = np.empty(2, dtype=np.uint64)
         ctr = np.empty(2, dtype=np.uint64)
 
-        for i in range(16):
-            block[i] = self.rng_state.block[i]
-        for i in range(4):
-            keysetup[i] = self.rng_state.keysetup[i]
-        for i in range(2):
-            block_idx[i] = self.rng_state.block_idx[i]
-        for i in range(2):
-            ctr[i] = self.rng_state.ctr[i]
+        with self.lock:
+            for i in range(16):
+                block[i] = self.rng_state.block[i]
+            for i in range(4):
+                keysetup[i] = self.rng_state.keysetup[i]
+            for i in range(2):
+                block_idx[i] = self.rng_state.block_idx[i]
+            for i in range(2):
+                ctr[i] = self.rng_state.ctr[i]
 
-        return {
-            "bit_generator": fully_qualified_name(self),
-            "state": {
-                "block": block,
-                "keysetup": keysetup,
-                "block_idx": block_idx,
-                "ctr": ctr,
-                "rounds": self.rng_state.rounds,
-                "has_uint32": self.rng_state.has_uint32,
-                "uinteger": self.rng_state.uinteger
+            return {
+                "bit_generator": fully_qualified_name(self),
+                "state": {
+                    "block": block,
+                    "keysetup": keysetup,
+                    "block_idx": block_idx,
+                    "ctr": ctr,
+                    "rounds": self.rng_state.rounds,
+                    "has_uint32": self.rng_state.has_uint32,
+                    "uinteger": self.rng_state.uinteger
+                }
             }
-        }
 
     @state.setter
     def state(self, value):
@@ -297,17 +299,18 @@ cdef class BlaBla(BitGenerator):
         keysetup = state["keysetup"]
         block_idx = state["block_idx"]
         ctr = state["ctr"]
-        for i in range(16):
-            self.rng_state.block[i] = block[i]
-        for i in range(4):
-            self.rng_state.keysetup[i] = keysetup[i]
-        for i in range(2):
-            self.rng_state.block_idx[i] = block_idx[i]
-        for i in range(2):
-            self.rng_state.ctr[i] = ctr[i]
-        self.rng_state.rounds = state["rounds"]
-        self.rng_state.has_uint32 = state["has_uint32"]
-        self.rng_state.uinteger = state["uinteger"]
+        with self.lock:
+            for i in range(16):
+                self.rng_state.block[i] = block[i]
+            for i in range(4):
+                self.rng_state.keysetup[i] = keysetup[i]
+            for i in range(2):
+                self.rng_state.block_idx[i] = block_idx[i]
+            for i in range(2):
+                self.rng_state.ctr[i] = ctr[i]
+            self.rng_state.rounds = state["rounds"]
+            self.rng_state.has_uint32 = state["has_uint32"]
+            self.rng_state.uinteger = state["uinteger"]
 
     cdef jump_inplace(self, object iter):
         """
@@ -364,6 +367,7 @@ cdef class BlaBla(BitGenerator):
         cdef uint64_t d[2]
         d[0] = delta & 0xFFFFFFFFFFFFFFFF
         d[1] = <uint64_t>(delta >> 64)
-        blabla_advance(self.rng_state, d)
-        self.rng_state.has_uint32 = 0
-        self.rng_state.uinteger = 0
+        with self.lock:
+            blabla_advance(self.rng_state, d)
+            self.rng_state.has_uint32 = 0
+            self.rng_state.uinteger = 0

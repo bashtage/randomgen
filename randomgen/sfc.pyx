@@ -329,15 +329,16 @@ cdef class SFC64(BitGenerator):
             Dictionary containing the information required to describe the
             state of the PRNG
         """
-        return {"bit_generator": fully_qualified_name(self),
-                "state": {"a": self.rng_state.a,
-                          "b": self.rng_state.b,
-                          "c": self.rng_state.c,
-                          "w": self.rng_state.w,
-                          "k": self.rng_state.k
-                          },
-                "has_uint32": self.rng_state.has_uint32,
-                "uinteger": self.rng_state.uinteger}
+        with self.lock:
+            return {"bit_generator": fully_qualified_name(self),
+                    "state": {"a": self.rng_state.a,
+                              "b": self.rng_state.b,
+                              "c": self.rng_state.c,
+                              "w": self.rng_state.w,
+                              "k": self.rng_state.k
+                              },
+                    "has_uint32": self.rng_state.has_uint32,
+                    "uinteger": self.rng_state.uinteger}
 
     @state.setter
     def state(self, value):
@@ -347,10 +348,11 @@ cdef class SFC64(BitGenerator):
         if bitgen not in (type(self).__name__, fully_qualified_name(self)):
             raise ValueError("state must be for a {0} "
                              "PRNG".format(type(self).__name__))
-        self.rng_state.a = value["state"]["a"]
-        self.rng_state.b = value["state"]["b"]
-        self.rng_state.c = value["state"]["c"]
-        self.rng_state.w = value["state"]["w"]
-        self.rng_state.k = value["state"]["k"]
-        self.rng_state.has_uint32 = value["has_uint32"]
-        self.rng_state.uinteger = value["uinteger"]
+        with self.lock:
+            self.rng_state.a = value["state"]["a"]
+            self.rng_state.b = value["state"]["b"]
+            self.rng_state.c = value["state"]["c"]
+            self.rng_state.w = value["state"]["w"]
+            self.rng_state.k = value["state"]["k"]
+            self.rng_state.has_uint32 = value["has_uint32"]
+            self.rng_state.uinteger = value["uinteger"]

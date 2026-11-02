@@ -192,9 +192,10 @@ cdef class LXM(BitGenerator):
             Number of times to jump the state of the rng.
         """
         cdef np.npy_intp i
-        for i in range(iter):
-            lxm_jump(&self.rng_state)
-        self._reset_state_variables()
+        with self.lock:
+            for i in range(iter):
+                lxm_jump(&self.rng_state)
+            self._reset_state_variables()
 
     def jump(self, np.npy_intp iter=1):
         """
@@ -262,15 +263,16 @@ cdef class LXM(BitGenerator):
             state of the PRNG
         """
         x = np.empty(4, dtype=np.uint64)
-        for i in range(4):
-            x[i] = self.rng_state.x[i]
-        return {"bit_generator": fully_qualified_name(self),
-                "state": {"x": x,
-                          "lcg_state": self.rng_state.lcg_state,
-                          "b": self.rng_state.b,
-                          },
-                "has_uint32": self.rng_state.has_uint32,
-                "uinteger": self.rng_state.uinteger}
+        with self.lock:
+            for i in range(4):
+                x[i] = self.rng_state.x[i]
+            return {"bit_generator": fully_qualified_name(self),
+                    "state": {"x": x,
+                              "lcg_state": self.rng_state.lcg_state,
+                              "b": self.rng_state.b,
+                              },
+                    "has_uint32": self.rng_state.has_uint32,
+                    "uinteger": self.rng_state.uinteger}
 
     @state.setter
     def state(self, value):
@@ -281,9 +283,10 @@ cdef class LXM(BitGenerator):
             raise ValueError("state must be for a {0} "
                              "PRNG".format(type(self).__name__))
         state = check_state_array(value["state"]["x"], 4, 64, "x")
-        for i in range(4):
-            self.rng_state.x[i] = <uint64_t>state[i]
-        self.rng_state.lcg_state = value["state"]["lcg_state"]
-        self.rng_state.b = value["state"]["b"]
-        self.rng_state.has_uint32 = value["has_uint32"]
-        self.rng_state.uinteger = value["uinteger"]
+        with self.lock:
+            for i in range(4):
+                self.rng_state.x[i] = <uint64_t>state[i]
+            self.rng_state.lcg_state = value["state"]["lcg_state"]
+            self.rng_state.b = value["state"]["b"]
+            self.rng_state.has_uint32 = value["has_uint32"]
+            self.rng_state.uinteger = value["uinteger"]

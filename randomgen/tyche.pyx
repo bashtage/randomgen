@@ -177,11 +177,12 @@ cdef class Tyche(BitGenerator):
             Dictionary containing the information required to describe the
             state of the PRNG
         """
-        state = {"a": self.rng_state.a,
-                 "b": self.rng_state.b,
-                 "c": self.rng_state.c,
-                 "d": self.rng_state.d,
-                 "original": self.original}
+        with self.lock:
+            state = {"a": self.rng_state.a,
+                     "b": self.rng_state.b,
+                     "c": self.rng_state.c,
+                     "d": self.rng_state.d,
+                     "original": self.original}
         return {"bit_generator": fully_qualified_name(self),
                 "state": state}
 
@@ -194,9 +195,10 @@ cdef class Tyche(BitGenerator):
             raise ValueError("state must be for a {0} "
                              "PRNG".format(type(self).__name__))
         state = value["state"]
-        self.original = bool(state["original"])
-        self.rng_state.a = state["a"]
-        self.rng_state.b = state["b"]
-        self.rng_state.c = state["c"]
-        self.rng_state.d = state["d"]
-        self._setup_bitgen()
+        with self.lock:
+            self.original = bool(state["original"])
+            self.rng_state.a = state["a"]
+            self.rng_state.b = state["b"]
+            self.rng_state.c = state["c"]
+            self.rng_state.d = state["d"]
+            self._setup_bitgen()
