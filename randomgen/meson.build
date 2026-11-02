@@ -156,7 +156,6 @@ subdirs_list = [
     '_build',
     'compat',
     'examples',
-    'legacy',
     'src',
     'tests',
 ]
@@ -343,7 +342,6 @@ top_level_py_list = [
     'lxm.pyi',
     'mt19937.pyi',
     'mt64.pyi',
-    'mtrand.pyi',
     'pcg32.pyi',
     'pcg64.pyi',
     'philox.pyi',
