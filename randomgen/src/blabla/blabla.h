@@ -49,12 +49,12 @@ extern int blabla_avx2_capable(void);
 extern void blabla_seed(blabla_state_t* state, uint64_t seedval[2], uint64_t stream[2], uint64_t ctr[2]);
 extern void blabla_advance(blabla_state_t* state, uint64_t delta[2]);
 static inline void blabla_core(blabla_state_t* state);
-#if defined(__AVX2__) && __AVX2__ && !defined(RG_DISABLE_BLABLA_AVX2)
-static inline void blabla_core_avx2(blabla_state_t* state);
+#if defined(RANDOMGEN_HAVE_AVX2) && !defined(RG_DISABLE_BLABLA_AVX2)
+static inline RANDOMGEN_AVX2_TARGET void blabla_core_avx2(blabla_state_t* state);
 #endif
 
-#if defined(__AVX2__) && __AVX2__ && !defined(RG_DISABLE_BLABLA_AVX2)
-static inline void blabla_core_avx2(blabla_state_t* state)
+#if defined(RANDOMGEN_HAVE_AVX2) && !defined(RG_DISABLE_BLABLA_AVX2)
+static inline RANDOMGEN_AVX2_TARGET void blabla_core_avx2(blabla_state_t* state)
 {
 #define _mm256_roti_epi64(r, c) _mm256_xor_si256(_mm256_srli_epi64((r), (c)), _mm256_slli_epi64((r), 64 - (c)))
 
@@ -167,13 +167,13 @@ static inline void generate_block(blabla_state_t* state)
 
     for (uint32_t i = 0; i < 16; ++i)
         state->block[i] = input[i];
-#if defined(__AVX2__) && __AVX2__ && !defined(RG_DISABLE_BLABLA_AVX2)
+#if defined(RANDOMGEN_HAVE_AVX2) && !defined(RG_DISABLE_BLABLA_AVX2)
     if LIKELY (RANDOMGEN_USE_AVX2 > 0) {
         blabla_core_avx2(state);
     } else {
 #endif
         blabla_core(state);
-#if defined(__AVX2__) && __AVX2__ && !defined(RG_DISABLE_BLABLA_AVX2)
+#if defined(RANDOMGEN_HAVE_AVX2) && !defined(RG_DISABLE_BLABLA_AVX2)
     }
 #endif
 
