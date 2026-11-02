@@ -53,9 +53,13 @@ void feature_flags(int flags[32], int major)
     }
 }
 
+#if (defined(__x86_64__) || defined(_M_X64)) && (defined(__GNUC__) || defined(__clang__))
+/* _xgetbv requires XSAVE, which is only enabled for this function */
+__attribute__((target("xsave")))
+#endif
 int avx2_capable(void)
 {
-#if defined(__AVX2__) && __AVX2__
+#if defined(__x86_64__) || defined(_M_X64)
     int info[4]; // Array to hold EAX, EBX, ECX, EDX registers
 
     // --- 1. Check for XSAVE and OSXSAVE support (CPUID Leaf 1) ---

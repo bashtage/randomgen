@@ -18,12 +18,26 @@
 #endif
 #endif
 
+/*
+ * AVX2 is only enabled for functions marked RANDOMGEN_AVX2_TARGET so that
+ * the rest of a module runs on CPUs without AVX2. These functions must only
+ * be called after avx2_capable() returns 1.
+ */
+#if defined(__x86_64__) || defined(_M_X64)
+#define RANDOMGEN_HAVE_AVX2 1
+#if defined(__GNUC__) || defined(__clang__)
+#define RANDOMGEN_AVX2_TARGET __attribute__((target("avx2")))
+#else
+#define RANDOMGEN_AVX2_TARGET
+#endif
+#endif
+
 #if defined(__SSE2__) && __SSE2__
 #include <emmintrin.h>
 #endif
 
 #if (defined(__SSSE3__) && __SSSE3__) || (defined(__AES__) && __AES__) ||      \
-    (defined(__RDRND__) && __RDRND__) || (defined(__AVX2__) && __AVX2__)
+    (defined(__RDRND__) && __RDRND__) || defined(RANDOMGEN_HAVE_AVX2)
 #include <immintrin.h>
 #endif
 
