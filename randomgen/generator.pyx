@@ -102,8 +102,10 @@ cdef _factorize(cov, meth, check_valid, tol, rank):
                 )
 
             func = get_lapack_funcs("pstrf")
-            _factor, _, rank_c, _ = func(cov)
+            _factor, piv, rank_c, _ = func(cov)
+            # pstrf factors P.T @ cov @ P, so undo the pivoting
             _factor = np.triu(_factor)
+            _factor[:, piv - 1] = _factor.copy()
             psd = rank_c >= rank
 
     if not psd and check_valid != "ignore":
@@ -116,6 +118,15 @@ cdef _factorize(cov, meth, check_valid, tol, rank):
         else:
             raise ValueError(msg)
     return _factor
+
+
+cdef _wishart_factor(scale, meth, check_valid, tol, rank):
+    # Return A with A @ A.T = scale. _factorize returns F with F.T @ F = cov,
+    # while method="factor" passes A through unchanged
+    factor = _factorize(scale, meth, check_valid, tol, rank)
+    if meth == "factor":
+        return factor
+    return factor.T
 
 
 cdef class ExtendedGenerator:
@@ -857,8 +868,9 @@ cdef class ExtendedGenerator:
             eigenvalues and their associated eigenvalues are used when method
             is `svd` or `eigh`. When method is 'cholesky, then the Cholesky
             of the upper ``rank`` by ``rank`` block is used. `factor` assumes
-            that scale has been pre-factored so that no transformation is
-            applied. When using `factor`, no check is performed on the rank.
+            that scale has been pre-factored so that it contains A, for
+            example the lower triangular Cholesky factor, and no transformation
+            is applied. When using `factor`, no check is performed on the rank.
 
         Returns
         -------
@@ -919,7 +931,7 @@ cdef class ExtendedGenerator:
         if not df_size and not shape_size:
             df_i = df_arr.item()
             out = self.standard_wishart(df_i, dim, size, False)
-            factor = _factorize(shape_arr, method, check_valid, tol, rank_val)
+            factor = _wishart_factor(shape_arr, method, check_valid, tol, rank_val)
             np.matmul(factor, out, out=out)
             np.matmul(out, factor.T, out=out)
             return out
@@ -960,9 +972,11 @@ and the trailing dimensions must match exactly so that
         out_shape = out.shape
         out = out.reshape((-1, np.prod(it_shape), dim, dim))
         temp_shape = np.shape(out[..., 0, :, :])
-        _factors = np.empty_like(scale)
-        for loc in np.ndindex(*scale.shape[:len(scale.shape) - 2]):
-            _factors[loc] = _factorize(scale[loc], method, check_valid, tol, rank_val)
+        _factors = np.empty_like(shape_arr)
+        for loc in np.ndindex(*shape_size):
+            _factors[loc] = _wishart_factor(
+                shape_arr[loc], method, check_valid, tol, rank_val
+            )
         _factors = _factors.reshape((-1, dim, dim))
 
         large_values = np.empty((block_size, dim, dim), dtype=np.float64)
