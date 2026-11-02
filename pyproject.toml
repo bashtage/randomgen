@@ -11,7 +11,9 @@ requires = [
 name = "randomgen"
 # Keep syned with requirements.txt
 dependencies = [
-  "numpy>=1.22.3,<3",
+  # NumPy 2.4.0 removed SeedlessSequence, so builds against NumPy <= 2.3 or
+  # 2.4.1+ fail to import on it (#426). NumPy 2.4.1 restored it.
+  "numpy>=1.22.3,!=2.4.0,<3",
 ]
 authors = [{ name = "Kevin Sheppard", email = "kevin.k.sheppard@gmail.com" }]
 classifiers = [

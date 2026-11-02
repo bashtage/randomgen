@@ -121,7 +121,7 @@ the latest commit (unreleased) is available under
 Building requires:
 
 * Python (3.9, 3.10, 3.11, 3.12, 3.13)
-* NumPy (1.22.3+, runtime, 2.0.0+, building)
+* NumPy (1.22.3+ except 2.4.0, runtime, 2.0.0+, building)
 * Cython (3.0.10+)
 
 Testing requires pytest (7+).
