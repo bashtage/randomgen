@@ -155,7 +155,8 @@ cdef class HC128(BitGenerator):
         state = int_to_array(key, "key", 256, 64)
         # Ensure state uint32 values are the same in LE and BE and in the same order
         state = view_little_endian(state, np.uint32)
-        hc128_seed(&self.rng_state, <uint32_t *>np.PyArray_DATA(state))
+        with self.lock:
+            hc128_seed(&self.rng_state, <uint32_t *>np.PyArray_DATA(state))
 
     @property
     def state(self):
@@ -178,19 +179,20 @@ cdef class HC128(BitGenerator):
         buffer = np.empty(16, dtype=np.uint32)
         p_arr = <uint32_t *>np.PyArray_DATA(p)
         q_arr = <uint32_t *>np.PyArray_DATA(q)
-        for i in range(512):
-            p_arr[i] = self.rng_state.p[i]
-            q_arr[i] = self.rng_state.q[i]
         buf_arr = <uint32_t *>np.PyArray_DATA(buffer)
-        for i in range(16):
-            buf_arr[i] = self.rng_state.buffer[i]
-        return {"bit_generator": fully_qualified_name(self),
-                "state": {"p": p,
-                          "q": q,
-                          "hc_idx": self.rng_state.hc_idx,
-                          "buffer": buffer,
-                          "buffer_idx": self.rng_state.buffer_idx},
-                }
+        with self.lock:
+            for i in range(512):
+                p_arr[i] = self.rng_state.p[i]
+                q_arr[i] = self.rng_state.q[i]
+            for i in range(16):
+                buf_arr[i] = self.rng_state.buffer[i]
+            return {"bit_generator": fully_qualified_name(self),
+                    "state": {"p": p,
+                              "q": q,
+                              "hc_idx": self.rng_state.hc_idx,
+                              "buffer": buffer,
+                              "buffer_idx": self.rng_state.buffer_idx},
+                    }
 
     @state.setter
     def state(self, value):
@@ -211,11 +213,12 @@ cdef class HC128(BitGenerator):
         buffer = check_state_array(state["buffer"], 16, 32, "buffer")
         p_arr = <uint32_t *>np.PyArray_DATA(p)
         q_arr = <uint32_t *>np.PyArray_DATA(q)
-        for i in range(512):
-            self.rng_state.p[i] = p_arr[i]
-            self.rng_state.q[i] = q_arr[i]
         buf_arr = <uint32_t *>np.PyArray_DATA(buffer)
-        for i in range(16):
-            self.rng_state.buffer[i] = buf_arr[i]
-        self.rng_state.hc_idx = state["hc_idx"]
-        self.rng_state.buffer_idx = state["buffer_idx"]
+        with self.lock:
+            for i in range(512):
+                self.rng_state.p[i] = p_arr[i]
+                self.rng_state.q[i] = q_arr[i]
+            for i in range(16):
+                self.rng_state.buffer[i] = buf_arr[i]
+            self.rng_state.hc_idx = state["hc_idx"]
+            self.rng_state.buffer_idx = state["buffer_idx"]

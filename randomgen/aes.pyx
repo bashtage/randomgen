@@ -225,17 +225,18 @@ cdef class AESCounter(BitGenerator):
         key = object_to_int(key, 128, "key")
         counter = object_to_int(counter, 128, "counter")
         _seed = int_to_array(key, "key", 128, 64)
-        # TODO: We have swapped here, but should we always use native in Python?
-        aesctr_seed(self.rng_state, <uint64_t*>np.PyArray_DATA(_seed))
         _counter = np.empty(8, dtype=np.uint64)
         counter = 0 if counter is None else counter
         for i in range(4):
             _counter[2*i:2*i+2] = int_to_array(
                 (counter + i) % (2**128), "counter", 128, 64
             )
-        aesctr_set_counter(self.rng_state,
-                           <uint64_t*>np.PyArray_DATA(_counter))
-        self._reset_state_variables()
+        with self.lock:
+            # TODO: We have swapped here, but should we always use native in Python?
+            aesctr_seed(self.rng_state, <uint64_t*>np.PyArray_DATA(_seed))
+            aesctr_set_counter(self.rng_state,
+                               <uint64_t*>np.PyArray_DATA(_counter))
+            self._reset_state_variables()
 
     @property
     def state(self):
@@ -254,18 +255,21 @@ cdef class AESCounter(BitGenerator):
 
         seed = np.empty(2 * (10 + 1), dtype=np.uint64)
         counter = np.empty(2 * 4, dtype=np.uint64)
-        aesctr_get_seed_counter(self.rng_state,
-                                <uint64_t*>np.PyArray_DATA(seed),
-                                <uint64_t*>np.PyArray_DATA(counter))
         state = np.empty(16 * 4, dtype=np.uint8)
-        for i in range(16 * 4):
-            state[i] = self.rng_state.state[i]
-        offset = self.rng_state.offset
+        with self.lock:
+            aesctr_get_seed_counter(self.rng_state,
+                                    <uint64_t*>np.PyArray_DATA(seed),
+                                    <uint64_t*>np.PyArray_DATA(counter))
+            for i in range(16 * 4):
+                state[i] = self.rng_state.state[i]
+            offset = self.rng_state.offset
+            has_uint32 = self.rng_state.has_uint32
+            uinteger = self.rng_state.uinteger
         return {"bit_generator": fully_qualified_name(self),
                 "s": {"state": state, "seed": seed, "counter": counter,
                       "offset": offset},
-                "has_uint32": self.rng_state.has_uint32,
-                "uinteger": self.rng_state.uinteger}
+                "has_uint32": has_uint32,
+                "uinteger": uinteger}
 
     @state.setter
     def state(self, value):
@@ -277,10 +281,7 @@ cdef class AESCounter(BitGenerator):
         if bitgen not in (type(self).__name__, fully_qualified_name(self)):
             raise ValueError("state must be for a {0} "
                              "PRNG".format(type(self).__name__))
-        state =value["s"]["state"]
-        for i in range(16 * 4):
-            self.rng_state.state[i] = state[i]
-        self.rng_state.offset = value["s"]["offset"]
+        state = value["s"]["state"]
         seed = np.ascontiguousarray(value["s"]["seed"], dtype=np.uint64)
         counter = np.ascontiguousarray(value["s"]["counter"], dtype=np.uint64)
         if seed.ndim != 1 or seed.shape[0] != 2 * (10 + 1):
@@ -288,11 +289,15 @@ cdef class AESCounter(BitGenerator):
         if counter.ndim != 1 or counter.shape[0] != 2 * (4):
             raise ValueError("counter must be a 1d uint64 array with 8 "
                              "elements")
-        aesctr_set_seed_counter(self.rng_state,
-                                <uint64_t*>np.PyArray_DATA(seed),
-                                <uint64_t*>np.PyArray_DATA(counter))
-        self.rng_state.has_uint32 = value["has_uint32"]
-        self.rng_state.uinteger = value["uinteger"]
+        with self.lock:
+            for i in range(16 * 4):
+                self.rng_state.state[i] = state[i]
+            self.rng_state.offset = value["s"]["offset"]
+            aesctr_set_seed_counter(self.rng_state,
+                                    <uint64_t*>np.PyArray_DATA(seed),
+                                    <uint64_t*>np.PyArray_DATA(counter))
+            self.rng_state.has_uint32 = value["has_uint32"]
+            self.rng_state.uinteger = value["uinteger"]
 
     cdef jump_inplace(self, object iter):
         """
@@ -401,7 +406,8 @@ cdef class AESCounter(BitGenerator):
             return self
 
         step = int_to_array(delta, "delta", 64*3, 64)
-        aesctr_advance(self.rng_state, <uint64_t *>np.PyArray_DATA(step))
-        self.rng_state.has_uint32 = 0
-        self.rng_state.uinteger = 0
+        with self.lock:
+            aesctr_advance(self.rng_state, <uint64_t *>np.PyArray_DATA(step))
+            self.rng_state.has_uint32 = 0
+            self.rng_state.uinteger = 0
         return self

@@ -212,13 +212,14 @@ cdef class SPECK128(BitGenerator):
         key = object_to_int(key, 256, "key")
         counter = object_to_int(counter, 128, "counter")
         _seed = int_to_array(key, "key", 256, 64)
-
-        speck_seed(self.rng_state, <uint64_t *>np.PyArray_DATA(_seed))
         counter = 0 if counter is None else counter
         _counter = int_to_array(counter, "counter", 128, 64)
-        speck_set_counter(self.rng_state,
-                          <uint64_t *>np.PyArray_DATA(_counter))
-        self._reset_state_variables()
+
+        with self.lock:
+            speck_seed(self.rng_state, <uint64_t *>np.PyArray_DATA(_seed))
+            speck_set_counter(self.rng_state,
+                              <uint64_t *>np.PyArray_DATA(_counter))
+            self._reset_state_variables()
 
     @property
     def use_sse41(self):
@@ -268,27 +269,28 @@ cdef class SPECK128(BitGenerator):
         buffer = np.empty(8 * SPECK_UNROLL, dtype=np.uint8)
         round_key = np.empty(2 * SPECK_MAX_ROUNDS, dtype=np.uint64)
 
-        arr = <uint64_t*>np.PyArray_DATA(ctr)
-        for i in range(SPECK_UNROLL):
-            arr[i] = self.rng_state.ctr[i // 2].u64[i % 2]
+        with self.lock:
+            arr = <uint64_t*>np.PyArray_DATA(ctr)
+            for i in range(SPECK_UNROLL):
+                arr[i] = self.rng_state.ctr[i // 2].u64[i % 2]
 
-        arr8 = <uint8_t*>np.PyArray_DATA(buffer)
-        for i in range(8*SPECK_UNROLL):
-            arr8[i] = self.rng_state.buffer[i]
+            arr8 = <uint8_t*>np.PyArray_DATA(buffer)
+            for i in range(8*SPECK_UNROLL):
+                arr8[i] = self.rng_state.buffer[i]
 
-        arr = <uint64_t*>np.PyArray_DATA(round_key)
-        for i in range(SPECK_MAX_ROUNDS):
-            arr[2*i] = self.rng_state.round_key[i].u64[0]
-            arr[2*i+1] = self.rng_state.round_key[i].u64[1]
+            arr = <uint64_t*>np.PyArray_DATA(round_key)
+            for i in range(SPECK_MAX_ROUNDS):
+                arr[2*i] = self.rng_state.round_key[i].u64[0]
+                arr[2*i+1] = self.rng_state.round_key[i].u64[1]
 
-        return {"bit_generator": fully_qualified_name(self),
-                "state": {"ctr": ctr,
-                          "buffer": buffer.view(np.uint64),
-                          "round_key": round_key,
-                          "offset": self.rng_state.offset,
-                          "rounds": self.rng_state.rounds},
-                "has_uint32": self.rng_state.has_uint32,
-                "uinteger": self.rng_state.uinteger}
+            return {"bit_generator": fully_qualified_name(self),
+                    "state": {"ctr": ctr,
+                              "buffer": buffer.view(np.uint64),
+                              "round_key": round_key,
+                              "offset": self.rng_state.offset,
+                              "rounds": self.rng_state.rounds},
+                    "has_uint32": self.rng_state.has_uint32,
+                    "uinteger": self.rng_state.uinteger}
 
     @state.setter
     def state(self, value):
@@ -310,23 +312,24 @@ cdef class SPECK128(BitGenerator):
         round_key = check_state_array(state["round_key"], 2*SPECK_MAX_ROUNDS, 64,
                                       "round_key")
 
-        arr = <uint64_t*>np.PyArray_DATA(ctr)
-        for i in range(SPECK_UNROLL):
-            self.rng_state.ctr[i//2].u64[i % 2] = arr[i]
+        with self.lock:
+            arr = <uint64_t*>np.PyArray_DATA(ctr)
+            for i in range(SPECK_UNROLL):
+                self.rng_state.ctr[i//2].u64[i % 2] = arr[i]
 
-        arr8 = <uint8_t*>np.PyArray_DATA(buffer)
-        for i in range(8*SPECK_UNROLL):
-            self.rng_state.buffer[i] = arr8[i]
+            arr8 = <uint8_t*>np.PyArray_DATA(buffer)
+            for i in range(8*SPECK_UNROLL):
+                self.rng_state.buffer[i] = arr8[i]
 
-        arr = <uint64_t*>np.PyArray_DATA(round_key)
-        for i in range(SPECK_MAX_ROUNDS):
-            self.rng_state.round_key[i].u64[0] = arr[2 * i]
-            self.rng_state.round_key[i].u64[1] = arr[2 * i + 1]
+            arr = <uint64_t*>np.PyArray_DATA(round_key)
+            for i in range(SPECK_MAX_ROUNDS):
+                self.rng_state.round_key[i].u64[0] = arr[2 * i]
+                self.rng_state.round_key[i].u64[1] = arr[2 * i + 1]
 
-        self.rng_state.rounds = state["rounds"]
-        self.rng_state.offset = state["offset"]
-        self.rng_state.has_uint32 = value["has_uint32"]
-        self.rng_state.uinteger = value["uinteger"]
+            self.rng_state.rounds = state["rounds"]
+            self.rng_state.offset = state["offset"]
+            self.rng_state.has_uint32 = value["has_uint32"]
+            self.rng_state.uinteger = value["uinteger"]
 
     cdef jump_inplace(self, object iter):
         """
@@ -430,7 +433,8 @@ cdef class SPECK128(BitGenerator):
             return self
 
         step = int_to_array(delta, "delta", 64*3, 64)
-        speck_advance(self.rng_state, <uint64_t *>np.PyArray_DATA(step))
-        self.rng_state.has_uint32 = 0
-        self.rng_state.uinteger = 0
+        with self.lock:
+            speck_advance(self.rng_state, <uint64_t *>np.PyArray_DATA(step))
+            self.rng_state.has_uint32 = 0
+            self.rng_state.uinteger = 0
         return self

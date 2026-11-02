@@ -1,6 +1,7 @@
 #!python
 from collections import namedtuple
 import sys
+from threading import RLock
 from typing import NamedTuple
 import warnings
 
@@ -56,6 +57,9 @@ cdef class BitGenerator(_BitGenerator):
     def __init__(self, seed, *, numpy_seed=False):
         self.mode = "numpy" if numpy_seed else "sequence"
         super().__init__(seed)
+        # NumPy < 2.5 uses a Lock, which deadlocks when seeding or state
+        # access nests acquisitions of the lock
+        self.lock = RLock()
         if type(self) is BitGenerator:
             raise NotImplementedError(
                 'BitGenerator is a base class and cannot be instantized'
@@ -80,17 +84,19 @@ cdef class BitGenerator(_BitGenerator):
     cdef _copy_seed(self):
         import copy
 
-        return copy.deepcopy(self._seed_seq)
+        with self.lock:
+            seed_seq = self._seed_seq
+        return copy.deepcopy(seed_seq)
 
     def _seed_with_seed_sequence(self, seed, **kwargs):
-        if isinstance(seed, ISEED_SEQUENCES):
+        if not isinstance(seed, ISEED_SEQUENCES):
+            seed = SeedSequence(seed)
+        with self.lock:
             self._seed_seq = seed
-        else:
-            self._seed_seq = SeedSequence(seed)
-        if self.mode == "sequence":
-            self._seed_from_seq(**kwargs)
-        else:  # numpy
-            self._seed_from_seq_numpy_compat(**kwargs)
+            if self.mode == "sequence":
+                self._seed_from_seq(**kwargs)
+            else:  # numpy
+                self._seed_from_seq_numpy_compat(**kwargs)
 
     @property
     def state(self):
@@ -151,10 +157,10 @@ cdef class BitGenerator(_BitGenerator):
             * next_double - function pointer to produce doubles
             * bit_generator - pointer to the bit generator struct
         """
-        if self._ctypes is None:
-            self._ctypes = prepare_ctypes(&self._bitgen)
-
-        return self._ctypes
+        with self.lock:
+            if self._ctypes is None:
+                self._ctypes = prepare_ctypes(&self._bitgen)
+            return self._ctypes
 
     @property
     def cffi(self):
@@ -173,10 +179,10 @@ cdef class BitGenerator(_BitGenerator):
             * next_double - function pointer to produce doubles
             * bit_generator - pointer to the bit generator struct
         """
-        if self._cffi is not None:
+        with self.lock:
+            if self._cffi is None:
+                self._cffi = prepare_cffi(&self._bitgen)
             return self._cffi
-        self._cffi = prepare_cffi(&self._bitgen)
-        return self._cffi
 
     @property
     def generator(self):

@@ -175,9 +175,10 @@ cdef class DSFMT(BitGenerator):
         """
         if iter < 0:
             raise ValueError("iter must be positive")
-        dsfmt_jump_n(&self.rng_state, iter)
-        # Clear the buffer
-        self._reset_state_variables()
+        with self.lock:
+            dsfmt_jump_n(&self.rng_state, iter)
+            # Clear the buffer
+            self._reset_state_variables()
 
     def jump(self, np.npy_intp iter=1):
         """
@@ -246,18 +247,19 @@ cdef class DSFMT(BitGenerator):
         cdef double[::1] buffered_uniforms
 
         state = np.empty(2 *DSFMT_N_PLUS_1, dtype=np.uint64)
-        for i in range(DSFMT_N_PLUS_1):
-            for j in range(2):
-                state[loc] = self.rng_state.state.status[i].u[j]
-                loc += 1
         buffered_uniforms = np.empty(DSFMT_N64, dtype=np.double)
-        for i in range(DSFMT_N64):
-            buffered_uniforms[i] = self.rng_state.buffered_uniforms[i]
-        return {"bit_generator": fully_qualified_name(self),
-                "state": {"state": np.asarray(state),
-                          "idx": self.rng_state.state.idx},
-                "buffer_loc": self.rng_state.buffer_loc,
-                "buffered_uniforms": np.asarray(buffered_uniforms)}
+        with self.lock:
+            for i in range(DSFMT_N_PLUS_1):
+                for j in range(2):
+                    state[loc] = self.rng_state.state.status[i].u[j]
+                    loc += 1
+            for i in range(DSFMT_N64):
+                buffered_uniforms[i] = self.rng_state.buffered_uniforms[i]
+            return {"bit_generator": fully_qualified_name(self),
+                    "state": {"state": np.asarray(state),
+                              "idx": self.rng_state.state.idx},
+                    "buffer_loc": self.rng_state.buffer_loc,
+                    "buffered_uniforms": np.asarray(buffered_uniforms)}
 
     @state.setter
     def state(self, value):
@@ -270,13 +272,14 @@ cdef class DSFMT(BitGenerator):
                              "PRNG".format(type(self).__name__))
         state = check_state_array(value["state"]["state"], 2*DSFMT_N_PLUS_1,
                                   64, "state")
-        for i in range(DSFMT_N_PLUS_1):
-            for j in range(2):
-                self.rng_state.state.status[i].u[j] = state[loc]
-                loc += 1
-        self.rng_state.state.idx = value["state"]["idx"]
         buffered_uniforms = value["buffered_uniforms"]
         # TODO: Check buffered_uniforms
-        for i in range(DSFMT_N64):
-            self.rng_state.buffered_uniforms[i] = buffered_uniforms[i]
-        self.rng_state.buffer_loc = value["buffer_loc"]
+        with self.lock:
+            for i in range(DSFMT_N_PLUS_1):
+                for j in range(2):
+                    self.rng_state.state.status[i].u[j] = state[loc]
+                    loc += 1
+            self.rng_state.state.idx = value["state"]["idx"]
+            for i in range(DSFMT_N64):
+                self.rng_state.buffered_uniforms[i] = buffered_uniforms[i]
+            self.rng_state.buffer_loc = value["buffer_loc"]

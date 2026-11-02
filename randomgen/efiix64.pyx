@@ -164,25 +164,26 @@ cdef class EFIIX64(BitGenerator):
         cdef np.ndarray[np.uint64_t, ndim=1] indirection_table
         cdef np.ndarray[np.uint64_t, ndim=1] iteration_table
         indirection_table = np.empty(INDIRECTION_SIZE, dtype=np.uint64)
-        arr = <np.uint64_t *>np.PyArray_DATA(indirection_table)
-        for i in range(0, INDIRECTION_SIZE):
-            arr[i] = self.rng_state.indirection_table[i]
-
         iteration_table = np.empty(ITERATION_SIZE, dtype=np.uint64)
-        arr = <np.uint64_t *>np.PyArray_DATA(iteration_table)
-        for i in range(0, ITERATION_SIZE):
-            arr[i] = self.rng_state.iteration_table[i]
+        with self.lock:
+            arr = <np.uint64_t *>np.PyArray_DATA(indirection_table)
+            for i in range(0, INDIRECTION_SIZE):
+                arr[i] = self.rng_state.indirection_table[i]
 
-        state = {"indirection_table": indirection_table,
-                 "iteration_table": iteration_table,
-                 "i": self.rng_state.i,
-                 "a": self.rng_state.a,
-                 "b": self.rng_state.b,
-                 "c": self.rng_state.c}
-        return {"bit_generator": fully_qualified_name(self),
-                "state": state,
-                "has_uint32": self.rng_state.has_uint32,
-                "uinteger": self.rng_state.uinteger}
+            arr = <np.uint64_t *>np.PyArray_DATA(iteration_table)
+            for i in range(0, ITERATION_SIZE):
+                arr[i] = self.rng_state.iteration_table[i]
+
+            state = {"indirection_table": indirection_table,
+                     "iteration_table": iteration_table,
+                     "i": self.rng_state.i,
+                     "a": self.rng_state.a,
+                     "b": self.rng_state.b,
+                     "c": self.rng_state.c}
+            return {"bit_generator": fully_qualified_name(self),
+                    "state": state,
+                    "has_uint32": self.rng_state.has_uint32,
+                    "uinteger": self.rng_state.uinteger}
 
     @state.setter
     def state(self, value):
@@ -201,21 +202,22 @@ cdef class EFIIX64(BitGenerator):
                                               INDIRECTION_SIZE,
                                               64,
                                               "indirection_table")
-        arr = <np.uint64_t *>np.PyArray_DATA(indirection_table)
-        for i in range(0, INDIRECTION_SIZE):
-            self.rng_state.indirection_table[i] = arr[i]
-
         iteration_table = check_state_array(state["iteration_table"],
                                             ITERATION_SIZE,
                                             64,
                                             "iteration_table")
-        arr = <np.uint64_t *>np.PyArray_DATA(iteration_table)
-        for i in range(0, ITERATION_SIZE):
-            self.rng_state.iteration_table[i] = arr[i]
-        self.rng_state.i = state["i"]
-        self.rng_state.a = state["a"]
-        self.rng_state.b = state["b"]
-        self.rng_state.c = state["c"]
+        with self.lock:
+            arr = <np.uint64_t *>np.PyArray_DATA(indirection_table)
+            for i in range(0, INDIRECTION_SIZE):
+                self.rng_state.indirection_table[i] = arr[i]
 
-        self.rng_state.has_uint32 = value["has_uint32"]
-        self.rng_state.uinteger = value["uinteger"]
+            arr = <np.uint64_t *>np.PyArray_DATA(iteration_table)
+            for i in range(0, ITERATION_SIZE):
+                self.rng_state.iteration_table[i] = arr[i]
+            self.rng_state.i = state["i"]
+            self.rng_state.a = state["a"]
+            self.rng_state.b = state["b"]
+            self.rng_state.c = state["c"]
+
+            self.rng_state.has_uint32 = value["has_uint32"]
+            self.rng_state.uinteger = value["uinteger"]

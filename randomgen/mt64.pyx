@@ -139,13 +139,14 @@ cdef class MT64(BitGenerator):
             state of the PRNG
         """
         key = np.empty(312, dtype=np.uint64)
-        for i in range(312):
-            key[i] = self.rng_state.mt[i]
+        with self.lock:
+            for i in range(312):
+                key[i] = self.rng_state.mt[i]
 
-        return {"bit_generator": fully_qualified_name(self),
-                "state": {"key": key, "pos": self.rng_state.mti},
-                "has_uint32": self.rng_state.has_uint32,
-                "uinteger": self.rng_state.uinteger}
+            return {"bit_generator": fully_qualified_name(self),
+                    "state": {"key": key, "pos": self.rng_state.mti},
+                    "has_uint32": self.rng_state.has_uint32,
+                    "uinteger": self.rng_state.uinteger}
 
     @state.setter
     def state(self, value):
@@ -156,8 +157,9 @@ cdef class MT64(BitGenerator):
             raise ValueError("state must be for a {0} "
                              "PRNG".format(type(self).__name__))
         key = check_state_array(value["state"]["key"], 312, 64, "key")
-        for i in range(312):
-            self.rng_state.mt[i] = key[i]
-        self.rng_state.mti = value["state"]["pos"]
-        self.rng_state.has_uint32 = value["has_uint32"]
-        self.rng_state.uinteger = value["uinteger"]
+        with self.lock:
+            for i in range(312):
+                self.rng_state.mt[i] = key[i]
+            self.rng_state.mti = value["state"]["pos"]
+            self.rng_state.has_uint32 = value["has_uint32"]
+            self.rng_state.uinteger = value["uinteger"]

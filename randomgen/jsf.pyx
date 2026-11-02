@@ -270,25 +270,26 @@ cdef class JSF(BitGenerator):
             Dictionary containing the information required to describe the
             state of the PRNG
         """
-        if self.size == 64:
-            a = self.rng_state.a.u64
-            b = self.rng_state.b.u64
-            c = self.rng_state.c.u64
-            d = self.rng_state.d.u64
-        else:
-            a = self.rng_state.a.u32
-            b = self.rng_state.b.u32
-            c = self.rng_state.c.u32
-            d = self.rng_state.d.u32
-        return {"bit_generator": fully_qualified_name(self),
-                "state": {"a": a, "b": b, "c": c, "d": d,
-                          "p": self.rng_state.p,
-                          "q": self.rng_state.q,
-                          "r": self.rng_state.r},
-                "size": self.size,
-                "has_uint32": self.rng_state.has_uint32,
-                "uinteger": self.rng_state.uinteger,
-                "seed_size": self.seed_size}
+        with self.lock:
+            if self.size == 64:
+                a = self.rng_state.a.u64
+                b = self.rng_state.b.u64
+                c = self.rng_state.c.u64
+                d = self.rng_state.d.u64
+            else:
+                a = self.rng_state.a.u32
+                b = self.rng_state.b.u32
+                c = self.rng_state.c.u32
+                d = self.rng_state.d.u32
+            return {"bit_generator": fully_qualified_name(self),
+                    "state": {"a": a, "b": b, "c": c, "d": d,
+                              "p": self.rng_state.p,
+                              "q": self.rng_state.q,
+                              "r": self.rng_state.r},
+                    "size": self.size,
+                    "has_uint32": self.rng_state.has_uint32,
+                    "uinteger": self.rng_state.uinteger,
+                    "seed_size": self.seed_size}
 
     @state.setter
     def state(self, value):
@@ -298,20 +299,21 @@ cdef class JSF(BitGenerator):
         if bitgen not in (type(self).__name__, fully_qualified_name(self)):
             raise ValueError("state must be for a {0} "
                              "PRNG".format(type(self).__name__))
-        self.size = value["size"]
         state = value["state"]
-        self.setup_generator(state["p"], state["q"], state["r"])
-        if self.size == 64:
-            self.rng_state.a.u64 = state["a"]
-            self.rng_state.b.u64 = state["b"]
-            self.rng_state.c.u64 = state["c"]
-            self.rng_state.d.u64 = state["d"]
-        else:
-            self.rng_state.a.u32 = state["a"]
-            self.rng_state.b.u32 = state["b"]
-            self.rng_state.c.u32 = state["c"]
-            self.rng_state.d.u32 = state["d"]
+        with self.lock:
+            self.size = value["size"]
+            self.setup_generator(state["p"], state["q"], state["r"])
+            if self.size == 64:
+                self.rng_state.a.u64 = state["a"]
+                self.rng_state.b.u64 = state["b"]
+                self.rng_state.c.u64 = state["c"]
+                self.rng_state.d.u64 = state["d"]
+            else:
+                self.rng_state.a.u32 = state["a"]
+                self.rng_state.b.u32 = state["b"]
+                self.rng_state.c.u32 = state["c"]
+                self.rng_state.d.u32 = state["d"]
 
-        self.rng_state.has_uint32 = value["has_uint32"]
-        self.rng_state.uinteger = value["uinteger"]
-        self.seed_size = value["seed_size"]
+            self.rng_state.has_uint32 = value["has_uint32"]
+            self.rng_state.uinteger = value["uinteger"]
+            self.seed_size = value["seed_size"]

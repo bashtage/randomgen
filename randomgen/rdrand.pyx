@@ -4,7 +4,7 @@ import numpy as np
 
 cimport numpy as np
 
-from threading import Lock
+from threading import RLock
 
 cimport libc.stdint
 from cpython cimport PyObject
@@ -60,7 +60,7 @@ cdef double rdrand_double(void* st) noexcept nogil:
 
 cdef class RaisingLock:
     """
-    A Lock that wraps threading.Lock can can raise errors.
+    A lock that wraps threading.RLock and can raise errors.
 
     Raises the last exception set while the lock was held,
     if any. It clears the error when the lock is acquired.
@@ -73,7 +73,7 @@ cdef class RaisingLock:
     cdef PyObject *err
 
     def __init__(self):
-        self.lock = Lock()
+        self.lock = RLock()
         self.err = NULL
 
     def acquire(self, blocking=True, timeout=-1):
@@ -288,7 +288,8 @@ cdef class RDRAND(BitGenerator):
         This happens to ensure that it is possible to manually verify
         the status flag.
         """
-        return bool(self.rng_state.status)
+        with self.lock:
+            return bool(self.rng_state.status)
 
     def _reset(self):
         """
@@ -298,10 +299,11 @@ cdef class RDRAND(BitGenerator):
         setting the buller_loc to BUFFER_SIZE so that a fresh set
         of values is pulled.
         """
-        if self.rng_state.status == 0:
-            # Reset and ensure a new pull
-            self.rng_state.status = 1
-            self.rng_state.buffer_loc = BUFFER_SIZE
+        with self.lock:
+            if self.rng_state.status == 0:
+                # Reset and ensure a new pull
+                self.rng_state.status = 1
+                self.rng_state.buffer_loc = BUFFER_SIZE
 
     cdef _set_seed_seq(self, seed_seq):
         """
@@ -364,11 +366,12 @@ cdef class RDRAND(BitGenerator):
 
         if not output:
             n = 1 if size is None else size
-            status = self.rng_state.status
-            with self.lock, nogil:
-                for i in range(n):
-                    status &= rdrand_next64(&self.rng_state, &value)
-            self.rng_state.status &= status
+            with self.lock:
+                status = self.rng_state.status
+                with nogil:
+                    for i in range(n):
+                        status &= rdrand_next64(&self.rng_state, &value)
+                self.rng_state.status &= status
             if status == 0:
                 raise RuntimeError(ERROR_MSG.format(retries=self.rng_state.retries))
             return
@@ -386,10 +389,11 @@ cdef class RDRAND(BitGenerator):
         n = np.PyArray_SIZE(randoms)
 
         status = 1
-        with self.lock, nogil:
-            for i in range(n):
-                status &= rdrand_next64(&self.rng_state, &randoms_data[i])
-        self.rng_state.status &= status
+        with self.lock:
+            with nogil:
+                for i in range(n):
+                    status &= rdrand_next64(&self.rng_state, &randoms_data[i])
+            self.rng_state.status &= status
         if status == 0:
             raise RuntimeError(ERROR_MSG.format(retries=self.rng_state.retries))
 
@@ -444,15 +448,16 @@ cdef class RDRAND(BitGenerator):
         cdef int i
 
         buffer = np.empty(BUFFER_SIZE, dtype=np.uint64)
-        for i in range(BUFFER_SIZE):
-            buffer[i] = self.rng_state.buffer[i]
+        with self.lock:
+            for i in range(BUFFER_SIZE):
+                buffer[i] = self.rng_state.buffer[i]
 
-        return {"bit_generator": fully_qualified_name(self),
-                "status": self.rng_state.status,
-                "retries": self.rng_state.retries,
-                "buffer_loc": self.rng_state.buffer_loc,
-                "buffer": np.asarray(buffer),
-                }
+            return {"bit_generator": fully_qualified_name(self),
+                    "status": self.rng_state.status,
+                    "retries": self.rng_state.retries,
+                    "buffer_loc": self.rng_state.buffer_loc,
+                    "buffer": np.asarray(buffer),
+                    }
 
     @state.setter
     def state(self, value):
@@ -462,4 +467,5 @@ cdef class RDRAND(BitGenerator):
         if bitgen not in (type(self).__name__, fully_qualified_name(self)):
             raise ValueError("state must be for a {0} "
                              "PRNG".format(type(self).__name__))
-        self.rng_state.retries = value["retries"]
+        with self.lock:
+            self.rng_state.retries = value["retries"]

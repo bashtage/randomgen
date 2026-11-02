@@ -233,10 +233,11 @@ cdef class ChaCha(BitGenerator):
         counter = 0 if counter is None else counter
         _counter = int_to_array(counter, "counter", 128, 64)
 
-        chacha_seed(self.rng_state,
-                    <uint64_t *>np.PyArray_DATA(_seed),
-                    <uint64_t *>np.PyArray_DATA(_stream),
-                    <uint64_t *>np.PyArray_DATA(_counter))
+        with self.lock:
+            chacha_seed(self.rng_state,
+                        <uint64_t *>np.PyArray_DATA(_seed),
+                        <uint64_t *>np.PyArray_DATA(_stream),
+                        <uint64_t *>np.PyArray_DATA(_counter))
 
     @property
     def state(self):
@@ -253,16 +254,17 @@ cdef class ChaCha(BitGenerator):
         block = np.empty(16, dtype=np.uint32)
         keysetup = np.empty(8, dtype=np.uint32)
         ctr = np.empty(2, dtype=np.uint64)
-        for i in range(16):
-            block[i] = self.rng_state.block[i]
-        for i in range(8):
-            keysetup[i] = self.rng_state.keysetup[i]
-        for i in range(2):
-            ctr[i] = self.rng_state.ctr[i]
+        with self.lock:
+            for i in range(16):
+                block[i] = self.rng_state.block[i]
+            for i in range(8):
+                keysetup[i] = self.rng_state.keysetup[i]
+            for i in range(2):
+                ctr[i] = self.rng_state.ctr[i]
 
-        return {"bit_generator": fully_qualified_name(self),
-                "state": {"block": block, "keysetup": keysetup, "ctr": ctr,
-                          "rounds": self.rng_state.rounds}}
+            return {"bit_generator": fully_qualified_name(self),
+                    "state": {"block": block, "keysetup": keysetup, "ctr": ctr,
+                              "rounds": self.rng_state.rounds}}
 
     @state.setter
     def state(self, value):
@@ -275,12 +277,13 @@ cdef class ChaCha(BitGenerator):
 
         state = value["state"]
         block = state["block"]
-        for i in range(16):
-            self.rng_state.block[i] = block[i]
         keysetup = state["keysetup"]
-        for i in range(8):
-            self.rng_state.keysetup[i] = keysetup[i]
         ctr = state["ctr"]
-        for i in range(2):
-            self.rng_state.ctr[i] = ctr[i]
-        self.rng_state.rounds = state["rounds"]
+        with self.lock:
+            for i in range(16):
+                self.rng_state.block[i] = block[i]
+            for i in range(8):
+                self.rng_state.keysetup[i] = keysetup[i]
+            for i in range(2):
+                self.rng_state.ctr[i] = ctr[i]
+            self.rng_state.rounds = state["rounds"]

@@ -300,14 +300,16 @@ cdef class PCG64(BitGenerator):
 
         # state_vec is state.high, state.low, inc.high, inc.low
         state_vec = <np.ndarray>np.empty(4, dtype=np.uint64)
-        pcg64_get_state(&self.rng_state,
-                        <uint64_t *>np.PyArray_DATA(state_vec),
-                        &use_dxsm, &has_uint32, &uinteger)
+        with self.lock:
+            pcg64_get_state(&self.rng_state,
+                            <uint64_t *>np.PyArray_DATA(state_vec),
+                            &use_dxsm, &has_uint32, &uinteger)
+            variant = self.variant
         state = int(state_vec[0]) * 2**64 + int(state_vec[1])
         inc = int(state_vec[2]) * 2**64 + int(state_vec[3])
         return {"bit_generator": fully_qualified_name(self),
                 "state": {"state": state, "inc": inc},
-                "variant": self.variant,
+                "variant": variant,
                 "has_uint32": has_uint32,
                 "uinteger": uinteger}
 
@@ -331,13 +333,14 @@ cdef class PCG64(BitGenerator):
         state_vec[3] = inc % 2 ** 64
         has_uint32 = value["has_uint32"]
         uinteger = value["uinteger"]
-        self.variant = value.get("variant", "1.0")
-        self._setup_rng_state()
+        with self.lock:
+            self.variant = value.get("variant", "1.0")
+            self._setup_rng_state()
 
-        # Default False for backward compat
-        pcg64_set_state(&self.rng_state,
-                        <uint64_t *>np.PyArray_DATA(state_vec),
-                        self.use_dxsm, has_uint32, uinteger)
+            # Default False for backward compat
+            pcg64_set_state(&self.rng_state,
+                            <uint64_t *>np.PyArray_DATA(state_vec),
+                            self.use_dxsm, has_uint32, uinteger)
 
     def advance(self, delta):
         """
@@ -380,10 +383,11 @@ cdef class PCG64(BitGenerator):
         cdef np.ndarray d = np.empty(2, dtype=np.uint64)
         d[0] = delta // 2**64
         d[1] = delta % 2**64
-        pcg64_advance(
-            &self.rng_state, <uint64_t *>np.PyArray_DATA(d), self.cheap_multiplier
-        )
-        self._reset_state_variables()
+        with self.lock:
+            pcg64_advance(
+                &self.rng_state, <uint64_t *>np.PyArray_DATA(d), self.cheap_multiplier
+            )
+            self._reset_state_variables()
         return self
 
     cdef jump_inplace(self, object iter):
@@ -772,21 +776,22 @@ cdef class LCG128Mix(BitGenerator):
         state_vec = <np.ndarray>np.empty(2, dtype=np.uint64)
         inc_vec = <np.ndarray>np.empty(2, dtype=np.uint64)
         mult_vec = <np.ndarray>np.empty(2, dtype=np.uint64)
-        lcg128mix_get_state(self.rng_state.pcg_state,
-                            <uint64_t *>np.PyArray_DATA(state_vec),
-                            <uint64_t *>np.PyArray_DATA(inc_vec),
-                            <uint64_t *>np.PyArray_DATA(mult_vec)
-                            )
-        dxsm_multiplier = self.rng_state.pcg_state.dxsm_multiplier
-        post = self.rng_state.pcg_state.post
-        if self._cfunc is None:
-            output_function = self._inv_output_lookup[
-                self.rng_state.pcg_state.output_idx
-            ]
-        else:
-            output_function = self._cfunc
-        has_uint32 = self.rng_state.has_uint32
-        uinteger = self.rng_state.uinteger
+        with self.lock:
+            lcg128mix_get_state(self.rng_state.pcg_state,
+                                <uint64_t *>np.PyArray_DATA(state_vec),
+                                <uint64_t *>np.PyArray_DATA(inc_vec),
+                                <uint64_t *>np.PyArray_DATA(mult_vec)
+                                )
+            dxsm_multiplier = self.rng_state.pcg_state.dxsm_multiplier
+            post = self.rng_state.pcg_state.post
+            if self._cfunc is None:
+                output_function = self._inv_output_lookup[
+                    self.rng_state.pcg_state.output_idx
+                ]
+            else:
+                output_function = self._cfunc
+            has_uint32 = self.rng_state.has_uint32
+            uinteger = self.rng_state.uinteger
 
         state = int(state_vec[0]) * 2**64 + int(state_vec[1])
         inc = int(inc_vec[0]) * 2**64 + int(inc_vec[1])
@@ -826,31 +831,32 @@ cdef class LCG128Mix(BitGenerator):
         has_uint32 = value["has_uint32"]
         uinteger = value["uinteger"]
 
-        # Default False for backward compat
-        lcg128mix_set_state(self.rng_state.pcg_state,
-                            <uint64_t *>np.PyArray_DATA(state_vec),
-                            <uint64_t *>np.PyArray_DATA(inc_vec),
-                            <uint64_t *>np.PyArray_DATA(mult_vec)
-                            )
-        self.rng_state.has_uint32 = has_uint32
-        self.rng_state.uinteger = uinteger
-        self.rng_state.pcg_state.dxsm_multiplier = value["state"]["dxsm_multiplier"]
-        self.rng_state.pcg_state.post = value["state"]["post"]
-        output_func = value["state"]["output_func"]
-        if isinstance(output_func, str):
-            self.rng_state.pcg_state.output_idx = self._output_lookup[output_func]
-        elif hasattr(output_func, "argtypes") and hasattr(output_func, "restype"):
-            import ctypes
+        with self.lock:
+            # Default False for backward compat
+            lcg128mix_set_state(self.rng_state.pcg_state,
+                                <uint64_t *>np.PyArray_DATA(state_vec),
+                                <uint64_t *>np.PyArray_DATA(inc_vec),
+                                <uint64_t *>np.PyArray_DATA(mult_vec)
+                                )
+            self.rng_state.has_uint32 = has_uint32
+            self.rng_state.uinteger = uinteger
+            self.rng_state.pcg_state.dxsm_multiplier = value["state"]["dxsm_multiplier"]
+            self.rng_state.pcg_state.post = value["state"]["post"]
+            output_func = value["state"]["output_func"]
+            if isinstance(output_func, str):
+                self.rng_state.pcg_state.output_idx = self._output_lookup[output_func]
+            elif hasattr(output_func, "argtypes") and hasattr(output_func, "restype"):
+                import ctypes
 
-            self._cfunc = output_func
-            self.output_function = -1
-            self.output_function_address = (
-                ctypes.cast(self._cfunc, ctypes.c_void_p).value
-            )
-            self.rng_state.pcg_state.output_idx = -1
-            self.rng_state.pcg_state.output_func = (
-                <pcg_output_func_t>self.output_function_address
-            )
+                self._cfunc = output_func
+                self.output_function = -1
+                self.output_function_address = (
+                    ctypes.cast(self._cfunc, ctypes.c_void_p).value
+                )
+                self.rng_state.pcg_state.output_idx = -1
+                self.rng_state.pcg_state.output_func = (
+                    <pcg_output_func_t>self.output_function_address
+                )
 
     def advance(self, delta):
         """
@@ -893,8 +899,9 @@ cdef class LCG128Mix(BitGenerator):
         cdef np.ndarray d = np.empty(2, dtype=np.uint64)
         d[0] = delta // 2**64
         d[1] = delta % 2**64
-        lcg128mix_advance(&self.rng_state, <uint64_t *>np.PyArray_DATA(d))
-        self._reset_state_variables()
+        with self.lock:
+            lcg128mix_advance(&self.rng_state, <uint64_t *>np.PyArray_DATA(d))
+            self._reset_state_variables()
         return self
 
     cdef jump_inplace(self, object iter):
@@ -1071,9 +1078,10 @@ cdef class PCG64DXSM(PCG64):
 
         # state_vec is state.high, state.low, inc.high, inc.low
         state_vec = <np.ndarray>np.empty(4, dtype=np.uint64)
-        pcg64_get_state(&self.rng_state,
-                        <uint64_t *>np.PyArray_DATA(state_vec),
-                        &use_dxsm, &has_uint32, &uinteger)
+        with self.lock:
+            pcg64_get_state(&self.rng_state,
+                            <uint64_t *>np.PyArray_DATA(state_vec),
+                            &use_dxsm, &has_uint32, &uinteger)
         state = int(state_vec[0]) * 2**64 + int(state_vec[1])
         inc = int(state_vec[2]) * 2**64 + int(state_vec[3])
         return {"bit_generator": fully_qualified_name(self),
@@ -1101,13 +1109,14 @@ cdef class PCG64DXSM(PCG64):
         state_vec[3] = inc % 2 ** 64
         has_uint32 = value["has_uint32"]
         uinteger = value["uinteger"]
-        self.variant = "dxsm"
-        self._setup_rng_state()
+        with self.lock:
+            self.variant = "dxsm"
+            self._setup_rng_state()
 
-        # Default False for backward compat
-        pcg64_set_state(&self.rng_state,
-                        <uint64_t *>np.PyArray_DATA(state_vec),
-                        self.use_dxsm, has_uint32, uinteger)
+            # Default False for backward compat
+            pcg64_set_state(&self.rng_state,
+                            <uint64_t *>np.PyArray_DATA(state_vec),
+                            self.use_dxsm, has_uint32, uinteger)
 
     def jumped(self, iter=1):
         """
