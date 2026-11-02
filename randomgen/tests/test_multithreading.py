@@ -38,6 +38,7 @@ from randomgen import (
     Xoshiro256,
     Xoshiro512,
 )
+from randomgen.squares import generate_keys
 
 try:
     RDRAND()
@@ -196,6 +197,18 @@ def test_parallel_state_access(bit_gen):
                 bg.jumped()
             else:
                 _ = bg.state
+
+    run_threaded(func)
+
+
+def test_parallel_squares_keys():
+    expected = generate_keys(12345, 100)
+    assert np.all(expected & np.uint64(1))
+
+    def func(i):
+        for _ in range(20):
+            np.testing.assert_array_equal(generate_keys(12345, 100), expected)
+            assert Squares(12345).state == Squares(12345).state
 
     run_threaded(func)
 

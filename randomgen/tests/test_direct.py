@@ -46,7 +46,7 @@ from randomgen import (
 import randomgen._pickle as rg_pkl
 from randomgen.common import Interface
 from randomgen.seed_sequence import ISeedSequence
-from randomgen.squares import _get_words, _test_sentinal, generate_keys
+from randomgen.squares import _test_sentinal, generate_keys
 from randomgen.tests._utility import CustomPartial
 
 MISSING_RDRAND = False
@@ -1991,13 +1991,6 @@ class TestSquares(TestPCG64DXSM):
         assert _test_sentinal.get_testing()
         _test_sentinal.set_testing(False)
         assert not _test_sentinal.get_testing()
-
-    def test_get_words(self):
-        words = _get_words()
-        assert isinstance(words, np.ndarray)
-        assert words.min() >= 0
-        assert words.max() <= 15
-        assert np.diff(np.sort(words)).max() <= 2
 
     def test_errors(self):
         with pytest.raises(ValueError, match="variant must be either"):
