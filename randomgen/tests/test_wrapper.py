@@ -84,6 +84,7 @@ def test_smoke(python_pcg):
     assert isinstance(gen.integers(0, 2**64, dtype=np.uint64), np.integer)
 
 
+@pytest.mark.thread_unsafe(reason="compares draws from shared fixtures")
 def test_random_raw(pcg_python, pcg_native):
     np.testing.assert_equal(pcg_python.random_raw(1000), pcg_native.random_raw(1000))
 
@@ -115,6 +116,7 @@ def test_random_raw(pcg_python, pcg_native):
         "integers-64-size-7-5-3-2",
     ],
 )
+@pytest.mark.thread_unsafe(reason="compares draws from shared fixtures")
 def test_against_ref(func, pcg_python, pcg_native):
     a = func(Generator(pcg_python))
     b = func(Generator(pcg_native))

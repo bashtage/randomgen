@@ -1,0 +1,41 @@
+name: Free-threaded Python
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  test:
+    name: ${{ matrix.os }}, Python ${{ matrix.python }}
+    runs-on: ${{ matrix.os }}
+    defaults:
+      run:
+        shell: bash
+    strategy:
+      fail-fast: false
+      matrix:
+        python: ["3.14t"]
+        os: [ubuntu-latest, windows-latest, macos-latest]
+
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+
+      - name: Set up Python ${{ matrix.python }}
+        uses: actions/setup-python@v7
+        with:
+          python-version: ${{ matrix.python }}
+
+      - name: Build and install randomgen
+        run: python -m pip install -v . -Csetup-args=--vsenv
+
+      - name: Install test requirements
+        run: python -m pip install "pytest>=8.4.1,<9" pytest-run-parallel packaging scipy
+
+      - name: Run each test in several threads at once
+        # Run outside the checkout so that the installed package is tested
+        working-directory: ${{ runner.temp }}
+        run: python -m pytest --pyargs randomgen --parallel-threads=4 -rfE --durations=10

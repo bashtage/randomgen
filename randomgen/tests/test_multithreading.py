@@ -98,7 +98,7 @@ def run_threaded(func, n_threads=8, timeout=120):
         try:
             barrier.wait()
             func(i)
-        except BaseException as exc:  # pragma: no cover
+        except Exception as exc:  # pragma: no cover
             errors.append(exc)
 
     threads = [
@@ -114,15 +114,14 @@ def run_threaded(func, n_threads=8, timeout=120):
         raise errors[0]
 
 
-def assert_state_equal(actual, expected):
+def states_equal(actual, expected):
     if isinstance(expected, dict):
-        assert actual.keys() == expected.keys()
-        for key in expected:
-            assert_state_equal(actual[key], expected[key])
-    elif isinstance(expected, np.ndarray):
-        np.testing.assert_array_equal(actual, expected)
-    else:
-        assert actual == expected
+        return actual.keys() == expected.keys() and all(
+            states_equal(actual[key], expected[key]) for key in expected
+        )
+    if isinstance(expected, np.ndarray):
+        return np.array_equal(actual, expected)
+    return actual == expected
 
 
 def _advance(bit_gen, delta):
@@ -161,13 +160,7 @@ def test_parallel_seed_state(bit_gen):
                 bg.seed(rnd.choice(seeds))
             else:
                 state = bg.state
-                matched = 0
-                for exp in expected:
-                    try:
-                        assert_state_equal(state, exp)
-                        matched += 1
-                    except AssertionError:
-                        pass
+                matched = sum(states_equal(state, exp) for exp in expected)
                 assert matched == 1, "state read while seeding was in progress"
 
     run_threaded(func)

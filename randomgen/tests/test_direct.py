@@ -1965,6 +1965,7 @@ class TestSquares(TestPCG64DXSM):
         with pytest.raises(ValueError, match="n must be a"):
             generate_keys(0, -1)
 
+    @pytest.mark.thread_unsafe(reason="changes a module-level test flag")
     def test_generate_keys_unique(self):
         a = generate_keys(0, 100, unique=True)
 
@@ -1985,6 +1986,7 @@ class TestSquares(TestPCG64DXSM):
         for i in range(len(hexes)):
             assert len({str(s) for s in hexes[i, 8:]}) == 8
 
+    @pytest.mark.thread_unsafe(reason="changes a module-level test flag")
     def test_sentinal(self):
         assert not _test_sentinal.get_testing()
         _test_sentinal.set_testing(True)
@@ -2122,6 +2124,7 @@ def test_numpy_mode_error_pcg64():
         PCG64(0, inc=1, numpy_seed=True)
 
 
+@pytest.mark.thread_unsafe(reason="runs pytest")
 def test_test_runner():
     val = rg_tester(["--collect-only"], exit=False)
     assert val == 0

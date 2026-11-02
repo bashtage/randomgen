@@ -4,6 +4,10 @@ import pytest
 def pytest_configure(config):
     # Minimal config to simplify running tests from lm.test()
     config.addinivalue_line("markers", "slow: mark a test as slow")
+    # Used by pytest-run-parallel, registered here for runs without it
+    config.addinivalue_line(
+        "markers", "thread_unsafe: mark a test as unsafe to run in several threads"
+    )
     config.addinivalue_line("filterwarnings", "ignore:Generator:FutureWarning")
     config.addinivalue_line("filterwarnings", "ignore:RandomState:FutureWarning")
     config.addinivalue_line(
