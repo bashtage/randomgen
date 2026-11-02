@@ -18,5 +18,4 @@ endif
 py = import('python').find_installation(pure: false)
 fs = import('fs')
 
-py.install_sources('pyproject.toml', subdir: 'arch')
 subdir('randomgen')
