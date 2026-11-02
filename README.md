@@ -98,10 +98,10 @@ The RNGs include:
 ## Status
 
 * Builds and passes all tests on:
-  * Linux 32/64 bit, Python 3.7, 3.8, 3.9, 3.10
+  * Linux 32/64 bit, Python 3.10, 3.11, 3.12, 3.13, 3.14, 3.15
   * Linux (ARM/ARM64), Python 3.8
-  * OSX 64-bit, Python 3.9
-  * Windows 32/64 bit, Python 3.7, 3.8, 3.9, 3.10
+  * OSX 64-bit, Python 3.14
+  * Windows 32/64 bit, Python 3.10, 3.11, 3.12, 3.13, 3.14, 3.15
   * FreeBSD 64-bit
 
 ## Version
@@ -120,11 +120,11 @@ the latest commit (unreleased) is available under
 ## Requirements
 Building requires:
 
-* Python (3.9, 3.10, 3.11, 3.12, 3.13)
+* Python (3.10, 3.11, 3.12, 3.13, 3.14, 3.15)
 * NumPy (1.22.3+ except 2.4.0, runtime, 2.0.0+, building)
 * Cython (3.1.0+)
 
-Testing requires pytest (7+).
+Testing requires pytest (9+).
 
 **Note:** it might work with other versions but only tested with these
 versions.
