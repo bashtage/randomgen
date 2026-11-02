@@ -1581,6 +1581,7 @@ class TestChaCha(Base):
         with pytest.raises(ValueError, match="rounds must be even and"):
             self.bit_generator(rounds=-4)
 
+    @pytest.mark.thread_unsafe(reason="toggles a process-wide SIMD flag")
     def test_use_simd(self):
         bg = self.bit_generator(0)
         if not bg.use_simd:
@@ -2140,6 +2141,7 @@ def test_bitgen_ctor():
         rg_pkl.__bit_generator_ctor("NewFangledBG")
 
 
+@pytest.mark.thread_unsafe(reason="toggles a process-wide SIMD flag")
 def test_speck_sse41():
     s = SPECK128(0)
     if not s.use_sse41:
@@ -2196,6 +2198,7 @@ class TestBlaBla(Base):
         with pytest.raises(ValueError, match="rounds must be even and"):
             self.bit_generator(rounds=-4)
 
+    @pytest.mark.thread_unsafe(reason="toggles a process-wide SIMD flag")
     def test_use_avx2(self):
         bg = self.bit_generator(0)
         if not bg.use_avx2:
