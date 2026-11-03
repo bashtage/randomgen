@@ -176,6 +176,10 @@ cdef class ChaCha(BitGenerator):
         -----
         The setting only affects this instance. New instances use SIMD when
         the CPU supports it. The generated values are the same either way.
+
+        The setting is not part of ``state`` and is not pickled. A generator
+        restored from a pickle, or copied, uses the fastest implementation
+        that the CPU it runs on supports.
         """
         return bool(self.rng_state.use_simd)
 

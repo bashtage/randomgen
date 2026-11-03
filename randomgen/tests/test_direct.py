@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import copy
 import os
 from os.path import join
 import pickle
@@ -2151,7 +2152,7 @@ def test_speck_sse41():
     s.use_sse41 = orig
 
 
-@pytest.mark.parametrize(
+SIMD_FLAGS = pytest.mark.parametrize(
     "bit_gen, flag",
     [
         (AESCounter, "use_aesni"),
@@ -2161,6 +2162,9 @@ def test_speck_sse41():
     ],
     ids=["AESCounter", "BlaBla", "ChaCha", "SPECK128"],
 )
+
+
+@SIMD_FLAGS
 def test_simd_flag_per_instance(bit_gen, flag):
     bg = bit_gen(0)
     if not getattr(bg, flag):
@@ -2178,6 +2182,21 @@ def test_simd_flag_per_instance(bit_gen, flag):
     first = bg.random_raw(500)
     setattr(bg, flag, True)
     assert_equal(np.concatenate([first, bg.random_raw(500)]), expected)
+
+
+@SIMD_FLAGS
+def test_simd_flag_not_pickled(bit_gen, flag):
+    # A pickle may be loaded on a CPU without the feature, so the copy must
+    # check the CPU it runs on rather than inherit the setting
+    bg = bit_gen(0)
+    default = getattr(bg, flag)
+    setattr(bg, flag, False)
+    bg.random_raw(7)
+    expected = copy.deepcopy(bg).random_raw(1000)
+    for restored in (pickle.loads(pickle.dumps(bg)), copy.deepcopy(bg)):
+        assert getattr(restored, flag) == default
+        assert_equal(restored.random_raw(1000), expected)
+    assert not any(flag in key for key in bg.state)
 
 
 def test_pcg64_errors():
