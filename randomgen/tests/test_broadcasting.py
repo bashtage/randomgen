@@ -381,3 +381,42 @@ def test_validate_output():
         generator.cont_1(np.array([0.1, 0.2, 0.3]), out=np.empty((7, 5)))
     with pytest.raises(ValueError, match="shape mismatch"):
         generator.cont_1(np.array([0.1, 0.2, 0.3]), size=(7, 11))
+
+
+SMALL_OUTPUT_CALLS = [
+    lambda g, **kw: g.cont_1([0.5, 0.5, 0.5], **kw),
+    lambda g, **kw: g.cont_2([0.5, 0.5, 0.5], 1.0, **kw),
+    lambda g, **kw: g.cont_3([0.5, 0.5, 0.5], 0.5, 1.5, **kw),
+    lambda g, **kw: g.cont_3_alt_cons([1.5, 1.5, 1.5], 1.0, 1.0, **kw),
+    lambda g, **kw: g.cont_1_float([0.5, 0.5, 0.5], **kw),
+    lambda g, **kw: g.disc_d([0.5, 0.5, 0.5], **kw),
+    lambda g, **kw: g.disc_dd([0.5, 0.5, 0.5], 1.0, **kw),
+    lambda g, **kw: g.disc_di([0.5, 0.5, 0.5], 1, **kw),
+    lambda g, **kw: g.disc_i([1, 1, 1], **kw),
+    lambda g, **kw: g.disc_iii([1, 1, 1], 1, 1, **kw),
+]
+
+
+@pytest.mark.parametrize("call", SMALL_OUTPUT_CALLS)
+@pytest.mark.parametrize("size", [1, (1,), (1, 1), (0, 1)])
+def test_size_smaller_than_broadcast_shape(call, size):
+    # The output must have the broadcast shape of the inputs. A size that
+    # broadcasts with the inputs but is smaller used to be silently truncated.
+    generator = ShimGenerator(PCG64())
+    with pytest.raises(ValueError, match=r"Output size .* is not compatible"):
+        call(generator, size=size)
+
+
+@pytest.mark.parametrize("out_shape", [(1,), (1, 1)])
+def test_out_smaller_than_broadcast_shape(out_shape):
+    generator = ShimGenerator(PCG64())
+    out = np.empty(out_shape)
+    with pytest.raises(ValueError, match=r"Output size .* is not compatible"):
+        generator.cont_1([0.5, 0.5, 0.5], out=out)
+
+
+def test_size_larger_than_broadcast_shape():
+    generator = ShimGenerator(PCG64())
+    assert generator.cont_1([0.5, 0.5, 0.5], size=(2, 3)).shape == (2, 3)
+    assert generator.cont_1([0.5, 0.5, 0.5], size=(1, 3)).shape == (1, 3)
+    assert generator.disc_i([1, 1, 1], size=(0, 3)).shape == (0, 3)
