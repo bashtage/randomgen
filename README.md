@@ -7,8 +7,8 @@ This package contains additional bit generators for NumPy's
 **Continuous Integration**
 
 [![Azure Build Status](https://dev.azure.com/kevinksheppard0207/kevinksheppard/_apis/build/status/bashtage.randomgen?branchName=main)](https://dev.azure.com/kevinksheppard0207/kevinksheppard/_build/latest?definitionId=2&branchName=main)
-[![Cirrus CI Build Status](https://api.cirrus-ci.com/github/bashtage/randomgen.svg?branch=main)](https://api.cirrus-ci.com/github/bashtage/randomgen.svg)
 [![Github Workflow Build Status](https://github.com/bashtage/randomgen/actions/workflows/cron-build-and-test.yml/badge.svg)](https://github.com/bashtage/randomgen/actions/workflows/cron-build-and-test.yml)
+[![Linux ARM64 Build Status](https://github.com/bashtage/randomgen/actions/workflows/linux-arm.yml/badge.svg)](https://github.com/bashtage/randomgen/actions/workflows/linux-arm.yml)
 
 
 **Coverage**
@@ -132,8 +132,8 @@ versions.
 ## Development and Testing
 
 All development has been on 64-bit Linux, and it is regularly tested on
-Azure (Linux-AMD64, Windows, and macOS), Cirrus (Linux-ARM), and GitHub
-Actions (free-threaded Python).
+Azure (Linux-AMD64, Windows, and macOS) and GitHub Actions (Linux-ARM64
+and free-threaded Python).
 
 Tests are in place for all RNGs. The MT19937 is tested against
 NumPy's implementation for identical results. It also passes NumPy's

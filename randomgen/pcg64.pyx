@@ -162,7 +162,6 @@ cdef class PCG64(BitGenerator):
         self.rng_state.pcg_state = <pcg64_random_t *>PyArray_malloc_aligned(
             sizeof(pcg64_random_t)
         )
-        inc = None if seed is None else inc
 
         variant = "dxsm" if variant is None else variant
         if not (isinstance(variant, (str, int, np.integer))):
@@ -260,7 +259,7 @@ cdef class PCG64(BitGenerator):
         inc : {None, int}, optional
             The increment in the LCG. Can be an integer in [0, 2**128) or
             None. If inc is None, then it is initialized using entropy. The
-            default is None if seed is None, else 0.
+            default is None.
 
         Raises
         ------
@@ -268,13 +267,12 @@ cdef class PCG64(BitGenerator):
             If seed values are out of range for the PRNG.
         """
         ub = 2 ** 128
-        inc = None if seed is None else inc
         if inc is not None:
             err_msg = "inc must be a scalar integer between 0 and " \
                       "{ub}".format(ub=ub)
             if not np.isscalar(inc):
                 raise TypeError(err_msg)
-            if inc < 0 or inc > ub or int(np.squeeze(inc)) != inc:
+            if inc < 0 or inc >= ub or int(np.squeeze(inc)) != inc:
                 raise ValueError(err_msg)
         BitGenerator._seed_with_seed_sequence(self, seed, inc=inc)
 

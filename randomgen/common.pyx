@@ -120,11 +120,11 @@ cdef class BitGenerator(_BitGenerator):
 
     @property
     def state(self):
-        raise NotImplemented("subclasses must implement")
+        raise NotImplementedError("subclasses must implement")
 
     @state.setter
     def state(self, value):
-        raise NotImplemented("subclasses must implement")
+        raise NotImplementedError("subclasses must implement")
 
     def random_raw(self, size=None, output=True):
         """
@@ -266,7 +266,7 @@ cdef object random_raw(bitgen_t *bitgen, object lock, object size, object output
             with lock:
                 bitgen.next_raw(bitgen.state)
             return None
-        n = np.asarray(size).sum()
+        n = int(np.prod(size))
         with lock, nogil:
             for i in range(n):
                 bitgen.next_raw(bitgen.state)

@@ -1,2 +1,11 @@
 randomgen/_version.py export-subst
 * text=auto eol=lf
+
+# Keep CI configuration and generated test results out of the sdist
+.github export-ignore
+.cirrus.yml export-ignore
+.pep8speaks.yml export-ignore
+azure-pipelines.yml export-ignore
+ci export-ignore
+codecov.yml export-ignore
+tools/results export-ignore
