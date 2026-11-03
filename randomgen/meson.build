@@ -176,16 +176,20 @@ foreach gen: standard_bit_generators
     )
 endforeach
 
-subdirs_list = [
-    '_build',
-    'examples',
-    'src',
+install_subdir('compat', install_dir: rg_dir)
+# The extension sources and the build-time `_shims` files are not needed to
+# run the tests
+install_subdir(
     'tests',
-]
-
-foreach subdir : subdirs_list
-    install_subdir(subdir, install_dir: py.get_install_dir() / 'randomgen')
-endforeach
+    install_dir: rg_dir,
+    exclude_files: [
+        'meson.build',
+        '_shim_dist.c',
+        '_shim_dist.h',
+        '_shims.pxd',
+        '_shims.pyx',
+    ],
+)
 
 
 py.extension_module(

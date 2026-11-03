@@ -5,19 +5,21 @@
 #define _threefryNxW_advance_tpl(N, W)                                         \
 void threefry##N##x##W##_advance(threefry_all_t *state, uint##W##_t *step, int use_carry) { \
   /* step has N+1 elements */                                                               \
-  int i, next_buffer_pos;                                                                   \
+  int i, next_buffer_pos, bp;                                                               \
   uint##W##_t last, carry, rem, adj_step;                                                   \
   threefry##N##x##W##_ctr_t ct;                                                             \
   rem = step[0] % N;                                                                        \
-  next_buffer_pos = state->buffer_pos + rem;                                                \
-  carry = (((state->buffer_pos == N) && (rem==0)) || (next_buffer_pos >= N && (rem > 0)))   \
-            && (use_carry > 0);                                                             \
+  /* buffer_pos is N once the buffer is used up, but a new or reset generator */            \
+  /* stores the buffer size, which is 4 even when N is 2 */                                 \
+  bp = state->buffer_pos > N ? N : state->buffer_pos;                                       \
+  next_buffer_pos = bp + rem;                                                               \
+  carry = (next_buffer_pos >= N) && (use_carry > 0);                                        \
   state->buffer_pos = next_buffer_pos % N;                                                  \
   for (i = 0; i < N; i++) {                                                                 \
       adj_step = step[i] / N;                                                               \
       /* Add in the lower bits from the next step size */                                   \
       /* The N/2 is really log2(N) but ok here since N is 2 or 4  */                        \
-      if (i < (N - 1)){                                                                     \
+      if (i < N){                                                                           \
         adj_step += (step[i + 1] % N) << (W - (N / 2));                                     \
       }                                                                                     \
       last = state->state.state##N##x##W.ctr.v[i];                                          \

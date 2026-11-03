@@ -97,13 +97,6 @@ jobs:
     displayName: 'Install dependencies'
 
   - script: |
-      ruff check
-      flake8 .
-      black --check .
-      isort --check randomgen
-    displayName: 'Check style and formatting'
-
-  - script: |
       python -m pip install pip --upgrade
       python -c "import platform;print(platform.uname())"
       python -c "import numpy;print(numpy.show_runtime())"

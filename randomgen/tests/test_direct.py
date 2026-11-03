@@ -29,6 +29,7 @@ from randomgen import (
     MWC192X,
     PCG32,
     PCG64,
+    PCG64DXSM,
     RDRAND,
     SFC64,
     SFMT,
@@ -36,6 +37,7 @@ from randomgen import (
     AESCounter,
     BlaBla,
     ChaCha,
+    LCG128Mix,
     Philox,
     Romu,
     Squares,
@@ -751,6 +753,74 @@ class TestXorshift1024(Base):
         cls.seed_error_type = TypeError
         cls.invalid_seed_types = [("apple",), (2 + 3j,), (3.1,)]
         cls.invalid_seed_values = [(-2,)]
+
+
+COUNTER_BASED = [
+    pytest.param(cls, number, width, id=f"{cls.__name__}-{number}x{width}")
+    for cls in (Philox, ThreeFry)
+    for number in (2, 4)
+    for width in (32, 64)
+]
+
+
+def _counter_as_int(bg):
+    width = bg.state["state"]["counter"].dtype.itemsize * 8
+    counter = bg.state["state"]["counter"]
+    return sum(int(v) << (width * i) for i, v in enumerate(counter))
+
+
+@pytest.mark.parametrize(("cls", "number", "width"), COUNTER_BASED)
+@pytest.mark.parametrize("warmup", [0, 1, 2, 3, 4, 5, 7, 100])
+@pytest.mark.parametrize("step", [1, 2, 3, 4, 5, 6, 7, 8, 9, 34159])
+def test_advance_counter_false_matches_draws(cls, number, width, warmup, step):
+    # Includes a new generator, whose buffer_pos is the buffer size (4), not number
+    bg = cls(1234, number=number, width=width)
+    bg.random_raw(warmup)
+    expected = cls(1234, number=number, width=width)
+    expected.random_raw(warmup + step)
+    bg.advance(step, counter=False)
+    assert_array_equal(bg.random_raw(7), expected.random_raw(7))
+
+
+@pytest.mark.parametrize(("cls", "number", "width"), COUNTER_BASED)
+@pytest.mark.parametrize("warmup", [0, 1, 2, 3, 4, 5, 7, 100])
+@pytest.mark.parametrize("step", [1, 2, 3, 4, 5, 34159])
+def test_advance_counter_true_matches_draws(cls, number, width, warmup, step):
+    # counter=True advances the counter by step blocks of number draws
+    bg = cls(1234, number=number, width=width)
+    bg.random_raw(warmup)
+    counter = _counter_as_int(bg)
+    expected = cls(1234, number=number, width=width)
+    expected.random_raw((counter + step) * number)
+    bg.advance(step, counter=True)
+    assert _counter_as_int(bg) == counter + step
+    assert_array_equal(bg.random_raw(7), expected.random_raw(7))
+
+
+@pytest.mark.parametrize(("cls", "number", "width"), COUNTER_BASED)
+@pytest.mark.parametrize("counter_only", [True, False])
+@pytest.mark.parametrize("warmup", [0, 1, 3])
+def test_advance_large(cls, number, width, counter_only, warmup):
+    # The counter has number * width bits and holds 2**(number * width) blocks.
+    # Check steps near the largest step that can be advanced, which carry
+    # across all of the words of the counter.
+    bits = number * width
+    log2_number = number // 2
+    modulus = 2**bits
+    for exponent in range(width - 1, bits + log2_number + 1):
+        for delta in (-1, 0, 1):
+            step = 2**exponent + delta
+            bg = cls(1234, number=number, width=width)
+            bg.random_raw(warmup)
+            counter = _counter_as_int(bg)
+            position = min(bg.state["buffer_pos"], number)
+            bg.advance(step, counter=counter_only)
+            if counter_only:
+                assert _counter_as_int(bg) == (counter + step) % modulus
+            else:
+                new_position = (counter * number + position + step) % (modulus * number)
+                assert _counter_as_int(bg) == new_position // number
+                assert bg.state["buffer_pos"] == new_position % number
 
 
 class TestThreeFry(Random123):
@@ -1500,6 +1570,12 @@ class TestRDRAND(Base):
             bit_generator.random_raw(output=False)
         with pytest.raises(RuntimeError):
             bit_generator.random_raw(10, output=False)
+
+    @pytest.mark.parametrize("size", [5, (3, 4), [3, 4], (2, 3, 4)])
+    def test_raw_no_output_size(self, size):
+        bit_generator = RDRAND()
+        assert bit_generator.random_raw(size, output=False) is None
+        assert bit_generator.state["status"] == 1
 
     def test_checked_raw(self):
         bit_generator = RDRAND()
@@ -2268,6 +2344,41 @@ def test_pcg64_errors():
         p.seed(seed=0, inc=-1)
     with pytest.raises(ValueError, match="inc must be a scalar"):
         p.seed(seed=0, inc=sum(2**i for i in range(129)))
+
+
+@pytest.mark.parametrize(
+    ("bg_ctor", "ub"),
+    [
+        (PCG32, 2**64),
+        (PCG64, 2**128),
+        (CustomPartial(PCG64, variant="dxsm"), 2**128),
+    ],
+)
+def test_inc_upper_bound(bg_ctor, ub):
+    with pytest.raises(ValueError, match="inc must be a scalar"):
+        bg_ctor(0, inc=ub)
+    with pytest.raises(ValueError, match="inc must be a scalar"):
+        bg_ctor(0).seed(0, inc=ub)
+    with pytest.raises(ValueError, match="inc must be a scalar"):
+        bg_ctor(0, inc=ub + 1)
+    bg = bg_ctor(0, inc=ub - 1)
+    assert isinstance(bg.random_raw(), int)
+
+
+@pytest.mark.parametrize("bg_ctor", [PCG32, PCG64, LCG128Mix, PCG64DXSM])
+def test_inc_with_seed_none(bg_ctor):
+    # inc is used even when seed is None
+    bg = bg_ctor(None, inc=5)
+    assert bg.state["state"]["inc"] == bg_ctor(0, inc=5).state["state"]["inc"]
+    bg.seed(None, inc=7)
+    assert bg.state["state"]["inc"] == bg_ctor(0, inc=7).state["state"]["inc"]
+    bg.seed(None, inc=None)
+    assert bg.state["state"]["inc"] not in (11, 15)
+
+
+def test_inc_with_seed_none_numpy_seed():
+    with pytest.raises(ValueError, match="inc must be"):
+        PCG64(None, inc=5, numpy_seed=True)
 
 
 class TestBlaBla(Base):
