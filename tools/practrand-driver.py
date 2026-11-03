@@ -30,6 +30,7 @@ for k in seen:
     bitgens.append(rg.SFC64(rg.SeedSequence(ENTROPY), k=k))
 output = 64
 """
+
 import argparse
 import importlib.machinery
 import json
@@ -289,7 +290,7 @@ def main():
         default="",
         help="""\
 Python file to import. Python file must contain the
-variable bitgens containing a list of instantized bit
+variable bitgens containing a list of instantiated bit
 generators and the variable output that describes the
 number of bits output (either 64 or 32).
 """,

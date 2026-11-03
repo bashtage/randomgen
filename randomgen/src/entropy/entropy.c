@@ -29,6 +29,7 @@
  * We also need to try to test whether or not to use the fallback.
  */
 
+#include <errno.h>
 #include <stddef.h>
 #include <stdlib.h>
 #include <string.h>
@@ -40,7 +41,7 @@
 #include <time.h>
 #include <windows.h>
 
-#include <wincrypt.h>
+#include <bcrypt.h>
 #else
 /* Unix */
 #include <sys/time.h>
@@ -67,6 +68,9 @@
 #include <unistd.h>
 #endif
 
+/* Largest single request made to the system, in bytes */
+#define ENTROPY_MAX_CHUNK ((size_t)1 << 30)
+
 #if HAVE_DEV_RANDOM
 /* entropy_getbytes(dest, size):
  *     Use /dev/random to get some external entropy for seeding purposes.
@@ -78,32 +82,45 @@
  */
 
 bool entropy_getbytes(void *dest, size_t size) {
+  unsigned char *out = (unsigned char *)dest;
   int fd = open("/dev/urandom", O_RDONLY);
   if (fd < 0)
     return false;
-  ssize_t sz = read(fd, dest, size);
-  if ((sz < 0) || ((size_t)sz < size))
-    return false;
+  /* read can return fewer bytes than requested or be interrupted by a signal */
+  while (size > 0) {
+    size_t chunk = size < ENTROPY_MAX_CHUNK ? size : ENTROPY_MAX_CHUNK;
+    ssize_t sz = read(fd, out, chunk);
+    if (sz < 0) {
+      if (errno == EINTR)
+        continue;
+      close(fd);
+      return false;
+    }
+    if (sz == 0) {
+      close(fd);
+      return false;
+    }
+    out += sz;
+    size -= (size_t)sz;
+  }
   return close(fd) == 0;
 }
 #endif
 
 #ifdef _WIN32
 bool entropy_getbytes(void *dest, size_t size) {
-  HCRYPTPROV hCryptProv;
-  BOOL done;
+  unsigned char *out = (unsigned char *)dest;
 
-  if (!CryptAcquireContext(&hCryptProv, NULL, NULL, PROV_RSA_FULL,
-                           CRYPT_VERIFYCONTEXT) ||
-      !hCryptProv) {
-    return true;
+  /* The length argument of BCryptGenRandom is a ULONG */
+  while (size > 0) {
+    ULONG chunk = (ULONG)(size < ENTROPY_MAX_CHUNK ? size : ENTROPY_MAX_CHUNK);
+    if (!BCRYPT_SUCCESS(BCryptGenRandom(NULL, out, chunk,
+                                        BCRYPT_USE_SYSTEM_PREFERRED_RNG))) {
+      return false;
+    }
+    out += chunk;
+    size -= chunk;
   }
-  done = CryptGenRandom(hCryptProv, (DWORD)size, (unsigned char *)dest);
-  CryptReleaseContext(hCryptProv, 0);
-  if (!done) {
-    return false;
-  }
-
   return true;
 }
 #endif
@@ -152,15 +169,14 @@ uint32_t entropy_randombytes(void) {
 }
 
 bool entropy_fallback_getbytes(void *dest, size_t size) {
-  int hashes = (int)size;
-  uint32_t *hash = malloc(hashes * sizeof(uint32_t));
-  // uint32_t hash[hashes];
-  int i;
-  for (i = 0; i < hashes; i++) {
-    hash[i] = entropy_randombytes();
+  unsigned char *out = (unsigned char *)dest;
+  while (size > 0) {
+    uint32_t word = entropy_randombytes();
+    size_t n = size < sizeof(word) ? size : sizeof(word);
+    memcpy(out, &word, n);
+    out += n;
+    size -= n;
   }
-  memcpy(dest, (void *)hash, size);
-  free(hash);
   return true;
 }
 

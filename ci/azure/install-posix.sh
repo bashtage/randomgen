@@ -13,7 +13,7 @@ else
 fi
 
 # Not all available in conda
-python -m pip install "setuptools_scm[toml]>=9.2.0,<10"  wheel pip "black[jupyter]~=25.9.0" isort flake8 threadpoolctl meson-python ninja meson ruff --upgrade
+python -m pip install "setuptools_scm[toml]>=9.2.0,<10"  wheel pip threadpoolctl meson-python ninja meson --upgrade
 
 EXTRA="pytest pytest-xdist coverage pytest-cov pytest-randomly colorama"
 
