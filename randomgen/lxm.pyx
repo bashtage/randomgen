@@ -26,9 +26,8 @@ cdef class LXM(BitGenerator):
         Entropy initializing the pseudo-random number generator.
         Can be an integer in [0, 2**64), array of integers in [0, 2**64),
         a SeedSequence instance or ``None`` (the default). If `seed` is
-        ``None``, then  data is read from ``/dev/urandom`` (or the Windows
-        analog) if available. If unavailable, a hash of the time and process
-        ID is used.
+        ``None``, a new SeedSequence is created using entropy from the
+        operating system.
     b : uint64
         The additive constant in the LCG update. Must be odd, and so 1 is
         added if even. The default value is 3037000493.
@@ -36,13 +35,13 @@ cdef class LXM(BitGenerator):
     Attributes
     ----------
     lock : threading.Lock
-        Lock instance that is shared so that the same bit git generator can
+        Lock instance that is shared so that the same bit generator can
         be used in multiple Generators without corrupting the state. Code that
         generates values from a bit generator should hold the bit generator's
         lock.
     seed_seq : {None, SeedSequence}
-        The SeedSequence instance used to initialize the generator if mode is
-        "sequence" or is seed is a SeedSequence.
+        The SeedSequence instance used to seed the generator. If `seed` is not
+        a SeedSequence, one is created from it.
 
     Notes
     -----
@@ -92,7 +91,7 @@ cdef class LXM(BitGenerator):
     >>> rg = [Generator(LXM(1234))]
     # Advance each LXM instance by i jumps
     >>> for i in range(10):
-    ...     rg.append(rg[-1].jumped())
+    ...     rg.append(Generator(rg[-1].bit_generator.jumped()))
 
     Note that jumped states only alters the Xorshift state since the jump is a
     full cycle of the LCG.
@@ -197,41 +196,14 @@ cdef class LXM(BitGenerator):
                 lxm_jump(&self.rng_state)
             self._reset_state_variables()
 
-    def jump(self, np.npy_intp iter=1):
-        """
-        jump(iter=1)
-
-        Jumps the state as-if 2**128 random numbers have been generated
-
-        Parameters
-        ----------
-        iter : integer, positive
-            Number of times to jump the state of the rng.
-
-        Returns
-        -------
-        self : LXM
-            PRNG jumped iter times
-
-        Notes
-        -----
-        Jumping the rng state resets any pre-computed random numbers. This is
-        required to ensure exact reproducibility.
-        """
-        import warnings
-        warnings.warn("jump (in-place) has been deprecated in favor of jumped"
-                      ", which returns a new instance", DeprecationWarning)
-        self.jump_inplace(iter)
-        return self
-
     def jumped(self, np.npy_intp iter=1):
         """
         jumped(iter=1)
 
         Returns a new bit generator with the state jumped
 
-        The state of the returned big generator is jumped as-if
-        2**(128 * iter) random numbers have been generated.
+        The state of the returned bit generator is jumped as-if
+        iter * 2**128 random numbers have been generated.
 
         Parameters
         ----------

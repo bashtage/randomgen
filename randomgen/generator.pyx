@@ -182,7 +182,7 @@ cdef class ExtendedGenerator:
         cdef const char *name = "BitGenerator"
         if not PyCapsule_IsValid(capsule, name):
             raise ValueError("Invalid bit generator. The bit generator must "
-                             "be instantized.")
+                             "be instantiated.")
         self._bitgen = (<bitgen_t *> PyCapsule_GetPointer(capsule, name))[0]
         self.lock = bit_generator.lock
         from numpy.random import Generator

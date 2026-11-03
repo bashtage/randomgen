@@ -29,26 +29,24 @@ cdef class MT19937(BitGenerator):
         Random seed used to initialize the pseudo-random number generator. Can
         be any integer between 0 and 2**32 - 1 inclusive, an array (or other
         sequence) of unsigned 32-bit integers, a SeedSequence instance or
-        ``None`` (the default). If `seed` is ``None``, then 624 32-bit
-        unsigned integers are read from ``/dev/urandom`` (or the Windows
-        analog) if available. If unavailable, a hash of the time and process
-        ID is used.
+        ``None`` (the default). If `seed` is ``None``, a new SeedSequence is
+        created using entropy from the operating system.
     numpy_seed : bool
         Set to True to use  the same seeding mechanism as NumPy and
         so matches NumPy exactly.
 
-        .. versionadded: 2.0.0
+        .. versionadded:: 2.0.0
 
     Attributes
     ----------
     lock : threading.Lock
-        Lock instance that is shared so that the same bit git generator can
+        Lock instance that is shared so that the same bit generator can
         be used in multiple Generators without corrupting the state. Code that
         generates values from a bit generator should hold the bit generator's
         lock.
     seed_seq : {None, SeedSequence}
-        The SeedSequence instance used to initialize the generator if mode is
-        "sequence" or is seed is a SeedSequence.
+        The SeedSequence instance used to seed the generator. If `seed` is not
+        a SeedSequence, one is created from it.
 
     Notes
     -----
@@ -62,8 +60,8 @@ cdef class MT19937(BitGenerator):
 
     **State and Seeding**
 
-    The ``MT19937`` state vector consists of a 768-element array of
-    32-bit unsigned integers plus a single integer value between 0 and 768
+    The ``MT19937`` state vector consists of a 624-element array of
+    32-bit unsigned integers plus a single integer value between 0 and 624
     that indexes the current position within the main array.
 
     ``MT19937`` is seeded using either a single 32-bit unsigned integer
@@ -76,7 +74,7 @@ cdef class MT19937(BitGenerator):
     **Parallel Features**
 
     ``MT19937`` can be used in parallel applications by
-    calling the method ``jump`` which advances the state as-if :math:`2^{128}`
+    calling the method ``jumped`` which advances the state as-if :math:`2^{128}`
     random numbers have been generated ([1]_, [2]_). This allows the original
     sequence to be split so that distinct segments can be used in each worker
     process. All generators should be initialized with the same seed to ensure
@@ -86,10 +84,8 @@ cdef class MT19937(BitGenerator):
     >>> from randomgen.entropy import random_entropy
     >>> from randomgen import MT19937
     >>> seed = random_entropy()
-    >>> rs = [Generator(MT19937(seed)) for _ in range(10)]
     # Advance each MT19937 instance by i jumps
-    >>> for i in range(10):
-    ...     rs[i].bit_generator.jump(i)
+    >>> rs = [Generator(MT19937(seed).jumped(i)) for i in range(10)]
 
     **Compatibility Guarantee**
 
@@ -143,10 +139,8 @@ cdef class MT19937(BitGenerator):
             Random seed used to initialize the pseudo-random number generator.
             Can be any integer between 0 and 2**32 - 1 inclusive, an array (or
             other sequence) of unsigned 32-bit integers, a SeedSequence
-            instance or ``None`` (the default). If `seed` is ``None``, then
-            624 32-bit unsigned integers are read from ``/dev/urandom`` (or
-            the Windows analog) if available. If unavailable, a hash of the
-            time and process ID is used.
+            instance or ``None`` (the default). If `seed` is ``None``, a new
+            SeedSequence is created using entropy from the operating system.
 
         Raises
         ------
@@ -193,37 +187,14 @@ cdef class MT19937(BitGenerator):
 
         return bit_generator
 
-    def jump(self, int iter=1):
-        """
-        jump(iter=1)
-
-        Jumps the state as-if 2**128 random numbers have been generated.
-
-        Parameters
-        ----------
-        iter : integer, positive
-            Number of times to jump the state of the bit generator.
-
-        Returns
-        -------
-        self : MT19937
-            PRNG jumped iter times
-        """
-        import warnings
-        warnings.warn("jump (in-place) has been deprecated in favor of jumped"
-                      ", which returns a new instance", DeprecationWarning)
-
-        self.jump_inplace(iter)
-        return self
-
     def jumped(self, int iter=1):
         """
         jumped(iter=1)
 
         Returns a new bit generator with the state jumped
 
-        The state of the returned big generator is jumped as-if
-        2**(128 * iter) random numbers have been generated.
+        The state of the returned bit generator is jumped as-if
+        iter * 2**128 random numbers have been generated.
 
         Parameters
         ----------

@@ -66,18 +66,18 @@ cdef class PCG64(BitGenerator):
         so matches NumPy exactly. To match NumPy, variant must be ``xsl-rr``.
         When using "numpy", ``inc`` must be ``None``.
 
-        .. versionadded: 2.0.0
+        .. versionadded:: 2.0.0
 
     Attributes
     ----------
     lock : threading.Lock
-        Lock instance that is shared so that the same bit git generator can
+        Lock instance that is shared so that the same bit generator can
         be used in multiple Generators without corrupting the state. Code that
         generates values from a bit generator should hold the bit generator's
         lock.
     seed_seq : {None, SeedSequence}
-        The SeedSequence instance used to initialize the generator if mode is
-        "sequence" or is seed is a SeedSequence.
+        The SeedSequence instance used to seed the generator. If `seed` is not
+        a SeedSequence, one is created from it.
 
     Notes
     -----
@@ -91,8 +91,8 @@ cdef class PCG64(BitGenerator):
 
        s_{n+1} = m s_{n} + i \mod 2^{128}
 
-    where :math:`s` is the state of the generator, :math:`m` is the multipler
-    and :math:`i` is the increment. The multipler is a 128-bit unsigned
+    where :math:`s` is the state of the generator, :math:`m` is the multiplier
+    and :math:`i` is the increment. The multiplier is a 128-bit unsigned
     integer with good spectral properties except when using the "dxsm"
     variant, in which case it is a 64-bit unsigned integer. The output of the
     LCG is the permuted using either an XOR and a random rotation (XSL-RR)
@@ -154,7 +154,6 @@ cdef class PCG64(BitGenerator):
         self.rng_state.pcg_state = <pcg64_random_t *>PyArray_malloc_aligned(
             sizeof(pcg64_random_t)
         )
-        inc = None if seed is None else inc
 
         variant = "dxsm" if variant is None else variant
         if not (isinstance(variant, (str, int, np.integer))):
@@ -255,14 +254,12 @@ cdef class PCG64(BitGenerator):
         seed : {None, int, SeedSequence}, optional
             Random seed initializing the pseudo-random number generator. Can
             be an integer in [0, 2**128), a SeedSequence instance or None
-            (the default). If `seed` is None, then ``PCG64`` will try to
-            read data from ``/dev/urandom`` (or the Windows analog) if
-            available. If unavailable, a 64-bit hash of the time and process
-            ID is used.
+            (the default). If `seed` is ``None``, a new SeedSequence is created
+            using entropy from the operating system.
         inc : {None, int}, optional
             The increment in the LCG. Can be an integer in [0, 2**128) or
             None. If inc is None, then it is initialized using entropy. The
-            default is None if seed is None, else 0.
+            default is None.
 
         Raises
         ------
@@ -270,13 +267,12 @@ cdef class PCG64(BitGenerator):
             If seed values are out of range for the PRNG.
         """
         ub = 2 ** 128
-        inc = None if seed is None else inc
         if inc is not None:
             err_msg = "inc must be a scalar integer between 0 and " \
                       "{ub}".format(ub=ub)
             if not np.isscalar(inc):
                 raise TypeError(err_msg)
-            if inc < 0 or inc > ub or int(np.squeeze(inc)) != inc:
+            if inc < 0 or inc >= ub or int(np.squeeze(inc)) != inc:
                 raise ValueError(err_msg)
         BitGenerator._seed_with_seed_sequence(self, seed, inc=inc)
 
@@ -400,8 +396,7 @@ cdef class PCG64(BitGenerator):
 
         Notes
         -----
-        The step size is phi (the Golden Ratio) when divided by the period
-        2**128.
+        The step size is floor(2**128 / phi), where phi is the Golden Ratio.
         """
         step = 0x9e3779b97f4a7c15f39cc0605cedc834
         step *= int(iter)
@@ -409,48 +404,15 @@ cdef class PCG64(BitGenerator):
         step -= 2**128 * divisor
         self.advance(step)
 
-    def jump(self, np.npy_intp iter=1):
-        """
-        jump(iter=1)
-
-        Jump the state a fixed increment
-
-        Jumps the state as-if 210306068529402873165736369884012333108 random
-        numbers have been generated.
-
-        Parameters
-        ----------
-        iter : integer, positive
-            Number of times to jump the state of the rng.
-
-        Returns
-        -------
-        self : PCG64
-            RNG jumped iter times
-
-        Notes
-        -----
-        Jumping the rng state resets any pre-computed random numbers. This is required
-        to ensure exact reproducibility.
-
-        The step size is phi (the Golden Ratio) when divided by 2**128.
-        """
-        import warnings
-        warnings.warn("jump (in-place) has been deprecated in favor of jumped"
-                      ", which returns a new instance", DeprecationWarning)
-
-        self.jump_inplace(iter)
-
-        return self
-
     def jumped(self, iter=1):
         """
         jumped(iter=1)
 
         Returns a new bit generator with the state jumped
 
-        The state of the returned big generator is jumped as-if
-        2**(64 * iter) random numbers have been generated.
+        The state of the returned bit generator is jumped as-if
+        iter * floor(2**128 / phi) random numbers have been generated, where
+        phi is the Golden Ratio. The jump is taken modulo 2**128.
 
         Parameters
         ----------
@@ -464,7 +426,7 @@ cdef class PCG64(BitGenerator):
 
         Notes
         -----
-        The step size is phi (the Golden Ratio) when divided by 2**128.
+        The step size is floor(2**128 / phi), where phi is the Golden Ratio.
         """
         cdef PCG64 bit_generator
 
@@ -484,7 +446,7 @@ cdef class LCG128Mix(BitGenerator):
     Customizable 128-bit LCG bit generator with output mixing
 
     Support changing the LCG's multiplier and the output function,
-    including support for user-defined output functions. This big generator
+    including support for user-defined output functions. This bit generator
     is based on the PCG64 generator in [1]_ and [2]_ but adds additional
     options that allow the multiplier to be changed (see [3]_ for a list
     of good multipliers). It has been added based on the discussion in [4]_.
@@ -501,7 +463,7 @@ cdef class LCG128Mix(BitGenerator):
         If `inc` is None, then it is initialized using the same``SeedSequence``
         used by seed.
     multiplier : int, optional
-        The multipler to use in the LCG. Must be an odd integer in (0, 2**128).
+        The multiplier to use in the LCG. Must be an odd integer in (0, 2**128).
     output : {str, CFunction, FuncPtr}
         The name of the output function or a ctypes function or function pointer
         with a signature uint64(uint64, uint64). Supported options are:
@@ -515,7 +477,7 @@ cdef class LCG128Mix(BitGenerator):
 
     dxsm_multiplier : int, optional
         The multiplier to use in the DXSM output function. The default is the
-        DXSM multipler in PCG 2.0.
+        DXSM multiplier in PCG 2.0.
     post : bool, optional
         Whether the mix the output before or after the next increment of
         the LCG is computed. True updates the state and then mixes the
@@ -524,13 +486,13 @@ cdef class LCG128Mix(BitGenerator):
     Attributes
     ----------
     lock : threading.Lock
-        Lock instance that is shared so that the same bit git generator can
+        Lock instance that is shared so that the same bit generator can
         be used in multiple Generators without corrupting the state. Code that
         generates values from a bit generator should hold the bit generator's
         lock.
     seed_seq : {None, SeedSequence}
-        The SeedSequence instance used to initialize the generator if mode is
-        "sequence" or is seed is a SeedSequence.
+        The SeedSequence instance used to seed the generator. If `seed` is not
+        a SeedSequence, one is created from it.
 
     Notes
     -----
@@ -545,8 +507,8 @@ cdef class LCG128Mix(BitGenerator):
 
        s_{n+1} = m s_{n} + i \mod 2^{128}
 
-    where :math:`s` is the state of the generator, :math:`m` is the multipler
-    and :math:`i` is the increment. The multipler is a 128-bit unsigned
+    where :math:`s` is the state of the generator, :math:`m` is the multiplier
+    and :math:`i` is the increment. The multiplier is a 128-bit unsigned
     integer that should be chosen to have good spectral properties. The output
     of the LCG is the permuted using a predefined method or a user-defined
     function.
@@ -631,17 +593,34 @@ cdef class LCG128Mix(BitGenerator):
         self.rng_state.pcg_state = <lcg128mix_random_t *>PyArray_malloc_aligned(
             sizeof(lcg128mix_random_t)
         )
+        cfunc = self._check_output(output)
+        self._check_multipliers(multiplier, dxsm_multiplier, post)
+        self._set_parameters(multiplier, dxsm_multiplier, post, output, cfunc)
+
+        self._bitgen.state = <void *>&self.rng_state
+        self._bitgen.next_uint64 = &lcg128mix_uint64
+        self._bitgen.next_uint32 = &lcg128mix_uint32
+        self._bitgen.next_double = &lcg128mix_double
+        self._bitgen.next_raw = &lcg128mix_uint64
+
+        self.seed(seed, inc)
+
+    def _check_output(self, output):
+        """Validate output, returning the ctypes function or None for a name"""
         if hasattr(output, "argtypes") and hasattr(output, "restype"):
             from ctypes import c_ulonglong
             if output.argtypes != (c_ulonglong, c_ulonglong):
                 raise ValueError("output must take two uint64 arguments")
             if output.restype != c_ulonglong:
                 raise ValueError("output must return a uint64")
-            self._cfunc = output
+            return output
         elif not isinstance(output, str) or output.lower() not in self._output_lookup:
             valid = ", ".join(self._output_lookup.keys())
             raise ValueError(f"{output} not supported. Must be one of: {valid} "
                              f"or a ctypes function or function pointer")
+        return None
+
+    def _check_multipliers(self, multiplier, dxsm_multiplier, post):
         if not 0 < multiplier < 2**128 or not (multiplier & 0x1):
             raise ValueError("multiplier must be an odd integer in (0, 2**128).")
         if not 0 < dxsm_multiplier < 2**64 or not (dxsm_multiplier & 0x1):
@@ -649,6 +628,8 @@ cdef class LCG128Mix(BitGenerator):
         if not isinstance(post, bool):
             raise TypeError("post must be a bool")
 
+    def _set_parameters(self, multiplier, dxsm_multiplier, post, output, cfunc):
+        """Set the parameters, which must have been checked, in the object and state"""
         self.multiplier = multiplier
 
         self.dxsm_multiplier = dxsm_multiplier
@@ -657,7 +638,8 @@ cdef class LCG128Mix(BitGenerator):
         self.rng_state.pcg_state.post = <bint>post
         self.post = post
 
-        if self._cfunc is None:
+        self._cfunc = cfunc
+        if cfunc is None:
             self.output_function = self._output_lookup[output.lower()]
             self.rng_state.pcg_state.output_idx = self.output_function
         else:
@@ -670,14 +652,6 @@ cdef class LCG128Mix(BitGenerator):
             self.rng_state.pcg_state.output_func = (
                 <pcg_output_func_t>self.output_function_address
             )
-
-        self._bitgen.state = <void *>&self.rng_state
-        self._bitgen.next_uint64 = &lcg128mix_uint64
-        self._bitgen.next_uint32 = &lcg128mix_uint32
-        self._bitgen.next_double = &lcg128mix_double
-        self._bitgen.next_raw = &lcg128mix_uint64
-
-        self.seed(seed, inc)
 
     def __repr__(self):
         out = object.__repr__(self)
@@ -807,18 +781,25 @@ cdef class LCG128Mix(BitGenerator):
     @state.setter
     def state(self, value):
         cdef np.ndarray state_vec, inc_vec, mult_vec
+        cdef int has_uint32
+        cdef uint32_t uinteger
         if not isinstance(value, dict):
             raise TypeError("state must be a dict")
         bitgen = value.get("bit_generator", "")
         if bitgen not in (type(self).__name__, fully_qualified_name(self)):
             raise ValueError("state must be for a {0} "
                              "RNG".format(type(self).__name__))
+        multiplier = int(value["state"]["multiplier"])
+        dxsm_multiplier = value["state"]["dxsm_multiplier"]
+        post = value["state"]["post"]
+        output_func = value["state"]["output_func"]
+        cfunc = self._check_output(output_func)
+        self._check_multipliers(multiplier, dxsm_multiplier, post)
         state_vec = <np.ndarray>np.empty(2, dtype=np.uint64)
         inc_vec = <np.ndarray>np.empty(2, dtype=np.uint64)
         mult_vec = <np.ndarray>np.empty(2, dtype=np.uint64)
         state = int(value["state"]["state"])
         inc = int(value["state"]["inc"])
-        multiplier = int(value["state"]["multiplier"])
         state_vec[0] = state // 2 ** 64
         state_vec[1] = state % 2 ** 64
         inc_vec[0] = inc // 2 ** 64
@@ -837,23 +818,8 @@ cdef class LCG128Mix(BitGenerator):
                                 )
             self.rng_state.has_uint32 = has_uint32
             self.rng_state.uinteger = uinteger
-            self.rng_state.pcg_state.dxsm_multiplier = value["state"]["dxsm_multiplier"]
-            self.rng_state.pcg_state.post = value["state"]["post"]
-            output_func = value["state"]["output_func"]
-            if isinstance(output_func, str):
-                self.rng_state.pcg_state.output_idx = self._output_lookup[output_func]
-            elif hasattr(output_func, "argtypes") and hasattr(output_func, "restype"):
-                import ctypes
-
-                self._cfunc = output_func
-                self.output_function = -1
-                self.output_function_address = (
-                    ctypes.cast(self._cfunc, ctypes.c_void_p).value
-                )
-                self.rng_state.pcg_state.output_idx = -1
-                self.rng_state.pcg_state.output_func = (
-                    <pcg_output_func_t>self.output_function_address
-                )
+            self._set_parameters(multiplier, dxsm_multiplier, post, output_func,
+                                 cfunc)
 
     def advance(self, delta):
         """
@@ -914,7 +880,7 @@ cdef class LCG128Mix(BitGenerator):
 
         Notes
         -----
-        The step size is phi (the Golden Ratio) when divided by 2**128.
+        The step size is floor(2**128 / phi), where phi is the Golden Ratio.
         """
         step = 0x9e3779b97f4a7c15f39cc0605cedc834
         step *= int(iter)
@@ -928,8 +894,9 @@ cdef class LCG128Mix(BitGenerator):
 
         Returns a new bit generator with the state jumped
 
-        The state of the returned big generator is jumped as-if
-        2**(64 * iter) random numbers have been generated.
+        The state of the returned bit generator is jumped as-if
+        iter * floor(2**128 / phi) random numbers have been generated, where
+        phi is the Golden Ratio. The jump is taken modulo 2**128.
 
         Parameters
         ----------
@@ -943,8 +910,7 @@ cdef class LCG128Mix(BitGenerator):
 
         Notes
         -----
-        The step size is phi (the Golden Ratio) when divided by the period
-        2**128.
+        The step size is floor(2**128 / phi), where phi is the Golden Ratio.
         """
         cdef LCG128Mix bit_generator
 
@@ -973,19 +939,19 @@ cdef class PCG64DXSM(PCG64):
         SeedSequence initialized with system entropy to Seed the generator
     inc : {None, int}, optional
         The increment in the LCG. Can be an integer in [0, 2**128) or None.
-        If inc is None, then it is initialized using the same SeedSeuqnce used
+        If inc is None, then it is initialized using the same SeedSequence used
         for seed.
 
     Attributes
     ----------
     lock : threading.Lock
-        Lock instance that is shared so that the same bit git generator can
+        Lock instance that is shared so that the same bit generator can
         be used in multiple Generators without corrupting the state. Code that
         generates values from a bit generator should hold the bit generator's
         lock.
     seed_seq : {None, SeedSequence}
-        The SeedSequence instance used to initialize the generator if mode is
-        "sequence" or is seed is a SeedSequence.
+        The SeedSequence instance used to seed the generator. If `seed` is not
+        a SeedSequence, one is created from it.
 
     Notes
     -----
@@ -995,8 +961,8 @@ cdef class PCG64DXSM(PCG64):
 
        s_{n+1} = m s_{n} + i \mod 2^{128}
 
-    where :math:`s` is the state of the generator, :math:`m` is the multipler
-    and :math:`i` is the increment. The multipler is a 64-bit unsigned
+    where :math:`s` is the state of the generator, :math:`m` is the multiplier
+    and :math:`i` is the increment. The multiplier is a 64-bit unsigned
     integer with good spectral properties. The output of the
     LCG is the permuted using the DXSM output function which is similar to an
     Xorshift ([1]_, [2]_).
@@ -1121,8 +1087,9 @@ cdef class PCG64DXSM(PCG64):
 
         Returns a new bit generator with the state jumped
 
-        The state of the returned big generator is jumped as-if
-        2**(64 * iter) random numbers have been generated.
+        The state of the returned bit generator is jumped as-if
+        iter * floor(2**128 / phi) random numbers have been generated, where
+        phi is the Golden Ratio. The jump is taken modulo 2**128.
 
         Parameters
         ----------
@@ -1136,7 +1103,7 @@ cdef class PCG64DXSM(PCG64):
 
         Notes
         -----
-        The step size is phi (the Golden Ratio) when divided by 2**128.
+        The step size is floor(2**128 / phi), where phi is the Golden Ratio.
         """
         cdef PCG64DXSM bit_generator
 
@@ -1145,9 +1112,3 @@ cdef class PCG64DXSM(PCG64):
         bit_generator.jump_inplace(iter)
 
         return bit_generator
-
-    def jump(self, np.npy_intp iter=1):
-        """Not implemented. Use jumped."""
-        raise NotImplementedError(
-            "jump is not available for PCG64DXSM. Use jumped instead."
-        )

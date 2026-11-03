@@ -22,7 +22,6 @@ Parallel generation
    :toctree: generated/
 
    ~SPECK128.advance
-   ~SPECK128.jump
    ~SPECK128.jumped
 
 Extending
