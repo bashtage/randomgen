@@ -805,6 +805,8 @@ cdef class ExtendedGenerator:
         cdef double *n_data
         cdef double *out_data
 
+        if df <= 0:
+            raise ValueError("df must contain strictly positive integer values.")
         if size is None or size == ():
             sz = 1
         elif np.isscalar(size):
@@ -968,6 +970,8 @@ cdef class ExtendedGenerator:
         else:
             if isinstance(size, (int, np.integer)):
                 size = (int(size),)
+            else:
+                size = tuple(size)
             if len(size) < len(it_shape) or size[len(size)-len(it_shape):] != it_shape:
                 err_msg = (
 f"""size {size} is not compatible with the broadcast shape of `df` and `scale`
