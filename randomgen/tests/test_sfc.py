@@ -1,3 +1,5 @@
+import math
+
 import numpy as np
 import pytest
 
@@ -10,7 +12,7 @@ def test_known():
     expected = np.array([6524879303493105881, 17467897594175157085], dtype=np.uint64)
     np.testing.assert_equal(weyl, expected)
     weyl = sfc.weyl_increments(2, 48, 16)
-    expected = np.array([18331436834911646537, 1349527966119344023], dtype=np.uint64)
+    expected = np.array([18043206458759934793, 1349527963971860375], dtype=np.uint64)
     np.testing.assert_equal(weyl, expected)
 
 
@@ -52,3 +54,30 @@ def test_invalid_weyl():
         sfc.weyl_increments(0)
     with pytest.warns(RuntimeWarning):
         sfc.weyl_increments(40, 2)
+
+
+@pytest.mark.parametrize("max_bits", list(range(1, 65)))
+def test_available_count_exact(max_bits):
+    # Odd values with exactly max_bits non-zero bits: C(63, max_bits - 1)
+    sfc = SFC64(SeedSequence(0))
+    available = math.comb(63, max_bits - 1)
+    with pytest.raises(
+        ValueError, match=rf"larger than the number available \({available}\)"
+    ):
+        sfc.weyl_increments(available + 1, max_bits)
+
+
+def test_popcount_all_seeds():
+    # A draw equal to the number of values available used to select no bucket
+    # and so return 1 for any number of bits
+    for seed in range(500):
+        sfc = SFC64(SeedSequence(seed))
+        weyl = sfc.weyl_increments(1, 2)
+        assert int(weyl[0]).bit_count() == 2
+
+
+def test_warning_threshold():
+    sfc = SFC64(SeedSequence(0))
+    available = math.comb(63, 1)
+    with pytest.warns(RuntimeWarning, match="more than 50%"):
+        sfc.weyl_increments(available // 2 + 1, 2)

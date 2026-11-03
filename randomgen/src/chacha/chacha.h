@@ -202,8 +202,9 @@ static INLINE uint32_t chacha_next32(chacha_state_t *state){
 }
 
 static INLINE uint64_t chacha_next64(chacha_state_t *state){
-    uint64_t out =  chacha_next32(state) | ((uint64_t)chacha_next32(state) << 32);
-    return out;
+    uint64_t low = chacha_next32(state);
+    uint64_t high = chacha_next32(state);
+    return low | (high << 32);
 }
 
 static INLINE double chacha_next_double(chacha_state_t *state){

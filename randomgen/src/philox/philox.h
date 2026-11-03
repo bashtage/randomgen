@@ -440,7 +440,9 @@ R123_STATIC_INLINE uint64_t philox##N##x##W##_next64(philox_all_t *state) { \
 
 #define _philoxNxW_next64_tpl32(N, W)  \
 R123_STATIC_INLINE uint64_t philox##N##x##W##_next64(philox_all_t *state) { \
-  return ((uint64_t)philox##N##x##W##_next(state) << 32) | philox##N##x##W##_next(state); \
+  uint64_t high = philox##N##x##W##_next(state); \
+  uint64_t low = philox##N##x##W##_next(state); \
+  return (high << 32) | low; \
 }
 
 _philoxNxW_next64_tpl32(2,32)
