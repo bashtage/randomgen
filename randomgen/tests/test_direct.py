@@ -25,6 +25,7 @@ from randomgen import (
     MT19937,
     PCG32,
     PCG64,
+    PCG64DXSM,
     RDRAND,
     SFC64,
     SFMT,
@@ -32,6 +33,7 @@ from randomgen import (
     AESCounter,
     BlaBla,
     ChaCha,
+    LCG128Mix,
     Philox,
     Romu,
     Squares,
@@ -2166,6 +2168,41 @@ def test_pcg64_errors():
         p.seed(seed=0, inc=-1)
     with pytest.raises(ValueError, match="inc must be a scalar"):
         p.seed(seed=0, inc=sum(2**i for i in range(129)))
+
+
+@pytest.mark.parametrize(
+    ("bg_ctor", "ub"),
+    [
+        (PCG32, 2**64),
+        (PCG64, 2**128),
+        (CustomPartial(PCG64, variant="dxsm"), 2**128),
+    ],
+)
+def test_inc_upper_bound(bg_ctor, ub):
+    with pytest.raises(ValueError, match="inc must be a scalar"):
+        bg_ctor(0, inc=ub)
+    with pytest.raises(ValueError, match="inc must be a scalar"):
+        bg_ctor(0).seed(0, inc=ub)
+    with pytest.raises(ValueError, match="inc must be a scalar"):
+        bg_ctor(0, inc=ub + 1)
+    bg = bg_ctor(0, inc=ub - 1)
+    assert isinstance(bg.random_raw(), int)
+
+
+@pytest.mark.parametrize("bg_ctor", [PCG32, PCG64, LCG128Mix, PCG64DXSM])
+def test_inc_with_seed_none(bg_ctor):
+    # inc is used even when seed is None
+    bg = bg_ctor(None, inc=5)
+    assert bg.state["state"]["inc"] == bg_ctor(0, inc=5).state["state"]["inc"]
+    bg.seed(None, inc=7)
+    assert bg.state["state"]["inc"] == bg_ctor(0, inc=7).state["state"]["inc"]
+    bg.seed(None, inc=None)
+    assert bg.state["state"]["inc"] not in (11, 15)
+
+
+def test_inc_with_seed_none_numpy_seed():
+    with pytest.raises(ValueError, match="inc must be"):
+        PCG64(None, inc=5, numpy_seed=True)
 
 
 class TestBlaBla(Base):

@@ -32,7 +32,7 @@ cdef class PCG32(BitGenerator):
         from ``/dev/urandom`` (or the Windows analog) if available. If
         unavailable, a 64-bit hash of the time and process ID is used.
     inc : {None, int}, optional
-        The increment in the LCG. Can be an integer in [0, 2**64] or ``None``.
+        The increment in the LCG. Can be an integer in [0, 2**64) or ``None``.
         The default is 0. If `inc` is ``None``, then it is initialized using
         entropy.
 
@@ -138,7 +138,7 @@ cdef class PCG32(BitGenerator):
                       "{ub}".format(ub=ub)
             if not np.isscalar(inc):
                 raise TypeError(err_msg)
-            if inc < 0 or inc > ub or int(np.squeeze(inc)) != inc:
+            if inc < 0 or inc >= ub or int(np.squeeze(inc)) != inc:
                 raise ValueError(err_msg)
         BitGenerator._seed_with_seed_sequence(self, seed, inc=inc)
 
