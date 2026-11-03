@@ -1470,6 +1470,12 @@ class TestRDRAND(Base):
         with pytest.raises(RuntimeError):
             bit_generator.random_raw(10, output=False)
 
+    @pytest.mark.parametrize("size", [5, (3, 4), [3, 4], (2, 3, 4)])
+    def test_raw_no_output_size(self, size):
+        bit_generator = RDRAND()
+        assert bit_generator.random_raw(size, output=False) is None
+        assert bit_generator.state["status"] == 1
+
     def test_checked_raw(self):
         bit_generator = RDRAND()
         assert isinstance(bit_generator.random_raw(), int)
