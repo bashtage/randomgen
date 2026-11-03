@@ -65,7 +65,7 @@ keywords = [
     "SPECK",
     "RDRAND",
 ]
-license = "NCSA"
+license = "NCSA OR BSD-3-Clause"
 license-files = [ "LICENSE.md" ]
 maintainers = [
   { name = "Kevin Sheppard", email = "kevin.k.sheppard@gmail.com" },

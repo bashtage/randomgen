@@ -53,11 +53,9 @@ cython_args = [
     '-X boundscheck=False',
     '-X wraparound=False',
     '-X cdivision=True',
-    '-X binding=True'
+    '-X binding=True',
+    '-X freethreading_compatible=True',
 ]
-if cy.version().version_compare('>=3.1.0')
-  cython_args += ['-X freethreading_compatible=True']
-endif
 cython_c_args =  ['-DNPY_NO_DEPRECATED_API=NPY_1_7_API_VERSION']
 cython_libs = []
 sse2_def = []
