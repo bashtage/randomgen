@@ -65,7 +65,7 @@ of `randomgen` being used as the preferred random number generator in
 NumPy. These all issue `DeprecationWarning`s except for `BasicRNG.generator`
 which raises `NotImplementedError`. The C-API has also changed to reflect
 the preferred naming the underlying Pseudo-RNGs, which are now known as
-bit generators (or `BigGenerator`s).
+bit generators (or `BitGenerator`s).
 
 ## Future Plans
 

@@ -27,15 +27,15 @@ class Interface(NamedTuple):
     Attributes
     ----------
     state_address
-        The state memoty address
+        The state memory address
     state
         Void pointer to the state struct
     next_uint64
-        Function type the returns psuedo-random uint64 values
+        Function type that returns pseudo-random uint64 values
     next_uint32
-        Function type the returns psuedo-random uint32 values
+        Function type that returns pseudo-random uint32 values
     next_double
-        Function type the returns psuedo-random double values
+        Function type that returns pseudo-random double values
     bit_generator
         Void pointer to the bit generator struct
     """
@@ -62,7 +62,7 @@ cdef class BitGenerator(_BitGenerator):
         self.lock = RLock()
         if type(self) is BitGenerator:
             raise NotImplementedError(
-                'BitGenerator is a base class and cannot be instantized'
+                'BitGenerator is a base class and cannot be instantiated'
             )
 
     def _supported_modes(self):
@@ -129,7 +129,7 @@ cdef class BitGenerator(_BitGenerator):
 
         Notes
         -----
-        This method directly exposes the the raw underlying pseudo-random
+        This method directly exposes the raw underlying pseudo-random
         number generator. All values are returned as unsigned 64-bit
         values irrespective of the number of bits produced by the PRNG.
 
@@ -189,7 +189,7 @@ cdef class BitGenerator(_BitGenerator):
         """
         Removed, raises NotImplementedError
         """
-        raise NotImplementedError("This method for accessing a Generator has"
+        raise NotImplementedError("This method for accessing a Generator has "
                                   "been removed.")
 
 
@@ -231,7 +231,7 @@ cdef object random_raw(bitgen_t *bitgen, object lock, object size, object output
 
     Notes
     -----
-    This method directly exposes the the raw underlying pseudo-random
+    This method directly exposes the raw underlying pseudo-random
     number generator. All values are returned as unsigned 64-bit
     values irrespective of the number of bits produced by the PRNG.
 

@@ -97,19 +97,19 @@ cdef class JSF(BitGenerator):
         Output size of a single iteration of JSF. 32 is better suited to 32-bit
         systems.
     p : int, optional
-        One the the three parameters that defines JSF. See Notes. If not
+        One of the three parameters that defines JSF. See Notes. If not
         provided uses the default values for the selected size listed in Notes.
     q : int, optional
-        One the the three parameters that defines JSF. See Notes. If not
+        One of the three parameters that defines JSF. See Notes. If not
         provided uses the default values for the selected size listed in Notes.
     r : int, optional
-        One the the three parameters that defines JSF. See Notes. If not
+        One of the three parameters that defines JSF. See Notes. If not
         provided uses the default values for the selected size listed in Notes.
 
     Attributes
     ----------
     lock : threading.Lock
-        Lock instance that is shared so that the same bit git generator can
+        Lock instance that is shared so that the same bit generator can
         be used in multiple Generators without corrupting the state. Code that
         generates values from a bit generator should hold the bit generator's
         lock.
