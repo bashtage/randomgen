@@ -27,6 +27,7 @@ per-file-ignores =
     randomgen/sfc.pyi: E301, E302
     randomgen/sfmt.pyi: E301, E302
     randomgen/speck128.pyi: E301, E302
+    randomgen/squares.pyi: E301, E302
     randomgen/tests/_shims.pyi: E301, E302
     randomgen/threefry.pyi: E301, E302
     randomgen/tyche.pyi: E301, E302
