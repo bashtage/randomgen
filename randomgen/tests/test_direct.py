@@ -3,6 +3,8 @@ from __future__ import annotations
 import os
 from os.path import join
 import pickle
+import sys
+import threading
 from typing import Any, ClassVar
 
 import numpy as np
@@ -1451,6 +1453,31 @@ class TestRDRAND(Base):
         assert state["status"] == 1
         assert state["buffer_loc"] == 256
         assert bit_generator.success is True
+
+    @pytest.mark.thread_unsafe(reason="replaces sys.stdout")
+    def test_pending_error_without_stdout(self, monkeypatch):
+        # Raising the pending error must not depend on print() doing work
+        monkeypatch.setattr(sys, "stdout", None)
+        bit_generator = self.bit_generator()
+        state = bit_generator.state
+        state["retries"] = -1
+        bit_generator.state = state
+        gen = np.random.Generator(bit_generator)
+        with pytest.raises(RuntimeError, match="Unable to get random values"):
+            gen.integers(0, 2**64, dtype=np.uint64, size=10)
+        # The lock must have been released
+        acquired = []
+
+        def try_acquire():
+            got = bit_generator.lock.acquire(False)
+            acquired.append(got)
+            if got:
+                bit_generator.lock.release()
+
+        thread = threading.Thread(target=try_acquire)
+        thread.start()
+        thread.join()
+        assert acquired == [True]
 
     def test_exception(self):
         with pytest.raises(ValueError, match="retries must be"):
