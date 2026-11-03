@@ -64,7 +64,9 @@ static inline uint32_t tyche_next32(tyche_state_t *state) {
 }
 
 static inline uint64_t tyche_next64(tyche_state_t *state) {
-  return ((uint64_t)tyche_next(state) << 32) | tyche_next(state);
+  uint64_t high = tyche_next(state);
+  uint64_t low = tyche_next(state);
+  return (high << 32) | low;
 }
 
 static inline double tyche_next_double(tyche_state_t *state) {
@@ -94,8 +96,9 @@ static inline uint32_t tyche_openrand_next32(tyche_state_t *state) {
 }
 
 static inline uint64_t tyche_openrand_next64(tyche_state_t *state) {
-  return ((uint64_t)tyche_openrand_next(state) << 32) |
-         tyche_openrand_next(state);
+  uint64_t high = tyche_openrand_next(state);
+  uint64_t low = tyche_openrand_next(state);
+  return (high << 32) | low;
 }
 
 static inline double tyche_openrand_next_double(tyche_state_t *state) {

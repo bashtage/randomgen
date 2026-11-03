@@ -123,7 +123,6 @@ hypergeometric
 inbounds
 incrementing
 indices
-instantized
 instantizing
 ints
 inv
@@ -149,7 +148,6 @@ mult
 multibuild
 multinomial
 multinormal
-multipler
 multithreaded
 multithreading
 multiway
