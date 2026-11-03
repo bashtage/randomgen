@@ -74,7 +74,7 @@ cdef class _SequenceSampler:
         self.bit_well = <uint64_t>self.random_well[self.index]
         self.bit_well_loc = 0
         self.index += 1
-        if self.index > self.randoms_drawm:
+        if self.index >= self.randoms_drawm:
             self.randoms_drawm *= 2
             self.random_well = self.seed_seq.generate_state(
                 self.randoms_drawm, dtype=np.uint64
@@ -532,9 +532,12 @@ cdef class Squares(BitGenerator):
         variant = value["variant"]
         if variant not in (64, 32):
             raise ValueError("variant must be either 64 or 32.")
+        key = self._check_value(state["key"], "key", True)
         with self.lock:
-            self.rng_state.key = state["key"]
+            self.rng_state.key = key
             self.rng_state.counter = state["counter"]
+            self.rng_state.has_uint32 = value["has_uint32"]
+            self.rng_state.uinteger = value["uinteger"]
             self.variant = variant
             self._use64 = variant == 64
             self._setup_bitgen()
