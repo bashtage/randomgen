@@ -1,7 +1,6 @@
 import hashlib
 import itertools
 import sys
-import warnings
 
 import numpy as np
 
@@ -33,8 +32,6 @@ from randomgen import (
     Xoshiro256,
     Xoshiro512,
 )
-
-warnings.filterwarnings("error", "The default value of inc")
 
 try:
     from numpy.random import SeedSequence

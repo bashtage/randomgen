@@ -308,16 +308,12 @@ xfail_strict = true
 addopts = "--strict"
 empty_parameter_set_mark = "xfail"
 filterwarnings = [
-   "error:covariance is not positive-semidefinite:RuntimeWarning",
-   "ignore:Generator:FutureWarning",
-   "ignore:RandomState:FutureWarning",
+   "error:The covariance is not positive-semidefinite:RuntimeWarning",
    "ignore:the imp module:DeprecationWarning",
-   "ignore:The default value of inc:FutureWarning",
    "ignore:`np.long` is a deprecated:DeprecationWarning:numba.core.types",
    "error:`np.bool` is a deprecated alias:DeprecationWarning:",
    "error:Passing None into shape:DeprecationWarning:",
    "error:overflow encountered in scalar negative:RuntimeWarning",
-   "error:mode is deprecated and will be removed:FutureWarning",
    "error:matching against an empty::",
 ]
 junit_family = "xunit2"
