@@ -1255,6 +1255,14 @@ class TestEntropy:
         e2 = entropy.random_entropy(10, source="system")
         assert (e1 != e2).all()
 
+    @pytest.mark.parametrize("source", ["system", "fallback", "auto"])
+    @pytest.mark.parametrize("size", [0, (0,), (0, 3), (3, 0)])
+    def test_entropy_zero_size(self, size, source):
+        e = entropy.random_entropy(size, source=source)
+        assert isinstance(e, np.ndarray)
+        assert e.dtype == np.uint32
+        assert e.shape == np.empty(size, dtype=bool).shape
+
     def test_fallback(self):
         e1 = entropy.random_entropy(source="fallback")
         time.sleep(0.1)

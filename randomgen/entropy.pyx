@@ -173,7 +173,9 @@ def random_entropy(size=None, source="system"):
     else:
         n = compute_numel(size)
         randoms = np.zeros(n, dtype=np.uint32)
-        if source in ("system", "auto"):
+        if n == 0:
+            pass
+        elif source in ("system", "auto"):
             success = entropy_getbytes(<void *>(&randoms[0]), 4 * n)
         else:
             success = entropy_fallback_getbytes(<void *>(&randoms[0]), 4 * n)
@@ -191,6 +193,6 @@ def random_entropy(size=None, source="system"):
             raise RuntimeError("Unable to read from system cryptographic "
                                "provider or use fallback")
 
-    if n == 0:
+    if size is None:
         return random
     return np.asarray(randoms).reshape(size)
