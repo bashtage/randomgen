@@ -9,6 +9,15 @@ import ctypes
 
 __all__ = ["UserBitGenerator"]
 
+cdef check_callable(str name, object value, bint allow_none):
+    # ctypes treats an int as a function address, so a non-callable would
+    # become a bogus function pointer
+    if value is None and allow_none:
+        return
+    if not callable(value):
+        raise TypeError(f"{name} must be callable, got {type(value).__name__}.")
+
+
 cdef object raw_32_to_64(object func):
     def f(voidp):
         return func(voidp) << 32 | func(voidp)
@@ -111,6 +120,12 @@ cdef class UserBitGenerator(BitGenerator):
                  next_double=None, state=None, state_getter=None,
                  state_setter=None):
         BitGenerator.__init__(self, 0)
+        check_callable("next_raw", next_raw, False)
+        check_callable("next_64", next_64, True)
+        check_callable("next_32", next_32, True)
+        check_callable("next_double", next_double, True)
+        check_callable("state_getter", state_getter, True)
+        check_callable("state_setter", state_setter, True)
         self.funcs = {"next_raw": next_raw,
                       "next_64": next_64,
                       "next_32": next_32,
@@ -323,6 +338,9 @@ cdef class UserBitGenerator(BitGenerator):
                     f"{i_n} must be a ctypes function with argtypes "
                     f"{(ctypes.c_void_p,)} (or equivalent) and restype {r}."
                 )
+
+        check_callable("state_getter", state_getter, True)
+        check_callable("state_setter", state_setter, True)
 
         cdef UserBitGenerator bit_gen
 

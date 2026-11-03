@@ -24,8 +24,8 @@ cdef class BlaBla(BitGenerator):
         Random seed initializing the pseudo-random number generator.
         Can be an integer in [0, 2**256), an array of 4 uint64 values,
         a SeedSequence instance or ``None`` (the default). If `seed` is
-        ``None``, then a new SeedSequence is created usign data is read
-        from ``/dev/urandom`` .
+        ``None``, then a new SeedSequence is created using entropy from
+        the operating system.
     counter : {None, int, array_like[uint64]}, optional
         Counter to use in the BlaBla state. Can be either
         a Python int in [0, 2**128) or a 2-element uint64 array.
@@ -42,20 +42,20 @@ cdef class BlaBla(BitGenerator):
     Attributes
     ----------
     lock : threading.Lock
-        Lock instance that is shared so that the same bit git generator can
+        Lock instance that is shared so that the same bit generator can
         be used in multiple Generators without corrupting the state. Code that
         generates values from a bit generator should hold the bit generator's
         lock.
     seed_seq : {None, SeedSequence}
-        The SeedSequence instance used to initialize the generator if mode is
-        "sequence" or is seed is a SeedSequence.
+        The SeedSequence instance used to seed the generator. If `seed` is not
+        a SeedSequence, one is created from it.
 
     Notes
     -----
     BlaBla is a 64-bit PRNG that uses a counter-based design based on
     the Blake2b hash function [1]_. The idea was first implemented in
     Swift in [2]_, and later reimplemented in C++ in [3]_. The C
-    implementation is dervied from the C++ version. Instances using
+    implementation is derived from the C++ version. Instances using
     different values of the key produce distinct sequences. ``BlaBla`` has
     a period of :math:`2^{128}` and supports arbitrary advancing and
     jumping the sequence in increments of :math:`2^{64}`. These features allow
@@ -175,6 +175,11 @@ cdef class BlaBla(BitGenerator):
         ------
         ValueError
             If SIMD is not supported
+
+        Notes
+        -----
+        This setting is process-wide. Changing it on one instance changes it
+        for every BlaBla instance in the process.
         """
         return bool(RANDOMGEN_USE_AVX2)
 
@@ -199,9 +204,8 @@ cdef class BlaBla(BitGenerator):
             Random seed initializing the pseudo-random number generator.
             Can be an integer in [0, 2**256), an array of 4 uint64 values,
             a SeedSequence instance or ``None`` (the default). If `seed` is
-            ``None``, then  data is read from ``/dev/urandom`` (or the Windows
-            analog) if available. If unavailable, a hash of the time and
-            process ID is used.
+            ``None``, a new SeedSequence is created using entropy from the
+            operating system.
         counter : {None, int, array_like[uint64]}, optional
             Counter to use in the BlaBla state. Can be either
             a Python int in [0, 2**128) or a 2-element uint64 array.
@@ -334,7 +338,7 @@ cdef class BlaBla(BitGenerator):
 
         Returns a new bit generator with the state jumped
 
-        The state of the returned big generator is jumped as-if
+        The state of the returned bit generator is jumped as-if
         iter * 2**64 random numbers have been generated.
 
         Parameters

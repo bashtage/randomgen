@@ -813,7 +813,9 @@ R123_STATIC_INLINE uint64_t threefry##N##x##W##_next64(threefry_all_t *state) { 
 
 #define _threefryNxW_next64_tpl32(N, W)  \
 R123_STATIC_INLINE uint64_t threefry##N##x##W##_next64(threefry_all_t *state) { \
-  return ((uint64_t)threefry##N##x##W##_next(state) << 32) | threefry##N##x##W##_next(state); \
+  uint64_t high = threefry##N##x##W##_next(state); \
+  uint64_t low = threefry##N##x##W##_next(state); \
+  return (high << 32) | low; \
 }
 
 _threefryNxW_next64_tpl32(2,32)

@@ -35,7 +35,6 @@ pyx_files = [
     "randomgen/xorshift1024.pyx",
     "randomgen/xoshiro256.pyx",
     "randomgen/xoshiro512.pyx",
-    "randomgen/_seed_sequence.pyx",
     "randomgen/tests/_shims.pyx",
 ]
 for pyx_file in pyx_files:
