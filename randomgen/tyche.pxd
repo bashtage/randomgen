@@ -3,7 +3,12 @@
 cimport numpy as np
 from libc.stdint cimport uint32_t, uint64_t
 
-from randomgen.common cimport BitGenerator, check_state_array, fully_qualified_name
+from randomgen.common cimport (
+    BitGenerator,
+    check_state_array,
+    check_state_config,
+    fully_qualified_name,
+)
 
 
 cdef extern from "src/tyche/tyche.h":

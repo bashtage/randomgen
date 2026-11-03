@@ -5,6 +5,7 @@ from randomgen.common cimport (
     BitGenerator,
     PyArray_free_aligned,
     PyArray_malloc_aligned,
+    check_state_config,
     fully_qualified_name,
     uint64_to_double,
     wrap_int,

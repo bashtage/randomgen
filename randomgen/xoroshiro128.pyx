@@ -244,7 +244,9 @@ cdef class Xoroshiro128(BitGenerator):
         """
         cdef Xoroshiro128 bit_generator
 
-        bit_generator = self.__class__(seed=self._copy_seed())
+        bit_generator = self.__class__(
+            seed=self._copy_seed(), plusplus=self._plusplus
+        )
         bit_generator.state = self.state
         bit_generator.jump_inplace(iter)
 
@@ -280,13 +282,15 @@ cdef class Xoroshiro128(BitGenerator):
             raise ValueError("state must be for a {0} "
                              "PRNG".format(type(self).__name__))
         state = check_state_array(value["s"], 2, 64, "s")
-        plusplus = False
-        if "plusplus" in value:
-            plusplus = value["plusplus"]
+        plusplus = bool(value.get("plusplus", False))
+        check_state_config(self, "plusplus", bool(self._plusplus), plusplus)
         with self.lock:
             self.rng_state.s[0] = <uint64_t>state[0]
             self.rng_state.s[1] = <uint64_t>state[1]
             self.rng_state.has_uint32 = value["has_uint32"]
             self.rng_state.uinteger = value["uinteger"]
-            self._plusplus = plusplus
+
+    def _configure_from_state(self, value):
+        with self.lock:
+            self._plusplus = bool(value.get("plusplus", False))
             self._set_generators()

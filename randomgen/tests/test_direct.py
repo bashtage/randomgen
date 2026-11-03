@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import copy
 import os
 from os.path import join
 import pickle
@@ -7,6 +8,7 @@ from typing import Any, ClassVar
 
 import numpy as np
 from numpy.random import SeedSequence
+import numpy.random._pickle as np_pickle
 from numpy.testing import (
     assert_allclose,
     assert_array_equal,
@@ -25,6 +27,7 @@ from randomgen import (
     MT19937,
     PCG32,
     PCG64,
+    PCG64DXSM,
     RDRAND,
     SFC64,
     SFMT,
@@ -32,6 +35,7 @@ from randomgen import (
     AESCounter,
     BlaBla,
     ChaCha,
+    ExtendedGenerator,
     Philox,
     Romu,
     Squares,
@@ -2212,3 +2216,180 @@ class TestBlaBla(Base):
     def test_seed_key(self):
         with pytest.raises(ValueError, match="seed and key"):
             self.setup_bitgenerator([0], key=0, counter=0)
+
+
+# Bit generators with a configuration that selects the output functions. A
+# Generator copies these functions when it is created, so the configuration
+# cannot be changed through state.
+CONFIGURATIONS: dict[Any, list[dict[str, Any]]] = {
+    PCG64: [{"variant": v} for v in ("xsl-rr", "dxsm", "dxsm-128")],
+    PCG64DXSM: [{}],
+    JSF: [{"size": 64}, {"size": 32}],
+    Philox: [{"number": n, "width": w} for n in (4, 2) for w in (64, 32)],
+    ThreeFry: [{"number": n, "width": w} for n in (4, 2) for w in (64, 32)],
+    Romu: [{"variant": "quad"}, {"variant": "trio"}],
+    Tyche: [{"original": True}, {"original": False}],
+    Squares: [{"variant": 64}, {"variant": 32}],
+    Xoroshiro128: [{"plusplus": False}, {"plusplus": True}],
+}
+
+
+def _config_id(cls, kwargs):
+    return "-".join([cls.__name__] + [f"{k}={v}" for k, v in kwargs.items()])
+
+
+ALL_CONFIGURATIONS = [
+    pytest.param(cls, kwargs, id=_config_id(cls, kwargs))
+    for cls, configs in CONFIGURATIONS.items()
+    for kwargs in configs
+]
+CONFIGURATION_CHANGES = [
+    pytest.param(
+        cls, kwargs, other, id=f"{_config_id(cls, kwargs)}->{_config_id(cls, other)}"
+    )
+    for cls, configs in CONFIGURATIONS.items()
+    for kwargs in configs
+    for other in configs
+    if kwargs != other
+]
+
+
+def _draw(gen):
+    # Uses the double, 64-bit and 32-bit output functions
+    return np.concatenate(
+        [
+            gen.random(10),
+            gen.integers(0, 2**64, 10, dtype=np.uint64).astype(float),
+            gen.integers(0, 2**32, 10, dtype=np.uint32).astype(float),
+        ]
+    )
+
+
+@pytest.mark.parametrize(("cls", "kwargs", "other"), CONFIGURATION_CHANGES)
+def test_state_configuration_change_rejected(cls, kwargs, other):
+    bg = cls(1234, **kwargs)
+    gen = np.random.Generator(bg)
+    extended = ExtendedGenerator(cls(1234, **kwargs))
+    other_state = cls(5678, **other).state
+    state = bg.state
+    with pytest.raises(ValueError, match="Create a new"):
+        bg.state = other_state
+    with pytest.raises(ValueError, match="Create a new"):
+        extended.bit_generator.state = other_state
+    # Nothing was written
+    assert_state_equal(bg.state, state)
+    # The existing Generators still match fresh ones
+    fresh = np.random.Generator(cls(1234, **kwargs))
+    assert_array_equal(_draw(gen), _draw(fresh))
+    fresh_extended = ExtendedGenerator(cls(1234, **kwargs))
+    assert_array_equal(
+        extended.complex_normal(size=10), fresh_extended.complex_normal(size=10)
+    )
+
+
+@pytest.mark.parametrize(("cls", "kwargs"), ALL_CONFIGURATIONS)
+def test_state_same_configuration(cls, kwargs):
+    bg = cls(1234, **kwargs)
+    gen = np.random.Generator(bg)
+    other = cls(5678, **kwargs)
+    bg.state = other.state
+    assert_array_equal(_draw(gen), _draw(np.random.Generator(other)))
+
+
+@pytest.mark.parametrize(("cls", "kwargs"), ALL_CONFIGURATIONS)
+def test_pickle_configurations(cls, kwargs):
+    bg = cls(1234, **kwargs)
+    gen = np.random.Generator(bg)
+    gen.random(3)
+    reloaded = pickle.loads(pickle.dumps(bg))
+    copied = copy.deepcopy(bg)
+    for other in (reloaded, copied):
+        assert type(other) is cls
+        assert other is not bg
+        assert_state_equal(other.state, bg.state)
+    expected = _draw(gen)
+    assert_array_equal(expected, _draw(np.random.Generator(reloaded)))
+    assert_array_equal(expected, _draw(np.random.Generator(copied)))
+
+
+@pytest.mark.parametrize(("cls", "kwargs"), ALL_CONFIGURATIONS)
+def test_pickle_generators_configurations(cls, kwargs):
+    extended = ExtendedGenerator(cls(1234, **kwargs))
+    extended.uintegers(3)
+    reloaded = pickle.loads(pickle.dumps(extended))
+    assert type(reloaded.bit_generator) is cls
+    assert_array_equal(
+        extended.complex_normal(size=10), reloaded.complex_normal(size=10)
+    )
+
+    gen = np.random.Generator(cls(1234, **kwargs))
+    reloaded = pickle.loads(pickle.dumps(gen))
+    assert type(reloaded.bit_generator) is cls
+    assert_array_equal(_draw(gen), _draw(reloaded))
+
+
+class _Reduced:
+    """Pickles as a fixed reduce tuple"""
+
+    def __init__(self, reduced):
+        self._reduced = reduced
+
+    def __reduce__(self):
+        return self._reduced
+
+
+@pytest.mark.parametrize(("cls", "kwargs"), ALL_CONFIGURATIONS)
+@pytest.mark.parametrize("style", ["class", "name", "dict"])
+def test_unpickle_randomgen_2_3_bit_generator(cls, kwargs, style):
+    # randomgen 2.3 used NumPy's reduce, which builds the default configuration
+    # and then sets the state
+    bg = cls(1234, **kwargs)
+    np.random.Generator(bg).random(3)
+    ctor = np_pickle.__bit_generator_ctor
+    name = f"{cls.__module__}.{cls.__name__}"
+    if style == "class":
+        try:
+            ctor(MT19937)
+        except ValueError:
+            pytest.skip("NumPy only accepts the name of the bit generator")
+        reduced = (ctor, (cls,), (bg.state, bg._seed_seq))
+    elif style == "name":
+        reduced = (ctor, (name,), (bg.state, bg._seed_seq))
+    else:
+        reduced = (ctor, (name,), bg.state)
+    reloaded = pickle.loads(pickle.dumps(_Reduced(reduced)))
+    assert type(reloaded) is cls
+    assert_state_equal(reloaded.state, bg.state)
+    assert_array_equal(
+        _draw(np.random.Generator(bg)), _draw(np.random.Generator(reloaded))
+    )
+
+
+@pytest.mark.parametrize(("cls", "kwargs"), ALL_CONFIGURATIONS)
+def test_unpickle_randomgen_2_3_extended_generator(cls, kwargs):
+    extended = ExtendedGenerator(cls(1234, **kwargs))
+    extended.uintegers(3)
+    ctor = rg_pkl.__extended_generator_ctor
+    name = f"{cls.__module__}.{cls.__name__}"
+    reduced = (ctor, (name,), extended.bit_generator.state)
+    reloaded = pickle.loads(pickle.dumps(_Reduced(reduced)))
+    assert type(reloaded.bit_generator) is cls
+    assert_array_equal(
+        extended.complex_normal(size=10), reloaded.complex_normal(size=10)
+    )
+
+
+@pytest.mark.parametrize(("cls", "kwargs"), ALL_CONFIGURATIONS)
+def test_jumped_configurations(cls, kwargs):
+    bg = cls(1234, **kwargs)
+    if not hasattr(bg, "jumped"):
+        pytest.skip("jumped not available")
+    jumped = bg.jumped()
+    assert type(jumped) is cls
+    # Fails if the configuration is different
+    same_config = cls(1234, **kwargs)
+    same_config.state = jumped.state
+    assert_array_equal(
+        _draw(np.random.Generator(jumped)),
+        _draw(np.random.Generator(same_config)),
+    )

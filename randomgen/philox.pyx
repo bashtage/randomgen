@@ -367,14 +367,13 @@ cdef class Philox(BitGenerator):
         # Default for previous version
         n = value.get("number", 4)
         w = value.get("width", 64)
+        check_state_config(self, "number", self.n, n)
+        check_state_config(self, "width", self.w, w)
         state = value["state"]
         ctr = check_state_array(state["counter"], n, w, "counter")
         key = check_state_array(state["key"], n // 2, w, "key")
         buffer = check_state_array(value["buffer"], n, w, "buffer")
         with self.lock:
-            self.rng_state.number = self.n = n
-            self.rng_state.width = self.w = w
-            self._setup_generator()
             # Reset to make sure buffer is 0ed
             self._reset_state_variables()
             for i in range(self.n):
@@ -403,6 +402,18 @@ cdef class Philox(BitGenerator):
             self.rng_state.has_uint32 = value["has_uint32"]
             self.rng_state.uinteger = value["uinteger"]
             self.rng_state.buffer_pos = value["buffer_pos"]
+
+    def _configure_from_state(self, value):
+        n = value.get("number", 4)
+        w = value.get("width", 64)
+        if n not in (2, 4):
+            raise ValueError("number must be either 2 or 4")
+        if w not in (32, 64):
+            raise ValueError("width must be either 32 or 64")
+        with self.lock:
+            self.rng_state.number = self.n = n
+            self.rng_state.width = self.w = w
+            self._setup_generator()
 
     cdef jump_inplace(self, object iter):
         """
@@ -467,7 +478,9 @@ cdef class Philox(BitGenerator):
         cdef Philox bit_generator
 
         kwargs = {} if self.mode != "numpy" else {"numpy_seed": True}
-        bit_generator = self.__class__(seed=self._copy_seed(), **kwargs)
+        bit_generator = self.__class__(
+            seed=self._copy_seed(), number=self.n, width=self.w, **kwargs
+        )
         bit_generator.state = self.state
         bit_generator.jump_inplace(iter)
 

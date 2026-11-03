@@ -300,9 +300,11 @@ cdef class JSF(BitGenerator):
             raise ValueError("state must be for a {0} "
                              "PRNG".format(type(self).__name__))
         state = value["state"]
+        check_state_config(self, "size", self.size, value["size"])
         with self.lock:
-            self.size = value["size"]
-            self.setup_generator(state["p"], state["q"], state["r"])
+            self.rng_state.p = state["p"]
+            self.rng_state.q = state["q"]
+            self.rng_state.r = state["r"]
             if self.size == 64:
                 self.rng_state.a.u64 = state["a"]
                 self.rng_state.b.u64 = state["b"]
@@ -317,3 +319,11 @@ cdef class JSF(BitGenerator):
             self.rng_state.has_uint32 = value["has_uint32"]
             self.rng_state.uinteger = value["uinteger"]
             self.seed_size = value["seed_size"]
+
+    def _configure_from_state(self, value):
+        size = value["size"]
+        if size not in (32, 64):
+            raise ValueError("size must be either 32 or 64")
+        with self.lock:
+            self.size = size
+            self.setup_generator(None, None, None)

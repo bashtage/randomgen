@@ -195,10 +195,14 @@ cdef class Tyche(BitGenerator):
             raise ValueError("state must be for a {0} "
                              "PRNG".format(type(self).__name__))
         state = value["state"]
+        check_state_config(self, "original", self.original, bool(state["original"]))
         with self.lock:
-            self.original = bool(state["original"])
             self.rng_state.a = state["a"]
             self.rng_state.b = state["b"]
             self.rng_state.c = state["c"]
             self.rng_state.d = state["d"]
+
+    def _configure_from_state(self, value):
+        with self.lock:
+            self.original = bool(value["state"]["original"])
             self._setup_bitgen()

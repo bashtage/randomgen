@@ -8,6 +8,14 @@ DEFAULT_MULTIPLIER = 47026247687942121848144207491837523525
 DEFAULT_DXSM_MULTIPLIER = 0xDA942042E4DD58B5
 
 
+cdef str _canonical_variant(object variant):
+    if variant in ("dxsm", "2.0", "2", "cm-dxsm", "cmdxsm"):
+        return "dxsm"
+    elif variant in ("dxsm-128", "dxsm128"):
+        return "dxsm-128"
+    return "xsl-rr"
+
+
 cdef uint64_t pcg64_uint64(void* st) noexcept nogil:
     return pcg64_next64(<pcg64_state_t *>st)
 
@@ -182,17 +190,9 @@ cdef class PCG64(BitGenerator):
         self._bitgen.state = <void *>&self.rng_state
 
     def _setup_rng_state(self):
-        self.use_dxsm = False
-        self.cheap_multiplier = False
-        if self.variant in ("dxsm", "2.0", "2", "cm-dxsm", "cmdxsm"):
-            self.use_dxsm = True
-            self.cheap_multiplier = True
-            self.variant = "dxsm"
-        elif self.variant in ("dxsm-128", "dxsm128"):
-            self.use_dxsm = True
-            self.variant = "dxsm-128"
-        else:
-            self.variant = "xsl-rr"
+        self.variant = _canonical_variant(self.variant)
+        self.use_dxsm = self.variant != "xsl-rr"
+        self.cheap_multiplier = self.variant == "dxsm"
 
         if not self.cheap_multiplier:
             self._bitgen.next_uint64 = &pcg64_uint64
@@ -333,14 +333,18 @@ cdef class PCG64(BitGenerator):
         state_vec[3] = inc % 2 ** 64
         has_uint32 = value["has_uint32"]
         uinteger = value["uinteger"]
+        variant = _canonical_variant(value.get("variant", "1.0"))
+        check_state_config(self, "variant", self.variant, variant)
         with self.lock:
-            self.variant = value.get("variant", "1.0")
-            self._setup_rng_state()
-
             # Default False for backward compat
             pcg64_set_state(&self.rng_state,
                             <uint64_t *>np.PyArray_DATA(state_vec),
                             self.use_dxsm, has_uint32, uinteger)
+
+    def _configure_from_state(self, value):
+        with self.lock:
+            self.variant = _canonical_variant(value.get("variant", "1.0"))
+            self._setup_rng_state()
 
     def advance(self, delta):
         """
@@ -1117,6 +1121,9 @@ cdef class PCG64DXSM(PCG64):
             pcg64_set_state(&self.rng_state,
                             <uint64_t *>np.PyArray_DATA(state_vec),
                             self.use_dxsm, has_uint32, uinteger)
+
+    def _configure_from_state(self, value):
+        pass
 
     def jumped(self, iter=1):
         """

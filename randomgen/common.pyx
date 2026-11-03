@@ -98,6 +98,29 @@ cdef class BitGenerator(_BitGenerator):
             else:  # numpy
                 self._seed_from_seq_numpy_compat(**kwargs)
 
+    def _configure_from_state(self, state):
+        """
+        Apply the configuration contained in state to this bit generator
+
+        Bit generators whose output functions depend on a configuration that
+        is part of the state (e.g., the variant) override this method. It is
+        only used when unpickling, where the bit generator has been built with
+        the default configuration and is not yet used by any Generator.
+        """
+
+    def __setstate__(self, state_seed_seq):
+        # NumPy's __setstate__ assigns state directly, which rejects a change
+        # in configuration. Configure the new bit generator, then set state.
+        if isinstance(state_seed_seq, dict):
+            state = state_seed_seq
+        else:
+            state = state_seed_seq[0]
+        with self.lock:
+            self._configure_from_state(state)
+            if not isinstance(state_seed_seq, dict):
+                self._seed_seq = state_seed_seq[1]
+            self.state = state
+
     @property
     def state(self):
         raise NotImplemented("subclasses must implement")
@@ -407,6 +430,24 @@ cdef object wrap_int(object val, object bits):
         divisor = val // upper
         val = val - upper * divisor
     return val
+
+cdef int check_state_config(object bit_generator, str name, object current,
+                            object new) except -1:
+    """
+    Reject a state whose configuration differs from the bit generator's
+
+    Generators copy a bit generator's output functions when they are created,
+    so the functions cannot change after construction.
+    """
+    if new != current:
+        cls = type(bit_generator).__name__
+        raise ValueError(
+            f"The state has {name}={new!r}, but this {cls} was created with "
+            f"{name}={current!r}. The {name} cannot be changed through state "
+            f"because Generators that use this {cls} would keep using the "
+            f"original {name}. Create a new {cls} with {name}={new!r}."
+        )
+    return 0
 
 cdef object check_state_array(object arr, np.npy_intp required_len,
                               int required_bits, object name):
