@@ -450,9 +450,9 @@ cdef class ThreeFry(BitGenerator):
 
         return bit_generator
 
-    def advance(self, delta, counter=None):
+    def advance(self, delta, counter=False):
         """
-        advance(delta, counter=None)
+        advance(delta, counter=False)
 
         Advance the underlying RNG as-if delta draws have occurred.
 
@@ -463,14 +463,15 @@ cdef class ThreeFry(BitGenerator):
             state variable in the underlying RNG. delta can take any value and
             can be negative. Values outside 0 and  2**(N*W+N/2) are converted
             into this range by taking the modulo.
-        counter : bool
-            Flag indicating whether the advance the counter only or both the
-            counter and the buffer position. The default is True, which has
-            been the pattern in in randomgen <= 1.16. This is changing to False
-            for randomgen > 1.17. To convert between the two, use
-            delta_new = delta * number where number is the number of
-            elements in the generator, delta is the step size when
-            counter=False and delta_new is the step size for counter=True
+        counter : bool, default False
+            Flag indicating whether to advance the counter only or both the
+            counter and the buffer position. If False, the generator is
+            advanced by delta draws, as if delta values had been drawn
+            using random_raw. If True, the counter is advanced by delta and
+            any buffered values are discarded, so that delta counts blocks
+            of number draws. This was the default in earlier releases. To
+            convert between the two, use delta_draws = delta_blocks * number
+            where number is the number of elements in the generator.
 
         Returns
         -------
@@ -494,15 +495,8 @@ cdef class ThreeFry(BitGenerator):
           from a single draw of a 32-bit RNG.
 
         Advancing the RNG state resets any stored 32-bit values. If counter is
-        False, it also resets the buffer and buffer position for backward
-        compatibility.
+        True, it also resets the buffer and buffer position.
         """
-        if counter is None:
-            import warnings
-            warnings.warn("counter defaults to True now, but will become "
-                          "False. Explicitly set counter to silence this"
-                          "warning. ", FutureWarning)
-            counter = True
         if delta == 0:
             return self
 
