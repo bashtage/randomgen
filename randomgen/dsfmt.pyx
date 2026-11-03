@@ -113,7 +113,7 @@ cdef class DSFMT(BitGenerator):
             DSFMT_N64, sizeof(double)
         )
         if self.rng_state.state == NULL or self.rng_state.buffered_uniforms == NULL:
-            raise MemoryError
+            raise MemoryError  # pragma: no cover
         self.rng_state.buffer_loc = DSFMT_N64
         self.seed(seed)
 

@@ -127,7 +127,7 @@ cdef class AESCounter(BitGenerator):
             sizeof(aesctr_state_t), 1
         )
         if self.rng_state == NULL:
-            raise MemoryError
+            raise MemoryError  # pragma: no cover
         self.seed(seed, counter, key)
 
         self._bitgen.state = <void *>self.rng_state

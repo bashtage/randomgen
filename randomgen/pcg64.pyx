@@ -155,7 +155,7 @@ cdef class PCG64(BitGenerator):
             sizeof(pcg64_random_t)
         )
         if self.rng_state.pcg_state == NULL:
-            raise MemoryError
+            raise MemoryError  # pragma: no cover
         inc = None if seed is None else inc
 
         variant = "dxsm" if variant is None else variant
@@ -637,7 +637,7 @@ cdef class LCG128Mix(BitGenerator):
             sizeof(lcg128mix_random_t)
         )
         if self.rng_state.pcg_state == NULL:
-            raise MemoryError
+            raise MemoryError  # pragma: no cover
         if hasattr(output, "argtypes") and hasattr(output, "restype"):
             from ctypes import c_ulonglong
             if output.argtypes != (c_ulonglong, c_ulonglong):

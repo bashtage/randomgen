@@ -133,7 +133,7 @@ cdef class ChaCha(BitGenerator):
             sizeof(chacha_state_t)
         )
         if self.rng_state == NULL:
-            raise MemoryError
+            raise MemoryError  # pragma: no cover
         if rounds % 2 != 0 or rounds <= 0:
             raise ValueError("rounds must be even and >= 2")
         self.rng_state.rounds = rounds

@@ -144,7 +144,7 @@ cdef class SPECK128(BitGenerator):
             sizeof(speck_state_t), 1
         )
         if self.rng_state == NULL:
-            raise MemoryError
+            raise MemoryError  # pragma: no cover
         if (rounds <= 0) or rounds > SPECK_MAX_ROUNDS or int(rounds) != rounds:
             raise ValueError("rounds must be an integer in [1, 34]")
         self.rng_state.rounds = int(rounds)
