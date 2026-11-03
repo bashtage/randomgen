@@ -1,7 +1,8 @@
 import ctypes
 from itertools import combinations
-import os
+import shutil
 import subprocess
+import sys
 
 import numpy as np
 import pytest
@@ -115,27 +116,23 @@ def test_ouput_ctypes():
     np.testing.assert_equal(a, b)
 
 
-def test_ctypes():
+@pytest.mark.thread_unsafe(reason="compiles into a shared temporary directory")
+def test_ctypes(tmp_path):
+    gcc = shutil.which("gcc")
+    if gcc is None or sys.platform == "win32":
+        pytest.skip("GCC unavailable or not supported when building a shared library")
 
-    base = os.path.split(os.path.abspath(__file__))[0]
-
-    c_loc = os.path.join(base, "ctypes_testing.c")
-    with open(c_loc, "w", encoding="utf-8") as c_file:
-        c_file.write(C_SOURCE)
-    o_loc = os.path.join(base, "ctypes_testing.o")
-    so_loc = os.path.join(base, "libctypes_testing.so")
-    try:
-        cmd = ["gcc", "-c", "-Wall", "-Werror", "-fpic", c_loc, "-o", o_loc]
-        subprocess.call(cmd)
-        cmd = ["gcc", "-shared", "-o", so_loc, o_loc]
-        subprocess.call(cmd)
-        if not os.path.exists(so_loc):
-            raise FileNotFoundError(f"{so_loc} does not exist")
-    except Exception as exc:
-        pytest.skip(
-            "GCC unavailable or other error compiling the test library" + str(exc),
-        )
-    libtesting = ctypes.CDLL(so_loc)
+    c_loc = tmp_path / "ctypes_testing.c"
+    c_loc.write_text(C_SOURCE, encoding="utf-8")
+    o_loc = tmp_path / "ctypes_testing.o"
+    so_loc = tmp_path / "libctypes_testing.so"
+    for cmd in (
+        [gcc, "-c", "-Wall", "-Werror", "-fpic", str(c_loc), "-o", str(o_loc)],
+        [gcc, "-shared", "-o", str(so_loc), str(o_loc)],
+    ):
+        result = subprocess.run(cmd, capture_output=True, text=True, check=False)
+        assert result.returncode == 0, f"{' '.join(cmd)} failed:\n{result.stderr}"
+    libtesting = ctypes.CDLL(str(so_loc))
     libtesting.output_upper.argtypes = (ctypes.c_uint64, ctypes.c_uint64)
     libtesting.output_upper.restype = ctypes.c_uint64
     a = LCG128Mix(SEED, output="upper").random_raw(10)
