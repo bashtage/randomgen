@@ -35,6 +35,10 @@ npymath_path = incdir_numpy_abs / '..' / 'lib'
 npyrandom_path = incdir_numpy_abs / '..' / '..' / 'random' / 'lib'
 npymath_lib = cc.find_library('npymath', dirs: npymath_path)
 npyrandom_lib = cc.find_library('npyrandom', dirs: npyrandom_path)
+entropy_deps = []
+if host_machine.system() == 'windows'
+  entropy_deps += cc.find_library('bcrypt')
+endif
 # Copy the main __init__.py to the build dir.
 # Some submodules (linalg, special, optimize) add pxd files to this.
 # Needed to trick Cython, it won't do a relative import outside a package
@@ -297,6 +301,7 @@ py.extension_module(
     subdir: 'randomgen',
     cython_args: cython_args,
     c_args: cython_c_args,
+    dependencies: entropy_deps,
 )
 py.extension_module(
     'wrapper',

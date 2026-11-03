@@ -1262,6 +1262,23 @@ class TestEntropy:
         assert e.dtype == np.uint32
         assert e.shape == np.empty(size, dtype=bool).shape
 
+    @pytest.mark.parametrize("source", ["system", "auto"])
+    def test_large(self, source):
+        n = 2**20 + 3
+        e = entropy.random_entropy(n, source=source)
+        assert e.shape == (n,)
+        assert e.dtype == np.uint32
+        # The tail stays zero if a partial fill is accepted as complete
+        assert (e[-4096:] != 0).sum() > 4000
+        assert np.unique(e).shape[0] > 0.99 * n
+
+    def test_large_fallback(self):
+        n = 2**20 + 3
+        e = entropy.random_entropy(n, source="fallback")
+        assert e.shape == (n,)
+        assert e.dtype == np.uint32
+        assert (e != 0).any()
+
     def test_fallback(self):
         e1 = entropy.random_entropy(source="fallback")
         time.sleep(0.1)
