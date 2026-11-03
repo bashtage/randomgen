@@ -383,21 +383,25 @@ def test_validate_output():
         generator.cont_1(np.array([0.1, 0.2, 0.3]), size=(7, 11))
 
 
-SMALL_OUTPUT_CALLS = [
-    lambda g, **kw: g.cont_1([0.5, 0.5, 0.5], **kw),
-    lambda g, **kw: g.cont_2([0.5, 0.5, 0.5], 1.0, **kw),
-    lambda g, **kw: g.cont_3([0.5, 0.5, 0.5], 0.5, 1.5, **kw),
-    lambda g, **kw: g.cont_3_alt_cons([1.5, 1.5, 1.5], 1.0, 1.0, **kw),
-    lambda g, **kw: g.cont_1_float([0.5, 0.5, 0.5], **kw),
-    lambda g, **kw: g.disc_d([0.5, 0.5, 0.5], **kw),
-    lambda g, **kw: g.disc_dd([0.5, 0.5, 0.5], 1.0, **kw),
-    lambda g, **kw: g.disc_di([0.5, 0.5, 0.5], 1, **kw),
-    lambda g, **kw: g.disc_i([1, 1, 1], **kw),
-    lambda g, **kw: g.disc_iii([1, 1, 1], 1, 1, **kw),
-]
+SMALL_OUTPUT_CALLS = {
+    "cont_1": lambda g, **kw: g.cont_1([0.5, 0.5, 0.5], **kw),
+    "cont_2": lambda g, **kw: g.cont_2([0.5, 0.5, 0.5], 1.0, **kw),
+    "cont_3": lambda g, **kw: g.cont_3([0.5, 0.5, 0.5], 0.5, 1.5, **kw),
+    "cont_3_alt_cons": lambda g, **kw: g.cont_3_alt_cons(
+        [1.5, 1.5, 1.5], 1.0, 1.0, **kw
+    ),
+    "cont_1_float": lambda g, **kw: g.cont_1_float([0.5, 0.5, 0.5], **kw),
+    "disc_d": lambda g, **kw: g.disc_d([0.5, 0.5, 0.5], **kw),
+    "disc_dd": lambda g, **kw: g.disc_dd([0.5, 0.5, 0.5], 1.0, **kw),
+    "disc_di": lambda g, **kw: g.disc_di([0.5, 0.5, 0.5], 1, **kw),
+    "disc_i": lambda g, **kw: g.disc_i([1, 1, 1], **kw),
+    "disc_iii": lambda g, **kw: g.disc_iii([1, 1, 1], 1, 1, **kw),
+}
 
 
-@pytest.mark.parametrize("call", SMALL_OUTPUT_CALLS)
+@pytest.mark.parametrize(
+    "call", list(SMALL_OUTPUT_CALLS.values()), ids=list(SMALL_OUTPUT_CALLS)
+)
 @pytest.mark.parametrize("size", [1, (1,), (1, 1), (0, 1)])
 def test_size_smaller_than_broadcast_shape(call, size):
     # The output must have the broadcast shape of the inputs. A size that
