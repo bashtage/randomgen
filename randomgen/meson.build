@@ -170,7 +170,6 @@ endforeach
 
 subdirs_list = [
     '_build',
-    'compat',
     'examples',
     'src',
     'tests',

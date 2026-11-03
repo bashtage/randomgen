@@ -328,9 +328,8 @@ markers = [
 [tool.isort]
 profile = "black"
 src_paths = ["randomgen"]
-sections = ["FUTURE","COMPAT","STDLIB","THIRDPARTY","FIRSTPARTY","LOCALFOLDER"]
+sections = ["FUTURE","STDLIB","THIRDPARTY","FIRSTPARTY","LOCALFOLDER"]
 known_first_party = ["randomgen"]
-known_compat = ["randomgen.compat.*"]
 known_third_party=["Cython","numpy","matplotlib","pandas","pytest","cython","scipy","seaborn"]
 line_length=88
 force_grid_wrap=0
@@ -347,8 +346,6 @@ plugins = [ "Cython.Coverage" ]
 omit = [
   # Version file
   "*/_version.py",
-  # Compatibility code
-  "*/compat/*",
   "*/conftest.py",
 ]
 
@@ -391,7 +388,6 @@ exclude_also = [
 include = [ "*/randomgen/*" ]
 omit = [
   "*/_version.py",
-  "*/compat/*",
   "*recursions.py",
   "*samplers.py",
 ]
