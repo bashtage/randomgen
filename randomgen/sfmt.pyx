@@ -285,14 +285,16 @@ cdef class SFMT(BitGenerator):
         state = state.view(np.uint64)
         buffered_uint64 = check_state_array(value["buffered_uint64"], SFMT_N64,
                                             64,  "buffered_uint64")
+        idx = check_state_int(value["state"]["idx"], "idx", 0, 4 * SFMT_N)
+        buffer_loc = check_state_int(value["buffer_loc"], "buffer_loc", 0, SFMT_N64)
         with self.lock:
             for i in range(SFMT_N):
                 for j in range(2):
                     self.rng_state.state.state[i].u64[j] = state[loc]
                     loc += 1
-            self.rng_state.state.idx = value["state"]["idx"]
+            self.rng_state.state.idx = idx
             for i in range(SFMT_N64):
                 self.rng_state.buffered_uint64[i] = buffered_uint64[i]
-            self.rng_state.buffer_loc = value["buffer_loc"]
+            self.rng_state.buffer_loc = buffer_loc
             self.rng_state.has_uint32 = value["has_uint32"]
             self.rng_state.uinteger = value["uinteger"]

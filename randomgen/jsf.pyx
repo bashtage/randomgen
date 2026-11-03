@@ -301,24 +301,33 @@ cdef class JSF(BitGenerator):
                              "PRNG".format(type(self).__name__))
         state = value["state"]
         check_state_config(self, "size", self.size, value["size"])
+        p = check_state_int(state["p"], "p", 0, self.size - 1)
+        q = check_state_int(state["q"], "q", 0, self.size - 1)
+        r = check_state_int(state["r"], "r", 0, self.size - 1)
+        upper = int(2) ** int(self.size) - 1
+        a = check_state_int(state["a"], "a", 0, upper)
+        b = check_state_int(state["b"], "b", 0, upper)
+        c = check_state_int(state["c"], "c", 0, upper)
+        d = check_state_int(state["d"], "d", 0, upper)
+        seed_size = check_state_int(value["seed_size"], "seed_size", 1, 3)
         with self.lock:
-            self.rng_state.p = state["p"]
-            self.rng_state.q = state["q"]
-            self.rng_state.r = state["r"]
+            self.rng_state.p = p
+            self.rng_state.q = q
+            self.rng_state.r = r
             if self.size == 64:
-                self.rng_state.a.u64 = state["a"]
-                self.rng_state.b.u64 = state["b"]
-                self.rng_state.c.u64 = state["c"]
-                self.rng_state.d.u64 = state["d"]
+                self.rng_state.a.u64 = a
+                self.rng_state.b.u64 = b
+                self.rng_state.c.u64 = c
+                self.rng_state.d.u64 = d
             else:
-                self.rng_state.a.u32 = state["a"]
-                self.rng_state.b.u32 = state["b"]
-                self.rng_state.c.u32 = state["c"]
-                self.rng_state.d.u32 = state["d"]
+                self.rng_state.a.u32 = a
+                self.rng_state.b.u32 = b
+                self.rng_state.c.u32 = c
+                self.rng_state.d.u32 = d
 
             self.rng_state.has_uint32 = value["has_uint32"]
             self.rng_state.uinteger = value["uinteger"]
-            self.seed_size = value["seed_size"]
+            self.seed_size = seed_size
 
     def _configure_from_state(self, value):
         size = value["size"]

@@ -157,9 +157,10 @@ cdef class MT64(BitGenerator):
             raise ValueError("state must be for a {0} "
                              "PRNG".format(type(self).__name__))
         key = check_state_array(value["state"]["key"], 312, 64, "key")
+        pos = check_state_int(value["state"]["pos"], "pos", 0, 312)
         with self.lock:
             for i in range(312):
                 self.rng_state.mt[i] = key[i]
-            self.rng_state.mti = value["state"]["pos"]
+            self.rng_state.mti = pos
             self.rng_state.has_uint32 = value["has_uint32"]
             self.rng_state.uinteger = value["uinteger"]

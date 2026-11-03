@@ -9,11 +9,14 @@ DEFAULT_DXSM_MULTIPLIER = 0xDA942042E4DD58B5
 
 
 cdef str _canonical_variant(object variant):
-    if variant in ("dxsm", "2.0", "2", "cm-dxsm", "cmdxsm"):
+    name = str(variant).lower().replace("-", "")
+    if name in ("xslrr", "1.0", "1"):
+        return "xsl-rr"
+    elif name in ("dxsm", "2.0", "2", "cmdxsm"):
         return "dxsm"
-    elif variant in ("dxsm-128", "dxsm128"):
+    elif name == "dxsm128":
         return "dxsm-128"
-    return "xsl-rr"
+    raise ValueError(f"variant {variant} is not known.")
 
 
 cdef uint64_t pcg64_uint64(void* st) noexcept nogil:

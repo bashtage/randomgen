@@ -272,14 +272,19 @@ cdef class DSFMT(BitGenerator):
                              "PRNG".format(type(self).__name__))
         state = check_state_array(value["state"]["state"], 2*DSFMT_N_PLUS_1,
                                   64, "state")
-        buffered_uniforms = value["buffered_uniforms"]
-        # TODO: Check buffered_uniforms
+        buffered_uniforms = np.ascontiguousarray(value["buffered_uniforms"],
+                                                 dtype=np.double)
+        if buffered_uniforms.shape != (DSFMT_N64,):
+            raise ValueError("buffered_uniforms must be a 1-d array of doubles "
+                             "with {0} elements".format(DSFMT_N64))
+        idx = check_state_int(value["state"]["idx"], "idx", 0, DSFMT_N64)
+        buffer_loc = check_state_int(value["buffer_loc"], "buffer_loc", 0, DSFMT_N64)
         with self.lock:
             for i in range(DSFMT_N_PLUS_1):
                 for j in range(2):
                     self.rng_state.state.status[i].u[j] = state[loc]
                     loc += 1
-            self.rng_state.state.idx = value["state"]["idx"]
+            self.rng_state.state.idx = idx
             for i in range(DSFMT_N64):
                 self.rng_state.buffered_uniforms[i] = buffered_uniforms[i]
-            self.rng_state.buffer_loc = value["buffer_loc"]
+            self.rng_state.buffer_loc = buffer_loc

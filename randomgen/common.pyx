@@ -1,5 +1,6 @@
 #!python
 from collections import namedtuple
+import operator
 import sys
 from threading import RLock
 from typing import NamedTuple
@@ -458,7 +459,20 @@ cdef object check_state_array(object arr, np.npy_intp required_len,
         raise ValueError("State element {0} must be a 1-d array with dtype {1} "
                          "and {2} elements".format(name, req_dtype,
                                                    required_len))
-    return arr
+    # Callers read the data through a pointer
+    return np.ascontiguousarray(arr)
+
+cdef object check_state_int(object value, str name, object lower, object upper):
+    """
+    Convert an integer in a state to a Python int in [lower, upper]
+    """
+    try:
+        out = operator.index(value)
+    except TypeError:
+        raise TypeError(f"{name} must be an integer.")
+    if not lower <= out <= upper:
+        raise ValueError(f"{name} must be in [{lower}, {upper}]. Got {out}.")
+    return out
 
 
 cdef np.ndarray int_to_array(object value, object name, object bits, object uint_size):
