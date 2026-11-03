@@ -1348,8 +1348,8 @@ class TestPCG32(TestPCG64XSLRR):
             (None, -1),
             (None, 2**129 + 1),
         ]
-        cls.large_advance_initial = 645664597830827402
-        cls.large_advance_final = 3
+        cls.large_advance_initial = 16393846548996684016
+        cls.large_advance_final = 15793235383387715777
 
     def setup_bitgenerator(self, seed, inc=None):
         return self.bit_generator(*seed, inc=inc)
