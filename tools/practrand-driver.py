@@ -30,6 +30,7 @@ for k in seen:
     bitgens.append(rg.SFC64(rg.SeedSequence(ENTROPY), k=k))
 output = 64
 """
+
 import argparse
 import importlib.machinery
 import json
