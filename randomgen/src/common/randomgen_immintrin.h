@@ -32,6 +32,20 @@
 #endif
 #endif
 
+/*
+ * The same applies to SSSE3, which ChaCha and SPECK-128 use after checking
+ * the CPU. Enabling it for a whole module lets the compiler use it anywhere,
+ * so the module would not load on an x86-64 CPU without SSSE3.
+ */
+#if defined(__x86_64__) || defined(_M_X64)
+#define RANDOMGEN_HAVE_SSSE3 1
+#if defined(__GNUC__) || defined(__clang__)
+#define RANDOMGEN_SSSE3_TARGET __attribute__((target("ssse3")))
+#else
+#define RANDOMGEN_SSSE3_TARGET
+#endif
+#endif
+
 #if defined(__SSE2__) && __SSE2__
 #include <emmintrin.h>
 #endif

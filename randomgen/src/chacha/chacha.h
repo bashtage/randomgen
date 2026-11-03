@@ -48,7 +48,7 @@ typedef struct CHACHA_STATE_T chacha_state_t;
 #if defined(__SSE2__) && __SSE2__
 // Get an efficient mm_roti_epi32 based on enabled features.
 #if !defined(__XOP__)
-    #if defined(__SSSE3__) && __SSSE3__
+    #if defined(RANDOMGEN_HAVE_SSSE3)
         /* Renamed _mm_roti_epi32 to _chacha_mm_roti_epi32 to avoid issues on MSVC */
         #undef _chacha_mm_roti_epi32 /* Silence warnings on some compiler */
         #define _chacha_mm_roti_epi32(r, c) (                              \
@@ -81,7 +81,7 @@ typedef struct CHACHA_STATE_T chacha_state_t;
     #define _chacha_mm_roti_epi32 _mm_roti_epi32
 #endif
 
-static INLINE void chacha_core_ssse3(chacha_state_t *state) {
+static INLINE RANDOMGEN_SSSE3_TARGET void chacha_core_ssse3(chacha_state_t *state) {
     // ROTVn rotates the elements in the given vector n places to the left.
     int i;
 
