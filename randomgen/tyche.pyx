@@ -29,7 +29,7 @@ cdef class Tyche(BitGenerator):
     """
     Tyche(seed=None, idx=None, original=True)
 
-    Container for the Tychee pseudo-random number generator.
+    Container for the Tyche pseudo-random number generator.
 
     Parameters
     ----------

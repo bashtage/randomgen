@@ -427,7 +427,7 @@ cdef np.ndarray int_to_array(object value, object name, object bits, object uint
     Parameters
     ----------
     value : int
-        The value to convrt
+        The value to convert
     name : str
         Variable name to use in error messages
     bits : int

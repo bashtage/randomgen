@@ -55,7 +55,7 @@ cdef class BlaBla(BitGenerator):
     BlaBla is a 64-bit PRNG that uses a counter-based design based on
     the Blake2b hash function [1]_. The idea was first implemented in
     Swift in [2]_, and later reimplemented in C++ in [3]_. The C
-    implementation is dervied from the C++ version. Instances using
+    implementation is derived from the C++ version. Instances using
     different values of the key produce distinct sequences. ``BlaBla`` has
     a period of :math:`2^{128}` and supports arbitrary advancing and
     jumping the sequence in increments of :math:`2^{64}`. These features allow
