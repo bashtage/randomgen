@@ -196,33 +196,6 @@ cdef class LXM(BitGenerator):
                 lxm_jump(&self.rng_state)
             self._reset_state_variables()
 
-    def jump(self, np.npy_intp iter=1):
-        """
-        jump(iter=1)
-
-        Jumps the state as-if 2**128 random numbers have been generated
-
-        Parameters
-        ----------
-        iter : integer, positive
-            Number of times to jump the state of the rng.
-
-        Returns
-        -------
-        self : LXM
-            PRNG jumped iter times
-
-        Notes
-        -----
-        Jumping the rng state resets any pre-computed random numbers. This is
-        required to ensure exact reproducibility.
-        """
-        import warnings
-        warnings.warn("jump (in-place) has been deprecated in favor of jumped"
-                      ", which returns a new instance", DeprecationWarning)
-        self.jump_inplace(iter)
-        return self
-
     def jumped(self, np.npy_intp iter=1):
         """
         jumped(iter=1)

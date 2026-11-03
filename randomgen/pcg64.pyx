@@ -404,40 +404,6 @@ cdef class PCG64(BitGenerator):
         step -= 2**128 * divisor
         self.advance(step)
 
-    def jump(self, np.npy_intp iter=1):
-        """
-        jump(iter=1)
-
-        Jump the state a fixed increment
-
-        Jumps the state as-if 210306068529402873165736369884012333108 random
-        numbers have been generated.
-
-        Parameters
-        ----------
-        iter : integer, positive
-            Number of times to jump the state of the rng.
-
-        Returns
-        -------
-        self : PCG64
-            RNG jumped iter times
-
-        Notes
-        -----
-        Jumping the rng state resets any pre-computed random numbers. This is required
-        to ensure exact reproducibility.
-
-        The step size is phi (the Golden Ratio) when divided by 2**128.
-        """
-        import warnings
-        warnings.warn("jump (in-place) has been deprecated in favor of jumped"
-                      ", which returns a new instance", DeprecationWarning)
-
-        self.jump_inplace(iter)
-
-        return self
-
     def jumped(self, iter=1):
         """
         jumped(iter=1)
@@ -1146,9 +1112,3 @@ cdef class PCG64DXSM(PCG64):
         bit_generator.jump_inplace(iter)
 
         return bit_generator
-
-    def jump(self, np.npy_intp iter=1):
-        """Not implemented. Use jumped."""
-        raise NotImplementedError(
-            "jump is not available for PCG64DXSM. Use jumped instead."
-        )

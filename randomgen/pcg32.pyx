@@ -225,36 +225,6 @@ cdef class PCG32(BitGenerator):
         step = int(0x9e3779b97f4a7c16)
         self.advance(iter * step)
 
-    def jump(self, iter=1):
-        """
-        jump(iter=1)
-
-        Jump the state a fixed increment
-
-        Jumps the state as-if 11400714819323198486 random numbers have been
-        generated.
-
-        Parameters
-        ----------
-        iter : integer, positive
-            Number of times to jump the state of the rng.
-
-        Returns
-        -------
-        self : PCG32
-            RNG jumped iter times
-
-        Notes
-        -----
-        The step size is phi when divided by the period 2**64
-        """
-        import warnings
-        warnings.warn("jump (in-place) has been deprecated in favor of jumped"
-                      ", which returns a new instance", DeprecationWarning)
-
-        self.jump_inplace(iter)
-        return self
-
     def jumped(self, iter=1):
         """
         jumped(iter=1)
