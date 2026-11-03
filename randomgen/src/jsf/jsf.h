@@ -106,7 +106,9 @@ static INLINE double jsf64_next_double(jsf_state_t *state) {
     return (next64(state) >> 11) * (1.0 / 9007199254740992.0);
 }
 static INLINE uint64_t jsf32_next64(jsf_state_t *state) {
-    return (uint64_t)next32(state) << 32 | next32(state);
+    uint64_t high = next32(state);
+    uint64_t low = next32(state);
+    return high << 32 | low;
 }
 static INLINE uint32_t jsf32_next32(jsf_state_t *state) {
     return next32(state);

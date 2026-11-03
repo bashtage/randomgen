@@ -67,7 +67,7 @@ v2.0.0
 
 v1.26.1
 =======
-- Initial compatability with Cython 3 and NumPy 2
+- Initial compatibility with Cython 3 and NumPy 2
 
 v1.26.0
 =======

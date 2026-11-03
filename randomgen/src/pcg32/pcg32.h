@@ -62,8 +62,9 @@ typedef struct pcg_state_setseq_64 pcg32_random_t;
 typedef struct PCG32_STATE_T { pcg32_random_t pcg_state; } pcg32_state_t;
 
 static inline uint64_t pcg32_next64(pcg32_state_t *state) {
-  return (uint64_t)(pcg32_random_r(&state->pcg_state)) << 32 |
-         pcg32_random_r(&state->pcg_state);
+  uint64_t high = pcg32_random_r(&state->pcg_state);
+  uint64_t low = pcg32_random_r(&state->pcg_state);
+  return high << 32 | low;
 }
 
 static inline uint32_t pcg32_next32(pcg32_state_t *state) {

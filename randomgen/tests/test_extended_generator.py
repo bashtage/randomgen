@@ -309,6 +309,28 @@ def test_complex_normal_invalid():
     assert_raises(ValueError, random.complex_normal, relation=[10j])
 
 
+@pytest.mark.parametrize(
+    ("gamma", "relation"),
+    [(1, 1 + 1j), (1, -1 + 1j), (0, 1j), (1, 0.1 + 5j)],
+)
+def test_complex_normal_invalid_covariance(extended_gen, gamma, relation):
+    # A zero variance (or a correlation outside [-1, 1]) is only valid with a
+    # zero (or smaller) covariance, and all paths must agree
+    msg = r"Im\(relation\) \*\* 2 > Re\(gamma \*\* 2 - relation \*\* 2\)"
+    with pytest.raises(ValueError, match=msg):
+        extended_gen.complex_normal(0, gamma, relation)
+    with pytest.raises(ValueError, match=msg):
+        extended_gen.complex_normal(0, gamma, relation, size=(2,))
+    with pytest.raises(ValueError, match=msg):
+        extended_gen.complex_normal(0, gamma, [relation])
+
+
+@pytest.mark.parametrize("relation", [1, -1, 0.5j, 0.5 + 0.1j])
+def test_complex_normal_valid_covariance(extended_gen, relation):
+    assert np.isfinite(extended_gen.complex_normal(0, 1, relation))
+    assert np.all(np.isfinite(extended_gen.complex_normal(0, 1, [relation])))
+
+
 def test_random_uintegers():
     assert len(random.uintegers(10)) == 10
     assert len(random.uintegers(10, bits=32)) == 10
@@ -342,6 +364,59 @@ def test_set_get_state(seed):
     gen.state = state
     assert_equal(gen.state["state"]["key"], state["state"]["key"])
     assert_equal(gen.state["state"]["pos"], state["state"]["pos"])
+
+
+MIXED_SHAPES = [
+    # (gamma, relation, expected shape)
+    ([1.0, 2.0, 3.0], 0.5 + 0.4j, (3,)),
+    ([1.0, 2.0, 3.0], [0.5 + 0.4j], (3,)),
+    ([1.0, 2.0, 3.0], [[0.5 + 0.4j], [0.1]], (2, 3)),
+    ([[1.0], [2.0]], [0.5 + 0.4j, 0.1, 0.2j], (2, 3)),
+    (2.0, [0.5 + 0.4j, 0.1, 0.2j], (3,)),
+    ([[1.0, 2.0, 3.0]], 0.5j, (1, 3)),
+]
+
+
+@pytest.mark.parametrize(("gamma", "relation", "shape"), MIXED_SHAPES)
+def test_complex_normal_mixed_shapes(extended_gen, gamma, relation, shape):
+    # gamma and relation with different shapes used to raise "too many
+    # boolean indices" unless gamma was a scalar
+    out = extended_gen.complex_normal(0.0, gamma, relation)
+    assert out.shape == shape
+    out = extended_gen.complex_normal(0.0, gamma, relation, size=(4,) + shape)
+    assert out.shape == (4,) + shape
+    # Same draws as when the parameters are explicitly broadcast
+    full_gamma, full_relation = np.broadcast_arrays(gamma, relation)
+    a = ExtendedGenerator(PCG64(0)).complex_normal(1.0, gamma, relation)
+    b = ExtendedGenerator(PCG64(0)).complex_normal(1.0, full_gamma, full_relation)
+    assert_allclose(a, b)
+
+
+def test_complex_normal_mixed_shapes_moments(extended_gen):
+    gamma = np.array([1.0, 2.0, 3.0])
+    relation = 0.5 + 0.4j
+    out = extended_gen.complex_normal(0.0, gamma, relation, size=(200000, 3))
+    var_real = 0.5 * (gamma + relation.real)
+    var_imag = 0.5 * (gamma - relation.real)
+    cov = 0.5 * relation.imag
+    assert_allclose(out.real.var(0), var_real, rtol=0.02)
+    assert_allclose(out.imag.var(0), var_imag, rtol=0.02)
+    assert_allclose((out.real * out.imag).mean(0), cov, atol=0.01)
+
+
+@pytest.mark.parametrize(
+    ("gamma", "relation"),
+    [
+        ([1.0, 1.0, 1.0], 1 + 1j),
+        ([1.0, 1.0, 1.0], [[0.1 + 5j], [0.1]]),
+        ([[1.0], [1.0]], [1 + 1j, 0.0, 0.0]),
+        ([1.0, 1.0, 1.0], [-1 + 1j]),
+    ],
+)
+def test_complex_normal_mixed_shapes_invalid(extended_gen, gamma, relation):
+    msg = r"Im\(relation\) \*\* 2 > Re\(gamma \*\* 2 - relation \*\* 2\)"
+    with pytest.raises(ValueError, match=msg):
+        extended_gen.complex_normal(0.0, gamma, relation)
 
 
 def test_complex_normal_size(mv_seed):
@@ -819,3 +894,38 @@ def test_random_long_double_direct(extended_gen):
         direct[i] = twopart(u1, u2, a, b, c)
 
     assert_allclose(actual, direct)
+
+
+@pytest.mark.parametrize("df", [0, -1])
+@pytest.mark.parametrize("rescale", [True, False])
+def test_standard_wishart_invalid_df(extended_gen, df, rescale):
+    # df=0 used to give NaN (0 / 0 when rescaling)
+    state = extended_gen.bit_generator.state
+    with pytest.raises(ValueError, match="df must contain strictly positive"):
+        extended_gen.standard_wishart(df, 2, rescale=rescale)
+    with pytest.raises(ValueError, match="df must contain strictly positive"):
+        extended_gen.standard_wishart(df, 2, size=3, rescale=rescale)
+    with pytest.raises(ValueError, match="df must contain strictly positive"):
+        extended_gen.wishart(df, np.eye(2))
+    assert extended_gen.bit_generator.state == state
+
+
+@pytest.mark.parametrize("size", [[3], [2, 3], (3,), (2, 3), 3])
+def test_wishart_list_size(extended_gen, size):
+    # A list size used to fail on the broadcasting path (array df or scale)
+    expected = np.empty(size, dtype=bool).shape + (2, 2)
+    assert extended_gen.wishart(3, np.eye(2), size=size).shape == expected
+    assert extended_gen.wishart([3, 4, 5], np.eye(2), size=size).shape == expected
+    scale = np.stack([np.eye(2)] * 3)
+    assert extended_gen.wishart(3, scale, size=size).shape == expected
+
+
+def test_wishart_list_size_matches_tuple():
+    list_size = ExtendedGenerator(PCG64(0)).wishart([3, 4, 5], np.eye(2), size=[2, 3])
+    tuple_size = ExtendedGenerator(PCG64(0)).wishart([3, 4, 5], np.eye(2), size=(2, 3))
+    assert_allclose(list_size, tuple_size)
+
+
+def test_wishart_size_incompatible(extended_gen):
+    with pytest.raises(ValueError, match=r"size .* is not compatible"):
+        extended_gen.wishart([3, 4, 5], np.eye(2), size=[2])
