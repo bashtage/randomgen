@@ -765,7 +765,7 @@ def _counter_as_int(bg):
     return sum(int(v) << (width * i) for i, v in enumerate(counter))
 
 
-@pytest.mark.parametrize("cls,number,width", COUNTER_BASED)
+@pytest.mark.parametrize(("cls", "number", "width"), COUNTER_BASED)
 @pytest.mark.parametrize("warmup", [0, 1, 2, 3, 4, 5, 7, 100])
 @pytest.mark.parametrize("step", [1, 2, 3, 4, 5, 6, 7, 8, 9, 34159])
 def test_advance_counter_false_matches_draws(cls, number, width, warmup, step):
@@ -778,7 +778,7 @@ def test_advance_counter_false_matches_draws(cls, number, width, warmup, step):
     assert_array_equal(bg.random_raw(7), expected.random_raw(7))
 
 
-@pytest.mark.parametrize("cls,number,width", COUNTER_BASED)
+@pytest.mark.parametrize(("cls", "number", "width"), COUNTER_BASED)
 @pytest.mark.parametrize("warmup", [0, 1, 2, 3, 4, 5, 7, 100])
 @pytest.mark.parametrize("step", [1, 2, 3, 4, 5, 34159])
 def test_advance_counter_true_matches_draws(cls, number, width, warmup, step):
@@ -793,7 +793,7 @@ def test_advance_counter_true_matches_draws(cls, number, width, warmup, step):
     assert_array_equal(bg.random_raw(7), expected.random_raw(7))
 
 
-@pytest.mark.parametrize("cls,number,width", COUNTER_BASED)
+@pytest.mark.parametrize(("cls", "number", "width"), COUNTER_BASED)
 @pytest.mark.parametrize("counter_only", [True, False])
 @pytest.mark.parametrize("warmup", [0, 1, 3])
 def test_advance_large(cls, number, width, counter_only, warmup):
