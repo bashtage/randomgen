@@ -28,7 +28,6 @@ from randomgen import (
     Xorshift1024,
     Xoshiro256,
     Xoshiro512,
-    compat,
     entropy,
 )
 from randomgen.entropy import _test_sentinel
@@ -114,7 +113,7 @@ def comp_state(state1, state2):
         state2,
         (list, tuple, np.ndarray),
     ):
-        for s1, s2 in compat.zip(state1, state2, strict=True):
+        for s1, s2 in zip(state1, state2, strict=True):
             identical &= comp_state(s1, s2)
     else:
         identical &= state1 == state2
