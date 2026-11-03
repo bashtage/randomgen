@@ -230,7 +230,7 @@ cdef class Philox(BitGenerator):
     def _seed_from_seq_numpy_compat(self, counter=None):
         if self.n != 4 or self.w != 64:
             raise ValueError("n must be 4 and w must br 64 when using mode='numpy'")
-        return self._seed_from_seq()
+        return self._seed_from_seq(counter=counter)
 
     def seed(self, seed=None, counter=None, key=None):
         """
