@@ -1581,7 +1581,6 @@ class TestChaCha(Base):
         with pytest.raises(ValueError, match="rounds must be even and"):
             self.bit_generator(rounds=-4)
 
-    @pytest.mark.thread_unsafe(reason="toggles a process-wide SIMD flag")
     def test_use_simd(self):
         bg = self.bit_generator(0)
         if not bg.use_simd:
@@ -2141,7 +2140,6 @@ def test_bitgen_ctor():
         rg_pkl.__bit_generator_ctor("NewFangledBG")
 
 
-@pytest.mark.thread_unsafe(reason="toggles a process-wide SIMD flag")
 def test_speck_sse41():
     s = SPECK128(0)
     if not s.use_sse41:
@@ -2151,6 +2149,35 @@ def test_speck_sse41():
     s.use_sse41 = not orig
     assert s.use_sse41 != orig
     s.use_sse41 = orig
+
+
+@pytest.mark.parametrize(
+    "bit_gen, flag",
+    [
+        (AESCounter, "use_aesni"),
+        (BlaBla, "use_avx2"),
+        (ChaCha, "use_simd"),
+        (SPECK128, "use_sse41"),
+    ],
+    ids=["AESCounter", "BlaBla", "ChaCha", "SPECK128"],
+)
+def test_simd_flag_per_instance(bit_gen, flag):
+    bg = bit_gen(0)
+    if not getattr(bg, flag):
+        pytest.skip(f"{flag} is not supported by this CPU")
+    setattr(bg, flag, False)
+    # Neither creating another instance nor reseeding turns it back on
+    assert getattr(bit_gen(1), flag)
+    bg.seed(0)
+    assert not getattr(bg, flag)
+
+    expected = bit_gen(0).random_raw(1000)
+    assert_equal(bg.random_raw(1000), expected)
+    # Seeded without SIMD, then switched on part way through
+    bg.seed(0)
+    first = bg.random_raw(500)
+    setattr(bg, flag, True)
+    assert_equal(np.concatenate([first, bg.random_raw(500)]), expected)
 
 
 def test_pcg64_errors():
@@ -2198,7 +2225,6 @@ class TestBlaBla(Base):
         with pytest.raises(ValueError, match="rounds must be even and"):
             self.bit_generator(rounds=-4)
 
-    @pytest.mark.thread_unsafe(reason="toggles a process-wide SIMD flag")
     def test_use_avx2(self):
         bg = self.bit_generator(0)
         if not bg.use_avx2:

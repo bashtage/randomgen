@@ -16,13 +16,12 @@ from randomgen.common cimport (
 
 cdef extern from "src/chacha/chacha.h":
 
-    int RANDOMGEN_USE_SIMD
-
     struct CHACHA_STATE_T:
         uint32_t block[16]
         uint32_t keysetup[8]
         uint64_t ctr[2]
         int rounds
+        int use_simd
 
     ctypedef CHACHA_STATE_T chacha_state_t
 
@@ -38,7 +37,6 @@ cdef extern from "src/chacha/chacha.h":
     )
     void chacha_advance(chacha_state_t *state, uint64_t *delta)
     int chacha_simd_capable()
-    void chacha_use_simd(int value)
 
 cdef class ChaCha(BitGenerator):
 

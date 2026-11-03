@@ -16,8 +16,6 @@ from randomgen.common cimport (
 
 cdef extern from "src/blabla/blabla.h":
 
-    int RANDOMGEN_USE_AVX2
-
     struct BLABLA_STATE_T:
         uint64_t block[16]
         uint64_t keysetup[4]
@@ -26,6 +24,7 @@ cdef extern from "src/blabla/blabla.h":
         int rounds
         int has_uint32
         uint32_t uinteger
+        int use_avx2
 
 
     ctypedef BLABLA_STATE_T blabla_state_t
@@ -42,7 +41,6 @@ cdef extern from "src/blabla/blabla.h":
     )
     void blabla_advance(blabla_state_t *state, uint64_t *delta)
     int blabla_avx2_capable()
-    void blabla_use_avx2(int value)
 
 cdef class BlaBla(BitGenerator):
 

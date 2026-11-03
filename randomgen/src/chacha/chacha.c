@@ -1,8 +1,6 @@
 #include "chacha.h"
 #include "../common/cpu_features.h"
 
-int RANDOMGEN_USE_SIMD;
-
 extern INLINE uint32_t chacha_next32(chacha_state_t *state);
 extern INLINE uint64_t chacha_next64(chacha_state_t *state);
 extern INLINE double chacha_next_double(chacha_state_t *state);
@@ -23,19 +21,14 @@ int chacha_simd_capable(void) {
 #if defined(__SSE2__) && __SSE2__
   int flags[32];
   feature_flags(flags, CHACHA_FEATURE_REG);
-  RANDOMGEN_USE_SIMD = flags[CHACHA_FEATURE_FLAG];
-  return RANDOMGEN_USE_SIMD;
+  return flags[CHACHA_FEATURE_FLAG];
 #else
-  RANDOMGEN_USE_SIMD = 0;
   return 0;
 #endif
 }
 
-void chacha_use_simd(int flag) { RANDOMGEN_USE_SIMD = flag; }
-
 void chacha_seed(chacha_state_t *state, uint64_t *seedval, uint64_t *stream,
                  uint64_t *ctr) {
-  chacha_simd_capable();
   // Using a 128-bit seed.
   state->keysetup[0] = seedval[0] & 0xffffffffu;
   state->keysetup[1] = seedval[0] >> 32;

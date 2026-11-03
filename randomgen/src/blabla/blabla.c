@@ -1,7 +1,6 @@
 #include "blabla.h"
 #include "../common/cpu_features.h"
 
-int RANDOMGEN_USE_AVX2;
 uint64_t blabla_next64(blabla_state_t* state);
 uint32_t blabla_next32(blabla_state_t* state);
 double blabla_next_double(blabla_state_t* state);
@@ -9,18 +8,14 @@ double blabla_next_double(blabla_state_t* state);
 extern int blabla_avx2_capable(void)
 {
 #if !defined(RG_DISABLE_BLABLA_AVX2)
-    RANDOMGEN_USE_AVX2 = avx2_capable();
+    return avx2_capable();
 #else
-    RANDOMGEN_USE_AVX2 = 0;
+    return 0;
 #endif
-    return RANDOMGEN_USE_AVX2;
 }
-
-void blabla_use_avx2(int flag) { RANDOMGEN_USE_AVX2 = flag; }
 
 void blabla_seed(blabla_state_t* state, uint64_t seedval[2], uint64_t stream[2], uint64_t ctr[2])
 {
-    blabla_use_avx2(blabla_avx2_capable());
     state->ctr[0] = ctr[0];
     state->ctr[1] = ctr[1];
     // ctr[1] = 0;

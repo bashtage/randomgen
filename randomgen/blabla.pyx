@@ -132,6 +132,7 @@ cdef class BlaBla(BitGenerator):
         self.rng_state = <blabla_state_t *>PyArray_malloc_aligned(
             sizeof(blabla_state_t)
         )
+        self.rng_state.use_avx2 = blabla_avx2_capable()
         if rounds % 2 != 0 or rounds <= 0:
             raise ValueError("rounds must be even and >= 2")
         self.seed(seed, counter, key)
@@ -175,15 +176,20 @@ cdef class BlaBla(BitGenerator):
         ------
         ValueError
             If SIMD is not supported
+
+        Notes
+        -----
+        The setting only affects this instance. New instances use AVX2 when
+        the CPU supports it. The generated values are the same either way.
         """
-        return bool(RANDOMGEN_USE_AVX2)
+        return bool(self.rng_state.use_avx2)
 
     @use_avx2.setter
     def use_avx2(self, value):
-        capable = blabla_avx2_capable()
-        if value and not capable:
+        if value and not blabla_avx2_capable():
             raise ValueError("CPU does not support AVX2")
-        blabla_use_avx2(bool(value))
+        with self.lock:
+            self.rng_state.use_avx2 = bool(value)
 
     def seed(self, seed=None, counter=None, key=None):
         """

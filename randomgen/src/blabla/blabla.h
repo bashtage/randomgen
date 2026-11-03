@@ -37,14 +37,13 @@ ALIGN_WINDOWS32 struct BLABLA_STATE_T {
     int rounds;
     int has_uint32;
     uint32_t uinteger;
+    int use_avx2;
 } ALIGN_GCC_CLANG32;
 
 typedef struct BLABLA_STATE_T blabla_state_t;
 
 #define R 10
 
-extern int RANDOMGEN_USE_AVX2;
-extern void blabla_use_avx2(int flag);
 extern int blabla_avx2_capable(void);
 extern void blabla_seed(blabla_state_t* state, uint64_t seedval[2], uint64_t stream[2], uint64_t ctr[2]);
 extern void blabla_advance(blabla_state_t* state, uint64_t delta[2]);
@@ -168,7 +167,7 @@ static inline void generate_block(blabla_state_t* state)
     for (uint32_t i = 0; i < 16; ++i)
         state->block[i] = input[i];
 #if defined(RANDOMGEN_HAVE_AVX2) && !defined(RG_DISABLE_BLABLA_AVX2)
-    if LIKELY (RANDOMGEN_USE_AVX2 > 0) {
+    if LIKELY (state->use_avx2 > 0) {
         blabla_core_avx2(state);
     } else {
 #endif

@@ -3,17 +3,13 @@
 
 #define AES_FEATURE_FLAG 25
 
-int RANDOMGEN_USE_AESNI;
-
 int aes_capable(void)
 {
 #if defined(__AES__) && __AES__
     int flags[32];
     feature_flags(flags, RANDOMGEN_ECX);
-    RANDOMGEN_USE_AESNI = flags[AES_FEATURE_FLAG];
-    return RANDOMGEN_USE_AESNI;
+    return flags[AES_FEATURE_FLAG];
 #else
-    RANDOMGEN_USE_AESNI = 0;
     return 0;
 #endif
 }
@@ -32,14 +28,12 @@ int aes_capable(void)
 void aesctr_seed_r(aesctr_state_t *state, uint64_t *seed)
 {
     int i;
-    /* Call to ensure  RANDOMGEN_USE_AESNI is assigned*/
-    aes_capable();
     /*static const uint8_t rcon[] = {
         0x8d, 0x01, 0x02, 0x04,
         0x08, 0x10, 0x20, 0x40,
         0x80, 0x1b, 0x36
     };*/
-    if (RANDOMGEN_USE_AESNI)
+    if (state->use_aesni)
     {
 #if defined(__AES__) && __AES__
         __m128i k = _mm_set_epi64x(seed[1], seed[0]);
@@ -99,8 +93,6 @@ void aesctr_seed_r(aesctr_state_t *state, uint64_t *seed)
 }
 
 #undef AES_ROUND
-
-void aesctr_use_aesni(int val) { RANDOMGEN_USE_AESNI = val; }
 
 void aesctr_seed(aesctr_state_t *state, uint64_t *seed)
 {

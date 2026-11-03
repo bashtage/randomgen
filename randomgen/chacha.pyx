@@ -132,6 +132,7 @@ cdef class ChaCha(BitGenerator):
         self.rng_state = <chacha_state_t *>PyArray_malloc_aligned(
             sizeof(chacha_state_t)
         )
+        self.rng_state.use_simd = chacha_simd_capable()
         if rounds % 2 != 0 or rounds <= 0:
             raise ValueError("rounds must be even and >= 2")
         self.rng_state.rounds = rounds
@@ -170,15 +171,20 @@ cdef class ChaCha(BitGenerator):
         ------
         ValueError
             If SIMD is not supported
+
+        Notes
+        -----
+        The setting only affects this instance. New instances use SIMD when
+        the CPU supports it. The generated values are the same either way.
         """
-        return RANDOMGEN_USE_SIMD
+        return bool(self.rng_state.use_simd)
 
     @use_simd.setter
     def use_simd(self, value):
-        capable = chacha_simd_capable()
-        if value and not capable:
+        if value and not chacha_simd_capable():
             raise ValueError("CPU does not support SIMD implementation")
-        chacha_use_simd(bool(value))
+        with self.lock:
+            self.rng_state.use_simd = bool(value)
 
     def seed(self, seed=None, counter=None, key=None):
         """

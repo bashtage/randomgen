@@ -22,8 +22,6 @@
 #define AESCTR_UNROLL 4
 #define AESCTR_ROUNDS 10
 
-extern int RANDOMGEN_USE_AESNI;
-
 union AES128_T {
 #if defined(__AES__) && __AES__
   __m128i m128;
@@ -42,6 +40,7 @@ struct AESCTR_STATE_T {
   size_t offset;
   int has_uint32;
   uint32_t uinteger;
+  int use_aesni;
 };
 
 typedef struct AESCTR_STATE_T aesctr_state_t;
@@ -49,7 +48,7 @@ typedef struct AESCTR_STATE_T aesctr_state_t;
 static INLINE uint64_t aesctr_r(aesctr_state_t *state) {
   uint64_t output;
   if (UNLIKELY(state->offset >= 16 * AESCTR_UNROLL)) {
-    if (RANDOMGEN_USE_AESNI) {
+    if (state->use_aesni) {
 #if defined(__AES__) && __AES__
       __m128i work[AESCTR_UNROLL];
       for (int i = 0; i < AESCTR_UNROLL; ++i) {
@@ -129,7 +128,6 @@ static INLINE double aes_next_double(aesctr_state_t *state) {
   return (aesctr_r(state) >> 11) * (1. / (UINT64_C(1) << 53));
 }
 
-extern void aesctr_use_aesni(int val);
 extern int aes_capable(void);
 extern void aesctr_seed(aesctr_state_t *state, uint64_t *seed);
 extern void aesctr_set_counter(aesctr_state_t *state, uint64_t *counter);

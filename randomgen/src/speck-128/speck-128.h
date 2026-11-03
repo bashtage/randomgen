@@ -9,8 +9,6 @@
 #include "speck-128-sse.h"
 #endif
 
-extern int RANDOMGEN_USE_SSE41;
-
 static INLINE void TF83(uint64_t *x, uint64_t *y, const uint64_t k) {
   x[0] = ((x[0] >> 8) | (x[0] << (64 - 8)));
   x[0] += y[0];
@@ -107,7 +105,7 @@ static INLINE uint64_t speck_next64(speck_state_t *state) {
   if
     UNLIKELY((state->offset == SPECK_BUFFER_SZ)) {
 #if defined(__SSSE3__) && __SSSE3__
-      if (RANDOMGEN_USE_SSE41 == 1) {
+      if (state->use_sse41 == 1) {
         generate_block_ssse3(state);
       } else {
 #endif
@@ -134,7 +132,6 @@ static INLINE uint32_t speck_next32(speck_state_t *state) {
 }
 
 int speck_sse41_capable(void);
-void speck_use_sse41(int val);
 void speck_seed(speck_state_t *state, uint64_t seed[4]);
 void speck_set_counter(speck_state_t *state, uint64_t *ctr);
 void speck_advance(speck_state_t *state, uint64_t *step);

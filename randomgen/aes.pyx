@@ -126,6 +126,7 @@ cdef class AESCounter(BitGenerator):
         self.rng_state = <aesctr_state_t *>PyArray_calloc_aligned(
             sizeof(aesctr_state_t), 1
         )
+        self.rng_state.use_aesni = aes_capable()
         self.seed(seed, counter, key)
 
         self._bitgen.state = <void *>self.rng_state
@@ -161,15 +162,20 @@ cdef class AESCounter(BitGenerator):
         ------
         ValueError
             If AESNI is not supported
+
+        Notes
+        -----
+        The setting only affects this instance. New instances use AESNI when
+        the CPU supports it. The generated values are the same either way.
         """
-        return RANDOMGEN_USE_AESNI
+        return bool(self.rng_state.use_aesni)
 
     @use_aesni.setter
     def use_aesni(self, value):
-        capable = aes_capable()
-        if value and not capable:
+        if value and not aes_capable():
             raise ValueError("CPU does not support AESNI")
-        aesctr_use_aesni(bool(value))
+        with self.lock:
+            self.rng_state.use_aesni = bool(value)
 
     def _seed_from_seq(self, counter=None):
         state = self._get_seed_seq().generate_state(2, np.uint64)

@@ -143,6 +143,7 @@ cdef class SPECK128(BitGenerator):
         self.rng_state = <speck_state_t *>PyArray_calloc_aligned(
             sizeof(speck_state_t), 1
         )
+        self.rng_state.use_sse41 = speck_sse41_capable()
         if (rounds <= 0) or rounds > SPECK_MAX_ROUNDS or int(rounds) != rounds:
             raise ValueError("rounds must be an integer in [1, 34]")
         self.rng_state.rounds = int(rounds)
@@ -240,15 +241,21 @@ cdef class SPECK128(BitGenerator):
         ------
         ValueError
             If SSE 4.1 is not supported
+
+        Notes
+        -----
+        The setting only affects this instance. New instances use SSE 4.1
+        when the CPU supports it. The generated values are the same either
+        way.
         """
-        return bool(RANDOMGEN_USE_SSE41)
+        return bool(self.rng_state.use_sse41)
 
     @use_sse41.setter
     def use_sse41(self, value):
-        capable = speck_sse41_capable()
-        if value and not capable:
+        if value and not speck_sse41_capable():
             raise ValueError("CPU does not support SSE41")
-        speck_use_sse41(int(value))
+        with self.lock:
+            self.rng_state.use_sse41 = bool(value)
 
     @property
     def state(self):
