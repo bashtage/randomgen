@@ -369,7 +369,7 @@ cdef class RDRAND(BitGenerator):
         cdef int status
 
         if not output:
-            n = 1 if size is None else size
+            n = 1 if size is None else int(np.prod(size))
             with self.lock:
                 status = self.rng_state.status
                 with nogil:
