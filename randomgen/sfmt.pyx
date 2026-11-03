@@ -77,7 +77,7 @@ cdef class SFMT(BitGenerator):
     **Parallel Features**
 
     ``SFMT`` can be used in parallel applications by calling the method
-    ``jump`` which advances the state as-if :math:`2^{128}` random numbers
+    ``jumped`` which advances the state as-if :math:`2^{128}` random numbers
     have been generated [2]_. This allows the original sequence to be split
     so that distinct segments can be used in each worker process. All
     generators should be initialized with the same seed to ensure that
@@ -86,10 +86,8 @@ cdef class SFMT(BitGenerator):
     >>> from randomgen.entropy import random_entropy
     >>> from randomgen import Generator, SFMT
     >>> seed = random_entropy()
-    >>> rs = [Generator(SFMT(seed)) for _ in range(10)]
     # Advance each SFMT instance by i jumps
-    >>> for i in range(10):
-    ...     rs[i].bit_generator.jump()
+    >>> rs = [Generator(SFMT(seed).jumped(i)) for i in range(10)]
 
     **Compatibility Guarantee**
 
@@ -179,29 +177,6 @@ cdef class SFMT(BitGenerator):
             sfmt_jump_n(&self.rng_state, iter)
             # Clear the buffer
             self._reset_state_variables()
-
-    def jump(self, np.npy_intp iter=1):
-        """
-        jump(iter=1)
-
-        Jumps the state as-if 2**128 random numbers have been generated.
-
-        Parameters
-        ----------
-        iter : integer, positive
-            Number of times to jump the state of the bit generator.
-
-        Returns
-        -------
-        self : SFMT
-            PRNG jumped iter times
-        """
-        import warnings
-        warnings.warn("jump (in-place) has been deprecated in favor of jumped"
-                      ", which returns a new instance", DeprecationWarning)
-
-        self.jump_inplace(iter)
-        return self
 
     def jumped(self, np.npy_intp iter=1):
         """

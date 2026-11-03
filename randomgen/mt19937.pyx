@@ -76,7 +76,7 @@ cdef class MT19937(BitGenerator):
     **Parallel Features**
 
     ``MT19937`` can be used in parallel applications by
-    calling the method ``jump`` which advances the state as-if :math:`2^{128}`
+    calling the method ``jumped`` which advances the state as-if :math:`2^{128}`
     random numbers have been generated ([1]_, [2]_). This allows the original
     sequence to be split so that distinct segments can be used in each worker
     process. All generators should be initialized with the same seed to ensure
@@ -86,10 +86,8 @@ cdef class MT19937(BitGenerator):
     >>> from randomgen.entropy import random_entropy
     >>> from randomgen import MT19937
     >>> seed = random_entropy()
-    >>> rs = [Generator(MT19937(seed)) for _ in range(10)]
     # Advance each MT19937 instance by i jumps
-    >>> for i in range(10):
-    ...     rs[i].bit_generator.jump(i)
+    >>> rs = [Generator(MT19937(seed).jumped(i)) for i in range(10)]
 
     **Compatibility Guarantee**
 
@@ -195,29 +193,6 @@ cdef class MT19937(BitGenerator):
         mt19937_jump_default(&bit_generator.rng_state)
 
         return bit_generator
-
-    def jump(self, int iter=1):
-        """
-        jump(iter=1)
-
-        Jumps the state as-if 2**128 random numbers have been generated.
-
-        Parameters
-        ----------
-        iter : integer, positive
-            Number of times to jump the state of the bit generator.
-
-        Returns
-        -------
-        self : MT19937
-            PRNG jumped iter times
-        """
-        import warnings
-        warnings.warn("jump (in-place) has been deprecated in favor of jumped"
-                      ", which returns a new instance", DeprecationWarning)
-
-        self.jump_inplace(iter)
-        return self
 
     def jumped(self, int iter=1):
         """
