@@ -184,14 +184,6 @@ cdef class BitGenerator(_BitGenerator):
                 self._cffi = prepare_cffi(&self._bitgen)
             return self._cffi
 
-    @property
-    def generator(self):
-        """
-        Removed, raises NotImplementedError
-        """
-        raise NotImplementedError("This method for accessing a Generator has"
-                                  "been removed.")
-
 
 cdef object benchmark(bitgen_t *bitgen, object lock, Py_ssize_t cnt, object method):
     """Benchmark command used by BitGenerator"""

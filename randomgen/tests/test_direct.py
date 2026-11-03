@@ -349,11 +349,6 @@ class Base:
         assert str(type(rs.bit_generator).__name__) in str(rs)
         assert f"{id(rs):#x}".upper().replace("X", "x")[2:] not in str(rs)
 
-    def test_generator(self):
-        bit_generator = self.setup_bitgenerator(self.data1["seed"])
-        with pytest.raises(NotImplementedError):
-            _ = bit_generator.generator
-
     def test_pickle(self):
         bit_generator = self.setup_bitgenerator(self.data1["seed"])
         bit_generator_pkl = pickle.dumps(bit_generator)
