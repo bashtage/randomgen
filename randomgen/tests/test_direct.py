@@ -1528,6 +1528,26 @@ class TestRDRAND(Base):
         assert isinstance(new_bg, type(bg))
         assert bg is not new_bg
 
+    def test_jumped_retries(self):
+        bg = RDRAND(retries=100)
+        assert bg.jumped().state["retries"] == 100
+        state = bg.state
+        state["retries"] = -1
+        bg.state = state
+        assert bg.jumped().state["retries"] == -1
+
+    def test_failure_buffer_loc(self):
+        bg = RDRAND()
+        state = bg.state
+        state["retries"] = -1
+        bg.state = state
+        gen = np.random.Generator(bg)
+        # After the first failure the buffer is not refilled
+        with pytest.raises(RuntimeError):
+            gen.integers(0, 2**64, dtype=np.uint64, size=300)
+        assert bg.state["status"] == 0
+        assert bg.state["buffer_loc"] <= 256
+
     def test_seed_sequence(self):
         bg = self.bit_generator()
         assert isinstance(bg, self.bit_generator)
