@@ -1,0 +1,80 @@
+cimport numpy as np
+from libc.stdint cimport uint32_t, uint64_t
+
+from randomgen.common cimport (
+    BitGenerator,
+    check_state_array,
+    fully_qualified_name,
+    int_to_array,
+    object_to_int,
+    uint64_to_double,
+    view_little_endian,
+    wrap_int,
+)
+
+{{
+py:
+N = (1, 2, 4)
+W = (32, 64)
+}}
+cdef extern from "src/threefry/threefry.h":
+
+{{for w in W}}
+{{for n in N}}
+    struct s_r123array{{n}}x{{w}}:
+        uint{{w}}_t v[{{n}}]
+    ctypedef s_r123array{{n}}x{{w}} r123array{{n}}x{{w}}
+{{endfor}}
+{{endfor}}
+
+
+{{for w in W}}
+{{for n in (2,4)}}
+    #######################################################
+    # {{n}}x{{w}}
+    #######################################################
+    ctypedef r123array{{n}}x{{w}} threefry{{n}}x{{w}}_ctr_t
+    ctypedef r123array{{n}}x{{w}} threefry{{n}}x{{w}}_key_t
+    struct s_threefry{{n}}x{{w}}_state:
+        threefry{{n}}x{{w}}_ctr_t ctr
+        threefry{{n}}x{{w}}_key_t key
+
+    ctypedef s_threefry{{n}}x{{w}}_state threefry{{n}}x{{w}}_state
+
+{{endfor}}
+{{endfor}}
+
+    union R123_UINT_T:
+        uint64_t u64
+        uint32_t u32
+
+    ctypedef R123_UINT_T r123_uint_t
+
+    union THREEFRY_STATE_T:
+        threefry2x32_state state2x32
+        threefry4x32_state state4x32
+        threefry2x64_state state2x64
+        threefry4x64_state state4x64
+
+    ctypedef THREEFRY_STATE_T threefry_state_t
+
+    struct THREEFRY_ALL_T:
+        threefry_state_t state
+        int buffer_pos
+        r123_uint_t buffer[4]
+        int has_uint32
+        uint32_t uinteger
+        int width
+        int number
+
+    ctypedef THREEFRY_ALL_T threefry_all_t
+
+{{for w in W}}
+{{for n in (2,4)}}
+    uint64_t threefry{{n}}x{{w}}_next64(threefry_all_t *state) noexcept nogil
+    uint32_t threefry{{n}}x{{w}}_next32(threefry_all_t *state) noexcept nogil
+    double threefry{{n}}x{{w}}_next_double(threefry_all_t *state) noexcept nogil
+    void threefry{{n}}x{{w}}_advance(threefry_all_t *state, uint{{w}}_t *step, int use_carry)
+
+{{endfor}}
+{{endfor}}
