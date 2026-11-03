@@ -2314,3 +2314,70 @@ class TestBlaBla(Base):
     def test_seed_key(self):
         with pytest.raises(ValueError, match="seed and key"):
             self.setup_bitgenerator([0], key=0, counter=0)
+
+
+def _seq():
+    return SeedSequence(20241103)
+
+
+# The first 64-bit and double draws below were produced by GCC and MSVC, which
+# agree. next64 combines two 32-bit draws, so these values pin the order in
+# which the two draws are made.
+COMBINED_DRAWS = [
+    (lambda: MT19937(_seq()), 0xBA359F020B92E667, 0.7273806932956745),
+    (lambda: JSF(_seq(), size=32), 0x2EEF8B101D2FB113, 0.18334263938339634),
+    (lambda: PCG32(_seq(), inc=1), 0x8DB8519F2962EDCB, 0.5535937261705531),
+    (
+        lambda: Philox(_seq(), number=2, width=32),
+        0x0585D7598E0C64EB,
+        0.02157350297925331,
+    ),
+    (
+        lambda: Philox(_seq(), number=4, width=32),
+        0x1382265E1C1729D1,
+        0.07620467327332825,
+    ),
+    (
+        lambda: ThreeFry(_seq(), number=2, width=32),
+        0x5E3FF57A8B9D45B0,
+        0.3681634332639614,
+    ),
+    (
+        lambda: ThreeFry(_seq(), number=4, width=32),
+        0x7A6C8547A17BF935,
+        0.4782183962374771,
+    ),
+    (lambda: Tyche(_seq(), original=True), 0xA1DFCBF6FF1BF3ED, 0.6323211192825456),
+    (lambda: Tyche(_seq(), original=False), 0x196A969D53A2DA39, 0.0992826545737957),
+    (
+        lambda: Squares(key=0xF9DB92E5A801E679, variant=32),
+        0x80EB62F8E5B545D5,
+        0.8972972519963361,
+    ),
+    (lambda: ChaCha(_seq()), 0xF60C7C2D96091EA5, 0.9611280070585376),
+    (lambda: HC128(_seq()), 0xB4EAB755D3BEB319, 0.7067064842738044),
+]
+COMBINED_IDS = [
+    "MT19937",
+    "JSF32",
+    "PCG32",
+    "Philox2x32",
+    "Philox4x32",
+    "ThreeFry2x32",
+    "ThreeFry4x32",
+    "Tyche",
+    "Tyche-openrand",
+    "Squares32",
+    "ChaCha",
+    "HC128",
+]
+
+
+@pytest.mark.parametrize(
+    ("factory", "uint64", "double"), COMBINED_DRAWS, ids=COMBINED_IDS
+)
+def test_combined_draw_order(factory, uint64, double):
+    gen = np.random.Generator(factory())
+    assert int(gen.integers(0, 2**64, dtype=np.uint64, endpoint=False)) == uint64
+    gen = np.random.Generator(factory())
+    assert gen.random() == double
