@@ -1,0 +1,40 @@
+name: Linux ARM64
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  test:
+    name: ubuntu-24.04-arm, Python ${{ matrix.python }}
+    runs-on: ubuntu-24.04-arm
+    defaults:
+      run:
+        shell: bash
+    strategy:
+      fail-fast: false
+      matrix:
+        python: ["3.12", "3.15"]
+
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+
+      - name: Set up Python ${{ matrix.python }}
+        uses: actions/setup-python@v7
+        with:
+          python-version: ${{ matrix.python }}
+
+      - name: Build and install randomgen
+        run: python -m pip install -v .
+
+      - name: Install test requirements
+        run: python -m pip install "pytest>=8.4.1,<9" pytest-xdist packaging scipy
+
+      - name: Run tests
+        # Run outside the checkout so that the installed package is tested.
+        working-directory: ${{ runner.temp }}
+        run: python -c "import randomgen; randomgen.test(['--skip-slow', '-n', 'auto', '-rfE', '--durations=10'])"
