@@ -120,6 +120,12 @@ cdef _factorize(cov, meth, check_valid, tol, rank):
     return _factor
 
 
+cdef _check_method(method, allowed):
+    if method not in allowed:
+        choices = ", ".join(f"'{m}'" for m in allowed)
+        raise ValueError(f"method must be one of {choices}")
+
+
 cdef _wishart_factor(scale, meth, check_valid, tol, rank):
     # Return A with A @ A.T = scale. _factorize returns F with F.T @ F = cov,
     # while method="factor" passes A through unchanged
@@ -507,6 +513,7 @@ cdef class ExtendedGenerator:
         """
         if check_valid not in ("warn", "raise", "ignore"):
             raise ValueError("check_valid must equal 'warn', 'raise', or 'ignore'")
+        _check_method(method, ("svd", "eigh", "cholesky", "factor"))
 
         mean = np.array(mean)
         cov = np.array(cov, dtype=np.double)
@@ -910,6 +917,7 @@ cdef class ExtendedGenerator:
         cdef np.ndarray df_arr, shape_arr
 
         # 1. Validate inputs
+        _check_method(method, ("svd", "eigh", "cholesky", "factor"))
         df_arr = <np.ndarray>np.asarray(df, dtype=np.int64, order="C")
         if df_arr.size == 0:
             raise ValueError("At least one value is required for df")
@@ -1148,6 +1156,7 @@ and the trailing dimensions must match exactly so that
         cdef np.npy_intp *rshape
         cdef int gdim, rdim, dim, ldim
 
+        _check_method(method, ("svd", "eigh", "cholesky"))
         larr = <np.ndarray>np.PyArray_FROM_OTF(loc,
                                                np.NPY_CDOUBLE,
                                                np.NPY_ARRAY_ALIGNED |
