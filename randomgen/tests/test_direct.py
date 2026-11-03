@@ -749,6 +749,74 @@ class TestXorshift1024(Base):
         cls.invalid_seed_values = [(-2,)]
 
 
+COUNTER_BASED = [
+    pytest.param(cls, number, width, id=f"{cls.__name__}-{number}x{width}")
+    for cls in (Philox, ThreeFry)
+    for number in (2, 4)
+    for width in (32, 64)
+]
+
+
+def _counter_as_int(bg):
+    width = bg.state["state"]["counter"].dtype.itemsize * 8
+    counter = bg.state["state"]["counter"]
+    return sum(int(v) << (width * i) for i, v in enumerate(counter))
+
+
+@pytest.mark.parametrize("cls,number,width", COUNTER_BASED)
+@pytest.mark.parametrize("warmup", [0, 1, 2, 3, 4, 5, 7, 100])
+@pytest.mark.parametrize("step", [1, 2, 3, 4, 5, 6, 7, 8, 9, 34159])
+def test_advance_counter_false_matches_draws(cls, number, width, warmup, step):
+    # Includes a new generator, whose buffer_pos is the buffer size (4), not number
+    bg = cls(1234, number=number, width=width)
+    bg.random_raw(warmup)
+    expected = cls(1234, number=number, width=width)
+    expected.random_raw(warmup + step)
+    bg.advance(step, counter=False)
+    assert_array_equal(bg.random_raw(7), expected.random_raw(7))
+
+
+@pytest.mark.parametrize("cls,number,width", COUNTER_BASED)
+@pytest.mark.parametrize("warmup", [0, 1, 2, 3, 4, 5, 7, 100])
+@pytest.mark.parametrize("step", [1, 2, 3, 4, 5, 34159])
+def test_advance_counter_true_matches_draws(cls, number, width, warmup, step):
+    # counter=True advances the counter by step blocks of number draws
+    bg = cls(1234, number=number, width=width)
+    bg.random_raw(warmup)
+    counter = _counter_as_int(bg)
+    expected = cls(1234, number=number, width=width)
+    expected.random_raw((counter + step) * number)
+    bg.advance(step, counter=True)
+    assert _counter_as_int(bg) == counter + step
+    assert_array_equal(bg.random_raw(7), expected.random_raw(7))
+
+
+@pytest.mark.parametrize("cls,number,width", COUNTER_BASED)
+@pytest.mark.parametrize("counter_only", [True, False])
+@pytest.mark.parametrize("warmup", [0, 1, 3])
+def test_advance_large(cls, number, width, counter_only, warmup):
+    # The counter has number * width bits and holds 2**(number * width) blocks.
+    # Check steps near the largest step that can be advanced, which carry
+    # across all of the words of the counter.
+    bits = number * width
+    log2_number = number // 2
+    modulus = 2**bits
+    for exponent in range(width - 1, bits + log2_number + 1):
+        for delta in (-1, 0, 1):
+            step = 2**exponent + delta
+            bg = cls(1234, number=number, width=width)
+            bg.random_raw(warmup)
+            counter = _counter_as_int(bg)
+            position = min(bg.state["buffer_pos"], number)
+            bg.advance(step, counter=counter_only)
+            if counter_only:
+                assert _counter_as_int(bg) == (counter + step) % modulus
+            else:
+                new_position = (counter * number + position + step) % (modulus * number)
+                assert _counter_as_int(bg) == new_position // number
+                assert bg.state["buffer_pos"] == new_position % number
+
+
 class TestThreeFry(Random123):
     @classmethod
     def setup_class(cls):
