@@ -61,6 +61,27 @@ HAS_AESNI = aes.use_aesni
 
 USE_AESNI = [True, False] if HAS_AESNI else [False]
 
+# Process-wide flags: the first instance of each bit generator is used to read them
+SIMD_FLAG_BIT_GENERATORS = (
+    (ChaCha(), "use_simd"),
+    (BlaBla(), "use_avx2"),
+    (SPECK128(), "use_sse41"),
+    (aes, "use_aesni"),
+)
+
+
+def _get_simd_flags():
+    return [getattr(bg, name) for bg, name in SIMD_FLAG_BIT_GENERATORS]
+
+
+@pytest.fixture(autouse=True)
+def check_simd_flags_restored():
+    # The SIMD flags are process-wide so a test that changes one must restore it
+    before = _get_simd_flags()
+    yield
+    assert _get_simd_flags() == before, "test left a process-wide SIMD flag changed"
+
+
 try:
     import cffi  # noqa: F401
 
@@ -419,7 +440,7 @@ class Base:
         bit_generator = self.setup_bitgenerator(self.data1["seed"])
         state = bit_generator.state
         get_state = bit_generator.__getstate__()
-        # Legacy numpy compatability
+        # Legacy numpy compatibility
         alt_state = get_state[0] if isinstance(get_state, tuple) else get_state
         assert_state_equal(state, alt_state)
 
@@ -472,10 +493,7 @@ class Base:
         g = np.random.Generator(bg)
         g.integers(0, 2**32, dtype=np.uint32)
         state = bg.state
-        if isinstance(bg, (Philox, ThreeFry)):
-            bg.advance(1000, False)
-        else:
-            bg.advance(1000)
+        bg.advance(1000)
         if "has_uint32" in bg.state:
             assert bg.state["has_uint32"] == 0
             return
@@ -541,6 +559,17 @@ class Random123(Base):
         # standard case
         assert direct == advanced
 
+    def test_advance_default_counter(self, step, warmup):
+        # The default is counter=False, which advances by step draws
+        bg = self.bit_generator()
+        bg.random_raw(warmup)
+        state0 = bg.state
+        bg.random_raw(step)
+        direct = bg.random_raw(3)
+        bg.state = state0
+        bg.advance(step)
+        assert_array_equal(bg.random_raw(3), direct)
+
     def test_advance_large(self):
         dtype = np.uint64 if self.width == 64 else np.uint32
         bg = self.bit_generator()
@@ -573,11 +602,6 @@ class Random123(Base):
             state["state"]["counter"],
             np.array([size_max, size_max, 0, 0], dtype=dtype),
         )
-
-    def test_advance_deprecated(self):
-        bg = self.bit_generator()
-        with pytest.warns(FutureWarning):
-            bg.advance(1)
 
     def test_numpy_uint_array(self):
         bg = self.bit_generator(np.uint64(1))
@@ -963,6 +987,9 @@ class TestAESCounter(TestPhilox):
     @pytest.fixture(autouse=True, params=USE_AESNI)
     def set_use_aesni(self, request):
         self.use_aesni = request.param
+        orig = aes.use_aesni
+        yield
+        aes.use_aesni = orig
 
     def setup_bitgenerator(self, seed, **kwargs):
         bg = self.bit_generator(*seed, **kwargs)
@@ -1528,6 +1555,26 @@ class TestRDRAND(Base):
         assert isinstance(new_bg, type(bg))
         assert bg is not new_bg
 
+    def test_jumped_retries(self):
+        bg = RDRAND(retries=100)
+        assert bg.jumped().state["retries"] == 100
+        state = bg.state
+        state["retries"] = -1
+        bg.state = state
+        assert bg.jumped().state["retries"] == -1
+
+    def test_failure_buffer_loc(self):
+        bg = RDRAND()
+        state = bg.state
+        state["retries"] = -1
+        bg.state = state
+        gen = np.random.Generator(bg)
+        # After the first failure the buffer is not refilled
+        with pytest.raises(RuntimeError):
+            gen.integers(0, 2**64, dtype=np.uint64, size=300)
+        assert bg.state["status"] == 0
+        assert bg.state["buffer_loc"] <= 256
+
     def test_seed_sequence(self):
         bg = self.bit_generator()
         assert isinstance(bg, self.bit_generator)
@@ -1589,8 +1636,12 @@ class TestChaCha(Base):
                 bg.use_simd = True
             return
         bg2 = self.bit_generator(0)
-        bg2.use_simd = not bg.use_simd
-        assert_equal(bg.random_raw(100), bg2.random_raw(100))
+        orig = bg.use_simd
+        try:
+            bg2.use_simd = not orig
+            assert_equal(bg.random_raw(100), bg2.random_raw(100))
+        finally:
+            bg.use_simd = orig
 
     def test_seed_key(self):
         with pytest.raises(ValueError, match="seed and key"):
@@ -2014,6 +2065,51 @@ class TestSquares(TestPCG64DXSM):
         with pytest.raises(ValueError, match="variant must be"):
             bg.state = state
 
+    def test_state_roundtrip_cached_uint32(self):
+        bg = self.setup_bitgenerator([0])
+        gen = np.random.Generator(bg)
+        gen.integers(0, 2**32, dtype=np.uint32)
+        state = bg.state
+        # Only the 64-bit variant caches the unused half of a 64-bit draw
+        assert state["has_uint32"] == int(state["variant"] == 64)
+        other = self.setup_bitgenerator([1])
+        other.state = state
+        assert_state_equal(other.state, state)
+        expected = gen.integers(0, 2**32, size=5, dtype=np.uint32)
+        other_gen = np.random.Generator(other)
+        assert_equal(other_gen.integers(0, 2**32, size=5, dtype=np.uint32), expected)
+
+    def test_invalid_state_key(self):
+        bg = self.bit_generator()
+        state = bg.state
+        orig = bg.state
+        state["state"]["key"] = int(state["state"]["key"]) - 1
+        with pytest.raises(ValueError, match="key must be odd"):
+            bg.state = state
+        state["state"]["key"] = 2**64 + 1
+        with pytest.raises(ValueError, match="key must be"):
+            bg.state = state
+        assert_state_equal(bg.state, orig)
+
+    @pytest.mark.parametrize(
+        ("seed", "key"),
+        [
+            (0, 3661817429494344399),
+            (1, 4126033252942326575),
+            (2, 8770630966058977947),
+            (1234, 9470186258571876535),
+            (2**64 - 1, 7173609320913571613),
+        ],
+    )
+    def test_seed_key_pinned(self, seed, key):
+        assert self.bit_generator(seed).state["state"]["key"] == key
+
+    def test_generate_keys_pinned(self):
+        expected = [3661817429494344399, 13566961089401090923, 6655634076464885827]
+        assert_equal(generate_keys(0, 3), np.array(expected, dtype=np.uint64))
+        expected = [18012821362677550425, 11190742791071495887]
+        assert_equal(generate_keys(1234, 40)[-2:], np.array(expected, dtype=np.uint64))
+
     def test_bad_jump(self):
         bg = self.bit_generator()
         with pytest.raises(ValueError, match="iter must be"):
@@ -2148,9 +2244,11 @@ def test_speck_sse41():
         pytest.skip("Can only test if SSE41 is available")
     assert isinstance(s.use_sse41, bool)
     orig = s.use_sse41
-    s.use_sse41 = not orig
-    assert s.use_sse41 != orig
-    s.use_sse41 = orig
+    try:
+        s.use_sse41 = not orig
+        assert s.use_sse41 != orig
+    finally:
+        s.use_sse41 = orig
 
 
 def test_pcg64_errors():
@@ -2206,9 +2304,80 @@ class TestBlaBla(Base):
                 bg.use_avx2 = True
             return
         bg2 = self.bit_generator(0)
-        bg2.use_avx2 = not bg.use_avx2
-        assert_equal(bg.random_raw(100), bg2.random_raw(100))
+        orig = bg.use_avx2
+        try:
+            bg2.use_avx2 = not orig
+            assert_equal(bg.random_raw(100), bg2.random_raw(100))
+        finally:
+            bg.use_avx2 = orig
 
     def test_seed_key(self):
         with pytest.raises(ValueError, match="seed and key"):
             self.setup_bitgenerator([0], key=0, counter=0)
+
+
+def _seq():
+    return SeedSequence(20241103)
+
+
+# The first 64-bit and double draws below were produced by GCC and MSVC, which
+# agree. next64 combines two 32-bit draws, so these values pin the order in
+# which the two draws are made.
+COMBINED_DRAWS = [
+    (lambda: MT19937(_seq()), 0xBA359F020B92E667, 0.7273806932956745),
+    (lambda: JSF(_seq(), size=32), 0x2EEF8B101D2FB113, 0.18334263938339634),
+    (lambda: PCG32(_seq(), inc=1), 0x8DB8519F2962EDCB, 0.5535937261705531),
+    (
+        lambda: Philox(_seq(), number=2, width=32),
+        0x0585D7598E0C64EB,
+        0.02157350297925331,
+    ),
+    (
+        lambda: Philox(_seq(), number=4, width=32),
+        0x1382265E1C1729D1,
+        0.07620467327332825,
+    ),
+    (
+        lambda: ThreeFry(_seq(), number=2, width=32),
+        0x5E3FF57A8B9D45B0,
+        0.3681634332639614,
+    ),
+    (
+        lambda: ThreeFry(_seq(), number=4, width=32),
+        0x7A6C8547A17BF935,
+        0.4782183962374771,
+    ),
+    (lambda: Tyche(_seq(), original=True), 0xA1DFCBF6FF1BF3ED, 0.6323211192825456),
+    (lambda: Tyche(_seq(), original=False), 0x196A969D53A2DA39, 0.0992826545737957),
+    (
+        lambda: Squares(key=0xF9DB92E5A801E679, variant=32),
+        0x80EB62F8E5B545D5,
+        0.8972972519963361,
+    ),
+    (lambda: ChaCha(_seq()), 0xF60C7C2D96091EA5, 0.9611280070585376),
+    (lambda: HC128(_seq()), 0xB4EAB755D3BEB319, 0.7067064842738044),
+]
+COMBINED_IDS = [
+    "MT19937",
+    "JSF32",
+    "PCG32",
+    "Philox2x32",
+    "Philox4x32",
+    "ThreeFry2x32",
+    "ThreeFry4x32",
+    "Tyche",
+    "Tyche-openrand",
+    "Squares32",
+    "ChaCha",
+    "HC128",
+]
+
+
+@pytest.mark.parametrize(
+    ("factory", "uint64", "double"), COMBINED_DRAWS, ids=COMBINED_IDS
+)
+def test_combined_draw_order(factory, uint64, double):
+    gen = np.random.Generator(factory())
+    assert int(gen.integers(0, 2**64, dtype=np.uint64, endpoint=False)) == uint64
+    gen = np.random.Generator(factory())
+    assert gen.random() == double

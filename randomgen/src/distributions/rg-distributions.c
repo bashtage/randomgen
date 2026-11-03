@@ -52,7 +52,8 @@ long double random_long_double(bitgen_t *bitgen_state){
 }
 
 void random_long_double_fill(bitgen_t *bitgen_state, npy_intp cnt, long double *out){
-   for (int i=0; i < cnt; i++){
+   npy_intp i;
+   for (i=0; i < cnt; i++){
       out[i] = rg_next_long_double(bitgen_state);
    }
 }
@@ -83,8 +84,4 @@ void random_wishart_large_df(bitgen_t *bitgen_state, int64_t df, npy_intp dim,
       }
     }
   }
-}
-
-int main() {
-return 0;
 }

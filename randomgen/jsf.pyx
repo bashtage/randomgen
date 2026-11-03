@@ -83,10 +83,9 @@ cdef class JSF(BitGenerator):
     seed : {None, int, array_like[uint], SeedSequence}, optional
         Random seed initializing the pseudo-random number generator. Can be
         an integer in [0, 2**size), an array of integers in
-        [0, 2**size), a SeedSequence or ``None`` (the default). If
-        `seed` is ``None``, then  data is read from ``/dev/urandom``
-        (or the Windows analog) if available. If unavailable, a hash of
-        the time and process ID is used.
+        [0, 2**size), a SeedSequence or ``None`` (the default). If `seed` is
+        ``None``, a new SeedSequence is created using entropy from the
+        operating system.
     seed_size : {1, 2, 3}, optional
         Number of distinct seed values used to initialize JSF. The original
         implementation uses 1 (default). Higher values increase the size of
@@ -95,25 +94,25 @@ cdef class JSF(BitGenerator):
         Output size of a single iteration of JSF. 32 is better suited to 32-bit
         systems.
     p : int, optional
-        One the the three parameters that defines JSF. See Notes. If not
+        One of the three parameters that defines JSF. See Notes. If not
         provided uses the default values for the selected size listed in Notes.
     q : int, optional
-        One the the three parameters that defines JSF. See Notes. If not
+        One of the three parameters that defines JSF. See Notes. If not
         provided uses the default values for the selected size listed in Notes.
     r : int, optional
-        One the the three parameters that defines JSF. See Notes. If not
+        One of the three parameters that defines JSF. See Notes. If not
         provided uses the default values for the selected size listed in Notes.
 
     Attributes
     ----------
     lock : threading.Lock
-        Lock instance that is shared so that the same bit git generator can
+        Lock instance that is shared so that the same bit generator can
         be used in multiple Generators without corrupting the state. Code that
         generates values from a bit generator should hold the bit generator's
         lock.
     seed_seq : {None, SeedSequence}
-        The SeedSequence instance used to initialize the generator if mode is
-        "sequence" or is seed is a SeedSequence.
+        The SeedSequence instance used to seed the generator. If `seed` is not
+        a SeedSequence, one is created from it.
 
     Notes
     -----
@@ -244,10 +243,9 @@ cdef class JSF(BitGenerator):
         seed : {None, int, array_like[uint], SeedSequence}, optional
             Random seed initializing the pseudo-random number generator. Can be
             an integer in [0, 2**size), an array of integers in
-            [0, 2**size), a SeedSequence or ``None`` (the default). If
-            `seed` is ``None``, then  data is read from ``/dev/urandom``
-            (or the Windows analog) if available. If unavailable, a hash of
-            the time and process ID is used.
+            [0, 2**size), a SeedSequence or ``None`` (the default). If `seed`
+            is ``None``, a new SeedSequence is created using entropy from the
+            operating system.
 
         Raises
         ------
