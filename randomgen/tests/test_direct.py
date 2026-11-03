@@ -1469,10 +1469,8 @@ class TestRDRAND(Base):
         acquired = []
 
         def try_acquire():
-            got = bit_generator.lock.acquire(False)
-            acquired.append(got)
-            if got:
-                bit_generator.lock.release()
+            acquired.append(bit_generator.lock.acquire(False))
+            bit_generator.lock.release()
 
         thread = threading.Thread(target=try_acquire)
         thread.start()
