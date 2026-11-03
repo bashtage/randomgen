@@ -1,6 +1,5 @@
 import numpy as np
 
-
 __all__ = ["EFIIX64"]
 
 cdef uint64_t efiix64_uint64(void* st) noexcept nogil:

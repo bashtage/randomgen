@@ -11,6 +11,7 @@ from randomgen.common cimport (
     uint64_to_double,
 )
 
+
 cdef extern from "src/sfmt/sfmt.h":
 
     cdef enum:

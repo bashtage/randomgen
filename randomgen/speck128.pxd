@@ -13,6 +13,7 @@ from randomgen.common cimport (
     wrap_int,
 )
 
+
 cdef extern from "src/speck-128/speck-128.h":
 
     cdef enum:

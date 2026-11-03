@@ -1,7 +1,5 @@
 import numpy as np
 
-
-
 __all__ = ["Tyche"]
 
 cdef uint64_t tyche_uint64(void* st) noexcept nogil:

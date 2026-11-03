@@ -11,6 +11,7 @@ from randomgen.common cimport (
     fully_qualified_name,
 )
 
+
 cdef extern from "src/dsfmt/dsfmt.h":
 
     cdef enum:

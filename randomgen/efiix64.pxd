@@ -10,6 +10,7 @@ from randomgen.common cimport (
     uint64_to_double,
 )
 
+
 cdef extern from "src/efiix64/efiix64.h":
 
     cdef enum:
