@@ -159,6 +159,11 @@ cdef class AESCounter(BitGenerator):
         ------
         ValueError
             If AESNI is not supported
+
+        Notes
+        -----
+        This setting is process-wide. Changing it on one instance changes it
+        for every AESCounter instance in the process.
         """
         return RANDOMGEN_USE_AESNI
 

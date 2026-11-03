@@ -156,6 +156,11 @@ cdef class ChaCha(BitGenerator):
         ------
         ValueError
             If SIMD is not supported
+
+        Notes
+        -----
+        This setting is process-wide. Changing it on one instance changes it
+        for every ChaCha instance in the process.
         """
         return RANDOMGEN_USE_SIMD
 

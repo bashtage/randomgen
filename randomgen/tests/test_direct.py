@@ -61,6 +61,27 @@ HAS_AESNI = aes.use_aesni
 
 USE_AESNI = [True, False] if HAS_AESNI else [False]
 
+# Process-wide flags: the first instance of each bit generator is used to read them
+SIMD_FLAG_BIT_GENERATORS = (
+    (ChaCha(), "use_simd"),
+    (BlaBla(), "use_avx2"),
+    (SPECK128(), "use_sse41"),
+    (aes, "use_aesni"),
+)
+
+
+def _get_simd_flags():
+    return [getattr(bg, name) for bg, name in SIMD_FLAG_BIT_GENERATORS]
+
+
+@pytest.fixture(autouse=True)
+def check_simd_flags_restored():
+    # The SIMD flags are process-wide so a test that changes one must restore it
+    before = _get_simd_flags()
+    yield
+    assert _get_simd_flags() == before, "test left a process-wide SIMD flag changed"
+
+
 try:
     import cffi  # noqa: F401
 
@@ -966,6 +987,9 @@ class TestAESCounter(TestPhilox):
     @pytest.fixture(autouse=True, params=USE_AESNI)
     def set_use_aesni(self, request):
         self.use_aesni = request.param
+        orig = aes.use_aesni
+        yield
+        aes.use_aesni = orig
 
     def setup_bitgenerator(self, seed, **kwargs):
         bg = self.bit_generator(*seed, **kwargs)
@@ -1612,8 +1636,12 @@ class TestChaCha(Base):
                 bg.use_simd = True
             return
         bg2 = self.bit_generator(0)
-        bg2.use_simd = not bg.use_simd
-        assert_equal(bg.random_raw(100), bg2.random_raw(100))
+        orig = bg.use_simd
+        try:
+            bg2.use_simd = not orig
+            assert_equal(bg.random_raw(100), bg2.random_raw(100))
+        finally:
+            bg.use_simd = orig
 
     def test_seed_key(self):
         with pytest.raises(ValueError, match="seed and key"):
@@ -2216,9 +2244,11 @@ def test_speck_sse41():
         pytest.skip("Can only test if SSE41 is available")
     assert isinstance(s.use_sse41, bool)
     orig = s.use_sse41
-    s.use_sse41 = not orig
-    assert s.use_sse41 != orig
-    s.use_sse41 = orig
+    try:
+        s.use_sse41 = not orig
+        assert s.use_sse41 != orig
+    finally:
+        s.use_sse41 = orig
 
 
 def test_pcg64_errors():
@@ -2274,8 +2304,12 @@ class TestBlaBla(Base):
                 bg.use_avx2 = True
             return
         bg2 = self.bit_generator(0)
-        bg2.use_avx2 = not bg.use_avx2
-        assert_equal(bg.random_raw(100), bg2.random_raw(100))
+        orig = bg.use_avx2
+        try:
+            bg2.use_avx2 = not orig
+            assert_equal(bg.random_raw(100), bg2.random_raw(100))
+        finally:
+            bg.use_avx2 = orig
 
     def test_seed_key(self):
         with pytest.raises(ValueError, match="seed and key"):
