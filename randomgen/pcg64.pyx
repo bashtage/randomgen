@@ -631,17 +631,34 @@ cdef class LCG128Mix(BitGenerator):
         )
         if self.rng_state.pcg_state == NULL:
             raise MemoryError  # pragma: no cover
+        cfunc = self._check_output(output)
+        self._check_multipliers(multiplier, dxsm_multiplier, post)
+        self._set_parameters(multiplier, dxsm_multiplier, post, output, cfunc)
+
+        self._bitgen.state = <void *>&self.rng_state
+        self._bitgen.next_uint64 = &lcg128mix_uint64
+        self._bitgen.next_uint32 = &lcg128mix_uint32
+        self._bitgen.next_double = &lcg128mix_double
+        self._bitgen.next_raw = &lcg128mix_uint64
+
+        self.seed(seed, inc)
+
+    def _check_output(self, output):
+        """Validate output, returning the ctypes function or None for a name"""
         if hasattr(output, "argtypes") and hasattr(output, "restype"):
             from ctypes import c_ulonglong
             if output.argtypes != (c_ulonglong, c_ulonglong):
                 raise ValueError("output must take two uint64 arguments")
             if output.restype != c_ulonglong:
                 raise ValueError("output must return a uint64")
-            self._cfunc = output
+            return output
         elif not isinstance(output, str) or output.lower() not in self._output_lookup:
             valid = ", ".join(self._output_lookup.keys())
             raise ValueError(f"{output} not supported. Must be one of: {valid} "
                              f"or a ctypes function or function pointer")
+        return None
+
+    def _check_multipliers(self, multiplier, dxsm_multiplier, post):
         if not 0 < multiplier < 2**128 or not (multiplier & 0x1):
             raise ValueError("multiplier must be an odd integer in (0, 2**128).")
         if not 0 < dxsm_multiplier < 2**64 or not (dxsm_multiplier & 0x1):
@@ -649,6 +666,8 @@ cdef class LCG128Mix(BitGenerator):
         if not isinstance(post, bool):
             raise TypeError("post must be a bool")
 
+    def _set_parameters(self, multiplier, dxsm_multiplier, post, output, cfunc):
+        """Set the parameters, which must have been checked, in the object and state"""
         self.multiplier = multiplier
 
         self.dxsm_multiplier = dxsm_multiplier
@@ -657,7 +676,8 @@ cdef class LCG128Mix(BitGenerator):
         self.rng_state.pcg_state.post = <bint>post
         self.post = post
 
-        if self._cfunc is None:
+        self._cfunc = cfunc
+        if cfunc is None:
             self.output_function = self._output_lookup[output.lower()]
             self.rng_state.pcg_state.output_idx = self.output_function
         else:
@@ -670,14 +690,6 @@ cdef class LCG128Mix(BitGenerator):
             self.rng_state.pcg_state.output_func = (
                 <pcg_output_func_t>self.output_function_address
             )
-
-        self._bitgen.state = <void *>&self.rng_state
-        self._bitgen.next_uint64 = &lcg128mix_uint64
-        self._bitgen.next_uint32 = &lcg128mix_uint32
-        self._bitgen.next_double = &lcg128mix_double
-        self._bitgen.next_raw = &lcg128mix_uint64
-
-        self.seed(seed, inc)
 
     def __repr__(self):
         out = object.__repr__(self)
@@ -807,18 +819,25 @@ cdef class LCG128Mix(BitGenerator):
     @state.setter
     def state(self, value):
         cdef np.ndarray state_vec, inc_vec, mult_vec
+        cdef int has_uint32
+        cdef uint32_t uinteger
         if not isinstance(value, dict):
             raise TypeError("state must be a dict")
         bitgen = value.get("bit_generator", "")
         if bitgen not in (type(self).__name__, fully_qualified_name(self)):
             raise ValueError("state must be for a {0} "
                              "RNG".format(type(self).__name__))
+        multiplier = int(value["state"]["multiplier"])
+        dxsm_multiplier = value["state"]["dxsm_multiplier"]
+        post = value["state"]["post"]
+        output_func = value["state"]["output_func"]
+        cfunc = self._check_output(output_func)
+        self._check_multipliers(multiplier, dxsm_multiplier, post)
         state_vec = <np.ndarray>np.empty(2, dtype=np.uint64)
         inc_vec = <np.ndarray>np.empty(2, dtype=np.uint64)
         mult_vec = <np.ndarray>np.empty(2, dtype=np.uint64)
         state = int(value["state"]["state"])
         inc = int(value["state"]["inc"])
-        multiplier = int(value["state"]["multiplier"])
         state_vec[0] = state // 2 ** 64
         state_vec[1] = state % 2 ** 64
         inc_vec[0] = inc // 2 ** 64
@@ -837,23 +856,8 @@ cdef class LCG128Mix(BitGenerator):
                                 )
             self.rng_state.has_uint32 = has_uint32
             self.rng_state.uinteger = uinteger
-            self.rng_state.pcg_state.dxsm_multiplier = value["state"]["dxsm_multiplier"]
-            self.rng_state.pcg_state.post = value["state"]["post"]
-            output_func = value["state"]["output_func"]
-            if isinstance(output_func, str):
-                self.rng_state.pcg_state.output_idx = self._output_lookup[output_func]
-            elif hasattr(output_func, "argtypes") and hasattr(output_func, "restype"):
-                import ctypes
-
-                self._cfunc = output_func
-                self.output_function = -1
-                self.output_function_address = (
-                    ctypes.cast(self._cfunc, ctypes.c_void_p).value
-                )
-                self.rng_state.pcg_state.output_idx = -1
-                self.rng_state.pcg_state.output_func = (
-                    <pcg_output_func_t>self.output_function_address
-                )
+            self._set_parameters(multiplier, dxsm_multiplier, post, output_func,
+                                 cfunc)
 
     def advance(self, delta):
         """
