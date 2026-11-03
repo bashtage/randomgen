@@ -31,8 +31,8 @@ generators in Python and NumPy.
 
 ## New Features
 
-The the [development documentation](https://bashtage.github.io/randomgen/change-log.html) for the latest features,
-or the [stable documentation](https://bashtage.github.io/randomgen/devel/change-log.html) for the latest released features.
+See the [development documentation](https://bashtage.github.io/randomgen/devel/change-log.html) for the latest features,
+or the [stable documentation](https://bashtage.github.io/randomgen/change-log.html) for the latest released features.
 
 
 # WARNINGS
@@ -79,7 +79,7 @@ number generators in addition to the MT19937 that is included in NumPy.
 The RNGs include:
 
 * Cryptographic cipher-based random number generator based on AES, ChaCha20, HC128 and Speck128.
-* [MT19937](https://github.com/numpy/numpy/blob/main/numpy/random/mtrand/),
+* [MT19937](https://github.com/numpy/numpy/blob/main/numpy/random/_mt19937.pyx),
  the NumPy rng
 * [dSFMT](http://www.math.sci.hiroshima-u.ac.jp/~m-mat/MT/SFMT/) a
   SSE2-aware version of the MT19937 generator that is especially fast at
@@ -98,11 +98,11 @@ The RNGs include:
 ## Status
 
 * Builds and passes all tests on:
-  * Linux 32/64 bit, Python 3.10, 3.11, 3.12, 3.13, 3.14, 3.15
-  * Linux (ARM/ARM64), Python 3.8
-  * OSX 64-bit, Python 3.14
-  * Windows 32/64 bit, Python 3.10, 3.11, 3.12, 3.13, 3.14, 3.15
-  * FreeBSD 64-bit
+  * Linux 64-bit (x86-64), Python 3.10, 3.11, 3.12, 3.13, 3.14, 3.15
+  * Linux ARM64, current Python
+  * macOS, Python 3.10, 3.11, 3.12, 3.15
+  * Windows 64-bit, Python 3.10, 3.11, 3.12, 3.13, 3.14, 3.15
+  * Free-threaded Python 3.14t on Linux, macOS and Windows
 
 ## Version
 
@@ -124,7 +124,7 @@ Building requires:
 * NumPy (1.22.3+ except 2.4.0, runtime, 2.0.0+, building)
 * Cython (3.1.0+)
 
-Testing requires pytest (9+).
+Testing requires pytest (8.4.1+, below 9).
 
 **Note:** it might work with other versions but only tested with these
 versions.
@@ -132,7 +132,8 @@ versions.
 ## Development and Testing
 
 All development has been on 64-bit Linux, and it is regularly tested on
-Azure (Linux-AMD64, Window, and OSX) and Cirrus (FreeBSD and Linux-ARM).
+Azure (Linux-AMD64, Windows, and macOS), Cirrus (Linux-ARM), and GitHub
+Actions (free-threaded Python).
 
 Tests are in place for all RNGs. The MT19937 is tested against
 NumPy's implementation for identical results. It also passes NumPy's
@@ -175,8 +176,8 @@ python -m pip install . -Csetup-args=-Ddisable-sse2=true
 
 ### Windows
 
-Either use a binary installer, or if building from scratch, use
-Python 3.6/3.7 with Visual Studio 2015 Build Toolx.
+Either use a binary wheel, or if building from scratch, use the Visual Studio
+Build Tools (MSVC). Builds with `clang-cl` are also tested.
 
 ## License
 

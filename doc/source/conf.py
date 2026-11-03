@@ -18,7 +18,7 @@ import randomgen
 # -- Project information -----------------------------------------------------
 
 project = "RandomGen"
-copyright = "2023, Kevin Sheppard"
+copyright = "2019-2026, Kevin Sheppard"
 author = "Kevin Sheppard"
 
 # More warnings

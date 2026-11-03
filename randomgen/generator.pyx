@@ -336,6 +336,17 @@ cdef class ExtendedGenerator:
             case a single float is returned). If dtype is np.longdouble, then the
             returned type is a scalar np.longdouble. Otherwise it is a float.
 
+        Notes
+        -----
+        ``np.longdouble`` depends on the platform, and so do the values drawn
+        with it. Each value uses one 64-bit draw where ``long double`` is the
+        x87 80-bit format (x86-64 Linux and macOS) or the same as float64
+        (Windows and macOS on Apple silicon), and two 64-bit draws where it is
+        a 128-bit format (for example Linux on ARM64 or POWER). The same seed
+        therefore gives different long double values on these platforms, and
+        on the 128-bit ones the later draws from the generator differ too. Use
+        float64 or float32 when results must match across machines.
+
         Examples
         --------
         >>> randomgen.generator.random()
