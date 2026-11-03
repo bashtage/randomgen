@@ -42,6 +42,9 @@ def test_found_extensions():
 
 @pytest.mark.parametrize("module", EXTENSIONS)
 def test_stub_installed(module):
-    origin = pathlib.Path(importlib.util.find_spec(module).origin)
+    origin = pathlib.Path(importlib.util.find_spec(module).origin).resolve()
+    package_dir = pathlib.Path(randomgen.__file__).parent.resolve()
+    if not origin.is_relative_to(package_dir):
+        pytest.skip("Editable install: extensions are in the build directory")
     stub = origin.with_name(module.rsplit(".", maxsplit=1)[-1] + ".pyi")
     assert stub.exists()
