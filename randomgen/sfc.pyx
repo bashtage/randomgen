@@ -1,10 +1,9 @@
 #!python
 
+import math
 import warnings
 
 import numpy as np
-
-cimport cython
 
 __all__ = ["SFC64"]
 
@@ -18,19 +17,10 @@ cdef double sfc_double(void* st) noexcept nogil:
     return uint64_to_double(sfc_next64(<sfc_state_t *>st))
 
 
-@cython.cdivision(True)
 cdef uint64_t choosek(uint64_t k):
-    cdef uint64_t _i, out, cnt
-    k = k - 1
-    if k > 32:
-        k = 63 - k
-    out = 1
-    cnt = 1
-    for _i in range(63, 63-k, -1):
-        out *= _i
-        out /= cnt
-        cnt += 1
-    return  out
+    """Number of odd values with k non-zero bits, C(63, k - 1)"""
+    # Exact: the running product in a uint64 overflows for k in 30..35
+    return <uint64_t>math.comb(63, k - 1)
 
 cdef class SFC64(BitGenerator):
     """
@@ -252,7 +242,7 @@ cdef class SFC64(BitGenerator):
             )
         elif n >= (0.50 * available) and n > 1:
             warnings.warn(
-                f"The number of values required ({n}) is more than 5% of the "
+                f"The number of values required ({n}) is more than 50% of the "
                 f"total available ({available}). The values are generated using "
                 "rejection sampling and this method can be slow if the "
                 "fraction of available values is large.",
@@ -276,7 +266,7 @@ cdef class SFC64(BitGenerator):
         out = np.empty(n, dtype=np.uint64)
         out_arr = <uint64_t *>np.PyArray_DATA(out)
         for i in range(n):
-            val = <uint64_t>gen.integers(0, total, endpoint=True, dtype=np.uint64)
+            val = <uint64_t>gen.integers(0, total, endpoint=False, dtype=np.uint64)
             nonzero_bits = 0
             for j in range(nbits):
                 if val < cum_count_arr[j] and nonzero_bits == 0:
