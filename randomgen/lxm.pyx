@@ -40,8 +40,8 @@ cdef class LXM(BitGenerator):
         generates values from a bit generator should hold the bit generator's
         lock.
     seed_seq : {None, SeedSequence}
-        The SeedSequence instance used to initialize the generator if mode is
-        "sequence" or is seed is a SeedSequence.
+        The SeedSequence instance used to seed the generator. If `seed` is not
+        a SeedSequence, one is created from it.
 
     Notes
     -----
@@ -230,7 +230,7 @@ cdef class LXM(BitGenerator):
         Returns a new bit generator with the state jumped
 
         The state of the returned big generator is jumped as-if
-        2**(128 * iter) random numbers have been generated.
+        iter * 2**128 random numbers have been generated.
 
         Parameters
         ----------

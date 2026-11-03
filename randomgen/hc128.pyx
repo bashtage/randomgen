@@ -41,8 +41,8 @@ cdef class HC128(BitGenerator):
         generates values from a bit generator should hold the bit generator's
         lock.
     seed_seq : {None, SeedSequence}
-        The SeedSequence instance used to initialize the generator if mode is
-        "sequence" or is seed is a SeedSequence.
+        The SeedSequence instance used to seed the generator. If `seed` is not
+        a SeedSequence, one is created from it.
 
     Notes
     -----

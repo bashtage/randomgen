@@ -76,8 +76,8 @@ cdef class PCG64(BitGenerator):
         generates values from a bit generator should hold the bit generator's
         lock.
     seed_seq : {None, SeedSequence}
-        The SeedSequence instance used to initialize the generator if mode is
-        "sequence" or is seed is a SeedSequence.
+        The SeedSequence instance used to seed the generator. If `seed` is not
+        a SeedSequence, one is created from it.
 
     Notes
     -----
@@ -530,8 +530,8 @@ cdef class LCG128Mix(BitGenerator):
         generates values from a bit generator should hold the bit generator's
         lock.
     seed_seq : {None, SeedSequence}
-        The SeedSequence instance used to initialize the generator if mode is
-        "sequence" or is seed is a SeedSequence.
+        The SeedSequence instance used to seed the generator. If `seed` is not
+        a SeedSequence, one is created from it.
 
     Notes
     -----
@@ -985,8 +985,8 @@ cdef class PCG64DXSM(PCG64):
         generates values from a bit generator should hold the bit generator's
         lock.
     seed_seq : {None, SeedSequence}
-        The SeedSequence instance used to initialize the generator if mode is
-        "sequence" or is seed is a SeedSequence.
+        The SeedSequence instance used to seed the generator. If `seed` is not
+        a SeedSequence, one is created from it.
 
     Notes
     -----

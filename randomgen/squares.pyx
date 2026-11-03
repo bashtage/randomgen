@@ -334,8 +334,8 @@ cdef class Squares(BitGenerator):
         generates values from a bit generator should hold the bit generator's
         lock.
     seed_seq : {None, SeedSequence}
-        The SeedSequence instance used to initialize the generator if mode is
-        "sequence" or is seed is a SeedSequence.
+        The SeedSequence instance used to seed the generator. If `seed` is not
+        a SeedSequence, one is created from it.
 
     Notes
     -----
@@ -567,7 +567,8 @@ cdef class Squares(BitGenerator):
         Returns a new bit generator with the state jumped
 
         The state of the returned big generator is jumped as-if
-        2**(64 * iter) random numbers have been generated.
+        iter * 11400714819323198485 random numbers have been generated,
+        modulo 2**64.
 
         Parameters
         ----------
@@ -581,7 +582,7 @@ cdef class Squares(BitGenerator):
 
         Notes
         -----
-        The step size is phi (the Golden Ratio) when divided by 2**64.
+        The step size is floor(2**64 / phi), where phi is the Golden Ratio.
         """
         cdef Squares bit_generator
         # phi * 2**64 = 11400714819323198485

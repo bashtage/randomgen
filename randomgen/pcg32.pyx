@@ -43,8 +43,8 @@ cdef class PCG32(BitGenerator):
         generates values from a bit generator should hold the bit generator's
         lock.
     seed_seq : {None, SeedSequence}
-        The SeedSequence instance used to initialize the generator if mode is
-        "sequence" or is seed is a SeedSequence.
+        The SeedSequence instance used to seed the generator. If `seed` is not
+        a SeedSequence, one is created from it.
 
     Notes
     -----
@@ -262,7 +262,8 @@ cdef class PCG32(BitGenerator):
         Returns a new bit generator with the state jumped
 
         The state of the returned big generator is jumped as-if
-        11400714819323198486 random numbers have been generated.
+        iter * 11400714819323198486 random numbers have been generated,
+        modulo 2**64.
 
         Parameters
         ----------
