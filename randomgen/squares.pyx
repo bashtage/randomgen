@@ -186,8 +186,8 @@ def generate_keys(seed=None, intptr_t n=1, bint unique=False):
         Entropy initializing the pseudo-random number generator.
         Can be an integer in [0, 2**64), array of integers in [0, 2**64),
         a SeedSequence instance or ``None`` (the default). If `seed` is
-        ``None``, then  data is read from ``/dev/urandom`` (or the Windows
-        analog) if available.
+        ``None``, a new SeedSequence is created using entropy from the
+        operating system.
     n : int, optional
         Number of keys to generate. Must be a positive integer. Default is 1.
     unique : bool, optional
@@ -314,8 +314,8 @@ cdef class Squares(BitGenerator):
         Entropy initializing the pseudo-random number generator.
         Can be an integer in [0, 2**64), array of integers in [0, 2**64),
         a SeedSequence instance or ``None`` (the default). If `seed` is
-        ``None``, then  data is read from ``/dev/urandom`` (or the Windows
-        analog) if available.
+        ``None``, a new SeedSequence is created using entropy from the
+        operating system.
     counter : {None, int}, optional
         The initial counter to use when constructing the PRNG.
         The defalt value is 0.
@@ -479,9 +479,8 @@ cdef class Squares(BitGenerator):
             Entropy initializing the pseudo-random number generator.
             Can be an integer in [0, 2**64), array of integers in
             [0, 2**64), a SeedSequence instance or ``None`` (the default).
-            If `seed` is ``None``, then  data is read from ``/dev/urandom``
-            (or the Windows analog) if available. If unavailable, a hash
-            of the time and process ID is used.
+            If `seed` is ``None``, a new SeedSequence is created using entropy
+            from the operating system.
 
         Raises
         ------

@@ -26,9 +26,8 @@ cdef class HC128(BitGenerator):
         Random seed initializing the pseudo-random number generator.
         Can be an integer in [0, 2**64), array of integers in [0, 2**64),
         a SeedSequence instance or ``None`` (the default). If `seed` is
-        ``None``, then  data is read from ``/dev/urandom`` (or the Windows
-        analog) if available. If unavailable, a hash of the time and process
-        ID is used.
+        ``None``, a new SeedSequence is created using entropy from the
+        operating system.
     key : {int, array_like[uint64]}, optional
         Key for HC128. The key is a 256-bit integer that contains both the
         key (lower 128 bits) and initial values (upper 128-bits) for the
@@ -68,11 +67,11 @@ cdef class HC128(BitGenerator):
     unsigned integers (p and q) and an integer in [0, 1024). In addition, the
     state contains a 16-element array that buffers values and a buffer index.
 
-    ``HC128`` is seeded using either a single 256-bit unsigned
-    integer or a vector of 64-bit unsigned integers. In either case, the seed
-    is used as an input for another simple random number generator, SplitMix64,
-    and the output of this PRNG function is used as the initial state.
-    Alternatively, the key can be set directly using a 256-bit integer.
+    ``HC128`` is seeded using either a single 256-bit unsigned integer or a
+    vector of 64-bit unsigned integers. In either case, the seed is used as an
+    input to a SeedSequence, and the output of the SeedSequence is used as the
+    initial state. Alternatively, the key can be set directly using a 256-bit
+    integer.
 
     **Parallel Features**
 
@@ -132,9 +131,8 @@ cdef class HC128(BitGenerator):
             Random seed initializing the pseudo-random number generator.
             Can be an integer in [0, 2**64), array of integers in
             [0, 2**64), a SeedSequence instance or ``None`` (the default).
-            If `seed` is ``None``, then  data is read from ``/dev/urandom``
-            (or the Windows analog) if available. If unavailable, a hash of
-            the time and process ID is used.
+            If `seed` is ``None``, a new SeedSequence is created using entropy
+            from the operating system.
         key : {int, array_like[uint64]}, optional
             Key for HC128. The key is a 256-bit integer that contains both the
             key (lower 128 bits) and initial values (upper 128-bits) for the

@@ -24,10 +24,9 @@ cdef class Xoshiro512(BitGenerator):
     seed : {None, int, array_like[uint64], SeedSequence}, optional
         Entropy initializing the pseudo-random number generator.
         Can be an integer in [0, 2**64), array of integers in [0, 2**64),
-        a SeedSequence instance or ``None`` (the default). If `seed`
-        is ``None``, then  data is read from ``/dev/urandom`` (or the
-        Windows analog) if available. If unavailable, a hash of the time
-        and process ID is used.
+        a SeedSequence instance or ``None`` (the default). If `seed` is
+        ``None``, a new SeedSequence is created using entropy from the
+        operating system.
 
 
     Attributes
@@ -60,15 +59,14 @@ cdef class Xoshiro512(BitGenerator):
 
     **State and Seeding**
 
-    The ``Xoshiro512`` state vector consists of a 4 element array
+    The ``Xoshiro512`` state vector consists of an 8-element array
     of 64-bit unsigned integers.
 
-    ``Xoshiro512`` is seeded using either a single 64-bit unsigned
-    integer or a vector of 64-bit unsigned integers. In either case, the seed
-    is used as an input for another simple random number generator, SplitMix64,
-    and the output of this PRNG function is used as the initial state. Using
-    a single 64-bit value for the seed can only initialize a small range of
-    the possible initial state values.
+    ``Xoshiro512`` is seeded using either a single 64-bit unsigned integer or a
+    vector of 64-bit unsigned integers. In either case, the seed is used as an
+    input to a SeedSequence, and the output of the SeedSequence is used as the
+    initial state. Using a single 64-bit value for the seed can only initialize
+    a small range of the possible initial state values.
 
     **Parallel Features**
 
@@ -141,9 +139,8 @@ cdef class Xoshiro512(BitGenerator):
             Entropy initializing the pseudo-random number generator.
             Can be an integer in [0, 2**64), array of integers in
             [0, 2**64), a SeedSequence instance or ``None`` (the default).
-            If `seed` is ``None``, then  data is read from ``/dev/urandom``
-            (or the Windows analog) if available. If unavailable, a hash
-            of the time and process ID is used.
+            If `seed` is ``None``, a new SeedSequence is created using entropy
+            from the operating system.
 
         Raises
         ------

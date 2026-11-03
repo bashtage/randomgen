@@ -29,10 +29,8 @@ cdef class MT64(BitGenerator):
         Random seed used to initialize the pseudo-random number generator. Can
         be any integer between 0 and 2**64 - 1 inclusive, an array (or other
         sequence) of unsigned 64-bit integers, a SeedSequence instance or
-        ``None`` (the default). If `seed` is ``None``, then 312 64-bit
-        unsigned integers are read from ``/dev/urandom`` (or the Windows
-        analog) if available. If unavailable, a hash of the time and process
-        ID is used.
+        ``None`` (the default). If `seed` is ``None``, a new SeedSequence is
+        created using entropy from the operating system.
 
     Attributes
     ----------
@@ -115,10 +113,8 @@ cdef class MT64(BitGenerator):
             Random seed used to initialize the pseudo-random number generator. Can
             be any integer between 0 and 2**64 - 1 inclusive, an array (or other
             sequence) of unsigned 64-bit integers, a SeedSequence instance or
-            ``None`` (the default). If `seed` is ``None``, then 312 64-bit
-            unsigned integers are read from ``/dev/urandom`` (or the Windows
-            analog) if available. If unavailable, a hash of the time and process
-            ID is used.
+            ``None`` (the default). If `seed` is ``None``, a new SeedSequence
+            is created using entropy from the operating system.
 
         Raises
         ------

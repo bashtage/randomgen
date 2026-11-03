@@ -86,10 +86,9 @@ cdef class JSF(BitGenerator):
     seed : {None, int, array_like[uint], SeedSequence}, optional
         Random seed initializing the pseudo-random number generator. Can be
         an integer in [0, 2**size), an array of integers in
-        [0, 2**size), a SeedSequence or ``None`` (the default). If
-        `seed` is ``None``, then  data is read from ``/dev/urandom``
-        (or the Windows analog) if available. If unavailable, a hash of
-        the time and process ID is used.
+        [0, 2**size), a SeedSequence or ``None`` (the default). If `seed` is
+        ``None``, a new SeedSequence is created using entropy from the
+        operating system.
     seed_size : {1, 2, 3}, optional
         Number of distinct seed values used to initialize JSF. The original
         implementation uses 1 (default). Higher values increase the size of
@@ -247,10 +246,9 @@ cdef class JSF(BitGenerator):
         seed : {None, int, array_like[uint], SeedSequence}, optional
             Random seed initializing the pseudo-random number generator. Can be
             an integer in [0, 2**size), an array of integers in
-            [0, 2**size), a SeedSequence or ``None`` (the default). If
-            `seed` is ``None``, then  data is read from ``/dev/urandom``
-            (or the Windows analog) if available. If unavailable, a hash of
-            the time and process ID is used.
+            [0, 2**size), a SeedSequence or ``None`` (the default). If `seed`
+            is ``None``, a new SeedSequence is created using entropy from the
+            operating system.
 
         Raises
         ------

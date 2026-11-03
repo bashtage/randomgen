@@ -26,9 +26,8 @@ cdef class LXM(BitGenerator):
         Entropy initializing the pseudo-random number generator.
         Can be an integer in [0, 2**64), array of integers in [0, 2**64),
         a SeedSequence instance or ``None`` (the default). If `seed` is
-        ``None``, then  data is read from ``/dev/urandom`` (or the Windows
-        analog) if available. If unavailable, a hash of the time and process
-        ID is used.
+        ``None``, a new SeedSequence is created using entropy from the
+        operating system.
     b : uint64
         The additive constant in the LCG update. Must be odd, and so 1 is
         added if even. The default value is 3037000493.
@@ -92,7 +91,7 @@ cdef class LXM(BitGenerator):
     >>> rg = [Generator(LXM(1234))]
     # Advance each LXM instance by i jumps
     >>> for i in range(10):
-    ...     rg.append(rg[-1].jumped())
+    ...     rg.append(Generator(rg[-1].bit_generator.jumped()))
 
     Note that jumped states only alters the Xorshift state since the jump is a
     full cycle of the LCG.

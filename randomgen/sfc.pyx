@@ -57,7 +57,7 @@ cdef class SFC64(BitGenerator):
         Uses the seed sequence to initialize three state values and
         checks that both w and k are 1.
 
-        .. versionadded: 2.0.0
+        .. versionadded:: 2.0.0
 
     Notes
     -----

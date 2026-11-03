@@ -66,7 +66,7 @@ cdef class PCG64(BitGenerator):
         so matches NumPy exactly. To match NumPy, variant must be ``xsl-rr``.
         When using "numpy", ``inc`` must be ``None``.
 
-        .. versionadded: 2.0.0
+        .. versionadded:: 2.0.0
 
     Attributes
     ----------
@@ -258,10 +258,8 @@ cdef class PCG64(BitGenerator):
         seed : {None, int, SeedSequence}, optional
             Random seed initializing the pseudo-random number generator. Can
             be an integer in [0, 2**128), a SeedSequence instance or None
-            (the default). If `seed` is None, then ``PCG64`` will try to
-            read data from ``/dev/urandom`` (or the Windows analog) if
-            available. If unavailable, a 64-bit hash of the time and process
-            ID is used.
+            (the default). If `seed` is ``None``, a new SeedSequence is created
+            using entropy from the operating system.
         inc : {None, int}, optional
             The increment in the LCG. Can be an integer in [0, 2**128) or
             None. If inc is None, then it is initialized using entropy. The
@@ -403,8 +401,7 @@ cdef class PCG64(BitGenerator):
 
         Notes
         -----
-        The step size is phi (the Golden Ratio) when divided by the period
-        2**128.
+        The step size is floor(2**128 / phi), where phi is the Golden Ratio.
         """
         step = 0x9e3779b97f4a7c15f39cc0605cedc834
         step *= int(iter)
@@ -453,7 +450,8 @@ cdef class PCG64(BitGenerator):
         Returns a new bit generator with the state jumped
 
         The state of the returned big generator is jumped as-if
-        2**(64 * iter) random numbers have been generated.
+        iter * floor(2**128 / phi) random numbers have been generated, where
+        phi is the Golden Ratio. The jump is taken modulo 2**128.
 
         Parameters
         ----------
@@ -467,7 +465,7 @@ cdef class PCG64(BitGenerator):
 
         Notes
         -----
-        The step size is phi (the Golden Ratio) when divided by 2**128.
+        The step size is floor(2**128 / phi), where phi is the Golden Ratio.
         """
         cdef PCG64 bit_generator
 
@@ -917,7 +915,7 @@ cdef class LCG128Mix(BitGenerator):
 
         Notes
         -----
-        The step size is phi (the Golden Ratio) when divided by 2**128.
+        The step size is floor(2**128 / phi), where phi is the Golden Ratio.
         """
         step = 0x9e3779b97f4a7c15f39cc0605cedc834
         step *= int(iter)
@@ -932,7 +930,8 @@ cdef class LCG128Mix(BitGenerator):
         Returns a new bit generator with the state jumped
 
         The state of the returned big generator is jumped as-if
-        2**(64 * iter) random numbers have been generated.
+        iter * floor(2**128 / phi) random numbers have been generated, where
+        phi is the Golden Ratio. The jump is taken modulo 2**128.
 
         Parameters
         ----------
@@ -946,8 +945,7 @@ cdef class LCG128Mix(BitGenerator):
 
         Notes
         -----
-        The step size is phi (the Golden Ratio) when divided by the period
-        2**128.
+        The step size is floor(2**128 / phi), where phi is the Golden Ratio.
         """
         cdef LCG128Mix bit_generator
 
@@ -1125,7 +1123,8 @@ cdef class PCG64DXSM(PCG64):
         Returns a new bit generator with the state jumped
 
         The state of the returned big generator is jumped as-if
-        2**(64 * iter) random numbers have been generated.
+        iter * floor(2**128 / phi) random numbers have been generated, where
+        phi is the Golden Ratio. The jump is taken modulo 2**128.
 
         Parameters
         ----------
@@ -1139,7 +1138,7 @@ cdef class PCG64DXSM(PCG64):
 
         Notes
         -----
-        The step size is phi (the Golden Ratio) when divided by 2**128.
+        The step size is floor(2**128 / phi), where phi is the Golden Ratio.
         """
         cdef PCG64DXSM bit_generator
 

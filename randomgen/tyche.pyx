@@ -37,8 +37,8 @@ cdef class Tyche(BitGenerator):
         Entropy initializing the pseudo-random number generator.
         Can be an integer in [0, 2**64), array of integers in [0, 2**64),
         a SeedSequence instance or ``None`` (the default). If `seed` is
-        ``None``, then  data is read from ``/dev/urandom`` (or the Windows
-        analog) if available.
+        ``None``, a new SeedSequence is created using entropy from the
+        operating system.
     idx : {None, int}, optional
         The index to use when seeding from a SeedSequence. If None, the
         default, the index is selected at random.
@@ -65,7 +65,7 @@ cdef class Tyche(BitGenerator):
 
     **State and Seeding**
 
-    The ``EFIIX64`` state vector consists of 4 32-bit unsigned integers.
+    The ``Tyche`` state vector consists of 4 32-bit unsigned integers.
     The ``seed`` value is translated into a 64-bit unsigned integer. If
     ``idx`` is not None, it is translated into a 32-bit unsigned integer.
 
@@ -155,9 +155,8 @@ cdef class Tyche(BitGenerator):
             Entropy initializing the pseudo-random number generator.
             Can be an integer in [0, 2**64), array of integers in
             [0, 2**64), a SeedSequence instance or ``None`` (the default).
-            If `seed` is ``None``, then  data is read from ``/dev/urandom``
-            (or the Windows analog) if available. If unavailable, a hash
-            of the time and process ID is used.
+            If `seed` is ``None``, a new SeedSequence is created using entropy
+            from the operating system.
 
         Raises
         ------

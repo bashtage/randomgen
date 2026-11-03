@@ -24,9 +24,8 @@ cdef class ChaCha(BitGenerator):
         Random seed initializing the pseudo-random number generator.
         Can be an integer in [0, 2**256), an array of 4 uint64 values,
         a SeedSequence instance or ``None`` (the default). If `seed` is
-        ``None``, then  data is read from ``/dev/urandom`` (or the Windows
-        analog) if available. If unavailable, a hash of the time and
-        process ID is used.
+        ``None``, a new SeedSequence is created using entropy from the
+        operating system.
     counter : {None, int, array_like[uint64]}, optional
         Counter to use in the ChaCha state. Can be either
         a Python int in [0, 2**128) or a 2-element uint64 array.
@@ -58,9 +57,8 @@ cdef class ChaCha(BitGenerator):
     ChaCha is a 64-bit PRNG that uses a counter-based design based on
     the ChaCha cipher [1]_. Instances using different values
     of the key produce distinct sequences. ``ChaCha`` has a period
-    of :math:`2^{128}` and supports arbitrary advancing and
-    jumping the sequence in increments of :math:`2^{64}`. These features allow
-    multiple non-overlapping sequences to be generated.
+    of :math:`2^{128}`. Distinct keys can be used to generate multiple
+    non-overlapping sequences.
 
     ``ChaCha`` provides a capsule containing function pointers that produce
     doubles, and unsigned 32 and 64- bit integers. These are not
@@ -78,32 +76,20 @@ cdef class ChaCha(BitGenerator):
     the user (or from the entropy pool). The final value rounds contains the
     number of rounds used. Typical values are  8, 12, or 20 (for high security).
 
-    ``ChaCha`` is seeded using either a single 256-bit unsigned integer
-    or a vector of 4 64-bit unsigned integers. In either case, the seed is
-    used as an input for a second random number generator,
-    SplitMix64, and the output of this PRNG function is used as the initial
-    state. Using a single 64-bit value for the seed can only initialize a small
-    range of the possible initial state values.
+    ``ChaCha`` is seeded using either a single 256-bit unsigned integer or a
+    vector of 4 64-bit unsigned integers. In either case, the seed is used as
+    an input to a SeedSequence, and the output of the SeedSequence is used as
+    the initial state. Using a single 64-bit value for the seed can only
+    initialize a small range of the possible initial state values.
 
     **Parallel Features**
 
-    ``ChaCha`` can be used in parallel applications by calling the ``jump``
-    method  to advances the state as-if :math:`2^{64}` random numbers have
-    been generated. Alternatively, ``advance`` can be used to advance the
-    counter for any positive step in [0, 2**128). When using ``jump``, all
-    generators should be initialized with the same seed to ensure that the
-    segments come from the same sequence.
+    ``ChaCha`` does not support ``jump`` or ``advance``. It can be used in
+    parallel applications by using a sequence of distinct keys where each
+    instance uses a different key.
 
     >>> from numpy.random import Generator
     >>> from randomgen import ChaCha
-    >>> rg = [Generator(ChaCha(1234)) for _ in range(10)]
-    # Advance each ChaCha instances by i jumps
-    >>> for i in range(10):
-    ...     rg[i].bit_generator.jump(i)
-
-    Alternatively, ``ChaCha`` can be used in parallel applications by using
-    a sequence of distinct keys where each instance uses different key.
-
     >>> key = 2**93 + 2**65 + 2**33 + 2**17 + 2**9
     >>> rg = [Generator(ChaCha(key=key+i)) for i in range(10)]
 
@@ -194,9 +180,8 @@ cdef class ChaCha(BitGenerator):
             Random seed initializing the pseudo-random number generator.
             Can be an integer in [0, 2**256), an array of 4 uint64 values,
             a SeedSequence instance or ``None`` (the default). If `seed` is
-            ``None``, then  data is read from ``/dev/urandom`` (or the Windows
-            analog) if available. If unavailable, a hash of the time and
-            process ID is used.
+            ``None``, a new SeedSequence is created using entropy from the
+            operating system.
         counter : {None, int, array_like[uint64]}, optional
             Counter to use in the ChaCha state. Can be either
             a Python int in [0, 2**128) or a 2-element uint64 array.

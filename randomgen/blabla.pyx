@@ -24,8 +24,8 @@ cdef class BlaBla(BitGenerator):
         Random seed initializing the pseudo-random number generator.
         Can be an integer in [0, 2**256), an array of 4 uint64 values,
         a SeedSequence instance or ``None`` (the default). If `seed` is
-        ``None``, then a new SeedSequence is created usign data is read
-        from ``/dev/urandom`` .
+        ``None``, then a new SeedSequence is created using entropy from
+        the operating system.
     counter : {None, int, array_like[uint64]}, optional
         Counter to use in the BlaBla state. Can be either
         a Python int in [0, 2**128) or a 2-element uint64 array.
@@ -199,9 +199,8 @@ cdef class BlaBla(BitGenerator):
             Random seed initializing the pseudo-random number generator.
             Can be an integer in [0, 2**256), an array of 4 uint64 values,
             a SeedSequence instance or ``None`` (the default). If `seed` is
-            ``None``, then  data is read from ``/dev/urandom`` (or the Windows
-            analog) if available. If unavailable, a hash of the time and
-            process ID is used.
+            ``None``, a new SeedSequence is created using entropy from the
+            operating system.
         counter : {None, int, array_like[uint64]}, optional
             Counter to use in the BlaBla state. Can be either
             a Python int in [0, 2**128) or a 2-element uint64 array.
