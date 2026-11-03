@@ -695,11 +695,13 @@ cdef class ExtendedGenerator:
         if np.any(np.not_equal(np.imag(ogamma), 0)):
             raise ValueError("Im(gamma) != 0")
 
-        cov = 0.5 * np.imag(orelation)
-        rho = np.zeros_like(cov)
-        idx = (v_real.flat > 0) & (v_imag.flat > 0)
-        rho.flat[idx] = cov.flat[idx] / np.sqrt(v_real.flat[idx] * v_imag.flat[idx])
-        if np.any(cov.flat[~idx] != 0) or np.any(np.abs(rho) > 1):
+        # gamma and relation can have different shapes, so use the shape of the
+        # variances, which is the broadcast of the two
+        cov = np.broadcast_to(0.5 * np.imag(orelation), np.shape(v_real))
+        rho = np.zeros(np.shape(v_real))
+        idx = (v_real > 0) & (v_imag > 0)
+        rho[idx] = cov[idx] / np.sqrt(v_real[idx] * v_imag[idx])
+        if np.any(cov[~idx] != 0) or np.any(np.abs(rho) > 1):
             raise ValueError("Im(relation) ** 2 > Re(gamma ** 2 - relation ** 2)")
 
         if size is not None:

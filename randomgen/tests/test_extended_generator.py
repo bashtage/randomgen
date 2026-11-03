@@ -344,6 +344,59 @@ def test_set_get_state(seed):
     assert_equal(gen.state["state"]["pos"], state["state"]["pos"])
 
 
+MIXED_SHAPES = [
+    # (gamma, relation, expected shape)
+    ([1.0, 2.0, 3.0], 0.5 + 0.4j, (3,)),
+    ([1.0, 2.0, 3.0], [0.5 + 0.4j], (3,)),
+    ([1.0, 2.0, 3.0], [[0.5 + 0.4j], [0.1]], (2, 3)),
+    ([[1.0], [2.0]], [0.5 + 0.4j, 0.1, 0.2j], (2, 3)),
+    (2.0, [0.5 + 0.4j, 0.1, 0.2j], (3,)),
+    ([[1.0, 2.0, 3.0]], 0.5j, (1, 3)),
+]
+
+
+@pytest.mark.parametrize(("gamma", "relation", "shape"), MIXED_SHAPES)
+def test_complex_normal_mixed_shapes(extended_gen, gamma, relation, shape):
+    # gamma and relation with different shapes used to raise "too many
+    # boolean indices" unless gamma was a scalar
+    out = extended_gen.complex_normal(0.0, gamma, relation)
+    assert out.shape == shape
+    out = extended_gen.complex_normal(0.0, gamma, relation, size=(4,) + shape)
+    assert out.shape == (4,) + shape
+    # Same draws as when the parameters are explicitly broadcast
+    full_gamma, full_relation = np.broadcast_arrays(gamma, relation)
+    a = ExtendedGenerator(PCG64(0)).complex_normal(1.0, gamma, relation)
+    b = ExtendedGenerator(PCG64(0)).complex_normal(1.0, full_gamma, full_relation)
+    assert_allclose(a, b)
+
+
+def test_complex_normal_mixed_shapes_moments(extended_gen):
+    gamma = np.array([1.0, 2.0, 3.0])
+    relation = 0.5 + 0.4j
+    out = extended_gen.complex_normal(0.0, gamma, relation, size=(200000, 3))
+    var_real = 0.5 * (gamma + relation.real)
+    var_imag = 0.5 * (gamma - relation.real)
+    cov = 0.5 * relation.imag
+    assert_allclose(out.real.var(0), var_real, rtol=0.02)
+    assert_allclose(out.imag.var(0), var_imag, rtol=0.02)
+    assert_allclose((out.real * out.imag).mean(0), cov, atol=0.01)
+
+
+@pytest.mark.parametrize(
+    ("gamma", "relation"),
+    [
+        ([1.0, 1.0, 1.0], 1 + 1j),
+        ([1.0, 1.0, 1.0], [[0.1 + 5j], [0.1]]),
+        ([[1.0], [1.0]], [1 + 1j, 0.0, 0.0]),
+        ([1.0, 1.0, 1.0], [-1 + 1j]),
+    ],
+)
+def test_complex_normal_mixed_shapes_invalid(extended_gen, gamma, relation):
+    msg = r"Im\(relation\) \*\* 2 > Re\(gamma \*\* 2 - relation \*\* 2\)"
+    with pytest.raises(ValueError, match=msg):
+        extended_gen.complex_normal(0.0, gamma, relation)
+
+
 def test_complex_normal_size(mv_seed):
     random = ExtendedGenerator(MT19937(mv_seed))
     state = random.state
