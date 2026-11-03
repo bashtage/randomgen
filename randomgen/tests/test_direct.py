@@ -2221,7 +2221,7 @@ def test_speck_sse41():
 
 
 SIMD_FLAGS = pytest.mark.parametrize(
-    "bit_gen, flag",
+    ("bit_gen", "flag"),
     [
         (AESCounter, "use_aesni"),
         (BlaBla, "use_avx2"),
