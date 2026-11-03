@@ -472,10 +472,7 @@ class Base:
         g = np.random.Generator(bg)
         g.integers(0, 2**32, dtype=np.uint32)
         state = bg.state
-        if isinstance(bg, (Philox, ThreeFry)):
-            bg.advance(1000, False)
-        else:
-            bg.advance(1000)
+        bg.advance(1000)
         if "has_uint32" in bg.state:
             assert bg.state["has_uint32"] == 0
             return
@@ -541,6 +538,17 @@ class Random123(Base):
         # standard case
         assert direct == advanced
 
+    def test_advance_default_counter(self, step, warmup):
+        # The default is counter=False, which advances by step draws
+        bg = self.bit_generator()
+        bg.random_raw(warmup)
+        state0 = bg.state
+        bg.random_raw(step)
+        direct = bg.random_raw(3)
+        bg.state = state0
+        bg.advance(step)
+        assert_array_equal(bg.random_raw(3), direct)
+
     def test_advance_large(self):
         dtype = np.uint64 if self.width == 64 else np.uint32
         bg = self.bit_generator()
@@ -573,11 +581,6 @@ class Random123(Base):
             state["state"]["counter"],
             np.array([size_max, size_max, 0, 0], dtype=dtype),
         )
-
-    def test_advance_deprecated(self):
-        bg = self.bit_generator()
-        with pytest.warns(FutureWarning):
-            bg.advance(1)
 
     def test_numpy_uint_array(self):
         bg = self.bit_generator(np.uint64(1))
