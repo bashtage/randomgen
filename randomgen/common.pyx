@@ -65,9 +65,6 @@ cdef class BitGenerator(_BitGenerator):
                 'BitGenerator is a base class and cannot be instantized'
             )
 
-    def _supported_modes(self):
-        return ("sequence",)
-
     def _get_seed_seq(self):
         try:
             return self.seed_seq
