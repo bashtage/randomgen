@@ -793,8 +793,8 @@ class TestPCG64XSLRR(Base):
         cls.seed_error_type = TypeError
         cls.invalid_seed_types = [(3.2,)]
         cls.invalid_seed_values = [(-2,)]
-        cls.large_advance_initial = 141078743063826365544432622475512570578
-        cls.large_advance_final = 32639015182640331666105117402520879107
+        cls.large_advance_initial = 262626489767919729675955844831248137855
+        cls.large_advance_final = 326675794918500479020985263602132957772
 
     def setup_bitgenerator(self, seed, inc: int | None = None):
         return self.bit_generator(*seed, variant="xsl-rr", inc=inc)
@@ -855,11 +855,13 @@ class TestPCG64XSLRR(Base):
         with pytest.raises(ValueError, match="variant"):
             PCG64(0, variant=3)
 
-    @pytest.mark.xfail(reason="Seeding changed")
     def test_large_advance(self):
         bg = self.setup_bitgenerator([0], inc=1)
         state = bg.state["state"]
         assert state["state"] == self.large_advance_initial
+        bg.advance(sum(2**i for i in range(96)))
+        state = bg.state["state"]
+        assert state["state"] == self.large_advance_final
 
 
 class TestPhilox(Random123):

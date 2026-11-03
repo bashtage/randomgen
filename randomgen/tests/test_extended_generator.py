@@ -651,15 +651,20 @@ def test_mv_complex_normal_scalar_size(extended_gen):
     extended_gen.multivariate_complex_normal(loc, gamma, rel, size=4)
 
 
+@restores_state
 def test_extended_gen_state(extended_gen):
-    def _assert_state_equal(actual, target):
-        for key in actual:
-            if isinstance(actual[key], dict):
-                _assert_state_equal(actual[key], target[key])
-            assert actual[key] == target[key]
+    state = extended_gen.__getstate__()
+    expected = extended_gen.complex_normal(size=10)
+    # The state is a snapshot, so drawing moves the generator but not the copy
+    assert extended_gen.state != state
+    assert not np.array_equal(extended_gen.complex_normal(size=10), expected)
 
-    val = extended_gen.__getstate__()
-    _assert_state_equal(val, extended_gen.state)
+    extended_gen.__setstate__(state)
+    assert_equal(extended_gen.complex_normal(size=10), expected)
+
+    other = ExtendedGenerator(PCG64(1))
+    other.__setstate__(state)
+    assert_equal(other.complex_normal(size=10), expected)
 
 
 def test_mv_complex_normal_exceptions(extended_gen):
