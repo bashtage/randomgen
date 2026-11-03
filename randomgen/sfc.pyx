@@ -124,9 +124,6 @@ cdef class SFC64(BitGenerator):
         self.rng_state.has_uint32 = 0
         self.rng_state.uinteger = 0
 
-    def _supported_modes(self):
-        return "sequence", "numpy"
-
     def _seed_from_seq(self):
         cdef int  loc, cnt
         cdef uint64_t *state_arr

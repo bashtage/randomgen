@@ -170,7 +170,6 @@ endforeach
 
 subdirs_list = [
     '_build',
-    'compat',
     'examples',
     'src',
     'tests',
@@ -272,15 +271,6 @@ py.extension_module(
     c_args: cython_c_args,
 )
 py.extension_module(
-    '_seed_sequence',
-    ['_seed_sequence.pyx'] + CPU_FEATURES + ALIGNED_MALLOC,
-    install: true,
-    include_directories: [inc_np, inc_np_random],
-    subdir: 'randomgen',
-    cython_args: cython_args,
-    c_args: cython_c_args,
-)
-py.extension_module(
     'broadcasting',
     ['broadcasting.pyx'] + CPU_FEATURES + ALIGNED_MALLOC,
     install: true,
@@ -345,7 +335,6 @@ top_level_py_list = [
     'conftest.py',
     'seed_sequence.py',
     'typing.py',
-    '_seed_sequence.pyi',
     'aes.pyi',
     'chacha.pyi',
     'common.pyi',

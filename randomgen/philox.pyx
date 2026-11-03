@@ -214,9 +214,6 @@ cdef class Philox(BitGenerator):
         for i in range(PHILOX_BUFFER_SIZE):
             self.rng_state.buffer[i].u64 = 0
 
-    def _supported_modes(self):
-        return "sequence", "numpy"
-
     def _seed_from_seq(self, counter=None):
         seed_seq_size = max(self.n * self.w // 128, 1)
         state = self._get_seed_seq().generate_state(seed_seq_size, np.uint64)

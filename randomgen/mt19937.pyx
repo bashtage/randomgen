@@ -115,9 +115,6 @@ cdef class MT19937(BitGenerator):
         self._bitgen.next_double = &mt19937_double
         self._bitgen.next_raw = &mt19937_raw
 
-    def _supported_modes(self):
-        return "sequence", "numpy"
-
     def _seed_from_seq(self):
         state = self._get_seed_seq().generate_state(RK_STATE_LEN, np.uint32)
         mt19937_init_by_array(&self.rng_state,

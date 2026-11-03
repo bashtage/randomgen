@@ -203,9 +203,6 @@ cdef class PCG64(BitGenerator):
             self._bitgen.next_double = &pcg64_cm_dxsm_double
             self._bitgen.next_raw = &pcg64_cm_dxsm_uint64
 
-    def _supported_modes(self):
-        return "sequence", "numpy"
-
     def __repr__(self):
         out = object.__repr__(self)
         out = out.replace(f"{type(self).__name__}",
