@@ -5,7 +5,7 @@ a small number of distributions that are not present in NumPy.
 The default bit generator used by
 :class:`~randomgen.generator.ExtendedGenerator` is
 :class:`~randomgen.pcg64.PCG64`.  The bit generator can be
-changed by passing an instantized bit generator to
+changed by passing an instantiated bit generator to
 :class:`~randomgen.generator.ExtendedGenerator`. It is also possible
 to share a bit generator with an instance of NumPy's :class:`numpy.random.Generator`.
 

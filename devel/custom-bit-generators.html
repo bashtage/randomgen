@@ -21,7 +21,7 @@
     
     
       
-        <title>Writing a BitGenerator - RandomGen v2.3.1 (+96)</title>
+        <title>Writing a BitGenerator - RandomGen v2.3.1 (+104)</title>
       
     
     
@@ -88,7 +88,7 @@
 
 <header class="md-header md-header--shadow" data-md-component="header">
   <nav class="md-header__inner md-grid" aria-label="Header">
-    <a href="index.html" title="RandomGen v2.3.1 (+96)" class="md-header__button md-logo" aria-label="RandomGen v2.3.1 (+96)" data-md-component="logo">
+    <a href="index.html" title="RandomGen v2.3.1 (+104)" class="md-header__button md-logo" aria-label="RandomGen v2.3.1 (+104)" data-md-component="logo">
       <img src="_static/casino.svg" alt="logo">
     </a>
     <label class="md-header__button md-icon" for="__drawer">
@@ -99,7 +99,7 @@
       <div class="md-header__ellipsis">
         <div class="md-header__topic">
           <span class="md-ellipsis">
-            RandomGen v2.3.1 (+96)
+            RandomGen v2.3.1 (+104)
           </span>
         </div>
         <div class="md-header__topic" data-md-component="header-topic">
@@ -194,10 +194,10 @@
 
 <nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
   <label class="md-nav__title" for="__drawer">
-    <a href="index.html" title="RandomGen v2.3.1 (+96)" class="md-nav__button md-logo" aria-label="RandomGen v2.3.1 (+96)" data-md-component="logo">
+    <a href="index.html" title="RandomGen v2.3.1 (+104)" class="md-nav__button md-logo" aria-label="RandomGen v2.3.1 (+104)" data-md-component="logo">
       <img src="_static/casino.svg" alt="logo">
     </a>
-    RandomGen v2.3.1 (+96)
+    RandomGen v2.3.1 (+104)
   </label>
   
     <div class="md-nav__source">
@@ -823,7 +823,7 @@
 <div class="math notranslate nohighlight">
 \[s_{n+1} = m s_{n} + i\]</div>
 <p>where <span class="math notranslate nohighlight">\(s\)</span> is the state, <span class="math notranslate nohighlight">\(m\)</span> is the multiplier and <span class="math notranslate nohighlight">\(i\)</span> is the increment.</p>
-<p>The PCG generator then transforms <span class="math notranslate nohighlight">\(s_{n+1}\)</span> to produce the the final output. The XLS-RR output function XORs the upper 64 bits of the state with the lower 64 bits before applying a random rotation of this value.</p>
+<p>The PCG generator then transforms <span class="math notranslate nohighlight">\(s_{n+1}\)</span> to produce the final output. The XLS-RR output function XORs the upper 64 bits of the state with the lower 64 bits before applying a random rotation of this value.</p>
 <p>The code below implements this generator using built-in Python operations and a little NumPy.</p>
 <div class="nbinput nblast docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span><code>[1]:
@@ -1119,7 +1119,7 @@ After: 9405893610231781608176235507540826829
                 <span class="c1"># Clear the stored value</span>
                 <span class="n">bit_gen_state</span><span class="p">[</span><span class="mi">4</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
                 <span class="k">return</span> <span class="n">out</span>
-            <span class="c1"># If no bits available, genrate a new value</span>
+            <span class="c1"># If no bits available, generate a new value</span>
             <span class="n">z</span> <span class="o">=</span> <span class="n">jsf_next</span><span class="p">(</span><span class="n">bit_gen_state</span><span class="p">)</span>
             <span class="c1"># Store the new value always with 1 in bit 0</span>
             <span class="n">bit_gen_state</span><span class="p">[</span><span class="mi">4</span><span class="p">]</span> <span class="o">=</span> <span class="n">z</span> <span class="o">|</span> <span class="n">np</span><span class="o">.</span><span class="n">uint64</span><span class="p">(</span><span class="mh">0x1</span><span class="p">)</span>
@@ -1363,7 +1363,7 @@ Notice has_uint is now 1
 </code></pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><code><span class="n">st</span> <span class="o">=</span> <span class="n">jsf_ubg</span><span class="o">.</span><span class="n">state</span>
-<span class="c1"># Clone the C-implemntations's state and set it</span>
+<span class="c1"># Clone the C-implementation's state and set it</span>
 <span class="n">st</span><span class="p">[</span><span class="s2">"state"</span><span class="p">][:</span><span class="mi">4</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="n">jsf_state</span><span class="p">[</span><span class="s2">"state"</span><span class="p">][</span><span class="n">key</span><span class="p">]</span> <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="p">(</span><span class="s2">"a"</span><span class="p">,</span> <span class="s2">"b"</span><span class="p">,</span> <span class="s2">"c"</span><span class="p">,</span> <span class="s2">"d"</span><span class="p">)]</span>
 <span class="n">st</span><span class="p">[</span><span class="s2">"has_uint32"</span><span class="p">]</span> <span class="o">=</span> <span class="n">jsf_state</span><span class="p">[</span><span class="s2">"has_uint32"</span><span class="p">]</span>
 <span class="n">st</span><span class="p">[</span><span class="s2">"uinteger"</span><span class="p">]</span> <span class="o">=</span> <span class="n">jsf_state</span><span class="p">[</span><span class="s2">"uinteger"</span><span class="p">]</span>

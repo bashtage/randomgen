@@ -21,7 +21,7 @@
     
     
       
-        <title>BLAKE2b hash-based RNG - RandomGen v2.3.1 (+96)</title>
+        <title>BLAKE2b hash-based RNG - RandomGen v2.3.1 (+104)</title>
       
     
     
@@ -87,7 +87,7 @@
 
 <header class="md-header md-header--shadow" data-md-component="header">
   <nav class="md-header__inner md-grid" aria-label="Header">
-    <a href="../index.html" title="RandomGen v2.3.1 (+96)" class="md-header__button md-logo" aria-label="RandomGen v2.3.1 (+96)" data-md-component="logo">
+    <a href="../index.html" title="RandomGen v2.3.1 (+104)" class="md-header__button md-logo" aria-label="RandomGen v2.3.1 (+104)" data-md-component="logo">
       <img src="../_static/casino.svg" alt="logo">
     </a>
     <label class="md-header__button md-icon" for="__drawer">
@@ -98,7 +98,7 @@
       <div class="md-header__ellipsis">
         <div class="md-header__topic">
           <span class="md-ellipsis">
-            RandomGen v2.3.1 (+96)
+            RandomGen v2.3.1 (+104)
           </span>
         </div>
         <div class="md-header__topic" data-md-component="header-topic">
@@ -193,10 +193,10 @@
 
 <nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
   <label class="md-nav__title" for="__drawer">
-    <a href="../index.html" title="RandomGen v2.3.1 (+96)" class="md-nav__button md-logo" aria-label="RandomGen v2.3.1 (+96)" data-md-component="logo">
+    <a href="../index.html" title="RandomGen v2.3.1 (+104)" class="md-nav__button md-logo" aria-label="RandomGen v2.3.1 (+104)" data-md-component="logo">
       <img src="../_static/casino.svg" alt="logo">
     </a>
-    RandomGen v2.3.1 (+96)
+    RandomGen v2.3.1 (+104)
   </label>
   
     <div class="md-nav__source">
@@ -954,7 +954,7 @@
       <span aria-label="Python attribute" class="objinfo-icon objinfo-icon__alias" title="Python attribute">A</span>
     
     <span class="md-ellipsis">
-      <span title="randomgen.blabla.BlaBla.lock (Python attribute) — Lock instance that is shared so that the same bit git generator can be used in multiple Generators without corrupting the state. Code that generates values from a bit generator should hold the bit generator&#39;s lock."><span>lock</span></span>
+      <span title="randomgen.blabla.BlaBla.lock (Python attribute) — Lock instance that is shared so that the same bit generator can be used in multiple Generators without corrupting the state. Code that generates values from a bit generator should hold the bit generator&#39;s lock."><span>lock</span></span>
     </span>
   </a>
   
@@ -982,7 +982,7 @@
       <span aria-label="Python attribute" class="objinfo-icon objinfo-icon__alias" title="Python attribute">A</span>
     
     <span class="md-ellipsis">
-      <span title="randomgen.blabla.BlaBla.seed_seq (Python attribute) — The SeedSequence instance used to initialize the generator if mode is &#34;sequence&#34; or is seed is a SeedSequence."><span>seed_<wbr>seq</span></span>
+      <span title="randomgen.blabla.BlaBla.seed_seq (Python attribute) — The SeedSequence instance used to seed the generator. If seed is not a SeedSequence, one is created from it."><span>seed_<wbr>seq</span></span>
     </span>
   </a>
   
@@ -2223,7 +2223,7 @@
       <span aria-label="Python attribute" class="objinfo-icon objinfo-icon__alias" title="Python attribute">A</span>
     
     <span class="md-ellipsis">
-      <span title="randomgen.blabla.BlaBla.lock (Python attribute) — Lock instance that is shared so that the same bit git generator can be used in multiple Generators without corrupting the state. Code that generates values from a bit generator should hold the bit generator&#39;s lock."><span>lock</span></span>
+      <span title="randomgen.blabla.BlaBla.lock (Python attribute) — Lock instance that is shared so that the same bit generator can be used in multiple Generators without corrupting the state. Code that generates values from a bit generator should hold the bit generator&#39;s lock."><span>lock</span></span>
     </span>
   </a>
   
@@ -2251,7 +2251,7 @@
       <span aria-label="Python attribute" class="objinfo-icon objinfo-icon__alias" title="Python attribute">A</span>
     
     <span class="md-ellipsis">
-      <span title="randomgen.blabla.BlaBla.seed_seq (Python attribute) — The SeedSequence instance used to initialize the generator if mode is &#34;sequence&#34; or is seed is a SeedSequence."><span>seed_<wbr>seq</span></span>
+      <span title="randomgen.blabla.BlaBla.seed_seq (Python attribute) — The SeedSequence instance used to seed the generator. If seed is not a SeedSequence, one is created from it."><span>seed_<wbr>seq</span></span>
     </span>
   </a>
   
@@ -2345,8 +2345,8 @@
 <dt id="randomgen.blabla.BlaBla.__init__.seed"><span class="n sig-name">seed</span><span class="o">=</span><code class="code python default_value docutils literal highlight highlight-python"><span class="kc">None</span></code><a class="headerlink" href="#randomgen.blabla.BlaBla.__init__.seed" title="Permalink to this definition">¶</a></dt><dd><p>Random seed initializing the pseudo-random number generator.
 Can be an integer in [0, 2**256), an array of 4 uint64 values,
 a SeedSequence instance or <code class="docutils literal notranslate"><span class="pre">None</span></code> (the default). If <cite>seed</cite> is
-<code class="docutils literal notranslate"><span class="pre">None</span></code>, then a new SeedSequence is created usign data is read
-from <code class="docutils literal notranslate"><span class="pre">/dev/urandom</span></code> .</p>
+<code class="docutils literal notranslate"><span class="pre">None</span></code>, then a new SeedSequence is created using entropy from
+the operating system.</p>
 </dd>
 <dt id="randomgen.blabla.BlaBla.__init__.counter"><span class="n sig-name">counter</span><span class="o">=</span><code class="code python default_value docutils literal highlight highlight-python"><span class="kc">None</span></code><a class="headerlink" href="#randomgen.blabla.BlaBla.__init__.counter" title="Permalink to this definition">¶</a></dt><dd><p>Counter to use in the BlaBla state. Can be either
 a Python int in [0, 2**128) or a 2-element uint64 array.
@@ -2366,7 +2366,7 @@ The standard number of rounds in 10.</p>
 <dl class="py attribute objdesc">
 <dt class="sig sig-object highlight py" id="randomgen.blabla.BlaBla.lock">
 <span class="sig-name descname"><span class="pre">lock</span></span><a class="headerlink" href="#randomgen.blabla.BlaBla.lock" title="Link to this definition">¶</a></dt>
-<dd><p>Lock instance that is shared so that the same bit git generator can
+<dd><p>Lock instance that is shared so that the same bit generator can
 be used in multiple Generators without corrupting the state. Code that
 generates values from a bit generator should hold the bit generator’s
 lock.</p>
@@ -2380,8 +2380,8 @@ lock.</p>
 <dl class="py attribute objdesc">
 <dt class="sig sig-object highlight py" id="randomgen.blabla.BlaBla.seed_seq">
 <span class="sig-name descname"><span class="pre">seed_seq</span></span><a class="headerlink" href="#randomgen.blabla.BlaBla.seed_seq" title="Link to this definition">¶</a></dt>
-<dd><p>The SeedSequence instance used to initialize the generator if mode is
-“sequence” or is seed is a SeedSequence.</p>
+<dd><p>The SeedSequence instance used to seed the generator. If <cite>seed</cite> is not
+a SeedSequence, one is created from it.</p>
 <dl class="field-list simple">
 <dt class="field-odd" id="randomgen.blabla.BlaBla.seed_seq-type">Type<span class="colon">:</span><a class="headerlink" href="#randomgen.blabla.BlaBla.seed_seq-type" title="Permalink to this headline">¶</a></dt>
 <dd class="field-odd"><p><code class="docutils literal notranslate"><span class="pre">{None,</span> <span class="pre">SeedSequence}</span></code></p>
@@ -2393,7 +2393,7 @@ lock.</p>
 <p>BlaBla is a 64-bit PRNG that uses a counter-based design based on
 the Blake2b hash function <a class="footnote-reference brackets" href="#id4" id="id1" role="doc-noteref"><span class="fn-bracket">[</span>1<span class="fn-bracket">]</span></a>. The idea was first implemented in
 Swift in <a class="footnote-reference brackets" href="#id5" id="id2" role="doc-noteref"><span class="fn-bracket">[</span>2<span class="fn-bracket">]</span></a>, and later reimplemented in C++ in <a class="footnote-reference brackets" href="#id6" id="id3" role="doc-noteref"><span class="fn-bracket">[</span>3<span class="fn-bracket">]</span></a>. The C
-implementation is dervied from the C++ version. Instances using
+implementation is derived from the C++ version. Instances using
 different values of the key produce distinct sequences. <code class="docutils literal notranslate"><span class="pre">BlaBla</span></code> has
 a period of <span class="math notranslate nohighlight">\(2^{128}\)</span> and supports arbitrary advancing and
 jumping the sequence in increments of <span class="math notranslate nohighlight">\(2^{64}\)</span>. These features allow

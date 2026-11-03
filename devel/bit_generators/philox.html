@@ -21,7 +21,7 @@
     
     
       
-        <title>Philox Counter-based RNG - RandomGen v2.3.1 (+96)</title>
+        <title>Philox Counter-based RNG - RandomGen v2.3.1 (+104)</title>
       
     
     
@@ -87,7 +87,7 @@
 
 <header class="md-header md-header--shadow" data-md-component="header">
   <nav class="md-header__inner md-grid" aria-label="Header">
-    <a href="../index.html" title="RandomGen v2.3.1 (+96)" class="md-header__button md-logo" aria-label="RandomGen v2.3.1 (+96)" data-md-component="logo">
+    <a href="../index.html" title="RandomGen v2.3.1 (+104)" class="md-header__button md-logo" aria-label="RandomGen v2.3.1 (+104)" data-md-component="logo">
       <img src="../_static/casino.svg" alt="logo">
     </a>
     <label class="md-header__button md-icon" for="__drawer">
@@ -98,7 +98,7 @@
       <div class="md-header__ellipsis">
         <div class="md-header__topic">
           <span class="md-ellipsis">
-            RandomGen v2.3.1 (+96)
+            RandomGen v2.3.1 (+104)
           </span>
         </div>
         <div class="md-header__topic" data-md-component="header-topic">
@@ -193,10 +193,10 @@
 
 <nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
   <label class="md-nav__title" for="__drawer">
-    <a href="../index.html" title="RandomGen v2.3.1 (+96)" class="md-nav__button md-logo" aria-label="RandomGen v2.3.1 (+96)" data-md-component="logo">
+    <a href="../index.html" title="RandomGen v2.3.1 (+104)" class="md-nav__button md-logo" aria-label="RandomGen v2.3.1 (+104)" data-md-component="logo">
       <img src="../_static/casino.svg" alt="logo">
     </a>
-    RandomGen v2.3.1 (+96)
+    RandomGen v2.3.1 (+104)
   </label>
   
     <div class="md-nav__source">
@@ -1237,7 +1237,7 @@
       <span aria-label="Python parameter" class="objinfo-icon objinfo-icon__sub-data" title="Python parameter">p</span>
     
     <span class="md-ellipsis">
-      <span title="randomgen.philox.Philox.__init__.seed (Python parameter) — Random seed initializing the pseudo-random number generator. Can be an integer in [0, 2**64), array of integers in [0, 2**64), a SeedSequence instance or None (the default). If seed is None, data will be read from /dev/urandom (or the Windows analog) if available."><span>seed</span></span>
+      <span title="randomgen.philox.Philox.__init__.seed (Python parameter) — Random seed initializing the pseudo-random number generator. Can be an integer in [0, 2**64), array of integers in [0, 2**64), a SeedSequence instance or None (the default). If seed is None, a new SeedSequence is created using entropy from the operating system."><span>seed</span></span>
     </span>
   </a>
   
@@ -1314,7 +1314,7 @@
       <span aria-label="Python attribute" class="objinfo-icon objinfo-icon__alias" title="Python attribute">A</span>
     
     <span class="md-ellipsis">
-      <span title="randomgen.philox.Philox.lock (Python attribute) — Lock instance that is shared so that the same bit git generator can be used in multiple Generators without corrupting the state. Code that generates values from a bit generator should hold the bit generator&#39;s lock."><span>lock</span></span>
+      <span title="randomgen.philox.Philox.lock (Python attribute) — Lock instance that is shared so that the same bit generator can be used in multiple Generators without corrupting the state. Code that generates values from a bit generator should hold the bit generator&#39;s lock."><span>lock</span></span>
     </span>
   </a>
   
@@ -1342,7 +1342,7 @@
       <span aria-label="Python attribute" class="objinfo-icon objinfo-icon__alias" title="Python attribute">A</span>
     
     <span class="md-ellipsis">
-      <span title="randomgen.philox.Philox.seed_seq (Python attribute) — The SeedSequence instance used to initialize the generator if mode is &#34;sequence&#34; or is seed is a SeedSequence."><span>seed_<wbr>seq</span></span>
+      <span title="randomgen.philox.Philox.seed_seq (Python attribute) — The SeedSequence instance used to seed the generator. If seed is not a SeedSequence, one is created from it."><span>seed_<wbr>seq</span></span>
     </span>
   </a>
   
@@ -2228,7 +2228,7 @@
       <span aria-label="Python parameter" class="objinfo-icon objinfo-icon__sub-data" title="Python parameter">p</span>
     
     <span class="md-ellipsis">
-      <span title="randomgen.philox.Philox.__init__.seed (Python parameter) — Random seed initializing the pseudo-random number generator. Can be an integer in [0, 2**64), array of integers in [0, 2**64), a SeedSequence instance or None (the default). If seed is None, data will be read from /dev/urandom (or the Windows analog) if available."><span>seed</span></span>
+      <span title="randomgen.philox.Philox.__init__.seed (Python parameter) — Random seed initializing the pseudo-random number generator. Can be an integer in [0, 2**64), array of integers in [0, 2**64), a SeedSequence instance or None (the default). If seed is None, a new SeedSequence is created using entropy from the operating system."><span>seed</span></span>
     </span>
   </a>
   
@@ -2305,7 +2305,7 @@
       <span aria-label="Python attribute" class="objinfo-icon objinfo-icon__alias" title="Python attribute">A</span>
     
     <span class="md-ellipsis">
-      <span title="randomgen.philox.Philox.lock (Python attribute) — Lock instance that is shared so that the same bit git generator can be used in multiple Generators without corrupting the state. Code that generates values from a bit generator should hold the bit generator&#39;s lock."><span>lock</span></span>
+      <span title="randomgen.philox.Philox.lock (Python attribute) — Lock instance that is shared so that the same bit generator can be used in multiple Generators without corrupting the state. Code that generates values from a bit generator should hold the bit generator&#39;s lock."><span>lock</span></span>
     </span>
   </a>
   
@@ -2333,7 +2333,7 @@
       <span aria-label="Python attribute" class="objinfo-icon objinfo-icon__alias" title="Python attribute">A</span>
     
     <span class="md-ellipsis">
-      <span title="randomgen.philox.Philox.seed_seq (Python attribute) — The SeedSequence instance used to initialize the generator if mode is &#34;sequence&#34; or is seed is a SeedSequence."><span>seed_<wbr>seq</span></span>
+      <span title="randomgen.philox.Philox.seed_seq (Python attribute) — The SeedSequence instance used to seed the generator. If seed is not a SeedSequence, one is created from it."><span>seed_<wbr>seq</span></span>
     </span>
   </a>
   
@@ -2419,7 +2419,7 @@
 <h1 id="module-randomgen.philox"><span id="philox-counter-based-rng"></span>Philox Counter-based RNG<a class="headerlink" href="#module-randomgen.philox" title="Link to this heading">¶</a></h1>
 <dl class="py class objdesc">
 <dt class="sig sig-object highlight sig-wrap py" id="randomgen.philox.Philox">
-<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">randomgen.philox.</span></span><span class="sig-name descname"><span class="pre">Philox</span></span><span class="sig-paren">(</span><span class="sig-param-decl"><em class="sig-param"><a class="n reference internal" href="#randomgen.philox.Philox.__init__.seed" title="randomgen.philox.Philox.__init__.seed (Python parameter) — Random seed initializing the pseudo-random number generator. Can be an integer in [0, 2**64), array of integers in [0, 2**64), a SeedSequence instance or None (the default). If seed is None, data will be read from /dev/urandom (or the Windows analog) if available."><span class="n"><span class="pre">seed</span></span></a><span class="o"><span class="pre">=</span></span><code class="code python default_value docutils literal highlight highlight-python"><span class="kc">None</span></code></em>, </span><span class="sig-param-decl"><em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, </span><span class="sig-param-decl"><em class="sig-param"><a class="n reference internal" href="#randomgen.philox.Philox.__init__.counter" title="randomgen.philox.Philox.__init__.counter (Python parameter) — Counter to use in the Philox state."><span class="n"><span class="pre">counter</span></span></a><span class="o"><span class="pre">=</span></span><code class="code python default_value docutils literal highlight highlight-python"><span class="kc">None</span></code></em>, </span><span class="sig-param-decl"><em class="sig-param"><a class="n reference internal" href="#randomgen.philox.Philox.__init__.key" title="randomgen.philox.Philox.__init__.key (Python parameter) — Key to use in the Philox state."><span class="n"><span class="pre">key</span></span></a><span class="o"><span class="pre">=</span></span><code class="code python default_value docutils literal highlight highlight-python"><span class="kc">None</span></code></em>, </span><span class="sig-param-decl"><em class="sig-param"><a class="n reference internal" href="#randomgen.philox.Philox.__init__.number" title="randomgen.philox.Philox.__init__.number (Python parameter) — Number of values to produce in a single call."><span class="n"><span class="pre">number</span></span></a><span class="o"><span class="pre">=</span></span><code class="code python default_value docutils literal highlight highlight-python"><span class="mi">4</span></code></em>, </span><span class="sig-param-decl"><em class="sig-param"><a class="n reference internal" href="#randomgen.philox.Philox.__init__.width" title="randomgen.philox.Philox.__init__.width (Python parameter) — Bit width the values produced."><span class="n"><span class="pre">width</span></span></a><span class="o"><span class="pre">=</span></span><code class="code python default_value docutils literal highlight highlight-python"><span class="mi">64</span></code></em>, </span><span class="sig-param-decl"><em class="sig-param"><a class="n reference internal" href="#randomgen.philox.Philox.__init__.numpy_seed" title="randomgen.philox.Philox.__init__.numpy_seed (Python parameter) — Set to True to use  the same seeding mechanism as NumPy and so matches NumPy exactly."><span class="n"><span class="pre">numpy_seed</span></span></a><span class="o"><span class="pre">=</span></span><code class="code python default_value docutils literal highlight highlight-python"><span class="kc">False</span></code></em></span><span class="sig-paren">)</span><a class="headerlink" href="#randomgen.philox.Philox" title="Link to this definition">¶</a></dt>
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">randomgen.philox.</span></span><span class="sig-name descname"><span class="pre">Philox</span></span><span class="sig-paren">(</span><span class="sig-param-decl"><em class="sig-param"><a class="n reference internal" href="#randomgen.philox.Philox.__init__.seed" title="randomgen.philox.Philox.__init__.seed (Python parameter) — Random seed initializing the pseudo-random number generator. Can be an integer in [0, 2**64), array of integers in [0, 2**64), a SeedSequence instance or None (the default). If seed is None, a new SeedSequence is created using entropy from the operating system."><span class="n"><span class="pre">seed</span></span></a><span class="o"><span class="pre">=</span></span><code class="code python default_value docutils literal highlight highlight-python"><span class="kc">None</span></code></em>, </span><span class="sig-param-decl"><em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, </span><span class="sig-param-decl"><em class="sig-param"><a class="n reference internal" href="#randomgen.philox.Philox.__init__.counter" title="randomgen.philox.Philox.__init__.counter (Python parameter) — Counter to use in the Philox state."><span class="n"><span class="pre">counter</span></span></a><span class="o"><span class="pre">=</span></span><code class="code python default_value docutils literal highlight highlight-python"><span class="kc">None</span></code></em>, </span><span class="sig-param-decl"><em class="sig-param"><a class="n reference internal" href="#randomgen.philox.Philox.__init__.key" title="randomgen.philox.Philox.__init__.key (Python parameter) — Key to use in the Philox state."><span class="n"><span class="pre">key</span></span></a><span class="o"><span class="pre">=</span></span><code class="code python default_value docutils literal highlight highlight-python"><span class="kc">None</span></code></em>, </span><span class="sig-param-decl"><em class="sig-param"><a class="n reference internal" href="#randomgen.philox.Philox.__init__.number" title="randomgen.philox.Philox.__init__.number (Python parameter) — Number of values to produce in a single call."><span class="n"><span class="pre">number</span></span></a><span class="o"><span class="pre">=</span></span><code class="code python default_value docutils literal highlight highlight-python"><span class="mi">4</span></code></em>, </span><span class="sig-param-decl"><em class="sig-param"><a class="n reference internal" href="#randomgen.philox.Philox.__init__.width" title="randomgen.philox.Philox.__init__.width (Python parameter) — Bit width the values produced."><span class="n"><span class="pre">width</span></span></a><span class="o"><span class="pre">=</span></span><code class="code python default_value docutils literal highlight highlight-python"><span class="mi">64</span></code></em>, </span><span class="sig-param-decl"><em class="sig-param"><a class="n reference internal" href="#randomgen.philox.Philox.__init__.numpy_seed" title="randomgen.philox.Philox.__init__.numpy_seed (Python parameter) — Set to True to use  the same seeding mechanism as NumPy and so matches NumPy exactly."><span class="n"><span class="pre">numpy_seed</span></span></a><span class="o"><span class="pre">=</span></span><code class="code python default_value docutils literal highlight highlight-python"><span class="kc">False</span></code></em></span><span class="sig-paren">)</span><a class="headerlink" href="#randomgen.philox.Philox" title="Link to this definition">¶</a></dt>
 <dd><p>Container for the Philox family of pseudo-random number generators.</p>
 <dl class="field-list simple">
 <dt class="field-odd" id="randomgen.philox.Philox-parameters">Parameters<span class="colon">:</span><a class="headerlink" href="#randomgen.philox.Philox-parameters" title="Permalink to this headline">¶</a></dt>
@@ -2427,9 +2427,8 @@
 <dt id="randomgen.philox.Philox.__init__.seed"><span class="n sig-name">seed</span><span class="o">=</span><code class="code python default_value docutils literal highlight highlight-python"><span class="kc">None</span></code><a class="headerlink" href="#randomgen.philox.Philox.__init__.seed" title="Permalink to this definition">¶</a></dt><dd><p>Random seed initializing the pseudo-random number generator.
 Can be an integer in [0, 2**64), array of integers in
 [0, 2**64), a SeedSequence instance or <code class="docutils literal notranslate"><span class="pre">None</span></code> (the default).
-If <cite>seed</cite> is <code class="docutils literal notranslate"><span class="pre">None</span></code>, data will be read from <code class="docutils literal notranslate"><span class="pre">/dev/urandom</span></code> (or
-the Windows analog) if available. If unavailable, a hash of the time
-and process ID is used.</p>
+If <cite>seed</cite> is <code class="docutils literal notranslate"><span class="pre">None</span></code>, a new SeedSequence is created using entropy from
+the operating system.</p>
 </dd>
 <dt id="randomgen.philox.Philox.__init__.counter"><span class="n sig-name">counter</span><span class="o">=</span><code class="code python default_value docutils literal highlight highlight-python"><span class="kc">None</span></code><a class="headerlink" href="#randomgen.philox.Philox.__init__.counter" title="Permalink to this definition">¶</a></dt><dd><p>Counter to use in the Philox state. Can be either a Python int in
 [0, 2**(N*W)) where N is number of W is the width, or a M-element
@@ -2452,6 +2451,9 @@ scheme PhiloxNxW.</p>
 <dt id="randomgen.philox.Philox.__init__.numpy_seed"><span class="n sig-name">numpy_seed</span><span class="o">=</span><code class="code python default_value docutils literal highlight highlight-python"><span class="kc">False</span></code><a class="headerlink" href="#randomgen.philox.Philox.__init__.numpy_seed" title="Permalink to this definition">¶</a></dt><dd><p><p>Set to True to use  the same seeding mechanism as NumPy and
 so matches NumPy exactly. To match NumPy, variant must be <code class="docutils literal notranslate"><span class="pre">xsl-rr</span></code>.
 When using “numpy”, <code class="docutils literal notranslate"><span class="pre">inc</span></code> must be <code class="docutils literal notranslate"><span class="pre">None</span></code>.</p>
+<div class="admonition versionadded">
+<p class="admonition-title"><span class="versionmodified added">Added in version 2.0.0.</span></p>
+</div>
 </p>
 </dd>
 </dl>
@@ -2460,7 +2462,7 @@ When using “numpy”, <code class="docutils literal notranslate"><span class="
 <dl class="py attribute objdesc">
 <dt class="sig sig-object highlight py" id="randomgen.philox.Philox.lock">
 <span class="sig-name descname"><span class="pre">lock</span></span><a class="headerlink" href="#randomgen.philox.Philox.lock" title="Link to this definition">¶</a></dt>
-<dd><p>Lock instance that is shared so that the same bit git generator can
+<dd><p>Lock instance that is shared so that the same bit generator can
 be used in multiple Generators without corrupting the state. Code that
 generates values from a bit generator should hold the bit generator’s
 lock.</p>
@@ -2474,8 +2476,8 @@ lock.</p>
 <dl class="py attribute objdesc">
 <dt class="sig sig-object highlight py" id="randomgen.philox.Philox.seed_seq">
 <span class="sig-name descname"><span class="pre">seed_seq</span></span><a class="headerlink" href="#randomgen.philox.Philox.seed_seq" title="Link to this definition">¶</a></dt>
-<dd><p>The SeedSequence instance used to initialize the generator if mode is
-“sequence” or is seed is a SeedSequence.</p>
+<dd><p>The SeedSequence instance used to seed the generator. If <cite>seed</cite> is not
+a SeedSequence, one is created from it.</p>
 <dl class="field-list simple">
 <dt class="field-odd" id="randomgen.philox.Philox.seed_seq-type">Type<span class="colon">:</span><a class="headerlink" href="#randomgen.philox.Philox.seed_seq-type" title="Permalink to this headline">¶</a></dt>
 <dd class="field-odd"><p><code class="docutils literal notranslate"><span class="pre">{None,</span> <span class="pre">SeedSequence}</span></code></p>
