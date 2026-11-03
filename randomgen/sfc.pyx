@@ -57,7 +57,7 @@ cdef class SFC64(BitGenerator):
         Uses the seed sequence to initialize three state values and
         checks that both w and k are 1.
 
-        .. versionadded: 2.0.0
+        .. versionadded:: 2.0.0
 
     Notes
     -----
@@ -125,9 +125,6 @@ cdef class SFC64(BitGenerator):
     cdef _reset_state_variables(self):
         self.rng_state.has_uint32 = 0
         self.rng_state.uinteger = 0
-
-    def _supported_modes(self):
-        return "sequence", "numpy"
 
     def _seed_from_seq(self):
         cdef int  loc, cnt

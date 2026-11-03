@@ -289,7 +289,7 @@ def main():
         default="",
         help="""\
 Python file to import. Python file must contain the
-variable bitgens containing a list of instantized bit
+variable bitgens containing a list of instantiated bit
 generators and the variable output that describes the
 number of bits output (either 64 or 32).
 """,

@@ -13,7 +13,7 @@ Failures are marked with FAIL. Most bit generators were only tested in their def
 Non-default configurations are indicated by listing the keyword arguments to the bit generator.
 Two sets of tests were performed. The first tested all configurations using 128GB of data using
 PractRand's extended set of tests and additional bit folding. The second set of tests used
-4TB of data wit the standard set of tests and folding.
+4TB of data with the standard set of tests and folding.
 
 All bit generators have been tested using the same :class:`~numpy.random.SeedSequence`
 initialized with the same 256-bits of entropy taken from random.org.

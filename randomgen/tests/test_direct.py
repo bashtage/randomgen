@@ -414,7 +414,7 @@ class Base:
         bit_generator = self.setup_bitgenerator(self.data1["seed"])
         state = bit_generator.state
         get_state = bit_generator.__getstate__()
-        # Legacy numpy compatability
+        # Legacy numpy compatibility
         alt_state = get_state[0] if isinstance(get_state, tuple) else get_state
         assert_state_equal(state, alt_state)
 
@@ -2008,6 +2008,51 @@ class TestSquares(TestPCG64DXSM):
         state["variant"] = 48
         with pytest.raises(ValueError, match="variant must be"):
             bg.state = state
+
+    def test_state_roundtrip_cached_uint32(self):
+        bg = self.setup_bitgenerator([0])
+        gen = np.random.Generator(bg)
+        gen.integers(0, 2**32, dtype=np.uint32)
+        state = bg.state
+        # Only the 64-bit variant caches the unused half of a 64-bit draw
+        assert state["has_uint32"] == int(state["variant"] == 64)
+        other = self.setup_bitgenerator([1])
+        other.state = state
+        assert_state_equal(other.state, state)
+        expected = gen.integers(0, 2**32, size=5, dtype=np.uint32)
+        other_gen = np.random.Generator(other)
+        assert_equal(other_gen.integers(0, 2**32, size=5, dtype=np.uint32), expected)
+
+    def test_invalid_state_key(self):
+        bg = self.bit_generator()
+        state = bg.state
+        orig = bg.state
+        state["state"]["key"] = int(state["state"]["key"]) - 1
+        with pytest.raises(ValueError, match="key must be odd"):
+            bg.state = state
+        state["state"]["key"] = 2**64 + 1
+        with pytest.raises(ValueError, match="key must be"):
+            bg.state = state
+        assert_state_equal(bg.state, orig)
+
+    @pytest.mark.parametrize(
+        ("seed", "key"),
+        [
+            (0, 3661817429494344399),
+            (1, 4126033252942326575),
+            (2, 8770630966058977947),
+            (1234, 9470186258571876535),
+            (2**64 - 1, 7173609320913571613),
+        ],
+    )
+    def test_seed_key_pinned(self, seed, key):
+        assert self.bit_generator(seed).state["state"]["key"] == key
+
+    def test_generate_keys_pinned(self):
+        expected = [3661817429494344399, 13566961089401090923, 6655634076464885827]
+        assert_equal(generate_keys(0, 3), np.array(expected, dtype=np.uint64))
+        expected = [18012821362677550425, 11190742791071495887]
+        assert_equal(generate_keys(1234, 40)[-2:], np.array(expected, dtype=np.uint64))
 
     def test_bad_jump(self):
         bg = self.bit_generator()
