@@ -74,18 +74,18 @@ cdef class PCG64(BitGenerator):
         so matches NumPy exactly. To match NumPy, variant must be ``xsl-rr``.
         When using "numpy", ``inc`` must be ``None``.
 
-        .. versionadded: 2.0.0
+        .. versionadded:: 2.0.0
 
     Attributes
     ----------
     lock : threading.Lock
-        Lock instance that is shared so that the same bit git generator can
+        Lock instance that is shared so that the same bit generator can
         be used in multiple Generators without corrupting the state. Code that
         generates values from a bit generator should hold the bit generator's
         lock.
     seed_seq : {None, SeedSequence}
-        The SeedSequence instance used to initialize the generator if mode is
-        "sequence" or is seed is a SeedSequence.
+        The SeedSequence instance used to seed the generator. If `seed` is not
+        a SeedSequence, one is created from it.
 
     Notes
     -----
@@ -99,8 +99,8 @@ cdef class PCG64(BitGenerator):
 
        s_{n+1} = m s_{n} + i \mod 2^{128}
 
-    where :math:`s` is the state of the generator, :math:`m` is the multipler
-    and :math:`i` is the increment. The multipler is a 128-bit unsigned
+    where :math:`s` is the state of the generator, :math:`m` is the multiplier
+    and :math:`i` is the increment. The multiplier is a 128-bit unsigned
     integer with good spectral properties except when using the "dxsm"
     variant, in which case it is a 64-bit unsigned integer. The output of the
     LCG is the permuted using either an XOR and a random rotation (XSL-RR)
@@ -205,9 +205,6 @@ cdef class PCG64(BitGenerator):
             self._bitgen.next_double = &pcg64_cm_dxsm_double
             self._bitgen.next_raw = &pcg64_cm_dxsm_uint64
 
-    def _supported_modes(self):
-        return "sequence", "numpy"
-
     def __repr__(self):
         out = object.__repr__(self)
         out = out.replace(f"{type(self).__name__}",
@@ -258,10 +255,8 @@ cdef class PCG64(BitGenerator):
         seed : {None, int, SeedSequence}, optional
             Random seed initializing the pseudo-random number generator. Can
             be an integer in [0, 2**128), a SeedSequence instance or None
-            (the default). If `seed` is None, then ``PCG64`` will try to
-            read data from ``/dev/urandom`` (or the Windows analog) if
-            available. If unavailable, a 64-bit hash of the time and process
-            ID is used.
+            (the default). If `seed` is ``None``, a new SeedSequence is created
+            using entropy from the operating system.
         inc : {None, int}, optional
             The increment in the LCG. Can be an integer in [0, 2**128) or
             None. If inc is None, then it is initialized using entropy. The
@@ -407,8 +402,7 @@ cdef class PCG64(BitGenerator):
 
         Notes
         -----
-        The step size is phi (the Golden Ratio) when divided by the period
-        2**128.
+        The step size is floor(2**128 / phi), where phi is the Golden Ratio.
         """
         step = 0x9e3779b97f4a7c15f39cc0605cedc834
         step *= int(iter)
@@ -456,8 +450,9 @@ cdef class PCG64(BitGenerator):
 
         Returns a new bit generator with the state jumped
 
-        The state of the returned big generator is jumped as-if
-        2**(64 * iter) random numbers have been generated.
+        The state of the returned bit generator is jumped as-if
+        iter * floor(2**128 / phi) random numbers have been generated, where
+        phi is the Golden Ratio. The jump is taken modulo 2**128.
 
         Parameters
         ----------
@@ -471,7 +466,7 @@ cdef class PCG64(BitGenerator):
 
         Notes
         -----
-        The step size is phi (the Golden Ratio) when divided by 2**128.
+        The step size is floor(2**128 / phi), where phi is the Golden Ratio.
         """
         cdef PCG64 bit_generator
 
@@ -491,7 +486,7 @@ cdef class LCG128Mix(BitGenerator):
     Customizable 128-bit LCG bit generator with output mixing
 
     Support changing the LCG's multiplier and the output function,
-    including support for user-defined output functions. This big generator
+    including support for user-defined output functions. This bit generator
     is based on the PCG64 generator in [1]_ and [2]_ but adds additional
     options that allow the multiplier to be changed (see [3]_ for a list
     of good multipliers). It has been added based on the discussion in [4]_.
@@ -508,7 +503,7 @@ cdef class LCG128Mix(BitGenerator):
         If `inc` is None, then it is initialized using the same``SeedSequence``
         used by seed.
     multiplier : int, optional
-        The multipler to use in the LCG. Must be an odd integer in (0, 2**128).
+        The multiplier to use in the LCG. Must be an odd integer in (0, 2**128).
     output : {str, CFunction, FuncPtr}
         The name of the output function or a ctypes function or function pointer
         with a signature uint64(uint64, uint64). Supported options are:
@@ -522,7 +517,7 @@ cdef class LCG128Mix(BitGenerator):
 
     dxsm_multiplier : int, optional
         The multiplier to use in the DXSM output function. The default is the
-        DXSM multipler in PCG 2.0.
+        DXSM multiplier in PCG 2.0.
     post : bool, optional
         Whether the mix the output before or after the next increment of
         the LCG is computed. True updates the state and then mixes the
@@ -531,13 +526,13 @@ cdef class LCG128Mix(BitGenerator):
     Attributes
     ----------
     lock : threading.Lock
-        Lock instance that is shared so that the same bit git generator can
+        Lock instance that is shared so that the same bit generator can
         be used in multiple Generators without corrupting the state. Code that
         generates values from a bit generator should hold the bit generator's
         lock.
     seed_seq : {None, SeedSequence}
-        The SeedSequence instance used to initialize the generator if mode is
-        "sequence" or is seed is a SeedSequence.
+        The SeedSequence instance used to seed the generator. If `seed` is not
+        a SeedSequence, one is created from it.
 
     Notes
     -----
@@ -552,8 +547,8 @@ cdef class LCG128Mix(BitGenerator):
 
        s_{n+1} = m s_{n} + i \mod 2^{128}
 
-    where :math:`s` is the state of the generator, :math:`m` is the multipler
-    and :math:`i` is the increment. The multipler is a 128-bit unsigned
+    where :math:`s` is the state of the generator, :math:`m` is the multiplier
+    and :math:`i` is the increment. The multiplier is a 128-bit unsigned
     integer that should be chosen to have good spectral properties. The output
     of the LCG is the permuted using a predefined method or a user-defined
     function.
@@ -921,7 +916,7 @@ cdef class LCG128Mix(BitGenerator):
 
         Notes
         -----
-        The step size is phi (the Golden Ratio) when divided by 2**128.
+        The step size is floor(2**128 / phi), where phi is the Golden Ratio.
         """
         step = 0x9e3779b97f4a7c15f39cc0605cedc834
         step *= int(iter)
@@ -935,8 +930,9 @@ cdef class LCG128Mix(BitGenerator):
 
         Returns a new bit generator with the state jumped
 
-        The state of the returned big generator is jumped as-if
-        2**(64 * iter) random numbers have been generated.
+        The state of the returned bit generator is jumped as-if
+        iter * floor(2**128 / phi) random numbers have been generated, where
+        phi is the Golden Ratio. The jump is taken modulo 2**128.
 
         Parameters
         ----------
@@ -950,8 +946,7 @@ cdef class LCG128Mix(BitGenerator):
 
         Notes
         -----
-        The step size is phi (the Golden Ratio) when divided by the period
-        2**128.
+        The step size is floor(2**128 / phi), where phi is the Golden Ratio.
         """
         cdef LCG128Mix bit_generator
 
@@ -980,19 +975,19 @@ cdef class PCG64DXSM(PCG64):
         SeedSequence initialized with system entropy to Seed the generator
     inc : {None, int}, optional
         The increment in the LCG. Can be an integer in [0, 2**128) or None.
-        If inc is None, then it is initialized using the same SeedSeuqnce used
+        If inc is None, then it is initialized using the same SeedSequence used
         for seed.
 
     Attributes
     ----------
     lock : threading.Lock
-        Lock instance that is shared so that the same bit git generator can
+        Lock instance that is shared so that the same bit generator can
         be used in multiple Generators without corrupting the state. Code that
         generates values from a bit generator should hold the bit generator's
         lock.
     seed_seq : {None, SeedSequence}
-        The SeedSequence instance used to initialize the generator if mode is
-        "sequence" or is seed is a SeedSequence.
+        The SeedSequence instance used to seed the generator. If `seed` is not
+        a SeedSequence, one is created from it.
 
     Notes
     -----
@@ -1002,8 +997,8 @@ cdef class PCG64DXSM(PCG64):
 
        s_{n+1} = m s_{n} + i \mod 2^{128}
 
-    where :math:`s` is the state of the generator, :math:`m` is the multipler
-    and :math:`i` is the increment. The multipler is a 64-bit unsigned
+    where :math:`s` is the state of the generator, :math:`m` is the multiplier
+    and :math:`i` is the increment. The multiplier is a 64-bit unsigned
     integer with good spectral properties. The output of the
     LCG is the permuted using the DXSM output function which is similar to an
     Xorshift ([1]_, [2]_).
@@ -1131,8 +1126,9 @@ cdef class PCG64DXSM(PCG64):
 
         Returns a new bit generator with the state jumped
 
-        The state of the returned big generator is jumped as-if
-        2**(64 * iter) random numbers have been generated.
+        The state of the returned bit generator is jumped as-if
+        iter * floor(2**128 / phi) random numbers have been generated, where
+        phi is the Golden Ratio. The jump is taken modulo 2**128.
 
         Parameters
         ----------
@@ -1146,7 +1142,7 @@ cdef class PCG64DXSM(PCG64):
 
         Notes
         -----
-        The step size is phi (the Golden Ratio) when divided by 2**128.
+        The step size is floor(2**128 / phi), where phi is the Golden Ratio.
         """
         cdef PCG64DXSM bit_generator
 

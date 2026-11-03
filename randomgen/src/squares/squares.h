@@ -61,7 +61,9 @@ inline static double squares_next_double(squares_state_t *state) {
   return (squares64(state) >> 11) * (1.0 / 9007199254740992.0);
 }
 inline static uint64_t squares_32_next64(squares_state_t *state) {
-  return squares32(state) | (((uint64_t)squares32(state)) << 32);
+  uint64_t low = squares32(state);
+  uint64_t high = squares32(state);
+  return low | (high << 32);
 }
 
 inline static uint32_t squares_32_next32(squares_state_t *state) {

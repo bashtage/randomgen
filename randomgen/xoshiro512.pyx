@@ -24,22 +24,21 @@ cdef class Xoshiro512(BitGenerator):
     seed : {None, int, array_like[uint64], SeedSequence}, optional
         Entropy initializing the pseudo-random number generator.
         Can be an integer in [0, 2**64), array of integers in [0, 2**64),
-        a SeedSequence instance or ``None`` (the default). If `seed`
-        is ``None``, then  data is read from ``/dev/urandom`` (or the
-        Windows analog) if available. If unavailable, a hash of the time
-        and process ID is used.
+        a SeedSequence instance or ``None`` (the default). If `seed` is
+        ``None``, a new SeedSequence is created using entropy from the
+        operating system.
 
 
     Attributes
     ----------
     lock : threading.Lock
-        Lock instance that is shared so that the same bit git generator can
+        Lock instance that is shared so that the same bit generator can
         be used in multiple Generators without corrupting the state. Code that
         generates values from a bit generator should hold the bit generator's
         lock.
     seed_seq : {None, SeedSequence}
-        The SeedSequence instance used to initialize the generator if mode is
-        "sequence" or is seed is a SeedSequence.
+        The SeedSequence instance used to seed the generator. If `seed` is not
+        a SeedSequence, one is created from it.
 
     Notes
     -----
@@ -60,15 +59,14 @@ cdef class Xoshiro512(BitGenerator):
 
     **State and Seeding**
 
-    The ``Xoshiro512`` state vector consists of a 4 element array
+    The ``Xoshiro512`` state vector consists of an 8-element array
     of 64-bit unsigned integers.
 
-    ``Xoshiro512`` is seeded using either a single 64-bit unsigned
-    integer or a vector of 64-bit unsigned integers. In either case, the seed
-    is used as an input for another simple random number generator, SplitMix64,
-    and the output of this PRNG function is used as the initial state. Using
-    a single 64-bit value for the seed can only initialize a small range of
-    the possible initial state values.
+    ``Xoshiro512`` is seeded using either a single 64-bit unsigned integer or a
+    vector of 64-bit unsigned integers. In either case, the seed is used as an
+    input to a SeedSequence, and the output of the SeedSequence is used as the
+    initial state. Using a single 64-bit value for the seed can only initialize
+    a small range of the possible initial state values.
 
     **Parallel Features**
 
@@ -141,9 +139,8 @@ cdef class Xoshiro512(BitGenerator):
             Entropy initializing the pseudo-random number generator.
             Can be an integer in [0, 2**64), array of integers in
             [0, 2**64), a SeedSequence instance or ``None`` (the default).
-            If `seed` is ``None``, then  data is read from ``/dev/urandom``
-            (or the Windows analog) if available. If unavailable, a hash
-            of the time and process ID is used.
+            If `seed` is ``None``, a new SeedSequence is created using entropy
+            from the operating system.
 
         Raises
         ------
@@ -203,8 +200,8 @@ cdef class Xoshiro512(BitGenerator):
 
         Returns a new bit generator with the state jumped
 
-        The state of the returned big generator is jumped as-if
-        2**(256 * iter) random numbers have been generated.
+        The state of the returned bit generator is jumped as-if
+        iter * 2**256 random numbers have been generated.
 
         Parameters
         ----------
