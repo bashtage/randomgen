@@ -310,16 +310,12 @@ xfail_strict = true
 addopts = "--strict"
 empty_parameter_set_mark = "xfail"
 filterwarnings = [
-   "error:covariance is not positive-semidefinite:RuntimeWarning",
-   "ignore:Generator:FutureWarning",
-   "ignore:RandomState:FutureWarning",
+   "error:The covariance is not positive-semidefinite:RuntimeWarning",
    "ignore:the imp module:DeprecationWarning",
-   "ignore:The default value of inc:FutureWarning",
    "ignore:`np.long` is a deprecated:DeprecationWarning:numba.core.types",
    "error:`np.bool` is a deprecated alias:DeprecationWarning:",
    "error:Passing None into shape:DeprecationWarning:",
    "error:overflow encountered in scalar negative:RuntimeWarning",
-   "error:mode is deprecated and will be removed:FutureWarning",
    "error:matching against an empty::",
 ]
 junit_family = "xunit2"
@@ -330,9 +326,8 @@ markers = [
 [tool.isort]
 profile = "black"
 src_paths = ["randomgen"]
-sections = ["FUTURE","COMPAT","STDLIB","THIRDPARTY","FIRSTPARTY","LOCALFOLDER"]
+sections = ["FUTURE","STDLIB","THIRDPARTY","FIRSTPARTY","LOCALFOLDER"]
 known_first_party = ["randomgen"]
-known_compat = ["randomgen.compat.*"]
 known_third_party=["Cython","numpy","matplotlib","pandas","pytest","cython","scipy","seaborn"]
 line_length=88
 force_grid_wrap=0
@@ -349,8 +344,6 @@ plugins = [ "Cython.Coverage" ]
 omit = [
   # Version file
   "*/_version.py",
-  # Compatibility code
-  "*/compat/*",
   "*/conftest.py",
 ]
 
@@ -393,7 +386,6 @@ exclude_also = [
 include = [ "*/randomgen/*" ]
 omit = [
   "*/_version.py",
-  "*/compat/*",
   "*recursions.py",
   "*samplers.py",
 ]

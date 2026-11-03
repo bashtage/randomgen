@@ -162,7 +162,7 @@ if __name__ == "__main__":
         "--size",
         type=str,
         default="1GB",
-        help="Set the size of data ot test using PractRand",
+        help="Set the size of data to test using PractRand",
     )
     parser.add_argument(
         "-e",

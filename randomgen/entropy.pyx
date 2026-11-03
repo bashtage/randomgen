@@ -147,8 +147,8 @@ def random_entropy(size=None, source="system"):
     Notes
     -----
     On Unix-like machines, reads from ``/dev/urandom``. On Windows machines
-    reads from the RSA algorithm provided by the cryptographic service
-    provider.
+    reads from the system-preferred random number generator using
+    ``BCryptGenRandom``.
 
     This function reads from the system entropy pool and so samples are
     not reproducible. In particular, it does *NOT* make use of a
