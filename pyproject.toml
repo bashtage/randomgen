@@ -2,7 +2,7 @@
 build-backend = 'mesonpy'
 requires = [
     'meson-python',
-    "cython>=3.0.13,<4",  # Sync with CYTHON_MIN_VER in setup
+    "cython>=3.1.0,<4",  # Sync with the Cython check in meson.build
     "numpy>=2.0.0,<3",
     "setuptools_scm[toml]>=9.2.0,<10",
 ]
@@ -11,7 +11,9 @@ requires = [
 name = "randomgen"
 # Keep syned with requirements.txt
 dependencies = [
-  "numpy>=1.22.3,<3",
+  # NumPy 2.4.0 removed SeedlessSequence, so builds against NumPy <= 2.3 or
+  # 2.4.1+ fail to import on it (#426). NumPy 2.4.1 restored it.
+  "numpy>=1.22.3,!=2.4.0,<3",
 ]
 authors = [{ name = "Kevin Sheppard", email = "kevin.k.sheppard@gmail.com" }]
 classifiers = [
@@ -28,10 +30,12 @@ classifiers = [
     "Programming Language :: C",
     "Programming Language :: Cython",
     "Programming Language :: Python :: 3.8",
-    "Programming Language :: Python :: 3.9",
     "Programming Language :: Python :: 3.10",
     "Programming Language :: Python :: 3.11",
-    "Topic :: Adaptive Technologies",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Programming Language :: Python :: 3.14",
+    "Programming Language :: Python :: 3.15",
     "Topic :: Artistic Software",
     "Topic :: Office/Business :: Financial",
     "Topic :: Scientific/Engineering",
@@ -86,7 +90,7 @@ doc = [
   "wheel",
   "setuptools_scm[toml]>=8.0.3,<9",
   "oldest-supported-numpy",
-  "cython>=3.0.13,<4",  # Sync with CYTHON_MIN_VER in setup
+  "cython>=3.1.0,<4",  # Sync with the Cython check in meson.build
   "numpy >=1.22",
   "scipy >=1.5.0",
   "ipython >=8.0.1",
@@ -116,7 +120,7 @@ dev = [
   "setuptools_scm[toml]>=9.2.0,<10",
   "packaging",
   # Performance
-  "cython>=3.0.10",
+  "cython>=3.1.0",
   "numba>=0.55",
   # Graphics
   "matplotlib>=3",

@@ -151,7 +151,8 @@ cdef class UserBitGenerator(BitGenerator):
             raise NotImplementedError(
                 "state_getter must be set during initialization to get the state."
             )
-        return self.state_getter()
+        with self.lock:
+            return self.state_getter()
 
     @state.setter
     def state(self, value):
@@ -159,7 +160,8 @@ cdef class UserBitGenerator(BitGenerator):
             raise NotImplementedError(
                 "state_setter must be set during initialization to set the state."
             )
-        self.state_setter(value)
+        with self.lock:
+            self.state_setter(value)
 
     cdef setup_bitgen(self):
         self.next_64_ptr = ctypes.cast(self.next_64, ctypes.c_void_p).value

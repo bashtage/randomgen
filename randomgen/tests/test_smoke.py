@@ -34,6 +34,10 @@ from randomgen import (
 from randomgen.entropy import _test_sentinel
 from randomgen.tests._utility import CustomPartial
 
+# Tests that reset the class's shared generator and then compare draws cannot
+# run in several threads at once (pytest-run-parallel)
+shared_state = pytest.mark.thread_unsafe(reason="resets the shared generator")
+
 
 @pytest.fixture(
     scope="module",
@@ -183,6 +187,7 @@ class RNG:
             bit_gen_name = self.rg.bit_generator.__class__.__name__
             pytest.skip(f"Advance is not supported by {bit_gen_name}")
 
+    @shared_state
     def test_jump(self):
         state = self.rg.bit_generator.state
         if hasattr(self.rg.bit_generator, "jump") and not isinstance(
@@ -214,6 +219,7 @@ class RNG:
             bit_gen_name = self.rg.bit_generator.__class__.__name__
             pytest.skip(f"jumped is not supported by {bit_gen_name}")
 
+    @shared_state
     def test_jumped_against_jump(self):
         if (
             hasattr(self.rg.bit_generator, "jumped")
@@ -232,6 +238,7 @@ class RNG:
             bit_gen_name = self.rg.bit_generator.__class__.__name__
             pytest.skip(f"jump or jumped is not supported by {bit_gen_name}")
 
+    @shared_state
     def test_jumped_against_jump_32bit(self):
         if (
             hasattr(self.rg.bit_generator, "jumped")
@@ -319,6 +326,7 @@ class RNG:
         assert self.rg.binomial(10, 0.5) >= 0
         assert self.rg.binomial(1000, 0.5) >= 0
 
+    @shared_state
     def test_reset_state(self):
         state = self.rg.bit_generator.state
         int_1 = self.rg.integers(2**31)
@@ -572,6 +580,7 @@ class RNG:
         state2 = self.rg.bit_generator.state
         assert comp_state(state1, state2)
 
+    @shared_state
     def test_array_scalar_seed_diff(self):
         if self.max_vector_seed_size == 1:
             pytest.skip("Skipping since max_vector_seed_size is 1")
@@ -673,6 +682,7 @@ class RNG:
         assert_equal(r1.dtype, np.float32)
         assert comp_state(rg.bit_generator.state, rg2.bit_generator.state)
 
+    @shared_state
     def test_output_fill(self):
         rg = self.rg
         state = rg.bit_generator.state
@@ -695,6 +705,7 @@ class RNG:
         direct = rg.standard_normal(size=size, dtype=np.float32)
         assert_equal(direct, existing)
 
+    @shared_state
     def test_output_filling_uniform(self):
         rg = self.rg
         state = rg.bit_generator.state
@@ -713,6 +724,7 @@ class RNG:
         direct = rg.random(size=size, dtype=np.float32)
         assert_equal(direct, existing)
 
+    @shared_state
     def test_output_filling_exponential(self):
         rg = self.rg
         state = rg.bit_generator.state
@@ -731,6 +743,7 @@ class RNG:
         direct = rg.standard_exponential(size=size, dtype=np.float32)
         assert_equal(direct, existing)
 
+    @shared_state
     def test_output_filling_gamma(self):
         rg = self.rg
         state = rg.bit_generator.state
@@ -749,6 +762,7 @@ class RNG:
         direct = rg.standard_gamma(1.0, size=size, dtype=np.float32)
         assert_equal(direct, existing)
 
+    @shared_state
     def test_output_filling_gamma_broadcast(self):
         rg = self.rg
         state = rg.bit_generator.state
@@ -791,6 +805,7 @@ class RNG:
         with pytest.raises(ValueError, match="Supplied output array must be C"):
             rg.standard_gamma(1.0, out=existing[::3])
 
+    @shared_state
     def test_integers_broadcast(self, dtype):
         if dtype is bool:
             upper = 2
@@ -860,6 +875,7 @@ class RNG:
         with pytest.raises(ValueError, match="high <= 0"):
             self.rg.integers([0], [0], dtype=dtype)
 
+    @shared_state
     def test_bit_generator_raw_large(self):
         bg = self.rg.bit_generator
         state = bg.state
@@ -900,6 +916,7 @@ class TestMT19937(RNG):
         cls._extra_setup()
         cls.seed_error = ValueError
 
+    @shared_state
     def test_numpy_state(self):
         nprg = np.random.RandomState()
         nprg.standard_normal(99)
@@ -1244,6 +1261,7 @@ class TestEntropy:
         e2 = entropy.random_entropy(source="fallback")
         assert e1 != e2
 
+    @pytest.mark.thread_unsafe(reason="changes module-level test flags")
     def test_not_success(self):
 
         _test_sentinel.testing_auto = True

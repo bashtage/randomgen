@@ -38,6 +38,11 @@ def mv_seed():
     return MV_SEED
 
 
+# Tests that restore the state of this fixture and then compare draws cannot
+# run in several threads at once (pytest-run-parallel)
+restores_state = pytest.mark.thread_unsafe(reason="restores the fixture's state")
+
+
 @pytest.fixture
 def extended_gen():
     pcg = PCG64(0)
@@ -443,6 +448,15 @@ def test_wishart_reduced_rank(method):
     assert np.linalg.matrix_rank(w) == 2
 
 
+@pytest.mark.parametrize("method", METHODS)
+def test_wishart_reduced_rank_mean(method):
+    # Rank 2 with an unequal diagonal so that pivoted Cholesky reorders
+    scale = np.array([[1.0, 2.0, 0.0], [2.0, 4.0, 0.0], [0.0, 0.0, 9.0]])
+    eg = ExtendedGenerator(PCG64(0))
+    w = eg.wishart(10, scale, size=20000, method=method, rank=2)
+    assert_allclose(w.mean(0) / 10, scale, atol=0.15)
+
+
 @pytest.mark.skipif(HAS_SCIPY, reason="Cannot test with SciPy")
 def test_missing_scipy_exception():
     scale = np.eye(3)
@@ -516,6 +530,41 @@ def test_factor_wishart():
     assert_allclose(np.diag((w[:, 1] / 5).mean(0)).mean(), 4, rtol=1e-2)
 
 
+NON_DIAG_SCALE = np.array([[2.0, 1.0, 0.5], [1.0, 3.0, -0.5], [0.5, -0.5, 1.5]])
+
+
+@pytest.mark.parametrize("method", ["svd", "eigh", "cholesky", "factor"])
+def test_wishart_non_diagonal_mean(method):
+    eg = ExtendedGenerator(PCG64(0))
+    scale = NON_DIAG_SCALE
+    if method == "factor":
+        scale = np.linalg.cholesky(scale)
+    w = eg.wishart(10, scale, size=20000, method=method)
+    assert_allclose(w.mean(0) / 10, NON_DIAG_SCALE, atol=0.05)
+
+
+@pytest.mark.parametrize("method", ["svd", "eigh", "cholesky", "factor"])
+def test_wishart_non_diagonal_mean_broadcast(method):
+    eg = ExtendedGenerator(PCG64(0))
+    expected = np.array([NON_DIAG_SCALE, 2 * NON_DIAG_SCALE])
+    scale = expected
+    if method == "factor":
+        scale = np.linalg.cholesky(scale)
+    # df=2 is less than the dimension, so it uses the small df path
+    w = eg.wishart([2, 10], scale, size=(20000, 2), method=method)
+    assert_allclose(w[:, 0].mean(0) / 2, expected[0], atol=0.1)
+    assert_allclose(w[:, 1].mean(0) / 10, expected[1], atol=0.1)
+
+
+def test_wishart_list_integer_scale():
+    eg = ExtendedGenerator(PCG64(0))
+    scale = [[[2, 1], [1, 3]], [[4, 2], [2, 6]]]
+    w = eg.wishart([5, 10], scale, size=(20000, 2))
+    assert_allclose(w[:, 0].mean(0) / 5, scale[0], atol=0.1)
+    assert_allclose(w[:, 1].mean(0) / 10, scale[1], atol=0.1)
+
+
+@restores_state
 def test_wishart_chi2(extended_gen):
     state = extended_gen.state
     w = extended_gen.standard_wishart(10, 1, 10, rescale=False)
@@ -525,6 +574,7 @@ def test_wishart_chi2(extended_gen):
     assert_allclose(np.squeeze(w), c)
 
 
+@restores_state
 @pytest.mark.parametrize("df", [3, 5])
 def test_standard_vs_full_wishart(extended_gen, df):
     state = extended_gen.state
@@ -534,6 +584,7 @@ def test_standard_vs_full_wishart(extended_gen, df):
     assert_allclose(sw, w)
 
 
+@restores_state
 def test_standard_wishart_direct_small(extended_gen):
     bg = extended_gen.bit_generator
     state = bg.state
@@ -547,6 +598,7 @@ def test_standard_wishart_direct_small(extended_gen):
         assert_allclose(direct, w[i])
 
 
+@restores_state
 def test_standard_wishart_direct_large(extended_gen):
     bg = extended_gen.bit_generator
     state = bg.state
@@ -670,6 +722,7 @@ def test_random_long_double(extended_gen):
     assert out.dtype == expected_type
 
 
+@restores_state
 def test_random_long_double_out(extended_gen):
     state = extended_gen.state
     out = np.empty((10, 10), dtype=np.longdouble)
@@ -731,6 +784,7 @@ def test_random_float_out(seed):
     assert_allclose(actual, other)
 
 
+@restores_state
 def test_random_long_double_direct(extended_gen):
     state = extended_gen.state
     actual = extended_gen.random(10, dtype=np.longdouble)

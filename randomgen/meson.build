@@ -59,18 +59,21 @@ cython_args = [
     '-X cdivision=True',
     '-X binding=True'
 ]
+if cy.version().version_compare('>=3.1.0')
+  cython_args += ['-X freethreading_compatible=True']
+endif
 cython_c_args =  ['-DNPY_NO_DEPRECATED_API=NPY_1_7_API_VERSION']
 cython_libs = []
 sse2_def = []
 if cc.get_id() == 'msvc' or cc.get_id() == 'clang-cl'
-  cython_c_args += cc.get_supported_arguments(['/Zp16','/wd4146', '/arch:SSE4.2','/arch:AVX2'])
+  cython_c_args += cc.get_supported_arguments(['/Zp16','/wd4146', '/arch:SSE4.2'])
 
   if cc.get_id() == 'msvc'
     cython_c_args += cc.get_supported_arguments(['/GL'])
    endif
 
   if cc.get_id() == 'clang-cl'
-    cython_c_args += cc.get_supported_arguments(['-maes', '-Wno-unused-but-set-variable', '-Wno-unused-function'])
+    cython_c_args += cc.get_supported_arguments(['-Wno-unused-but-set-variable', '-Wno-unused-function'])
   endif
 
   if cc.has_argument('/arch:SSE4.2')
@@ -83,10 +86,23 @@ if cc.get_id() == 'msvc' or cc.get_id() == 'clang-cl'
 else
   cython_c_args += ['-std=c99', '-U__GNUC_GNU_INLINE__']
   add_project_link_arguments('-lm', language : 'c')
-  cython_c_args += cc.get_supported_arguments(['-msse2', '-mrdrnd', '-mssse3', '-maes', '-mavx2'])
+  cython_c_args += cc.get_supported_arguments(['-msse2'])
   if cc.has_argument('-msse2')
     sse2_def += ['-DHAVE_SSE2=1']
   endif
+endif
+
+# ISA extensions are only enabled for the modules that check the CPU before
+# using them, so that randomgen can be imported on any x86-64 CPU. AVX2 is
+# enabled per function (RANDOMGEN_AVX2_TARGET). MSVC does not need flags to
+# use intrinsics.
+ssse3_args = []
+aes_args = []
+rdrnd_args = []
+if cc.get_id() != 'msvc'
+  ssse3_args = cc.get_supported_arguments(['-mssse3'])
+  aes_args = cc.get_supported_arguments(['-maes'])
+  rdrnd_args = cc.get_supported_arguments(['-mrdrnd'])
 endif
 
 if get_option('cython-coverage')
@@ -160,7 +176,6 @@ subdirs_list = [
     '_build',
     'compat',
     'examples',
-    'legacy',
     'src',
     'tests',
 ]
@@ -186,7 +201,7 @@ py.extension_module(
     include_directories: [inc_np, inc_aligned_malloc, include_directories('src/aesctr')],
     subdir: 'randomgen',
     cython_args: cython_args,
-    c_args: cython_c_args,
+    c_args: cython_c_args + aes_args,
 )
 py.extension_module(
     'chacha',
@@ -195,7 +210,7 @@ py.extension_module(
     include_directories: [inc_np, inc_aligned_malloc, include_directories('src/chacha')],
     subdir: 'randomgen',
     cython_args: cython_args,
-    c_args: cython_c_args,
+    c_args: cython_c_args + ssse3_args,
 )
 py.extension_module(
     'blabla',
@@ -240,7 +255,7 @@ py.extension_module(
     include_directories: [inc_np, inc_aligned_malloc, include_directories('src/rdrand')],
     subdir: 'randomgen',
     cython_args: cython_args,
-    c_args: cython_c_args,
+    c_args: cython_c_args + rdrnd_args,
 )
 py.extension_module(
     'sfmt',
@@ -258,7 +273,7 @@ py.extension_module(
     include_directories: [inc_np, inc_aligned_malloc, include_directories('src/speck-128')],
     subdir: 'randomgen',
     cython_args: cython_args,
-    c_args: cython_c_args + ['-DDSFMT_MEXP=19937'],
+    c_args: cython_c_args + ['-DDSFMT_MEXP=19937'] + ssse3_args,
 )
 py.extension_module(
     'common',
@@ -356,7 +371,6 @@ top_level_py_list = [
     'lxm.pyi',
     'mt19937.pyi',
     'mt64.pyi',
-    'mtrand.pyi',
     'mwcx.pyi',
     'pcg32.pyi',
     'pcg64.pyi',

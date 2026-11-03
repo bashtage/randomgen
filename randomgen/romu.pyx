@@ -168,15 +168,16 @@ cdef class Romu(BitGenerator):
             Dictionary containing the information required to describe the
             state of the PRNG
         """
-        return {"bit_generator": fully_qualified_name(self),
-                "state": {"w": self.rng_state.w,
-                          "x": self.rng_state.x,
-                          "y": self.rng_state.y,
-                          "z": self.rng_state.z,
-                          "variant": self.variant
-                          },
-                "has_uint32": self.rng_state.has_uint32,
-                "uinteger": self.rng_state.uinteger}
+        with self.lock:
+            return {"bit_generator": fully_qualified_name(self),
+                    "state": {"w": self.rng_state.w,
+                              "x": self.rng_state.x,
+                              "y": self.rng_state.y,
+                              "z": self.rng_state.z,
+                              "variant": self.variant
+                              },
+                    "has_uint32": self.rng_state.has_uint32,
+                    "uinteger": self.rng_state.uinteger}
 
     @state.setter
     def state(self, value):
@@ -186,11 +187,13 @@ cdef class Romu(BitGenerator):
         if bitgen not in (type(self).__name__, fully_qualified_name(self)):
             raise ValueError("state must be for a {0} "
                              "PRNG".format(type(self).__name__))
-        self.rng_state.w = value["state"]["w"]
-        self.rng_state.x = value["state"]["x"]
-        self.rng_state.y = value["state"]["y"]
-        self.rng_state.z = value["state"]["z"]
-        self.variant = self._check_variant(value["state"]["variant"])
-        self.rng_state.has_uint32 = value["has_uint32"]
-        self.rng_state.uinteger = value["uinteger"]
-        self._setup_bitgen()
+        variant = self._check_variant(value["state"]["variant"])
+        with self.lock:
+            self.rng_state.w = value["state"]["w"]
+            self.rng_state.x = value["state"]["x"]
+            self.rng_state.y = value["state"]["y"]
+            self.rng_state.z = value["state"]["z"]
+            self.variant = variant
+            self.rng_state.has_uint32 = value["has_uint32"]
+            self.rng_state.uinteger = value["uinteger"]
+            self._setup_bitgen()

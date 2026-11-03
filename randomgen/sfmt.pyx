@@ -175,9 +175,10 @@ cdef class SFMT(BitGenerator):
         """
         if iter < 0:
             raise ValueError("iter must be positive")
-        sfmt_jump_n(&self.rng_state, iter)
-        # Clear the buffer
-        self._reset_state_variables()
+        with self.lock:
+            sfmt_jump_n(&self.rng_state, iter)
+            # Clear the buffer
+            self._reset_state_variables()
 
     def jump(self, np.npy_intp iter=1):
         """
@@ -246,24 +247,29 @@ cdef class SFMT(BitGenerator):
         cdef uint64_t[::1] buffered_uint64
 
         state = np.empty(SFMT_N64, dtype=np.uint64)
-        for i in range(SFMT_N):
-            for j in range(2):
-                state[loc] = self.rng_state.state.state[i].u64[j]
-                loc += 1
+        buffered_uint64 = np.empty(SFMT_N64, dtype=np.uint64)
+        with self.lock:
+            for i in range(SFMT_N):
+                for j in range(2):
+                    state[loc] = self.rng_state.state.state[i].u64[j]
+                    loc += 1
+            for i in range(SFMT_N64):
+                buffered_uint64[i] = self.rng_state.buffered_uint64[i]
+            idx = self.rng_state.state.idx
+            buffer_loc = self.rng_state.buffer_loc
+            has_uint32 = self.rng_state.has_uint32
+            uinteger = self.rng_state.uinteger
         # If the state is s[0],s[1],s[2],s[3] on LE, it is s[1],s[0],s[3],s[2] on BE
         # when viewed as uint32
         state_arr = np.asarray(state).view(np.uint32)
 
-        buffered_uint64 = np.empty(SFMT_N64, dtype=np.uint64)
-        for i in range(SFMT_N64):
-            buffered_uint64[i] = self.rng_state.buffered_uint64[i]
         return {"bit_generator": fully_qualified_name(self),
                 "state": {"state": state_arr,
-                          "idx": self.rng_state.state.idx},
-                "buffer_loc": self.rng_state.buffer_loc,
+                          "idx": idx},
+                "buffer_loc": buffer_loc,
                 "buffered_uint64": np.asarray(buffered_uint64),
-                "has_uint32": self.rng_state.has_uint32,
-                "uinteger": self.rng_state.uinteger}
+                "has_uint32": has_uint32,
+                "uinteger": uinteger}
 
     @state.setter
     def state(self, value):
@@ -277,15 +283,16 @@ cdef class SFMT(BitGenerator):
         state = check_state_array(value["state"]["state"], 4 * SFMT_N, 32,
                                   "state")
         state = state.view(np.uint64)
-        for i in range(SFMT_N):
-            for j in range(2):
-                self.rng_state.state.state[i].u64[j] = state[loc]
-                loc += 1
-        self.rng_state.state.idx = value["state"]["idx"]
         buffered_uint64 = check_state_array(value["buffered_uint64"], SFMT_N64,
                                             64,  "buffered_uint64")
-        for i in range(SFMT_N64):
-            self.rng_state.buffered_uint64[i] = buffered_uint64[i]
-        self.rng_state.buffer_loc = value["buffer_loc"]
-        self.rng_state.has_uint32 = value["has_uint32"]
-        self.rng_state.uinteger = value["uinteger"]
+        with self.lock:
+            for i in range(SFMT_N):
+                for j in range(2):
+                    self.rng_state.state.state[i].u64[j] = state[loc]
+                    loc += 1
+            self.rng_state.state.idx = value["state"]["idx"]
+            for i in range(SFMT_N64):
+                self.rng_state.buffered_uint64[i] = buffered_uint64[i]
+            self.rng_state.buffer_loc = value["buffer_loc"]
+            self.rng_state.has_uint32 = value["has_uint32"]
+            self.rng_state.uinteger = value["uinteger"]

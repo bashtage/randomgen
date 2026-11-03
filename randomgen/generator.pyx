@@ -102,8 +102,10 @@ cdef _factorize(cov, meth, check_valid, tol, rank):
                 )
 
             func = get_lapack_funcs("pstrf")
-            _factor, _, rank_c, _ = func(cov)
+            _factor, piv, rank_c, _ = func(cov)
+            # pstrf factors P.T @ cov @ P, so undo the pivoting
             _factor = np.triu(_factor)
+            _factor[:, piv - 1] = _factor.copy()
             psd = rank_c >= rank
 
     if not psd and check_valid != "ignore":
@@ -116,6 +118,15 @@ cdef _factorize(cov, meth, check_valid, tol, rank):
         else:
             raise ValueError(msg)
     return _factor
+
+
+cdef _wishart_factor(scale, meth, check_valid, tol, rank):
+    # Return A with A @ A.T = scale. _factorize returns F with F.T @ F = cov,
+    # while method="factor" passes A through unchanged
+    factor = _factorize(scale, meth, check_valid, tol, rank)
+    if meth == "factor":
+        return factor
+    return factor.T
 
 
 cdef class ExtendedGenerator:
@@ -324,6 +335,17 @@ cdef class ExtendedGenerator:
             Array of random floats of shape `size` (unless ``size=None``, in which
             case a single float is returned). If dtype is np.longdouble, then the
             returned type is a scalar np.longdouble. Otherwise it is a float.
+
+        Notes
+        -----
+        ``np.longdouble`` depends on the platform, and so do the values drawn
+        with it. Each value uses one 64-bit draw where ``long double`` is the
+        x87 80-bit format (x86-64 Linux and macOS) or the same as float64
+        (Windows and macOS on Apple silicon), and two 64-bit draws where it is
+        a 128-bit format (for example Linux on ARM64 or POWER). The same seed
+        therefore gives different long double values on these platforms, and
+        on the 128-bit ones the later draws from the generator differ too. Use
+        float64 or float32 when results must match across machines.
 
         Examples
         --------
@@ -648,8 +670,9 @@ cdef class ExtendedGenerator:
                 raise ValueError("Im(relation) ** 2 > Re(gamma ** 2 - relation** 2)")
 
             if size is None:
-                f_real = random_standard_normal(&self._bitgen)
-                f_imag = random_standard_normal(&self._bitgen)
+                with self.lock:
+                    f_real = random_standard_normal(&self._bitgen)
+                    f_imag = random_standard_normal(&self._bitgen)
 
                 compute_complex(&f_real, &f_imag, floc_r, floc_i, fvar_r,
                                 fvar_i, f_rho)
@@ -857,8 +880,9 @@ cdef class ExtendedGenerator:
             eigenvalues and their associated eigenvalues are used when method
             is `svd` or `eigh`. When method is 'cholesky, then the Cholesky
             of the upper ``rank`` by ``rank`` block is used. `factor` assumes
-            that scale has been pre-factored so that no transformation is
-            applied. When using `factor`, no check is performed on the rank.
+            that scale has been pre-factored so that it contains A, for
+            example the lower triangular Cholesky factor, and no transformation
+            is applied. When using `factor`, no check is performed on the rank.
 
         Returns
         -------
@@ -919,7 +943,7 @@ cdef class ExtendedGenerator:
         if not df_size and not shape_size:
             df_i = df_arr.item()
             out = self.standard_wishart(df_i, dim, size, False)
-            factor = _factorize(shape_arr, method, check_valid, tol, rank_val)
+            factor = _wishart_factor(shape_arr, method, check_valid, tol, rank_val)
             np.matmul(factor, out, out=out)
             np.matmul(out, factor.T, out=out)
             return out
@@ -960,9 +984,11 @@ and the trailing dimensions must match exactly so that
         out_shape = out.shape
         out = out.reshape((-1, np.prod(it_shape), dim, dim))
         temp_shape = np.shape(out[..., 0, :, :])
-        _factors = np.empty_like(scale)
-        for loc in np.ndindex(*scale.shape[:len(scale.shape) - 2]):
-            _factors[loc] = _factorize(scale[loc], method, check_valid, tol, rank_val)
+        _factors = np.empty_like(shape_arr)
+        for loc in np.ndindex(*shape_size):
+            _factors[loc] = _wishart_factor(
+                shape_arr[loc], method, check_valid, tol, rank_val
+            )
         _factors = _factors.reshape((-1, dim, dim))
 
         large_values = np.empty((block_size, dim, dim), dtype=np.float64)

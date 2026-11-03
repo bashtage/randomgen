@@ -6,14 +6,6 @@ uint64_t blabla_next64(blabla_state_t* state);
 uint32_t blabla_next32(blabla_state_t* state);
 double blabla_next_double(blabla_state_t* state);
 
-#if defined(__AVX2__) && __AVX2__
-#define BLABLA_FEATURE_REG RANDOMGEN_EBX
-#define BLABLA_FEATURE_FLAG 5
-#else
-#define BLABLA_FEATURE_REG 0
-#define BLABLA_FEATURE_FLAG 0
-#endif
-
 extern int blabla_avx2_capable(void)
 {
 #if !defined(RG_DISABLE_BLABLA_AVX2)

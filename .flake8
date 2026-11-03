@@ -19,7 +19,6 @@ per-file-ignores =
     randomgen/lxm.pyi: E301, E302
     randomgen/mt19937.pyi: E301, E302
     randomgen/mt64.pyi: E301, E302
-    randomgen/mtrand.pyi: E301, E302, E305
     randomgen/pcg32.pyi: E301, E302
     randomgen/pcg64.pyi: E301, E302
     randomgen/mwcx.pyi: E301, E302

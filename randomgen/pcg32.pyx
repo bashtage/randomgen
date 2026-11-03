@@ -153,9 +153,10 @@ cdef class PCG32(BitGenerator):
             Dictionary containing the information required to describe the
             state of the PRNG
         """
-        return {"bit_generator": fully_qualified_name(self),
-                "state": {"state": self.rng_state.pcg_state.state,
-                          "inc": self.rng_state.pcg_state.inc}}
+        with self.lock:
+            return {"bit_generator": fully_qualified_name(self),
+                    "state": {"state": self.rng_state.pcg_state.state,
+                              "inc": self.rng_state.pcg_state.inc}}
 
     @state.setter
     def state(self, value):
@@ -165,8 +166,9 @@ cdef class PCG32(BitGenerator):
         if bitgen not in (type(self).__name__, fully_qualified_name(self)):
             raise ValueError("state must be for a {0} "
                              "PRNG".format(type(self).__name__))
-        self.rng_state.pcg_state.state = value["state"]["state"]
-        self.rng_state.pcg_state.inc = value["state"]["inc"]
+        with self.lock:
+            self.rng_state.pcg_state.state = value["state"]["state"]
+            self.rng_state.pcg_state.inc = value["state"]["inc"]
 
     def advance(self, delta):
         """
@@ -202,7 +204,8 @@ cdef class PCG32(BitGenerator):
           from a single draw of a 32-bit RNG.
         """
         delta = wrap_int(delta, 64)
-        pcg32_advance_state(&self.rng_state, <uint64_t>delta)
+        with self.lock:
+            pcg32_advance_state(&self.rng_state, <uint64_t>delta)
         return self
 
     cdef jump_inplace(self, object iter):

@@ -164,9 +164,10 @@ cdef class Xoshiro512(BitGenerator):
             Number of times to jump the state of the rng.
         """
         cdef np.npy_intp i
-        for i in range(iter):
-            xoshiro512_jump(&self.rng_state)
-        self._reset_state_variables()
+        with self.lock:
+            for i in range(iter):
+                xoshiro512_jump(&self.rng_state)
+            self._reset_state_variables()
 
     def jump(self, np.npy_intp iter=1):
         """
@@ -235,12 +236,13 @@ cdef class Xoshiro512(BitGenerator):
             state of the PRNG
         """
         state = np.empty(8, dtype=np.uint64)
-        for i in range(8):
-            state[i] = self.rng_state.s[i]
-        return {"bit_generator": fully_qualified_name(self),
-                "s": state,
-                "has_uint32": self.rng_state.has_uint32,
-                "uinteger": self.rng_state.uinteger}
+        with self.lock:
+            for i in range(8):
+                state[i] = self.rng_state.s[i]
+            return {"bit_generator": fully_qualified_name(self),
+                    "s": state,
+                    "has_uint32": self.rng_state.has_uint32,
+                    "uinteger": self.rng_state.uinteger}
 
     @state.setter
     def state(self, value):
@@ -251,7 +253,8 @@ cdef class Xoshiro512(BitGenerator):
             raise ValueError("state must be for a {0} "
                              "PRNG".format(type(self).__name__))
         state = check_state_array(value["s"], 8, 64, "s")
-        for i in range(8):
-            self.rng_state.s[i] = <uint64_t>state[i]
-        self.rng_state.has_uint32 = value["has_uint32"]
-        self.rng_state.uinteger = value["uinteger"]
+        with self.lock:
+            for i in range(8):
+                self.rng_state.s[i] = <uint64_t>state[i]
+            self.rng_state.has_uint32 = value["has_uint32"]
+            self.rng_state.uinteger = value["uinteger"]
