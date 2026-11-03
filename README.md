@@ -166,12 +166,11 @@ conda install -c conda-forge randomgen
 
 ### SSE2
 
-`dSFTM` makes use of SSE2 by default.  If you have a very old computer
-or are building on non-x86, you can install using:
+`dSFMT` and `SFMT` make use of SSE2 by default.  If you have a very old
+computer or are building on non-x86, you can install using:
 
 ```bash
-export RANDOMGEN_NO_SSE2=1
-python -m pip install . 
+python -m pip install . -Csetup-args=-Ddisable-sse2=true
 ```
 
 ### Windows

@@ -70,7 +70,7 @@ if cc.get_id() == 'msvc' or cc.get_id() == 'clang-cl'
     cython_c_args += cc.get_supported_arguments(['-Wno-unused-but-set-variable', '-Wno-unused-function'])
   endif
 
-  if cc.has_argument('/arch:SSE4.2')
+  if cc.has_argument('/arch:SSE4.2') and not get_option('disable-sse2')
     sse2_def += ['-DHAVE_SSE2=1']
   endif
   add_project_link_arguments('/LTCG', language : 'c')
@@ -81,7 +81,7 @@ else
   cython_c_args += ['-std=c99', '-U__GNUC_GNU_INLINE__']
   add_project_link_arguments('-lm', language : 'c')
   cython_c_args += cc.get_supported_arguments(['-msse2'])
-  if cc.has_argument('-msse2')
+  if cc.has_argument('-msse2') and not get_option('disable-sse2')
     sse2_def += ['-DHAVE_SSE2=1']
   endif
 endif
