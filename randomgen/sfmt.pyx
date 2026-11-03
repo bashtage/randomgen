@@ -33,21 +33,19 @@ cdef class SFMT(BitGenerator):
         Entropy used to initialize the pseudo-random number generator. Can
         be any integer between 0 and 2**32 - 1 inclusive, an array (or other
         sequence) of unsigned 32-bit integers, , a SeedSequence instance or
-        ``None`` (the default). If `seed` is ``None``, the 624 32-bit
-        unsigned integers are read from ``/dev/urandom`` (or the Windows
-        analog) if available. If unavailable, a hash of the time and process
-        ID is used.
+        ``None`` (the default). If `seed` is ``None``, a new SeedSequence is
+        created using entropy from the operating system.
 
     Attributes
     ----------
     lock : threading.Lock
-        Lock instance that is shared so that the same bit git generator can
+        Lock instance that is shared so that the same bit generator can
         be used in multiple Generators without corrupting the state. Code that
         generates values from a bit generator should hold the bit generator's
         lock.
     seed_seq : {None, SeedSequence}
-        The SeedSequence instance used to initialize the generator if mode is
-        "sequence" or is seed is a SeedSequence.
+        The SeedSequence instance used to seed the generator. If `seed` is not
+        a SeedSequence, one is created from it.
 
     Notes
     -----
@@ -61,11 +59,12 @@ cdef class SFMT(BitGenerator):
 
     **State and Seeding**
 
-    The ``SFMT`` state vector consists of a 768 element array of 32-bit
-    unsigned integers plus a single integer value between 0 and 382
+    The ``SFMT`` state vector consists of a 624 element array of 32-bit
+    unsigned integers plus a single integer value between 0 and 624
     indicating the current position within the main array. The implementation
-    used here augments this with a 382 element array of doubles which are used
-    to efficiently access the random numbers produced by the SFMT generator.
+    used here augments this with a 312 element array of 64-bit unsigned
+    integers which are used to efficiently access the random numbers produced
+    by the SFMT generator.
 
     ``SFMT`` is seeded using either a single 32-bit unsigned integer or a
     vector of 32-bit unsigned integers. In either case, the input seed is used
@@ -152,10 +151,8 @@ cdef class SFMT(BitGenerator):
             Entropy used to initialize the pseudo-random number generator. Can
             be any integer between 0 and 2**32 - 1 inclusive, an array (or
             other sequence) of unsigned 32-bit integers, , a SeedSequence
-            instance or ``None`` (the default). If `seed` is ``None``, the
-            624 32-bit unsigned integers are read from ``/dev/urandom`` (or
-            the Windows analog) if available. If unavailable, a hash of the
-            time and process ID is used.
+            instance or ``None`` (the default). If `seed` is ``None``, a new
+            SeedSequence is created using entropy from the operating system.
 
         Raises
         ------
@@ -211,8 +208,8 @@ cdef class SFMT(BitGenerator):
 
         Returns a new bit generator with the state jumped
 
-        The state of the returned big generator is jumped as-if
-        2**(128 * iter) random numbers have been generated.
+        The state of the returned bit generator is jumped as-if
+        iter * 2**128 random numbers have been generated.
 
         Parameters
         ----------

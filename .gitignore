@@ -19,3 +19,4 @@ randomgen/*.c
 randomgen/tests/*.c
 doc/build
 doc/**/generated
+*.o

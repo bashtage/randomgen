@@ -8,6 +8,7 @@ Typical usage:
 python practrand-driver.py -if practrand-driver-config.py | \
     ./RNG_test stdin64 -tlmax 1TB -multithreaded
 """
+
 import numpy as np
 
 import randomgen as rg

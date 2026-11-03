@@ -8,12 +8,6 @@ def pytest_configure(config):
     config.addinivalue_line(
         "markers", "thread_unsafe: mark a test as unsafe to run in several threads"
     )
-    config.addinivalue_line("filterwarnings", "ignore:Generator:FutureWarning")
-    config.addinivalue_line("filterwarnings", "ignore:RandomState:FutureWarning")
-    config.addinivalue_line(
-        "filterwarnings",
-        "ignore:The default value of inc:FutureWarning",
-    )
 
 
 def pytest_addoption(parser):

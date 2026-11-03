@@ -1,3 +1,5 @@
+import ctypes
+
 import numpy as np
 from numpy.random import Generator
 import pytest
@@ -164,3 +166,36 @@ def test_32():
     assert gen.integers(0, 2**64, dtype=np.uint64) == np.iinfo(np.uint64).max
     np.testing.assert_allclose(gen.random(), (2**53 - 1) / (2**53), rtol=1e-14)
     assert "UserBitGenerator(Python)" in repr(bg)
+
+
+@pytest.mark.parametrize(
+    "kwargs",
+    [
+        {"next_raw": 1234},
+        {"next_raw": "next_raw"},
+        {"next_raw": None},
+        {"next_64": 1234},
+        {"next_32": 1234},
+        {"next_double": 1234},
+        {"state_getter": 1234},
+        {"state_setter": 1234},
+    ],
+)
+def test_not_callable(kwargs):
+    # An int is a function address to ctypes, and used to crash when called
+    kwargs = {"next_raw": lambda void_p: 0, **kwargs}
+    with pytest.raises(TypeError, match="must be callable"):
+        UserBitGenerator(**kwargs)
+
+
+def test_from_ctypes_not_callable():
+    with pytest.raises(TypeError, match="next_raw must be a ctypes function"):
+        UserBitGenerator.from_ctypes(1234, 1234, 1234, 1234, None)
+    ct_raw = ctypes.CFUNCTYPE(ctypes.c_uint64, ctypes.c_void_p)(lambda void_p: 0)
+    ct_32 = ctypes.CFUNCTYPE(ctypes.c_uint32, ctypes.c_void_p)(lambda void_p: 0)
+    ct_dbl = ctypes.CFUNCTYPE(ctypes.c_double, ctypes.c_void_p)(lambda void_p: 0.0)
+    ct_args = (ct_raw, ct_raw, ct_32, ct_dbl, None)
+    with pytest.raises(TypeError, match="state_getter must be callable"):
+        UserBitGenerator.from_ctypes(*ct_args, state_getter=1234)
+    with pytest.raises(TypeError, match="state_setter must be callable"):
+        UserBitGenerator.from_ctypes(*ct_args, state_setter=1234)
