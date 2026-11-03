@@ -117,7 +117,7 @@ generators, 'in addition' to the standard PRNG in NumPy.  The included PRNGs are
 * Other PRNGs including :class:`~randomgen.romu.Romu`, :class:`~randomgen.tyche.Tyche`,
   and :class:`~randomgen.squares.Squares`.
 
-.. _`NumPy's documentation`: https://docs.scipy.org/doc/numpy/reference/routines.random.html
+.. _`NumPy's documentation`: https://numpy.org/doc/stable/reference/random/index.html
 .. _`dSFMT authors' page`: http://www.math.sci.hiroshima-u.ac.jp/~m-mat/MT/SFMT/
 .. _`xorshift, xoroshiro and xoshiro authors' page`:  https://prng.di.unimi.it/
 .. _`PCG author's page`: https://www.pcg-random.org/

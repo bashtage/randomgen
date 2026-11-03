@@ -27,9 +27,8 @@ cdef class SPECK128(BitGenerator):
     seed : {None, int, SeedSequence}, optional
         Entropy initializing the pseudo-random number generator.
         Can be an integer in [0, 2**256), a SeedSequence instance or ``None``
-        (the default). If `seed` is ``None``, then  data is read
-        from ``/dev/urandom`` (or the Windows analog) if available. If
-        unavailable, a hash of the time and process ID is used.
+        (the default). If `seed` is ``None``, a new SeedSequence is created
+        using entropy from the operating system.
     counter : {None, int, array_like[uint64]}, optional
         Counter to use in the SPECK128 state. Can be either
         a Python int in [0, 2**128) or a 2-element uint64 array.
@@ -47,13 +46,13 @@ cdef class SPECK128(BitGenerator):
     Attributes
     ----------
     lock : threading.Lock
-        Lock instance that is shared so that the same bit git generator can
+        Lock instance that is shared so that the same bit generator can
         be used in multiple Generators without corrupting the state. Code that
         generates values from a bit generator should hold the bit generator's
         lock.
     seed_seq : {None, SeedSequence}
-        The SeedSequence instance used to initialize the generator if mode is
-        "sequence" or is seed is a SeedSequence.
+        The SeedSequence instance used to seed the generator. If `seed` is not
+        a SeedSequence, one is created from it.
 
     Notes
     -----
@@ -81,12 +80,11 @@ cdef class SPECK128(BitGenerator):
     The offset varies between 0 and 96 and shows the location in the buffer of
     the next 64 bits.
 
-    ``SPECK128`` is seeded using either a single 256-bit unsigned integer
-    or a vector of 4 64-bit unsigned integers. In either case, the seed is
-    used as an input for a second random number generator,
-    SplitMix64, and the output of this PRNG function is used as the initial
-    state. Using a single 64-bit value for the seed can only initialize a small
-    range of the possible initial state values.
+    ``SPECK128`` is seeded using either a single 256-bit unsigned integer or a
+    vector of 4 64-bit unsigned integers. In either case, the seed is used as
+    an input to a SeedSequence, and the output of the SeedSequence is used as
+    the initial state. Using a single 64-bit value for the seed can only
+    initialize a small range of the possible initial state values.
 
     **Parallel Features**
 
@@ -180,9 +178,8 @@ cdef class SPECK128(BitGenerator):
         seed : {None, int, SeedSequence}, optional
             Entropy initializing the pseudo-random number generator.
             Can be an integer in [0, 2**256), a SeedSequence instance or
-            ``None`` (the default). If `seed` is ``None``, then  data is read
-            from ``/dev/urandom`` (or the Windows analog) if available. If
-            unavailable, a hash of the time and process ID is used.
+            ``None`` (the default). If `seed` is ``None``, a new SeedSequence
+            is created using entropy from the operating system.
         counter : {None, int, array_like[uint64]}
             Integer in [0,2**128) containing the counter position or a
             2-element array of uint64 containing the counter
@@ -346,7 +343,7 @@ cdef class SPECK128(BitGenerator):
 
         Returns a new bit generator with the state jumped
 
-        The state of the returned big generator is jumped as-if
+        The state of the returned bit generator is jumped as-if
         iter * 2**64 random numbers have been generated.
 
         Parameters

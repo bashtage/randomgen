@@ -51,9 +51,8 @@ cdef class Philox(BitGenerator):
         Random seed initializing the pseudo-random number generator.
         Can be an integer in [0, 2**64), array of integers in
         [0, 2**64), a SeedSequence instance or ``None`` (the default).
-        If `seed` is ``None``, data will be read from ``/dev/urandom`` (or
-        the Windows analog) if available. If unavailable, a hash of the time
-        and process ID is used.
+        If `seed` is ``None``, a new SeedSequence is created using entropy from
+        the operating system.
     counter : {None, int, array_like[uint64]}, optional
         Counter to use in the Philox state. Can be either a Python int in
         [0, 2**(N*W)) where N is number of W is the width, or a M-element
@@ -77,18 +76,18 @@ cdef class Philox(BitGenerator):
         so matches NumPy exactly. To match NumPy, variant must be ``xsl-rr``.
         When using "numpy", ``inc`` must be ``None``.
 
-        .. versionadded: 2.0.0
+        .. versionadded:: 2.0.0
 
     Attributes
     ----------
     lock : threading.Lock
-        Lock instance that is shared so that the same bit git generator can
+        Lock instance that is shared so that the same bit generator can
         be used in multiple Generators without corrupting the state. Code that
         generates values from a bit generator should hold the bit generator's
         lock.
     seed_seq : {None, SeedSequence}
-        The SeedSequence instance used to initialize the generator if mode is
-        "sequence" or is seed is a SeedSequence.
+        The SeedSequence instance used to seed the generator. If `seed` is not
+        a SeedSequence, one is created from it.
 
     Notes
     -----
@@ -213,9 +212,6 @@ cdef class Philox(BitGenerator):
         for i in range(PHILOX_BUFFER_SIZE):
             self.rng_state.buffer[i].u64 = 0
 
-    def _supported_modes(self):
-        return "sequence", "numpy"
-
     def _seed_from_seq(self, counter=None):
         seed_seq_size = max(self.n * self.w // 128, 1)
         state = self._get_seed_seq().generate_state(seed_seq_size, np.uint64)
@@ -246,9 +242,8 @@ cdef class Philox(BitGenerator):
             Random seed initializing the pseudo-random number generator.
             Can be an integer in [0, 2**64), array of integers in
             [0, 2**64), a SeedSequence instance or ``None`` (the default).
-            If `seed` is ``None``, data will be read from ``/dev/urandom`` (or
-            the Windows analog) if available. If unavailable, a hash of the
-            time and process ID is used.
+            If `seed` is ``None``, a new SeedSequence is created using entropy
+            from the operating system.
         counter : {None, int, array_like[uint64]}, optional
             Counter to use in the Philox state. Can be either a Python int
             in [0, 2**256) or a 4-element uint64 array. If not provided,
@@ -422,8 +417,8 @@ cdef class Philox(BitGenerator):
 
         Returns a new bit generator with the state jumped
 
-        The state of the returned big generator is jumped as-if
-        2**(2*W * iter) random numbers have been generated.
+        The state of the returned bit generator is jumped as-if
+        iter * 2**(N*W/2) random numbers have been generated.
 
         Parameters
         ----------
