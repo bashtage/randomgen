@@ -154,6 +154,8 @@ cdef class PCG64(BitGenerator):
         self.rng_state.pcg_state = <pcg64_random_t *>PyArray_malloc_aligned(
             sizeof(pcg64_random_t)
         )
+        if self.rng_state.pcg_state == NULL:
+            raise MemoryError
         inc = None if seed is None else inc
 
         variant = "dxsm" if variant is None else variant
@@ -634,6 +636,8 @@ cdef class LCG128Mix(BitGenerator):
         self.rng_state.pcg_state = <lcg128mix_random_t *>PyArray_malloc_aligned(
             sizeof(lcg128mix_random_t)
         )
+        if self.rng_state.pcg_state == NULL:
+            raise MemoryError
         if hasattr(output, "argtypes") and hasattr(output, "restype"):
             from ctypes import c_ulonglong
             if output.argtypes != (c_ulonglong, c_ulonglong):

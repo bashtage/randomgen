@@ -2,12 +2,14 @@
 
 uint32_t pack_littleendian(const uint8_t *v)
 {
-    return *((uint32_t *)v);
+    uint32_t value;
+    memcpy(&value, v, sizeof(value));
+    return value;
 }
 
 void unpack_littleendian(uint32_t value, uint8_t *v)
 {
-    *((uint32_t *)v) = value;
+    memcpy(v, &value, sizeof(value));
 }
 
 /* Init Only */

@@ -112,6 +112,8 @@ cdef class DSFMT(BitGenerator):
         self.rng_state.buffered_uniforms = <double *>PyArray_calloc_aligned(
             DSFMT_N64, sizeof(double)
         )
+        if self.rng_state.state == NULL or self.rng_state.buffered_uniforms == NULL:
+            raise MemoryError
         self.rng_state.buffer_loc = DSFMT_N64
         self.seed(seed)
 
