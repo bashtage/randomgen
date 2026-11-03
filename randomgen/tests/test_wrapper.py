@@ -189,12 +189,9 @@ def test_not_callable(kwargs):
 
 
 def test_from_ctypes_not_callable():
-    def next_raw(void_p):
-        return 0
-
     with pytest.raises(TypeError, match="next_raw must be a ctypes function"):
         UserBitGenerator.from_ctypes(1234, 1234, 1234, 1234, None)
-    ct_raw = ctypes.CFUNCTYPE(ctypes.c_uint64, ctypes.c_void_p)(next_raw)
+    ct_raw = ctypes.CFUNCTYPE(ctypes.c_uint64, ctypes.c_void_p)(lambda void_p: 0)
     ct_32 = ctypes.CFUNCTYPE(ctypes.c_uint32, ctypes.c_void_p)(lambda void_p: 0)
     ct_dbl = ctypes.CFUNCTYPE(ctypes.c_double, ctypes.c_void_p)(lambda void_p: 0.0)
     ct_args = (ct_raw, ct_raw, ct_32, ct_dbl, None)
