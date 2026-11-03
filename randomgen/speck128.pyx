@@ -240,6 +240,11 @@ cdef class SPECK128(BitGenerator):
         ------
         ValueError
             If SSE 4.1 is not supported
+
+        Notes
+        -----
+        This setting is process-wide. Changing it on one instance changes it
+        for every SPECK128 instance in the process.
         """
         return bool(RANDOMGEN_USE_SSE41)
 

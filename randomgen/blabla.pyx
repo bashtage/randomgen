@@ -175,6 +175,11 @@ cdef class BlaBla(BitGenerator):
         ------
         ValueError
             If SIMD is not supported
+
+        Notes
+        -----
+        This setting is process-wide. Changing it on one instance changes it
+        for every BlaBla instance in the process.
         """
         return bool(RANDOMGEN_USE_AVX2)
 
