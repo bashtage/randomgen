@@ -43,7 +43,9 @@ extern void mt19937_init_by_array(mt19937_state_t *state, uint32_t *init_key,
                                   int key_length);
 
 static INLINE uint64_t mt19937_next64(mt19937_state_t *state) {
-  return (uint64_t)mt19937_next(state) << 32 | mt19937_next(state);
+  uint64_t high = mt19937_next(state);
+  uint64_t low = mt19937_next(state);
+  return high << 32 | low;
 }
 
 static INLINE uint32_t mt19937_next32(mt19937_state_t *state) {
