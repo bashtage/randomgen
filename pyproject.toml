@@ -66,7 +66,9 @@ keywords = [
     "RDRAND",
 ]
 license = "NCSA"
-license-files = [ "LICENSE.md" ]
+# The third-party code in randomgen/src carries its own license files, which
+# must accompany the compiled extensions (the sources are no longer installed)
+license-files = [ "LICENSE.md", "randomgen/src/*/LICENSE.md" ]
 maintainers = [
   { name = "Kevin Sheppard", email = "kevin.k.sheppard@gmail.com" },
 ]
