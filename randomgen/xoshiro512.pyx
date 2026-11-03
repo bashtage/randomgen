@@ -32,7 +32,7 @@ cdef class Xoshiro512(BitGenerator):
     Attributes
     ----------
     lock : threading.Lock
-        Lock instance that is shared so that the same bit git generator can
+        Lock instance that is shared so that the same bit generator can
         be used in multiple Generators without corrupting the state. Code that
         generates values from a bit generator should hold the bit generator's
         lock.
@@ -200,7 +200,7 @@ cdef class Xoshiro512(BitGenerator):
 
         Returns a new bit generator with the state jumped
 
-        The state of the returned big generator is jumped as-if
+        The state of the returned bit generator is jumped as-if
         iter * 2**256 random numbers have been generated.
 
         Parameters

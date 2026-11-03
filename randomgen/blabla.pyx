@@ -42,7 +42,7 @@ cdef class BlaBla(BitGenerator):
     Attributes
     ----------
     lock : threading.Lock
-        Lock instance that is shared so that the same bit git generator can
+        Lock instance that is shared so that the same bit generator can
         be used in multiple Generators without corrupting the state. Code that
         generates values from a bit generator should hold the bit generator's
         lock.
@@ -55,7 +55,7 @@ cdef class BlaBla(BitGenerator):
     BlaBla is a 64-bit PRNG that uses a counter-based design based on
     the Blake2b hash function [1]_. The idea was first implemented in
     Swift in [2]_, and later reimplemented in C++ in [3]_. The C
-    implementation is dervied from the C++ version. Instances using
+    implementation is derived from the C++ version. Instances using
     different values of the key produce distinct sequences. ``BlaBla`` has
     a period of :math:`2^{128}` and supports arbitrary advancing and
     jumping the sequence in increments of :math:`2^{64}`. These features allow
@@ -330,7 +330,7 @@ cdef class BlaBla(BitGenerator):
 
         Returns a new bit generator with the state jumped
 
-        The state of the returned big generator is jumped as-if
+        The state of the returned bit generator is jumped as-if
         iter * 2**64 random numbers have been generated.
 
         Parameters

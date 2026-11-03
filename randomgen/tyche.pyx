@@ -29,7 +29,7 @@ cdef class Tyche(BitGenerator):
     """
     Tyche(seed=None, idx=None, original=True)
 
-    Container for the Tychee pseudo-random number generator.
+    Container for the Tyche pseudo-random number generator.
 
     Parameters
     ----------
@@ -49,7 +49,7 @@ cdef class Tyche(BitGenerator):
     Attributes
     ----------
     lock : threading.Lock
-        Lock instance that is shared so that the same bit git generator can
+        Lock instance that is shared so that the same bit generator can
         be used in multiple Generators without corrupting the state. Code that
         generates values from a bit generator should hold the bit generator's
         lock.
