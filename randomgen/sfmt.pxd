@@ -7,6 +7,7 @@ from randomgen.common cimport (
     PyArray_free_aligned,
     PyArray_malloc_aligned,
     check_state_array,
+    check_state_int,
     fully_qualified_name,
     uint64_to_double,
 )

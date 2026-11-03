@@ -2607,6 +2607,165 @@ def test_jumped_configurations(cls, kwargs):
     )
 
 
+ROUND_TRIP_CONFIGURATIONS = [
+    *ALL_CONFIGURATIONS,
+    *[
+        pytest.param(cls, {}, id=cls.__name__)
+        for cls in (
+            AESCounter,
+            BlaBla,
+            ChaCha,
+            DSFMT,
+            EFIIX64,
+            HC128,
+            LCG128Mix,
+            LXM,
+            MT19937,
+            MT64,
+            PCG32,
+            SFC64,
+            SFMT,
+            SPECK128,
+            Xorshift1024,
+            Xoshiro256,
+            Xoshiro512,
+        )
+    ],
+]
+
+
+@pytest.mark.parametrize(("cls", "kwargs"), ROUND_TRIP_CONFIGURATIONS)
+@pytest.mark.parametrize("warmup", [0, 7, 1000])
+def test_state_round_trip(cls, kwargs, warmup):
+    bg = cls(1234, **kwargs)
+    ref = cls(1234, **kwargs)
+    bg.random_raw(warmup)
+    ref.random_raw(warmup)
+    bg.state = bg.state
+    assert_state_equal(bg.state, ref.state)
+    assert_array_equal(bg.random_raw(100), ref.random_raw(100))
+
+
+def _replace(state, path, value):
+    state = copy.deepcopy(state)
+    inner = state
+    for key in path[:-1]:
+        inner = inner[key]
+    inner[path[-1]] = value
+    return state
+
+
+INVALID_STATES = [
+    (Philox, {}, ("buffer_pos",), 5, "buffer_pos"),
+    (Philox, {}, ("buffer_pos",), -1, "buffer_pos"),
+    (Philox, {}, ("number",), 6, "created with"),
+    (ThreeFry, {}, ("buffer_pos",), 5, "buffer_pos"),
+    (ThreeFry, {}, ("buffer_pos",), -1, "buffer_pos"),
+    (ThreeFry, {}, ("number",), 6, "created with"),
+    (MT19937, {}, ("state", "pos"), 625, "pos"),
+    (MT19937, {}, ("state", "pos"), -1, "pos"),
+    (MT64, {}, ("state", "pos"), 313, "pos"),
+    (MT64, {}, ("state", "pos"), -1, "pos"),
+    (Xorshift1024, {}, ("state", "p"), 16, "p must"),
+    (Xorshift1024, {}, ("state", "p"), -1, "p must"),
+    (SPECK128, {}, ("state", "rounds"), 0, "rounds"),
+    (SPECK128, {}, ("state", "rounds"), 35, "rounds"),
+    (SPECK128, {}, ("state", "rounds"), -1, "rounds"),
+    (SPECK128, {}, ("state", "offset"), 97, "offset"),
+    (SPECK128, {}, ("state", "offset"), -8, "offset"),
+    (SPECK128, {}, ("state", "offset"), 12, "multiple of 8"),
+    (AESCounter, {}, ("s", "offset"), 65, "offset"),
+    (AESCounter, {}, ("s", "offset"), -8, "offset"),
+    (AESCounter, {}, ("s", "offset"), 4, "multiple of 8"),
+    (BlaBla, {}, ("state", "rounds"), -2, "rounds"),
+    (BlaBla, {}, ("state", "rounds"), 0, "rounds"),
+    (BlaBla, {}, ("state", "rounds"), 3, "even"),
+    (ChaCha, {}, ("state", "rounds"), -2, "rounds"),
+    (ChaCha, {}, ("state", "rounds"), 0, "rounds"),
+    (ChaCha, {}, ("state", "rounds"), 3, "even"),
+    (HC128, {}, ("state", "hc_idx"), 1024, "hc_idx"),
+    (HC128, {}, ("state", "hc_idx"), -16, "hc_idx"),
+    (HC128, {}, ("state", "hc_idx"), 8, "multiple of 16"),
+    (HC128, {}, ("state", "buffer_idx"), 17, "buffer_idx"),
+    (HC128, {}, ("state", "buffer_idx"), -1, "buffer_idx"),
+    (DSFMT, {}, ("state", "idx"), 383, "idx"),
+    (DSFMT, {}, ("state", "idx"), -1, "idx"),
+    (DSFMT, {}, ("buffer_loc",), 383, "buffer_loc"),
+    (DSFMT, {}, ("buffer_loc",), -1, "buffer_loc"),
+    (DSFMT, {}, ("buffered_uniforms",), np.zeros(10), "buffered_uniforms"),
+    (SFMT, {}, ("state", "idx"), 625, "idx"),
+    (SFMT, {}, ("state", "idx"), -1, "idx"),
+    (SFMT, {}, ("buffer_loc",), 313, "buffer_loc"),
+    (SFMT, {}, ("buffer_loc",), -1, "buffer_loc"),
+    (PCG64, {}, ("variant",), "unknown", "variant unknown is not known"),
+    (PCG64, {}, ("variant",), 3, "variant 3 is not known"),
+    (JSF, {}, ("state", "p"), 64, "p must"),
+    (JSF, {}, ("state", "q"), -1, "q must"),
+    (JSF, {}, ("state", "r"), 64, "r must"),
+    (JSF, {"size": 32}, ("state", "r"), 32, "r must"),
+    (JSF, {}, ("state", "a"), 2**64, "a must"),
+    (JSF, {"size": 32}, ("state", "d"), 2**32, "d must"),
+    (JSF, {}, ("seed_size",), 0, "seed_size"),
+    (JSF, {}, ("seed_size",), 4, "seed_size"),
+]
+
+
+@pytest.mark.parametrize(
+    ("cls", "kwargs", "path", "value", "match"),
+    [
+        pytest.param(
+            *args, id=f"{args[0].__name__}-{'.'.join(args[2])}={args[3]!r}"[:60]
+        )
+        for args in INVALID_STATES
+    ],
+)
+def test_invalid_state_rejected(cls, kwargs, path, value, match):
+    bg = cls(1234, **kwargs)
+    state = bg.state
+    invalid = _replace(state, path, value)
+    with pytest.raises(ValueError, match=match):
+        bg.state = invalid
+    # Nothing was written
+    assert_state_equal(bg.state, state)
+    bg.state = state
+
+
+def test_mt19937_legacy_invalid_pos():
+    bg = MT19937(1234)
+    state = bg.state
+    legacy = ("MT19937", state["state"]["key"], 625, 0, 0.0)
+    with pytest.raises(ValueError, match="pos"):
+        bg.state = legacy
+    assert_state_equal(bg.state, state)
+
+
+@pytest.mark.parametrize("cls", [HC128, SPECK128, EFIIX64, Xoshiro256, DSFMT, SFMT])
+def test_state_non_contiguous_arrays(cls):
+    # Arrays are read through a pointer so must be contiguous
+    def spread(value):
+        if not isinstance(value, np.ndarray):
+            return value
+        out = np.empty((value.shape[0], 2), dtype=value.dtype)
+        out[:, 0] = value
+        out[:, 1] = ~value if value.dtype.kind == "u" else 1
+        out = out[:, 0]
+        assert not out.flags.c_contiguous
+        return out
+
+    def convert(value):
+        if isinstance(value, dict):
+            return {key: convert(val) for key, val in value.items()}
+        return spread(value)
+
+    bg = cls(1234)
+    bg.random_raw(5)
+    ref = cls(1234)
+    ref.random_raw(5)
+    bg.state = convert(bg.state)
+    assert_state_equal(bg.state, ref.state)
+    assert_array_equal(bg.random_raw(50), ref.random_raw(50))
+
+
 def _seq():
     return SeedSequence(20241103)
 

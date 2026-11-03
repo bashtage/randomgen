@@ -291,10 +291,13 @@ cdef class AESCounter(BitGenerator):
         if counter.ndim != 1 or counter.shape[0] != 2 * (4):
             raise ValueError("counter must be a 1d uint64 array with 8 "
                              "elements")
+        offset = check_state_int(value["s"]["offset"], "offset", 0, 16 * 4)
+        if offset % 8:
+            raise ValueError("offset must be a multiple of 8.")
         with self.lock:
             for i in range(16 * 4):
                 self.rng_state.state[i] = state[i]
-            self.rng_state.offset = value["s"]["offset"]
+            self.rng_state.offset = offset
             aesctr_set_seed_counter(self.rng_state,
                                     <uint64_t*>np.PyArray_DATA(seed),
                                     <uint64_t*>np.PyArray_DATA(counter))

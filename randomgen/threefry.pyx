@@ -356,6 +356,9 @@ cdef class ThreeFry(BitGenerator):
         ctr = check_state_array(state["counter"], n, w, "counter")
         key = check_state_array(state["key"], n, w, "key")
         buffer = check_state_array(value["buffer"], n, w, "buffer")
+        buffer_pos = check_state_int(
+            value["buffer_pos"], "buffer_pos", 0, THREEFRY_BUFFER_SIZE
+        )
         with self.lock:
             # Reset to make sure buffer is 0ed
             self._reset_state_variables()
@@ -379,7 +382,7 @@ cdef class ThreeFry(BitGenerator):
 
             self.rng_state.has_uint32 = value["has_uint32"]
             self.rng_state.uinteger = value["uinteger"]
-            self.rng_state.buffer_pos = value["buffer_pos"]
+            self.rng_state.buffer_pos = buffer_pos
 
     def _configure_from_state(self, value):
         n = value.get("number", 4)

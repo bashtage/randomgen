@@ -209,6 +209,10 @@ cdef class HC128(BitGenerator):
         p = check_state_array(state["p"], 512, 32, "p")
         q = check_state_array(state["q"], 512, 32, "q")
         buffer = check_state_array(state["buffer"], 16, 32, "buffer")
+        hc_idx = check_state_int(state["hc_idx"], "hc_idx", 0, 1023)
+        if hc_idx % 16:
+            raise ValueError("hc_idx must be a multiple of 16.")
+        buffer_idx = check_state_int(state["buffer_idx"], "buffer_idx", 0, 16)
         p_arr = <uint32_t *>np.PyArray_DATA(p)
         q_arr = <uint32_t *>np.PyArray_DATA(q)
         buf_arr = <uint32_t *>np.PyArray_DATA(buffer)
@@ -218,5 +222,5 @@ cdef class HC128(BitGenerator):
                 self.rng_state.q[i] = q_arr[i]
             for i in range(16):
                 self.rng_state.buffer[i] = buf_arr[i]
-            self.rng_state.hc_idx = state["hc_idx"]
-            self.rng_state.buffer_idx = state["buffer_idx"]
+            self.rng_state.hc_idx = hc_idx
+            self.rng_state.buffer_idx = buffer_idx

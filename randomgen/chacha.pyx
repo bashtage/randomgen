@@ -269,6 +269,9 @@ cdef class ChaCha(BitGenerator):
         block = state["block"]
         keysetup = state["keysetup"]
         ctr = state["ctr"]
+        rounds = check_state_int(state["rounds"], "rounds", 1, 2**31 - 1)
+        if rounds % 2:
+            raise ValueError("rounds must be even and >= 2")
         with self.lock:
             for i in range(16):
                 self.rng_state.block[i] = block[i]
@@ -276,4 +279,4 @@ cdef class ChaCha(BitGenerator):
                 self.rng_state.keysetup[i] = keysetup[i]
             for i in range(2):
                 self.rng_state.ctr[i] = ctr[i]
-            self.rng_state.rounds = state["rounds"]
+            self.rng_state.rounds = rounds

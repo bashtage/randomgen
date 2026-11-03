@@ -313,6 +313,10 @@ cdef class SPECK128(BitGenerator):
         buffer = check_state_array(state["buffer"], SPECK_UNROLL, 64, "buffer")
         round_key = check_state_array(state["round_key"], 2*SPECK_MAX_ROUNDS, 64,
                                       "round_key")
+        rounds = check_state_int(state["rounds"], "rounds", 1, SPECK_MAX_ROUNDS)
+        offset = check_state_int(state["offset"], "offset", 0, 8 * SPECK_UNROLL)
+        if offset % 8:
+            raise ValueError("offset must be a multiple of 8.")
 
         with self.lock:
             arr = <uint64_t*>np.PyArray_DATA(ctr)
@@ -328,8 +332,8 @@ cdef class SPECK128(BitGenerator):
                 self.rng_state.round_key[i].u64[0] = arr[2 * i]
                 self.rng_state.round_key[i].u64[1] = arr[2 * i + 1]
 
-            self.rng_state.rounds = state["rounds"]
-            self.rng_state.offset = state["offset"]
+            self.rng_state.rounds = rounds
+            self.rng_state.offset = offset
             self.rng_state.has_uint32 = value["has_uint32"]
             self.rng_state.uinteger = value["uinteger"]
 

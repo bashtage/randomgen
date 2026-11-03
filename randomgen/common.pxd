@@ -26,6 +26,7 @@ cdef object prepare_ctypes(bitgen_t *bitgen)
 cdef object wrap_int(object val, object bits)
 cdef object check_state_array(object arr, np.npy_intp required_len,
                               int required_bits, object name)
+cdef object check_state_int(object value, str name, object lower, object upper)
 cdef int check_state_config(object bit_generator, str name, object current,
                             object new) except -1
 cpdef object object_to_int(object val, object bits, object name,
