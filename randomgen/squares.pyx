@@ -186,8 +186,8 @@ def generate_keys(seed=None, intptr_t n=1, bint unique=False):
         Entropy initializing the pseudo-random number generator.
         Can be an integer in [0, 2**64), array of integers in [0, 2**64),
         a SeedSequence instance or ``None`` (the default). If `seed` is
-        ``None``, then  data is read from ``/dev/urandom`` (or the Windows
-        analog) if available.
+        ``None``, a new SeedSequence is created using entropy from the
+        operating system.
     n : int, optional
         Number of keys to generate. Must be a positive integer. Default is 1.
     unique : bool, optional
@@ -213,7 +213,7 @@ def generate_keys(seed=None, intptr_t n=1, bint unique=False):
       be different from word n-1.
 
     There is no guarantee that the keys returns are distinct unless ``unique``
-    is True. Using unqiue keys can be expensive as it requires calling
+    is True. Using unique keys can be expensive as it requires calling
     np.unique on the generated keys, and then regenerating keys additional
     keys if there are incufficient unique keys. The number of distinct keys
     is
@@ -314,11 +314,11 @@ cdef class Squares(BitGenerator):
         Entropy initializing the pseudo-random number generator.
         Can be an integer in [0, 2**64), array of integers in [0, 2**64),
         a SeedSequence instance or ``None`` (the default). If `seed` is
-        ``None``, then  data is read from ``/dev/urandom`` (or the Windows
-        analog) if available.
+        ``None``, a new SeedSequence is created using entropy from the
+        operating system.
     counter : {None, int}, optional
         The initial counter to use when constructing the PRNG.
-        The defalt value is 0.
+        The default value is 0.
     key : {None, int}, optional
         The key to use when constructing the PRNG. If None, the key is
         generated using the seeded SeedSequence. Default is None. Setting
@@ -329,13 +329,13 @@ cdef class Squares(BitGenerator):
     Attributes
     ----------
     lock : threading.Lock
-        Lock instance that is shared so that the same bit git generator can
+        Lock instance that is shared so that the same bit generator can
         be used in multiple Generators without corrupting the state. Code that
         generates values from a bit generator should hold the bit generator's
         lock.
     seed_seq : {None, SeedSequence}
-        The SeedSequence instance used to initialize the generator if mode is
-        "sequence" or is seed is a SeedSequence.
+        The SeedSequence instance used to seed the generator. If `seed` is not
+        a SeedSequence, one is created from it.
 
     Notes
     -----
@@ -479,9 +479,8 @@ cdef class Squares(BitGenerator):
             Entropy initializing the pseudo-random number generator.
             Can be an integer in [0, 2**64), array of integers in
             [0, 2**64), a SeedSequence instance or ``None`` (the default).
-            If `seed` is ``None``, then  data is read from ``/dev/urandom``
-            (or the Windows analog) if available. If unavailable, a hash
-            of the time and process ID is used.
+            If `seed` is ``None``, a new SeedSequence is created using entropy
+            from the operating system.
 
         Raises
         ------
@@ -570,8 +569,9 @@ cdef class Squares(BitGenerator):
 
         Returns a new bit generator with the state jumped
 
-        The state of the returned big generator is jumped as-if
-        2**(64 * iter) random numbers have been generated.
+        The state of the returned bit generator is jumped as-if
+        iter * 11400714819323198485 random numbers have been generated,
+        modulo 2**64.
 
         Parameters
         ----------
@@ -585,7 +585,7 @@ cdef class Squares(BitGenerator):
 
         Notes
         -----
-        The step size is phi (the Golden Ratio) when divided by 2**64.
+        The step size is floor(2**64 / phi), where phi is the Golden Ratio.
         """
         cdef Squares bit_generator
         # phi * 2**64 = 11400714819323198485

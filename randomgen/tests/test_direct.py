@@ -419,7 +419,7 @@ class Base:
         bit_generator = self.setup_bitgenerator(self.data1["seed"])
         state = bit_generator.state
         get_state = bit_generator.__getstate__()
-        # Legacy numpy compatability
+        # Legacy numpy compatibility
         alt_state = get_state[0] if isinstance(get_state, tuple) else get_state
         assert_state_equal(state, alt_state)
 
