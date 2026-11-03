@@ -664,10 +664,12 @@ cdef class ExtendedGenerator:
             if fvar_r < 0:
                 raise ValueError("Re(gamma + relation) < 0")
             f_rho = 0.0
-            if fvar_i > 0 and fvar_r > 0:
+            has_var = fvar_i > 0 and fvar_r > 0
+            if has_var:
                 f_rho = frelation_i / sqrt(fvar_i * fvar_r)
-            if f_rho > 1.0 or f_rho < -1.0:
-                raise ValueError("Im(relation) ** 2 > Re(gamma ** 2 - relation** 2)")
+            # A zero variance requires a zero covariance
+            if f_rho > 1.0 or f_rho < -1.0 or (not has_var and frelation_i != 0):
+                raise ValueError("Im(relation) ** 2 > Re(gamma ** 2 - relation ** 2)")
 
             if size is None:
                 with self.lock:

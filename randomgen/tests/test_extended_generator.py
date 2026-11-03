@@ -309,6 +309,28 @@ def test_complex_normal_invalid():
     assert_raises(ValueError, random.complex_normal, relation=[10j])
 
 
+@pytest.mark.parametrize(
+    ("gamma", "relation"),
+    [(1, 1 + 1j), (1, -1 + 1j), (0, 1j), (1, 0.1 + 5j)],
+)
+def test_complex_normal_invalid_covariance(extended_gen, gamma, relation):
+    # A zero variance (or a correlation outside [-1, 1]) is only valid with a
+    # zero (or smaller) covariance, and all paths must agree
+    msg = r"Im\(relation\) \*\* 2 > Re\(gamma \*\* 2 - relation \*\* 2\)"
+    with pytest.raises(ValueError, match=msg):
+        extended_gen.complex_normal(0, gamma, relation)
+    with pytest.raises(ValueError, match=msg):
+        extended_gen.complex_normal(0, gamma, relation, size=(2,))
+    with pytest.raises(ValueError, match=msg):
+        extended_gen.complex_normal(0, gamma, [relation])
+
+
+@pytest.mark.parametrize("relation", [1, -1, 0.5j, 0.5 + 0.1j])
+def test_complex_normal_valid_covariance(extended_gen, relation):
+    assert np.isfinite(extended_gen.complex_normal(0, 1, relation))
+    assert np.all(np.isfinite(extended_gen.complex_normal(0, 1, [relation])))
+
+
 def test_random_uintegers():
     assert len(random.uintegers(10)) == 10
     assert len(random.uintegers(10, bits=32)) == 10
