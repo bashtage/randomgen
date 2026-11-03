@@ -1,3 +1,4 @@
+import copy
 import ctypes
 from itertools import combinations
 import os
@@ -213,3 +214,86 @@ def test_equivalence_pcg64dxsm(seed, inc):
     a_st = a.state
     b_st = b.state
     assert a_st["state"] == b_st["state"]
+
+
+def _python_output(func):
+    prototype = ctypes.CFUNCTYPE(
+        ctypes.c_ulonglong, ctypes.c_ulonglong, ctypes.c_ulonglong
+    )
+    return prototype(func)
+
+
+def _strip_address(rep):
+    return rep.split(" object at ")[0]
+
+
+def test_state_sets_output_function():
+    # Output functions are looked up when numbers are generated, so they can
+    # be changed through the state
+    callback = _python_output(lambda high, low: high)
+    bg = LCG128Mix(SEED, output=callback)
+    assert bg.state["state"]["output_func"] is callback
+    assert "Custom Output Function" in repr(bg)
+
+    for output in ("lower", "dxsm", "xsl-rr", "murmur3"):
+        other = LCG128Mix(SEED + 1, output=output)
+        bg.state = other.state
+        assert bg.state["state"]["output_func"] == output
+        assert "Custom Output Function" not in repr(bg)
+        assert _strip_address(repr(bg)) == _strip_address(repr(other))
+        np.testing.assert_equal(bg.random_raw(10), other.random_raw(10))
+
+    # And back to a ctypes function
+    other = LCG128Mix(SEED + 2, output=callback)
+    bg.state = other.state
+    assert bg.state["state"]["output_func"] is callback
+    assert "Custom Output Function" in repr(bg)
+    np.testing.assert_equal(bg.random_raw(10), other.random_raw(10))
+
+
+def test_state_sets_parameters():
+    other = LCG128Mix(
+        SEED,
+        output="dxsm",
+        post=False,
+        multiplier=DEFAULT_DXSM_MULTIPLIER,
+        dxsm_multiplier=DEFAULT_DXSM_MULTIPLIER + 2,
+    )
+    bg = LCG128Mix(SEED + 1)
+    bg.state = other.state
+    assert _strip_address(repr(bg)) == _strip_address(repr(other))
+    np.testing.assert_equal(bg.random_raw(10), other.random_raw(10))
+    # The multiplier is used when seeding
+    bg.seed(1234)
+    other.seed(1234)
+    assert bg.state == other.state
+    np.testing.assert_equal(bg.random_raw(10), other.random_raw(10))
+    # The parameters are used by jumped
+    jumped = bg.jumped()
+    expected = other.jumped()
+    assert _strip_address(repr(jumped)) == _strip_address(repr(expected))
+    np.testing.assert_equal(jumped.random_raw(10), expected.random_raw(10))
+
+
+@pytest.mark.parametrize(
+    ("key", "value", "exception", "match"),
+    [
+        ("output_func", "not-implemented", ValueError, "not-implemented not supported"),
+        ("output_func", 3, ValueError, "3 not supported"),
+        ("multiplier", DEFAULT_MULTIPLIER + 1, ValueError, "multiplier must be an od"),
+        ("multiplier", 0, ValueError, "multiplier must be an od"),
+        ("dxsm_multiplier", 2, ValueError, "dxsm_multiplier must be an od"),
+        ("dxsm_multiplier", 2**64 + 1, ValueError, "dxsm_multiplier must be an od"),
+        ("post", 1, TypeError, "post must be a bool"),
+    ],
+)
+def test_invalid_state_parameters(key, value, exception, match):
+    bg = LCG128Mix(SEED, output="dxsm")
+    state = bg.state
+    invalid = copy.deepcopy(state)
+    invalid["state"][key] = value
+    # Anything else that differs is not written when the state is rejected
+    invalid["state"]["state"] = state["state"]["state"] + 1
+    with pytest.raises(exception, match=match):
+        bg.state = invalid
+    assert bg.state == state
