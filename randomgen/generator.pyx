@@ -336,6 +336,17 @@ cdef class ExtendedGenerator:
             case a single float is returned). If dtype is np.longdouble, then the
             returned type is a scalar np.longdouble. Otherwise it is a float.
 
+        Notes
+        -----
+        ``np.longdouble`` depends on the platform, and so do the values drawn
+        with it. Each value uses one 64-bit draw where ``long double`` is the
+        x87 80-bit format (x86-64 Linux and macOS) or the same as float64
+        (Windows and macOS on Apple silicon), and two 64-bit draws where it is
+        a 128-bit format (for example Linux on ARM64 or POWER). The same seed
+        therefore gives different long double values on these platforms, and
+        on the 128-bit ones the later draws from the generator differ too. Use
+        float64 or float32 when results must match across machines.
+
         Examples
         --------
         >>> randomgen.generator.random()
@@ -653,10 +664,12 @@ cdef class ExtendedGenerator:
             if fvar_r < 0:
                 raise ValueError("Re(gamma + relation) < 0")
             f_rho = 0.0
-            if fvar_i > 0 and fvar_r > 0:
+            has_var = fvar_i > 0 and fvar_r > 0
+            if has_var:
                 f_rho = frelation_i / sqrt(fvar_i * fvar_r)
-            if f_rho > 1.0 or f_rho < -1.0:
-                raise ValueError("Im(relation) ** 2 > Re(gamma ** 2 - relation** 2)")
+            # A zero variance requires a zero covariance
+            if f_rho > 1.0 or f_rho < -1.0 or (not has_var and frelation_i != 0):
+                raise ValueError("Im(relation) ** 2 > Re(gamma ** 2 - relation ** 2)")
 
             if size is None:
                 with self.lock:
@@ -695,11 +708,13 @@ cdef class ExtendedGenerator:
         if np.any(np.not_equal(np.imag(ogamma), 0)):
             raise ValueError("Im(gamma) != 0")
 
-        cov = 0.5 * np.imag(orelation)
-        rho = np.zeros_like(cov)
-        idx = (v_real.flat > 0) & (v_imag.flat > 0)
-        rho.flat[idx] = cov.flat[idx] / np.sqrt(v_real.flat[idx] * v_imag.flat[idx])
-        if np.any(cov.flat[~idx] != 0) or np.any(np.abs(rho) > 1):
+        # gamma and relation can have different shapes, so use the shape of the
+        # variances, which is the broadcast of the two
+        cov = np.broadcast_to(0.5 * np.imag(orelation), np.shape(v_real))
+        rho = np.zeros(np.shape(v_real))
+        idx = (v_real > 0) & (v_imag > 0)
+        rho[idx] = cov[idx] / np.sqrt(v_real[idx] * v_imag[idx])
+        if np.any(cov[~idx] != 0) or np.any(np.abs(rho) > 1):
             raise ValueError("Im(relation) ** 2 > Re(gamma ** 2 - relation ** 2)")
 
         if size is not None:
@@ -794,6 +809,8 @@ cdef class ExtendedGenerator:
         cdef double *n_data
         cdef double *out_data
 
+        if df <= 0:
+            raise ValueError("df must contain strictly positive integer values.")
         if size is None or size == ():
             sz = 1
         elif np.isscalar(size):
@@ -957,6 +974,8 @@ cdef class ExtendedGenerator:
         else:
             if isinstance(size, (int, np.integer)):
                 size = (int(size),)
+            else:
+                size = tuple(size)
             if len(size) < len(it_shape) or size[len(size)-len(it_shape):] != it_shape:
                 err_msg = (
 f"""size {size} is not compatible with the broadcast shape of `df` and `scale`
