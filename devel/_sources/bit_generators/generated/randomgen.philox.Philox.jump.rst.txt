@@ -1,6 +1,0 @@
-﻿randomgen.philox.Philox.jump
-============================
-
-.. currentmodule:: randomgen.philox
-
-.. automethod:: Philox.jump

@@ -21,7 +21,7 @@
     
     
       
-        <title>Mersenne Twister (MT19937) - RandomGen v2.3.1 (+144)</title>
+        <title>Mersenne Twister (MT19937) - RandomGen v2.3.1 (+153)</title>
       
     
     
@@ -87,7 +87,7 @@
 
 <header class="md-header md-header--shadow" data-md-component="header">
   <nav class="md-header__inner md-grid" aria-label="Header">
-    <a href="../index.html" title="RandomGen v2.3.1 (+144)" class="md-header__button md-logo" aria-label="RandomGen v2.3.1 (+144)" data-md-component="logo">
+    <a href="../index.html" title="RandomGen v2.3.1 (+153)" class="md-header__button md-logo" aria-label="RandomGen v2.3.1 (+153)" data-md-component="logo">
       <img src="../_static/casino.svg" alt="logo">
     </a>
     <label class="md-header__button md-icon" for="__drawer">
@@ -98,7 +98,7 @@
       <div class="md-header__ellipsis">
         <div class="md-header__topic">
           <span class="md-ellipsis">
-            RandomGen v2.3.1 (+144)
+            RandomGen v2.3.1 (+153)
           </span>
         </div>
         <div class="md-header__topic" data-md-component="header-topic">
@@ -193,10 +193,10 @@
 
 <nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
   <label class="md-nav__title" for="__drawer">
-    <a href="../index.html" title="RandomGen v2.3.1 (+144)" class="md-nav__button md-logo" aria-label="RandomGen v2.3.1 (+144)" data-md-component="logo">
+    <a href="../index.html" title="RandomGen v2.3.1 (+153)" class="md-nav__button md-logo" aria-label="RandomGen v2.3.1 (+153)" data-md-component="logo">
       <img src="../_static/casino.svg" alt="logo">
     </a>
-    RandomGen v2.3.1 (+144)
+    RandomGen v2.3.1 (+153)
   </label>
   
     <div class="md-nav__source">
@@ -761,30 +761,6 @@
   
   
     <li class="md-nav__item">
-      <a href="generated/randomgen.mt19937.MT19937.jump.html" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    <span title="/bit_generators/generated/randomgen.mt19937.mt19937.jump.rst (reference label)"><span>randomgen.<wbr>mt19937.<wbr>MT19937.<wbr>jump</span></span>
-    
-  </span>
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-  
-    <li class="md-nav__item">
       <a href="generated/randomgen.mt19937.MT19937.jumped.html" class="md-nav__link">
         
   
@@ -1199,16 +1175,6 @@
   
     <nav class="md-nav" aria-label="Parallel generation">
       <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="generated/randomgen.mt19937.MT19937.jump.html" class="md-nav__link">
-    
-    <span class="md-ellipsis">
-      <span title="/bit_generators/generated/randomgen.mt19937.mt19937.jump.rst (reference label)"><span>randomgen.<wbr>mt19937.<wbr>MT19937.<wbr>jump</span></span>
-    </span>
-  </a>
-  
-</li>
         
           <li class="md-nav__item">
   <a href="generated/randomgen.mt19937.MT19937.jumped.html" class="md-nav__link">
@@ -2355,7 +2321,7 @@ for the seed can only initialize a small range of the possible initial
 state values.</p>
 <p><strong>Parallel Features</strong></p>
 <p><code class="docutils literal notranslate"><span class="pre">MT19937</span></code> can be used in parallel applications by
-calling the method <code class="docutils literal notranslate"><span class="pre">jump</span></code> which advances the state as-if <span class="math notranslate nohighlight">\(2^{128}\)</span>
+calling the method <code class="docutils literal notranslate"><span class="pre">jumped</span></code> which advances the state as-if <span class="math notranslate nohighlight">\(2^{128}\)</span>
 random numbers have been generated (<a class="footnote-reference brackets" href="#id4" id="id2" role="doc-noteref"><span class="fn-bracket">[</span>1<span class="fn-bracket">]</span></a>, <a class="footnote-reference brackets" href="#id5" id="id3" role="doc-noteref"><span class="fn-bracket">[</span>2<span class="fn-bracket">]</span></a>). This allows the original
 sequence to be split so that distinct segments can be used in each worker
 process. All generators should be initialized with the same seed to ensure
@@ -2364,10 +2330,8 @@ that the segments come from the same sequence.</p>
 <span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">randomgen.entropy</span><span class="w"> </span><span class="kn">import</span> <span class="n">random_entropy</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">randomgen</span><span class="w"> </span><span class="kn">import</span> <span class="n">MT19937</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">seed</span> <span class="o">=</span> <span class="n">random_entropy</span><span class="p">()</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">rs</span> <span class="o">=</span> <span class="p">[</span><span class="n">Generator</span><span class="p">(</span><span class="n">MT19937</span><span class="p">(</span><span class="n">seed</span><span class="p">))</span> <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">10</span><span class="p">)]</span>
 <span class="go"># Advance each MT19937 instance by i jumps</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">10</span><span class="p">):</span>
-<span class="gp">... </span>    <span class="n">rs</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">bit_generator</span><span class="o">.</span><span class="n">jump</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">rs</span> <span class="o">=</span> <span class="p">[</span><span class="n">Generator</span><span class="p">(</span><span class="n">MT19937</span><span class="p">(</span><span class="n">seed</span><span class="p">)</span><span class="o">.</span><span class="n">jumped</span><span class="p">(</span><span class="n">i</span><span class="p">))</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">10</span><span class="p">)]</span>
 </code></pre></div>
 </div>
 <p><strong>Compatibility Guarantee</strong></p>
@@ -2406,10 +2370,7 @@ No. 3, Summer 2008, pp. 385-390.</p>
 <h2 id="parallel-generation">Parallel generation<a class="headerlink" href="#parallel-generation" title="Link to this heading">¶</a></h2>
 <table class="autosummary longtable docutils data align-default">
 <tbody>
-<tr class="row-odd"><td><p><a class="reference internal" href="generated/randomgen.mt19937.MT19937.jump.html#randomgen.mt19937.MT19937.jump" title="randomgen.mt19937.MT19937.jump (Python method) — Jumps the state as-if 2**128 random numbers have been generated."><code class="xref py py-obj docutils literal notranslate"><span class="pre">jump</span></code></a>([iter])</p></td>
-<td><p>Jumps the state as-if 2**128 random numbers have been generated.</p></td>
-</tr>
-<tr class="row-even"><td><p><a class="reference internal" href="generated/randomgen.mt19937.MT19937.jumped.html#randomgen.mt19937.MT19937.jumped" title="randomgen.mt19937.MT19937.jumped (Python method) — Returns a new bit generator with the state jumped"><code class="xref py py-obj docutils literal notranslate"><span class="pre">jumped</span></code></a>([iter])</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="generated/randomgen.mt19937.MT19937.jumped.html#randomgen.mt19937.MT19937.jumped" title="randomgen.mt19937.MT19937.jumped (Python method) — Returns a new bit generator with the state jumped"><code class="xref py py-obj docutils literal notranslate"><span class="pre">jumped</span></code></a>([iter])</p></td>
 <td><p>Returns a new bit generator with the state jumped</p></td>
 </tr>
 </tbody>

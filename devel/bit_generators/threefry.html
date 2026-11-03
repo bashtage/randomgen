@@ -21,7 +21,7 @@
     
     
       
-        <title>ThreeFry Counter-based RNG - RandomGen v2.3.1 (+144)</title>
+        <title>ThreeFry Counter-based RNG - RandomGen v2.3.1 (+153)</title>
       
     
     
@@ -87,7 +87,7 @@
 
 <header class="md-header md-header--shadow" data-md-component="header">
   <nav class="md-header__inner md-grid" aria-label="Header">
-    <a href="../index.html" title="RandomGen v2.3.1 (+144)" class="md-header__button md-logo" aria-label="RandomGen v2.3.1 (+144)" data-md-component="logo">
+    <a href="../index.html" title="RandomGen v2.3.1 (+153)" class="md-header__button md-logo" aria-label="RandomGen v2.3.1 (+153)" data-md-component="logo">
       <img src="../_static/casino.svg" alt="logo">
     </a>
     <label class="md-header__button md-icon" for="__drawer">
@@ -98,7 +98,7 @@
       <div class="md-header__ellipsis">
         <div class="md-header__topic">
           <span class="md-ellipsis">
-            RandomGen v2.3.1 (+144)
+            RandomGen v2.3.1 (+153)
           </span>
         </div>
         <div class="md-header__topic" data-md-component="header-topic">
@@ -193,10 +193,10 @@
 
 <nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
   <label class="md-nav__title" for="__drawer">
-    <a href="../index.html" title="RandomGen v2.3.1 (+144)" class="md-nav__button md-logo" aria-label="RandomGen v2.3.1 (+144)" data-md-component="logo">
+    <a href="../index.html" title="RandomGen v2.3.1 (+153)" class="md-nav__button md-logo" aria-label="RandomGen v2.3.1 (+153)" data-md-component="logo">
       <img src="../_static/casino.svg" alt="logo">
     </a>
-    RandomGen v2.3.1 (+144)
+    RandomGen v2.3.1 (+153)
   </label>
   
     <div class="md-nav__source">
@@ -1097,30 +1097,6 @@
   
   
     <li class="md-nav__item">
-      <a href="generated/randomgen.threefry.ThreeFry.jump.html" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    <span title="/bit_generators/generated/randomgen.threefry.threefry.jump.rst (reference label)"><span>randomgen.<wbr>threefry.<wbr>Three<wbr>Fry.<wbr>jump</span></span>
-    
-  </span>
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-  
-    <li class="md-nav__item">
       <a href="generated/randomgen.threefry.ThreeFry.jumped.html" class="md-nav__link">
         
   
@@ -1577,16 +1553,6 @@
     
     <span class="md-ellipsis">
       <span title="/bit_generators/generated/randomgen.threefry.threefry.advance.rst (reference label)"><span>randomgen.<wbr>threefry.<wbr>Three<wbr>Fry.<wbr>advance</span></span>
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="generated/randomgen.threefry.ThreeFry.jump.html" class="md-nav__link">
-    
-    <span class="md-ellipsis">
-      <span title="/bit_generators/generated/randomgen.threefry.threefry.jump.rst (reference label)"><span>randomgen.<wbr>threefry.<wbr>Three<wbr>Fry.<wbr>jump</span></span>
     </span>
   </a>
   
@@ -2471,18 +2437,16 @@ produced. Using different keys produces distinct sequences.</p>
 <p>Using a single 64-bit value for the seed can only initialize a small range of
 the possible initial state values.</p>
 <p><strong>Parallel Features</strong></p>
-<p><code class="docutils literal notranslate"><span class="pre">ThreeFry</span></code> can be used in parallel applications by calling the <code class="docutils literal notranslate"><span class="pre">jump</span></code>
+<p><code class="docutils literal notranslate"><span class="pre">ThreeFry</span></code> can be used in parallel applications by calling the <code class="docutils literal notranslate"><span class="pre">jumped</span></code>
 method  to advances the state as-if <span class="math notranslate nohighlight">\(2^{N*W//2}\)</span> random numbers have
 been generated. Alternatively, <code class="docutils literal notranslate"><span class="pre">advance</span></code> can be used to advance the
-counter for any positive step in [0, 2**N*W). When using <code class="docutils literal notranslate"><span class="pre">jump</span></code>, all
+counter for any positive step in [0, 2**N*W). When using <code class="docutils literal notranslate"><span class="pre">jumped</span></code>, all
 generators should be initialized with the same seed to ensure that the
 segments come from the same sequence.</p>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><code><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">numpy.random</span><span class="w"> </span><span class="kn">import</span> <span class="n">Generator</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">randomgen</span><span class="w"> </span><span class="kn">import</span> <span class="n">ThreeFry</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">rg</span> <span class="o">=</span> <span class="p">[</span><span class="n">Generator</span><span class="p">(</span><span class="n">ThreeFry</span><span class="p">(</span><span class="mi">1234</span><span class="p">))</span> <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">10</span><span class="p">)]</span>
 <span class="go"># Advance each ThreeFry instance by i jumps</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">10</span><span class="p">):</span>
-<span class="gp">... </span>    <span class="n">rg</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">bit_generator</span><span class="o">.</span><span class="n">jump</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">rg</span> <span class="o">=</span> <span class="p">[</span><span class="n">Generator</span><span class="p">(</span><span class="n">ThreeFry</span><span class="p">(</span><span class="mi">1234</span><span class="p">)</span><span class="o">.</span><span class="n">jumped</span><span class="p">(</span><span class="n">i</span><span class="p">))</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">10</span><span class="p">)]</span>
 </code></pre></div>
 </div>
 <p>Alternatively, <code class="docutils literal notranslate"><span class="pre">ThreeFry</span></code> can be used in parallel applications by using
@@ -2531,10 +2495,7 @@ Networking, Storage and Analysis (SC11), New York, NY: ACM, 2011.</p>
 <tr class="row-odd"><td><p><a class="reference internal" href="generated/randomgen.threefry.ThreeFry.advance.html#randomgen.threefry.ThreeFry.advance" title="randomgen.threefry.ThreeFry.advance (Python method) — Advance the underlying RNG as-if delta draws have occurred."><code class="xref py py-obj docutils literal notranslate"><span class="pre">advance</span></code></a>(delta[, counter])</p></td>
 <td><p>Advance the underlying RNG as-if delta draws have occurred.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="generated/randomgen.threefry.ThreeFry.jump.html#randomgen.threefry.ThreeFry.jump" title="randomgen.threefry.ThreeFry.jump (Python method) — Jumps the state as-if 2**(W*N/2) random numbers have been generated."><code class="xref py py-obj docutils literal notranslate"><span class="pre">jump</span></code></a>([iter])</p></td>
-<td><p>Jumps the state as-if 2**(W*N/2) random numbers have been generated.</p></td>
-</tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="generated/randomgen.threefry.ThreeFry.jumped.html#randomgen.threefry.ThreeFry.jumped" title="randomgen.threefry.ThreeFry.jumped (Python method) — Returns a new bit generator with the state jumped"><code class="xref py py-obj docutils literal notranslate"><span class="pre">jumped</span></code></a>([iter])</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="generated/randomgen.threefry.ThreeFry.jumped.html#randomgen.threefry.ThreeFry.jumped" title="randomgen.threefry.ThreeFry.jumped (Python method) — Returns a new bit generator with the state jumped"><code class="xref py py-obj docutils literal notranslate"><span class="pre">jumped</span></code></a>([iter])</p></td>
 <td><p>Returns a new bit generator with the state jumped</p></td>
 </tr>
 </tbody>

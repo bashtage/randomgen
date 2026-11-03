@@ -19,7 +19,7 @@
     
     
       
-        <title>RandomGen v2.3.1 (+144)</title>
+        <title>RandomGen v2.3.1 (+153)</title>
       
     
     
@@ -85,7 +85,7 @@
 
 <header class="md-header md-header--shadow" data-md-component="header">
   <nav class="md-header__inner md-grid" aria-label="Header">
-    <a href="#" title="RandomGen v2.3.1 (+144)" class="md-header__button md-logo" aria-label="RandomGen v2.3.1 (+144)" data-md-component="logo">
+    <a href="#" title="RandomGen v2.3.1 (+153)" class="md-header__button md-logo" aria-label="RandomGen v2.3.1 (+153)" data-md-component="logo">
       <img src="_static/casino.svg" alt="logo">
     </a>
     <label class="md-header__button md-icon" for="__drawer">
@@ -96,7 +96,7 @@
       <div class="md-header__ellipsis">
         <div class="md-header__topic">
           <span class="md-ellipsis">
-            RandomGen v2.3.1 (+144)
+            RandomGen v2.3.1 (+153)
           </span>
         </div>
         <div class="md-header__topic" data-md-component="header-topic">
@@ -198,10 +198,10 @@
 
 <nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
   <label class="md-nav__title" for="__drawer">
-    <a href="#" title="RandomGen v2.3.1 (+144)" class="md-nav__button md-logo" aria-label="RandomGen v2.3.1 (+144)" data-md-component="logo">
+    <a href="#" title="RandomGen v2.3.1 (+153)" class="md-nav__button md-logo" aria-label="RandomGen v2.3.1 (+153)" data-md-component="logo">
       <img src="_static/casino.svg" alt="logo">
     </a>
-    RandomGen v2.3.1 (+144)
+    RandomGen v2.3.1 (+153)
   </label>
   
     <div class="md-nav__source">
@@ -861,10 +861,10 @@ as-if 2**128 draws have been made (<a class="reference internal" href="bit_gener
 See <a class="reference external" href="https://numpy.org/doc/stable/reference/random/index.html">NumPy’s documentation</a>.</p></li>
 <li><p><a class="reference internal" href="bit_generators/dsfmt.html#randomgen.dsfmt.DSFMT" title="randomgen.dsfmt.DSFMT (Python class) — Container for the SIMD-based Mersenne Twister pseudo RNG."><code class="xref py py-class docutils literal notranslate"><span class="pre">DSFMT</span></code></a> and <a class="reference internal" href="bit_generators/sfmt.html#randomgen.sfmt.SFMT" title="randomgen.sfmt.SFMT (Python class) — Container for the SIMD-based Mersenne Twister pseudo RNG."><code class="xref py py-class docutils literal notranslate"><span class="pre">SFMT</span></code></a> - SSE2 enabled versions of the MT19937 generator.  Theoretically
 the same, but with a different state and so it is not possible to produce a
-sequence identical to MT19937. <a class="reference internal" href="bit_generators/dsfmt.html#randomgen.dsfmt.DSFMT" title="randomgen.dsfmt.DSFMT (Python class) — Container for the SIMD-based Mersenne Twister pseudo RNG."><code class="xref py py-class docutils literal notranslate"><span class="pre">DSFMT</span></code></a> supports <code class="docutils literal notranslate"><span class="pre">jump</span></code> and so can
+sequence identical to MT19937. <a class="reference internal" href="bit_generators/dsfmt.html#randomgen.dsfmt.DSFMT" title="randomgen.dsfmt.DSFMT (Python class) — Container for the SIMD-based Mersenne Twister pseudo RNG."><code class="xref py py-class docutils literal notranslate"><span class="pre">DSFMT</span></code></a> supports <code class="docutils literal notranslate"><span class="pre">jumped</span></code> and so can
 be used in parallel applications. See the <a class="reference external" href="http://www.math.sci.hiroshima-u.ac.jp/~m-mat/MT/SFMT/">dSFMT authors’ page</a>.</p></li>
 <li><p>Xorshiro256** and Xorshiro512** - The most recently introduced XOR,
-shift, and rotate generator. Supports <code class="docutils literal notranslate"><span class="pre">jump</span></code> and so can be used in
+shift, and rotate generator. Supports <code class="docutils literal notranslate"><span class="pre">jumped</span></code> and so can be used in
 parallel applications. See the documentation for
 <a class="reference internal" href="bit_generators/generated/randomgen.xoshiro256.Xoshiro256.jumped.html#randomgen.xoshiro256.Xoshiro256.jumped" title="randomgen.xoshiro256.Xoshiro256.jumped (Python method) — Returns a new bit generator with the state jumped"><code class="xref py py-meth docutils literal notranslate"><span class="pre">jumped()</span></code></a> for details. More
 information about these PRNGs is available at the
@@ -888,7 +888,7 @@ to produce multiple streams in parallel applications. See
 More information about this PRNG is available at the
 <a class="reference external" href="https://prng.di.unimi.it/">xorshift, xoroshiro and xoshiro authors’ page</a>.</p></li>
 <li><p>XorShift1024*φ - Fast generator based on the XSadd
-generator. Supports <code class="docutils literal notranslate"><span class="pre">jump</span></code> and so can be used in
+generator. Supports <code class="docutils literal notranslate"><span class="pre">jumped</span></code> and so can be used in
 parallel applications. See the documentation for
 <a class="reference internal" href="bit_generators/generated/randomgen.xorshift1024.Xorshift1024.jumped.html#randomgen.xorshift1024.Xorshift1024.jumped" title="randomgen.xorshift1024.Xorshift1024.jumped (Python method) — Returns a new bit generator with the state jumped"><code class="xref py py-meth docutils literal notranslate"><span class="pre">jumped()</span></code></a> for details. More information
 about these PRNGs is available at the

@@ -1,6 +1,0 @@
-﻿randomgen.dsfmt.DSFMT.jump
-==========================
-
-.. currentmodule:: randomgen.dsfmt
-
-.. automethod:: DSFMT.jump
