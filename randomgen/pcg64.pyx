@@ -1,5 +1,3 @@
-#!python
-
 import numpy as np
 
 __all__ = ["PCG64", "LCG128Mix", "PCG64DXSM"]

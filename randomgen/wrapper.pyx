@@ -1,5 +1,3 @@
-#!python
-
 from libc.stdint cimport uint32_t
 
 from randomgen.common cimport BitGenerator

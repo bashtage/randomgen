@@ -1,4 +1,3 @@
-#!python
 # cython: boundscheck=False, wraparound=False, nonecheck=False, cdivision=True
 from numpy.random.bit_generator import ISeedSequence
 

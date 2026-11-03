@@ -1,4 +1,3 @@
-#!python
 # cython: wraparound=False, nonecheck=False, boundscheck=False, cdivision=True
 import warnings
 

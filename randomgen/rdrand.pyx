@@ -1,5 +1,3 @@
-#!python
-
 import numpy as np
 
 cimport numpy as np
@@ -13,8 +11,6 @@ from cpython.exc cimport PyErr_Clear, PyErr_Occurred, PyErr_SetString
 np.import_array()
 
 __all__ = ["RDRAND"]
-
-DEF BUFFER_SIZE = 256
 
 ERROR_MSG = """\
 Unable to get random values from RDRAND after {retries} retries. This can

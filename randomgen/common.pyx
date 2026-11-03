@@ -1,4 +1,3 @@
-#!python
 from collections import namedtuple
 import sys
 from threading import RLock

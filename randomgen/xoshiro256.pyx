@@ -1,5 +1,3 @@
-#!python
-
 import numpy as np
 
 __all__ = ["Xoshiro256"]

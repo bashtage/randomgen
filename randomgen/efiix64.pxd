@@ -10,10 +10,11 @@ from randomgen.common cimport (
     uint64_to_double,
 )
 
-DEF INDIRECTION_SIZE = 16
-DEF ITERATION_SIZE = 32
-
 cdef extern from "src/efiix64/efiix64.h":
+
+    cdef enum:
+        INDIRECTION_SIZE
+        ITERATION_SIZE
 
     struct EFIIX64_STATE_T:
         uint64_t indirection_table[INDIRECTION_SIZE]

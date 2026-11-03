@@ -1,12 +1,6 @@
-#!python
-
 import numpy as np
 
 __all__ = ["SFMT"]
-
-DEF SFMT_MEXP = 19937
-DEF SFMT_N = 156  # SFMT_MEXP / 128 + 1
-DEF SFMT_N64 = SFMT_N * 2
 
 cdef uint64_t sfmt_uint64(void* st) noexcept nogil:
     return sfmt_next64(<sfmt_state_t *>st)

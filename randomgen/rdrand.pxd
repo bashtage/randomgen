@@ -3,9 +3,10 @@ from libc.stdint cimport uint32_t, uint64_t
 
 from randomgen.common cimport BitGenerator, fully_qualified_name, uint64_to_double
 
-DEF BUFFER_SIZE = 256
-
 cdef extern from "src/rdrand/rdrand.h":
+
+    cdef enum:
+        BUFFER_SIZE
 
     struct s_rdrand_state:
         uint64_t buffer[BUFFER_SIZE]

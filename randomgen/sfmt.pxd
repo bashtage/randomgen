@@ -11,11 +11,11 @@ from randomgen.common cimport (
     uint64_to_double,
 )
 
-DEF SFMT_MEXP = 19937
-DEF SFMT_N = 156  # SFMT_MEXP / 128 + 1
-DEF SFMT_N64 = SFMT_N * 2
-
 cdef extern from "src/sfmt/sfmt.h":
+
+    cdef enum:
+        SFMT_N
+        SFMT_N64
 
     union W128_T:
         uint32_t u[4]

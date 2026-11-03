@@ -1,10 +1,9 @@
-#!python
-
 import numpy as np
 
 __all__ = ["Philox"]
 
-DEF PHILOX_BUFFER_SIZE=4
+cdef enum:
+    PHILOX_BUFFER_SIZE = 4
 
 # Keeping these here makes a large difference (2x) to performance
 cdef uint64_t philox2x64_uint64(void*st) noexcept nogil:

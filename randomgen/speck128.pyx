@@ -1,11 +1,6 @@
-#!python
-
 import numpy as np
 
 __all__ = ["SPECK128"]
-
-DEF SPECK_UNROLL = 12
-DEF SPECK_MAX_ROUNDS = 34
 
 cdef uint64_t speck_uint64(void* st) noexcept nogil:
     return speck_next64(<speck_state_t *>st)
