@@ -3,7 +3,7 @@ from collections.abc import Sequence
 from numpy import ndarray
 
 from randomgen.common import BitGenerator
-from randomgen.typing import IntegerSequenceSeed, SeedMode
+from randomgen.typing import IntegerSequenceSeed
 
 class AESCounter(BitGenerator):
     def __init__(
@@ -12,7 +12,6 @@ class AESCounter(BitGenerator):
         *,
         counter: int | Sequence[int] | None = ...,
         key: int | Sequence[int] | None = ...,
-        mode: SeedMode | None = ...,
     ) -> None: ...
     @property
     def use_aesni(self) -> bool: ...
@@ -20,7 +19,7 @@ class AESCounter(BitGenerator):
     def use_aesni(self, value: bool) -> None: ...
     def seed(
         self,
-        seed: int | Sequence[int] = ...,
+        seed: IntegerSequenceSeed | None = ...,
         counter: int | Sequence[int] | None = ...,
         key: int | Sequence[int] | None = ...,
     ) -> None: ...

@@ -1,5 +1,3 @@
-from typing import Literal
-
 import numpy as np
 
 from randomgen.common import BitGenerator
@@ -12,7 +10,7 @@ class SFC64(BitGenerator):
         w: int = ...,
         k: int = ...,
         *,
-        mode: Literal["sequence", "numpy"] | None,
+        numpy_seed: bool = ...,
     ) -> None: ...
     def weyl_increments(
         self,

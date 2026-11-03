@@ -1,7 +1,10 @@
+from typing import ClassVar
+
 from randomgen.common import BitGenerator
-from randomgen.typing import IntegerSequenceSeed, SeedMode
+from randomgen.typing import IntegerSequenceSeed
 
 class JSF(BitGenerator):
+    parameters: ClassVar[dict[int, list[dict[str, int]]]]
     def __init__(
         self,
         seed: IntegerSequenceSeed | None = ...,
@@ -11,7 +14,6 @@ class JSF(BitGenerator):
         p: int | None = ...,
         q: int | None = ...,
         r: int | None = ...,
-        mode: SeedMode | None = ...,
     ) -> None: ...
     def seed(self, seed: IntegerSequenceSeed | None = ...) -> None: ...
     @property

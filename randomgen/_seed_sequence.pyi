@@ -2,9 +2,7 @@ from abc import ABCMeta, abstractmethod
 from collections.abc import Sequence
 from typing import Any
 
-from numpy import unsignedinteger
-
-DEFAULT_POOL_SIZE: int
+from numpy import ndarray, unsignedinteger
 
 class ISeedSequence(metaclass=ABCMeta):
     @abstractmethod
@@ -19,6 +17,16 @@ class ISpawnableSeedSequence(ISeedSequence, metaclass=ABCMeta):
     def spawn(self, n_children: int) -> list[SeedSequence]: ...
 
 class SeedSequence(ISpawnableSeedSequence):
+    @property
+    def entropy(self) -> int | Sequence[int] | None: ...
+    @property
+    def spawn_key(self) -> tuple[int, ...]: ...
+    @property
+    def pool_size(self) -> int: ...
+    @property
+    def pool(self) -> ndarray: ...
+    @property
+    def n_children_spawned(self) -> int: ...
     def __init__(
         self,
         entropy: int | Sequence[int] | None = ...,
