@@ -186,12 +186,17 @@ cdef class Romu(BitGenerator):
             raise ValueError("state must be for a {0} "
                              "PRNG".format(type(self).__name__))
         variant = self._check_variant(value["state"]["variant"])
+        check_state_config(self, "variant", self.variant, variant)
         with self.lock:
             self.rng_state.w = value["state"]["w"]
             self.rng_state.x = value["state"]["x"]
             self.rng_state.y = value["state"]["y"]
             self.rng_state.z = value["state"]["z"]
-            self.variant = variant
             self.rng_state.has_uint32 = value["has_uint32"]
             self.rng_state.uinteger = value["uinteger"]
+
+    def _configure_from_state(self, value):
+        variant = self._check_variant(value["state"]["variant"])
+        with self.lock:
+            self.variant = variant
             self._setup_bitgen()

@@ -7,6 +7,7 @@ from randomgen.common cimport (
     BitGenerator,
     PyArray_calloc_aligned,
     PyArray_free_aligned,
+    check_state_int,
     fully_qualified_name,
     int_to_array,
     object_to_int,

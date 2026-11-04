@@ -10,6 +10,7 @@ from typing import Any, ClassVar
 
 import numpy as np
 from numpy.random import SeedSequence
+import numpy.random._pickle as np_pickle
 from numpy.testing import (
     assert_allclose,
     assert_array_equal,
@@ -40,6 +41,7 @@ from randomgen import (
     AESCounter,
     BlaBla,
     ChaCha,
+    ExtendedGenerator,
     LCG128Mix,
     Philox,
     Romu,
@@ -2586,6 +2588,342 @@ class TestMWC64X32(TestMWC128X32):
         cls.ref_long_jump = [0x919D6B6A, 0x685C7E2B]
         cls.ref_jump_n = [0xBAA48E47, 0xA7823455]
         cls.fallback_seed = 176
+
+
+# Bit generators with a configuration that selects the output functions. A
+# Generator copies these functions when it is created, so the configuration
+# cannot be changed through state.
+CONFIGURATIONS: dict[Any, list[dict[str, Any]]] = {
+    PCG64: [{"variant": v} for v in ("xsl-rr", "dxsm", "dxsm-128")],
+    PCG64DXSM: [{}],
+    JSF: [{"size": 64}, {"size": 32}],
+    Philox: [{"number": n, "width": w} for n in (4, 2) for w in (64, 32)],
+    ThreeFry: [{"number": n, "width": w} for n in (4, 2) for w in (64, 32)],
+    Romu: [{"variant": "quad"}, {"variant": "trio"}],
+    Tyche: [{"original": True}, {"original": False}],
+    Squares: [{"variant": 64}, {"variant": 32}],
+    Xoroshiro128: [{"plusplus": False}, {"plusplus": True}],
+}
+
+
+def _config_id(cls, kwargs):
+    return "-".join([cls.__name__] + [f"{k}={v}" for k, v in kwargs.items()])
+
+
+ALL_CONFIGURATIONS = [
+    pytest.param(cls, kwargs, id=_config_id(cls, kwargs))
+    for cls, configs in CONFIGURATIONS.items()
+    for kwargs in configs
+]
+CONFIGURATION_CHANGES = [
+    pytest.param(
+        cls, kwargs, other, id=f"{_config_id(cls, kwargs)}->{_config_id(cls, other)}"
+    )
+    for cls, configs in CONFIGURATIONS.items()
+    for kwargs in configs
+    for other in configs
+    if kwargs != other
+]
+
+
+def _draw(gen):
+    # Uses the double, 64-bit and 32-bit output functions
+    return np.concatenate(
+        [
+            gen.random(10),
+            gen.integers(0, 2**64, 10, dtype=np.uint64).astype(float),
+            gen.integers(0, 2**32, 10, dtype=np.uint32).astype(float),
+        ]
+    )
+
+
+@pytest.mark.parametrize(("cls", "kwargs", "other"), CONFIGURATION_CHANGES)
+def test_state_configuration_change_rejected(cls, kwargs, other):
+    bg = cls(1234, **kwargs)
+    gen = np.random.Generator(bg)
+    extended = ExtendedGenerator(cls(1234, **kwargs))
+    other_state = cls(5678, **other).state
+    state = bg.state
+    with pytest.raises(ValueError, match="Create a new"):
+        bg.state = other_state
+    with pytest.raises(ValueError, match="Create a new"):
+        extended.bit_generator.state = other_state
+    # Nothing was written
+    assert_state_equal(bg.state, state)
+    # The existing Generators still match fresh ones
+    fresh = np.random.Generator(cls(1234, **kwargs))
+    assert_array_equal(_draw(gen), _draw(fresh))
+    fresh_extended = ExtendedGenerator(cls(1234, **kwargs))
+    assert_array_equal(
+        extended.complex_normal(size=10), fresh_extended.complex_normal(size=10)
+    )
+
+
+@pytest.mark.parametrize(("cls", "kwargs"), ALL_CONFIGURATIONS)
+def test_state_same_configuration(cls, kwargs):
+    bg = cls(1234, **kwargs)
+    gen = np.random.Generator(bg)
+    other = cls(5678, **kwargs)
+    bg.state = other.state
+    assert_array_equal(_draw(gen), _draw(np.random.Generator(other)))
+
+
+@pytest.mark.parametrize(("cls", "kwargs"), ALL_CONFIGURATIONS)
+def test_pickle_configurations(cls, kwargs):
+    bg = cls(1234, **kwargs)
+    gen = np.random.Generator(bg)
+    gen.random(3)
+    reloaded = pickle.loads(pickle.dumps(bg))
+    copied = copy.deepcopy(bg)
+    for other in (reloaded, copied):
+        assert type(other) is cls
+        assert other is not bg
+        assert_state_equal(other.state, bg.state)
+    expected = _draw(gen)
+    assert_array_equal(expected, _draw(np.random.Generator(reloaded)))
+    assert_array_equal(expected, _draw(np.random.Generator(copied)))
+
+
+@pytest.mark.parametrize(("cls", "kwargs"), ALL_CONFIGURATIONS)
+def test_pickle_generators_configurations(cls, kwargs):
+    extended = ExtendedGenerator(cls(1234, **kwargs))
+    extended.uintegers(3)
+    reloaded = pickle.loads(pickle.dumps(extended))
+    assert type(reloaded.bit_generator) is cls
+    assert_array_equal(
+        extended.complex_normal(size=10), reloaded.complex_normal(size=10)
+    )
+
+    gen = np.random.Generator(cls(1234, **kwargs))
+    reloaded = pickle.loads(pickle.dumps(gen))
+    assert type(reloaded.bit_generator) is cls
+    assert_array_equal(_draw(gen), _draw(reloaded))
+
+
+class _Reduced:
+    """Pickles as a fixed reduce tuple"""
+
+    def __init__(self, reduced):
+        self._reduced = reduced
+
+    def __reduce__(self):
+        return self._reduced
+
+
+@pytest.mark.parametrize(("cls", "kwargs"), ALL_CONFIGURATIONS)
+@pytest.mark.parametrize("style", ["class", "name", "dict"])
+def test_unpickle_randomgen_2_3_bit_generator(cls, kwargs, style):
+    # randomgen 2.3 used NumPy's reduce, which builds the default configuration
+    # and then sets the state
+    bg = cls(1234, **kwargs)
+    np.random.Generator(bg).random(3)
+    ctor = np_pickle.__bit_generator_ctor
+    name = f"{cls.__module__}.{cls.__name__}"
+    if style == "class":
+        try:
+            ctor(MT19937)
+        except ValueError:
+            pytest.skip("NumPy only accepts the name of the bit generator")
+        reduced = (ctor, (cls,), (bg.state, bg._seed_seq))
+    elif style == "name":
+        reduced = (ctor, (name,), (bg.state, bg._seed_seq))
+    else:
+        reduced = (ctor, (name,), bg.state)
+    reloaded = pickle.loads(pickle.dumps(_Reduced(reduced)))
+    assert type(reloaded) is cls
+    assert_state_equal(reloaded.state, bg.state)
+    assert_array_equal(
+        _draw(np.random.Generator(bg)), _draw(np.random.Generator(reloaded))
+    )
+
+
+@pytest.mark.parametrize(("cls", "kwargs"), ALL_CONFIGURATIONS)
+def test_unpickle_randomgen_2_3_extended_generator(cls, kwargs):
+    extended = ExtendedGenerator(cls(1234, **kwargs))
+    extended.uintegers(3)
+    ctor = rg_pkl.__extended_generator_ctor
+    name = f"{cls.__module__}.{cls.__name__}"
+    reduced = (ctor, (name,), extended.bit_generator.state)
+    reloaded = pickle.loads(pickle.dumps(_Reduced(reduced)))
+    assert type(reloaded.bit_generator) is cls
+    assert_array_equal(
+        extended.complex_normal(size=10), reloaded.complex_normal(size=10)
+    )
+
+
+@pytest.mark.parametrize(("cls", "kwargs"), ALL_CONFIGURATIONS)
+def test_jumped_configurations(cls, kwargs):
+    bg = cls(1234, **kwargs)
+    if not hasattr(bg, "jumped"):
+        pytest.skip("jumped not available")
+    jumped = bg.jumped()
+    assert type(jumped) is cls
+    # Fails if the configuration is different
+    same_config = cls(1234, **kwargs)
+    same_config.state = jumped.state
+    assert_array_equal(
+        _draw(np.random.Generator(jumped)),
+        _draw(np.random.Generator(same_config)),
+    )
+
+
+ROUND_TRIP_CONFIGURATIONS = [
+    *ALL_CONFIGURATIONS,
+    *[
+        pytest.param(cls, {}, id=cls.__name__)
+        for cls in (
+            AESCounter,
+            BlaBla,
+            ChaCha,
+            DSFMT,
+            EFIIX64,
+            HC128,
+            LCG128Mix,
+            LXM,
+            MT19937,
+            MT64,
+            PCG32,
+            SFC64,
+            SFMT,
+            SPECK128,
+            Xorshift1024,
+            Xoshiro256,
+            Xoshiro512,
+        )
+    ],
+]
+
+
+@pytest.mark.parametrize(("cls", "kwargs"), ROUND_TRIP_CONFIGURATIONS)
+@pytest.mark.parametrize("warmup", [0, 7, 1000])
+def test_state_round_trip(cls, kwargs, warmup):
+    bg = cls(1234, **kwargs)
+    ref = cls(1234, **kwargs)
+    bg.random_raw(warmup)
+    ref.random_raw(warmup)
+    bg.state = bg.state
+    assert_state_equal(bg.state, ref.state)
+    assert_array_equal(bg.random_raw(100), ref.random_raw(100))
+
+
+def _replace(state, path, value):
+    state = copy.deepcopy(state)
+    inner = state
+    for key in path[:-1]:
+        inner = inner[key]
+    inner[path[-1]] = value
+    return state
+
+
+INVALID_STATES = [
+    (Philox, {}, ("buffer_pos",), 5, "buffer_pos"),
+    (Philox, {}, ("buffer_pos",), -1, "buffer_pos"),
+    (Philox, {}, ("number",), 6, "created with"),
+    (ThreeFry, {}, ("buffer_pos",), 5, "buffer_pos"),
+    (ThreeFry, {}, ("buffer_pos",), -1, "buffer_pos"),
+    (ThreeFry, {}, ("number",), 6, "created with"),
+    (MT19937, {}, ("state", "pos"), 625, "pos"),
+    (MT19937, {}, ("state", "pos"), -1, "pos"),
+    (MT64, {}, ("state", "pos"), 313, "pos"),
+    (MT64, {}, ("state", "pos"), -1, "pos"),
+    (Xorshift1024, {}, ("state", "p"), 16, "p must"),
+    (Xorshift1024, {}, ("state", "p"), -1, "p must"),
+    (SPECK128, {}, ("state", "rounds"), 0, "rounds"),
+    (SPECK128, {}, ("state", "rounds"), 35, "rounds"),
+    (SPECK128, {}, ("state", "rounds"), -1, "rounds"),
+    (SPECK128, {}, ("state", "offset"), 97, "offset"),
+    (SPECK128, {}, ("state", "offset"), -8, "offset"),
+    (SPECK128, {}, ("state", "offset"), 12, "multiple of 8"),
+    (AESCounter, {}, ("s", "offset"), 65, "offset"),
+    (AESCounter, {}, ("s", "offset"), -8, "offset"),
+    (AESCounter, {}, ("s", "offset"), 4, "multiple of 8"),
+    (BlaBla, {}, ("state", "rounds"), -2, "rounds"),
+    (BlaBla, {}, ("state", "rounds"), 0, "rounds"),
+    (BlaBla, {}, ("state", "rounds"), 3, "even"),
+    (ChaCha, {}, ("state", "rounds"), -2, "rounds"),
+    (ChaCha, {}, ("state", "rounds"), 0, "rounds"),
+    (ChaCha, {}, ("state", "rounds"), 3, "even"),
+    (HC128, {}, ("state", "hc_idx"), 1024, "hc_idx"),
+    (HC128, {}, ("state", "hc_idx"), -16, "hc_idx"),
+    (HC128, {}, ("state", "hc_idx"), 8, "multiple of 16"),
+    (HC128, {}, ("state", "buffer_idx"), 17, "buffer_idx"),
+    (HC128, {}, ("state", "buffer_idx"), -1, "buffer_idx"),
+    (DSFMT, {}, ("state", "idx"), 383, "idx"),
+    (DSFMT, {}, ("state", "idx"), -1, "idx"),
+    (DSFMT, {}, ("buffer_loc",), 383, "buffer_loc"),
+    (DSFMT, {}, ("buffer_loc",), -1, "buffer_loc"),
+    (DSFMT, {}, ("buffered_uniforms",), np.zeros(10), "buffered_uniforms"),
+    (SFMT, {}, ("state", "idx"), 625, "idx"),
+    (SFMT, {}, ("state", "idx"), -1, "idx"),
+    (SFMT, {}, ("buffer_loc",), 313, "buffer_loc"),
+    (SFMT, {}, ("buffer_loc",), -1, "buffer_loc"),
+    (PCG64, {}, ("variant",), "unknown", "variant unknown is not known"),
+    (PCG64, {}, ("variant",), 3, "variant 3 is not known"),
+    (JSF, {}, ("state", "p"), 64, "p must"),
+    (JSF, {}, ("state", "q"), -1, "q must"),
+    (JSF, {}, ("state", "r"), 64, "r must"),
+    (JSF, {"size": 32}, ("state", "r"), 32, "r must"),
+    (JSF, {}, ("state", "a"), 2**64, "a must"),
+    (JSF, {"size": 32}, ("state", "d"), 2**32, "d must"),
+    (JSF, {}, ("seed_size",), 0, "seed_size"),
+    (JSF, {}, ("seed_size",), 4, "seed_size"),
+]
+
+
+@pytest.mark.parametrize(
+    ("cls", "kwargs", "path", "value", "match"),
+    [
+        pytest.param(
+            *args, id=f"{args[0].__name__}-{'.'.join(args[2])}={args[3]!r}"[:60]
+        )
+        for args in INVALID_STATES
+    ],
+)
+def test_invalid_state_rejected(cls, kwargs, path, value, match):
+    bg = cls(1234, **kwargs)
+    state = bg.state
+    invalid = _replace(state, path, value)
+    with pytest.raises(ValueError, match=match):
+        bg.state = invalid
+    # Nothing was written
+    assert_state_equal(bg.state, state)
+    bg.state = state
+
+
+def test_mt19937_legacy_invalid_pos():
+    bg = MT19937(1234)
+    state = bg.state
+    legacy = ("MT19937", state["state"]["key"], 625, 0, 0.0)
+    with pytest.raises(ValueError, match="pos"):
+        bg.state = legacy
+    assert_state_equal(bg.state, state)
+
+
+@pytest.mark.parametrize("cls", [HC128, SPECK128, EFIIX64, Xoshiro256, DSFMT, SFMT])
+def test_state_non_contiguous_arrays(cls):
+    # Arrays are read through a pointer so must be contiguous
+    def spread(value):
+        if not isinstance(value, np.ndarray):
+            return value
+        out = np.empty((value.shape[0], 2), dtype=value.dtype)
+        out[:, 0] = value
+        out[:, 1] = ~value if value.dtype.kind == "u" else 1
+        out = out[:, 0]
+        assert not out.flags.c_contiguous
+        return out
+
+    def convert(value):
+        if isinstance(value, dict):
+            return {key: convert(val) for key, val in value.items()}
+        return spread(value)
+
+    bg = cls(1234)
+    bg.random_raw(5)
+    ref = cls(1234)
+    ref.random_raw(5)
+    bg.state = convert(bg.state)
+    assert_state_equal(bg.state, ref.state)
+    assert_array_equal(bg.random_raw(50), ref.random_raw(50))
 
 
 def _seq():

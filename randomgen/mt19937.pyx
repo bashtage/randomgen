@@ -268,7 +268,8 @@ cdef class MT19937(BitGenerator):
             raise ValueError("state must be for a {0} "
                              "PRNG".format(type(self).__name__))
         key = check_state_array(value["state"]["key"], RK_STATE_LEN, 32, "key")
+        pos = check_state_int(value["state"]["pos"], "pos", 0, RK_STATE_LEN)
         with self.lock:
             for i in range(RK_STATE_LEN):
                 self.rng_state.key[i] = key[i]
-            self.rng_state.pos = value["state"]["pos"]
+            self.rng_state.pos = pos

@@ -4,6 +4,8 @@ from libc.stdint cimport uint32_t, uint64_t
 from randomgen.common cimport (
     BitGenerator,
     check_state_array,
+    check_state_config,
+    check_state_int,
     fully_qualified_name,
     int_to_array,
     object_to_int,

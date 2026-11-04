@@ -212,7 +212,11 @@ cdef class ExtendedGenerator:
         return self.bit_generator.state
 
     def __setstate__(self, state):
-        self.bit_generator.state = state
+        # Pickles from randomgen 2.3 and earlier build the default configuration
+        # of the bit generator, and then set its state. Configure it, and then
+        # rebind to it since Generators copy the bit generator's functions.
+        self.bit_generator.__setstate__(state)
+        self.__init__(self.bit_generator)
 
     def __reduce__(self):
         from randomgen._pickle import __extended_generator_ctor

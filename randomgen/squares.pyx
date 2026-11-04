@@ -530,12 +530,19 @@ cdef class Squares(BitGenerator):
         variant = value["variant"]
         if variant not in (64, 32):
             raise ValueError("variant must be either 64 or 32.")
+        check_state_config(self, "variant", self.variant, variant)
         key = self._check_value(state["key"], "key", True)
         with self.lock:
             self.rng_state.key = key
             self.rng_state.counter = state["counter"]
             self.rng_state.has_uint32 = value["has_uint32"]
             self.rng_state.uinteger = value["uinteger"]
+
+    def _configure_from_state(self, value):
+        variant = value["variant"]
+        if variant not in (64, 32):
+            raise ValueError("variant must be either 64 or 32.")
+        with self.lock:
             self.variant = variant
             self._use64 = variant == 64
             self._setup_bitgen()

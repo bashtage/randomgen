@@ -1,4 +1,5 @@
 from collections import namedtuple
+import operator
 import sys
 from threading import RLock
 from typing import NamedTuple
@@ -93,6 +94,29 @@ cdef class BitGenerator(_BitGenerator):
                 self._seed_from_seq(**kwargs)
             else:  # numpy
                 self._seed_from_seq_numpy_compat(**kwargs)
+
+    def _configure_from_state(self, state):
+        """
+        Apply the configuration contained in state to this bit generator
+
+        Bit generators whose output functions depend on a configuration that
+        is part of the state (e.g., the variant) override this method. It is
+        only used when unpickling, where the bit generator has been built with
+        the default configuration and is not yet used by any Generator.
+        """
+
+    def __setstate__(self, state_seed_seq):
+        # NumPy's __setstate__ assigns state directly, which rejects a change
+        # in configuration. Configure the new bit generator, then set state.
+        if isinstance(state_seed_seq, dict):
+            state = state_seed_seq
+        else:
+            state = state_seed_seq[0]
+        with self.lock:
+            self._configure_from_state(state)
+            if not isinstance(state_seed_seq, dict):
+                self._seed_seq = state_seed_seq[1]
+            self.state = state
 
     @property
     def state(self):
@@ -396,6 +420,24 @@ cdef object wrap_int(object val, object bits):
         val = val - upper * divisor
     return val
 
+cdef int check_state_config(object bit_generator, str name, object current,
+                            object new) except -1:
+    """
+    Reject a state whose configuration differs from the bit generator's
+
+    Generators copy a bit generator's output functions when they are created,
+    so the functions cannot change after construction.
+    """
+    if new != current:
+        cls = type(bit_generator).__name__
+        raise ValueError(
+            f"The state has {name}={new!r}, but this {cls} was created with "
+            f"{name}={current!r}. The {name} cannot be changed through state "
+            f"because Generators that use this {cls} would keep using the "
+            f"original {name}. Create a new {cls} with {name}={new!r}."
+        )
+    return 0
+
 cdef object check_state_array(object arr, np.npy_intp required_len,
                               int required_bits, object name):
     req_dtype = np.dtype("uint" + str(required_bits))
@@ -405,7 +447,20 @@ cdef object check_state_array(object arr, np.npy_intp required_len,
         raise ValueError("State element {0} must be a 1-d array with dtype {1} "
                          "and {2} elements".format(name, req_dtype,
                                                    required_len))
-    return arr
+    # Callers read the data through a pointer
+    return np.ascontiguousarray(arr)
+
+cdef object check_state_int(object value, str name, object lower, object upper):
+    """
+    Convert an integer in a state to a Python int in [lower, upper]
+    """
+    try:
+        out = operator.index(value)
+    except TypeError:
+        raise TypeError(f"{name} must be an integer.")
+    if not lower <= out <= upper:
+        raise ValueError(f"{name} must be in [{lower}, {upper}]. Got {out}.")
+    return out
 
 
 cdef np.ndarray int_to_array(object value, object name, object bits, object uint_size):
