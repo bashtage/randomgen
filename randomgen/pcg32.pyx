@@ -79,8 +79,10 @@ cdef class PCG32(BitGenerator):
     ...     rg[i].bit_generator.advance(i * 2**32)
 
     Each instance above uses a different increment ``inc``. To split a single
-    stream, use ``jumped`` rather than advancing by a large power of two such
-    as ``2**63``, which gives strongly related streams (see ``advance``).
+    stream, advance by multiples of an odd step such as
+    ``0x9e3779b97f4a7c15``, or use ``jumped``, rather than by a large power of
+    two such as ``2**63``, which gives strongly related streams (see
+    ``advance``).
 
     **Compatibility Guarantee**
 
@@ -198,9 +200,16 @@ cdef class PCG32(BitGenerator):
         states differ only in their top bit at every step, and each output
         is the other with its 16-bit halves swapped and one bit flipped.
 
-        ``jumped`` uses a step that is not a power of two. Since
-        ``jumped(iter)`` advances by ``iter`` times this step, ``iter``
-        should not be a large power of two either.
+        To split a stream, advance by multiples of an odd step whose bits
+        look random. The states of the two streams then always differ in
+        their lowest bit and, on average, in about 32 of their 64 bits.
+        After ``advance(2**63)`` they differ in a single bit, and after
+        ``advance(2**32)`` in about 16 bits, never in the lowest 32. A good
+        step is ``0x9e3779b97f4a7c15``, the odd integer closest to
+        ``2**64 / phi``, where phi is the golden ratio. Stream ``i`` then
+        uses ``advance(i * 0x9e3779b97f4a7c15)``. ``jumped(iter)`` advances
+        by ``iter`` times a similar golden-ratio step, so it is also a good
+        choice as long as ``iter`` is not a large power of two.
 
         Notes
         -----

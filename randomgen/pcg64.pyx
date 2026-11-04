@@ -144,8 +144,10 @@ cdef class PCG64(BitGenerator):
     ...     rg[i].bit_generator.advance(i * 2**64)
 
     Each instance above uses a different increment ``inc``. To split a single
-    stream, use ``jumped`` rather than advancing by a large power of two such
-    as ``2**127``, which gives strongly related streams (see ``advance``).
+    stream, advance by multiples of an odd step such as
+    ``0x9e3779b97f4a7c15f39cc0605cedc835``, or use ``jumped``, rather than by a
+    large power of two such as ``2**127``, which gives strongly related streams
+    (see ``advance``).
 
     References
     ----------
@@ -381,9 +383,17 @@ cdef class PCG64(BitGenerator):
           never congruent modulo 4, so their last hexadecimal digits never
           coincide, and PractRand fails the interleaved streams at 1 MB.
 
-        ``jumped`` uses a step that is not a power of two. Since
-        ``jumped(iter)`` advances by ``iter`` times this step, ``iter``
-        should not be a large power of two either.
+        To split a stream, advance by multiples of an odd step whose bits
+        look random. The states of the two streams then always differ in
+        their lowest bit and, on average, in about 64 of their 128 bits.
+        After ``advance(2**127)`` they differ in a single bit, and after
+        ``advance(2**64)`` in about 32 bits, never in the lowest 64. A good
+        step is ``0x9e3779b97f4a7c15f39cc0605cedc835``, the odd integer
+        closest to ``2**128 / phi``, where phi is the golden ratio, which is
+        also the step of NumPy's ``PCG64.jumped``. Stream ``i`` then uses
+        ``advance(i * 0x9e3779b97f4a7c15f39cc0605cedc835)``. ``jumped(iter)``
+        advances by ``iter`` times a similar golden-ratio step, so it is also
+        a good choice as long as ``iter`` is not a large power of two.
 
         Notes
         -----
@@ -896,9 +906,17 @@ cdef class LCG128Mix(BitGenerator):
         * ``"murmur3"``: no pattern is visible in the outputs, although the
           states are related in the same way.
 
-        ``jumped`` uses a step that is not a power of two. Since
-        ``jumped(iter)`` advances by ``iter`` times this step, ``iter``
-        should not be a large power of two either.
+        To split a stream, advance by multiples of an odd step whose bits
+        look random. The states of the two streams then always differ in
+        their lowest bit and, on average, in about 64 of their 128 bits.
+        After ``advance(2**127)`` they differ in a single bit, and after
+        ``advance(2**64)`` in about 32 bits, never in the lowest 64. A good
+        step is ``0x9e3779b97f4a7c15f39cc0605cedc835``, the odd integer
+        closest to ``2**128 / phi``, where phi is the golden ratio, which is
+        also the step of NumPy's ``PCG64.jumped``. Stream ``i`` then uses
+        ``advance(i * 0x9e3779b97f4a7c15f39cc0605cedc835)``. ``jumped(iter)``
+        advances by ``iter`` times a similar golden-ratio step, so it is also
+        a good choice as long as ``iter`` is not a large power of two.
 
         Notes
         -----
@@ -1071,8 +1089,10 @@ cdef class PCG64DXSM(PCG64):
     ...     rg[i].bit_generator.advance(i * 2**64)
 
     Each instance above uses a different increment ``inc``. To split a single
-    stream, use ``jumped`` rather than advancing by a large power of two such
-    as ``2**127``, which gives strongly related streams (see ``advance``).
+    stream, advance by multiples of an odd step such as
+    ``0x9e3779b97f4a7c15f39cc0605cedc835``, or use ``jumped``, rather than by a
+    large power of two such as ``2**127``, which gives strongly related streams
+    (see ``advance``).
 
     References
     ----------

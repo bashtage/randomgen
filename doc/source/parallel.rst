@@ -123,9 +123,25 @@ does not support advancing a counter.
    :math:`2^e` steps, so the streams share the lowest bits of their states and
    their outputs are strongly related. For example, after advancing
    :class:`~randomgen.pcg64.PCG64` by :math:`2^{127}`, each output is the
-   other with its 32-bit halves swapped and one bit flipped. Use ``jumped``,
-   whose step is not a power of two, instead. The ``advance`` method of each
-   generator describes the effect on its output functions.
+   other with its 32-bit halves swapped and one bit flipped. The ``advance``
+   method of each generator describes the effect on its output functions.
+
+   Instead, advance by multiples of an odd step whose bits look random, so
+   that the states of the streams always differ in their lowest bit and, on
+   average, in about half of their bits. A good step is the odd integer
+   closest to :math:`2^{128}/\phi`, where :math:`\phi` is the golden ratio,
+   ``0x9e3779b97f4a7c15f39cc0605cedc835`` (``0x9e3779b97f4a7c15``, the odd
+   integer closest to :math:`2^{64}/\phi`, for
+   :class:`~randomgen.pcg32.PCG32`), and stream ``i`` uses
+   ``advance(i * step)``. ``jumped`` uses a similar golden-ratio step and is
+   also a good choice.
+
+   .. code-block:: python
+
+      from randomgen import PCG64
+
+      STEP = 0x9e3779b97f4a7c15f39cc0605cedc835
+      streams = [PCG64(1234).advance(i * STEP) for i in range(16)]
 
 .. _jumping:
 
