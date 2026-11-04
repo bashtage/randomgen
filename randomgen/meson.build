@@ -46,8 +46,12 @@ _cython_tree = [fs.copyfile('__init__.py')]
 
 _pcg64_def = []
 _blabla_def = []
+_mwcx_def = []
 if get_option('pcg64-force-emulated')
   _pcg64_def += ['-DPCG_FORCE_EMULATED_128BIT_MATH=1']
+endif
+if get_option('mwcx-force-portable')
+  _mwcx_def += ['-DRANDOMGEN_MWCX_FORCE_PORTABLE=1']
 endif
 if get_option('disable-avx2')
   _blabla_def += ['-DRG_DISABLE_BLABLA_AVX2=1']
@@ -188,6 +192,15 @@ install_subdir(
 )
 
 
+py.extension_module(
+    'mwcx',
+    ['mwcx.pyx', 'src/mwcx/mwcx.c'],
+    install: true,
+    include_directories: [inc_np, inc_aligned_malloc, include_directories('src/mwcx')],
+    subdir: 'randomgen',
+    cython_args: cython_args,
+    c_args: cython_c_args + _mwcx_def,
+)
 py.extension_module(
     'aes',
     ['aes.pyx', 'src/aesctr/aesctr.c'] + CPU_FEATURES + ALIGNED_MALLOC,
@@ -357,6 +370,7 @@ top_level_py_list = [
     'lxm.pyi',
     'mt19937.pyi',
     'mt64.pyi',
+    'mwcx.pyi',
     'pcg32.pyi',
     'pcg64.pyi',
     'philox.pyi',

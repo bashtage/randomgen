@@ -14,6 +14,7 @@ from randomgen.jsf import JSF
 from randomgen.lxm import LXM
 from randomgen.mt64 import MT64
 from randomgen.mt19937 import MT19937
+from randomgen.mwcx import MWC64X32, MWC128X, MWC128X32, MWC192X
 from randomgen.pcg32 import PCG32
 from randomgen.pcg64 import PCG64, PCG64DXSM, LCG128Mix
 from randomgen.philox import Philox
@@ -42,6 +43,10 @@ BitGenerators: dict[str, type[BitGenerator]] = {
     "LXM": LXM,
     "MT19937": MT19937,
     "MT64": MT64,
+    "MWC64X32": MWC64X32,
+    "MWC128X": MWC128X,
+    "MWC128X32": MWC128X32,
+    "MWC192X": MWC192X,
     "PCG32": PCG32,
     "PCG64": PCG64,
     "PCG64DXSM": PCG64DXSM,

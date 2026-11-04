@@ -2,6 +2,16 @@
 
 Change Log
 ----------
+v2.4.0
+======
+- Added the scrambled multiply-with-carry generators
+  :class:`~randomgen.mwcx.MWC192X`, :class:`~randomgen.mwcx.MWC128X`,
+  :class:`~randomgen.mwcx.MWC128X32`, and :class:`~randomgen.mwcx.MWC64X32`
+  of Vigna. All support :meth:`~randomgen.mwcx.MWC192X.advance` and
+  :meth:`~randomgen.mwcx.MWC192X.jumped`, which take time logarithmic in
+  the number of steps or jumps, respectively, and accept negative values
+  to move backward.
+
 v2.3.0
 ======
 - Added the :class:`~randomgen.blabla.BlaBla` PRNG which is based on the Blake 2b
