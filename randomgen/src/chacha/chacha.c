@@ -8,7 +8,7 @@ extern INLINE uint64_t chacha_next64(chacha_state_t *state);
 extern INLINE double chacha_next_double(chacha_state_t *state);
 
 #if defined(__SSE2__) && __SSE2__
-#if defined(__SSSE3__) && __SSSE3__
+#if defined(RANDOMGEN_HAVE_SSSE3)
 #define CHACHA_FEATURE_REG RANDOMGEN_ECX
 #define CHACHA_FEATURE_FLAG 9
 #else

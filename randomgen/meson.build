@@ -95,14 +95,13 @@ else
 endif
 
 # ISA extensions are only enabled for the modules that check the CPU before
-# using them, so that randomgen can be imported on any x86-64 CPU. AVX2 is
-# enabled per function (RANDOMGEN_AVX2_TARGET). MSVC does not need flags to
-# use intrinsics.
-ssse3_args = []
+# using them, so that randomgen can be imported on any x86-64 CPU. AVX2 and
+# SSSE3 are enabled per function (RANDOMGEN_AVX2_TARGET and
+# RANDOMGEN_SSSE3_TARGET), since compilers may use them anywhere in a module
+# built with -mavx2 or -mssse3. MSVC does not need flags to use intrinsics.
 aes_args = []
 rdrnd_args = []
 if cc.get_id() != 'msvc'
-  ssse3_args = cc.get_supported_arguments(['-mssse3'])
   aes_args = cc.get_supported_arguments(['-maes'])
   rdrnd_args = cc.get_supported_arguments(['-mrdrnd'])
 endif
@@ -215,7 +214,7 @@ py.extension_module(
     include_directories: [inc_np, inc_aligned_malloc, include_directories('src/chacha')],
     subdir: 'randomgen',
     cython_args: cython_args,
-    c_args: cython_c_args + ssse3_args,
+    c_args: cython_c_args,
 )
 py.extension_module(
     'blabla',
@@ -278,7 +277,7 @@ py.extension_module(
     include_directories: [inc_np, inc_aligned_malloc, include_directories('src/speck-128')],
     subdir: 'randomgen',
     cython_args: cython_args,
-    c_args: cython_c_args + ['-DDSFMT_MEXP=19937'] + ssse3_args,
+    c_args: cython_c_args + ['-DDSFMT_MEXP=19937'],
 )
 py.extension_module(
     'common',
