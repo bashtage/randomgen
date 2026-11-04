@@ -40,7 +40,6 @@ jobs:
         echo "PWD: ${PWD}"
         pushd doc
         make html
-        make html
         popd
         echo "PWD: ${PWD}"
     - name: Deploy documentation
