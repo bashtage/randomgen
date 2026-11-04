@@ -21,7 +21,6 @@ Parallel generation
 .. autosummary::
    :toctree: generated/
 
-   ~LXM.jump
    ~LXM.jumped
 
 Extending

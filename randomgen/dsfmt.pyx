@@ -1,13 +1,9 @@
-#!python
-
 import numpy as np
 
 __all__ = ["DSFMT"]
 
-DEF DSFMT_MEXP = 19937
-DEF DSFMT_N = 191  # ((DSFMT_MEXP - 128) / 104 + 1)
-DEF DSFMT_N_PLUS_1 = 192  # DSFMT_N + 1
-DEF DSFMT_N64 = DSFMT_N * 2
+cdef enum:
+    DSFMT_N_PLUS_1 = DSFMT_N + 1
 
 cdef uint64_t dsfmt_uint64(void* st) noexcept nogil:
     return dsfmt_next64(<dsfmt_state_t *>st)
@@ -75,7 +71,7 @@ cdef class DSFMT(BitGenerator):
     **Parallel Features**
 
     ``DSFMT`` can be used in parallel applications by calling the method
-    ``jump`` which advances the state as-if :math:`2^{128}` random numbers
+    ``jumped`` which advances the state as-if :math:`2^{128}` random numbers
     have been generated [2]_. This allows the original sequence to be split
     so that distinct segments can be used in each worker process. All
     generators should be initialized with the same seed to ensure that
@@ -85,10 +81,8 @@ cdef class DSFMT(BitGenerator):
     >>> from randomgen.entropy import random_entropy
     >>> from randomgen import DSFMT
     >>> seed = random_entropy()
-    >>> rs = [Generator(DSFMT(seed)) for _ in range(10)]
     # Advance each DSFMT instance by i jumps
-    >>> for i in range(10):
-    ...     rs[i].bit_generator.jump()
+    >>> rs = [Generator(DSFMT(seed).jumped(i)) for i in range(10)]
 
     **Compatibility Guarantee**
 
@@ -111,6 +105,8 @@ cdef class DSFMT(BitGenerator):
         self.rng_state.buffered_uniforms = <double *>PyArray_calloc_aligned(
             DSFMT_N64, sizeof(double)
         )
+        if self.rng_state.state == NULL or self.rng_state.buffered_uniforms == NULL:
+            raise MemoryError  # pragma: no cover
         self.rng_state.buffer_loc = DSFMT_N64
         self.seed(seed)
 
@@ -176,29 +172,6 @@ cdef class DSFMT(BitGenerator):
             dsfmt_jump_n(&self.rng_state, iter)
             # Clear the buffer
             self._reset_state_variables()
-
-    def jump(self, np.npy_intp iter=1):
-        """
-        jump(iter=1)
-
-        Jumps the state as-if 2**128 random numbers have been generated.
-
-        Parameters
-        ----------
-        iter : integer, positive
-            Number of times to jump the state of the bit generator.
-
-        Returns
-        -------
-        self : DSFMT
-            PRNG jumped iter times
-        """
-        import warnings
-        warnings.warn("jump (in-place) has been deprecated in favor of jumped"
-                      ", which returns a new instance", DeprecationWarning)
-
-        self.jump_inplace(iter)
-        return self
 
     def jumped(self, np.npy_intp iter=1):
         """

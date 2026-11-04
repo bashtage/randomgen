@@ -14,10 +14,12 @@ from randomgen.common cimport (
     wrap_int,
 )
 
-DEF SPECK_UNROLL = 12
-DEF SPECK_ROUNDS = 34
 
 cdef extern from "src/speck-128/speck-128.h":
+
+    cdef enum:
+        SPECK_UNROLL
+        SPECK_MAX_ROUNDS
 
     union SPEC_T:
         uint64_t u64[2]
@@ -25,7 +27,7 @@ cdef extern from "src/speck-128/speck-128.h":
     ctypedef SPEC_T spec_t
 
     struct SPECK_STATE_T:
-        spec_t round_key[SPECK_ROUNDS]
+        spec_t round_key[SPECK_MAX_ROUNDS]
         spec_t ctr[SPECK_UNROLL // 2]
         uint8_t buffer[8 * SPECK_UNROLL]
         int rounds

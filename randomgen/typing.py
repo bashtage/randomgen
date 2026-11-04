@@ -1,11 +1,9 @@
 from collections.abc import Sequence
-from typing import Literal, Optional, Union
+from typing import Optional, Union
 
 from randomgen.seed_sequence import SeedSequence
 
-SeedMode = Literal["sequence"]
-
-__all__ = ["IntegerSequenceSeed", "SeedMode", "Size"]
+__all__ = ["IntegerSequenceSeed", "Size"]
 
 IntegerSequenceSeed = Union[int, Sequence[int], SeedSequence]
 

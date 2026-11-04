@@ -22,7 +22,6 @@ Parallel generation
    :toctree: generated/
 
    ~PCG64.advance
-   ~PCG64.jump
    ~PCG64.jumped
 
 Extending

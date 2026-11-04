@@ -28,6 +28,7 @@ cdef int check_array_constraint(
         np.ndarray val, object name, constraint_type cons
 ) except -1
 cdef check_output(object out, object dtype, object size, bint require_c_array)
+cdef validate_output_shape(iter_shape, np.ndarray output)
 
 ctypedef double (*random_double_fill)(
         bitgen_t *state, np.npy_intp count, double* out

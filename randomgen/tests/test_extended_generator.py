@@ -309,6 +309,59 @@ def test_complex_normal_invalid():
     assert_raises(ValueError, random.complex_normal, relation=[10j])
 
 
+@pytest.mark.parametrize("method", ["bogus", "SVD", "", None, 1])
+def test_invalid_method(extended_gen, method):
+    state = extended_gen.bit_generator.state
+    cov = np.eye(2)
+    batch_cov = np.stack([cov, cov])
+    msg = "method must be one of"
+    with pytest.raises(ValueError, match=msg):
+        extended_gen.multivariate_normal([0.0, 0.0], cov, method=method)
+    with pytest.raises(ValueError, match=msg):
+        extended_gen.multivariate_normal([0.0, 0.0], batch_cov, method=method)
+    with pytest.raises(ValueError, match=msg):
+        extended_gen.multivariate_complex_normal([0.0, 0.0], method=method)
+    with pytest.raises(ValueError, match=msg):
+        extended_gen.wishart(5, cov, method=method)
+    with pytest.raises(ValueError, match=msg):
+        extended_gen.wishart([5, 6], cov, method=method)
+    with pytest.raises(ValueError, match=msg):
+        extended_gen.wishart(5, batch_cov, size=(3, 2), method=method)
+    # Validated before any draws are made
+    assert extended_gen.bit_generator.state == state
+
+
+def test_method_factor(extended_gen):
+    # "factor" takes a pre-computed factor in multivariate_normal and wishart,
+    # but multivariate_complex_normal always computes the factor itself
+    cov = np.eye(2)
+    extended_gen.multivariate_normal([0.0, 0.0], cov, method="factor")
+    extended_gen.wishart(5, cov, method="factor")
+    with pytest.raises(ValueError, match="method must be one of"):
+        extended_gen.multivariate_complex_normal([0.0, 0.0], method="factor")
+
+
+@pytest.mark.parametrize("size", [1, (1,), (1, 1), (0, 1)])
+def test_complex_normal_size_smaller_than_broadcast(extended_gen, size):
+    # Matches Generator.normal, which raises rather than truncating
+    msg = r"Output size .* is not compatible with broadcast dimensions of inputs"
+    with pytest.raises(ValueError, match=msg):
+        Generator(PCG64(0)).normal([0.0, 1.0, 2.0], 1.0, size=size)
+    with pytest.raises(ValueError, match=msg):
+        extended_gen.complex_normal([0.0, 1.0, 2.0], size=size)
+    with pytest.raises(ValueError, match=msg):
+        extended_gen.complex_normal(0.0, [1.0, 1.0, 1.0], [0.5, 0.5, 0.5], size=size)
+    with pytest.raises(ValueError, match=msg):
+        extended_gen.complex_normal(0.0, 1.0, [0.5, 0.5, 0.5], size=size)
+
+
+@pytest.mark.parametrize("size", [3, (3,), (1, 3), (2, 3), (0, 3)])
+def test_complex_normal_size_with_broadcast(extended_gen, size):
+    expected = np.empty(size, dtype=bool).shape
+    out = extended_gen.complex_normal([0.0, 1.0, 2.0], size=size)
+    assert out.shape == expected
+
+
 @pytest.mark.parametrize(
     ("gamma", "relation"),
     [(1, 1 + 1j), (1, -1 + 1j), (0, 1j), (1, 0.1 + 5j)],
@@ -726,15 +779,20 @@ def test_mv_complex_normal_scalar_size(extended_gen):
     extended_gen.multivariate_complex_normal(loc, gamma, rel, size=4)
 
 
+@restores_state
 def test_extended_gen_state(extended_gen):
-    def _assert_state_equal(actual, target):
-        for key in actual:
-            if isinstance(actual[key], dict):
-                _assert_state_equal(actual[key], target[key])
-            assert actual[key] == target[key]
+    state = extended_gen.__getstate__()
+    expected = extended_gen.complex_normal(size=10)
+    # The state is a snapshot, so drawing moves the generator but not the copy
+    assert extended_gen.state != state
+    assert not np.array_equal(extended_gen.complex_normal(size=10), expected)
 
-    val = extended_gen.__getstate__()
-    _assert_state_equal(val, extended_gen.state)
+    extended_gen.__setstate__(state)
+    assert_equal(extended_gen.complex_normal(size=10), expected)
+
+    other = ExtendedGenerator(PCG64(1))
+    other.__setstate__(state)
+    assert_equal(other.complex_normal(size=10), expected)
 
 
 def test_mv_complex_normal_exceptions(extended_gen):
@@ -894,6 +952,57 @@ def test_random_long_double_direct(extended_gen):
         direct[i] = twopart(u1, u2, a, b, c)
 
     assert_allclose(actual, direct)
+
+
+ZERO_AND_UNIT_SIZES = [0, 1, (), (0,), (1,), (0, 3), (3, 0), (1, 3), (3, 1), (2, 0, 1)]
+
+
+@pytest.mark.parametrize("size", ZERO_AND_UNIT_SIZES)
+@pytest.mark.parametrize("method", ["svd", "eigh", "cholesky"])
+def test_multivariate_normal_size_shape(extended_gen, size, method):
+    expected = np.empty(size, dtype=bool).shape + (2,)
+    out = extended_gen.multivariate_normal([0.0, 1.0], np.eye(2), size, method=method)
+    assert out.shape == expected
+    npgen = Generator(PCG64(0))
+    assert npgen.multivariate_normal([0.0, 1.0], np.eye(2), size).shape == expected
+
+
+@pytest.mark.parametrize("size", ZERO_AND_UNIT_SIZES)
+def test_multivariate_complex_normal_size_shape(extended_gen, size):
+    expected = np.empty(size, dtype=bool).shape + (2,)
+    out = extended_gen.multivariate_complex_normal([0.0, 1.0], size=size)
+    assert out.shape == expected
+    assert out.dtype == np.complex128
+
+
+@pytest.mark.parametrize("size", [(0, 3), (1, 3), (2, 3), (4, 0, 3), (4, 1, 3)])
+def test_multivariate_normal_size_shape_batch(extended_gen, size):
+    mean = np.zeros((3, 2))
+    expected = size + (2,)
+    assert extended_gen.multivariate_normal(mean, np.eye(2), size).shape == expected
+    out = extended_gen.multivariate_complex_normal(mean, size=size)
+    assert out.shape == expected
+
+
+def test_multivariate_normal_size_zero_batch_mismatch(extended_gen):
+    with pytest.raises(ValueError, match="not compatible with the broadcast size"):
+        extended_gen.multivariate_normal(np.zeros((3, 2)), np.eye(2), size=0)
+    with pytest.raises(ValueError, match="not compatible with the broadcast size"):
+        extended_gen.multivariate_normal(np.zeros((3, 2)), np.eye(2), size=(3, 0))
+
+
+@pytest.mark.parametrize("size", [0, (0,), (0, 3), (3, 0), (2, 0, 1)])
+def test_zero_size_extended_generator(extended_gen, size):
+    expected = np.empty(size, dtype=bool).shape
+    assert extended_gen.complex_normal(size=size).shape == expected
+    assert extended_gen.complex_normal([0.0], size=size).shape == expected
+    assert extended_gen.uintegers(size=size).shape == expected
+    assert extended_gen.uintegers(size=size, bits=32).shape == expected
+    assert extended_gen.random(size=size).shape == expected
+    assert extended_gen.random(size=size, dtype=np.float32).shape == expected
+    assert extended_gen.wishart(5, np.eye(2), size=size).shape == expected + (2, 2)
+    assert extended_gen.wishart(2, np.eye(3), size=size).shape == expected + (3, 3)
+    assert extended_gen.standard_wishart(5, 2, size=size).shape == expected + (2, 2)
 
 
 @pytest.mark.parametrize("df", [0, -1])

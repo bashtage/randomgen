@@ -1,4 +1,3 @@
-#!python
 import numpy as np
 
 __all__ = ["AESCounter"]
@@ -80,19 +79,17 @@ cdef class AESCounter(BitGenerator):
 
     **Parallel Features**
 
-    ``AESCounter`` can be used in parallel applications by calling the ``jump``
+    ``AESCounter`` can be used in parallel applications by calling the ``jumped``
     method  to advances the state as-if :math:`2^{64}` random numbers have
     been generated. Alternatively, ``advance`` can be used to advance the
-    counter for any positive step in [0, 2**128). When using ``jump``, all
+    counter for any positive step in [0, 2**128). When using ``jumped``, all
     generators should be initialized with the same seed to ensure that the
     segments come from the same sequence.
 
     >>> from numpy.random import Generator
     >>> from randomgen import AESCounter
-    >>> rg = [Generator(AESCounter(1234)) for _ in range(10)]
     # Advance each AESCounter instances by i jumps
-    >>> for i in range(10):
-    ...     rg[i].bit_generator.jump(i)
+    >>> rg = [Generator(AESCounter(1234).jumped(i)) for i in range(10)]
 
     Alternatively, ``AESCounter`` can be used in parallel applications by using
     a sequence of distinct keys where each instance uses different key.
@@ -124,6 +121,8 @@ cdef class AESCounter(BitGenerator):
         self.rng_state = <aesctr_state_t *>PyArray_calloc_aligned(
             sizeof(aesctr_state_t), 1
         )
+        if self.rng_state == NULL:
+            raise MemoryError  # pragma: no cover
         self.seed(seed, counter, key)
 
         self._bitgen.state = <void *>self.rng_state
@@ -316,33 +315,6 @@ cdef class AESCounter(BitGenerator):
             Number of times to jump the state of the rng.
         """
         self.advance(iter * int(2 ** 64))
-
-    def jump(self, iter=1):
-        """
-        jump(iter=1)
-
-        Jumps the state as-if iter * 2**64 random numbers are generated
-
-        Parameters
-        ----------
-        iter : integer, positive
-            Number of times to jump the state of the rng.
-
-        Returns
-        -------
-        self : AESCounter
-            PRNG jumped iter times
-
-        Notes
-        -----
-        Jumping the rng state resets any pre-computed random numbers. This is
-        required to ensure exact reproducibility.
-        """
-        import warnings
-        warnings.warn("jump (in-place) has been deprecated in favor of jumped"
-                      ", which returns a new instance", DeprecationWarning)
-        self.jump_inplace(iter)
-        return self
 
     def jumped(self, iter=1):
         """

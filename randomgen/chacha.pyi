@@ -3,7 +3,7 @@ from collections.abc import Sequence
 from numpy import ndarray
 
 from randomgen.common import BitGenerator
-from randomgen.typing import IntegerSequenceSeed, SeedMode
+from randomgen.typing import IntegerSequenceSeed
 
 class ChaCha(BitGenerator):
     def __init__(
@@ -13,7 +13,6 @@ class ChaCha(BitGenerator):
         counter: int | Sequence[int] | None = ...,
         key: int | Sequence[int] | None = ...,
         rounds: int = ...,
-        mode: SeedMode | None = ...,
     ) -> None: ...
     @property
     def use_simd(self) -> bool: ...

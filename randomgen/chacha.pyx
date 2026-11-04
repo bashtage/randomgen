@@ -1,4 +1,3 @@
-#!python
 import numpy as np
 
 __all__ = ["ChaCha"]
@@ -118,6 +117,8 @@ cdef class ChaCha(BitGenerator):
         self.rng_state = <chacha_state_t *>PyArray_malloc_aligned(
             sizeof(chacha_state_t)
         )
+        if self.rng_state == NULL:
+            raise MemoryError  # pragma: no cover
         if rounds % 2 != 0 or rounds <= 0:
             raise ValueError("rounds must be even and >= 2")
         self.rng_state.rounds = rounds

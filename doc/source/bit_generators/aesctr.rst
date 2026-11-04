@@ -22,7 +22,6 @@ Parallel generation
    :toctree: generated/
 
    ~AESCounter.advance
-   ~AESCounter.jump
    ~AESCounter.jumped
 
 Extending

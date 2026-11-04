@@ -47,7 +47,10 @@ static NPY_INLINE void *PyArray_calloc_aligned(size_t n, size_t s)
 
 static NPY_INLINE void PyArray_free_aligned(void *p)
 {
-    void *base = *(((void **)p) - 1);
+    void *base;
+    if (NPY_UNLIKELY(p == NULL))
+        return;
+    base = *(((void **)p) - 1);
     PyMem_Free(base);
 }
 
