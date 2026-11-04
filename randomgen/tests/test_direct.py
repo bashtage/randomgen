@@ -2449,6 +2449,21 @@ def test_advance_step(bg_cls, bits):
         assert step == expected
         assert step % 2 == 1
         assert step >= max_draws
+        # The docstrings use this bound for the number of streams that fit
+        assert step < 2 * max_draws
+
+
+def test_advance_step_documented_stream_limits():
+    # The largest number of streams that do not overlap, as given in the docstrings
+    # 1.4 * 10**13, 1.4 * 10**10 and 1.4 * 10**7, to two significant digits
+    for max_draws, power in ((10**6, 13), (10**9, 10), (10**12, 7)):
+        n = 2**64 // PCG32.advance_step(max_draws)
+        assert round(n, 1 - power) == 14 * 10 ** (power - 1)
+    assert 2**64 // PCG32.advance_step(10**15) == 13254
+    assert 2**64 // PCG32.advance_step(10**18) == 12
+    # 2.5 * 10**26 streams of 10**12 draws
+    for bg_cls in (PCG64, PCG64DXSM, LCG128Mix):
+        assert round(2**128 // bg_cls.advance_step(10**12), -25) == 25 * 10**25
 
 
 @pytest.mark.parametrize(

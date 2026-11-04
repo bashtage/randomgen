@@ -144,10 +144,11 @@ cdef class PCG64(BitGenerator):
     ...     rg[i].bit_generator.advance(i * 2**64)
 
     Each instance above uses a different increment ``inc``. To split a single
-    stream, advance by multiples of an odd step such as
-    ``0x9e3779b97f4a7c15f39cc0605cedc835``, or use ``jumped``, rather than by a
-    large power of two such as ``2**127``, which gives strongly related streams
-    (see ``advance``).
+    stream, advance stream ``i`` by ``i * step``, where ``step`` is
+    ``advance_step(max_draws)`` and ``max_draws`` is the most draws that any
+    stream makes, or use ``jumped``. Do not advance by a large power of two
+    such as ``2**127``, which gives strongly related streams (see
+    ``advance``).
 
     References
     ----------
@@ -384,8 +385,14 @@ cdef class PCG64(BitGenerator):
           coincide, and PractRand fails the interleaved streams at 1 MB.
 
         After ``advance(2**64)``, the states differ in about 32 of their 128
-        bits and never in the lowest 64. ``advance_step`` returns a step that
-        splits a stream safely, and the Notes explain how to choose one.
+        bits and never in the lowest 64.
+
+        The size of the step also matters. Stream ``i``, advanced by
+        ``i * step``, can make at most ``step`` draws before it reaches the
+        start of stream ``i + 1``, and ``n`` streams are only guaranteed not
+        to overlap when ``n * step <= 2**128``. ``advance_step`` returns an
+        odd step for a given number of draws per stream, and the Notes
+        explain how to choose one.
 
         See Also
         --------
@@ -418,11 +425,15 @@ cdef class PCG64(BitGenerator):
         since in any LCG they repeat every few steps. This holds for an odd
         step of any size. The size sets how far apart the streams are: stream
         ``i`` reaches the start of stream ``i + 1`` after ``step`` draws, so
-        ``step`` must be larger than the number of draws that any stream makes.
+        ``step`` must be at least the number of draws that any stream makes.
+        The starts ``i * step`` are taken modulo the period, ``2**128``, so
+        ``n`` streams are only guaranteed not to overlap when
+        ``n * step <= 2**128``. This is not a practical limit: streams of
+        ``10**12`` draws allow about ``2.5 * 10**26`` streams.
 
         A convenient step is the odd integer closest to ``2**XX / phi``, where
-        phi is the golden ratio and ``XX`` is chosen so that the step is larger
-        than the number of draws per stream. ``advance_step(max_draws)``
+        phi is the golden ratio and ``XX`` is chosen so that the step is at
+        least the number of draws per stream. ``advance_step(max_draws)``
         returns this step for the smallest ``XX`` that works, using only
         integer arithmetic. For example, ``XX = 48`` gives ``0x9e3779b97f4b``,
         about ``1.7 * 10**14`` draws per stream, ``XX = 64`` gives
@@ -498,9 +509,14 @@ cdef class PCG64(BitGenerator):
         The step is odd, so the states of two streams differ as if at random,
         apart from their lowest few bits. The step is at least ``max_draws``,
         so a stream that makes at most ``max_draws`` draws does not reach the
-        start of the next stream. Streams ``0`` to ``n - 1`` do not overlap
-        when ``n * step <= 2**128``. The Notes of ``advance`` explain this
-        choice of step.
+        start of the next stream. The Notes of ``advance`` explain this choice
+        of step.
+
+        The starts ``i * step`` are taken modulo the period, ``2**128``, so
+        streams ``0`` to ``n - 1`` are only guaranteed not to overlap when
+        ``n * step <= 2**128``. ``advance_step`` does not check this, since it
+        does not know ``n``, but it is not a practical limit: streams of
+        ``10**12`` draws allow about ``2.5 * 10**26`` streams.
 
         The step is computed with integer arithmetic only, so it is exact for
         any ``max_draws``.
@@ -1007,8 +1023,14 @@ cdef class LCG128Mix(BitGenerator):
           states are related in the same way.
 
         After ``advance(2**64)``, the states differ in about 32 of their 128
-        bits and never in the lowest 64. ``advance_step`` returns a step that
-        splits a stream safely, and the Notes explain how to choose one.
+        bits and never in the lowest 64.
+
+        The size of the step also matters. Stream ``i``, advanced by
+        ``i * step``, can make at most ``step`` draws before it reaches the
+        start of stream ``i + 1``, and ``n`` streams are only guaranteed not
+        to overlap when ``n * step <= 2**128``. ``advance_step`` returns an
+        odd step for a given number of draws per stream, and the Notes
+        explain how to choose one.
 
         See Also
         --------
@@ -1041,12 +1063,16 @@ cdef class LCG128Mix(BitGenerator):
         few bits follow a fixed pattern, since in any LCG they repeat every few
         steps. This holds for an odd step of any size. The size sets how far
         apart the streams are: stream ``i`` reaches the start of stream
-        ``i + 1`` after ``step`` draws, so ``step`` must be larger than the
-        number of draws that any stream makes.
+        ``i + 1`` after ``step`` draws, so ``step`` must be at least the number
+        of draws that any stream makes. The starts ``i * step`` are taken
+        modulo the period, ``2**128``, so ``n`` streams are only guaranteed not
+        to overlap when ``n * step <= 2**128``. This is not a practical limit
+        for ``LCG128Mix``: streams of ``10**12`` draws allow about
+        ``2.5 * 10**26`` streams.
 
         A convenient step is the odd integer closest to ``2**XX / phi``, where
-        phi is the golden ratio and ``XX`` is chosen so that the step is larger
-        than the number of draws per stream. ``advance_step(max_draws)``
+        phi is the golden ratio and ``XX`` is chosen so that the step is at
+        least the number of draws per stream. ``advance_step(max_draws)``
         returns this step for the smallest ``XX`` that works, using only
         integer arithmetic. For example, ``XX = 48`` gives ``0x9e3779b97f4b``,
         about ``1.7 * 10**14`` draws per stream, ``XX = 64`` gives
@@ -1120,10 +1146,14 @@ cdef class LCG128Mix(BitGenerator):
         The step is odd, so, for the default ``multiplier``, the states of two
         streams differ as if at random, apart from their lowest few bits. The
         step is at least ``max_draws``, so a stream that makes at most
-        ``max_draws`` draws does not reach the start of the next stream.
-        Streams ``0`` to ``n - 1`` do not overlap when
-        ``n * step <= 2**128``. The Notes of ``advance`` explain this choice of
-        step.
+        ``max_draws`` draws does not reach the start of the next stream. The
+        Notes of ``advance`` explain this choice of step.
+
+        The starts ``i * step`` are taken modulo the period, ``2**128``, so
+        streams ``0`` to ``n - 1`` are only guaranteed not to overlap when
+        ``n * step <= 2**128``. ``advance_step`` does not check this, since it
+        does not know ``n``, but it is not a practical limit: streams of
+        ``10**12`` draws allow about ``2.5 * 10**26`` streams.
 
         The step is computed with integer arithmetic only, so it is exact for
         any ``max_draws``.
@@ -1290,10 +1320,11 @@ cdef class PCG64DXSM(PCG64):
     ...     rg[i].bit_generator.advance(i * 2**64)
 
     Each instance above uses a different increment ``inc``. To split a single
-    stream, advance by multiples of an odd step such as
-    ``0x9e3779b97f4a7c15f39cc0605cedc835``, or use ``jumped``, rather than by a
-    large power of two such as ``2**127``, which gives strongly related streams
-    (see ``advance``).
+    stream, advance stream ``i`` by ``i * step``, where ``step`` is
+    ``advance_step(max_draws)`` and ``max_draws`` is the most draws that any
+    stream makes, or use ``jumped``. Do not advance by a large power of two
+    such as ``2**127``, which gives strongly related streams (see
+    ``advance``).
 
     References
     ----------

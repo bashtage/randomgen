@@ -128,9 +128,10 @@ does not support advancing a counter.
 
    Instead, advance stream ``i`` by ``i * step`` with an odd ``step``. With
    any odd step the states of two streams differ as if at random, apart from
-   their lowest few bits, and the size of the step only has to be larger than
-   the number of draws that each stream makes, so that the streams do not
-   overlap. A convenient step is the odd integer closest to
+   their lowest few bits. The size of the step matters for overlap: it must be
+   at least the number of draws that each stream makes, and ``n`` streams are
+   only guaranteed not to overlap when ``n * step`` is no larger than the
+   period. A convenient step is the odd integer closest to
    :math:`2^{XX}/\phi`, where :math:`\phi` is the golden ratio, for example
    ``0x9e3779b97f4a7c15`` (:math:`XX = 64`, about :math:`1.1 \times 10^{19}`
    draws per stream) or, for :class:`~randomgen.pcg32.PCG32`,
@@ -140,6 +141,13 @@ does not support advancing a counter.
    largest number of draws that any stream makes and returns this step for the
    smallest :math:`XX` that works. ``jumped`` uses a golden-ratio step and is
    also a good choice.
+
+   The period of :class:`~randomgen.pcg32.PCG32` is only :math:`2^{64}`, which
+   limits it to, for example, about :math:`1.4 \times 10^{7}` streams of
+   :math:`10^{12}` draws. Use :class:`~randomgen.pcg64.PCG64`, or the related
+   :class:`~randomgen.pcg64.PCG64DXSM` or :class:`~randomgen.pcg64.LCG128Mix`,
+   whose period is :math:`2^{128}`, when many streams or many draws per stream
+   are needed.
 
    .. code-block:: python
 

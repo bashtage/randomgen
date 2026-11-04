@@ -79,10 +79,16 @@ cdef class PCG32(BitGenerator):
     ...     rg[i].bit_generator.advance(i * 2**32)
 
     Each instance above uses a different increment ``inc``. To split a single
-    stream, advance by multiples of an odd step such as
-    ``0x9e3779b97f4a7c15``, or use ``jumped``, rather than by a large power of
-    two such as ``2**63``, which gives strongly related streams (see
-    ``advance``).
+    stream, advance stream ``i`` by ``i * step``, where ``step`` is
+    ``advance_step(max_draws)`` and ``max_draws`` is the most draws that any
+    stream makes, or use ``jumped``. Do not advance by a large power of two
+    such as ``2**63``, which gives strongly related streams (see
+    ``advance``). The period of ``PCG32`` is only ``2**64``, which limits how
+    many streams fit without overlapping, for example to about
+    ``1.4 * 10**7`` streams of ``10**12`` draws. Use
+    :class:`~randomgen.pcg64.PCG64`, or the related
+    :class:`~randomgen.pcg64.PCG64DXSM` or :class:`~randomgen.pcg64.LCG128Mix`,
+    when many streams or many draws per stream are needed.
 
     **Compatibility Guarantee**
 
@@ -201,8 +207,20 @@ cdef class PCG32(BitGenerator):
         is the other with its 16-bit halves swapped and one bit flipped.
 
         After ``advance(2**32)``, the states differ in about 16 of their 64
-        bits and never in the lowest 32. ``advance_step`` returns a step that
-        splits a stream safely, and the Notes explain how to choose one.
+        bits and never in the lowest 32.
+
+        The size of the step also matters. Stream ``i``, advanced by
+        ``i * step``, can make at most ``step`` draws before it reaches the
+        start of stream ``i + 1``, and ``n`` streams are only guaranteed not
+        to overlap when ``n * step <= 2**64``. The period of ``PCG32`` is
+        short enough for this to limit real applications, for example to
+        about ``1.4 * 10**7`` streams of ``10**12`` draws. Use
+        :class:`~randomgen.pcg64.PCG64`, or the related
+        :class:`~randomgen.pcg64.PCG64DXSM` or
+        :class:`~randomgen.pcg64.LCG128Mix`, when many streams or many draws
+        per stream are needed. ``advance_step`` returns an odd step for a
+        given number of draws per stream, and the Notes explain how to choose
+        one.
 
         See Also
         --------
@@ -232,11 +250,14 @@ cdef class PCG32(BitGenerator):
         since in any LCG they repeat every few steps. This holds for an odd
         step of any size. The size sets how far apart the streams are: stream
         ``i`` reaches the start of stream ``i + 1`` after ``step`` draws, so
-        ``step`` must be larger than the number of draws that any stream makes.
+        ``step`` must be at least the number of draws that any stream makes.
+        The starts ``i * step`` are taken modulo the period, ``2**64``, so
+        ``n`` streams are only guaranteed not to overlap when
+        ``n * step <= 2**64``.
 
         A convenient step is the odd integer closest to ``2**XX / phi``, where
-        phi is the golden ratio and ``XX`` is chosen so that the step is larger
-        than the number of draws per stream. ``advance_step(max_draws)``
+        phi is the golden ratio and ``XX`` is chosen so that the step is at
+        least the number of draws per stream. ``advance_step(max_draws)``
         returns this step for the smallest ``XX`` that works, using only
         integer arithmetic. For example, ``XX = 32`` gives ``0x9e3779b9``,
         about ``2.7 * 10**9`` draws per stream, and ``XX = 64`` gives
@@ -248,6 +269,29 @@ cdef class PCG32(BitGenerator):
         >>> hex(step)
         '0x278dde6e5'
         >>> streams = [PCG32(1234).advance(i * step) for i in range(8)]
+
+        The period of ``PCG32``, ``2**64``, is short enough for
+        ``n * step <= 2**64`` to limit the number of streams in practice. With
+        the step from ``advance_step``, the largest number of streams that are
+        guaranteed not to overlap is
+
+        =================  ==================
+        Draws per stream   Streams
+        =================  ==================
+        ``10**6``          ``1.4 * 10**13``
+        ``10**9``          ``1.4 * 10**10``
+        ``10**12``         ``1.4 * 10**7``
+        ``10**15``         13,254
+        ``10**18``         12
+        =================  ==================
+
+        The step from ``advance_step`` is less than twice the number of draws
+        per stream, so ``n`` streams of ``m`` draws always fit when
+        ``n * m <= 2**63``. When many streams or many draws per stream are
+        needed, use :class:`~randomgen.pcg64.PCG64`, or the related
+        :class:`~randomgen.pcg64.PCG64DXSM` or
+        :class:`~randomgen.pcg64.LCG128Mix`. Their period of ``2**128`` allows
+        about ``2.5 * 10**26`` streams of ``10**12`` draws.
 
         Streams ``i`` and ``j`` are ``(j - i) * step`` draws apart, so they
         share the lowest ``v`` bits of their states, where ``2**v`` is the
@@ -300,9 +344,31 @@ cdef class PCG32(BitGenerator):
         The step is odd, so the states of two streams differ as if at random,
         apart from their lowest few bits. The step is at least ``max_draws``,
         so a stream that makes at most ``max_draws`` draws does not reach the
-        start of the next stream. Streams ``0`` to ``n - 1`` do not overlap
-        when ``n * step <= 2**64``. The Notes of ``advance`` explain this
-        choice of step.
+        start of the next stream. The Notes of ``advance`` explain this choice
+        of step.
+
+        The starts ``i * step`` are taken modulo the period, ``2**64``, so
+        streams ``0`` to ``n - 1`` are only guaranteed not to overlap when
+        ``n * step <= 2**64``. ``advance_step`` does not check this, since it
+        does not know ``n``, and the period of ``PCG32`` is short enough for
+        the limit to matter. The largest ``n`` is ``2**64 // step``:
+
+        =================  ==================
+        ``max_draws``      Largest ``n``
+        =================  ==================
+        ``10**6``          ``1.4 * 10**13``
+        ``10**9``          ``1.4 * 10**10``
+        ``10**12``         ``1.4 * 10**7``
+        ``10**15``         13,254
+        ``10**18``         12
+        =================  ==================
+
+        The step is less than ``2 * max_draws``, so ``n`` streams always fit
+        when ``n * max_draws <= 2**63``. When many streams or many draws per
+        stream are needed, use :class:`~randomgen.pcg64.PCG64`, or the related
+        :class:`~randomgen.pcg64.PCG64DXSM` or
+        :class:`~randomgen.pcg64.LCG128Mix`. Their period of ``2**128`` allows
+        about ``2.5 * 10**26`` streams of ``10**12`` draws.
 
         The step is computed with integer arithmetic only, so it is exact for
         any ``max_draws``.
