@@ -143,6 +143,13 @@ cdef class PCG64(BitGenerator):
     >>> for i in range(10):
     ...     rg[i].bit_generator.advance(i * 2**64)
 
+    Each instance above uses a different increment ``inc``. To split a single
+    stream, advance stream ``i`` by ``i * step``, where ``step`` is
+    ``advance_step(max_draws)`` and ``max_draws`` is the most draws that any
+    stream makes, or use ``jumped``. Do not advance by a large power of two
+    such as ``2**127``, which gives strongly related streams (see
+    ``advance``).
+
     References
     ----------
     .. [1] "PCG, A Family of Better Random Number Generators",
@@ -359,6 +366,38 @@ cdef class PCG64(BitGenerator):
         self : PCG64
             RNG advanced delta steps
 
+        Warnings
+        --------
+        Do not use ``advance`` with a large power of two, such as ``2**127``
+        (half of the period), to split a single stream (the same seed and
+        ``inc``) into several. The state is an LCG modulo ``2**128``, whose
+        lowest ``e`` bits repeat every ``2**e`` steps, so advancing by
+        ``2**e`` leaves them unchanged. After ``advance(2**127)``, the two
+        states differ only in their top bit at every step, and the outputs
+        are strongly related:
+
+        * ``"xsl-rr"``: each output is the other with its 32-bit halves
+          swapped and one bit flipped. More generally, advancing by
+          ``2**(128 - t)`` gives outputs that are rotations of each other
+          with at most ``t`` bits flipped.
+        * ``"dxsm"``, ``"dxsm-128"`` and ``PCG64DXSM``: the two outputs are
+          never congruent modulo 4, so their last hexadecimal digits never
+          coincide, and PractRand fails the interleaved streams at 1 MB.
+
+        After ``advance(2**64)``, the states differ in about 32 of their 128
+        bits and never in the lowest 64.
+
+        The size of the step also matters. Stream ``i``, advanced by
+        ``i * step``, can make at most ``step`` draws before it reaches the
+        start of stream ``i + 1``, and ``n`` streams are only guaranteed not
+        to overlap when ``n * step <= 2**128``. ``advance_step`` returns an
+        odd step for a given number of draws per stream, and the Notes
+        explain how to choose one.
+
+        See Also
+        --------
+        advance_step : Step for splitting one stream into several.
+
         Notes
         -----
         Advancing a RNG updates the underlying RNG state as-if a given
@@ -377,6 +416,46 @@ cdef class PCG64(BitGenerator):
 
         Advancing the RNG state resets any pre-computed random numbers.
         This is required to ensure exact reproducibility.
+
+        To split one stream into several, advance stream ``i`` by ``i * step``
+        with an odd ``step``. With an odd step, the states of two streams
+        differ in their lowest bit at every step and their other bits differ as
+        if at random: about 64 of the 128 bits differ, with the spread of a
+        binomial distribution. Only the lowest few bits follow a fixed pattern,
+        since in any LCG they repeat every few steps. This holds for an odd
+        step of any size. The size sets how far apart the streams are: stream
+        ``i`` reaches the start of stream ``i + 1`` after ``step`` draws, so
+        ``step`` must be at least the number of draws that any stream makes.
+        The starts ``i * step`` are taken modulo the period, ``2**128``, so
+        ``n`` streams are only guaranteed not to overlap when
+        ``n * step <= 2**128``. This is not a practical limit: streams of
+        ``10**12`` draws allow about ``2.5 * 10**26`` streams.
+
+        A convenient step is the odd integer closest to ``2**XX / phi``, where
+        phi is the golden ratio and ``XX`` is chosen so that the step is at
+        least the number of draws per stream. ``advance_step(max_draws)``
+        returns this step for the smallest ``XX`` that works, using only
+        integer arithmetic. For example, ``XX = 48`` gives ``0x9e3779b97f4b``,
+        about ``1.7 * 10**14`` draws per stream, ``XX = 64`` gives
+        ``0x9e3779b97f4a7c15``, about ``1.1 * 10**19``, and ``XX = 128`` gives
+        ``0x9e3779b97f4a7c15f39cc0605cedc835``, the step of ``jumped`` and of
+        NumPy's ``PCG64.jumped``. With ``XX = 128`` the multiples of the step
+        wrap around the period, and the golden ratio spreads the streams evenly
+        around it.
+
+        >>> step = PCG64.advance_step(10**10)
+        >>> hex(step)
+        '0x278dde6e5'
+        >>> streams = [PCG64(1234).advance(i * step) for i in range(8)]
+
+        Streams ``i`` and ``j`` are ``(j - i) * step`` draws apart, so they
+        share the lowest ``v`` bits of their states, where ``2**v`` is the
+        largest power of two that divides ``j - i``. With fewer than ``2**20``
+        streams that is at most 19 bits. NumPy reports that two XSL-RR streams
+        that share their lowest 58 bits and their increment fail PractRand when
+        interleaved. ``jumped(iter)`` advances by ``iter`` times a golden-ratio
+        step, so it is also a good choice when ``iter`` is not a large power of
+        two.
         """
         delta = wrap_int(delta, 128)
 
@@ -389,6 +468,68 @@ cdef class PCG64(BitGenerator):
             )
             self._reset_state_variables()
         return self
+
+    @staticmethod
+    def advance_step(max_draws):
+        """
+        advance_step(max_draws)
+
+        Step for splitting one stream into streams of up to max_draws draws
+
+        .. versionadded:: 2.6.0
+
+        Parameters
+        ----------
+        max_draws : int
+            The largest number of draws that any stream makes. Must be at
+            least 1 and at most the integer part of ``2**128 / phi``, about
+            ``2.1 * 10**38``, where phi is the golden ratio.
+
+        Returns
+        -------
+        step : int
+            The odd integer closest to ``2**XX / phi``, where ``XX`` is the
+            smallest integer for which ``2**XX / phi`` is larger than
+            ``max_draws``. The step is never smaller than ``max_draws``.
+
+        Raises
+        ------
+        ValueError
+            If ``max_draws`` is outside the range above.
+        TypeError
+            If ``max_draws`` is not an integer.
+
+        See Also
+        --------
+        advance : Advance the state as-if delta draws have occurred.
+
+        Notes
+        -----
+        Advance stream ``i`` by ``i * step`` to split one stream into several.
+        The step is odd, so the states of two streams differ as if at random,
+        apart from their lowest few bits. The step is at least ``max_draws``,
+        so a stream that makes at most ``max_draws`` draws does not reach the
+        start of the next stream. The Notes of ``advance`` explain this choice
+        of step.
+
+        The starts ``i * step`` are taken modulo the period, ``2**128``, so
+        streams ``0`` to ``n - 1`` are only guaranteed not to overlap when
+        ``n * step <= 2**128``. ``advance_step`` does not check this, since it
+        does not know ``n``, but it is not a practical limit: streams of
+        ``10**12`` draws allow about ``2.5 * 10**26`` streams.
+
+        The step is computed with integer arithmetic only, so it is exact for
+        any ``max_draws``.
+
+        Examples
+        --------
+        >>> from randomgen import PCG64
+        >>> step = PCG64.advance_step(10**10)
+        >>> hex(step)
+        '0x278dde6e5'
+        >>> streams = [PCG64(1234).advance(i * step) for i in range(8)]
+        """
+        return golden_advance_step(max_draws, 128)
 
     cdef jump_inplace(self, object iter):
         """
@@ -855,8 +996,45 @@ cdef class LCG128Mix(BitGenerator):
 
         Returns
         -------
-        self : PCG64
+        self : LCG128Mix
             RNG advanced delta steps
+
+        Warnings
+        --------
+        Do not use ``advance`` with a large power of two, such as ``2**127``
+        (half of the period), to split a single stream (the same seed,
+        ``inc`` and ``multiplier``) into several. The state is an LCG modulo
+        ``2**128``, whose lowest ``e`` bits repeat every ``2**e`` steps, so
+        advancing by ``2**e`` leaves them unchanged. After
+        ``advance(2**127)``, the two states differ only in their top bit at
+        every step, and with most output functions the outputs are strongly
+        related:
+
+        * ``"xsl-rr"``: each output is the other with its 32-bit halves
+          swapped and one bit flipped.
+        * ``"dxsm"``: the two outputs are never congruent modulo 4, and
+          PractRand fails the interleaved streams at 1 MB.
+        * ``"upper"``: the outputs are identical except for the highest bit.
+          More generally, advancing by ``2**(128 - t)`` leaves the lowest
+          ``64 - t`` bits of every output unchanged.
+        * ``"lower"``: the outputs are identical, as they are after advancing
+          by any multiple of ``2**64``.
+        * ``"murmur3"``: no pattern is visible in the outputs, although the
+          states are related in the same way.
+
+        After ``advance(2**64)``, the states differ in about 32 of their 128
+        bits and never in the lowest 64.
+
+        The size of the step also matters. Stream ``i``, advanced by
+        ``i * step``, can make at most ``step`` draws before it reaches the
+        start of stream ``i + 1``, and ``n`` streams are only guaranteed not
+        to overlap when ``n * step <= 2**128``. ``advance_step`` returns an
+        odd step for a given number of draws per stream, and the Notes
+        explain how to choose one.
+
+        See Also
+        --------
+        advance_step : Step for splitting one stream into several.
 
         Notes
         -----
@@ -876,6 +1054,47 @@ cdef class LCG128Mix(BitGenerator):
 
         Advancing the RNG state resets any pre-computed random numbers.
         This is required to ensure exact reproducibility.
+
+        To split one stream into several, advance stream ``i`` by ``i * step``
+        with an odd ``step``. With an odd step, the states of two streams
+        differ in their lowest bit at every step and their other bits differ as
+        if at random: about 64 of the 128 bits differ, with the spread of a
+        binomial distribution, for the default ``multiplier``. Only the lowest
+        few bits follow a fixed pattern, since in any LCG they repeat every few
+        steps. This holds for an odd step of any size. The size sets how far
+        apart the streams are: stream ``i`` reaches the start of stream
+        ``i + 1`` after ``step`` draws, so ``step`` must be at least the number
+        of draws that any stream makes. The starts ``i * step`` are taken
+        modulo the period, ``2**128``, so ``n`` streams are only guaranteed not
+        to overlap when ``n * step <= 2**128``. This is not a practical limit
+        for ``LCG128Mix``: streams of ``10**12`` draws allow about
+        ``2.5 * 10**26`` streams.
+
+        A convenient step is the odd integer closest to ``2**XX / phi``, where
+        phi is the golden ratio and ``XX`` is chosen so that the step is at
+        least the number of draws per stream. ``advance_step(max_draws)``
+        returns this step for the smallest ``XX`` that works, using only
+        integer arithmetic. For example, ``XX = 48`` gives ``0x9e3779b97f4b``,
+        about ``1.7 * 10**14`` draws per stream, ``XX = 64`` gives
+        ``0x9e3779b97f4a7c15``, about ``1.1 * 10**19``, and ``XX = 128`` gives
+        ``0x9e3779b97f4a7c15f39cc0605cedc835``, the step of ``jumped`` and of
+        NumPy's ``PCG64.jumped``. With ``XX = 128`` the multiples of the step
+        wrap around the period, and the golden ratio spreads the streams evenly
+        around it.
+
+        >>> step = LCG128Mix.advance_step(10**10)
+        >>> hex(step)
+        '0x278dde6e5'
+        >>> streams = [LCG128Mix(1234).advance(i * step) for i in range(8)]
+
+        Streams ``i`` and ``j`` are ``(j - i) * step`` draws apart, so they
+        share the lowest ``v`` bits of their states, where ``2**v`` is the
+        largest power of two that divides ``j - i``. With fewer than ``2**20``
+        streams that is at most 19 bits. NumPy reports that two XSL-RR streams
+        that share their lowest 58 bits and their increment fail PractRand when
+        interleaved. ``jumped(iter)`` advances by ``iter`` times a golden-ratio
+        step, so it is also a good choice when ``iter`` is not a large power of
+        two.
         """
         delta = wrap_int(delta, 128)
 
@@ -886,6 +1105,68 @@ cdef class LCG128Mix(BitGenerator):
             lcg128mix_advance(&self.rng_state, <uint64_t *>np.PyArray_DATA(d))
             self._reset_state_variables()
         return self
+
+    @staticmethod
+    def advance_step(max_draws):
+        """
+        advance_step(max_draws)
+
+        Step for splitting one stream into streams of up to max_draws draws
+
+        .. versionadded:: 2.6.0
+
+        Parameters
+        ----------
+        max_draws : int
+            The largest number of draws that any stream makes. Must be at
+            least 1 and at most the integer part of ``2**128 / phi``, about
+            ``2.1 * 10**38``, where phi is the golden ratio.
+
+        Returns
+        -------
+        step : int
+            The odd integer closest to ``2**XX / phi``, where ``XX`` is the
+            smallest integer for which ``2**XX / phi`` is larger than
+            ``max_draws``. The step is never smaller than ``max_draws``.
+
+        Raises
+        ------
+        ValueError
+            If ``max_draws`` is outside the range above.
+        TypeError
+            If ``max_draws`` is not an integer.
+
+        See Also
+        --------
+        advance : Advance the state as-if delta draws have occurred.
+
+        Notes
+        -----
+        Advance stream ``i`` by ``i * step`` to split one stream into several.
+        The step is odd, so, for the default ``multiplier``, the states of two
+        streams differ as if at random, apart from their lowest few bits. The
+        step is at least ``max_draws``, so a stream that makes at most
+        ``max_draws`` draws does not reach the start of the next stream. The
+        Notes of ``advance`` explain this choice of step.
+
+        The starts ``i * step`` are taken modulo the period, ``2**128``, so
+        streams ``0`` to ``n - 1`` are only guaranteed not to overlap when
+        ``n * step <= 2**128``. ``advance_step`` does not check this, since it
+        does not know ``n``, but it is not a practical limit: streams of
+        ``10**12`` draws allow about ``2.5 * 10**26`` streams.
+
+        The step is computed with integer arithmetic only, so it is exact for
+        any ``max_draws``.
+
+        Examples
+        --------
+        >>> from randomgen import LCG128Mix
+        >>> step = LCG128Mix.advance_step(10**10)
+        >>> hex(step)
+        '0x278dde6e5'
+        >>> streams = [LCG128Mix(1234).advance(i * step) for i in range(8)]
+        """
+        return golden_advance_step(max_draws, 128)
 
     cdef jump_inplace(self, object iter):
         """
@@ -1037,6 +1318,13 @@ cdef class PCG64DXSM(PCG64):
     >>> rg = [Generator(PCG64DXSM(1234, i + 1)) for i in range(10)]
     >>> for i in range(10):
     ...     rg[i].bit_generator.advance(i * 2**64)
+
+    Each instance above uses a different increment ``inc``. To split a single
+    stream, advance stream ``i`` by ``i * step``, where ``step`` is
+    ``advance_step(max_draws)`` and ``max_draws`` is the most draws that any
+    stream makes, or use ``jumped``. Do not advance by a large power of two
+    such as ``2**127``, which gives strongly related streams (see
+    ``advance``).
 
     References
     ----------

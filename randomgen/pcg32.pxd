@@ -1,7 +1,12 @@
 cimport numpy as np
 from libc.stdint cimport uint32_t, uint64_t
 
-from randomgen.common cimport BitGenerator, fully_qualified_name, wrap_int
+from randomgen.common cimport (
+    BitGenerator,
+    fully_qualified_name,
+    golden_advance_step,
+    wrap_int,
+)
 
 
 cdef extern from "src/pcg32/pcg32.h":

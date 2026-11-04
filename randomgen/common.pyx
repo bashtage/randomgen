@@ -1,4 +1,5 @@
 from collections import namedtuple
+import math
 import operator
 import sys
 from threading import RLock
@@ -419,6 +420,35 @@ cdef object wrap_int(object val, object bits):
         divisor = val // upper
         val = val - upper * divisor
     return val
+
+cdef object golden_advance_step(object max_draws, object bits):
+    """
+    Odd integer closest to 2**xx / phi for the smallest xx with 2**xx / phi > max_draws
+
+    Only integer arithmetic is used. 2**xx / phi = (sqrt(5) - 1) * 2**xx / 2 and
+    sqrt(5) * 2**xx is irrational, so with r = isqrt(5 * 4**xx), the integer part
+    of 2**xx / phi is (r - 2**xx) // 2. As 2**xx / phi is irrational, it is larger
+    than an integer n exactly when its integer part is at least n.
+    """
+    n = operator.index(max_draws)
+    # 2**xx / phi > n needs 2**xx > n, so xx >= n.bit_length(). Since 1 / phi > 1 / 2,
+    # 2**xx >= 2 * n is enough, so xx is either n.bit_length() or one more.
+    if n >= 1:
+        for xx in (n.bit_length(), n.bit_length() + 1):
+            if xx > bits:
+                break
+            p = 1 << xx
+            floor = (math.isqrt(5 * p * p) - p) // 2
+            if floor >= n:
+                # 2**xx / phi lies strictly between floor and floor + 1, so the
+                # closest odd integer is floor if it is odd and floor + 1 otherwise
+                return floor if floor & 1 else floor + 1
+    p = 1 << bits
+    upper = (math.isqrt(5 * p * p) - p) // 2
+    raise ValueError(
+        f"max_draws must be between 1 and {upper}, the integer part of "
+        f"2**{bits} / phi, where phi is the golden ratio."
+    )
 
 cdef int check_state_config(object bit_generator, str name, object current,
                             object new) except -1:

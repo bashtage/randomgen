@@ -22,6 +22,7 @@ Parallel generation
    :toctree: generated/
 
    ~PCG32.advance
+   ~PCG32.advance_step
    ~PCG32.jumped
 
 Extending

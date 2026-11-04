@@ -20,6 +20,7 @@ Parallel generation
    :toctree: generated/
 
    ~LCG128Mix.advance
+   ~LCG128Mix.advance_step
    ~LCG128Mix.jumped
 
 Extending
