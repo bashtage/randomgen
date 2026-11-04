@@ -21,7 +21,7 @@
     
     
       
-        <title>Permuted Congruential Generator (32-bit, PCG32) - RandomGen v2.3.1 (+217)</title>
+        <title>Permuted Congruential Generator (32-bit, PCG32) - RandomGen v2.3.1 (+225)</title>
       
     
     
@@ -87,7 +87,7 @@
 
 <header class="md-header md-header--shadow" data-md-component="header">
   <nav class="md-header__inner md-grid" aria-label="Header">
-    <a href="../index.html" title="RandomGen v2.3.1 (+217)" class="md-header__button md-logo" aria-label="RandomGen v2.3.1 (+217)" data-md-component="logo">
+    <a href="../index.html" title="RandomGen v2.3.1 (+225)" class="md-header__button md-logo" aria-label="RandomGen v2.3.1 (+225)" data-md-component="logo">
       <img src="../_static/casino.svg" alt="logo">
     </a>
     <label class="md-header__button md-icon" for="__drawer">
@@ -98,7 +98,7 @@
       <div class="md-header__ellipsis">
         <div class="md-header__topic">
           <span class="md-ellipsis">
-            RandomGen v2.3.1 (+217)
+            RandomGen v2.3.1 (+225)
           </span>
         </div>
         <div class="md-header__topic" data-md-component="header-topic">
@@ -193,10 +193,10 @@
 
 <nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
   <label class="md-nav__title" for="__drawer">
-    <a href="../index.html" title="RandomGen v2.3.1 (+217)" class="md-nav__button md-logo" aria-label="RandomGen v2.3.1 (+217)" data-md-component="logo">
+    <a href="../index.html" title="RandomGen v2.3.1 (+225)" class="md-nav__button md-logo" aria-label="RandomGen v2.3.1 (+225)" data-md-component="logo">
       <img src="../_static/casino.svg" alt="logo">
     </a>
-    RandomGen v2.3.1 (+217)
+    RandomGen v2.3.1 (+225)
   </label>
   
     <div class="md-nav__source">
@@ -929,6 +929,30 @@
   
   
     <li class="md-nav__item">
+      <a href="generated/randomgen.pcg32.PCG32.advance_step.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    <span title="/bit_generators/generated/randomgen.pcg32.pcg32.advance_step.rst (reference label)"><span>randomgen.<wbr>pcg32.<wbr>PCG32.<wbr>advance_<wbr>step</span></span>
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="generated/randomgen.pcg32.PCG32.jumped.html" class="md-nav__link">
         
   
@@ -1349,6 +1373,16 @@
     
     <span class="md-ellipsis">
       <span title="/bit_generators/generated/randomgen.pcg32.pcg32.advance.rst (reference label)"><span>randomgen.<wbr>pcg32.<wbr>PCG32.<wbr>advance</span></span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="generated/randomgen.pcg32.PCG32.advance_step.html" class="md-nav__link">
+    
+    <span class="md-ellipsis">
+      <span title="/bit_generators/generated/randomgen.pcg32.pcg32.advance_step.rst (reference label)"><span>randomgen.<wbr>pcg32.<wbr>PCG32.<wbr>advance_<wbr>step</span></span>
     </span>
   </a>
   
@@ -2454,6 +2488,17 @@ non-overlapping sequences.</p>
 <span class="gp">... </span>    <span class="n">rg</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">bit_generator</span><span class="o">.</span><span class="n">advance</span><span class="p">(</span><span class="n">i</span> <span class="o">*</span> <span class="mi">2</span><span class="o">**</span><span class="mi">32</span><span class="p">)</span>
 </code></pre></div>
 </div>
+<p>Each instance above uses a different increment <code class="docutils literal notranslate"><span class="pre">inc</span></code>. To split a single
+stream, advance stream <code class="docutils literal notranslate"><span class="pre">i</span></code> by <code class="docutils literal notranslate"><span class="pre">i</span> <span class="pre">*</span> <span class="pre">step</span></code>, where <code class="docutils literal notranslate"><span class="pre">step</span></code> is
+<code class="docutils literal notranslate"><span class="pre">advance_step(max_draws)</span></code> and <code class="docutils literal notranslate"><span class="pre">max_draws</span></code> is the most draws that any
+stream makes, or use <code class="docutils literal notranslate"><span class="pre">jumped</span></code>. Do not advance by a large power of two
+such as <code class="docutils literal notranslate"><span class="pre">2**63</span></code>, which gives strongly related streams (see
+<code class="docutils literal notranslate"><span class="pre">advance</span></code>). The period of <code class="docutils literal notranslate"><span class="pre">PCG32</span></code> is only <code class="docutils literal notranslate"><span class="pre">2**64</span></code>, which limits how
+many streams fit without overlapping, for example to about
+<code class="docutils literal notranslate"><span class="pre">1.4</span> <span class="pre">*</span> <span class="pre">10**7</span></code> streams of <code class="docutils literal notranslate"><span class="pre">10**12</span></code> draws. Use
+<a class="reference internal" href="pcg64.html#randomgen.pcg64.PCG64" title="randomgen.pcg64.PCG64 (Python class) — Container for the PCG-64 pseudo-random number generator."><code class="xref py py-class docutils literal notranslate"><span class="pre">PCG64</span></code></a>, or the related
+<a class="reference internal" href="pcg64dxsm.html#randomgen.pcg64.PCG64DXSM" title="randomgen.pcg64.PCG64DXSM (Python class) — Container for the PCG-64 updated with a 64-bit mult using DXSM output func."><code class="xref py py-class docutils literal notranslate"><span class="pre">PCG64DXSM</span></code></a> or <a class="reference internal" href="lcg128mix.html#randomgen.pcg64.LCG128Mix" title="randomgen.pcg64.LCG128Mix (Python class) — Customizable 128-bit LCG bit generator with output mixing"><code class="xref py py-class docutils literal notranslate"><span class="pre">LCG128Mix</span></code></a>,
+when many streams or many draws per stream are needed.</p>
 <p><strong>Compatibility Guarantee</strong></p>
 <p><code class="docutils literal notranslate"><span class="pre">PCG32</span></code> makes a guarantee that a fixed seed and will always produce
 the same random integer stream.</p>
@@ -2489,7 +2534,10 @@ Statistically Good Algorithms for Random Number Generation”</p>
 <tr class="row-odd"><td><p><a class="reference internal" href="generated/randomgen.pcg32.PCG32.advance.html#randomgen.pcg32.PCG32.advance" title="randomgen.pcg32.PCG32.advance (Python method) — Advance the underlying RNG as-if delta draws have occurred."><code class="xref py py-obj docutils literal notranslate"><span class="pre">advance</span></code></a>(delta)</p></td>
 <td><p>Advance the underlying RNG as-if delta draws have occurred.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="generated/randomgen.pcg32.PCG32.jumped.html#randomgen.pcg32.PCG32.jumped" title="randomgen.pcg32.PCG32.jumped (Python method) — Returns a new bit generator with the state jumped"><code class="xref py py-obj docutils literal notranslate"><span class="pre">jumped</span></code></a>([iter])</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="generated/randomgen.pcg32.PCG32.advance_step.html#randomgen.pcg32.PCG32.advance_step" title="randomgen.pcg32.PCG32.advance_step (Python method) — Step for splitting one stream into streams of up to max_draws draws"><code class="xref py py-obj docutils literal notranslate"><span class="pre">advance_step</span></code></a>(max_draws)</p></td>
+<td><p>Step for splitting one stream into streams of up to max_draws draws</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="generated/randomgen.pcg32.PCG32.jumped.html#randomgen.pcg32.PCG32.jumped" title="randomgen.pcg32.PCG32.jumped (Python method) — Returns a new bit generator with the state jumped"><code class="xref py py-obj docutils literal notranslate"><span class="pre">jumped</span></code></a>([iter])</p></td>
 <td><p>Returns a new bit generator with the state jumped</p></td>
 </tr>
 </tbody>

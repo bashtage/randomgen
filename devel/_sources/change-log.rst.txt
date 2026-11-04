@@ -39,6 +39,18 @@ New features
   They used to set a flag shared by the whole process, and creating or
   reseeding any instance turned SIMD back on. The output is the same with
   and without SIMD.
+- Added ``advance_step(max_draws)`` to :class:`~randomgen.pcg64.PCG64`,
+  :class:`~randomgen.pcg64.PCG64DXSM`, :class:`~randomgen.pcg64.LCG128Mix`
+  and :class:`~randomgen.pcg32.PCG32`
+  (:meth:`~randomgen.pcg64.PCG64.advance_step`). It returns a step for
+  splitting one stream into several, where stream ``i`` is advanced by
+  ``i * step`` and makes at most ``max_draws`` draws. The step is the odd
+  integer closest to :math:`2^{XX}/\phi`, where :math:`\phi` is the golden
+  ratio, for the smallest :math:`XX` with :math:`2^{XX}/\phi` larger than
+  ``max_draws``, and is computed with integer arithmetic only. Because it is
+  odd, the states of the streams differ as if at random, apart from their
+  lowest few bits. Because it is at least ``max_draws``, ``n`` streams do not
+  overlap as long as ``n * step`` is no larger than the period.
 
 .. _stream-changes-2-6-0:
 
@@ -160,7 +172,8 @@ Other fixes
 - A failed aligned allocation raises ``MemoryError`` instead of crashing,
   and HC-128 no longer relies on unaligned pointer casts.
 - The ``advance`` methods of the PCG generators warn against splitting one
-  stream with a large power of two, and suggest an odd step
+  stream with a large power of two, and explain how to choose an odd step,
+  which ``advance_step`` computes
   (`#450 <https://github.com/bashtage/randomgen/issues/450>`_).
 - The documentation of ``random(dtype=np.longdouble)`` explains why it gives
   different values across platforms.

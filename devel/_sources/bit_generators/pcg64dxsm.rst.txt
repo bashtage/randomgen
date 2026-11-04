@@ -20,6 +20,7 @@ Parallel generation
    :toctree: generated/
 
    ~PCG64DXSM.advance
+   ~PCG64DXSM.advance_step
    ~PCG64DXSM.jumped
 
 Extending

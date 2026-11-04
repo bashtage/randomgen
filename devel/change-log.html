@@ -19,7 +19,7 @@
     
     
       
-        <title>Change Log - RandomGen v2.3.1 (+217)</title>
+        <title>Change Log - RandomGen v2.3.1 (+225)</title>
       
     
     
@@ -85,7 +85,7 @@
 
 <header class="md-header md-header--shadow" data-md-component="header">
   <nav class="md-header__inner md-grid" aria-label="Header">
-    <a href="index.html" title="RandomGen v2.3.1 (+217)" class="md-header__button md-logo" aria-label="RandomGen v2.3.1 (+217)" data-md-component="logo">
+    <a href="index.html" title="RandomGen v2.3.1 (+225)" class="md-header__button md-logo" aria-label="RandomGen v2.3.1 (+225)" data-md-component="logo">
       <img src="_static/casino.svg" alt="logo">
     </a>
     <label class="md-header__button md-icon" for="__drawer">
@@ -96,7 +96,7 @@
       <div class="md-header__ellipsis">
         <div class="md-header__topic">
           <span class="md-ellipsis">
-            RandomGen v2.3.1 (+217)
+            RandomGen v2.3.1 (+225)
           </span>
         </div>
         <div class="md-header__topic" data-md-component="header-topic">
@@ -191,10 +191,10 @@
 
 <nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
   <label class="md-nav__title" for="__drawer">
-    <a href="index.html" title="RandomGen v2.3.1 (+217)" class="md-nav__button md-logo" aria-label="RandomGen v2.3.1 (+217)" data-md-component="logo">
+    <a href="index.html" title="RandomGen v2.3.1 (+225)" class="md-nav__button md-logo" aria-label="RandomGen v2.3.1 (+225)" data-md-component="logo">
       <img src="_static/casino.svg" alt="logo">
     </a>
-    RandomGen v2.3.1 (+217)
+    RandomGen v2.3.1 (+225)
   </label>
   
     <div class="md-nav__source">
@@ -1395,6 +1395,18 @@ between threads. The lock is now always a reentrant
 They used to set a flag shared by the whole process, and creating or
 reseeding any instance turned SIMD back on. The output is the same with
 and without SIMD.</p></li>
+<li><p>Added <code class="docutils literal notranslate"><span class="pre">advance_step(max_draws)</span></code> to <a class="reference internal" href="bit_generators/pcg64.html#randomgen.pcg64.PCG64" title="randomgen.pcg64.PCG64 (Python class) — Container for the PCG-64 pseudo-random number generator."><code class="xref py py-class docutils literal notranslate"><span class="pre">PCG64</span></code></a>,
+<a class="reference internal" href="bit_generators/pcg64dxsm.html#randomgen.pcg64.PCG64DXSM" title="randomgen.pcg64.PCG64DXSM (Python class) — Container for the PCG-64 updated with a 64-bit mult using DXSM output func."><code class="xref py py-class docutils literal notranslate"><span class="pre">PCG64DXSM</span></code></a>, <a class="reference internal" href="bit_generators/lcg128mix.html#randomgen.pcg64.LCG128Mix" title="randomgen.pcg64.LCG128Mix (Python class) — Customizable 128-bit LCG bit generator with output mixing"><code class="xref py py-class docutils literal notranslate"><span class="pre">LCG128Mix</span></code></a>
+and <a class="reference internal" href="bit_generators/pcg32.html#randomgen.pcg32.PCG32" title="randomgen.pcg32.PCG32 (Python class) — Container for the PCG-32 pseudo-random number generator."><code class="xref py py-class docutils literal notranslate"><span class="pre">PCG32</span></code></a>
+(<a class="reference internal" href="bit_generators/generated/randomgen.pcg64.PCG64.advance_step.html#randomgen.pcg64.PCG64.advance_step" title="randomgen.pcg64.PCG64.advance_step (Python method) — Step for splitting one stream into streams of up to max_draws draws"><code class="xref py py-meth docutils literal notranslate"><span class="pre">advance_step()</span></code></a>). It returns a step for
+splitting one stream into several, where stream <code class="docutils literal notranslate"><span class="pre">i</span></code> is advanced by
+<code class="docutils literal notranslate"><span class="pre">i</span> <span class="pre">*</span> <span class="pre">step</span></code> and makes at most <code class="docutils literal notranslate"><span class="pre">max_draws</span></code> draws. The step is the odd
+integer closest to <span class="math notranslate nohighlight">\(2^{XX}/\phi\)</span>, where <span class="math notranslate nohighlight">\(\phi\)</span> is the golden
+ratio, for the smallest <span class="math notranslate nohighlight">\(XX\)</span> with <span class="math notranslate nohighlight">\(2^{XX}/\phi\)</span> larger than
+<code class="docutils literal notranslate"><span class="pre">max_draws</span></code>, and is computed with integer arithmetic only. Because it is
+odd, the states of the streams differ as if at random, apart from their
+lowest few bits. Because it is at least <code class="docutils literal notranslate"><span class="pre">max_draws</span></code>, <code class="docutils literal notranslate"><span class="pre">n</span></code> streams do not
+overlap as long as <code class="docutils literal notranslate"><span class="pre">n</span> <span class="pre">*</span> <span class="pre">step</span></code> is no larger than the period.</p></li>
 </ul>
 <h3 id="changes-to-random-streams"><span id="stream-changes-2-6-0"></span>Changes to random streams<a class="headerlink" href="#changes-to-random-streams" title="Link to this heading">¶</a></h3>
 <p>These changes alter values that randomgen 2.3.0 produced for the same seed
@@ -1512,7 +1524,8 @@ order matches what GCC, Clang and MSVC produced before.</p></li>
 <li><p>A failed aligned allocation raises <code class="docutils literal notranslate"><span class="pre">MemoryError</span></code> instead of crashing,
 and HC-128 no longer relies on unaligned pointer casts.</p></li>
 <li><p>The <code class="docutils literal notranslate"><span class="pre">advance</span></code> methods of the PCG generators warn against splitting one
-stream with a large power of two, and suggest an odd step
+stream with a large power of two, and explain how to choose an odd step,
+which <code class="docutils literal notranslate"><span class="pre">advance_step</span></code> computes
 (<a class="reference external" href="https://github.com/bashtage/randomgen/issues/450">#450</a>).</p></li>
 <li><p>The documentation of <code class="docutils literal notranslate"><span class="pre">random(dtype=np.longdouble)</span></code> explains why it gives
 different values across platforms.</p></li>

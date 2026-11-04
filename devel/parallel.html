@@ -21,7 +21,7 @@
     
     
       
-        <title>Parallel Random Number Generation - RandomGen v2.3.1 (+217)</title>
+        <title>Parallel Random Number Generation - RandomGen v2.3.1 (+225)</title>
       
     
     
@@ -87,7 +87,7 @@
 
 <header class="md-header md-header--shadow" data-md-component="header">
   <nav class="md-header__inner md-grid" aria-label="Header">
-    <a href="index.html" title="RandomGen v2.3.1 (+217)" class="md-header__button md-logo" aria-label="RandomGen v2.3.1 (+217)" data-md-component="logo">
+    <a href="index.html" title="RandomGen v2.3.1 (+225)" class="md-header__button md-logo" aria-label="RandomGen v2.3.1 (+225)" data-md-component="logo">
       <img src="_static/casino.svg" alt="logo">
     </a>
     <label class="md-header__button md-icon" for="__drawer">
@@ -98,7 +98,7 @@
       <div class="md-header__ellipsis">
         <div class="md-header__topic">
           <span class="md-ellipsis">
-            RandomGen v2.3.1 (+217)
+            RandomGen v2.3.1 (+225)
           </span>
         </div>
         <div class="md-header__topic" data-md-component="header-topic">
@@ -193,10 +193,10 @@
 
 <nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
   <label class="md-nav__title" for="__drawer">
-    <a href="index.html" title="RandomGen v2.3.1 (+217)" class="md-nav__button md-logo" aria-label="RandomGen v2.3.1 (+217)" data-md-component="logo">
+    <a href="index.html" title="RandomGen v2.3.1 (+225)" class="md-nav__button md-logo" aria-label="RandomGen v2.3.1 (+225)" data-md-component="logo">
       <img src="_static/casino.svg" alt="logo">
     </a>
-    RandomGen v2.3.1 (+217)
+    RandomGen v2.3.1 (+225)
   </label>
   
     <div class="md-nav__source">
@@ -917,9 +917,50 @@ required to ensure exact reproducibility.</p>
 </div>
 <p>In addition to the cryptographic PRNGs,
 the PCG-based generators also support <code class="docutils literal notranslate"><span class="pre">advance</span></code>: <a class="reference internal" href="bit_generators/pcg64.html#randomgen.pcg64.PCG64" title="randomgen.pcg64.PCG64 (Python class) — Container for the PCG-64 pseudo-random number generator."><code class="xref py py-class docutils literal notranslate"><span class="pre">PCG64</span></code></a>,
-<a class="reference internal" href="bit_generators/lcg128mix.html#randomgen.pcg64.LCG128Mix" title="randomgen.pcg64.LCG128Mix (Python class) — Customizable 128-bit LCG bit generator with output mixing"><code class="xref py py-class docutils literal notranslate"><span class="pre">LCG128Mix</span></code></a>, and <a class="reference internal" href="bit_generators/pcg32.html#randomgen.pcg32.PCG32" title="randomgen.pcg32.PCG32 (Python class) — Container for the PCG-32 pseudo-random number generator."><code class="xref py py-class docutils literal notranslate"><span class="pre">PCG32</span></code></a>.
+<a class="reference internal" href="bit_generators/pcg64dxsm.html#randomgen.pcg64.PCG64DXSM" title="randomgen.pcg64.PCG64DXSM (Python class) — Container for the PCG-64 updated with a 64-bit mult using DXSM output func."><code class="xref py py-class docutils literal notranslate"><span class="pre">PCG64DXSM</span></code></a>, <a class="reference internal" href="bit_generators/lcg128mix.html#randomgen.pcg64.LCG128Mix" title="randomgen.pcg64.LCG128Mix (Python class) — Customizable 128-bit LCG bit generator with output mixing"><code class="xref py py-class docutils literal notranslate"><span class="pre">LCG128Mix</span></code></a>, and
+<a class="reference internal" href="bit_generators/pcg32.html#randomgen.pcg32.PCG32" title="randomgen.pcg32.PCG32 (Python class) — Container for the PCG-32 pseudo-random number generator."><code class="xref py py-class docutils literal notranslate"><span class="pre">PCG32</span></code></a>.
 Note that <a class="reference internal" href="bit_generators/hc128.html#randomgen.hc128.HC128" title="randomgen.hc128.HC128 (Python class) — Container for the HC-128 cipher-based pseudo-random number generator"><code class="xref py py-class docutils literal notranslate"><span class="pre">HC128</span></code></a> is based on a stream cipher and so
 does not support advancing a counter.</p>
+<div class="warning admonition">
+<p class="admonition-title">Warning</p>
+<p>Do not split a single stream of a PCG-based generator by advancing it by a
+large power of two, such as <span class="math notranslate nohighlight">\(2^{127}\)</span> (<span class="math notranslate nohighlight">\(2^{63}\)</span> for
+<a class="reference internal" href="bit_generators/pcg32.html#randomgen.pcg32.PCG32" title="randomgen.pcg32.PCG32 (Python class) — Container for the PCG-32 pseudo-random number generator."><code class="xref py py-class docutils literal notranslate"><span class="pre">PCG32</span></code></a>). These generators are built on an LCG
+modulo a power of two, whose lowest <span class="math notranslate nohighlight">\(e\)</span> bits repeat every
+<span class="math notranslate nohighlight">\(2^e\)</span> steps, so the streams share the lowest bits of their states and
+their outputs are strongly related. For example, after advancing
+<a class="reference internal" href="bit_generators/pcg64.html#randomgen.pcg64.PCG64" title="randomgen.pcg64.PCG64 (Python class) — Container for the PCG-64 pseudo-random number generator."><code class="xref py py-class docutils literal notranslate"><span class="pre">PCG64</span></code></a> by <span class="math notranslate nohighlight">\(2^{127}\)</span>, each output is the
+other with its 32-bit halves swapped and one bit flipped. The <code class="docutils literal notranslate"><span class="pre">advance</span></code>
+method of each generator describes the effect on its output functions.</p>
+<p>Instead, advance stream <code class="docutils literal notranslate"><span class="pre">i</span></code> by <code class="docutils literal notranslate"><span class="pre">i</span> <span class="pre">*</span> <span class="pre">step</span></code> with an odd <code class="docutils literal notranslate"><span class="pre">step</span></code>. With
+any odd step the states of two streams differ as if at random, apart from
+their lowest few bits. The size of the step matters for overlap: it must be
+at least the number of draws that each stream makes, and <code class="docutils literal notranslate"><span class="pre">n</span></code> streams are
+only guaranteed not to overlap when <code class="docutils literal notranslate"><span class="pre">n</span> <span class="pre">*</span> <span class="pre">step</span></code> is no larger than the
+period. A convenient step is the odd integer closest to
+<span class="math notranslate nohighlight">\(2^{XX}/\phi\)</span>, where <span class="math notranslate nohighlight">\(\phi\)</span> is the golden ratio, for example
+<code class="docutils literal notranslate"><span class="pre">0x9e3779b97f4a7c15</span></code> (<span class="math notranslate nohighlight">\(XX = 64\)</span>, about <span class="math notranslate nohighlight">\(1.1 \times 10^{19}\)</span>
+draws per stream) or, for <a class="reference internal" href="bit_generators/pcg32.html#randomgen.pcg32.PCG32" title="randomgen.pcg32.PCG32 (Python class) — Container for the PCG-32 pseudo-random number generator."><code class="xref py py-class docutils literal notranslate"><span class="pre">PCG32</span></code></a>,
+<code class="docutils literal notranslate"><span class="pre">0x9e3779b9</span></code> (<span class="math notranslate nohighlight">\(XX = 32\)</span>, about <span class="math notranslate nohighlight">\(2.7 \times 10^{9}\)</span> draws per
+stream). Each generator’s <code class="docutils literal notranslate"><span class="pre">advance_step</span></code> method, such as
+<a class="reference internal" href="bit_generators/generated/randomgen.pcg64.PCG64.advance_step.html#randomgen.pcg64.PCG64.advance_step" title="randomgen.pcg64.PCG64.advance_step (Python method) — Step for splitting one stream into streams of up to max_draws draws"><code class="xref py py-meth docutils literal notranslate"><span class="pre">PCG64.advance_step</span></code></a>, takes the
+largest number of draws that any stream makes and returns this step for the
+smallest <span class="math notranslate nohighlight">\(XX\)</span> that works. <code class="docutils literal notranslate"><span class="pre">jumped</span></code> uses a golden-ratio step and is
+also a good choice.</p>
+<p>The period of <a class="reference internal" href="bit_generators/pcg32.html#randomgen.pcg32.PCG32" title="randomgen.pcg32.PCG32 (Python class) — Container for the PCG-32 pseudo-random number generator."><code class="xref py py-class docutils literal notranslate"><span class="pre">PCG32</span></code></a> is only <span class="math notranslate nohighlight">\(2^{64}\)</span>, which
+limits it to, for example, about <span class="math notranslate nohighlight">\(1.4 \times 10^{7}\)</span> streams of
+<span class="math notranslate nohighlight">\(10^{12}\)</span> draws. Use <a class="reference internal" href="bit_generators/pcg64.html#randomgen.pcg64.PCG64" title="randomgen.pcg64.PCG64 (Python class) — Container for the PCG-64 pseudo-random number generator."><code class="xref py py-class docutils literal notranslate"><span class="pre">PCG64</span></code></a>, or the related
+<a class="reference internal" href="bit_generators/pcg64dxsm.html#randomgen.pcg64.PCG64DXSM" title="randomgen.pcg64.PCG64DXSM (Python class) — Container for the PCG-64 updated with a 64-bit mult using DXSM output func."><code class="xref py py-class docutils literal notranslate"><span class="pre">PCG64DXSM</span></code></a> or <a class="reference internal" href="bit_generators/lcg128mix.html#randomgen.pcg64.LCG128Mix" title="randomgen.pcg64.LCG128Mix (Python class) — Customizable 128-bit LCG bit generator with output mixing"><code class="xref py py-class docutils literal notranslate"><span class="pre">LCG128Mix</span></code></a>,
+whose period is <span class="math notranslate nohighlight">\(2^{128}\)</span>, when many streams or many draws per stream
+are needed.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">randomgen</span><span class="w"> </span><span class="kn">import</span> <span class="n">PCG64</span>
+
+<span class="c1"># Each stream makes at most 10**12 draws</span>
+<span class="n">STEP</span> <span class="o">=</span> <span class="n">PCG64</span><span class="o">.</span><span class="n">advance_step</span><span class="p">(</span><span class="mi">10</span><span class="o">**</span><span class="mi">12</span><span class="p">)</span>
+<span class="n">streams</span> <span class="o">=</span> <span class="p">[</span><span class="n">PCG64</span><span class="p">(</span><span class="mi">1234</span><span class="p">)</span><span class="o">.</span><span class="n">advance</span><span class="p">(</span><span class="n">i</span> <span class="o">*</span> <span class="n">STEP</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">16</span><span class="p">)]</span>
+</code></pre></div>
+</div>
+</div>
 <h2 id="jumping-the-prng-state"><span id="jumping"></span>Jumping the PRNG state<a class="headerlink" href="#jumping-the-prng-state" title="Link to this heading">¶</a></h2>
 <p><code class="docutils literal notranslate"><span class="pre">jumped</span></code> advances the state of the PRNG as if a large number of random
 numbers have been drawn, and returns a new instance with this state.  Jumping

@@ -109,9 +109,53 @@ required to ensure exact reproducibility.
 
 In addition to the cryptographic PRNGs,
 the PCG-based generators also support ``advance``: :class:`~randomgen.pcg64.PCG64`,
-:class:`~randomgen.pcg64.LCG128Mix`, and :class:`~randomgen.pcg32.PCG32`.
+:class:`~randomgen.pcg64.PCG64DXSM`, :class:`~randomgen.pcg64.LCG128Mix`, and
+:class:`~randomgen.pcg32.PCG32`.
 Note that :class:`~randomgen.hc128.HC128` is based on a stream cipher and so
 does not support advancing a counter.
+
+.. warning::
+
+   Do not split a single stream of a PCG-based generator by advancing it by a
+   large power of two, such as :math:`2^{127}` (:math:`2^{63}` for
+   :class:`~randomgen.pcg32.PCG32`). These generators are built on an LCG
+   modulo a power of two, whose lowest :math:`e` bits repeat every
+   :math:`2^e` steps, so the streams share the lowest bits of their states and
+   their outputs are strongly related. For example, after advancing
+   :class:`~randomgen.pcg64.PCG64` by :math:`2^{127}`, each output is the
+   other with its 32-bit halves swapped and one bit flipped. The ``advance``
+   method of each generator describes the effect on its output functions.
+
+   Instead, advance stream ``i`` by ``i * step`` with an odd ``step``. With
+   any odd step the states of two streams differ as if at random, apart from
+   their lowest few bits. The size of the step matters for overlap: it must be
+   at least the number of draws that each stream makes, and ``n`` streams are
+   only guaranteed not to overlap when ``n * step`` is no larger than the
+   period. A convenient step is the odd integer closest to
+   :math:`2^{XX}/\phi`, where :math:`\phi` is the golden ratio, for example
+   ``0x9e3779b97f4a7c15`` (:math:`XX = 64`, about :math:`1.1 \times 10^{19}`
+   draws per stream) or, for :class:`~randomgen.pcg32.PCG32`,
+   ``0x9e3779b9`` (:math:`XX = 32`, about :math:`2.7 \times 10^{9}` draws per
+   stream). Each generator's ``advance_step`` method, such as
+   :meth:`PCG64.advance_step <randomgen.pcg64.PCG64.advance_step>`, takes the
+   largest number of draws that any stream makes and returns this step for the
+   smallest :math:`XX` that works. ``jumped`` uses a golden-ratio step and is
+   also a good choice.
+
+   The period of :class:`~randomgen.pcg32.PCG32` is only :math:`2^{64}`, which
+   limits it to, for example, about :math:`1.4 \times 10^{7}` streams of
+   :math:`10^{12}` draws. Use :class:`~randomgen.pcg64.PCG64`, or the related
+   :class:`~randomgen.pcg64.PCG64DXSM` or :class:`~randomgen.pcg64.LCG128Mix`,
+   whose period is :math:`2^{128}`, when many streams or many draws per stream
+   are needed.
+
+   .. code-block:: python
+
+      from randomgen import PCG64
+
+      # Each stream makes at most 10**12 draws
+      STEP = PCG64.advance_step(10**12)
+      streams = [PCG64(1234).advance(i * STEP) for i in range(16)]
 
 .. _jumping:
 
