@@ -21,7 +21,6 @@ Parallel generation
 .. autosummary::
    :toctree: generated/
 
-   ~Xoshiro512.jump
    ~Xoshiro512.jumped
 
 Extending

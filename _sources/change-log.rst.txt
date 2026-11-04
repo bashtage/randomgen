@@ -2,6 +2,216 @@
 
 Change Log
 ----------
+v2.5.0
+======
+
+.. note::
+
+   The version number now follows NumPy's, so there was no version 2.4.0.
+
+.. warning::
+
+   Some streams differ from randomgen 2.3.0 for the same seed and calls. Most
+   of these changes fix output that was wrong; see
+   :ref:`stream-changes-2-5-0` before upgrading code that must reproduce
+   earlier results.
+
+New features
+~~~~~~~~~~~~
+- Added the scrambled multiply-with-carry generators
+  :class:`~randomgen.mwcx.MWC192X`, :class:`~randomgen.mwcx.MWC128X`,
+  :class:`~randomgen.mwcx.MWC128X32`, and :class:`~randomgen.mwcx.MWC64X32`
+  of Vigna. All support :meth:`~randomgen.mwcx.MWC192X.advance` and
+  :meth:`~randomgen.mwcx.MWC192X.jumped`, which take time logarithmic in
+  the number of steps or jumps, respectively, and accept negative values
+  to move backward.
+- Added support for free-threaded Python. The extensions are declared
+  free-threading compatible, so importing randomgen does not re-enable the
+  GIL. Every bit generator now holds its lock while it reads or sets its
+  state, seeds, advances or jumps, so one bit generator can be shared
+  between threads. The lock is now always a reentrant
+  :class:`threading.RLock`.
+- The SIMD switches ``use_aesni`` (:class:`~randomgen.aes.AESCounter`),
+  ``use_avx2`` (:class:`~randomgen.blabla.BlaBla`), ``use_simd``
+  (:class:`~randomgen.chacha.ChaCha`) and ``use_sse41``
+  (:class:`~randomgen.speck128.SPECK128`) now apply to a single instance.
+  They used to set a flag shared by the whole process, and creating or
+  reseeding any instance turned SIMD back on. The output is the same with
+  and without SIMD.
+- Added ``advance_step(max_draws)`` to :class:`~randomgen.pcg64.PCG64`,
+  :class:`~randomgen.pcg64.PCG64DXSM`, :class:`~randomgen.pcg64.LCG128Mix`
+  and :class:`~randomgen.pcg32.PCG32`
+  (:meth:`~randomgen.pcg64.PCG64.advance_step`). It returns a step for
+  splitting one stream into several, where stream ``i`` is advanced by
+  ``i * step`` and makes at most ``max_draws`` draws. The step is the odd
+  integer closest to :math:`2^{XX}/\phi`, where :math:`\phi` is the golden
+  ratio, for the smallest :math:`XX` with :math:`2^{XX}/\phi` larger than
+  ``max_draws``, and is computed with integer arithmetic only. Because it is
+  odd, the states of the streams differ as if at random, apart from their
+  lowest few bits. Because it is at least ``max_draws``, ``n`` streams do not
+  overlap as long as ``n * step`` is no larger than the period.
+
+.. _stream-changes-2-5-0:
+
+Changes to random streams
+~~~~~~~~~~~~~~~~~~~~~~~~~
+These changes alter values that randomgen 2.3.0 produced for the same seed
+and calls.
+
+- ``jumped`` in :class:`~randomgen.pcg64.PCG64`,
+  :class:`~randomgen.pcg64.PCG64DXSM` and
+  :class:`~randomgen.pcg64.LCG128Mix` now jumps by the odd integer closest to
+  :math:`2^{128}/\phi`, where :math:`\phi` is the golden ratio, and
+  :class:`~randomgen.pcg32.PCG32` by the odd integer closest to
+  :math:`2^{64}/\phi`. The previous steps were even, so ``jumped(2**126)``
+  (``jumped(2**63)`` for :class:`~randomgen.pcg32.PCG32`) returned the
+  original state. ``jumped`` of :class:`~randomgen.pcg64.PCG64` with
+  ``numpy_seed=True`` and of :class:`~randomgen.pcg64.PCG64DXSM` now matches
+  NumPy (`#398 <https://github.com/bashtage/randomgen/issues/398>`_).
+- :meth:`~randomgen.philox.Philox.advance` and
+  :meth:`~randomgen.threefry.ThreeFry.advance` now default to
+  ``counter=False``, so ``advance(delta)`` moves the stream by ``delta``
+  draws. This change has been announced by a ``FutureWarning`` since
+  randomgen 1.18. Pass ``counter=True`` to advance the counter, as the
+  previous default did.
+- Fixed :meth:`~randomgen.philox.Philox.advance` and
+  :meth:`~randomgen.threefry.ThreeFry.advance`. With ``number=2`` and
+  ``counter=False``, advancing a newly seeded generator by an even number
+  of draws did not move it. With any configuration, steps that reach the
+  highest word of the counter, which include every negative step, lost
+  that word.
+- Fixed :meth:`~randomgen.generator.ExtendedGenerator.wishart` with
+  ``method`` ``"svd"``, ``"eigh"`` or ``"cholesky"`` when the factor of
+  ``scale`` is not symmetric, which includes every non-diagonal ``scale``.
+  The draws had the wrong distribution, with a mean different from
+  ``df * scale``. Rank-deficient ``scale`` with ``"cholesky"`` is also fixed.
+- :class:`~randomgen.philox.Philox` with ``numpy_seed=True`` now uses
+  ``counter``, which was ignored, so it matches :class:`numpy.random.Philox`.
+- Fixed :meth:`~randomgen.sfc.SFC64.weyl_increments`. The number of values
+  with 30 to 35 non-zero bits overflowed, which includes the default
+  ``max_bits=32``, so increments were drawn with the wrong probabilities
+  when ``min_bits < max_bits``. A draw at the end of the range could also
+  return a value with the wrong number of bits, or loop forever.
+- Setting the state of :class:`~randomgen.squares.Squares` now restores the
+  buffered 32-bit value (``has_uint32`` and ``uinteger``).
+- Setting the state of :class:`~randomgen.pcg64.LCG128Mix` now updates all
+  of its parameters (``multiplier``, ``dxsm_multiplier``, ``post`` and the
+  output function), which a later ``seed`` used.
+- :meth:`~randomgen.generator.ExtendedGenerator.multivariate_normal` and
+  :meth:`~randomgen.generator.ExtendedGenerator.multivariate_complex_normal`
+  with a size containing 0 now draw nothing and return an empty array.
+  With ``size=1`` they return shape ``(1, N)``, as NumPy does, instead of
+  ``(N,)``.
+- ``random_raw(size, output=False)`` now advances by ``prod(size)`` values.
+  It used to advance by ``sum(size)`` when ``size`` was a tuple.
+
+Stricter validation
+~~~~~~~~~~~~~~~~~~~
+These calls used to run, often with wrong results, and now raise.
+
+- Setting ``state`` with a different configuration, for example a
+  :class:`~randomgen.pcg64.PCG64` state with another ``variant`` or a
+  :class:`~randomgen.philox.Philox` state with another ``number`` or
+  ``width``, raises ``ValueError``. Generators created from the bit
+  generator kept using the old configuration. Create a new bit generator
+  instead. Unpickling is not affected.
+- Setting ``state`` with values out of range, such as a position or buffer
+  index, the number of rounds, or an unknown :class:`~randomgen.pcg64.PCG64`
+  variant, raises ``ValueError`` instead of using them. So does a
+  :class:`~randomgen.squares.Squares` state with an invalid ``key``.
+- An unknown ``method`` in
+  :meth:`~randomgen.generator.ExtendedGenerator.multivariate_normal`,
+  :meth:`~randomgen.generator.ExtendedGenerator.multivariate_complex_normal`
+  or :meth:`~randomgen.generator.ExtendedGenerator.wishart` raises
+  ``ValueError``. It used to be treated as ``"cholesky"``.
+  :meth:`~randomgen.generator.ExtendedGenerator.multivariate_complex_normal`
+  does not accept ``"factor"``.
+- :meth:`~randomgen.generator.ExtendedGenerator.complex_normal` validates
+  scalar parameters as it does arrays, and a ``size`` smaller than the
+  broadcast shape of the parameters raises, as in
+  :meth:`numpy.random.Generator.normal`. It used to return a partly filled
+  array.
+- :meth:`~randomgen.generator.ExtendedGenerator.standard_wishart` raises
+  when ``df`` is not positive.
+- An ``inc`` out of range in :class:`~randomgen.pcg32.PCG32` and
+  :class:`~randomgen.pcg64.PCG64` raises ``ValueError``, and
+  :class:`~randomgen.pcg64.PCG64` with ``numpy_seed=True`` rejects ``inc``,
+  which it used to ignore.
+- :class:`~randomgen.wrapper.UserBitGenerator` checks that the functions it
+  is given are callable.
+
+Removals
+~~~~~~~~
+- Removed the in-place ``jump`` method, deprecated since 1.18, from every
+  bit generator. Use ``jumped``, which returns a new bit generator.
+- Removed ``BitGenerator.generator``, which has only raised
+  ``NotImplementedError`` since 1.18.
+- Removed ``randomgen.legacy``, which could not be imported since the move
+  to meson, the ``mtrand`` stubs, and the internal ``randomgen.compat``
+  module.
+
+Other fixes
+~~~~~~~~~~~
+- :meth:`~randomgen.generator.ExtendedGenerator.complex_normal` accepts
+  ``gamma`` and ``relation`` arrays of different shapes that broadcast.
+- :meth:`~randomgen.generator.ExtendedGenerator.wishart` accepts a list for
+  ``scale`` and ``size``.
+- ``PCG64(None, inc=...)`` uses ``inc``, which used to be replaced by a
+  random increment.
+- :func:`~randomgen.entropy.random_entropy` checks for errors on Windows,
+  where it could return uninitialized memory, and retries short reads on
+  other platforms. ``random_entropy(0)`` returns an empty array.
+- :class:`~randomgen.rdrand.RDRAND` keeps ``retries`` in ``jumped``, no
+  longer reads past its buffer after a failure, and raises pending errors
+  without printing them.
+- :func:`~randomgen.squares.generate_keys` and seeding
+  :class:`~randomgen.squares.Squares` are thread safe.
+- 64-bit values built from two 32-bit draws now use a defined order. The
+  order matches what GCC, Clang and MSVC produced before.
+- A failed aligned allocation raises ``MemoryError`` instead of crashing,
+  and HC-128 no longer relies on unaligned pointer casts.
+- The ``advance`` methods of the PCG generators warn against splitting one
+  stream with a large power of two, and explain how to choose an odd step,
+  which ``advance_step`` computes
+  (`#450 <https://github.com/bashtage/randomgen/issues/450>`_).
+- The documentation of ``random(dtype=np.longdouble)`` explains why it gives
+  different values across platforms.
+
+Build and packaging
+~~~~~~~~~~~~~~~~~~~
+- randomgen requires Python 3.10 or later and NumPy 1.26 or later.
+  randomgen 2.3.0 supported Python 3.9 and NumPy 1.22.3.
+- Wheels are built for free-threaded Python 3.14 and 3.15. There are no
+  wheels for free-threaded Python 3.13.
+- Building requires Cython 3.1 or later.
+- NumPy 2.4.0 is excluded: it renamed a class in a way that stops randomgen
+  from importing. NumPy 2.4.1 restored the name.
+- Extensions are no longer all compiled with AVX2 (``-mavx2`` or
+  ``/arch:AVX2``). SIMD instructions are only enabled in the functions that
+  check the CPU first, so importing randomgen no longer crashes on x86-64
+  CPUs without AVX2.
+- The ``disable-sse2`` build option now takes effect, and the new
+  ``mwcx-force-portable`` option forces the portable multiplication in the
+  MWCX generators.
+- Wheels no longer install the C sources, build helpers or examples, and
+  the sdist no longer includes CI configuration or test results. The
+  license is declared as ``NCSA OR BSD-3-Clause``, and the licenses of the
+  included third-party code are part of the package metadata.
+- The build no longer installs an empty ``randomgen/compat`` directory,
+  which also removes a meson deprecation warning (``install_subdir`` with an
+  empty directory).
+- The ``test``, ``doc`` and ``dev`` extras are removed. The development
+  dependencies are now dependency groups (PEP 735) in ``pyproject.toml``,
+  which replace ``requirements.txt``, ``requirements-dev.txt`` and
+  ``doc/requirements.txt``. With pip 25.1 or later, install them with, for
+  example, ``python -m pip install --group dev``.
+- The flake8, pep8speaks and Codecov configuration files are removed.
+  flake8 no longer runs: ruff covers its pyflakes and flake8-pyi checks,
+  and black's formatting covers pycodestyle's whitespace checks. The
+  remaining tool configuration is in ``pyproject.toml``, including pytest's
+  native TOML configuration, which needs pytest 9.
+- Tested on Python 3.10 to 3.15, including free-threaded 3.14 and 3.15.
+
 v2.3.0
 ======
 - Added the :class:`~randomgen.blabla.BlaBla` PRNG which is based on the Blake 2b
@@ -57,7 +267,7 @@ v2.0.0
 
 v1.26.1
 =======
-- Initial compatability with Cython 3 and NumPy 2
+- Initial compatibility with Cython 3 and NumPy 2
 
 v1.26.0
 =======

@@ -1,0 +1,6 @@
+﻿randomgen.mwcx.MWC64X32.seed
+============================
+
+.. currentmodule:: randomgen.mwcx
+
+.. automethod:: MWC64X32.seed

@@ -1,0 +1,6 @@
+﻿randomgen.mwcx.MWC192X.advance
+==============================
+
+.. currentmodule:: randomgen.mwcx
+
+.. automethod:: MWC192X.advance

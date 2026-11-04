@@ -1,0 +1,6 @@
+﻿randomgen.mwcx.MWC128X32.ctypes
+===============================
+
+.. currentmodule:: randomgen.mwcx
+
+.. autoattribute:: MWC128X32.ctypes

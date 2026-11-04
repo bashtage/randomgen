@@ -14,14 +14,14 @@
         <link rel="prev" href="randomgen.pcg32.PCG32.state.html">
       
       
-        <link rel="next" href="randomgen.pcg32.PCG32.jump.html">
+        <link rel="next" href="randomgen.pcg32.PCG32.advance_step.html">
       
       
       <link rel="icon" href="../../_static/favicon.ico">
     
     
       
-        <title>randomgen.pcg32.PCG32.advance - RandomGen 2.3.0</title>
+        <title>randomgen.pcg32.PCG32.advance - RandomGen 2.5.0</title>
       
     
     
@@ -42,7 +42,7 @@
         <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
       
     
-        <link rel="stylesheet" type="text/css" href="../../_static/sphinx_immaterial_theme.acf80fe7f4d9ef9e2.min.css?v=9e56d0d2" />
+        <link rel="stylesheet" type="text/css" href="../../_static/sphinx_immaterial_theme.6efbe22605a23fcd6.min.css?v=b2ceb110" />
     <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
     
       
@@ -87,7 +87,7 @@
 
 <header class="md-header md-header--shadow" data-md-component="header">
   <nav class="md-header__inner md-grid" aria-label="Header">
-    <a href="../../index.html" title="RandomGen 2.3.0" class="md-header__button md-logo" aria-label="RandomGen 2.3.0" data-md-component="logo">
+    <a href="../../index.html" title="RandomGen 2.5.0" class="md-header__button md-logo" aria-label="RandomGen 2.5.0" data-md-component="logo">
       <img src="../../_static/casino.svg" alt="logo">
     </a>
     <label class="md-header__button md-icon" for="__drawer">
@@ -98,7 +98,7 @@
       <div class="md-header__ellipsis">
         <div class="md-header__topic">
           <span class="md-ellipsis">
-            RandomGen 2.3.0
+            RandomGen 2.5.0
           </span>
         </div>
         <div class="md-header__topic" data-md-component="header-topic">
@@ -193,10 +193,10 @@
 
 <nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
   <label class="md-nav__title" for="__drawer">
-    <a href="../../index.html" title="RandomGen 2.3.0" class="md-nav__button md-logo" aria-label="RandomGen 2.3.0" data-md-component="logo">
+    <a href="../../index.html" title="RandomGen 2.5.0" class="md-nav__button md-logo" aria-label="RandomGen 2.5.0" data-md-component="logo">
       <img src="../../_static/casino.svg" alt="logo">
     </a>
-    RandomGen 2.3.0
+    RandomGen 2.5.0
   </label>
   
     <div class="md-nav__source">
@@ -616,6 +616,102 @@
                 
   
   
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../mwc192x.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    <span title="/bit_generators/mwc192x.rst (reference label)"><span>MWC192X</span></span>
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../mwc128x.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    <span title="/bit_generators/mwc128x.rst (reference label)"><span>MWC128X</span></span>
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../mwc128x32.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    <span title="/bit_generators/mwc128x32.rst (reference label)"><span>MWC128X/32</span></span>
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../mwc64x32.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    <span title="/bit_generators/mwc64x32.rst (reference label)"><span>MWC64X/32</span></span>
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
     
   
   
@@ -627,7 +723,7 @@
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4_1_11" checked>
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4_1_15" checked>
         
           
           <div class="md-nav__link md-nav__container">
@@ -644,14 +740,14 @@
             </a>
             
               
-              <label class="md-nav__link " for="__nav_4_1_11" id="__nav_4_1_11_label" tabindex="0">
+              <label class="md-nav__link " for="__nav_4_1_15" id="__nav_4_1_15_label" tabindex="0">
                 <span class="md-nav__icon md-icon"></span>
               </label>
             
           </div>
         
-        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_4_1_11_label" aria-expanded="true">
-          <label class="md-nav__title" for="__nav_4_1_11">
+        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_4_1_15_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_4_1_15">
             <span class="md-nav__icon md-icon"></span>
             <span title="/bit_generators/pcg32.rst (reference label)"><span>PCG32</span></span>
           </label>
@@ -696,7 +792,7 @@
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4_1_11_2" checked>
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4_1_15_2" checked>
         
           
           <div class="md-nav__link md-nav__container">
@@ -713,14 +809,14 @@
             </a>
             
               
-              <label class="md-nav__link " for="__nav_4_1_11_2" id="__nav_4_1_11_2_label" tabindex="0">
+              <label class="md-nav__link " for="__nav_4_1_15_2" id="__nav_4_1_15_2_label" tabindex="0">
                 <span class="md-nav__icon md-icon"></span>
               </label>
             
           </div>
         
-        <nav class="md-nav" data-md-level="4" aria-labelledby="__nav_4_1_11_2_label" aria-expanded="true">
-          <label class="md-nav__title" for="__nav_4_1_11_2">
+        <nav class="md-nav" data-md-level="4" aria-labelledby="__nav_4_1_15_2_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_4_1_15_2">
             <span class="md-nav__icon md-icon"></span>
             <span title="/bit_generators/pcg32.rst#parallel-generation (reference label)"><span>Parallel generation</span></span>
           </label>
@@ -865,12 +961,12 @@
   
   
     <li class="md-nav__item">
-      <a href="randomgen.pcg32.PCG32.jump.html" class="md-nav__link">
+      <a href="randomgen.pcg32.PCG32.advance_step.html" class="md-nav__link">
         
   
   
   <span class="md-ellipsis">
-    <span title="/bit_generators/generated/randomgen.pcg32.pcg32.jump.rst (reference label)"><span>randomgen.<wbr>pcg32.<wbr>PCG32.<wbr>jump</span></span>
+    <span title="/bit_generators/generated/randomgen.pcg32.pcg32.advance_step.rst (reference label)"><span>randomgen.<wbr>pcg32.<wbr>PCG32.<wbr>advance_<wbr>step</span></span>
     
   </span>
   
@@ -1845,6 +1941,37 @@ size state variable in the underlying RNG.</p>
 <dd class="field-odd"><p><a class="reference internal" href="../pcg32.html#randomgen.pcg32.PCG32" title="randomgen.pcg32.PCG32 (Python class) — Container for the PCG-32 pseudo-random number generator."><code class="xref py py-class docutils literal notranslate"><span class="pre">PCG32</span></code></a></p>
 </dd>
 </dl>
+<div class="warning admonition">
+<p class="admonition-title">Warning</p>
+<p>Do not use <code class="docutils literal notranslate"><span class="pre">advance</span></code> with a large power of two, such as <code class="docutils literal notranslate"><span class="pre">2**63</span></code>
+(half of the period), to split a single stream (the same seed and
+<code class="docutils literal notranslate"><span class="pre">inc</span></code>) into several. The state is an LCG modulo <code class="docutils literal notranslate"><span class="pre">2**64</span></code>, whose
+lowest <code class="docutils literal notranslate"><span class="pre">e</span></code> bits repeat every <code class="docutils literal notranslate"><span class="pre">2**e</span></code> steps, so advancing by
+<code class="docutils literal notranslate"><span class="pre">2**e</span></code> leaves them unchanged. After <code class="docutils literal notranslate"><span class="pre">advance(2**63)</span></code>, the two
+states differ only in their top bit at every step, and each output
+is the other with its 16-bit halves swapped and one bit flipped.</p>
+<p>After <code class="docutils literal notranslate"><span class="pre">advance(2**32)</span></code>, the states differ in about 16 of their 64
+bits and never in the lowest 32.</p>
+<p>The size of the step also matters. Stream <code class="docutils literal notranslate"><span class="pre">i</span></code>, advanced by
+<code class="docutils literal notranslate"><span class="pre">i</span> <span class="pre">*</span> <span class="pre">step</span></code>, can make at most <code class="docutils literal notranslate"><span class="pre">step</span></code> draws before it reaches the
+start of stream <code class="docutils literal notranslate"><span class="pre">i</span> <span class="pre">+</span> <span class="pre">1</span></code>, and <code class="docutils literal notranslate"><span class="pre">n</span></code> streams are only guaranteed not
+to overlap when <code class="docutils literal notranslate"><span class="pre">n</span> <span class="pre">*</span> <span class="pre">step</span> <span class="pre">&lt;=</span> <span class="pre">2**64</span></code>. The period of <code class="docutils literal notranslate"><span class="pre">PCG32</span></code> is
+short enough for this to limit real applications, for example to
+about <code class="docutils literal notranslate"><span class="pre">1.4</span> <span class="pre">*</span> <span class="pre">10**7</span></code> streams of <code class="docutils literal notranslate"><span class="pre">10**12</span></code> draws. Use
+<a class="reference internal" href="../pcg64.html#randomgen.pcg64.PCG64" title="randomgen.pcg64.PCG64 (Python class) — Container for the PCG-64 pseudo-random number generator."><code class="xref py py-class docutils literal notranslate"><span class="pre">PCG64</span></code></a>, or the related
+<a class="reference internal" href="../pcg64dxsm.html#randomgen.pcg64.PCG64DXSM" title="randomgen.pcg64.PCG64DXSM (Python class) — Container for the PCG-64 updated with a 64-bit mult using DXSM output func."><code class="xref py py-class docutils literal notranslate"><span class="pre">PCG64DXSM</span></code></a> or
+<a class="reference internal" href="../lcg128mix.html#randomgen.pcg64.LCG128Mix" title="randomgen.pcg64.LCG128Mix (Python class) — Customizable 128-bit LCG bit generator with output mixing"><code class="xref py py-class docutils literal notranslate"><span class="pre">LCG128Mix</span></code></a>, when many streams or many draws
+per stream are needed. <code class="docutils literal notranslate"><span class="pre">advance_step</span></code> returns an odd step for a
+given number of draws per stream, and the Notes explain how to choose
+one.</p>
+</div>
+<div class="seealso admonition">
+<p class="admonition-title">See also</p>
+<dl class="simple">
+<dt><a class="reference internal" href="randomgen.pcg32.PCG32.advance_step.html#randomgen.pcg32.PCG32.advance_step" title="randomgen.pcg32.PCG32.advance_step (Python method) — Step for splitting one stream into streams of up to max_draws draws"><code class="xref py py-obj docutils literal notranslate"><span class="pre">advance_step</span></code></a></dt><dd><p>Step for splitting one stream into several.</p>
+</dd>
+</dl>
+</div>
 <p class="rubric">Notes</p>
 <p>Advancing a RNG updates the underlying RNG state as-if a given
 number of calls to the underlying RNG have been made. In general
@@ -1860,6 +1987,73 @@ differs from the number of bits generated by the underlying
 RNG. For example, two 16-bit integer values can be simulated
 from a single draw of a 32-bit RNG.</p></li>
 </ul>
+<p>To split one stream into several, advance stream <code class="docutils literal notranslate"><span class="pre">i</span></code> by <code class="docutils literal notranslate"><span class="pre">i</span> <span class="pre">*</span> <span class="pre">step</span></code>
+with an odd <code class="docutils literal notranslate"><span class="pre">step</span></code>. With an odd step, the states of two streams
+differ in their lowest bit at every step and their other bits differ as
+if at random: about 32 of the 64 bits differ, with the spread of a
+binomial distribution. Only the lowest few bits follow a fixed pattern,
+since in any LCG they repeat every few steps. This holds for an odd
+step of any size. The size sets how far apart the streams are: stream
+<code class="docutils literal notranslate"><span class="pre">i</span></code> reaches the start of stream <code class="docutils literal notranslate"><span class="pre">i</span> <span class="pre">+</span> <span class="pre">1</span></code> after <code class="docutils literal notranslate"><span class="pre">step</span></code> draws, so
+<code class="docutils literal notranslate"><span class="pre">step</span></code> must be at least the number of draws that any stream makes.
+The starts <code class="docutils literal notranslate"><span class="pre">i</span> <span class="pre">*</span> <span class="pre">step</span></code> are taken modulo the period, <code class="docutils literal notranslate"><span class="pre">2**64</span></code>, so
+<code class="docutils literal notranslate"><span class="pre">n</span></code> streams are only guaranteed not to overlap when
+<code class="docutils literal notranslate"><span class="pre">n</span> <span class="pre">*</span> <span class="pre">step</span> <span class="pre">&lt;=</span> <span class="pre">2**64</span></code>.</p>
+<p>A convenient step is the odd integer closest to <code class="docutils literal notranslate"><span class="pre">2**XX</span> <span class="pre">/</span> <span class="pre">phi</span></code>, where
+phi is the golden ratio and <code class="docutils literal notranslate"><span class="pre">XX</span></code> is chosen so that the step is at
+least the number of draws per stream. <code class="docutils literal notranslate"><span class="pre">advance_step(max_draws)</span></code>
+returns this step for the smallest <code class="docutils literal notranslate"><span class="pre">XX</span></code> that works, using only
+integer arithmetic. For example, <code class="docutils literal notranslate"><span class="pre">XX</span> <span class="pre">=</span> <span class="pre">32</span></code> gives <code class="docutils literal notranslate"><span class="pre">0x9e3779b9</span></code>,
+about <code class="docutils literal notranslate"><span class="pre">2.7</span> <span class="pre">*</span> <span class="pre">10**9</span></code> draws per stream, and <code class="docutils literal notranslate"><span class="pre">XX</span> <span class="pre">=</span> <span class="pre">64</span></code> gives
+<code class="docutils literal notranslate"><span class="pre">0x9e3779b97f4a7c15</span></code>, the step of <code class="docutils literal notranslate"><span class="pre">jumped</span></code>. With <code class="docutils literal notranslate"><span class="pre">XX</span> <span class="pre">=</span> <span class="pre">64</span></code> the
+multiples of the step wrap around the period, and the golden ratio
+spreads the streams evenly around it.</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><code><span class="gp">&gt;&gt;&gt; </span><span class="n">step</span> <span class="o">=</span> <span class="n">PCG32</span><span class="o">.</span><span class="n">advance_step</span><span class="p">(</span><span class="mi">10</span><span class="o">**</span><span class="mi">10</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">hex</span><span class="p">(</span><span class="n">step</span><span class="p">)</span>
+<span class="go">'0x278dde6e5'</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">streams</span> <span class="o">=</span> <span class="p">[</span><span class="n">PCG32</span><span class="p">(</span><span class="mi">1234</span><span class="p">)</span><span class="o">.</span><span class="n">advance</span><span class="p">(</span><span class="n">i</span> <span class="o">*</span> <span class="n">step</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">8</span><span class="p">)]</span>
+</code></pre></div>
+</div>
+<p>The period of <code class="docutils literal notranslate"><span class="pre">PCG32</span></code>, <code class="docutils literal notranslate"><span class="pre">2**64</span></code>, is short enough for
+<code class="docutils literal notranslate"><span class="pre">n</span> <span class="pre">*</span> <span class="pre">step</span> <span class="pre">&lt;=</span> <span class="pre">2**64</span></code> to limit the number of streams in practice. With
+the step from <code class="docutils literal notranslate"><span class="pre">advance_step</span></code>, the largest number of streams that are
+guaranteed not to overlap is</p>
+<table class="docutils data align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Draws per stream</p></th>
+<th class="head"><p>Streams</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">10**6</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">1.4</span> <span class="pre">*</span> <span class="pre">10**13</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">10**9</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">1.4</span> <span class="pre">*</span> <span class="pre">10**10</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">10**12</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">1.4</span> <span class="pre">*</span> <span class="pre">10**7</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">10**15</span></code></p></td>
+<td><p>13,254</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">10**18</span></code></p></td>
+<td><p>12</p></td>
+</tr>
+</tbody>
+</table>
+<p>The step from <code class="docutils literal notranslate"><span class="pre">advance_step</span></code> is less than twice the number of draws
+per stream, so <code class="docutils literal notranslate"><span class="pre">n</span></code> streams of <code class="docutils literal notranslate"><span class="pre">m</span></code> draws always fit when
+<code class="docutils literal notranslate"><span class="pre">n</span> <span class="pre">*</span> <span class="pre">m</span> <span class="pre">&lt;=</span> <span class="pre">2**63</span></code>. When many streams or many draws per stream are
+needed, use <a class="reference internal" href="../pcg64.html#randomgen.pcg64.PCG64" title="randomgen.pcg64.PCG64 (Python class) — Container for the PCG-64 pseudo-random number generator."><code class="xref py py-class docutils literal notranslate"><span class="pre">PCG64</span></code></a>, or the related
+<a class="reference internal" href="../pcg64dxsm.html#randomgen.pcg64.PCG64DXSM" title="randomgen.pcg64.PCG64DXSM (Python class) — Container for the PCG-64 updated with a 64-bit mult using DXSM output func."><code class="xref py py-class docutils literal notranslate"><span class="pre">PCG64DXSM</span></code></a> or
+<a class="reference internal" href="../lcg128mix.html#randomgen.pcg64.LCG128Mix" title="randomgen.pcg64.LCG128Mix (Python class) — Customizable 128-bit LCG bit generator with output mixing"><code class="xref py py-class docutils literal notranslate"><span class="pre">LCG128Mix</span></code></a>. Their period of <code class="docutils literal notranslate"><span class="pre">2**128</span></code> allows
+about <code class="docutils literal notranslate"><span class="pre">2.5</span> <span class="pre">*</span> <span class="pre">10**26</span></code> streams of <code class="docutils literal notranslate"><span class="pre">10**12</span></code> draws.</p>
+<p>Streams <code class="docutils literal notranslate"><span class="pre">i</span></code> and <code class="docutils literal notranslate"><span class="pre">j</span></code> are <code class="docutils literal notranslate"><span class="pre">(j</span> <span class="pre">-</span> <span class="pre">i)</span> <span class="pre">*</span> <span class="pre">step</span></code> draws apart, so they
+share the lowest <code class="docutils literal notranslate"><span class="pre">v</span></code> bits of their states, where <code class="docutils literal notranslate"><span class="pre">2**v</span></code> is the
+largest power of two that divides <code class="docutils literal notranslate"><span class="pre">j</span> <span class="pre">-</span> <span class="pre">i</span></code>. <code class="docutils literal notranslate"><span class="pre">jumped(iter)</span></code> advances
+by <code class="docutils literal notranslate"><span class="pre">iter</span></code> times a golden-ratio step, so it is also a good choice when
+<code class="docutils literal notranslate"><span class="pre">iter</span></code> is not a large power of two.</p>
 </dd></dl>
 
 
@@ -1895,13 +2089,13 @@ from a single draw of a 32-bit RNG.</p></li>
       <div class="md-copyright">
   
     <div class="md-footer-copyright__highlight">
-        &#169; Copyright 2023, Kevin Sheppard.
+        &#169; Copyright 2019-2026, Kevin Sheppard.
         
     </div>
   
     Created using
     <a href="https://www.sphinx-doc.org/" target="_blank" rel="noopener">Sphinx</a>
-    8.1.3.
+    9.0.4.
      and
     <a href="https://github.com/jbms/sphinx-immaterial/" target="_blank" rel="noopener">Sphinx-Immaterial</a>
   

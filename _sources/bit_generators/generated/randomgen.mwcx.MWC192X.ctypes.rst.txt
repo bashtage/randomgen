@@ -1,0 +1,6 @@
+﻿randomgen.mwcx.MWC192X.ctypes
+=============================
+
+.. currentmodule:: randomgen.mwcx
+
+.. autoattribute:: MWC192X.ctypes

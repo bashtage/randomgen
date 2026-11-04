@@ -1,0 +1,38 @@
+MWC128X/32
+----------
+
+.. currentmodule:: randomgen.mwcx
+
+.. autoclass:: MWC128X32
+
+Seeding and State
+=================
+
+.. autosummary::
+   :toctree: generated/
+
+   ~MWC128X32.seed
+   ~MWC128X32.state
+
+Parallel generation
+===================
+.. autosummary::
+   :toctree: generated/
+
+   ~MWC128X32.advance
+   ~MWC128X32.jumped
+
+Extending
+=========
+.. autosummary::
+   :toctree: generated/
+
+   ~MWC128X32.cffi
+   ~MWC128X32.ctypes
+
+Testing
+=======
+.. autosummary::
+   :toctree: generated/
+
+   ~MWC128X32.random_raw

@@ -1,0 +1,6 @@
+﻿randomgen.mwcx.MWC64X32.state
+=============================
+
+.. currentmodule:: randomgen.mwcx
+
+.. autoattribute:: MWC64X32.state

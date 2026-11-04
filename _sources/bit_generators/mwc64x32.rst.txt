@@ -1,0 +1,38 @@
+MWC64X/32
+---------
+
+.. currentmodule:: randomgen.mwcx
+
+.. autoclass:: MWC64X32
+
+Seeding and State
+=================
+
+.. autosummary::
+   :toctree: generated/
+
+   ~MWC64X32.seed
+   ~MWC64X32.state
+
+Parallel generation
+===================
+.. autosummary::
+   :toctree: generated/
+
+   ~MWC64X32.advance
+   ~MWC64X32.jumped
+
+Extending
+=========
+.. autosummary::
+   :toctree: generated/
+
+   ~MWC64X32.cffi
+   ~MWC64X32.ctypes
+
+Testing
+=======
+.. autosummary::
+   :toctree: generated/
+
+   ~MWC64X32.random_raw

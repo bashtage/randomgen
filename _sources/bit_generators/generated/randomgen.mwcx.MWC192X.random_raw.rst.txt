@@ -1,0 +1,6 @@
+﻿randomgen.mwcx.MWC192X.random\_raw
+==================================
+
+.. currentmodule:: randomgen.mwcx
+
+.. automethod:: MWC192X.random_raw
