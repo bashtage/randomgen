@@ -123,6 +123,7 @@ cdef class AESCounter(BitGenerator):
         )
         if self.rng_state == NULL:
             raise MemoryError  # pragma: no cover
+        self.rng_state.use_aesni = aes_capable()
         self.seed(seed, counter, key)
 
         self._bitgen.state = <void *>self.rng_state
@@ -161,17 +162,21 @@ cdef class AESCounter(BitGenerator):
 
         Notes
         -----
-        This setting is process-wide. Changing it on one instance changes it
-        for every AESCounter instance in the process.
+        The setting only affects this instance. New instances use AESNI when
+        the CPU supports it. The generated values are the same either way.
+
+        The setting is not part of ``state`` and is not pickled. A generator
+        restored from a pickle, or copied, uses the fastest implementation
+        that the CPU it runs on supports.
         """
-        return RANDOMGEN_USE_AESNI
+        return bool(self.rng_state.use_aesni)
 
     @use_aesni.setter
     def use_aesni(self, value):
-        capable = aes_capable()
-        if value and not capable:
+        if value and not aes_capable():
             raise ValueError("CPU does not support AESNI")
-        aesctr_use_aesni(bool(value))
+        with self.lock:
+            self.rng_state.use_aesni = bool(value)
 
     def _seed_from_seq(self, counter=None):
         state = self._get_seed_seq().generate_state(2, np.uint64)

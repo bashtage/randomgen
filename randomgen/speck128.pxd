@@ -34,15 +34,14 @@ cdef extern from "src/speck-128/speck-128.h":
         int offset
         int has_uint32
         uint32_t uinteger
+        int use_sse41
 
     ctypedef SPECK_STATE_T speck_state_t
 
     uint64_t speck_next64(speck_state_t *state) noexcept nogil
     uint32_t speck_next32(speck_state_t *state) noexcept nogil
 
-    int RANDOMGEN_USE_SSE41
     int speck_sse41_capable()
-    void speck_use_sse41(int val)
     void speck_seed(speck_state_t *state, uint64_t *seed)
     void speck_set_counter(speck_state_t *state, uint64_t *ctr)
     void speck_advance(speck_state_t *state, uint64_t *step)

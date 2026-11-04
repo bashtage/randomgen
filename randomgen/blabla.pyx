@@ -133,6 +133,7 @@ cdef class BlaBla(BitGenerator):
         )
         if self.rng_state == NULL:
             raise MemoryError  # pragma: no cover
+        self.rng_state.use_avx2 = blabla_avx2_capable()
         if rounds % 2 != 0 or rounds <= 0:
             raise ValueError("rounds must be even and >= 2")
         self.seed(seed, counter, key)
@@ -179,17 +180,21 @@ cdef class BlaBla(BitGenerator):
 
         Notes
         -----
-        This setting is process-wide. Changing it on one instance changes it
-        for every BlaBla instance in the process.
+        The setting only affects this instance. New instances use AVX2 when
+        the CPU supports it. The generated values are the same either way.
+
+        The setting is not part of ``state`` and is not pickled. A generator
+        restored from a pickle, or copied, uses the fastest implementation
+        that the CPU it runs on supports.
         """
-        return bool(RANDOMGEN_USE_AVX2)
+        return bool(self.rng_state.use_avx2)
 
     @use_avx2.setter
     def use_avx2(self, value):
-        capable = blabla_avx2_capable()
-        if value and not capable:
+        if value and not blabla_avx2_capable():
             raise ValueError("CPU does not support AVX2")
-        blabla_use_avx2(bool(value))
+        with self.lock:
+            self.rng_state.use_avx2 = bool(value)
 
     def seed(self, seed=None, counter=None, key=None):
         """

@@ -136,6 +136,7 @@ cdef class SPECK128(BitGenerator):
         )
         if self.rng_state == NULL:
             raise MemoryError  # pragma: no cover
+        self.rng_state.use_sse41 = speck_sse41_capable()
         if (rounds <= 0) or rounds > SPECK_MAX_ROUNDS or int(rounds) != rounds:
             raise ValueError("rounds must be an integer in [1, 34]")
         self.rng_state.rounds = int(rounds)
@@ -235,17 +236,22 @@ cdef class SPECK128(BitGenerator):
 
         Notes
         -----
-        This setting is process-wide. Changing it on one instance changes it
-        for every SPECK128 instance in the process.
+        The setting only affects this instance. New instances use SSE 4.1
+        when the CPU supports it. The generated values are the same either
+        way.
+
+        The setting is not part of ``state`` and is not pickled. A generator
+        restored from a pickle, or copied, uses the fastest implementation
+        that the CPU it runs on supports.
         """
-        return bool(RANDOMGEN_USE_SSE41)
+        return bool(self.rng_state.use_sse41)
 
     @use_sse41.setter
     def use_sse41(self, value):
-        capable = speck_sse41_capable()
-        if value and not capable:
+        if value and not speck_sse41_capable():
             raise ValueError("CPU does not support SSE41")
-        speck_use_sse41(int(value))
+        with self.lock:
+            self.rng_state.use_sse41 = bool(value)
 
     @property
     def state(self):

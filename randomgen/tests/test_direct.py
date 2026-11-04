@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import copy
 import os
 from os.path import join
 import pickle
@@ -68,27 +69,6 @@ aes = AESCounter()
 HAS_AESNI = aes.use_aesni
 
 USE_AESNI = [True, False] if HAS_AESNI else [False]
-
-# Process-wide flags: the first instance of each bit generator is used to read them
-SIMD_FLAG_BIT_GENERATORS = (
-    (ChaCha(), "use_simd"),
-    (BlaBla(), "use_avx2"),
-    (SPECK128(), "use_sse41"),
-    (aes, "use_aesni"),
-)
-
-
-def _get_simd_flags():
-    return [getattr(bg, name) for bg, name in SIMD_FLAG_BIT_GENERATORS]
-
-
-@pytest.fixture(autouse=True)
-def check_simd_flags_restored():
-    # The SIMD flags are process-wide so a test that changes one must restore it
-    before = _get_simd_flags()
-    yield
-    assert _get_simd_flags() == before, "test left a process-wide SIMD flag changed"
-
 
 try:
     import cffi  # noqa: F401
@@ -1060,9 +1040,6 @@ class TestAESCounter(TestPhilox):
     @pytest.fixture(autouse=True, params=USE_AESNI)
     def set_use_aesni(self, request):
         self.use_aesni = request.param
-        orig = aes.use_aesni
-        yield
-        aes.use_aesni = orig
 
     def setup_bitgenerator(self, seed, **kwargs):
         bg = self.bit_generator(*seed, **kwargs)
@@ -1730,7 +1707,6 @@ class TestChaCha(Base):
         with pytest.raises(ValueError, match="rounds must be even and"):
             self.bit_generator(rounds=-4)
 
-    @pytest.mark.thread_unsafe(reason="toggles a process-wide SIMD flag")
     def test_use_simd(self):
         bg = self.bit_generator(0)
         if not bg.use_simd:
@@ -1738,12 +1714,8 @@ class TestChaCha(Base):
                 bg.use_simd = True
             return
         bg2 = self.bit_generator(0)
-        orig = bg.use_simd
-        try:
-            bg2.use_simd = not orig
-            assert_equal(bg.random_raw(100), bg2.random_raw(100))
-        finally:
-            bg.use_simd = orig
+        bg2.use_simd = not bg.use_simd
+        assert_equal(bg.random_raw(100), bg2.random_raw(100))
 
     def test_seed_key(self):
         with pytest.raises(ValueError, match="seed and key"):
@@ -2339,18 +2311,62 @@ def test_bitgen_ctor():
         rg_pkl.__bit_generator_ctor("NewFangledBG")
 
 
-@pytest.mark.thread_unsafe(reason="toggles a process-wide SIMD flag")
 def test_speck_sse41():
     s = SPECK128(0)
     if not s.use_sse41:
         pytest.skip("Can only test if SSE41 is available")
     assert isinstance(s.use_sse41, bool)
     orig = s.use_sse41
-    try:
-        s.use_sse41 = not orig
-        assert s.use_sse41 != orig
-    finally:
-        s.use_sse41 = orig
+    s.use_sse41 = not orig
+    assert s.use_sse41 != orig
+    s.use_sse41 = orig
+
+
+SIMD_FLAGS = pytest.mark.parametrize(
+    ("bit_gen", "flag"),
+    [
+        (AESCounter, "use_aesni"),
+        (BlaBla, "use_avx2"),
+        (ChaCha, "use_simd"),
+        (SPECK128, "use_sse41"),
+    ],
+    ids=["AESCounter", "BlaBla", "ChaCha", "SPECK128"],
+)
+
+
+@SIMD_FLAGS
+def test_simd_flag_per_instance(bit_gen, flag):
+    bg = bit_gen(0)
+    if not getattr(bg, flag):
+        pytest.skip(f"{flag} is not supported by this CPU")
+    setattr(bg, flag, False)
+    # Neither creating another instance nor reseeding turns it back on
+    assert getattr(bit_gen(1), flag)
+    bg.seed(0)
+    assert not getattr(bg, flag)
+
+    expected = bit_gen(0).random_raw(1000)
+    assert_equal(bg.random_raw(1000), expected)
+    # Seeded without SIMD, then switched on part way through
+    bg.seed(0)
+    first = bg.random_raw(500)
+    setattr(bg, flag, True)
+    assert_equal(np.concatenate([first, bg.random_raw(500)]), expected)
+
+
+@SIMD_FLAGS
+def test_simd_flag_not_pickled(bit_gen, flag):
+    # A pickle may be loaded on a CPU without the feature, so the copy must
+    # check the CPU it runs on rather than inherit the setting
+    bg = bit_gen(0)
+    default = getattr(bg, flag)
+    setattr(bg, flag, False)
+    bg.random_raw(7)
+    expected = copy.deepcopy(bg).random_raw(1000)
+    for restored in (pickle.loads(pickle.dumps(bg)), copy.deepcopy(bg)):
+        assert getattr(restored, flag) == default
+        assert_equal(restored.random_raw(1000), expected)
+    assert not any(flag in key for key in bg.state)
 
 
 def test_pcg64_errors():
@@ -2433,7 +2449,6 @@ class TestBlaBla(Base):
         with pytest.raises(ValueError, match="rounds must be even and"):
             self.bit_generator(rounds=-4)
 
-    @pytest.mark.thread_unsafe(reason="toggles a process-wide SIMD flag")
     def test_use_avx2(self):
         bg = self.bit_generator(0)
         if not bg.use_avx2:
@@ -2441,12 +2456,8 @@ class TestBlaBla(Base):
                 bg.use_avx2 = True
             return
         bg2 = self.bit_generator(0)
-        orig = bg.use_avx2
-        try:
-            bg2.use_avx2 = not orig
-            assert_equal(bg.random_raw(100), bg2.random_raw(100))
-        finally:
-            bg.use_avx2 = orig
+        bg2.use_avx2 = not bg.use_avx2
+        assert_equal(bg.random_raw(100), bg2.random_raw(100))
 
     def test_seed_key(self):
         with pytest.raises(ValueError, match="seed and key"):

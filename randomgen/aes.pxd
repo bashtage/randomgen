@@ -25,6 +25,7 @@ cdef extern from "src/aesctr/aesctr.h":
         size_t offset
         int has_uint32
         uint32_t uinteger
+        int use_aesni
 
     ctypedef AESCTR_STATE_T aesctr_state_t
 
@@ -32,8 +33,6 @@ cdef extern from "src/aesctr/aesctr.h":
     uint32_t aes_next32(aesctr_state_t *aesctr) noexcept nogil
     double aes_next_double(aesctr_state_t *aesctr) noexcept nogil
 
-    int RANDOMGEN_USE_AESNI
-    void aesctr_use_aesni(int val)
     void aesctr_seed(aesctr_state_t *aesctr, uint64_t *seed)
     void aesctr_set_seed_counter(
             aesctr_state_t *aesctr, uint64_t *seed, uint64_t *counter

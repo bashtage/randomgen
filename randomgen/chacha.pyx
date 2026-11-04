@@ -119,6 +119,7 @@ cdef class ChaCha(BitGenerator):
         )
         if self.rng_state == NULL:
             raise MemoryError  # pragma: no cover
+        self.rng_state.use_simd = chacha_simd_capable()
         if rounds % 2 != 0 or rounds <= 0:
             raise ValueError("rounds must be even and >= 2")
         self.rng_state.rounds = rounds
@@ -160,17 +161,21 @@ cdef class ChaCha(BitGenerator):
 
         Notes
         -----
-        This setting is process-wide. Changing it on one instance changes it
-        for every ChaCha instance in the process.
+        The setting only affects this instance. New instances use SIMD when
+        the CPU supports it. The generated values are the same either way.
+
+        The setting is not part of ``state`` and is not pickled. A generator
+        restored from a pickle, or copied, uses the fastest implementation
+        that the CPU it runs on supports.
         """
-        return RANDOMGEN_USE_SIMD
+        return bool(self.rng_state.use_simd)
 
     @use_simd.setter
     def use_simd(self, value):
-        capable = chacha_simd_capable()
-        if value and not capable:
+        if value and not chacha_simd_capable():
             raise ValueError("CPU does not support SIMD implementation")
-        chacha_use_simd(bool(value))
+        with self.lock:
+            self.rng_state.use_simd = bool(value)
 
     def seed(self, seed=None, counter=None, key=None):
         """

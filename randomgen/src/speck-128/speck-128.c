@@ -3,17 +3,13 @@
 
 #define SSE41_FEATURE_FLAG 19
 
-int RANDOMGEN_USE_SSE41;
-
 int speck_sse41_capable(void)
 {
 #if defined(RANDOMGEN_HAVE_SSSE3)
     int flags[32];
     feature_flags(flags, RANDOMGEN_ECX);
-    RANDOMGEN_USE_SSE41 = flags[SSE41_FEATURE_FLAG];
-    return RANDOMGEN_USE_SSE41;
+    return flags[SSE41_FEATURE_FLAG];
 #else
-    RANDOMGEN_USE_SSE41 = 0;
     return 0;
 #endif
 }
@@ -21,7 +17,6 @@ int speck_sse41_capable(void)
 void speck_seed(speck_state_t *state, uint64_t seed[4])
 {
     int i;
-    speck_sse41_capable();
     speck_expandkey_128x256(seed, state->round_key);
     state->offset = SPECK_BUFFER_SZ;
     for (i = 0; i < SPECK_CTR_SZ; i++)
@@ -30,8 +25,6 @@ void speck_seed(speck_state_t *state, uint64_t seed[4])
         state->ctr[i].u64[1] = 0;
     }
 }
-
-void speck_use_sse41(int val) { RANDOMGEN_USE_SSE41 = val; }
 
 void speck_set_counter(speck_state_t *state, uint64_t *ctr)
 {

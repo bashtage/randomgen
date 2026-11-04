@@ -30,8 +30,6 @@
 #define M128I_CAST (__m128i)
 #endif
 
-extern int RANDOMGEN_USE_SIMD;
-
 
 typedef double * aligned_double_ptr ;
 
@@ -40,6 +38,7 @@ ALIGN_WINDOWS struct CHACHA_STATE_T {
     uint32_t keysetup[8];
     uint64_t ctr[2];
     int rounds;
+    int use_simd;
 } ALIGN_GCC_CLANG;
 
 typedef struct CHACHA_STATE_T chacha_state_t;
@@ -182,7 +181,7 @@ static INLINE void generate_block(chacha_state_t *state) {
 
     for (i = 0; i < 16; ++i) state->block[i] = input[i];
 #if defined(__SSE2__) && __SSE2__
-    if LIKELY(RANDOMGEN_USE_SIMD > 0) {
+    if LIKELY(state->use_simd > 0) {
         chacha_core_ssse3(state);
     } else {
 #endif
@@ -212,7 +211,6 @@ static INLINE double chacha_next_double(chacha_state_t *state){
     return (chacha_next64(state) >> 11) * (1.0/9007199254740992.0);
 }
 
-void chacha_use_simd(int flag);
 int chacha_simd_capable(void);
 void chacha_seed(chacha_state_t *state, uint64_t *seedval, uint64_t *stream, uint64_t *ctr);
 void chacha_advance(chacha_state_t *state, uint64_t *delta);

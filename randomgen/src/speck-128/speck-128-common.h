@@ -28,6 +28,7 @@ struct SPECK_STATE_T {
   int offset;
   int has_uint32;
   uint32_t uinteger;
+  int use_sse41;
 };
 
 typedef struct SPECK_STATE_T speck_state_t;
