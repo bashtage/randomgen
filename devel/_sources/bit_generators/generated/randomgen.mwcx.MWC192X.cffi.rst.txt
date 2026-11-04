@@ -1,0 +1,6 @@
+﻿randomgen.mwcx.MWC192X.cffi
+===========================
+
+.. currentmodule:: randomgen.mwcx
+
+.. autoattribute:: MWC192X.cffi

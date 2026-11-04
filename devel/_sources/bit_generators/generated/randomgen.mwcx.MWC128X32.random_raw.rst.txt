@@ -1,0 +1,6 @@
+﻿randomgen.mwcx.MWC128X32.random\_raw
+====================================
+
+.. currentmodule:: randomgen.mwcx
+
+.. automethod:: MWC128X32.random_raw

@@ -27,6 +27,10 @@ These RNGs will be included in future releases.
    LXM <lxm>
    MT19937 <mt19937>
    MT64 <mt64>
+   MWC192X <mwc192x>
+   MWC128X <mwc128x>
+   MWC128X/32 <mwc128x32>
+   MWC64X/32 <mwc64x32>
    PCG32 <pcg32>
    PCG64 <pcg64>
    PCG64 2.0 (64-bit multiplier, DXSM mixing) <pcg64dxsm>

@@ -1,0 +1,6 @@
+﻿randomgen.mwcx.MWC128X.state
+============================
+
+.. currentmodule:: randomgen.mwcx
+
+.. autoattribute:: MWC128X.state

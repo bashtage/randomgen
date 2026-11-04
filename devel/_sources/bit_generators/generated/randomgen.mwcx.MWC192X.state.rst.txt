@@ -1,0 +1,6 @@
+﻿randomgen.mwcx.MWC192X.state
+============================
+
+.. currentmodule:: randomgen.mwcx
+
+.. autoattribute:: MWC192X.state
