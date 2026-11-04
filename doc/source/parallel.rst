@@ -135,13 +135,18 @@ does not support advancing a counter.
    ``0x9e3779b97f4a7c15`` (:math:`XX = 64`, about :math:`1.1 \times 10^{19}`
    draws per stream) or, for :class:`~randomgen.pcg32.PCG32`,
    ``0x9e3779b9`` (:math:`XX = 32`, about :math:`2.7 \times 10^{9}` draws per
-   stream). ``jumped`` uses a golden-ratio step and is also a good choice.
+   stream). Each generator's ``advance_step`` method, such as
+   :meth:`PCG64.advance_step <randomgen.pcg64.PCG64.advance_step>`, takes the
+   largest number of draws that any stream makes and returns this step for the
+   smallest :math:`XX` that works. ``jumped`` uses a golden-ratio step and is
+   also a good choice.
 
    .. code-block:: python
 
       from randomgen import PCG64
 
-      STEP = 0x9e3779b97f4a7c15
+      # Each stream makes at most 10**12 draws
+      STEP = PCG64.advance_step(10**12)
       streams = [PCG64(1234).advance(i * STEP) for i in range(16)]
 
 .. _jumping:

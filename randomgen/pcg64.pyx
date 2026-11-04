@@ -384,8 +384,12 @@ cdef class PCG64(BitGenerator):
           coincide, and PractRand fails the interleaved streams at 1 MB.
 
         After ``advance(2**64)``, the states differ in about 32 of their 128
-        bits and never in the lowest 64. The Notes describe how to choose a
-        step that splits a stream safely.
+        bits and never in the lowest 64. ``advance_step`` returns a step that
+        splits a stream safely, and the Notes explain how to choose one.
+
+        See Also
+        --------
+        advance_step : Step for splitting one stream into several.
 
         Notes
         -----
@@ -418,15 +422,19 @@ cdef class PCG64(BitGenerator):
 
         A convenient step is the odd integer closest to ``2**XX / phi``, where
         phi is the golden ratio and ``XX`` is chosen so that the step is larger
-        than the number of draws per stream. For example, ``XX = 48`` gives
-        ``0x9e3779b97f4b``, about ``1.7 * 10**14`` draws per stream,
-        ``XX = 64`` gives ``0x9e3779b97f4a7c15``, about ``1.1 * 10**19``, and
-        ``XX = 128`` gives ``0x9e3779b97f4a7c15f39cc0605cedc835``, the step of
-        NumPy's ``PCG64.jumped``. With ``XX = 128`` the multiples of the step
-        wrap around the period, and the golden ratio spreads the streams evenly
+        than the number of draws per stream. ``advance_step(max_draws)``
+        returns this step for the smallest ``XX`` that works, using only
+        integer arithmetic. For example, ``XX = 48`` gives ``0x9e3779b97f4b``,
+        about ``1.7 * 10**14`` draws per stream, ``XX = 64`` gives
+        ``0x9e3779b97f4a7c15``, about ``1.1 * 10**19``, and ``XX = 128`` gives
+        ``0x9e3779b97f4a7c15f39cc0605cedc835``, the step of NumPy's
+        ``PCG64.jumped``. With ``XX = 128`` the multiples of the step wrap
+        around the period, and the golden ratio spreads the streams evenly
         around it.
 
-        >>> step = 0x9e3779b97f4a7c15
+        >>> step = PCG64.advance_step(10**10)
+        >>> hex(step)
+        '0x278dde6e5'
         >>> streams = [PCG64(1234).advance(i * step) for i in range(8)]
 
         Streams ``i`` and ``j`` are ``(j - i) * step`` draws apart, so they
@@ -449,6 +457,63 @@ cdef class PCG64(BitGenerator):
             )
             self._reset_state_variables()
         return self
+
+    @staticmethod
+    def advance_step(max_draws):
+        """
+        advance_step(max_draws)
+
+        Step for splitting one stream into streams of up to max_draws draws
+
+        .. versionadded:: 2.6.0
+
+        Parameters
+        ----------
+        max_draws : int
+            The largest number of draws that any stream makes. Must be at
+            least 1 and at most the integer part of ``2**128 / phi``, about
+            ``2.1 * 10**38``, where phi is the golden ratio.
+
+        Returns
+        -------
+        step : int
+            The odd integer closest to ``2**XX / phi``, where ``XX`` is the
+            smallest integer for which ``2**XX / phi`` is larger than
+            ``max_draws``. The step is never smaller than ``max_draws``.
+
+        Raises
+        ------
+        ValueError
+            If ``max_draws`` is outside the range above.
+        TypeError
+            If ``max_draws`` is not an integer.
+
+        See Also
+        --------
+        advance : Advance the state as-if delta draws have occurred.
+
+        Notes
+        -----
+        Advance stream ``i`` by ``i * step`` to split one stream into several.
+        The step is odd, so the states of two streams differ as if at random,
+        apart from their lowest few bits. The step is at least ``max_draws``,
+        so a stream that makes at most ``max_draws`` draws does not reach the
+        start of the next stream. Streams ``0`` to ``n - 1`` do not overlap
+        when ``n * step <= 2**128``. The Notes of ``advance`` explain this
+        choice of step.
+
+        The step is computed with integer arithmetic only, so it is exact for
+        any ``max_draws``.
+
+        Examples
+        --------
+        >>> from randomgen import PCG64
+        >>> step = PCG64.advance_step(10**10)
+        >>> hex(step)
+        '0x278dde6e5'
+        >>> streams = [PCG64(1234).advance(i * step) for i in range(8)]
+        """
+        return golden_advance_step(max_draws, 128)
 
     cdef jump_inplace(self, object iter):
         """
@@ -931,8 +996,12 @@ cdef class LCG128Mix(BitGenerator):
           states are related in the same way.
 
         After ``advance(2**64)``, the states differ in about 32 of their 128
-        bits and never in the lowest 64. The Notes describe how to choose a
-        step that splits a stream safely.
+        bits and never in the lowest 64. ``advance_step`` returns a step that
+        splits a stream safely, and the Notes explain how to choose one.
+
+        See Also
+        --------
+        advance_step : Step for splitting one stream into several.
 
         Notes
         -----
@@ -966,15 +1035,19 @@ cdef class LCG128Mix(BitGenerator):
 
         A convenient step is the odd integer closest to ``2**XX / phi``, where
         phi is the golden ratio and ``XX`` is chosen so that the step is larger
-        than the number of draws per stream. For example, ``XX = 48`` gives
-        ``0x9e3779b97f4b``, about ``1.7 * 10**14`` draws per stream,
-        ``XX = 64`` gives ``0x9e3779b97f4a7c15``, about ``1.1 * 10**19``, and
-        ``XX = 128`` gives ``0x9e3779b97f4a7c15f39cc0605cedc835``, the step of
-        NumPy's ``PCG64.jumped``. With ``XX = 128`` the multiples of the step
-        wrap around the period, and the golden ratio spreads the streams evenly
+        than the number of draws per stream. ``advance_step(max_draws)``
+        returns this step for the smallest ``XX`` that works, using only
+        integer arithmetic. For example, ``XX = 48`` gives ``0x9e3779b97f4b``,
+        about ``1.7 * 10**14`` draws per stream, ``XX = 64`` gives
+        ``0x9e3779b97f4a7c15``, about ``1.1 * 10**19``, and ``XX = 128`` gives
+        ``0x9e3779b97f4a7c15f39cc0605cedc835``, the step of NumPy's
+        ``PCG64.jumped``. With ``XX = 128`` the multiples of the step wrap
+        around the period, and the golden ratio spreads the streams evenly
         around it.
 
-        >>> step = 0x9e3779b97f4a7c15
+        >>> step = LCG128Mix.advance_step(10**10)
+        >>> hex(step)
+        '0x278dde6e5'
         >>> streams = [LCG128Mix(1234).advance(i * step) for i in range(8)]
 
         Streams ``i`` and ``j`` are ``(j - i) * step`` draws apart, so they
@@ -995,6 +1068,64 @@ cdef class LCG128Mix(BitGenerator):
             lcg128mix_advance(&self.rng_state, <uint64_t *>np.PyArray_DATA(d))
             self._reset_state_variables()
         return self
+
+    @staticmethod
+    def advance_step(max_draws):
+        """
+        advance_step(max_draws)
+
+        Step for splitting one stream into streams of up to max_draws draws
+
+        .. versionadded:: 2.6.0
+
+        Parameters
+        ----------
+        max_draws : int
+            The largest number of draws that any stream makes. Must be at
+            least 1 and at most the integer part of ``2**128 / phi``, about
+            ``2.1 * 10**38``, where phi is the golden ratio.
+
+        Returns
+        -------
+        step : int
+            The odd integer closest to ``2**XX / phi``, where ``XX`` is the
+            smallest integer for which ``2**XX / phi`` is larger than
+            ``max_draws``. The step is never smaller than ``max_draws``.
+
+        Raises
+        ------
+        ValueError
+            If ``max_draws`` is outside the range above.
+        TypeError
+            If ``max_draws`` is not an integer.
+
+        See Also
+        --------
+        advance : Advance the state as-if delta draws have occurred.
+
+        Notes
+        -----
+        Advance stream ``i`` by ``i * step`` to split one stream into several.
+        The step is odd, so, for the default ``multiplier``, the states of two
+        streams differ as if at random, apart from their lowest few bits. The
+        step is at least ``max_draws``, so a stream that makes at most
+        ``max_draws`` draws does not reach the start of the next stream.
+        Streams ``0`` to ``n - 1`` do not overlap when
+        ``n * step <= 2**128``. The Notes of ``advance`` explain this choice of
+        step.
+
+        The step is computed with integer arithmetic only, so it is exact for
+        any ``max_draws``.
+
+        Examples
+        --------
+        >>> from randomgen import LCG128Mix
+        >>> step = LCG128Mix.advance_step(10**10)
+        >>> hex(step)
+        '0x278dde6e5'
+        >>> streams = [LCG128Mix(1234).advance(i * step) for i in range(8)]
+        """
+        return golden_advance_step(max_draws, 128)
 
     cdef jump_inplace(self, object iter):
         """

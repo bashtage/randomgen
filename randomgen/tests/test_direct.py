@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import copy
+from decimal import Decimal, localcontext
 import os
 from os.path import join
 import pickle
@@ -2419,6 +2420,82 @@ def test_inc_with_seed_none(bg_ctor):
 def test_inc_with_seed_none_numpy_seed():
     with pytest.raises(ValueError, match="inc must be"):
         PCG64(None, inc=5, numpy_seed=True)
+
+
+ADVANCE_STEP_BITS = [(PCG32, 64), (PCG64, 128), (PCG64DXSM, 128), (LCG128Mix, 128)]
+
+
+def _golden_floors(bits):
+    # Integer parts of 2**xx / phi for xx = 1, ..., bits, from 100-digit decimals
+    # rather than the integer arithmetic that advance_step uses
+    with localcontext() as ctx:
+        ctx.prec = 100
+        inv_phi = (Decimal(5).sqrt() - 1) / 2
+        return [int(Decimal(2) ** xx * inv_phi) for xx in range(1, bits + 1)]
+
+
+@pytest.mark.parametrize(("bg_cls", "bits"), ADVANCE_STEP_BITS)
+def test_advance_step(bg_cls, bits):
+    floors = _golden_floors(bits)
+    cases = {1, 2, 3, 1000, 10**10, 2**bits // 3}
+    for floor in floors:
+        cases.update({floor - 1, floor, floor + 1})
+    cases = sorted(n for n in cases if 1 <= n <= floors[-1])
+    for max_draws in cases:
+        # The smallest xx with 2**xx / phi > max_draws, and the closest odd integer
+        floor = next(f for f in floors if f >= max_draws)
+        expected = floor if floor % 2 else floor + 1
+        step = bg_cls.advance_step(max_draws)
+        assert step == expected
+        assert step % 2 == 1
+        assert step >= max_draws
+
+
+@pytest.mark.parametrize(
+    ("max_draws", "step"),
+    [
+        (1, 1),
+        (1000, 0x4F1),
+        (10**10, 0x278DDE6E5),
+        (10**14, 0x9E3779B97F4B),
+        (10**19, 0x9E3779B97F4A7C15),
+        (2**63, 0x9E3779B97F4A7C15),
+    ],
+)
+@pytest.mark.parametrize("bg_cls", [PCG32, PCG64, PCG64DXSM, LCG128Mix])
+def test_advance_step_values(bg_cls, max_draws, step):
+    assert bg_cls.advance_step(max_draws) == step
+    assert bg_cls(0).advance_step(max_draws) == step
+    assert bg_cls.advance_step(np.uint64(max_draws)) == step
+
+
+@pytest.mark.parametrize("bg_cls", [PCG64, PCG64DXSM, LCG128Mix])
+def test_advance_step_numpy_jumped(bg_cls):
+    # The step for XX = 128 is the step of NumPy's PCG64.jumped
+    assert bg_cls.advance_step(2**127) == 0x9E3779B97F4A7C15F39CC0605CEDC835
+
+
+@pytest.mark.parametrize(("bg_cls", "bits"), ADVANCE_STEP_BITS)
+def test_advance_step_errors(bg_cls, bits):
+    largest = _golden_floors(bits)[-1]
+    assert bg_cls.advance_step(largest) < 2**bits
+    for max_draws in (0, -1, largest + 1, 2**bits):
+        with pytest.raises(ValueError, match=f"between 1 and {largest}"):
+            bg_cls.advance_step(max_draws)
+    for max_draws in (10.0**10, "10", None):
+        with pytest.raises(TypeError):
+            bg_cls.advance_step(max_draws)
+
+
+@pytest.mark.parametrize("bg_cls", [PCG32, PCG64, PCG64DXSM, LCG128Mix])
+def test_advance_step_streams_do_not_overlap(bg_cls):
+    max_draws = 1000
+    step = bg_cls.advance_step(max_draws)
+    streams = [bg_cls(1234).advance(i * step) for i in range(4)]
+    single = bg_cls(1234).random_raw(4 * step)
+    for i, stream in enumerate(streams):
+        draws = stream.random_raw(max_draws)
+        assert_array_equal(draws, single[i * step : i * step + max_draws])
 
 
 class TestBlaBla(Base):
