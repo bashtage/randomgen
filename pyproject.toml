@@ -65,7 +65,7 @@ keywords = [
     "SPECK",
     "RDRAND",
 ]
-license = "NCSA"
+license = "NCSA OR BSD-3-Clause"
 # The third-party code in randomgen/src carries its own license files, which
 # must accompany the compiled extensions (the sources are no longer installed)
 license-files = [ "LICENSE.md", "randomgen/src/*/LICENSE.md" ]

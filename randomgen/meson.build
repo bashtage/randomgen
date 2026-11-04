@@ -61,11 +61,9 @@ cython_args = [
     '-X boundscheck=False',
     '-X wraparound=False',
     '-X cdivision=True',
-    '-X binding=True'
+    '-X binding=True',
+    '-X freethreading_compatible=True',
 ]
-if cy.version().version_compare('>=3.1.0')
-  cython_args += ['-X freethreading_compatible=True']
-endif
 cython_c_args =  ['-DNPY_NO_DEPRECATED_API=NPY_1_7_API_VERSION']
 cython_libs = []
 sse2_def = []
@@ -80,7 +78,7 @@ if cc.get_id() == 'msvc' or cc.get_id() == 'clang-cl'
     cython_c_args += cc.get_supported_arguments(['-Wno-unused-but-set-variable', '-Wno-unused-function'])
   endif
 
-  if cc.has_argument('/arch:SSE4.2')
+  if cc.has_argument('/arch:SSE4.2') and not get_option('disable-sse2')
     sse2_def += ['-DHAVE_SSE2=1']
   endif
   add_project_link_arguments('/LTCG', language : 'c')
@@ -91,7 +89,7 @@ else
   cython_c_args += ['-std=c99', '-U__GNUC_GNU_INLINE__']
   add_project_link_arguments('-lm', language : 'c')
   cython_c_args += cc.get_supported_arguments(['-msse2'])
-  if cc.has_argument('-msse2')
+  if cc.has_argument('-msse2') and not get_option('disable-sse2')
     sse2_def += ['-DHAVE_SSE2=1']
   endif
 endif
