@@ -36,13 +36,22 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 //#error "We've only tested MSVC_FULL_VER==15."
 //#endif
 
-#if !defined(_M_IX86) && !defined(_M_X64)
-#  error "This code has only been tested on x86 platforms."
+// randomgen: ARM64 is supported too. It has no SSE, CPUID or _umul128, so
+// those are only used on x86 (R123_MSVC_X86), and the high half of a 64-bit
+// product comes from __umulh (see R123_USE_MULHILO64_MULHI_INTRIN below).
+#if !defined(_M_IX86) && !defined(_M_X64) && !defined(_M_ARM64)
+#  error "This code has only been tested on x86 and ARM64 platforms."
 { // maybe an unbalanced brace will terminate the compilation
 // You are invited to try Random123 on other architectures, by changing
 // the conditions that reach this error, but you should consider it a
 // porting exercise and expect to encounter bugs and deficiencies.
 // Please let the authors know of any successes (or failures).
+#endif
+
+#if defined(_M_IX86) || defined(_M_X64)
+#define R123_MSVC_X86 1
+#else
+#define R123_MSVC_X86 0
 #endif
 
 #ifndef R123_STATIC_INLINE
@@ -109,7 +118,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #endif
 
 #ifndef R123_USE_SSE
-#define R123_USE_SSE 1
+#define R123_USE_SSE R123_MSVC_X86
 #endif
 
 #ifndef R123_USE_AES_OPENSSL
@@ -125,7 +134,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #endif
 
 #ifndef R123_USE_CPUID_MSVC
-#define R123_USE_CPUID_MSVC 1
+#define R123_USE_CPUID_MSVC R123_MSVC_X86
 #endif
 
 #ifndef R123_USE_X86INTRIN_H
@@ -141,15 +150,15 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #endif
 
 #ifndef R123_USE_EMMINTRIN_H
-#define R123_USE_EMMINTRIN_H 1
+#define R123_USE_EMMINTRIN_H R123_MSVC_X86
 #endif
 
 #ifndef R123_USE_SMMINTRIN_H
-#define R123_USE_SMMINTRIN_H 1
+#define R123_USE_SMMINTRIN_H R123_MSVC_X86
 #endif
 
 #ifndef R123_USE_WMMINTRIN_H
-#define R123_USE_WMMINTRIN_H 1
+#define R123_USE_WMMINTRIN_H R123_MSVC_X86
 #endif
 
 #ifndef R123_USE_INTRIN_H
@@ -182,6 +191,14 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #ifndef R123_USE_MULHILO64_OPENCL_INTRIN
 #define R123_USE_MULHILO64_OPENCL_INTRIN 0
+#endif
+
+// ARM64 has no _umul128, but __umulh returns the high half of the product.
+#if defined(_M_ARM64) && !defined(R123_USE_MULHILO64_MULHI_INTRIN)
+#include <intrin.h>
+#pragma intrinsic(__umulh)
+#define R123_USE_MULHILO64_MULHI_INTRIN 1
+#define R123_MULHILO64_MULHI_INTRIN __umulh
 #endif
 
 #ifndef __STDC_CONSTANT_MACROS
