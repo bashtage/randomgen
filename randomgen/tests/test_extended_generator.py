@@ -309,6 +309,38 @@ def test_complex_normal_invalid():
     assert_raises(ValueError, random.complex_normal, relation=[10j])
 
 
+@pytest.mark.parametrize("method", ["bogus", "SVD", "", None, 1])
+def test_invalid_method(extended_gen, method):
+    state = extended_gen.bit_generator.state
+    cov = np.eye(2)
+    batch_cov = np.stack([cov, cov])
+    msg = "method must be one of"
+    with pytest.raises(ValueError, match=msg):
+        extended_gen.multivariate_normal([0.0, 0.0], cov, method=method)
+    with pytest.raises(ValueError, match=msg):
+        extended_gen.multivariate_normal([0.0, 0.0], batch_cov, method=method)
+    with pytest.raises(ValueError, match=msg):
+        extended_gen.multivariate_complex_normal([0.0, 0.0], method=method)
+    with pytest.raises(ValueError, match=msg):
+        extended_gen.wishart(5, cov, method=method)
+    with pytest.raises(ValueError, match=msg):
+        extended_gen.wishart([5, 6], cov, method=method)
+    with pytest.raises(ValueError, match=msg):
+        extended_gen.wishart(5, batch_cov, size=(3, 2), method=method)
+    # Validated before any draws are made
+    assert extended_gen.bit_generator.state == state
+
+
+def test_method_factor(extended_gen):
+    # "factor" takes a pre-computed factor in multivariate_normal and wishart,
+    # but multivariate_complex_normal always computes the factor itself
+    cov = np.eye(2)
+    extended_gen.multivariate_normal([0.0, 0.0], cov, method="factor")
+    extended_gen.wishart(5, cov, method="factor")
+    with pytest.raises(ValueError, match="method must be one of"):
+        extended_gen.multivariate_complex_normal([0.0, 0.0], method="factor")
+
+
 @pytest.mark.parametrize("size", [1, (1,), (1, 1), (0, 1)])
 def test_complex_normal_size_smaller_than_broadcast(extended_gen, size):
     # Matches Generator.normal, which raises rather than truncating
