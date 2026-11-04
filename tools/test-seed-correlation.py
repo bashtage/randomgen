@@ -169,7 +169,7 @@ if __name__ == "__main__":
         for key in configuration_keys
     ]
     cpu_per_job = 2 + args.multithreaded + args.expanded + (args.folding - 1)
-    n_jobs = args.n_jobs if args.n_jobs else (cpu_count() - 1) // cpu_per_job
+    n_jobs = args.n_jobs or (cpu_count() - 1) // cpu_per_job
     n_jobs = max(n_jobs, 1)
     logger.info(f"Running in parallel with {n_jobs}.")
     logger.info(f"{len(test_args)} configurations to test")

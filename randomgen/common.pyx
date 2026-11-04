@@ -1,4 +1,3 @@
-#!python
 from collections import namedtuple
 import sys
 from threading import RLock
@@ -97,11 +96,11 @@ cdef class BitGenerator(_BitGenerator):
 
     @property
     def state(self):
-        raise NotImplemented("subclasses must implement")
+        raise NotImplementedError("subclasses must implement")
 
     @state.setter
     def state(self, value):
-        raise NotImplemented("subclasses must implement")
+        raise NotImplementedError("subclasses must implement")
 
     def random_raw(self, size=None, output=True):
         """
@@ -181,14 +180,6 @@ cdef class BitGenerator(_BitGenerator):
                 self._cffi = prepare_cffi(&self._bitgen)
             return self._cffi
 
-    @property
-    def generator(self):
-        """
-        Removed, raises NotImplementedError
-        """
-        raise NotImplementedError("This method for accessing a Generator has "
-                                  "been removed.")
-
 
 cdef object benchmark(bitgen_t *bitgen, object lock, Py_ssize_t cnt, object method):
     """Benchmark command used by BitGenerator"""
@@ -243,7 +234,7 @@ cdef object random_raw(bitgen_t *bitgen, object lock, object size, object output
             with lock:
                 bitgen.next_raw(bitgen.state)
             return None
-        n = np.asarray(size).sum()
+        n = int(np.prod(size))
         with lock, nogil:
             for i in range(n):
                 bitgen.next_raw(bitgen.state)

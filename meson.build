@@ -1,7 +1,7 @@
 project(
   'randomgen',
   'c', 'cython',
-  license: 'NCSA',
+  license: 'NCSA OR BSD-3-Clause',
   meson_version: '>= 1.9.0',
   default_options: [],
   version:  run_command(['randomgen/_build/git_version.py'], check: true).stdout().strip(),

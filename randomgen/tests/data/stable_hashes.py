@@ -84,6 +84,26 @@ known_hashes = {
         "initial_state_hash": "00065ceea3c768fe4242085e5a3fc428c9f00e7bd32e5a213bfd9976271d23b2",
         "final_state_hash": "4b365cb9948e87b3892a9783c2769b7f03b4da223659e3bc63f77779ff0caa2c",
     },
+    ("MWC192X", "seed"): {
+        "random_values": "43cd69895dc2c7176d04ebfb9371b91d47ce4c46129dedbcf68db445081dd2d4",
+        "initial_state_hash": "0caa0ea177ae683da4edeee1cf84eeb2563fe8309d6a51a9de9b0079ebf1ef9f",
+        "final_state_hash": "630b354ad57aceb477ff24c6279955ff909cbe53d244d0624fb229050e68bbaf",
+    },
+    ("MWC128X", "seed"): {
+        "random_values": "481a56f3472094be6bfea4464a83e1aaca950f1ecbb79c1e2c83c06f54c6bfc1",
+        "initial_state_hash": "25910a97b846470d1edbb0bc504d4a18a689fec03e54c28afed18866f9d3f80d",
+        "final_state_hash": "392ec3beea565de37e1e98568c38f63c03901776c5d9fa293bfdc790b07a9075",
+    },
+    ("MWC128X32", "seed"): {
+        "random_values": "32d7812e219875105696dc9be469200623edb4f3132b58c212cef35e35468629",
+        "initial_state_hash": "227aa4befb9f5e98e31b8ca4ec124d86b116037772e00ad5c982fdf892a27155",
+        "final_state_hash": "58630ec60f1364d71d543faed5856894c7260321741f50c4e6fe3d7893c92780",
+    },
+    ("MWC64X32", "seed"): {
+        "random_values": "d9c65280dedb26e2777427e145dfbdc7e4c65b15ea5d6f44c4bcd7eece66eefa",
+        "initial_state_hash": "d90f7332d85d12af04c08de79afc7acb15ce810f778c4d4feeb046a056e7d97d",
+        "final_state_hash": "0cfff2e2c8ae28313771dc5d143fc4517d8e722934f7982678a8b5c72dd16418",
+    },
     ("MT19937", "seed"): {
         "random_values": "de6797f1e0209e9a3afb9cdbe52fb524fb7fb23416e2a0aa92625319d3b4f7e8",
         "initial_state_hash": "567c1b44adca76c5c52d86fbfae48b3482b3fb6f3daa70538dd92e2d064e6317",

@@ -1,12 +1,14 @@
 # Use this options by adding to the pip command:
 #     -Csetup-args="-Dcython-coverage=true"
 # then run:
-#     pytest --cov=statsmodels statsmodels
+#     pytest --cov=randomgen randomgen
 #     coverage html
 option('cython-coverage', type: 'boolean', value: false,
         description: 'Compile and build cython modules with coverage support')
 option('pcg64-force-emulated', type: 'boolean', value: false,
         description: 'Force emulated 64-bit math on PCG64')
+option('mwcx-force-portable', type: 'boolean', value: false,
+        description: 'Force portable 128-bit multiplication in the MWCX generators')
 option('disable-sse2', type: 'boolean', value: false,
         description: 'Disable use of SSE2+ instructions')
 option('disable-avx2', type: 'boolean', value: false,

@@ -1,4 +1,3 @@
-#!python
 # cython: wraparound=False, nonecheck=False, boundscheck=False, cdivision=True
 import warnings
 
@@ -24,7 +23,12 @@ from numpy.random.c_distributions cimport (
 )
 
 from randomgen cimport api
-from randomgen.broadcasting cimport check_output, double_fill, float_fill
+from randomgen.broadcasting cimport (
+    check_output,
+    double_fill,
+    float_fill,
+    validate_output_shape,
+)
 from randomgen.common cimport compute_complex
 from randomgen.distributions cimport (
     random_double_fill,
@@ -118,6 +122,12 @@ cdef _factorize(cov, meth, check_valid, tol, rank):
         else:
             raise ValueError(msg)
     return _factor
+
+
+cdef _check_method(method, allowed):
+    if method not in allowed:
+        choices = ", ".join(f"'{m}'" for m in allowed)
+        raise ValueError(f"method must be one of {choices}")
 
 
 cdef _wishart_factor(scale, meth, check_valid, tol, rank):
@@ -518,6 +528,7 @@ cdef class ExtendedGenerator:
         """
         if check_valid not in ("warn", "raise", "ignore"):
             raise ValueError("check_valid must equal 'warn', 'raise', or 'ignore'")
+        _check_method(method, ("svd", "eigh", "cholesky", "factor"))
 
         mean = np.array(mean)
         cov = np.array(cov, dtype=np.double)
@@ -562,13 +573,13 @@ cdef class ExtendedGenerator:
                         f"either 1 or the same as the corresponding element "
                         f"of the broadcast size."
                     )
-                final_size.append(max(s, os))
+                final_size.append(s if os == 1 else os)
             out_shape = tuple(final_size)
 
         out = self._generator.standard_normal(out_shape + (1, n,))
         prod = np.matmul(out, _factors)
         final = mean + np.squeeze(prod, axis=prod.ndim - 2)
-        if drop_dims and final.shape[0] == 1:
+        if drop_dims and (size is None or len(size) == 0):
             final = final.reshape(final.shape[1:])
         return final
 
@@ -727,6 +738,7 @@ cdef class ExtendedGenerator:
         n = np.PyArray_SIZE(randoms)
 
         it = np.PyArray_MultiIterNew5(randoms, oloc, v_real, v_imag, rho)
+        validate_output_shape(it.shape, randoms)
         with self.lock, nogil:
             n2 = 2 * n  # Avoid compiler noise for cast
             for i in range(n2):
@@ -927,6 +939,7 @@ cdef class ExtendedGenerator:
         cdef np.ndarray df_arr, shape_arr
 
         # 1. Validate inputs
+        _check_method(method, ("svd", "eigh", "cholesky", "factor"))
         df_arr = <np.ndarray>np.asarray(df, dtype=np.int64, order="C")
         if df_arr.size == 0:
             raise ValueError("At least one value is required for df")
@@ -1167,6 +1180,7 @@ and the trailing dimensions must match exactly so that
         cdef np.npy_intp *rshape
         cdef int gdim, rdim, dim, ldim
 
+        _check_method(method, ("svd", "eigh", "cholesky"))
         larr = <np.ndarray>np.PyArray_FROM_OTF(loc,
                                                np.NPY_CDOUBLE,
                                                np.NPY_ARRAY_ALIGNED |

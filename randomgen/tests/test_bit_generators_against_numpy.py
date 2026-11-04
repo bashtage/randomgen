@@ -43,3 +43,12 @@ def test_philox_numpy_mode_exception(number, width):
         return
     with pytest.raises(ValueError, match="n must be"):
         Philox(SeedSequence(0), numpy_seed=True, number=number, width=width)
+
+
+@pytest.mark.parametrize("counter", [0, 1, 2**64 + 5, 2**255])
+def test_philox_numpy_counter(counter):
+    ss = np.random.SeedSequence(1203940)
+    np_ss = np.random.SeedSequence(1203940)
+    ref = Philox(ss, counter=counter, numpy_seed=True)
+    exp = np.random.Philox(np_ss, counter=counter)
+    np.testing.assert_equal(ref.random_raw(1000), exp.random_raw(1000))

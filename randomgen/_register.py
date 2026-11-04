@@ -10,6 +10,7 @@ from randomgen.jsf import JSF
 from randomgen.lxm import LXM
 from randomgen.mt64 import MT64
 from randomgen.mt19937 import MT19937
+from randomgen.mwcx import MWC64X32, MWC128X, MWC128X32, MWC192X
 from randomgen.pcg32 import PCG32
 from randomgen.pcg64 import PCG64, PCG64DXSM, LCG128Mix
 from randomgen.philox import Philox
@@ -38,6 +39,10 @@ bit_generators = [
     LXM,
     MT19937,
     MT64,
+    MWC64X32,
+    MWC128X,
+    MWC128X32,
+    MWC192X,
     PCG32,
     PCG64,
     PCG64DXSM,

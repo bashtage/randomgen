@@ -48,7 +48,7 @@
    Y[2] = ROL(Y[2], 3), Y[2] = XOR(Y[2], X[2]), X[3] = ADD(ROR8(X[3]), Y[3]),  \
    X[3] = XOR(X[3], k.m128), Y[3] = ROL(Y[3], 3), Y[3] = XOR(Y[3], X[3]))
 
-static inline void speck_expandkey_128x256_sse4(uint64_t key[], u128 *round_key) {
+static inline RANDOMGEN_SSSE3_TARGET void speck_expandkey_128x256_sse4(uint64_t key[], u128 *round_key) {
   uint64_t i, D, C, B, A;
   D = key[3];
   C = key[2];
@@ -66,7 +66,7 @@ static inline void speck_expandkey_128x256_sse4(uint64_t key[], u128 *round_key)
   round_key[33] = SET(A, A);
 }
 
-static inline void LOAD(uint8_t pt[], u128 *X, u128 *Y) {
+static inline RANDOMGEN_SSSE3_TARGET void LOAD(uint8_t pt[], u128 *X, u128 *Y) {
   u128 R, S;
   R = LD(pt);
   S = LD(pt + 16);
@@ -90,7 +90,7 @@ static inline void LOAD(uint8_t pt[], u128 *X, u128 *Y) {
 #endif
 }
 
-static inline void STORE(uint8_t ct[], u128 *X, u128 *Y) {
+static inline RANDOMGEN_SSSE3_TARGET void STORE(uint8_t ct[], u128 *X, u128 *Y) {
   u128 R, S;
   R = LOW(Y[0], X[0]);
   ST(ct, R);
@@ -114,7 +114,7 @@ static inline void STORE(uint8_t ct[], u128 *X, u128 *Y) {
 #endif
 }
 
-static inline void speck_128x256_encrypt_sse(uint8_t buffer[],
+static inline RANDOMGEN_SSSE3_TARGET void speck_128x256_encrypt_sse(uint8_t buffer[],
                                              const speck_t *round_key,
                                              const int rounds) {
   int i;
@@ -132,7 +132,7 @@ static inline void speck_128x256_encrypt_sse(uint8_t buffer[],
   STORE(buffer, X, Y);
 }
 
-static inline void generate_block_ssse3(speck_state_t *state) {
+static inline RANDOMGEN_SSSE3_TARGET void generate_block_ssse3(speck_state_t *state) {
   uint8_t *buffer;
   memcpy(&state->buffer, &state->ctr, sizeof(state->buffer));
   buffer = (uint8_t *)state->buffer;

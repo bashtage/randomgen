@@ -3,7 +3,7 @@ from typing import Any, NamedTuple
 from numpy import ndarray
 
 from randomgen.seed_sequence import SeedSequence
-from randomgen.typing import IntegerSequenceSeed, SeedMode
+from randomgen.typing import IntegerSequenceSeed
 
 class Interface(NamedTuple):
     state_address: int
@@ -17,9 +17,14 @@ class BitGenerator:
     seed_seq: SeedSequence
     def __init__(
         self,
-        seed: IntegerSequenceSeed = ...,
-        mode: SeedMode | None = ...,
+        seed: IntegerSequenceSeed | None,
+        *,
+        numpy_seed: bool = ...,
     ) -> None: ...
+    @property
+    def state(self) -> dict[str, Any]: ...
+    @state.setter
+    def state(self, value: dict[str, Any]) -> None: ...
     def random_raw(
         self,
         size: int | None = ...,

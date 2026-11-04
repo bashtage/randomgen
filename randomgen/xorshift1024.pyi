@@ -1,17 +1,11 @@
 import numpy as np
 
 from randomgen.common import BitGenerator
-from randomgen.typing import IntegerSequenceSeed, SeedMode
+from randomgen.typing import IntegerSequenceSeed
 
 class Xorshift1024(BitGenerator):
-    def __init__(
-        self,
-        seed: IntegerSequenceSeed | None = ...,
-        *,
-        mode: SeedMode = ...,
-    ) -> None: ...
+    def __init__(self, seed: IntegerSequenceSeed | None = ...) -> None: ...
     def seed(self, seed: IntegerSequenceSeed | None = ...) -> None: ...
-    def jump(self, iter: int = ...) -> Xorshift1024: ...
     def jumped(self, iter: int = ...) -> Xorshift1024: ...
     @property
     def state(

@@ -13,9 +13,8 @@ build/
 settings.json
 *.so
 randomgen/_version.py
-randomgen/bounded_integers.pyx
-randomgen/bounded_integers.pxd
 randomgen/*.c
 randomgen/tests/*.c
 doc/build
 doc/**/generated
+*.o

@@ -1,4 +1,3 @@
-#!python
 import numpy as np
 
 __all__ = ["BlaBla"]
@@ -132,6 +131,8 @@ cdef class BlaBla(BitGenerator):
         self.rng_state = <blabla_state_t *>PyArray_malloc_aligned(
             sizeof(blabla_state_t)
         )
+        if self.rng_state == NULL:
+            raise MemoryError  # pragma: no cover
         self.rng_state.use_avx2 = blabla_avx2_capable()
         if rounds % 2 != 0 or rounds <= 0:
             raise ValueError("rounds must be even and >= 2")

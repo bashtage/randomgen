@@ -7,6 +7,7 @@ class Tyche(BitGenerator):
         seed: IntegerSequenceSeed | None = ...,
         *,
         idx: int | None = ...,
+        original: bool = ...,
     ) -> None: ...
     def seed(
         self,

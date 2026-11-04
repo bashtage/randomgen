@@ -82,10 +82,10 @@ generators, 'in addition' to the standard PRNG in NumPy.  The included PRNGs are
   See `NumPy's documentation`_.
 * :class:`~randomgen.dsfmt.DSFMT` and :class:`~randomgen.sfmt.SFMT` - SSE2 enabled versions of the MT19937 generator.  Theoretically
   the same, but with a different state and so it is not possible to produce a
-  sequence identical to MT19937. :class:`~randomgen.dsfmt.DSFMT` supports ``jump`` and so can
+  sequence identical to MT19937. :class:`~randomgen.dsfmt.DSFMT` supports ``jumped`` and so can
   be used in parallel applications. See the `dSFMT authors' page`_.
 * Xorshiro256** and Xorshiro512** - The most recently introduced XOR,
-  shift, and rotate generator. Supports ``jump`` and so can be used in
+  shift, and rotate generator. Supports ``jumped`` and so can be used in
   parallel applications. See the documentation for
   :meth:`~randomgen.xoshiro256.Xoshiro256.jumped` for details. More
   information about these PRNGs is available at the
@@ -109,13 +109,15 @@ generators, 'in addition' to the standard PRNG in NumPy.  The included PRNGs are
   More information about this PRNG is available at the
   `xorshift, xoroshiro and xoshiro authors' page`_.
 * XorShift1024*φ - Fast generator based on the XSadd
-  generator. Supports ``jump`` and so can be used in
+  generator. Supports ``jumped`` and so can be used in
   parallel applications. See the documentation for
   :meth:`~randomgen.xorshift1024.Xorshift1024.jumped` for details. More information
   about these PRNGs is available at the
   `xorshift, xoroshiro and xoshiro authors' page`_.
 * Other PRNGs including :class:`~randomgen.romu.Romu`, :class:`~randomgen.tyche.Tyche`,
-  and :class:`~randomgen.squares.Squares`.
+  :class:`~randomgen.squares.Squares`, and the scrambled multiply-with-carry
+  generators :class:`~randomgen.mwcx.MWC192X`, :class:`~randomgen.mwcx.MWC128X`,
+  :class:`~randomgen.mwcx.MWC128X32`, and :class:`~randomgen.mwcx.MWC64X32`.
 
 .. _`NumPy's documentation`: https://numpy.org/doc/stable/reference/random/index.html
 .. _`dSFMT authors' page`: http://www.math.sci.hiroshima-u.ac.jp/~m-mat/MT/SFMT/

@@ -1,5 +1,3 @@
-#!python
-
 import numpy as np
 
 __all__ = ["Xoshiro512"]
@@ -71,7 +69,7 @@ cdef class Xoshiro512(BitGenerator):
     **Parallel Features**
 
     ``Xoshiro512`` can be used in parallel applications by calling the
-    method ``jump`` which advances the state as-if :math:`2^{128}` random
+    method ``jumped`` which advances the state as-if :math:`2^{128}` random
     numbers have been generated. This allows the original sequence to be split
     so that distinct segments can be used in each worker process. All
     generators should be initialized with the same seed to ensure that the
@@ -79,10 +77,8 @@ cdef class Xoshiro512(BitGenerator):
 
     >>> from numpy.random import Generator
     >>> from randomgen import Xoshiro512
-    >>> rg = [Generator(Xoshiro512(1234)) for _ in range(10)]
     # Advance each Xoshiro512 instance by i jumps
-    >>> for i in range(10):
-    ...     rg[i].bit_generator.jump(i)
+    >>> rg = [Generator(Xoshiro512(1234).jumped(i)) for i in range(10)]
 
     **Compatibility Guarantee**
 
@@ -165,34 +161,6 @@ cdef class Xoshiro512(BitGenerator):
             for i in range(iter):
                 xoshiro512_jump(&self.rng_state)
             self._reset_state_variables()
-
-    def jump(self, np.npy_intp iter=1):
-        """
-        jump(iter=1)
-
-        Jumps the state as-if 2**256 random numbers have been generated.
-
-        Parameters
-        ----------
-        iter : integer, positive
-            Number of times to jump the state of the rng.
-
-        Returns
-        -------
-        self : Xoshiro512
-            PRNG jumped iter times
-
-        Notes
-        -----
-        Jumping the rng state resets any pre-computed random numbers. This is
-        required to ensure exact reproducibility.
-        """
-        import warnings
-        warnings.warn("jump (in-place) has been deprecated in favor of jumped"
-                      ", which returns a new instance", DeprecationWarning)
-
-        self.jump_inplace(iter)
-        return self
 
     def jumped(self, np.npy_intp iter=1):
         """

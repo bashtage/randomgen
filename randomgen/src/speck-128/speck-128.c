@@ -5,7 +5,7 @@
 
 int speck_sse41_capable(void)
 {
-#if defined(__SSSE3__) && __SSSE3__
+#if defined(RANDOMGEN_HAVE_SSSE3)
     int flags[32];
     feature_flags(flags, RANDOMGEN_ECX);
     return flags[SSE41_FEATURE_FLAG];

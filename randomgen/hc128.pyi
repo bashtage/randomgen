@@ -3,7 +3,7 @@ from collections.abc import Sequence
 import numpy as np
 
 from randomgen.common import BitGenerator
-from randomgen.typing import IntegerSequenceSeed, SeedMode
+from randomgen.typing import IntegerSequenceSeed
 
 class HC128(BitGenerator):
     def __init__(
@@ -11,7 +11,6 @@ class HC128(BitGenerator):
         seed: IntegerSequenceSeed | None = ...,
         *,
         key: int | Sequence[int] | None = ...,
-        mode: SeedMode = ...,
     ) -> None: ...
     def seed(
         self,

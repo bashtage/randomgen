@@ -1,7 +1,7 @@
 import numpy as np
 
 from randomgen.common import BitGenerator
-from randomgen.typing import IntegerSequenceSeed, SeedMode
+from randomgen.typing import IntegerSequenceSeed
 
 class ThreeFry(BitGenerator):
     def __init__(
@@ -12,7 +12,6 @@ class ThreeFry(BitGenerator):
         key: int | np.ndarray | None = ...,
         number: int = ...,
         width: int = ...,
-        mode: SeedMode | None = ...,
     ) -> None: ...
     def seed(
         self,
@@ -29,6 +28,5 @@ class ThreeFry(BitGenerator):
         self,
         value: dict[str, str | int | np.ndarray | dict[str, np.ndarray]],
     ) -> None: ...
-    def jump(self, iter: int = ...) -> ThreeFry: ...
     def jumped(self, iter: int = ...) -> ThreeFry: ...
     def advance(self, delta: int, counter: bool | None = ...) -> ThreeFry: ...

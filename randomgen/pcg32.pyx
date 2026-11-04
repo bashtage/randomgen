@@ -1,5 +1,3 @@
-#!python
-
 import numpy as np
 
 __all__ = ["PCG32"]
@@ -31,7 +29,7 @@ cdef class PCG32(BitGenerator):
         default). If `seed` is ``None``, a new SeedSequence is created using
         entropy from the operating system.
     inc : {None, int}, optional
-        The increment in the LCG. Can be an integer in [0, 2**64] or ``None``.
+        The increment in the LCG. Can be an integer in [0, 2**64) or ``None``.
         The default is 0. If `inc` is ``None``, then it is initialized using
         entropy.
 
@@ -137,7 +135,7 @@ cdef class PCG32(BitGenerator):
                       "{ub}".format(ub=ub)
             if not np.isscalar(inc):
                 raise TypeError(err_msg)
-            if inc < 0 or inc > ub or int(np.squeeze(inc)) != inc:
+            if inc < 0 or inc >= ub or int(np.squeeze(inc)) != inc:
                 raise ValueError(err_msg)
         BitGenerator._seed_with_seed_sequence(self, seed, inc=inc)
 
@@ -224,36 +222,6 @@ cdef class PCG32(BitGenerator):
         """
         step = int(0x9e3779b97f4a7c16)
         self.advance(iter * step)
-
-    def jump(self, iter=1):
-        """
-        jump(iter=1)
-
-        Jump the state a fixed increment
-
-        Jumps the state as-if 11400714819323198486 random numbers have been
-        generated.
-
-        Parameters
-        ----------
-        iter : integer, positive
-            Number of times to jump the state of the rng.
-
-        Returns
-        -------
-        self : PCG32
-            RNG jumped iter times
-
-        Notes
-        -----
-        The step size is phi when divided by the period 2**64
-        """
-        import warnings
-        warnings.warn("jump (in-place) has been deprecated in favor of jumped"
-                      ", which returns a new instance", DeprecationWarning)
-
-        self.jump_inplace(iter)
-        return self
 
     def jumped(self, iter=1):
         """

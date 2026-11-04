@@ -1,7 +1,7 @@
 from typing import Literal
 
 from randomgen.common import BitGenerator
-from randomgen.typing import IntegerSequenceSeed, SeedMode
+from randomgen.typing import IntegerSequenceSeed
 
 DEFAULT_MULTIPLIER: int
 DEFAULT_DXSM_MULTIPLIER: int
@@ -22,8 +22,10 @@ class PCG64(BitGenerator):
             "2.0",
             "dxsm-128",
         ] = ...,
-        mode: SeedMode | None = ...,
+        numpy_seed: bool = ...,
     ) -> None: ...
+    @property
+    def variant(self) -> str: ...
     def seed(
         self,
         seed: IntegerSequenceSeed | None = ...,
@@ -34,7 +36,6 @@ class PCG64(BitGenerator):
     @state.setter
     def state(self, value: dict[str, str | int | dict[str, int]]) -> None: ...
     def advance(self, delta: int) -> PCG64: ...
-    def jump(self, iter: int = ...) -> PCG64: ...
     def jumped(self, iter: int = ...) -> PCG64: ...
 
 class LCG128Mix(BitGenerator):
@@ -74,4 +75,3 @@ class PCG64DXSM(PCG64):
     @state.setter
     def state(self, value: dict[str, str | int | dict[str, int]]) -> None: ...
     def jumped(self, iter: int = ...) -> PCG64DXSM: ...
-    def jump(self, iter: int = ...) -> PCG64DXSM: ...

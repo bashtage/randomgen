@@ -1,4 +1,3 @@
-from threading import Lock
 from types import TracebackType
 
 import numpy as np
@@ -6,8 +5,7 @@ import numpy as np
 from randomgen.common import BitGenerator
 
 class RaisingLock:
-    lock: Lock
-    def acquire(self, blocking: bool = ..., timeout: int = ...) -> None: ...
+    def acquire(self, blocking: bool = ..., timeout: float = ...) -> bool: ...
     def release(self) -> None: ...
     def __enter__(self) -> None: ...
     def __exit__(
