@@ -383,17 +383,9 @@ cdef class PCG64(BitGenerator):
           never congruent modulo 4, so their last hexadecimal digits never
           coincide, and PractRand fails the interleaved streams at 1 MB.
 
-        To split a stream, advance by multiples of an odd step whose bits
-        look random. The states of the two streams then always differ in
-        their lowest bit and, on average, in about 64 of their 128 bits.
-        After ``advance(2**127)`` they differ in a single bit, and after
-        ``advance(2**64)`` in about 32 bits, never in the lowest 64. A good
-        step is ``0x9e3779b97f4a7c15f39cc0605cedc835``, the odd integer
-        closest to ``2**128 / phi``, where phi is the golden ratio, which is
-        also the step of NumPy's ``PCG64.jumped``. Stream ``i`` then uses
-        ``advance(i * 0x9e3779b97f4a7c15f39cc0605cedc835)``. ``jumped(iter)``
-        advances by ``iter`` times a similar golden-ratio step, so it is also
-        a good choice as long as ``iter`` is not a large power of two.
+        After ``advance(2**64)``, the states differ in about 32 of their 128
+        bits and never in the lowest 64. The Notes describe how to choose a
+        step that splits a stream safely.
 
         Notes
         -----
@@ -413,6 +405,38 @@ cdef class PCG64(BitGenerator):
 
         Advancing the RNG state resets any pre-computed random numbers.
         This is required to ensure exact reproducibility.
+
+        To split one stream into several, advance stream ``i`` by ``i * step``
+        with an odd ``step``. With an odd step, the states of two streams
+        differ in their lowest bit at every step and their other bits differ as
+        if at random: about 64 of the 128 bits differ, with the spread of a
+        binomial distribution. Only the lowest few bits follow a fixed pattern,
+        since in any LCG they repeat every few steps. This holds for an odd
+        step of any size. The size sets how far apart the streams are: stream
+        ``i`` reaches the start of stream ``i + 1`` after ``step`` draws, so
+        ``step`` must be larger than the number of draws that any stream makes.
+
+        A convenient step is the odd integer closest to ``2**XX / phi``, where
+        phi is the golden ratio and ``XX`` is chosen so that the step is larger
+        than the number of draws per stream. For example, ``XX = 48`` gives
+        ``0x9e3779b97f4b``, about ``1.7 * 10**14`` draws per stream,
+        ``XX = 64`` gives ``0x9e3779b97f4a7c15``, about ``1.1 * 10**19``, and
+        ``XX = 128`` gives ``0x9e3779b97f4a7c15f39cc0605cedc835``, the step of
+        NumPy's ``PCG64.jumped``. With ``XX = 128`` the multiples of the step
+        wrap around the period, and the golden ratio spreads the streams evenly
+        around it.
+
+        >>> step = 0x9e3779b97f4a7c15
+        >>> streams = [PCG64(1234).advance(i * step) for i in range(8)]
+
+        Streams ``i`` and ``j`` are ``(j - i) * step`` draws apart, so they
+        share the lowest ``v`` bits of their states, where ``2**v`` is the
+        largest power of two that divides ``j - i``. With fewer than ``2**20``
+        streams that is at most 19 bits. NumPy reports that two XSL-RR streams
+        that share their lowest 58 bits and their increment fail PractRand when
+        interleaved. ``jumped(iter)`` advances by ``iter`` times a golden-ratio
+        step, so it is also a good choice when ``iter`` is not a large power of
+        two.
         """
         delta = wrap_int(delta, 128)
 
@@ -906,17 +930,9 @@ cdef class LCG128Mix(BitGenerator):
         * ``"murmur3"``: no pattern is visible in the outputs, although the
           states are related in the same way.
 
-        To split a stream, advance by multiples of an odd step whose bits
-        look random. The states of the two streams then always differ in
-        their lowest bit and, on average, in about 64 of their 128 bits.
-        After ``advance(2**127)`` they differ in a single bit, and after
-        ``advance(2**64)`` in about 32 bits, never in the lowest 64. A good
-        step is ``0x9e3779b97f4a7c15f39cc0605cedc835``, the odd integer
-        closest to ``2**128 / phi``, where phi is the golden ratio, which is
-        also the step of NumPy's ``PCG64.jumped``. Stream ``i`` then uses
-        ``advance(i * 0x9e3779b97f4a7c15f39cc0605cedc835)``. ``jumped(iter)``
-        advances by ``iter`` times a similar golden-ratio step, so it is also
-        a good choice as long as ``iter`` is not a large power of two.
+        After ``advance(2**64)``, the states differ in about 32 of their 128
+        bits and never in the lowest 64. The Notes describe how to choose a
+        step that splits a stream safely.
 
         Notes
         -----
@@ -936,6 +952,39 @@ cdef class LCG128Mix(BitGenerator):
 
         Advancing the RNG state resets any pre-computed random numbers.
         This is required to ensure exact reproducibility.
+
+        To split one stream into several, advance stream ``i`` by ``i * step``
+        with an odd ``step``. With an odd step, the states of two streams
+        differ in their lowest bit at every step and their other bits differ as
+        if at random: about 64 of the 128 bits differ, with the spread of a
+        binomial distribution, for the default ``multiplier``. Only the lowest
+        few bits follow a fixed pattern, since in any LCG they repeat every few
+        steps. This holds for an odd step of any size. The size sets how far
+        apart the streams are: stream ``i`` reaches the start of stream
+        ``i + 1`` after ``step`` draws, so ``step`` must be larger than the
+        number of draws that any stream makes.
+
+        A convenient step is the odd integer closest to ``2**XX / phi``, where
+        phi is the golden ratio and ``XX`` is chosen so that the step is larger
+        than the number of draws per stream. For example, ``XX = 48`` gives
+        ``0x9e3779b97f4b``, about ``1.7 * 10**14`` draws per stream,
+        ``XX = 64`` gives ``0x9e3779b97f4a7c15``, about ``1.1 * 10**19``, and
+        ``XX = 128`` gives ``0x9e3779b97f4a7c15f39cc0605cedc835``, the step of
+        NumPy's ``PCG64.jumped``. With ``XX = 128`` the multiples of the step
+        wrap around the period, and the golden ratio spreads the streams evenly
+        around it.
+
+        >>> step = 0x9e3779b97f4a7c15
+        >>> streams = [LCG128Mix(1234).advance(i * step) for i in range(8)]
+
+        Streams ``i`` and ``j`` are ``(j - i) * step`` draws apart, so they
+        share the lowest ``v`` bits of their states, where ``2**v`` is the
+        largest power of two that divides ``j - i``. With fewer than ``2**20``
+        streams that is at most 19 bits. NumPy reports that two XSL-RR streams
+        that share their lowest 58 bits and their increment fail PractRand when
+        interleaved. ``jumped(iter)`` advances by ``iter`` times a golden-ratio
+        step, so it is also a good choice when ``iter`` is not a large power of
+        two.
         """
         delta = wrap_int(delta, 128)
 

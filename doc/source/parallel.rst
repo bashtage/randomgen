@@ -126,21 +126,22 @@ does not support advancing a counter.
    other with its 32-bit halves swapped and one bit flipped. The ``advance``
    method of each generator describes the effect on its output functions.
 
-   Instead, advance by multiples of an odd step whose bits look random, so
-   that the states of the streams always differ in their lowest bit and, on
-   average, in about half of their bits. A good step is the odd integer
-   closest to :math:`2^{128}/\phi`, where :math:`\phi` is the golden ratio,
-   ``0x9e3779b97f4a7c15f39cc0605cedc835`` (``0x9e3779b97f4a7c15``, the odd
-   integer closest to :math:`2^{64}/\phi`, for
-   :class:`~randomgen.pcg32.PCG32`), and stream ``i`` uses
-   ``advance(i * step)``. ``jumped`` uses a similar golden-ratio step and is
-   also a good choice.
+   Instead, advance stream ``i`` by ``i * step`` with an odd ``step``. With
+   any odd step the states of two streams differ as if at random, apart from
+   their lowest few bits, and the size of the step only has to be larger than
+   the number of draws that each stream makes, so that the streams do not
+   overlap. A convenient step is the odd integer closest to
+   :math:`2^{XX}/\phi`, where :math:`\phi` is the golden ratio, for example
+   ``0x9e3779b97f4a7c15`` (:math:`XX = 64`, about :math:`1.1 \times 10^{19}`
+   draws per stream) or, for :class:`~randomgen.pcg32.PCG32`,
+   ``0x9e3779b9`` (:math:`XX = 32`, about :math:`2.7 \times 10^{9}` draws per
+   stream). ``jumped`` uses a golden-ratio step and is also a good choice.
 
    .. code-block:: python
 
       from randomgen import PCG64
 
-      STEP = 0x9e3779b97f4a7c15f39cc0605cedc835
+      STEP = 0x9e3779b97f4a7c15
       streams = [PCG64(1234).advance(i * STEP) for i in range(16)]
 
 .. _jumping:
