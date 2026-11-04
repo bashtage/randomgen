@@ -173,7 +173,6 @@ foreach gen: standard_bit_generators
     )
 endforeach
 
-install_subdir('compat', install_dir: rg_dir)
 # The extension sources and the build-time `_shims` files are not needed to
 # run the tests
 install_subdir(

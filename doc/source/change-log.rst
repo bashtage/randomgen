@@ -2,19 +2,18 @@
 
 Change Log
 ----------
-v2.6.0
+v2.5.0
 ======
 
 .. note::
 
-   The version number now follows NumPy's, so there were no versions 2.4.0
-   or 2.5.0.
+   The version number now follows NumPy's, so there was no version 2.4.0.
 
 .. warning::
 
    Some streams differ from randomgen 2.3.0 for the same seed and calls. Most
    of these changes fix output that was wrong; see
-   :ref:`stream-changes-2-6-0` before upgrading code that must reproduce
+   :ref:`stream-changes-2-5-0` before upgrading code that must reproduce
    earlier results.
 
 New features
@@ -52,7 +51,7 @@ New features
   lowest few bits. Because it is at least ``max_draws``, ``n`` streams do not
   overlap as long as ``n * step`` is no larger than the period.
 
-.. _stream-changes-2-6-0:
+.. _stream-changes-2-5-0:
 
 Changes to random streams
 ~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -180,6 +179,10 @@ Other fixes
 
 Build and packaging
 ~~~~~~~~~~~~~~~~~~~
+- randomgen requires Python 3.10 or later and NumPy 1.26 or later.
+  randomgen 2.3.0 supported Python 3.9 and NumPy 1.22.3.
+- Wheels are built for free-threaded Python 3.14 and 3.15. There are no
+  wheels for free-threaded Python 3.13.
 - Building requires Cython 3.1 or later.
 - NumPy 2.4.0 is excluded: it renamed a class in a way that stops randomgen
   from importing. NumPy 2.4.1 restored the name.
@@ -194,6 +197,19 @@ Build and packaging
   the sdist no longer includes CI configuration or test results. The
   license is declared as ``NCSA OR BSD-3-Clause``, and the licenses of the
   included third-party code are part of the package metadata.
+- The build no longer installs an empty ``randomgen/compat`` directory,
+  which also removes a meson deprecation warning (``install_subdir`` with an
+  empty directory).
+- The ``test``, ``doc`` and ``dev`` extras are removed. The development
+  dependencies are now dependency groups (PEP 735) in ``pyproject.toml``,
+  which replace ``requirements.txt``, ``requirements-dev.txt`` and
+  ``doc/requirements.txt``. With pip 25.1 or later, install them with, for
+  example, ``python -m pip install --group dev``.
+- The flake8, pep8speaks and Codecov configuration files are removed.
+  flake8 no longer runs: ruff covers its pyflakes and flake8-pyi checks,
+  and black's formatting covers pycodestyle's whitespace checks. The
+  remaining tool configuration is in ``pyproject.toml``, including pytest's
+  native TOML configuration, which needs pytest 9.
 - Tested on Python 3.10 to 3.15, including free-threaded 3.14 and 3.15.
 
 v2.3.0

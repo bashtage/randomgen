@@ -1,8 +1,6 @@
 from collections.abc import Callable
 from ctypes import c_void_p
-from typing import Any, Literal
-
-from typing_extensions import TypeAlias
+from typing import Any, Literal, TypeAlias
 
 from randomgen.common import BitGenerator
 

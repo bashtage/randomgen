@@ -311,7 +311,7 @@ cdef class PCG32(BitGenerator):
 
         Step for splitting one stream into streams of up to max_draws draws
 
-        .. versionadded:: 2.6.0
+        .. versionadded:: 2.5.0
 
         Parameters
         ----------
@@ -429,7 +429,7 @@ cdef class PCG32(BitGenerator):
         the Golden Ratio. As the step is odd, the state only returns to its
         starting value after 2**64 jumps.
 
-        .. versionchanged:: 2.6.0
+        .. versionchanged:: 2.5.0
            The step was the integer closest to ``2**64 / phi``, which is even,
            so ``jumped(2**63)`` returned the original state.
         """

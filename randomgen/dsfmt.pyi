@@ -1,5 +1,6 @@
+from typing import TypeAlias
+
 import numpy as np
-from typing_extensions import TypeAlias
 
 from randomgen.common import BitGenerator
 from randomgen.typing import IntegerSequenceSeed
