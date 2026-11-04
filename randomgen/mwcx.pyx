@@ -170,7 +170,9 @@ cdef class _MWCX(BitGenerator):
         This is required to ensure exact reproducibility.
         """
         delta = operator.index(delta)
-        self._multiply_state(pow(self._multiplier, delta, self._modulus))
+        r = pow(self._multiplier, delta, self._modulus)
+        with self.lock:
+            self._multiply_state(r)
         return self
 
     def jumped(self, iter=1):
@@ -220,10 +222,12 @@ cdef class _MWCX(BitGenerator):
             Dictionary containing the information required to describe the
             state of the PRNG
         """
-        words = self._get_words()
+        with self.lock:
+            words = self._get_words()
+            buffer = self._get_buffer()
         state = {"bit_generator": fully_qualified_name(self),
                  "state": dict(zip(self._names, words))}
-        state.update(self._get_buffer())
+        state.update(buffer)
         return state
 
     @state.setter
@@ -247,8 +251,9 @@ cdef class _MWCX(BitGenerator):
                 "the carry must be positive and smaller than the modulus "
                 f"{self._modulus:#x}"
             )
-        self._set_words(words)
-        self._set_buffer(value)
+        with self.lock:
+            self._set_words(words)
+            self._set_buffer(value)
 
     def _get_buffer(self):
         return {}
@@ -275,7 +280,7 @@ cdef class MWC192X(_MWCX):
     Attributes
     ----------
     lock : threading.Lock
-        Lock instance that is shared so that the same bit git generator can
+        Lock instance that is shared so that the same bit generator can
         be used in multiple Generators without corrupting the state. Code that
         generates values from a bit generator should hold the bit generator's
         lock.
@@ -396,7 +401,7 @@ cdef class MWC128X(_MWCX):
     Attributes
     ----------
     lock : threading.Lock
-        Lock instance that is shared so that the same bit git generator can
+        Lock instance that is shared so that the same bit generator can
         be used in multiple Generators without corrupting the state. Code that
         generates values from a bit generator should hold the bit generator's
         lock.
@@ -515,7 +520,7 @@ cdef class MWC128X32(_MWCX):
     Attributes
     ----------
     lock : threading.Lock
-        Lock instance that is shared so that the same bit git generator can
+        Lock instance that is shared so that the same bit generator can
         be used in multiple Generators without corrupting the state. Code that
         generates values from a bit generator should hold the bit generator's
         lock.
@@ -628,7 +633,7 @@ cdef class MWC64X32(_MWCX):
     Attributes
     ----------
     lock : threading.Lock
-        Lock instance that is shared so that the same bit git generator can
+        Lock instance that is shared so that the same bit generator can
         be used in multiple Generators without corrupting the state. Code that
         generates values from a bit generator should hold the bit generator's
         lock.
