@@ -152,6 +152,8 @@ cdef class PCG64(BitGenerator):
         self.rng_state.pcg_state = <pcg64_random_t *>PyArray_malloc_aligned(
             sizeof(pcg64_random_t)
         )
+        if self.rng_state.pcg_state == NULL:
+            raise MemoryError  # pragma: no cover
 
         variant = "dxsm" if variant is None else variant
         if not (isinstance(variant, (str, int, np.integer))):
@@ -591,6 +593,8 @@ cdef class LCG128Mix(BitGenerator):
         self.rng_state.pcg_state = <lcg128mix_random_t *>PyArray_malloc_aligned(
             sizeof(lcg128mix_random_t)
         )
+        if self.rng_state.pcg_state == NULL:
+            raise MemoryError  # pragma: no cover
         cfunc = self._check_output(output)
         self._check_multipliers(multiplier, dxsm_multiplier, post)
         self._set_parameters(multiplier, dxsm_multiplier, post, output, cfunc)

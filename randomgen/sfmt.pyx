@@ -102,6 +102,8 @@ cdef class SFMT(BitGenerator):
         self.rng_state.buffered_uint64 = <uint64_t *>PyArray_calloc_aligned(
             SFMT_N64, sizeof(uint64_t)
         )
+        if self.rng_state.state == NULL or self.rng_state.buffered_uint64 == NULL:
+            raise MemoryError  # pragma: no cover
         self.rng_state.buffer_loc = SFMT_N64
         self.seed(seed)
 

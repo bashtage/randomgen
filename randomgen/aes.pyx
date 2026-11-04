@@ -121,6 +121,8 @@ cdef class AESCounter(BitGenerator):
         self.rng_state = <aesctr_state_t *>PyArray_calloc_aligned(
             sizeof(aesctr_state_t), 1
         )
+        if self.rng_state == NULL:
+            raise MemoryError  # pragma: no cover
         self.seed(seed, counter, key)
 
         self._bitgen.state = <void *>self.rng_state
