@@ -1,9 +1,4 @@
-#!python
 import numpy as np
-
-DEF INDIRECTION_SIZE = 16
-DEF ITERATION_SIZE = 32
-
 
 __all__ = ["EFIIX64"]
 

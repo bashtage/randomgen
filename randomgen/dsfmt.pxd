@@ -11,12 +11,12 @@ from randomgen.common cimport (
     fully_qualified_name,
 )
 
-DEF DSFMT_MEXP = 19937
-DEF DSFMT_N = 191  # ((DSFMT_MEXP - 128) / 104 + 1)
-DEF DSFMT_N_PLUS_1 = 192  # DSFMT_N + 1
-DEF DSFMT_N64 = DSFMT_N * 2
 
 cdef extern from "src/dsfmt/dsfmt.h":
+
+    cdef enum:
+        DSFMT_N
+        DSFMT_N64
 
     union W128_T:
         uint64_t u[2]
@@ -26,7 +26,7 @@ cdef extern from "src/dsfmt/dsfmt.h":
     ctypedef W128_T w128_t
 
     struct DSFMT_T:
-        w128_t status[DSFMT_N_PLUS_1]
+        w128_t status[DSFMT_N + 1]
         int idx
 
     ctypedef DSFMT_T dsfmt_t
