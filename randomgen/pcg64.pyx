@@ -403,9 +403,12 @@ cdef class PCG64(BitGenerator):
 
         Notes
         -----
-        The step size is floor(2**128 / phi), where phi is the Golden Ratio.
+        The step size is the odd integer closest to 2**128 / phi, where phi is
+        the Golden Ratio, which is also the step of NumPy's ``PCG64.jumped``.
+        As the step is odd, the state only returns to its starting value
+        after 2**128 jumps.
         """
-        step = 0x9e3779b97f4a7c15f39cc0605cedc834
+        step = 0x9e3779b97f4a7c15f39cc0605cedc835
         step *= int(iter)
         divisor = step // 2**128
         step -= 2**128 * divisor
@@ -418,8 +421,8 @@ cdef class PCG64(BitGenerator):
         Returns a new bit generator with the state jumped
 
         The state of the returned bit generator is jumped as-if
-        iter * floor(2**128 / phi) random numbers have been generated, where
-        phi is the Golden Ratio. The jump is taken modulo 2**128.
+        iter * 210306068529402873165736369884012333109 random numbers have been
+        generated, modulo 2**128.
 
         Parameters
         ----------
@@ -433,7 +436,15 @@ cdef class PCG64(BitGenerator):
 
         Notes
         -----
-        The step size is floor(2**128 / phi), where phi is the Golden Ratio.
+        The step size is the odd integer closest to 2**128 / phi, where phi is
+        the Golden Ratio, which is also the step of NumPy's ``PCG64.jumped``.
+        As the step is odd, the state only returns to its starting value
+        after 2**128 jumps.
+
+        .. versionchanged:: 2.6.0
+           The step was ``floor(2**128 / phi)``, which is divisible by 4, so
+           the jumped state differed from NumPy's and ``jumped(2**126)``
+           returned the original state.
         """
         cdef PCG64 bit_generator
 
@@ -889,9 +900,12 @@ cdef class LCG128Mix(BitGenerator):
 
         Notes
         -----
-        The step size is floor(2**128 / phi), where phi is the Golden Ratio.
+        The step size is the odd integer closest to 2**128 / phi, where phi is
+        the Golden Ratio, which is also the step of NumPy's ``PCG64.jumped``.
+        As the step is odd, the state only returns to its starting value
+        after 2**128 jumps.
         """
-        step = 0x9e3779b97f4a7c15f39cc0605cedc834
+        step = 0x9e3779b97f4a7c15f39cc0605cedc835
         step *= int(iter)
         divisor = step // 2**128
         step -= 2**128 * divisor
@@ -904,8 +918,8 @@ cdef class LCG128Mix(BitGenerator):
         Returns a new bit generator with the state jumped
 
         The state of the returned bit generator is jumped as-if
-        iter * floor(2**128 / phi) random numbers have been generated, where
-        phi is the Golden Ratio. The jump is taken modulo 2**128.
+        iter * 210306068529402873165736369884012333109 random numbers have been
+        generated, modulo 2**128.
 
         Parameters
         ----------
@@ -919,7 +933,14 @@ cdef class LCG128Mix(BitGenerator):
 
         Notes
         -----
-        The step size is floor(2**128 / phi), where phi is the Golden Ratio.
+        The step size is the odd integer closest to 2**128 / phi, where phi is
+        the Golden Ratio, which is also the step of NumPy's ``PCG64.jumped``.
+        As the step is odd, the state only returns to its starting value
+        after 2**128 jumps.
+
+        .. versionchanged:: 2.6.0
+           The step was ``floor(2**128 / phi)``, which is divisible by 4, so
+           ``jumped(2**126)`` returned the original state.
         """
         cdef LCG128Mix bit_generator
 
@@ -1100,8 +1121,8 @@ cdef class PCG64DXSM(PCG64):
         Returns a new bit generator with the state jumped
 
         The state of the returned bit generator is jumped as-if
-        iter * floor(2**128 / phi) random numbers have been generated, where
-        phi is the Golden Ratio. The jump is taken modulo 2**128.
+        iter * 210306068529402873165736369884012333109 random numbers have been
+        generated, modulo 2**128.
 
         Parameters
         ----------
@@ -1115,7 +1136,15 @@ cdef class PCG64DXSM(PCG64):
 
         Notes
         -----
-        The step size is floor(2**128 / phi), where phi is the Golden Ratio.
+        The step size is the odd integer closest to 2**128 / phi, where phi is
+        the Golden Ratio, which is also the step of NumPy's ``PCG64.jumped``.
+        As the step is odd, the state only returns to its starting value
+        after 2**128 jumps.
+
+        .. versionchanged:: 2.6.0
+           The step was ``floor(2**128 / phi)``, which is divisible by 4, so
+           the jumped state differed from NumPy's and ``jumped(2**126)``
+           returned the original state.
         """
         cdef PCG64DXSM bit_generator
 
