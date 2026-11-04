@@ -309,6 +309,27 @@ def test_complex_normal_invalid():
     assert_raises(ValueError, random.complex_normal, relation=[10j])
 
 
+@pytest.mark.parametrize("size", [1, (1,), (1, 1), (0, 1)])
+def test_complex_normal_size_smaller_than_broadcast(extended_gen, size):
+    # Matches Generator.normal, which raises rather than truncating
+    msg = r"Output size .* is not compatible with broadcast dimensions of inputs"
+    with pytest.raises(ValueError, match=msg):
+        Generator(PCG64(0)).normal([0.0, 1.0, 2.0], 1.0, size=size)
+    with pytest.raises(ValueError, match=msg):
+        extended_gen.complex_normal([0.0, 1.0, 2.0], size=size)
+    with pytest.raises(ValueError, match=msg):
+        extended_gen.complex_normal(0.0, [1.0, 1.0, 1.0], [0.5, 0.5, 0.5], size=size)
+    with pytest.raises(ValueError, match=msg):
+        extended_gen.complex_normal(0.0, 1.0, [0.5, 0.5, 0.5], size=size)
+
+
+@pytest.mark.parametrize("size", [3, (3,), (1, 3), (2, 3), (0, 3)])
+def test_complex_normal_size_with_broadcast(extended_gen, size):
+    expected = np.empty(size, dtype=bool).shape
+    out = extended_gen.complex_normal([0.0, 1.0, 2.0], size=size)
+    assert out.shape == expected
+
+
 @pytest.mark.parametrize(
     ("gamma", "relation"),
     [(1, 1 + 1j), (1, -1 + 1j), (0, 1j), (1, 0.1 + 5j)],
