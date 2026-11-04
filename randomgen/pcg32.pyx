@@ -78,6 +78,10 @@ cdef class PCG32(BitGenerator):
     >>> for i in range(10):
     ...     rg[i].bit_generator.advance(i * 2**32)
 
+    Each instance above uses a different increment ``inc``. To split a single
+    stream, use ``jumped`` rather than advancing by a large power of two such
+    as ``2**63``, which gives strongly related streams (see ``advance``).
+
     **Compatibility Guarantee**
 
     ``PCG32`` makes a guarantee that a fixed seed and will always produce
@@ -183,6 +187,20 @@ cdef class PCG32(BitGenerator):
         -------
         self : PCG32
             RNG advanced delta steps
+
+        Warnings
+        --------
+        Do not use ``advance`` with a large power of two, such as ``2**63``
+        (half of the period), to split a single stream (the same seed and
+        ``inc``) into several. The state is an LCG modulo ``2**64``, whose
+        lowest ``e`` bits repeat every ``2**e`` steps, so advancing by
+        ``2**e`` leaves them unchanged. After ``advance(2**63)``, the two
+        states differ only in their top bit at every step, and each output
+        is the other with its 16-bit halves swapped and one bit flipped.
+
+        ``jumped`` uses a step that is not a power of two. Since
+        ``jumped(iter)`` advances by ``iter`` times this step, ``iter``
+        should not be a large power of two either.
 
         Notes
         -----

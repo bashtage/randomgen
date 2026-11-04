@@ -143,6 +143,10 @@ cdef class PCG64(BitGenerator):
     >>> for i in range(10):
     ...     rg[i].bit_generator.advance(i * 2**64)
 
+    Each instance above uses a different increment ``inc``. To split a single
+    stream, use ``jumped`` rather than advancing by a large power of two such
+    as ``2**127``, which gives strongly related streams (see ``advance``).
+
     References
     ----------
     .. [1] "PCG, A Family of Better Random Number Generators",
@@ -358,6 +362,28 @@ cdef class PCG64(BitGenerator):
         -------
         self : PCG64
             RNG advanced delta steps
+
+        Warnings
+        --------
+        Do not use ``advance`` with a large power of two, such as ``2**127``
+        (half of the period), to split a single stream (the same seed and
+        ``inc``) into several. The state is an LCG modulo ``2**128``, whose
+        lowest ``e`` bits repeat every ``2**e`` steps, so advancing by
+        ``2**e`` leaves them unchanged. After ``advance(2**127)``, the two
+        states differ only in their top bit at every step, and the outputs
+        are strongly related:
+
+        * ``"xsl-rr"``: each output is the other with its 32-bit halves
+          swapped and one bit flipped. More generally, advancing by
+          ``2**(128 - t)`` gives outputs that are rotations of each other
+          with at most ``t`` bits flipped.
+        * ``"dxsm"``, ``"dxsm-128"`` and ``PCG64DXSM``: the two outputs are
+          never congruent modulo 4, so their last hexadecimal digits never
+          coincide, and PractRand fails the interleaved streams at 1 MB.
+
+        ``jumped`` uses a step that is not a power of two. Since
+        ``jumped(iter)`` advances by ``iter`` times this step, ``iter``
+        should not be a large power of two either.
 
         Notes
         -----
@@ -844,8 +870,35 @@ cdef class LCG128Mix(BitGenerator):
 
         Returns
         -------
-        self : PCG64
+        self : LCG128Mix
             RNG advanced delta steps
+
+        Warnings
+        --------
+        Do not use ``advance`` with a large power of two, such as ``2**127``
+        (half of the period), to split a single stream (the same seed,
+        ``inc`` and ``multiplier``) into several. The state is an LCG modulo
+        ``2**128``, whose lowest ``e`` bits repeat every ``2**e`` steps, so
+        advancing by ``2**e`` leaves them unchanged. After
+        ``advance(2**127)``, the two states differ only in their top bit at
+        every step, and with most output functions the outputs are strongly
+        related:
+
+        * ``"xsl-rr"``: each output is the other with its 32-bit halves
+          swapped and one bit flipped.
+        * ``"dxsm"``: the two outputs are never congruent modulo 4, and
+          PractRand fails the interleaved streams at 1 MB.
+        * ``"upper"``: the outputs are identical except for the highest bit.
+          More generally, advancing by ``2**(128 - t)`` leaves the lowest
+          ``64 - t`` bits of every output unchanged.
+        * ``"lower"``: the outputs are identical, as they are after advancing
+          by any multiple of ``2**64``.
+        * ``"murmur3"``: no pattern is visible in the outputs, although the
+          states are related in the same way.
+
+        ``jumped`` uses a step that is not a power of two. Since
+        ``jumped(iter)`` advances by ``iter`` times this step, ``iter``
+        should not be a large power of two either.
 
         Notes
         -----
@@ -1016,6 +1069,10 @@ cdef class PCG64DXSM(PCG64):
     >>> rg = [Generator(PCG64DXSM(1234, i + 1)) for i in range(10)]
     >>> for i in range(10):
     ...     rg[i].bit_generator.advance(i * 2**64)
+
+    Each instance above uses a different increment ``inc``. To split a single
+    stream, use ``jumped`` rather than advancing by a large power of two such
+    as ``2**127``, which gives strongly related streams (see ``advance``).
 
     References
     ----------
