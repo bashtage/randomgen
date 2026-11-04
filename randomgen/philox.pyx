@@ -51,9 +51,8 @@ cdef class Philox(BitGenerator):
         Random seed initializing the pseudo-random number generator.
         Can be an integer in [0, 2**64), array of integers in
         [0, 2**64), a SeedSequence instance or ``None`` (the default).
-        If `seed` is ``None``, data will be read from ``/dev/urandom`` (or
-        the Windows analog) if available. If unavailable, a hash of the time
-        and process ID is used.
+        If `seed` is ``None``, a new SeedSequence is created using entropy from
+        the operating system.
     counter : {None, int, array_like[uint64]}, optional
         Counter to use in the Philox state. Can be either a Python int in
         [0, 2**(N*W)) where N is number of W is the width, or a M-element
@@ -77,18 +76,18 @@ cdef class Philox(BitGenerator):
         so matches NumPy exactly. To match NumPy, variant must be ``xsl-rr``.
         When using "numpy", ``inc`` must be ``None``.
 
-        .. versionadded: 2.0.0
+        .. versionadded:: 2.0.0
 
     Attributes
     ----------
     lock : threading.Lock
-        Lock instance that is shared so that the same bit git generator can
+        Lock instance that is shared so that the same bit generator can
         be used in multiple Generators without corrupting the state. Code that
         generates values from a bit generator should hold the bit generator's
         lock.
     seed_seq : {None, SeedSequence}
-        The SeedSequence instance used to initialize the generator if mode is
-        "sequence" or is seed is a SeedSequence.
+        The SeedSequence instance used to seed the generator. If `seed` is not
+        a SeedSequence, one is created from it.
 
     Notes
     -----
@@ -119,19 +118,17 @@ cdef class Philox(BitGenerator):
 
     **Parallel Features**
 
-    ``Philox`` can be used in parallel applications by calling the ``jump``
+    ``Philox`` can be used in parallel applications by calling the ``jumped``
     method  to advances the state as-if :math:`2^{N*W//2}` random numbers have
     been generated. Alternatively, ``advance`` can be used to advance the
-    counter for any positive step in [0, 2**N*W). When using ``jump``, all
+    counter for any positive step in [0, 2**N*W). When using ``jumped``, all
     generators should be initialized with the same seed to ensure that the
     segments come from the same sequence.
 
     >>> from numpy.random import Generator
     >>> from randomgen import Philox
-    >>> rg = [Generator(Philox(1234)) for _ in range(10)]
     # Advance each Philox instance by i jumps
-    >>> for i in range(10):
-    ...     rg[i].bit_generator.jump(i)
+    >>> rg = [Generator(Philox(1234).jumped(i)) for i in range(10)]
 
     Alternatively, ``Philox`` can be used in parallel applications by using
     a sequence of distinct keys where each instance uses different key.
@@ -227,7 +224,7 @@ cdef class Philox(BitGenerator):
     def _seed_from_seq_numpy_compat(self, counter=None):
         if self.n != 4 or self.w != 64:
             raise ValueError("n must be 4 and w must br 64 when using mode='numpy'")
-        return self._seed_from_seq()
+        return self._seed_from_seq(counter=counter)
 
     def seed(self, seed=None, counter=None, key=None):
         """
@@ -245,9 +242,8 @@ cdef class Philox(BitGenerator):
             Random seed initializing the pseudo-random number generator.
             Can be an integer in [0, 2**64), array of integers in
             [0, 2**64), a SeedSequence instance or ``None`` (the default).
-            If `seed` is ``None``, data will be read from ``/dev/urandom`` (or
-            the Windows analog) if available. If unavailable, a hash of the
-            time and process ID is used.
+            If `seed` is ``None``, a new SeedSequence is created using entropy
+            from the operating system.
         counter : {None, int, array_like[uint64]}, optional
             Counter to use in the Philox state. Can be either a Python int
             in [0, 2**256) or a 4-element uint64 array. If not provided,
@@ -415,41 +411,14 @@ cdef class Philox(BitGenerator):
         step_size = (self.w * self.n) // 2
         self.advance(iter * int(2 ** step_size), True)
 
-    def jump(self, iter=1):
-        """
-        jump(iter=1)
-
-        Jumps the state as-if 2**(W*N/2) random numbers have been generated.
-
-        Parameters
-        ----------
-        iter : integer, positive
-            Number of times to jump the state of the rng.
-
-        Returns
-        -------
-        self : Philox
-            PRNG jumped iter times
-
-        Notes
-        -----
-        Jumping the rng state resets any pre-computed random numbers. This is
-        required to ensure exact reproducibility.
-        """
-        import warnings
-        warnings.warn("jump (in-place) has been deprecated in favor of jumped"
-                      ", which returns a new instance", DeprecationWarning)
-        self.jump_inplace(iter)
-        return self
-
     def jumped(self, np.npy_intp iter=1):
         """
         jumped(iter=1)
 
         Returns a new bit generator with the state jumped
 
-        The state of the returned big generator is jumped as-if
-        2**(2*W * iter) random numbers have been generated.
+        The state of the returned bit generator is jumped as-if
+        iter * 2**(N*W/2) random numbers have been generated.
 
         Parameters
         ----------
@@ -470,9 +439,9 @@ cdef class Philox(BitGenerator):
 
         return bit_generator
 
-    def advance(self, delta, counter=None):
+    def advance(self, delta, counter=False):
         """
-        advance(delta, counter=None)
+        advance(delta, counter=False)
 
         Advance the underlying RNG as-if delta draws have occurred.
 
@@ -483,14 +452,15 @@ cdef class Philox(BitGenerator):
             state variable in the underlying RNG. delta can take any value and
             can be negative. Values outside 0 and  2**(N*W+N/2) are converted
             into this range by taking the modulo.
-        counter : bool
-            Flag indicating whether the advance the counter only or both the
-            counter and the buffer position. The default is True, which has
-            been the pattern in in randomgen <= 1.16. This is changing to False
-            for randomgen > 1.17. To convert between the two, use
-            delta_new = delta * number where number is the number of
-            elements in the generator, delta is the step size when
-            counter=False and delta_new is the step size for counter=True
+        counter : bool, default False
+            Flag indicating whether to advance the counter only or both the
+            counter and the buffer position. If False, the generator is
+            advanced by delta draws, as if delta values had been drawn
+            using random_raw. If True, the counter is advanced by delta and
+            any buffered values are discarded, so that delta counts blocks
+            of number draws. This was the default in earlier releases. To
+            convert between the two, use delta_draws = delta_blocks * number
+            where number is the number of elements in the generator.
 
         Returns
         -------
@@ -514,15 +484,8 @@ cdef class Philox(BitGenerator):
           from a single draw of a 32-bit RNG.
 
         Advancing the RNG state resets any stored 32-bit values. If counter is
-        False, it also resets the buffer and buffer position for backward
-        compatibility.
+        True, it also resets the buffer and buffer position.
         """
-        if counter is None:
-            import warnings
-            warnings.warn("counter defaults to True now, but will become "
-                          "False. Explicitly set counter to silence this"
-                          "warning. ", FutureWarning)
-            counter = True
         if delta == 0:
             return self
 

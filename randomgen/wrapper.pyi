@@ -2,9 +2,12 @@ from collections.abc import Callable
 from ctypes import c_void_p
 from typing import Any, Literal
 
-from numba.core.ccallback import CFunc
+from typing_extensions import TypeAlias
 
 from randomgen.common import BitGenerator
+
+# numba is an optional dependency, so its CFunc type is not imported here
+_CFunc: TypeAlias = Any
 
 class UserBitGenerator(BitGenerator):
     def __init__(
@@ -25,10 +28,10 @@ class UserBitGenerator(BitGenerator):
     @classmethod
     def from_cfunc(
         cls,
-        next_raw: CFunc,
-        next_64: CFunc,
-        next_32: CFunc,
-        next_double: CFunc,
+        next_raw: _CFunc,
+        next_64: _CFunc,
+        next_32: _CFunc,
+        next_double: _CFunc,
         state: int,
         state_getter: Callable[[], Any] | None = ...,
         state_setter: Callable[[Any], None] | None = ...,

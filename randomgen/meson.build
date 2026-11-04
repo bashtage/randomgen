@@ -35,6 +35,10 @@ npymath_path = incdir_numpy_abs / '..' / 'lib'
 npyrandom_path = incdir_numpy_abs / '..' / '..' / 'random' / 'lib'
 npymath_lib = cc.find_library('npymath', dirs: npymath_path)
 npyrandom_lib = cc.find_library('npyrandom', dirs: npyrandom_path)
+entropy_deps = []
+if host_machine.system() == 'windows'
+  entropy_deps += cc.find_library('bcrypt')
+endif
 # Copy the main __init__.py to the build dir.
 # Some submodules (linalg, special, optimize) add pxd files to this.
 # Needed to trick Cython, it won't do a relative import outside a package
@@ -168,16 +172,20 @@ foreach gen: standard_bit_generators
     )
 endforeach
 
-subdirs_list = [
-    '_build',
-    'examples',
-    'src',
+install_subdir('compat', install_dir: rg_dir)
+# The extension sources and the build-time `_shims` files are not needed to
+# run the tests
+install_subdir(
     'tests',
-]
-
-foreach subdir : subdirs_list
-    install_subdir(subdir, install_dir: py.get_install_dir() / 'randomgen')
-endforeach
+    install_dir: rg_dir,
+    exclude_files: [
+        'meson.build',
+        '_shim_dist.c',
+        '_shim_dist.h',
+        '_shims.pxd',
+        '_shims.pyx',
+    ],
+)
 
 
 py.extension_module(
@@ -297,6 +305,7 @@ py.extension_module(
     subdir: 'randomgen',
     cython_args: cython_args,
     c_args: cython_c_args,
+    dependencies: entropy_deps,
 )
 py.extension_module(
     'wrapper',
@@ -336,6 +345,7 @@ top_level_py_list = [
     'seed_sequence.py',
     'typing.py',
     'aes.pyi',
+    'blabla.pyi',
     'chacha.pyi',
     'common.pyi',
     'dsfmt.pyi',
@@ -355,6 +365,7 @@ top_level_py_list = [
     'sfc.pyi',
     'sfmt.pyi',
     'speck128.pyi',
+    'squares.pyi',
     'threefry.pyi',
     'tyche.pyi',
     'wrapper.pyi',

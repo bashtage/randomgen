@@ -147,8 +147,8 @@ def random_entropy(size=None, source="system"):
     Notes
     -----
     On Unix-like machines, reads from ``/dev/urandom``. On Windows machines
-    reads from the RSA algorithm provided by the cryptographic service
-    provider.
+    reads from the system-preferred random number generator using
+    ``BCryptGenRandom``.
 
     This function reads from the system entropy pool and so samples are
     not reproducible. In particular, it does *NOT* make use of a
@@ -173,7 +173,9 @@ def random_entropy(size=None, source="system"):
     else:
         n = compute_numel(size)
         randoms = np.zeros(n, dtype=np.uint32)
-        if source in ("system", "auto"):
+        if n == 0:
+            pass
+        elif source in ("system", "auto"):
             success = entropy_getbytes(<void *>(&randoms[0]), 4 * n)
         else:
             success = entropy_fallback_getbytes(<void *>(&randoms[0]), 4 * n)
@@ -191,6 +193,6 @@ def random_entropy(size=None, source="system"):
             raise RuntimeError("Unable to read from system cryptographic "
                                "provider or use fallback")
 
-    if n == 0:
+    if size is None:
         return random
     return np.asarray(randoms).reshape(size)

@@ -1,4 +1,6 @@
 import importlib
+import importlib.util
+import pathlib
 import pkgutil
 
 import pytest
@@ -21,3 +23,28 @@ def test_found_modules():
 @pytest.mark.parametrize("module", MODULES)
 def test_import(module):
     importlib.import_module(module)
+
+
+# Internal helper without a public API
+NO_STUB = ("randomgen.broadcasting",)
+EXTENSIONS = [
+    mod
+    for mod in MODULES
+    if mod not in NO_STUB
+    and not importlib.util.find_spec(mod).origin.endswith((".py", ".pyc"))
+]
+
+
+def test_found_extensions():
+    assert "randomgen.squares" in EXTENSIONS
+    assert len(EXTENSIONS) > 20
+
+
+@pytest.mark.parametrize("module", EXTENSIONS)
+def test_stub_installed(module):
+    origin = pathlib.Path(importlib.util.find_spec(module).origin).resolve()
+    package_dir = pathlib.Path(randomgen.__file__).parent.resolve()
+    if not origin.is_relative_to(package_dir):
+        pytest.skip("Editable install: extensions are in the build directory")
+    stub = origin.with_name(module.rsplit(".", maxsplit=1)[-1] + ".pyi")
+    assert stub.exists()

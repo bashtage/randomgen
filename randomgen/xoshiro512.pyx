@@ -24,22 +24,21 @@ cdef class Xoshiro512(BitGenerator):
     seed : {None, int, array_like[uint64], SeedSequence}, optional
         Entropy initializing the pseudo-random number generator.
         Can be an integer in [0, 2**64), array of integers in [0, 2**64),
-        a SeedSequence instance or ``None`` (the default). If `seed`
-        is ``None``, then  data is read from ``/dev/urandom`` (or the
-        Windows analog) if available. If unavailable, a hash of the time
-        and process ID is used.
+        a SeedSequence instance or ``None`` (the default). If `seed` is
+        ``None``, a new SeedSequence is created using entropy from the
+        operating system.
 
 
     Attributes
     ----------
     lock : threading.Lock
-        Lock instance that is shared so that the same bit git generator can
+        Lock instance that is shared so that the same bit generator can
         be used in multiple Generators without corrupting the state. Code that
         generates values from a bit generator should hold the bit generator's
         lock.
     seed_seq : {None, SeedSequence}
-        The SeedSequence instance used to initialize the generator if mode is
-        "sequence" or is seed is a SeedSequence.
+        The SeedSequence instance used to seed the generator. If `seed` is not
+        a SeedSequence, one is created from it.
 
     Notes
     -----
@@ -60,20 +59,19 @@ cdef class Xoshiro512(BitGenerator):
 
     **State and Seeding**
 
-    The ``Xoshiro512`` state vector consists of a 4 element array
+    The ``Xoshiro512`` state vector consists of an 8-element array
     of 64-bit unsigned integers.
 
-    ``Xoshiro512`` is seeded using either a single 64-bit unsigned
-    integer or a vector of 64-bit unsigned integers. In either case, the seed
-    is used as an input for another simple random number generator, SplitMix64,
-    and the output of this PRNG function is used as the initial state. Using
-    a single 64-bit value for the seed can only initialize a small range of
-    the possible initial state values.
+    ``Xoshiro512`` is seeded using either a single 64-bit unsigned integer or a
+    vector of 64-bit unsigned integers. In either case, the seed is used as an
+    input to a SeedSequence, and the output of the SeedSequence is used as the
+    initial state. Using a single 64-bit value for the seed can only initialize
+    a small range of the possible initial state values.
 
     **Parallel Features**
 
     ``Xoshiro512`` can be used in parallel applications by calling the
-    method ``jump`` which advances the state as-if :math:`2^{128}` random
+    method ``jumped`` which advances the state as-if :math:`2^{128}` random
     numbers have been generated. This allows the original sequence to be split
     so that distinct segments can be used in each worker process. All
     generators should be initialized with the same seed to ensure that the
@@ -81,10 +79,8 @@ cdef class Xoshiro512(BitGenerator):
 
     >>> from numpy.random import Generator
     >>> from randomgen import Xoshiro512
-    >>> rg = [Generator(Xoshiro512(1234)) for _ in range(10)]
     # Advance each Xoshiro512 instance by i jumps
-    >>> for i in range(10):
-    ...     rg[i].bit_generator.jump(i)
+    >>> rg = [Generator(Xoshiro512(1234).jumped(i)) for i in range(10)]
 
     **Compatibility Guarantee**
 
@@ -141,9 +137,8 @@ cdef class Xoshiro512(BitGenerator):
             Entropy initializing the pseudo-random number generator.
             Can be an integer in [0, 2**64), array of integers in
             [0, 2**64), a SeedSequence instance or ``None`` (the default).
-            If `seed` is ``None``, then  data is read from ``/dev/urandom``
-            (or the Windows analog) if available. If unavailable, a hash
-            of the time and process ID is used.
+            If `seed` is ``None``, a new SeedSequence is created using entropy
+            from the operating system.
 
         Raises
         ------
@@ -169,42 +164,14 @@ cdef class Xoshiro512(BitGenerator):
                 xoshiro512_jump(&self.rng_state)
             self._reset_state_variables()
 
-    def jump(self, np.npy_intp iter=1):
-        """
-        jump(iter=1)
-
-        Jumps the state as-if 2**256 random numbers have been generated.
-
-        Parameters
-        ----------
-        iter : integer, positive
-            Number of times to jump the state of the rng.
-
-        Returns
-        -------
-        self : Xoshiro512
-            PRNG jumped iter times
-
-        Notes
-        -----
-        Jumping the rng state resets any pre-computed random numbers. This is
-        required to ensure exact reproducibility.
-        """
-        import warnings
-        warnings.warn("jump (in-place) has been deprecated in favor of jumped"
-                      ", which returns a new instance", DeprecationWarning)
-
-        self.jump_inplace(iter)
-        return self
-
     def jumped(self, np.npy_intp iter=1):
         """
         jumped(iter=1)
 
         Returns a new bit generator with the state jumped
 
-        The state of the returned big generator is jumped as-if
-        2**(256 * iter) random numbers have been generated.
+        The state of the returned bit generator is jumped as-if
+        iter * 2**256 random numbers have been generated.
 
         Parameters
         ----------

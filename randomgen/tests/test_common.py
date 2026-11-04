@@ -139,6 +139,27 @@ def test_bitgenerator_error():
         BitGenerator(1)
 
 
+def test_bitgenerator_state_not_implemented():
+    class NoState(BitGenerator):
+        pass
+
+    bg = NoState(1)
+    with pytest.raises(NotImplementedError, match="subclasses must implement"):
+        _ = bg.state
+    with pytest.raises(NotImplementedError, match="subclasses must implement"):
+        bg.state = {}
+
+
+@pytest.mark.parametrize("size", [5, (3, 4), (2, 3, 4), [3, 4]])
+def test_random_raw_no_output_draws(size):
+    expected = int(np.prod(size))
+    bg = Romu(0)
+    ref = Romu(0)
+    assert bg.random_raw(size, output=False) is None
+    ref.random_raw(expected)
+    assert bg.random_raw() == ref.random_raw()
+
+
 @pytest.mark.skipif(MISSING_CFFI, reason="Requires CFFI")
 def test_cffi():
 

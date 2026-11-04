@@ -38,6 +38,10 @@ cdef uint64_t rdrand_uint64(void* st) noexcept nogil:
         # Only refill if good status
         # This function will
         status = rdrand_fill_buffer(state)
+    if state.buffer_loc >= BUFFER_SIZE:
+        # Only reachable after a failure, when the buffer is not refilled.
+        # Reuse the (fallback) buffer rather than reading past its end.
+        state.buffer_loc = 0
     val = state.buffer[state.buffer_loc]
     state.buffer_loc += 1
     if status == 0:
@@ -58,6 +62,11 @@ cdef double rdrand_double(void* st) noexcept nogil:
     return uint64_to_double(rdrand_uint64(st))
 
 
+cdef int _raise_pending_error() except -1:
+    # Returning -1 with an error set makes Cython propagate the pending error
+    return -1
+
+
 cdef class RaisingLock:
     """
     A lock that wraps threading.RLock and can raise errors.
@@ -70,26 +79,20 @@ cdef class RaisingLock:
     This class has been specially designed for issues unique to RDRAND.
     """
     cdef object lock
-    cdef PyObject *err
 
     def __init__(self):
         self.lock = RLock()
-        self.err = NULL
 
     def acquire(self, blocking=True, timeout=-1):
         PyErr_Clear()
         return self.lock.acquire(blocking, timeout)
 
     def release(self):
-        self.err = PyErr_Occurred()
-        if self.err != NULL:
-            try:
-                # Python operation causes error to be raised
-                print()
-            except Exception as exc:
-                self.release()
-                raise exc
-        self.lock.release()
+        try:
+            if PyErr_Occurred() != NULL:
+                _raise_pending_error()
+        finally:
+            self.lock.release()
 
     def __enter__(self):
         self.acquire()
@@ -121,7 +124,7 @@ cdef class RDRAND(BitGenerator):
     Attributes
     ----------
     lock : threading.Lock
-        Lock instance that is shared so that the same bit git generator can
+        Lock instance that is shared so that the same bit generator can
         be used in multiple Generators without corrupting the state. Code that
         generates values from a bit generator should hold the bit generator's
         lock.
@@ -365,7 +368,7 @@ cdef class RDRAND(BitGenerator):
         cdef int status
 
         if not output:
-            n = 1 if size is None else size
+            n = 1 if size is None else int(np.prod(size))
             with self.lock:
                 status = self.rng_state.status
                 with nogil:
@@ -424,6 +427,9 @@ cdef class RDRAND(BitGenerator):
         """
         cdef RDRAND bit_generator
         bit_generator = self.__class__()
+        with self.lock:
+            # Set directly since the state setter accepts any value
+            bit_generator.rng_state.retries = self.rng_state.retries
         bit_generator._set_seed_seq(self._seed_seq)
 
         return bit_generator

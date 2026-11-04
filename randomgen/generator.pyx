@@ -24,7 +24,12 @@ from numpy.random.c_distributions cimport (
 )
 
 from randomgen cimport api
-from randomgen.broadcasting cimport check_output, double_fill, float_fill
+from randomgen.broadcasting cimport (
+    check_output,
+    double_fill,
+    float_fill,
+    validate_output_shape,
+)
 from randomgen.common cimport compute_complex
 from randomgen.distributions cimport (
     random_double_fill,
@@ -188,7 +193,7 @@ cdef class ExtendedGenerator:
         cdef const char *name = "BitGenerator"
         if not PyCapsule_IsValid(capsule, name):
             raise ValueError("Invalid bit generator. The bit generator must "
-                             "be instantized.")
+                             "be instantiated.")
         self._bitgen = (<bitgen_t *> PyCapsule_GetPointer(capsule, name))[0]
         self.lock = bit_generator.lock
         from numpy.random import Generator
@@ -569,13 +574,13 @@ cdef class ExtendedGenerator:
                         f"either 1 or the same as the corresponding element "
                         f"of the broadcast size."
                     )
-                final_size.append(max(s, os))
+                final_size.append(s if os == 1 else os)
             out_shape = tuple(final_size)
 
         out = self._generator.standard_normal(out_shape + (1, n,))
         prod = np.matmul(out, _factors)
         final = mean + np.squeeze(prod, axis=prod.ndim - 2)
-        if drop_dims and final.shape[0] == 1:
+        if drop_dims and (size is None or len(size) == 0):
             final = final.reshape(final.shape[1:])
         return final
 
@@ -715,11 +720,13 @@ cdef class ExtendedGenerator:
         if np.any(np.not_equal(np.imag(ogamma), 0)):
             raise ValueError("Im(gamma) != 0")
 
-        cov = 0.5 * np.imag(orelation)
-        rho = np.zeros_like(cov)
-        idx = (v_real.flat > 0) & (v_imag.flat > 0)
-        rho.flat[idx] = cov.flat[idx] / np.sqrt(v_real.flat[idx] * v_imag.flat[idx])
-        if np.any(cov.flat[~idx] != 0) or np.any(np.abs(rho) > 1):
+        # gamma and relation can have different shapes, so use the shape of the
+        # variances, which is the broadcast of the two
+        cov = np.broadcast_to(0.5 * np.imag(orelation), np.shape(v_real))
+        rho = np.zeros(np.shape(v_real))
+        idx = (v_real > 0) & (v_imag > 0)
+        rho[idx] = cov[idx] / np.sqrt(v_real[idx] * v_imag[idx])
+        if np.any(cov[~idx] != 0) or np.any(np.abs(rho) > 1):
             raise ValueError("Im(relation) ** 2 > Re(gamma ** 2 - relation ** 2)")
 
         if size is not None:
@@ -732,6 +739,7 @@ cdef class ExtendedGenerator:
         n = np.PyArray_SIZE(randoms)
 
         it = np.PyArray_MultiIterNew5(randoms, oloc, v_real, v_imag, rho)
+        validate_output_shape(it.shape, randoms)
         with self.lock, nogil:
             n2 = 2 * n  # Avoid compiler noise for cast
             for i in range(n2):

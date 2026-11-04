@@ -96,8 +96,9 @@ static INLINE uint32_t hc128_next32(hc128_state_t *state) {
 }
 
 static INLINE uint64_t hc128_next64(hc128_state_t *state) {
-  uint64_t out = hc128_next32(state) | ((uint64_t)hc128_next32(state) << 32);
-  return out;
+  uint64_t low = hc128_next32(state);
+  uint64_t high = hc128_next32(state);
+  return low | (high << 32);
 }
 
 static INLINE double hc128_next_double(hc128_state_t *state) {

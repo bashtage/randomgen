@@ -28,24 +28,23 @@ cdef class PCG32(BitGenerator):
     seed : {None, int, SeedSequence}, optional
         Random seed initializing the pseudo-random number generator. Can be an
         integer in [0, 2**64], a SeedSequence instance or ``None`` (the
-        default). If `seed` is ``None``, then ``PCG32`` will try to read data
-        from ``/dev/urandom`` (or the Windows analog) if available. If
-        unavailable, a 64-bit hash of the time and process ID is used.
+        default). If `seed` is ``None``, a new SeedSequence is created using
+        entropy from the operating system.
     inc : {None, int}, optional
-        The increment in the LCG. Can be an integer in [0, 2**64] or ``None``.
+        The increment in the LCG. Can be an integer in [0, 2**64) or ``None``.
         The default is 0. If `inc` is ``None``, then it is initialized using
         entropy.
 
     Attributes
     ----------
     lock : threading.Lock
-        Lock instance that is shared so that the same bit git generator can
+        Lock instance that is shared so that the same bit generator can
         be used in multiple Generators without corrupting the state. Code that
         generates values from a bit generator should hold the bit generator's
         lock.
     seed_seq : {None, SeedSequence}
-        The SeedSequence instance used to initialize the generator if mode is
-        "sequence" or is seed is a SeedSequence.
+        The SeedSequence instance used to seed the generator. If `seed` is not
+        a SeedSequence, one is created from it.
 
     Notes
     -----
@@ -62,7 +61,7 @@ cdef class PCG32(BitGenerator):
     steps. The state of the PCG-32 PRNG is represented by 2 64-bit unsigned
     integers.
 
-    See ``PCG64`` for a similar implementation with a smaller period.
+    See ``PCG64`` for a similar implementation with a larger period.
 
     **State and Seeding**
 
@@ -121,7 +120,7 @@ cdef class PCG32(BitGenerator):
         Parameters
         ----------
         seed : int, optional
-            Seed for ``PCG64``. Integer between 0 and 2**64-1. If None,
+            Seed for ``PCG32``. Integer between 0 and 2**64-1. If None,
             seeded with entropy.
         inc : int, optional
             The increment in the LCG. Integer between 0 and 2**64-1. If None,
@@ -138,7 +137,7 @@ cdef class PCG32(BitGenerator):
                       "{ub}".format(ub=ub)
             if not np.isscalar(inc):
                 raise TypeError(err_msg)
-            if inc < 0 or inc > ub or int(np.squeeze(inc)) != inc:
+            if inc < 0 or inc >= ub or int(np.squeeze(inc)) != inc:
                 raise ValueError(err_msg)
         BitGenerator._seed_with_seed_sequence(self, seed, inc=inc)
 
@@ -226,44 +225,15 @@ cdef class PCG32(BitGenerator):
         step = int(0x9e3779b97f4a7c16)
         self.advance(iter * step)
 
-    def jump(self, iter=1):
-        """
-        jump(iter=1)
-
-        Jump the state a fixed increment
-
-        Jumps the state as-if 11400714819323198486 random numbers have been
-        generated.
-
-        Parameters
-        ----------
-        iter : integer, positive
-            Number of times to jump the state of the rng.
-
-        Returns
-        -------
-        self : PCG32
-            RNG jumped iter times
-
-        Notes
-        -----
-        The step size is phi when divided by the period 2**64
-        """
-        import warnings
-        warnings.warn("jump (in-place) has been deprecated in favor of jumped"
-                      ", which returns a new instance", DeprecationWarning)
-
-        self.jump_inplace(iter)
-        return self
-
     def jumped(self, iter=1):
         """
         jumped(iter=1)
 
         Returns a new bit generator with the state jumped
 
-        The state of the returned big generator is jumped as-if
-        11400714819323198486 random numbers have been generated.
+        The state of the returned bit generator is jumped as-if
+        iter * 11400714819323198486 random numbers have been generated,
+        modulo 2**64.
 
         Parameters
         ----------

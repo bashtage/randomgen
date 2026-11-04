@@ -23,7 +23,6 @@ Parallel generation
    :toctree: generated/
 
    ~SFMT.jumped
-   ~SFMT.jump
 
 Extending
 =========

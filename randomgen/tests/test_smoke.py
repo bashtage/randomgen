@@ -186,27 +186,6 @@ class RNG:
             bit_gen_name = self.rg.bit_generator.__class__.__name__
             pytest.skip(f"Advance is not supported by {bit_gen_name}")
 
-    @shared_state
-    def test_jump(self):
-        state = self.rg.bit_generator.state
-        if hasattr(self.rg.bit_generator, "jump") and not isinstance(
-            self.rg.bit_generator,
-            PCG64DXSM,
-        ):
-            with pytest.deprecated_call():
-                self.rg.bit_generator.jump()
-            jumped_state = self.rg.bit_generator.state
-            assert not comp_state(state, jumped_state)
-            self.rg.random(2 * 3 * 5 * 7 * 11 * 13 * 17)
-            self.rg.bit_generator.state = state
-            with pytest.deprecated_call():
-                self.rg.bit_generator.jump()
-            rejumped_state = self.rg.bit_generator.state
-            assert comp_state(jumped_state, rejumped_state)
-        else:
-            bit_gen_name = self.rg.bit_generator.__class__.__name__
-            pytest.skip(f"jump is not supported by {bit_gen_name}")
-
     def test_jumped(self):
         state = self.rg.bit_generator.state
         if hasattr(self.rg.bit_generator, "jumped"):
@@ -217,47 +196,6 @@ class RNG:
         else:
             bit_gen_name = self.rg.bit_generator.__class__.__name__
             pytest.skip(f"jumped is not supported by {bit_gen_name}")
-
-    @shared_state
-    def test_jumped_against_jump(self):
-        if (
-            hasattr(self.rg.bit_generator, "jumped")
-            and hasattr(self.rg.bit_generator, "jump")
-            and not isinstance(self.rg.bit_generator, PCG64DXSM)
-        ):
-            bg = self.rg.bit_generator
-            state = bg.state
-            new_bg = bg.jumped()
-            with pytest.deprecated_call():
-                bg.jump()
-            assert not comp_state(state, bg.state)
-            assert not comp_state(state, new_bg.state)
-            assert comp_state(bg.state, new_bg.state)
-        else:
-            bit_gen_name = self.rg.bit_generator.__class__.__name__
-            pytest.skip(f"jump or jumped is not supported by {bit_gen_name}")
-
-    @shared_state
-    def test_jumped_against_jump_32bit(self):
-        if (
-            hasattr(self.rg.bit_generator, "jumped")
-            and hasattr(self.rg.bit_generator, "jump")
-            and not isinstance(self.rg.bit_generator, PCG64DXSM)
-        ):
-            bg = self.rg.bit_generator
-            bg.seed(*self.seed)
-            # Draw large prime number of 32bits to move internal state values
-            self.rg.random(11587, dtype=np.float32)
-            state = bg.state
-            new_bg = bg.jumped()
-            with pytest.deprecated_call():
-                bg.jump()
-            assert not comp_state(state, bg.state)
-            assert not comp_state(state, new_bg.state)
-            assert comp_state(bg.state, new_bg.state)
-        else:
-            bit_gen_name = self.rg.bit_generator.__class__.__name__
-            pytest.skip(f"jump or jumped is not supported by {bit_gen_name}")
 
     def test_uniform(self):
         r = self.rg.uniform(-1.0, 0.0, size=10)
@@ -1253,6 +1191,31 @@ class TestEntropy:
         e1 = entropy.random_entropy(10, source="system")
         e2 = entropy.random_entropy(10, source="system")
         assert (e1 != e2).all()
+
+    @pytest.mark.parametrize("source", ["system", "fallback", "auto"])
+    @pytest.mark.parametrize("size", [0, (0,), (0, 3), (3, 0)])
+    def test_entropy_zero_size(self, size, source):
+        e = entropy.random_entropy(size, source=source)
+        assert isinstance(e, np.ndarray)
+        assert e.dtype == np.uint32
+        assert e.shape == np.empty(size, dtype=bool).shape
+
+    @pytest.mark.parametrize("source", ["system", "auto"])
+    def test_large(self, source):
+        n = 2**20 + 3
+        e = entropy.random_entropy(n, source=source)
+        assert e.shape == (n,)
+        assert e.dtype == np.uint32
+        # The tail stays zero if a partial fill is accepted as complete
+        assert (e[-4096:] != 0).sum() > 4000
+        assert np.unique(e).shape[0] > 0.99 * n
+
+    def test_large_fallback(self):
+        n = 2**20 + 3
+        e = entropy.random_entropy(n, source="fallback")
+        assert e.shape == (n,)
+        assert e.dtype == np.uint32
+        assert (e != 0).any()
 
     def test_fallback(self):
         e1 = entropy.random_entropy(source="fallback")
