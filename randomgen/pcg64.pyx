@@ -427,9 +427,9 @@ cdef class PCG64(BitGenerator):
         integer arithmetic. For example, ``XX = 48`` gives ``0x9e3779b97f4b``,
         about ``1.7 * 10**14`` draws per stream, ``XX = 64`` gives
         ``0x9e3779b97f4a7c15``, about ``1.1 * 10**19``, and ``XX = 128`` gives
-        ``0x9e3779b97f4a7c15f39cc0605cedc835``, the step of NumPy's
-        ``PCG64.jumped``. With ``XX = 128`` the multiples of the step wrap
-        around the period, and the golden ratio spreads the streams evenly
+        ``0x9e3779b97f4a7c15f39cc0605cedc835``, the step of ``jumped`` and of
+        NumPy's ``PCG64.jumped``. With ``XX = 128`` the multiples of the step
+        wrap around the period, and the golden ratio spreads the streams evenly
         around it.
 
         >>> step = PCG64.advance_step(10**10)
@@ -1051,9 +1051,9 @@ cdef class LCG128Mix(BitGenerator):
         integer arithmetic. For example, ``XX = 48`` gives ``0x9e3779b97f4b``,
         about ``1.7 * 10**14`` draws per stream, ``XX = 64`` gives
         ``0x9e3779b97f4a7c15``, about ``1.1 * 10**19``, and ``XX = 128`` gives
-        ``0x9e3779b97f4a7c15f39cc0605cedc835``, the step of NumPy's
-        ``PCG64.jumped``. With ``XX = 128`` the multiples of the step wrap
-        around the period, and the golden ratio spreads the streams evenly
+        ``0x9e3779b97f4a7c15f39cc0605cedc835``, the step of ``jumped`` and of
+        NumPy's ``PCG64.jumped``. With ``XX = 128`` the multiples of the step
+        wrap around the period, and the golden ratio spreads the streams evenly
         around it.
 
         >>> step = LCG128Mix.advance_step(10**10)

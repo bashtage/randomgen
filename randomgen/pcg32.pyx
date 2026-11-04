@@ -240,9 +240,9 @@ cdef class PCG32(BitGenerator):
         returns this step for the smallest ``XX`` that works, using only
         integer arithmetic. For example, ``XX = 32`` gives ``0x9e3779b9``,
         about ``2.7 * 10**9`` draws per stream, and ``XX = 64`` gives
-        ``0x9e3779b97f4a7c15``. With ``XX = 64`` the multiples of the step wrap
-        around the period, and the golden ratio spreads the streams evenly
-        around it.
+        ``0x9e3779b97f4a7c15``, the step of ``jumped``. With ``XX = 64`` the
+        multiples of the step wrap around the period, and the golden ratio
+        spreads the streams evenly around it.
 
         >>> step = PCG32.advance_step(10**10)
         >>> hex(step)

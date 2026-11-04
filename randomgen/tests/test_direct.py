@@ -2475,6 +2475,19 @@ def test_advance_step_numpy_jumped(bg_cls):
     assert bg_cls.advance_step(2**127) == 0x9E3779B97F4A7C15F39CC0605CEDC835
 
 
+@pytest.mark.parametrize(
+    ("bg_cls", "max_draws"),
+    [(PCG32, 2**63), (PCG64, 2**127), (PCG64DXSM, 2**127), (LCG128Mix, 2**127)],
+)
+def test_advance_step_jumped(bg_cls, max_draws):
+    # The step for XX = bits is the step of jumped
+    step = bg_cls.advance_step(max_draws)
+    for i in (1, 2, 5):
+        jumped = bg_cls(1234).jumped(i)
+        advanced = bg_cls(1234).advance(i * step)
+        assert jumped.state == advanced.state
+
+
 @pytest.mark.parametrize(("bg_cls", "bits"), ADVANCE_STEP_BITS)
 def test_advance_step_errors(bg_cls, bits):
     largest = _golden_floors(bits)[-1]
