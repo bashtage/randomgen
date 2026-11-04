@@ -567,13 +567,13 @@ cdef class ExtendedGenerator:
                         f"either 1 or the same as the corresponding element "
                         f"of the broadcast size."
                     )
-                final_size.append(max(s, os))
+                final_size.append(s if os == 1 else os)
             out_shape = tuple(final_size)
 
         out = self._generator.standard_normal(out_shape + (1, n,))
         prod = np.matmul(out, _factors)
         final = mean + np.squeeze(prod, axis=prod.ndim - 2)
-        if drop_dims and final.shape[0] == 1:
+        if drop_dims and (size is None or len(size) == 0):
             final = final.reshape(final.shape[1:])
         return final
 
