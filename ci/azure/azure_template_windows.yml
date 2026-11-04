@@ -40,9 +40,8 @@ jobs:
     displayName: 'Use Python $(python.version)'
 
   - pwsh: |
-      python -m pip install --upgrade pip wheel -U
-      python -m pip install -r requirements.txt -U
-      python -m pip install -r requirements-dev.txt  -U
+      python -m pip install --upgrade pip
+      python -m pip install --group dev -U
     displayName: 'Install dependencies'
 
   - pwsh: |

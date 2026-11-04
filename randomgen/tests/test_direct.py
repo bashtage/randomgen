@@ -2606,7 +2606,7 @@ class TestMWC192X(Base):
 
     def set_words(self, bg, words):
         state = bg.state
-        state["state"] = dict(zip(bg._names, words))
+        state["state"] = dict(zip(bg._names, words, strict=True))
         bg.state = state
 
     def test_reference_jumps(self):

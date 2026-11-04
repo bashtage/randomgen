@@ -4,16 +4,16 @@ requires = [
     'meson-python',
     "cython>=3.1.0,<4",  # Sync with the Cython check in meson.build
     "numpy>=2.0.0,<3",
-    "setuptools_scm[toml]>=9.2.0,<10",
+    "setuptools-scm>=9.2.0,<10",
 ]
 
 [project]
 name = "randomgen"
-# Keep syned with requirements.txt
+# Keep synced with the build dependency group
 dependencies = [
   # NumPy 2.4.0 removed SeedlessSequence, so builds against NumPy <= 2.3 or
   # 2.4.1+ fail to import on it (#426). NumPy 2.4.1 restored it.
-  "numpy>=1.22.3,!=2.4.0,<3",
+  "numpy>=1.26,!=2.4.0,<3",
 ]
 authors = [{ name = "Kevin Sheppard", email = "kevin.k.sheppard@gmail.com" }]
 classifiers = [
@@ -29,7 +29,7 @@ classifiers = [
     "Operating System :: Unix",
     "Programming Language :: C",
     "Programming Language :: Cython",
-    "Programming Language :: Python :: 3.8",
+    "Programming Language :: Python :: 3 :: Only",
     "Programming Language :: Python :: 3.10",
     "Programming Language :: Python :: 3.11",
     "Programming Language :: Python :: 3.12",
@@ -73,94 +73,67 @@ maintainers = [
   { name = "Kevin Sheppard", email = "kevin.k.sheppard@gmail.com" },
 ]
 readme = "README.md"
-requires-python = ">=3.8"
-
-[project.optional-dependencies]
-test = [
-  # test
-  "pytest>=8.4.1,<9",
-  "pytest-randomly",
-  "pytest-xdist",
-  "pytest-cov",
-  "coverage[toml]",
-  "meson",
-  "ninja",
-]
-doc = [
-  # Documentation
-  "setuptools>=61",
-  "wheel",
-  "setuptools_scm[toml]>=8.0.3,<9",
-  "oldest-supported-numpy",
-  "cython>=3.1.0,<4",  # Sync with the Cython check in meson.build
-  "numpy >=1.22",
-  "scipy >=1.5.0",
-  "ipython >=8.0.1",
-  "matplotlib >=3.0",
-  "patsy >=0.5.3",
-  "statsmodels >=0.13.5",
-  "jinja2",
-  "sphinx>=7",
-  "seaborn",
-  "numpydoc>=1.0.0",
-  "nbsphinx",
-  "sphinx-immaterial",
-  "jupyter",
-  "notebook",
-  "sphinx-autodoc-typehints",
-  "fonttools>=4.43.0", # not directly required, pinned by Snyk to avoid a vulnerability
-  "jupyterlab>=4.4.8", # not directly required, pinned by Snyk to avoid a vulnerability
-  "ipython>=7",
-  "sphinx_immaterial",
-  "nbconvert",
-  "pickleshare",
-  # Requirements for doc build, in addition to requirements.txt
-  "pandas~=2.3.3",
-]
-dev = [
-  # versioning
-  "setuptools_scm[toml]>=9.2.0,<10",
-  "packaging",
-  # Performance
-  "cython>=3.1.0",
-  "numba>=0.55",
-  # Graphics
-  "matplotlib>=3",
-  "seaborn",
-  # Tests
-  "pytest>=8.4.1,<9",
-  "pytest-randomly",
-  "pytest-xdist",
-  "pytest-cov",
-  # formatting
-  "black[jupyter]~=26.10.1",
-  "isort~=9.0",
-  "colorama",
-  "flake8",
-  "flake8-bugbear",
-  "mypy>=1.3",
-  "ruff>=0.17.3",
-  "pyupgrade>=3.4.0",
-  "jupyterlab-code-formatter",
-  "jupyterlab>=4.4.8",  # not directly required, pinned by Snyk to avoid a vulnerability
-  "zipp>=3.19.1", # not directly required, pinned by Snyk to avoid a vulnerability
-]
-
+requires-python = ">=3.10"
 
 [project.urls]
 homepage = "https://github.com/bashtage/randomgen"
 documentation = "https://bashtage.github.io/randomgen/"
 repository = "https://github.com/bashtage/randomgen"
+issues = "https://github.com/bashtage/randomgen/issues"
 changelog = "https://bashtage.github.io/randomgen/change-log.html"
 
-[tool.meson-python.args]
-
+# Development dependencies (PEP 735). Install them with pip 25.1 or later, for
+# example "python -m pip install --group dev" for everything needed to build,
+# test and lint, or "python -m pip install --group dev --group doc" to also
+# build the documentation.
+[dependency-groups]
+# Everything needed for "pip install -e . --no-build-isolation"
+build = [
+  "cython>=3.1.0,<4",  # Sync with the Cython check in meson.build
+  "meson>=1.9.0",  # Sync with meson_version in meson.build
+  "meson-python",
+  "ninja",
+  "numpy>=1.26,!=2.4.0,<3",
+  "setuptools-scm>=9.2.0,<10",
+]
+test = [
+  "pytest>=9",
+  "pytest-cov",
+  "pytest-randomly",
+  "pytest-xdist",
+  "scipy>=1.13.1",
+]
+lint = [
+  "black[jupyter]~=26.10.1",
+  "isort~=9.0",
+  "mypy>=1.3",
+  "ruff>=0.17.3",
+]
+doc = [
+  "ipython>=8",
+  "nbsphinx",
+  "numba>=0.49",
+  "pickleshare",
+  "sphinx>=8",
+  "sphinx-immaterial",
+  "pygments>=2.7.4",  # not directly required, pinned by Snyk to avoid a vulnerability
+  "requests>=2.32.4",  # not directly required, pinned by Snyk to avoid a vulnerability
+]
+dev = [
+  { include-group = "build" },
+  { include-group = "test" },
+  { include-group = "lint" },
+  # Used by the PractRand and seed-correlation tools in tools/
+  "jinja2",
+  "joblib",
+  "zipp>=3.19.1",  # not directly required, pinned by Snyk to avoid a vulnerability
+]
 
 [tool.setuptools_scm]
 version_file = "randomgen/_version.py"
 
+# black and ruff take their target Python versions from requires-python
 [tool.black]
-target-version = ['py38', 'py39', 'py310', 'py311', 'py312', 'py313']
 exclude = '''
 (
   \.egg
@@ -182,7 +155,6 @@ exclude = [
 [tool.ruff]
 line-length = 88
 fix = false
-target-version = "py38"
 
 [tool.ruff.lint]
 typing-modules = []
@@ -307,11 +279,12 @@ ignore = [
 "tools/shared.py" = ["PT028"]
 
 
-[tool.pytest.ini_options]
-minversion = "8.4.1"
-testpaths = "randomgen"
-xfail_strict = true
-addopts = "--strict"
+# Native TOML configuration, which needs pytest 9
+[tool.pytest]
+minversion = "9.0"
+testpaths = ["randomgen"]
+# strict_config, strict_markers, strict_xfail and strict_parametrization_ids
+strict = true
 empty_parameter_set_mark = "xfail"
 filterwarnings = [
    "error:The covariance is not positive-semidefinite:RuntimeWarning",
@@ -408,11 +381,8 @@ disallow_untyped_defs=true
 disallow_incomplete_defs=true
 show_error_context=true
 
-[tool.mypy-randomgen.conftest]
-check_untyped_defs=false
-disallow_untyped_defs=false
-
-[tool.mypy-randomgen._version]
+[[tool.mypy.overrides]]
+module = ["randomgen.conftest", "randomgen._version"]
 check_untyped_defs=false
 disallow_untyped_defs=false
 

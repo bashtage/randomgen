@@ -102,7 +102,7 @@ The RNGs include:
   * Linux ARM64, current Python
   * macOS, Python 3.10, 3.11, 3.12, 3.15
   * Windows 64-bit, Python 3.10, 3.11, 3.12, 3.13, 3.14, 3.15
-  * Free-threaded Python 3.14t on Linux, macOS and Windows
+  * Free-threaded Python 3.14t and 3.15t on Linux, macOS and Windows
 
 ## Version
 
@@ -121,10 +121,22 @@ the latest commit (unreleased) is available under
 Building requires:
 
 * Python (3.10, 3.11, 3.12, 3.13, 3.14, 3.15)
-* NumPy (1.22.3+ except 2.4.0, runtime, 2.0.0+, building)
+* NumPy (1.26+ except 2.4.0, runtime; 2.0.0+, building)
 * Cython (3.1.0+)
 
-Testing requires pytest (8.4.1+, below 9).
+Testing requires pytest (9+).
+
+The development dependencies are dependency groups in `pyproject.toml`.
+With pip 25.1 or later, install everything needed to build, test and lint
+randomgen, and then randomgen itself, with
+
+```bash
+python -m pip install --group dev
+python -m pip install -e . --no-build-isolation
+```
+
+The groups are `build`, `test`, `lint`, `doc` (for the documentation) and
+`dev` (`build`, `test` and `lint` together).
 
 **Note:** it might work with other versions but only tested with these
 versions.

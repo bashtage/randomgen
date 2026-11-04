@@ -476,7 +476,7 @@ cdef class PCG64(BitGenerator):
 
         Step for splitting one stream into streams of up to max_draws draws
 
-        .. versionadded:: 2.6.0
+        .. versionadded:: 2.5.0
 
         Parameters
         ----------
@@ -582,7 +582,7 @@ cdef class PCG64(BitGenerator):
         As the step is odd, the state only returns to its starting value
         after 2**128 jumps.
 
-        .. versionchanged:: 2.6.0
+        .. versionchanged:: 2.5.0
            The step was ``floor(2**128 / phi)``, which is divisible by 4, so
            the jumped state differed from NumPy's and ``jumped(2**126)``
            returned the original state.
@@ -1113,7 +1113,7 @@ cdef class LCG128Mix(BitGenerator):
 
         Step for splitting one stream into streams of up to max_draws draws
 
-        .. versionadded:: 2.6.0
+        .. versionadded:: 2.5.0
 
         Parameters
         ----------
@@ -1219,7 +1219,7 @@ cdef class LCG128Mix(BitGenerator):
         As the step is odd, the state only returns to its starting value
         after 2**128 jumps.
 
-        .. versionchanged:: 2.6.0
+        .. versionchanged:: 2.5.0
            The step was ``floor(2**128 / phi)``, which is divisible by 4, so
            ``jumped(2**126)`` returned the original state.
         """
@@ -1429,7 +1429,7 @@ cdef class PCG64DXSM(PCG64):
         As the step is odd, the state only returns to its starting value
         after 2**128 jumps.
 
-        .. versionchanged:: 2.6.0
+        .. versionchanged:: 2.5.0
            The step was ``floor(2**128 / phi)``, which is divisible by 4, so
            the jumped state differed from NumPy's and ``jumped(2**126)``
            returned the original state.
