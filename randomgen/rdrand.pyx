@@ -62,6 +62,11 @@ cdef double rdrand_double(void* st) noexcept nogil:
     return uint64_to_double(rdrand_uint64(st))
 
 
+cdef int _raise_pending_error() except -1:
+    # Returning -1 with an error set makes Cython propagate the pending error
+    return -1
+
+
 cdef class RaisingLock:
     """
     A lock that wraps threading.RLock and can raise errors.
@@ -74,26 +79,20 @@ cdef class RaisingLock:
     This class has been specially designed for issues unique to RDRAND.
     """
     cdef object lock
-    cdef PyObject *err
 
     def __init__(self):
         self.lock = RLock()
-        self.err = NULL
 
     def acquire(self, blocking=True, timeout=-1):
         PyErr_Clear()
         return self.lock.acquire(blocking, timeout)
 
     def release(self):
-        self.err = PyErr_Occurred()
-        if self.err != NULL:
-            try:
-                # Python operation causes error to be raised
-                print()
-            except Exception as exc:
-                self.release()
-                raise exc
-        self.lock.release()
+        try:
+            if PyErr_Occurred() != NULL:
+                _raise_pending_error()
+        finally:
+            self.lock.release()
 
     def __enter__(self):
         self.acquire()
