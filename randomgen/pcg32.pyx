@@ -218,9 +218,11 @@ cdef class PCG32(BitGenerator):
 
         Notes
         -----
-        The step size is phi when divided by the period 2**64
+        The step size is the odd integer closest to 2**64 / phi, where phi is
+        the Golden Ratio. As the step is odd, the state only returns to its
+        starting value after 2**64 jumps.
         """
-        step = int(0x9e3779b97f4a7c16)
+        step = 0x9e3779b97f4a7c15
         self.advance(iter * step)
 
     def jumped(self, iter=1):
@@ -230,7 +232,7 @@ cdef class PCG32(BitGenerator):
         Returns a new bit generator with the state jumped
 
         The state of the returned bit generator is jumped as-if
-        iter * 11400714819323198486 random numbers have been generated,
+        iter * 11400714819323198485 random numbers have been generated,
         modulo 2**64.
 
         Parameters
@@ -245,7 +247,13 @@ cdef class PCG32(BitGenerator):
 
         Notes
         -----
-        The step size is phi when divided by the period 2**64
+        The step size is the odd integer closest to 2**64 / phi, where phi is
+        the Golden Ratio. As the step is odd, the state only returns to its
+        starting value after 2**64 jumps.
+
+        .. versionchanged:: 2.6.0
+           The step was the integer closest to ``2**64 / phi``, which is even,
+           so ``jumped(2**63)`` returned the original state.
         """
         cdef PCG32 bit_generator
 
