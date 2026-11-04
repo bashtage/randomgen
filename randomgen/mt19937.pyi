@@ -1,5 +1,3 @@
-from typing import Literal
-
 import numpy as np
 
 from randomgen.common import BitGenerator
@@ -10,10 +8,10 @@ class MT19937(BitGenerator):
         self,
         seed: IntegerSequenceSeed | None = ...,
         *,
-        mode: Literal["numpy", "sequence"] | None = ...,
+        numpy_seed: bool = ...,
     ) -> None: ...
     def seed(self, seed: IntegerSequenceSeed | None = ...) -> None: ...
-    def jumped(self, jumps: int = ...) -> MT19937: ...
+    def jumped(self, iter: int = ...) -> MT19937: ...
     @property
     def state(self) -> dict[str, str | dict[str, int | np.ndarray]]: ...
     @state.setter

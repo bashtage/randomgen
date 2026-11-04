@@ -1,15 +1,10 @@
 import numpy as np
 
 from randomgen.common import BitGenerator
-from randomgen.typing import IntegerSequenceSeed, SeedMode
+from randomgen.typing import IntegerSequenceSeed
 
 class MT64(BitGenerator):
-    def __init__(
-        self,
-        seed: IntegerSequenceSeed | None = ...,
-        *,
-        mode: SeedMode | None = ...,
-    ) -> None: ...
+    def __init__(self, seed: IntegerSequenceSeed | None = ...) -> None: ...
     def seed(self, seed: IntegerSequenceSeed | None = ...) -> None: ...
     @property
     def state(

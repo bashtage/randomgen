@@ -1,9 +1,7 @@
 import numpy as np
 
 from randomgen.common import BitGenerator
-from randomgen.typing import IntegerSequenceSeed, SeedMode
-
-SPECK_MAX_ROUNDS: int
+from randomgen.typing import IntegerSequenceSeed
 
 class SPECK128(BitGenerator):
     def __init__(
@@ -13,7 +11,6 @@ class SPECK128(BitGenerator):
         counter: int | np.ndarray | None = ...,
         key: int | np.ndarray | None = ...,
         rounds: int = ...,
-        mode: SeedMode | None = ...,
     ) -> None: ...
     def seed(
         self,

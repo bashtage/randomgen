@@ -1,14 +1,13 @@
 import numpy as np
 
 from randomgen.common import BitGenerator
-from randomgen.typing import IntegerSequenceSeed, SeedMode
+from randomgen.typing import IntegerSequenceSeed
 
 class Xoroshiro128(BitGenerator):
     def __init__(
         self,
         seed: IntegerSequenceSeed | None = ...,
         *,
-        mode: SeedMode = ...,
         plusplus: bool = ...,
     ) -> None: ...
     def seed(self, seed: IntegerSequenceSeed | None = ...) -> None: ...
