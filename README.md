@@ -9,6 +9,7 @@ This package contains additional bit generators for NumPy's
 [![Azure Build Status](https://dev.azure.com/kevinksheppard0207/kevinksheppard/_apis/build/status/bashtage.randomgen?branchName=main)](https://dev.azure.com/kevinksheppard0207/kevinksheppard/_build/latest?definitionId=2&branchName=main)
 [![Github Workflow Build Status](https://github.com/bashtage/randomgen/actions/workflows/cron-build-and-test.yml/badge.svg)](https://github.com/bashtage/randomgen/actions/workflows/cron-build-and-test.yml)
 [![Linux ARM64 Build Status](https://github.com/bashtage/randomgen/actions/workflows/linux-arm.yml/badge.svg)](https://github.com/bashtage/randomgen/actions/workflows/linux-arm.yml)
+[![Windows ARM64 Build Status](https://github.com/bashtage/randomgen/actions/workflows/windows-arm.yml/badge.svg)](https://github.com/bashtage/randomgen/actions/workflows/windows-arm.yml)
 
 
 **Coverage**
@@ -102,6 +103,7 @@ The RNGs include:
   * Linux ARM64, current Python
   * macOS, Python 3.10, 3.11, 3.12, 3.15
   * Windows 64-bit, Python 3.10, 3.11, 3.12, 3.13, 3.14, 3.15
+  * Windows ARM64, Python 3.11, 3.15 and 3.14t
   * Free-threaded Python 3.14t and 3.15t on Linux, macOS and Windows
 
 ## Version
@@ -144,8 +146,8 @@ versions.
 ## Development and Testing
 
 All development has been on 64-bit Linux, and it is regularly tested on
-Azure (Linux-AMD64, Windows, and macOS) and GitHub Actions (Linux-ARM64
-and free-threaded Python).
+Azure (Linux-AMD64, Windows, and macOS) and GitHub Actions (Linux-ARM64,
+Windows-ARM64 and free-threaded Python).
 
 Tests are in place for all RNGs. The MT19937 is tested against
 NumPy's implementation for identical results. It also passes NumPy's
