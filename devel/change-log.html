@@ -19,7 +19,7 @@
     
     
       
-        <title>Change Log - RandomGen v2.5.1 (+3)</title>
+        <title>Change Log - RandomGen v2.5.1 (+5)</title>
       
     
     
@@ -65,7 +65,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#v2-5-0" class="md-skip">
+        <a href="#v2-5-1" class="md-skip">
           Skip to content
         </a>
       
@@ -85,7 +85,7 @@
 
 <header class="md-header md-header--shadow" data-md-component="header">
   <nav class="md-header__inner md-grid" aria-label="Header">
-    <a href="index.html" title="RandomGen v2.5.1 (+3)" class="md-header__button md-logo" aria-label="RandomGen v2.5.1 (+3)" data-md-component="logo">
+    <a href="index.html" title="RandomGen v2.5.1 (+5)" class="md-header__button md-logo" aria-label="RandomGen v2.5.1 (+5)" data-md-component="logo">
       <img src="_static/casino.svg" alt="logo">
     </a>
     <label class="md-header__button md-icon" for="__drawer">
@@ -96,7 +96,7 @@
       <div class="md-header__ellipsis">
         <div class="md-header__topic">
           <span class="md-ellipsis">
-            RandomGen v2.5.1 (+3)
+            RandomGen v2.5.1 (+5)
           </span>
         </div>
         <div class="md-header__topic" data-md-component="header-topic">
@@ -191,10 +191,10 @@
 
 <nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
   <label class="md-nav__title" for="__drawer">
-    <a href="index.html" title="RandomGen v2.5.1 (+3)" class="md-nav__button md-logo" aria-label="RandomGen v2.5.1 (+3)" data-md-component="logo">
+    <a href="index.html" title="RandomGen v2.5.1 (+5)" class="md-nav__button md-logo" aria-label="RandomGen v2.5.1 (+5)" data-md-component="logo">
       <img src="_static/casino.svg" alt="logo">
     </a>
-    RandomGen v2.5.1 (+3)
+    RandomGen v2.5.1 (+5)
   </label>
   
     <div class="md-nav__source">
@@ -659,6 +659,16 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
+  <a href="#v2-5-1" class="md-nav__link">
+    
+    <span class="md-ellipsis">
+      <span title="/change-log.rst#v2-5-1 (reference label)"><span>v2.<wbr>5.<wbr>1</span></span>
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#v2-5-0" class="md-nav__link">
     
     <span class="md-ellipsis">
@@ -1018,6 +1028,16 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
+  <a href="#v2-5-1" class="md-nav__link">
+    
+    <span class="md-ellipsis">
+      <span title="/change-log.rst#v2-5-1 (reference label)"><span>v2.<wbr>5.<wbr>1</span></span>
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#v2-5-0" class="md-nav__link">
     
     <span class="md-ellipsis">
@@ -1360,6 +1380,22 @@
 
 
 <h1 id="change-log"><span id="id1"></span>Change Log<a class="headerlink" href="#change-log" title="Link to this heading">¶</a></h1>
+<h2 id="v2-5-1">v2.5.1<a class="headerlink" href="#v2-5-1" title="Link to this heading">¶</a></h2>
+<p>This release adds wheels for Windows on ARM64. It does not change the API
+or any random stream.</p>
+<ul class="simple">
+<li><p>Added wheels for Windows on ARM64 for Python 3.11 to 3.15, including
+free-threaded 3.14t and 3.15t. Python 3.10 has no Windows ARM64 build,
+so it has no wheel.</p></li>
+<li><p>Fixed compiling with MSVC for Windows on ARM64. The Random123 headers
+used by <a class="reference internal" href="bit_generators/philox.html#randomgen.philox.Philox" title="randomgen.philox.Philox (Python class) — Container for the Philox family of pseudo-random number generators."><code class="xref py py-class docutils literal notranslate"><span class="pre">Philox</span></code></a> and
+<a class="reference internal" href="bit_generators/threefry.html#randomgen.threefry.ThreeFry" title="randomgen.threefry.ThreeFry (Python class) — Container for the ThreeFry family of pseudo-random number generators."><code class="xref py py-class docutils literal notranslate"><span class="pre">ThreeFry</span></code></a> accepted only x86, and the byte
+order was not detected, which stopped <a class="reference internal" href="bit_generators/aesctr.html#randomgen.aes.AESCounter" title="randomgen.aes.AESCounter (Python class) — Container for the AES Counter pseudo-random number generator."><code class="xref py py-class docutils literal notranslate"><span class="pre">AESCounter</span></code></a>,
+<a class="reference internal" href="bit_generators/dsfmt.html#randomgen.dsfmt.DSFMT" title="randomgen.dsfmt.DSFMT (Python class) — Container for the SIMD-based Mersenne Twister pseudo RNG."><code class="xref py py-class docutils literal notranslate"><span class="pre">DSFMT</span></code></a> and <a class="reference internal" href="bit_generators/sfmt.html#randomgen.sfmt.SFMT" title="randomgen.sfmt.SFMT (Python class) — Container for the SIMD-based Mersenne Twister pseudo RNG."><code class="xref py py-class docutils literal notranslate"><span class="pre">SFMT</span></code></a> from
+compiling. On ARM64, <a class="reference internal" href="bit_generators/philox.html#randomgen.philox.Philox" title="randomgen.philox.Philox (Python class) — Container for the Philox family of pseudo-random number generators."><code class="xref py py-class docutils literal notranslate"><span class="pre">Philox</span></code></a> uses <code class="docutils literal notranslate"><span class="pre">__umulh</span></code>
+for the high half of its 64-bit products.</p></li>
+<li><p>Windows on ARM64 is now tested on GitHub Actions.</p></li>
+</ul>
 <h2 id="v2-5-0">v2.5.0<a class="headerlink" href="#v2-5-0" title="Link to this heading">¶</a></h2>
 <div class="note admonition">
 <p class="admonition-title">Note</p>

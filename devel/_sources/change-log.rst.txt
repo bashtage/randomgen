@@ -2,6 +2,23 @@
 
 Change Log
 ----------
+v2.5.1
+======
+This release adds wheels for Windows on ARM64. It does not change the API
+or any random stream.
+
+- Added wheels for Windows on ARM64 for Python 3.11 to 3.15, including
+  free-threaded 3.14t and 3.15t. Python 3.10 has no Windows ARM64 build,
+  so it has no wheel.
+- Fixed compiling with MSVC for Windows on ARM64. The Random123 headers
+  used by :class:`~randomgen.philox.Philox` and
+  :class:`~randomgen.threefry.ThreeFry` accepted only x86, and the byte
+  order was not detected, which stopped :class:`~randomgen.aes.AESCounter`,
+  :class:`~randomgen.dsfmt.DSFMT` and :class:`~randomgen.sfmt.SFMT` from
+  compiling. On ARM64, :class:`~randomgen.philox.Philox` uses ``__umulh``
+  for the high half of its 64-bit products.
+- Windows on ARM64 is now tested on GitHub Actions.
+
 v2.5.0
 ======
 
