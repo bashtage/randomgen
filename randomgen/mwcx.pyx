@@ -97,12 +97,13 @@ cdef class _MWCX(BitGenerator):
         dtype = np.uint64 if self._word_bits == 64 else np.uint32
         state = self._get_seed_seq().generate_state(self._lag + 1, dtype)
         words = [int(v) for v in state]
+        # As suggested by the reference code, the value used for the carry is
+        # read as a fixed-point fraction in [0..1) and multiplied by a - 2,
+        # the size of the range of valid carries
+        words[self._lag] = 1 + (
+            (words[self._lag] * (self._a - 2)) >> self._word_bits
+        )
         self._set_words(words)
-        if not 0 < self._state_int() < self._modulus:
-            # Not a valid state: as suggested by the reference code, the
-            # carry is set to one
-            words[self._lag] = 1
-            self._set_words(words)
 
     def seed(self, seed=None):
         """
@@ -305,8 +306,8 @@ cdef class MWC192X(_MWCX):
     **State and Seeding**
 
     The ``MWC192X`` state consists of two 64-bit digits and a 64-bit carry. It
-    is seeded using a `SeedSequence`, which fills the whole state; the carry is
-    set to one if the resulting state is not valid.
+    is seeded using a `SeedSequence`, which initializes the digits and the
+    carry to valid values.
 
     **Parallel Features**
 
@@ -425,8 +426,8 @@ cdef class MWC128X(_MWCX):
     **State and Seeding**
 
     The ``MWC128X`` state consists of a 64-bit digit and a 64-bit carry. It is
-    seeded using a `SeedSequence`, which fills the whole state; the carry is
-    set to one if the resulting state is not valid.
+    seeded using a `SeedSequence`, which initializes the digit and the carry to
+    valid values.
 
     **Parallel Features**
 
@@ -545,8 +546,8 @@ cdef class MWC128X32(_MWCX):
     **State and Seeding**
 
     The ``MWC128X32`` state consists of three 32-bit digits and a 32-bit carry.
-    It is seeded using a `SeedSequence`, which fills the whole state; the carry
-    is set to one if the resulting state is not valid.
+    It is seeded using a `SeedSequence`, which initializes the digits and the
+    carry to valid values.
 
     **Parallel Features**
 
@@ -659,8 +660,8 @@ cdef class MWC64X32(_MWCX):
     **State and Seeding**
 
     The ``MWC64X32`` state consists of a 32-bit digit and a 32-bit carry. It is
-    seeded using a `SeedSequence`, which fills the whole state; the carry is
-    set to one if the resulting state is not valid.
+    seeded using a `SeedSequence`, which initializes the digit and the carry to
+    valid values.
 
     **Parallel Features**
 

@@ -2590,16 +2590,10 @@ class TestMWC192X(Base):
         # States reached from SeedSequence(0xDEADBEAF) by jump(), jump()
         # twice, long_jump() and jump_n(jump_n) of the reference C code
         # (see src/mwcx/mwcx-test-data-gen.c)
-        cls.ref_jump = [0x378C18A9317CEFEC, 0xA3122FCAD13E3A74, 0x4CCF8DE02AF05A17]
-        cls.ref_jump2 = [0xA402F4824C96FD18, 0x89FE66B5AE1C0A1C, 0x3C7769471B035208]
-        cls.ref_long_jump = [
-            0x766F5F67BFC844D6,
-            0x79E26C48292E3CAE,
-            0x738B12B17C7634E1,
-        ]
-        cls.ref_jump_n = [0x1296749179EBA3A7, 0x1B6682F57E9C91C7, 0x3EB11682E8DEF27]
-        # A seed whose SeedSequence output is not a valid state
-        cls.fallback_seed = 61
+        cls.ref_jump = [0xACA1E6959AFB0D53, 0xC7D09786EF4DA5ED, 0x9F4CD1C468C826D1]
+        cls.ref_jump2 = [0x7A6E7CE91B0AC585, 0x802A1BF348FA1CDF, 0x5242E2D71D148867]
+        cls.ref_long_jump = [0xA60A56CD093A8428, 0x4A39CBDC52A3C666, 0x5958E024181B1133]
+        cls.ref_jump_n = [0x9E55EDA0A3E85E20, 0xA75434DD719230C0, 0x23312D5F59AA6391]
 
     def words(self, bg):
         return [bg.state["state"][name] for name in bg._names]
@@ -2627,9 +2621,16 @@ class TestMWC192X(Base):
         assert_equal(bg.random_raw(1000), self.data1["data"])
         assert self.words(bg.jumped(-1).advance(2**self.jump_log2)) == state
 
-    def test_seed_fallback(self):
-        bg = self.bit_generator(self.fallback_seed)
-        assert bg.state["state"]["c"] == 1
+    def test_seed_carry(self):
+        # The value used for the carry is mapped into [1..a - 2] by
+        # fixed-point multiplication, so the seeded state is always valid
+        for seed in range(100):
+            bg = self.bit_generator(seed)
+            dtype = np.uint64 if bg._word_bits == 64 else np.uint32
+            r = int(SeedSequence(seed).generate_state(bg._lag + 1, dtype)[-1])
+            c = bg.state["state"]["c"]
+            assert c == 1 + ((r * (bg._a - 2)) >> bg._word_bits)
+            assert 1 <= c <= bg._a - 2
 
     def test_invalid_state(self):
         bg = self.bit_generator(self.data1["seed"][0])
@@ -2652,11 +2653,10 @@ class TestMWC128X(TestMWC192X):
         cls.jump_log2 = 64
         cls.long_jump_log2 = 96
         cls.jump_n = 0x9E3779B97F4A7C15 + (0x0123456789ABCDEF << 64)
-        cls.ref_jump = [0x817813F49D3ED2D1, 0xAA3D8684C281159D]
-        cls.ref_jump2 = [0xC607BC0DB8C92DCA, 0x814F18F907E73B2A]
-        cls.ref_long_jump = [0x8A0A18B33375C8AC, 0x198ACB1ED1AD5560]
-        cls.ref_jump_n = [0x54807E33BCFCCC66, 0xA72CE4A567B8A02E]
-        cls.fallback_seed = 920
+        cls.ref_jump = [0x966EBC8A8A5B12B4, 0x49EF68AC0B48B8F4]
+        cls.ref_jump2 = [0x38E8F98F126C35C1, 0xBD739E622ED40ADB]
+        cls.ref_long_jump = [0xA70DB55450C29640, 0xF2BF346D4BD41D86]
+        cls.ref_jump_n = [0x67AD57AF61F88DDC, 0x34701895123068CD]
 
 
 class TestMWC128X32(TestMWC192X):
@@ -2671,11 +2671,10 @@ class TestMWC128X32(TestMWC192X):
         cls.jump_log2 = 64
         cls.long_jump_log2 = 96
         cls.jump_n = 0x9E3779B97F4A7C15 + (0x0123456789ABCDEF << 64)
-        cls.ref_jump = [0x7A1F8053, 0x11635201, 0xCE3AF6B1, 0x1B6BFF72]
-        cls.ref_jump2 = [0x8CF33DEA, 0x866F4BD7, 0x0C8DAB7A, 0x2BA18B81]
-        cls.ref_long_jump = [0xA9D9C54D, 0xB4B948C1, 0x2190E965, 0x616E0173]
-        cls.ref_jump_n = [0x8ED6AB73, 0x26158A35, 0x59D83BCE, 0x51A9EB84]
-        cls.fallback_seed = 1226
+        cls.ref_jump = [0xDE0A81C5, 0x2FCD1C1C, 0x2AFC0150, 0x9B229277]
+        cls.ref_jump2 = [0x9D32D103, 0x74E9A3ED, 0xE4FDF361, 0x193DF2A9]
+        cls.ref_long_jump = [0x44F053EA, 0x74248B96, 0xA2BA80FF, 0x63C1C424]
+        cls.ref_jump_n = [0xBFD6E0E6, 0xA7F326C3, 0x6E27D1FE, 0x957AE032]
 
 
 class TestMWC64X32(TestMWC128X32):
@@ -2688,11 +2687,10 @@ class TestMWC64X32(TestMWC128X32):
         cls.jump_log2 = 32
         cls.long_jump_log2 = 48
         cls.jump_n = 0x9E3779B97F4A7C15
-        cls.ref_jump = [0x524EACF3, 0x72C5D1CA]
-        cls.ref_jump2 = [0x9A80E78A, 0xB041A5D8]
-        cls.ref_long_jump = [0x919D6B6A, 0x685C7E2B]
-        cls.ref_jump_n = [0xBAA48E47, 0xA7823455]
-        cls.fallback_seed = 176
+        cls.ref_jump = [0x20D3EBDF, 0xC440E0A3]
+        cls.ref_jump2 = [0x2D9ED6C0, 0x3C85459F]
+        cls.ref_long_jump = [0xD5429F27, 0x275EF8AB]
+        cls.ref_jump_n = [0xB3021090, 0xA5D8B1C6]
 
 
 # Bit generators with a configuration that selects the output functions. A
