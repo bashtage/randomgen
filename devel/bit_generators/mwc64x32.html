@@ -21,7 +21,7 @@
     
     
       
-        <title>MWC64X/32 - RandomGen 2.5.1</title>
+        <title>MWC64X/32 - RandomGen v2.5.2 (+2)</title>
       
     
     
@@ -87,7 +87,7 @@
 
 <header class="md-header md-header--shadow" data-md-component="header">
   <nav class="md-header__inner md-grid" aria-label="Header">
-    <a href="../index.html" title="RandomGen 2.5.1" class="md-header__button md-logo" aria-label="RandomGen 2.5.1" data-md-component="logo">
+    <a href="../index.html" title="RandomGen v2.5.2 (+2)" class="md-header__button md-logo" aria-label="RandomGen v2.5.2 (+2)" data-md-component="logo">
       <img src="../_static/casino.svg" alt="logo">
     </a>
     <label class="md-header__button md-icon" for="__drawer">
@@ -98,7 +98,7 @@
       <div class="md-header__ellipsis">
         <div class="md-header__topic">
           <span class="md-ellipsis">
-            RandomGen 2.5.1
+            RandomGen v2.5.2 (+2)
           </span>
         </div>
         <div class="md-header__topic" data-md-component="header-topic">
@@ -193,10 +193,10 @@
 
 <nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
   <label class="md-nav__title" for="__drawer">
-    <a href="../index.html" title="RandomGen 2.5.1" class="md-nav__button md-logo" aria-label="RandomGen 2.5.1" data-md-component="logo">
+    <a href="../index.html" title="RandomGen v2.5.2 (+2)" class="md-nav__button md-logo" aria-label="RandomGen v2.5.2 (+2)" data-md-component="logo">
       <img src="../_static/casino.svg" alt="logo">
     </a>
-    RandomGen 2.5.1
+    RandomGen v2.5.2 (+2)
   </label>
   
     <div class="md-nav__source">
@@ -2415,8 +2415,8 @@ directly consumable in Python and must be consumed by a <code class="docutils li
 or similar object that supports low-level access.</p>
 <p><strong>State and Seeding</strong></p>
 <p>The <code class="docutils literal notranslate"><span class="pre">MWC64X32</span></code> state consists of a 32-bit digit and a 32-bit carry. It is
-seeded using a <cite>SeedSequence</cite>, which fills the whole state; the carry is
-set to one if the resulting state is not valid.</p>
+seeded using a <cite>SeedSequence</cite>, which initializes the digit and the carry to
+valid values.</p>
 <p><strong>Parallel Features</strong></p>
 <p><code class="docutils literal notranslate"><span class="pre">MWC64X32</span></code> can be used in parallel applications by calling the method
 <code class="docutils literal notranslate"><span class="pre">jumped</span></code> which advances the state as-if <span class="math notranslate nohighlight">\(2^{32}\)</span> random numbers
