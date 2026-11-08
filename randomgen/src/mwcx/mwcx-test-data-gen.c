@@ -7,6 +7,10 @@
  *  -o mwcx-test-data-gen
  *  ./mwcx-test-data-gen
  *
+ * The state is set from the output of SeedSequence as randomgen does: the
+ * value used for the carry is read as a fixed-point fraction and multiplied
+ * by the size of the range of valid carries.
+ *
  * The program also prints the states produced by the reference jump
  * functions, which are used in test_direct.py.
  */
@@ -27,7 +31,10 @@ static const uint64_t seed1[] = {5778446405158232650ULL, 4639759349701729399ULL,
 /* SeedSequence(0).generate_state(3, dtype=np.uint64) */
 static const uint64_t seed2[] = {15793235383387715774ULL,
                                  12390638538380655177ULL, 2361836109651742017ULL};
-static void set_state(const uint64_t *s) { x = s[0], y = s[1], c = s[2]; }
+static void set_state(const uint64_t *s) {
+  x = s[0], y = s[1];
+  c = 1 + (uint64_t)((__uint128_t)s[2] * (MWC_A2 - 2) >> 64);
+}
 static void print_state(const char *label) {
   printf("%s: 0x%" PRIx64 ", 0x%" PRIx64 ", 0x%" PRIx64 "\n", label, x, y, c);
 }
@@ -45,7 +52,10 @@ static const uint64_t seed1[] = {5778446405158232650ULL, 4639759349701729399ULL}
 /* SeedSequence(0).generate_state(2, dtype=np.uint64) */
 static const uint64_t seed2[] = {15793235383387715774ULL,
                                  12390638538380655177ULL};
-static void set_state(const uint64_t *s) { x = s[0], c = s[1]; }
+static void set_state(const uint64_t *s) {
+  x = s[0];
+  c = 1 + (uint64_t)((__uint128_t)s[1] * (MWC_A1 - 2) >> 64);
+}
 static void print_state(const char *label) {
   printf("%s: 0x%" PRIx64 ", 0x%" PRIx64 "\n", label, x, c);
 }
@@ -65,7 +75,8 @@ static const uint32_t seed1[] = {3575046730U, 1345399395U, 3393510519U,
 static const uint32_t seed2[] = {2968811710U, 3677149159U, 745650761U,
                                  2884920346U};
 static void set_state(const uint32_t *s) {
-  x = s[0], y = s[1], z = s[2], c = s[3];
+  x = s[0], y = s[1], z = s[2];
+  c = 1 + (uint32_t)((uint64_t)s[3] * (MWC_A3 - 2) >> 32);
 }
 static void print_state(const char *label) {
   printf("%s: 0x%" PRIx32 ", 0x%" PRIx32 ", 0x%" PRIx32 ", 0x%" PRIx32 "\n",
@@ -84,7 +95,10 @@ typedef uint32_t out_t;
 static const uint32_t seed1[] = {3575046730U, 1345399395U};
 /* SeedSequence(0).generate_state(2, dtype=np.uint32) */
 static const uint32_t seed2[] = {2968811710U, 3677149159U};
-static void set_state(const uint32_t *s) { x = s[0], c = s[1]; }
+static void set_state(const uint32_t *s) {
+  x = s[0];
+  c = 1 + (uint32_t)((uint64_t)s[1] * (MWC_A1 - 2) >> 32);
+}
 static void print_state(const char *label) {
   printf("%s: 0x%" PRIx32 ", 0x%" PRIx32 "\n", label, x, c);
 }
