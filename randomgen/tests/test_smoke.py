@@ -31,7 +31,7 @@ from randomgen import (
     entropy,
 )
 from randomgen.entropy import _test_sentinel
-from randomgen.tests._utility import CustomPartial
+from randomgen.tests._utility import CustomPartial, unpickle_numpy_generator
 
 # Tests that reset the class's shared generator and then compare draws cannot
 # run in several threads at once (pytest-run-parallel)
@@ -492,12 +492,12 @@ class RNG:
 
     def test_pickle(self):
         pick = pickle.dumps(self.rg)
-        unpick = pickle.loads(pick)
+        unpick = unpickle_numpy_generator(pick)
         assert type(self.rg) is type(unpick)
         assert comp_state(self.rg.bit_generator.state, unpick.bit_generator.state)
 
         pick = pickle.dumps(self.rg)
-        unpick = pickle.loads(pick)
+        unpick = unpickle_numpy_generator(pick)
         assert type(self.rg) is type(unpick)
         assert comp_state(self.rg.bit_generator.state, unpick.bit_generator.state)
 

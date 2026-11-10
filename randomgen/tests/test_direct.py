@@ -59,7 +59,7 @@ import randomgen._pickle as rg_pkl
 from randomgen.common import Interface
 from randomgen.seed_sequence import ISeedSequence
 from randomgen.squares import _test_sentinal, generate_keys
-from randomgen.tests._utility import CustomPartial
+from randomgen.tests._utility import CustomPartial, unpickle_numpy_generator
 
 MISSING_RDRAND = False
 try:
@@ -2798,7 +2798,7 @@ def test_pickle_generators_configurations(cls, kwargs):
     )
 
     gen = np.random.Generator(cls(1234, **kwargs))
-    reloaded = pickle.loads(pickle.dumps(gen))
+    reloaded = unpickle_numpy_generator(pickle.dumps(gen))
     assert type(reloaded.bit_generator) is cls
     assert_array_equal(_draw(gen), _draw(reloaded))
 
