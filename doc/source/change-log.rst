@@ -454,7 +454,7 @@ v1.16.6
 - Changed the default jump step size to phi times the period of the generator for
   :class:`~randomgen.pcg32.PCG32` and :class:`~randomgen.pcg64.PCG64`.
 - Improved the performance of :class:`~randomgen.pcg64.PCG64` on Windows.
-- Improved performance of :func:`~randomgen.dsfmt.DSFMT.jump` and
+- Improved performance of ``jump`` and
   :func:`~randomgen.dsfmt.DSFMT.jumped`.
 - Improves backward compatibility of ``RandomState``
 
@@ -511,7 +511,7 @@ v1.16.1
 v1.16.0
 =======
 - Fixed a bug that affected :class:`~randomgen.dsfmt.DSFMT` when calling
-  :func:`~randomgen.dsfmt.DSFMT.jump` or :func:`~randomgen.dsfmt.DSFMT.seed`
+  ``jump`` or :func:`~randomgen.dsfmt.DSFMT.seed`
   that failed to reset the buffer.  This resulted in up to 381 values from the
   previous state being used before the buffer was refilled at the new state.
 - Fixed bugs in :class:`~randomgen.xoshiro512.Xoshiro512`
@@ -525,7 +525,8 @@ v1.15.1
 =======
 - Added Xoshiro256** and Xoshiro512**, the preferred generators of this class.
 - Fixed bug in `jump` method of Random123 generators which did not specify a default value.
-- Added support for generating bounded uniform integers using Lemire's method.
+- Added support for generating bounded uniform integers using Lemire's method
+  [Lemire]_.
 - Synchronized with upstream changes, which requires moving the minimum supported NumPy to 1.13.
 
 v1.15
