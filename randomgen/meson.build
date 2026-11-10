@@ -64,7 +64,16 @@ cython_args = [
     '-X binding=True',
     '-X freethreading_compatible=True',
 ]
-cython_c_args =  ['-DNPY_NO_DEPRECATED_API=NPY_1_7_API_VERSION']
+# NumPy builds numpy.random with CYTHON_USE_TYPE_SPECS=1, which makes
+# numpy.random.bit_generator.BitGenerator a heap type. The dealloc of a heap-type
+# base decrefs the instance's type, so every subclass must also be a heap type.
+# Otherwise each instance dealloc steals a reference from its class and the
+# interpreter eventually segfaults. Heap-type subclasses are also fine with the
+# static-type BitGenerator of NumPy <= 2.5, so this is safe for all NumPy versions.
+cython_c_args =  [
+    '-DNPY_NO_DEPRECATED_API=NPY_1_7_API_VERSION',
+    '-DCYTHON_USE_TYPE_SPECS=1',
+]
 cython_libs = []
 sse2_def = []
 if cc.get_id() == 'msvc' or cc.get_id() == 'clang-cl'
