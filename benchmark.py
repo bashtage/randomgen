@@ -29,31 +29,34 @@ else:
     scale_64 = 2
 
 PRNGS = [
+    "AESCounter",
+    "ChaCha",
     "DSFMT",
-    "PCG64",
-    "PCG64DXSM",
-    "PCG32",
+    "EFIIX64",
+    "HC128",
+    "JSF",
+    "LCG128Mix",
+    "LXM",
     "MT19937",
     "MT64",
+    "MWC128X",
+    "MWC128X32",
+    "MWC192X",
+    "MWC64X32",
+    "PCG32",
+    "PCG64",
+    "PCG64DXSM",
+    "Philox",
+    "Romu",
+    "SFC64",
+    "SFMT",
+    "SPECK128",
+    "ThreeFry",
     "Xoroshiro128",
     "Xorshift1024",
     "Xoshiro256",
     "Xoshiro512",
-    "Philox",
-    "ThreeFry",
     "numpy",
-    "SFMT",
-    "AESCounter",
-    "ChaCha",
-    "HC128",
-    "SPECK128",
-    "JSF",
-    "SFC64",
-    "Romu",
-    "LXM",
-    "LCG128Mix",
-    "EFIIX64",
-    "MT64",
 ]
 
 PRNGS = sorted(set(PRNGS))
@@ -92,10 +95,11 @@ def run_timer(command, numpy_command=None, setup="", random_type=""):
     print_legend(random_type + " per second")
     print(p)
 
-    baseline = next(k for k in p.index if "numpy" in k)[0]
+    baseline = "numpy"
     p = 1000.0 / s
     p = p / p[baseline] * 100 - 100
-    p = p.drop(baseline, 0)
+    print(p)
+    p = p.drop(baseline, axis=0)
     p = p.apply(add_color)
     print_legend("Speed-up relative to NumPy")
     print(p)
@@ -139,18 +143,7 @@ def timer_bounded(bits=8, max=95, use_masked=True):
     if bits not in (8, 16, 32, 64):
         raise ValueError("bits must be one of 8, 16, 32, 64.")
     minimum = 0
-
-    if use_masked:  # Use masking & rejection.
-        command = (
-            "rg.randint({min}, {max}+1, 1000000, dtype=np.uint{bits},"
-            " use_masked=True)"
-        )
-    else:  # Use Lemire's algo.
-        command = (
-            "rg.randint({min}, {max}+1, 1000000, dtype=np.uint{bits},"
-            " use_masked=False)"
-        )
-
+    command = "rg.integers({min}, {max}+1, 1000000, dtype=np.uint{bits})"
     command = command.format(min=minimum, max=max, bits=bits)
 
     command_numpy = "rg.randint({min}, {max}+1, 1000000, dtype=np.uint{bits})"
@@ -168,7 +161,7 @@ def timer_bounded(bits=8, max=95, use_masked=True):
 def timer_32bit():
     info = np.iinfo(np.uint32)
     minimum, maximum = info.min, info.max
-    command = "rg.randint(2**32, size=1000000, dtype='uint32')"
+    command = "rg.integers(2**32, size=1000000, dtype='uint32')"
     command_numpy = "rg.randint({min}, {max}+1, 1000000, dtype=np.uint32)"
     command_numpy = command_numpy.format(min=minimum, max=maximum)
     run_timer(command, command_numpy, SETUP, "32-bit unsigned integers")
@@ -177,7 +170,7 @@ def timer_32bit():
 def timer_64bit():
     info = np.iinfo(np.uint64)
     minimum, maximum = info.min, info.max
-    command = "rg.randint(2**64, size=1000000, dtype='uint64')"
+    command = "rg.integers(2**64, size=1000000, dtype='uint64')"
     command_numpy = "rg.randint({min}, {max}+1, 1000000, dtype=np.uint64)"
     command_numpy = command_numpy.format(min=minimum, max=maximum)
     run_timer(command, command_numpy, SETUP, "64-bit unsigned integers")

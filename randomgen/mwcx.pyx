@@ -145,8 +145,8 @@ cdef class _MWCX(BitGenerator):
 
         Returns
         -------
-        self : BitGenerator
-            RNG advanced delta steps
+        self : numpy.random.BitGenerator
+            The same bit generator instance, advanced delta steps
 
         Notes
         -----
@@ -195,8 +195,8 @@ cdef class _MWCX(BitGenerator):
 
         Returns
         -------
-        bit_generator : BitGenerator
-            New instance of generator jumped iter times
+        bit_generator : numpy.random.BitGenerator
+            New instance of the same bit generator class, jumped iter times
 
         Notes
         -----

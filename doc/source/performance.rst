@@ -6,12 +6,13 @@ Performance
 Recommendation
 **************
 The recommended generator for single use is :class:`~randomgen.pcg64.PCG64DXSM`
-although :class:`~randomgen.sfc.SFC64` and :class:`~randomgen.xoshiro256.Xoshiro256`
-are both excellent alternatives. :class:`~randomgen.romu.Romu` is a newer generator that
+although :class:`~randomgen.mwcx.MWC192X`, :class:`~randomgen.sfc.SFC64` and :class:`~randomgen.xoshiro256.Xoshiro256`
+are all excellent alternatives. :class:`~randomgen.romu.Romu` is a newer generator that
 is also very fast.
 
 For very large scale
 applications -- requiring 1,000+ streams --
+:class:`~randomgen.mwcx.MWC192X` using ``advance``, 
 :class:`~randomgen.pcg64.PCG64DXSM` combined with a :class:`~numpy.random.SeedSequence` and ``spawn``,
 :class:`~randomgen.sfc.SFC64` initialized using distinct Weyl increments (``k``), or one of
 the cryptography-based generators :class:`~randomgen.aes.AESCounter` (if you have hardware acceleration),
@@ -27,8 +28,8 @@ Timings
 *******
 
 The timings below are the time in ns to produce 1 random value from a
-specific distribution. :class:`~randomgen.sfc.SFC64` is the fastest,
-followed closely by  :class:`~randomgen.xoshiro256.Xoshiro256`,
+specific distribution. :class:`~randomgen.romu.Romu` and :class:`~randomgen.sfc.SFC64` are the fastest,
+followed closely by  followed closely by  :class:`~randomgen.mwcx.MWC128X` and :class:`~randomgen.mwcx.MWC192X` (and related generators), :class:`~randomgen.xoshiro256.Xoshiro256`,
 :class:`~randomgen.pcg64.PCG64DXSM`, :class:`~randomgen.jsf.JSF`,
 and :class:`~randomgen.efiix64.EFIIX64`. The original
 NumPy :class:`~randomgen.mt19937.MT19937` generator is slower since
@@ -38,39 +39,43 @@ it requires 2 32-bit values to equal the output of the faster generators.
    :header: Bit Gen,Uint32,Uint64,Uniform,Expon,Normal,Gamma
    :widths: 30,10,10,10,10,10,10
 
-    "Romu(variant=""trio"")",1.9,2.6,2.4,3.9,7.3,18.4
-    Romu,2.1,2.6,2.4,4.2,7.4,19.4
-    SFC64,2.1,2.6,2.5,4.2,7.6,20.6
-    Xoshiro256,2.3,2.8,2.7,4.4,8.0,22.1
-    JSF,2.2,2.9,2.7,4.6,8.1,21.5
-    SFMT,2.2,2.8,2.5,4.7,8.7,21.5
-    PCG64DXSM,2.3,3.0,2.8,4.7,9.2,23.8
-    PCG64,2.3,3.2,2.9,4.6,9.0,23.2
-    Xoshiro512,2.6,3.0,2.9,5.3,8.9,21.9
-    Squares,2.4,2.9,2.8,5.2,11.3,27.1
-    AESCounter,2.8,2.9,3.0,5.3,10.4,24.4
-    "PCG64(variant=""dxsm-128"")",2.5,3.4,3.2,4.8,10.5,25.5
-    LXM,2.6,3.4,3.3,5.8,9.5,24.6
-    MT64,2.6,3.3,3.2,5.5,10.4,26.5
-    DSFMT,2.8,4.2,2.5,6.3,10.1,25.1
-    JSF32,2.8,3.6,3.8,5.8,9.4,23.7
-    MT19937,2.5,4.2,4.0,6.1,10.5,20.8
-    EFIIX64,2.4,3.5,3.4,9.8,12.3,24.7
-    Philox,3.1,4.0,4.5,6.1,10.6,28.1
-    "Philox(n=2, w=64)",3.0,4.0,4.1,6.6,12.3,30.7
-    "ThreeFry(n=2, w=64)",3.5,5.4,5.2,7.7,13.0,31.0
-    TycheOpenRand,4.3,5.5,6.2,8.3,12.6,27.5
-    ThreeFry,4.7,6.5,6.4,8.4,12.2,23.7
-    HC128,3.7,5.9,5.9,8.2,13.2,34.8
-    SPECK128,4.4,6.4,6.8,8.5,12.7,24.7
-    "Philox(n=4, w=32)",3.8,6.5,6.5,9.2,13.5,32.8
-    ChaCha(rounds=8),4.2,7.3,7.2,9.3,13.9,26.4
-    Tyche,5.4,8.2,7.8,9.8,16.3,30.7
-    NumPy,5.1,5.2,5.2,18.9,28.3,37.9
-    BlaBla,7.6,12.4,12.7,14.8,17.9,36.6
-    ChaCha,6.9,12.9,12.7,15.1,19.4,37.6
-    "ThreeFry(n=4, w=32)",6.2,11.4,12.8,18.8,22.4,59.8
-    RDRAND,882.5,886.7,883.7,912.2,903.3,1929.9
+   "Romu(variant=""trio"")",2.0,2.2,2.3,3.8,4.1,17.6
+   SFC64,2.1,2.5,2.7,3.6,4.0,16.8
+   MWC128X,2.5,2.5,2.2,3.9,4.3,17.5
+   MWC192X,2.8,2.6,2.6,3.9,4.6,16.3
+   Xoshiro256,2.3,2.8,3.1,3.9,4.1,17.2
+   Romu,2.4,2.5,3.8,4.4,4.3,17.7
+   MWC64X32,2.2,3.3,3.2,4.5,4.3,18.8
+   PCG64DXSM,2.5,3.3,3.4,4.2,4.3,18.7
+   MWC128X32,2.5,3.4,3.3,4.1,4.4,21.4
+   JSF,2.9,3.3,3.4,4.8,5.1,19.6
+   EFIIX64,2.7,4.1,3.5,4.4,4.3,22.7
+   SFMT,3.0,3.2,3.2,5.3,5.4,19.8
+   Squares,2.8,3.6,3.8,5.1,5.0,19.5
+   PCG64,3.1,3.9,3.5,5.9,6.1,23.2
+   LXM,3.3,4.0,4.0,5.6,5.7,22.1
+   AESCounter,3.5,3.9,3.8,5.8,6.2,21.0
+   DSFMT,3.1,4.8,2.9,6.7,6.6,19.5
+   TycheOpenRand,3.0,5.1,4.7,5.7,5.4,20.6
+   "PCG64(variant=""dxsm-128"")",3.1,5.4,3.9,6.2,6.2,19.5
+   JSF32,3.0,6.1,5.4,6.6,6.5,24.8
+   Xoshiro512,4.4,6.6,6.6,7.2,7.5,25.4
+   MT19937,3.7,6.3,7.0,8.6,8.6,26.7
+   Philox,5.0,5.9,6.9,8.7,7.9,24.0
+   MT64,3.6,7.3,5.0,10.4,11.4,24.9
+   Tyche,4.3,7.8,7.7,8.7,9.1,25.3
+   "Philox(n=2, w=64)",5.2,7.2,8.2,9.2,8.8,28.6
+   HC128,4.2,7.9,7.8,9.6,9.7,31.1
+   SPECK128,6.1,10.3,10.7,12.4,13.3,32.9
+   NumPy,3.8,7.2,7.6,17.7,22.6,44.5
+   BlaBla,6.7,10.7,10.8,14.4,14.4,34.0
+   ChaCha(rounds=8),7.1,14.0,14.4,14.5,14.6,42.6
+   ThreeFry,10.2,14.9,15.2,16.6,16.4,45.7
+   "Philox(n=4, w=32)",7.6,17.4,21.3,24.3,25.0,50.6
+   ChaCha,11.1,19.6,21.6,20.9,21.3,55.7
+   "ThreeFry(n=2, w=64)",14.2,24.0,23.9,26.3,26.2,63.7
+   "ThreeFry(n=4, w=32)",15.3,25.4,26.2,27.7,27.8,68.5
+   RDRAND,1618.4,1581.0,1595.3,1855.4,1966.9,3409.9
 
 The next table presents the performance relative to NumPy's ``RandomState`` in
 percentage. The overall performance is computed using a geometric mean.
@@ -79,39 +84,42 @@ percentage. The overall performance is computed using a geometric mean.
    :header: Bit Gen,Uint32,Uint64,Uniform,Expon,Normal,Gamma,Overall
    :widths: 30,10,10,10,10,10,10,10
 
-    Bit Gen,Uint32,Uint64,Uniform,Expon,Normal,Gamma,Overall
-    "Romu(variant=""trio"")",267,198,217,481,389,206,276
-    Romu,248,203,217,455,380,196,268
-    SFC64,242,197,206,455,370,184,259
-    Xoshiro256,219,185,195,432,353,171,243
-    JSF,232,183,192,407,348,177,243
-    SFMT,228,187,207,400,323,177,242
-    PCG64DXSM,219,172,186,406,309,160,228
-    PCG64,224,162,177,414,313,163,227
-    Xoshiro512,195,173,177,358,319,173,221
-    Squares,210,179,185,364,250,140,211
-    AESCounter,181,179,173,354,273,155,209
-    "PCG64(variant=""dxsm-128"")",201,154,165,391,270,149,208
-    LXM,193,155,159,329,298,154,204
-    MT64,200,157,162,343,272,143,202
-    DSFMT,183,125,209,298,279,151,198
-    JSF32,182,144,138,324,301,160,196
-    MT19937,201,123,128,309,269,182,191
-    EFIIX64,212,148,155,192,229,154,179
-    Philox,163,131,116,311,266,135,174
-    "Philox(n=2, w=64)",170,131,126,285,231,123,168
-    "ThreeFry(n=2, w=64)",145,96,101,246,217,122,145
-    TycheOpenRand,118,94,84,227,224,138,137
-    ThreeFry,109,80,81,225,232,160,135
-    HC128,137,88,89,229,214,109,134
-    SPECK128,115,82,76,222,222,154,132
-    "Philox(n=4, w=32)",134,80,80,206,209,116,127
-    ChaCha(rounds=8),122,72,73,202,203,144,125
-    Tyche,95,63,66,193,173,124,109
-    BlaBla,67,42,41,128,158,104,79
-    ChaCha,74,40,41,125,146,101,78
-    "ThreeFry(n=4, w=32)",83,46,41,100,126,63,71
-    RDRAND,1,1,1,2,3,2,1
+   "Romu(variant=""trio"")",192,326,337,469,555,253,334
+   SFC64,180,286,278,493,570,265,320
+   MWC128X,154,289,344,453,527,254,312
+   MWC192X,137,276,292,455,496,273,297
+   Xoshiro256,163,259,249,448,551,259,296
+   Romu,158,288,203,404,529,251,281
+   MWC64X32,172,218,235,394,520,237,274
+   PCG64DXSM,152,222,225,423,529,238,272
+   MWC128X32,150,214,229,428,511,208,263
+   JSF,132,220,223,366,441,228,249
+   EFIIX64,141,176,216,400,527,196,246
+   SFMT,124,227,235,334,416,225,243
+   Squares,136,202,200,347,447,228,241
+   PCG64,122,184,220,302,370,192,217
+   LXM,113,180,191,316,394,201,215
+   AESCounter,109,188,202,303,362,213,214
+   DSFMT,121,151,259,263,340,228,214
+   TycheOpenRand,125,142,162,310,421,216,208
+   "PCG64(variant=""dxsm-128"")",122,134,194,284,363,229,205
+   JSF32,125,118,141,267,349,179,181
+   Xoshiro512,86,110,115,244,300,175,155
+   MT19937,102,115,109,207,261,167,150
+   Philox,76,122,111,203,286,186,149
+   MT64,105,100,151,170,197,179,146
+   Tyche,87,93,99,203,249,176,139
+   "Philox(n=2, w=64)",73,101,92,191,257,156,132
+   HC128,89,92,98,185,232,143,130
+   SPECK128,62,71,71,143,170,135,100
+   BlaBla,57,68,71,123,157,131,94
+   ChaCha(rounds=8),54,52,53,122,154,105,81
+   ThreeFry,37,49,50,106,138,97,71
+   "Philox(n=4, w=32)",50,42,36,73,90,88,59
+   ChaCha,34,37,35,85,106,80,56
+   "ThreeFry(n=2, w=64)",27,30,32,67,86,70,47
+   "ThreeFry(n=4, w=32)",25,29,29,64,81,65,44
+   RDRAND,0,0,0,1,1,1,1
 
 
 .. note::

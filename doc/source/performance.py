@@ -12,6 +12,10 @@ from randomgen import (
     LXM,
     MT64,
     MT19937,
+    MWC64X32,
+    MWC128X,
+    MWC128X32,
+    MWC192X,
     PCG64,
     PCG64DXSM,
     RDRAND,
@@ -140,6 +144,10 @@ PRNGS = [
     Squares,
     Tyche,
     TycheOpenRand,
+    MWC128X,
+    MWC128X32,
+    MWC192X,
+    MWC64X32,
 ]
 
 if HAS_RDRND:
@@ -207,7 +215,7 @@ final = table
 
 func_list = list(funcs.keys())
 table = pd.DataFrame(final)
-table = table.reindex(table.mean(1).sort_values().index)
+table = table.reindex(table.mean(axis=1).sort_values().index)
 order = np.log(table).mean().sort_values().index
 table = table.T
 table = table.reindex(order, axis=0)
@@ -228,7 +236,7 @@ table = table.T
 rel = table.loc[:, ["NumPy"]].values @ np.ones((1, table.shape[1])) / table
 rel.pop("NumPy")
 rel = rel.T
-rel["Overall"] = np.exp(np.log(rel).mean(1))
+rel["Overall"] = np.exp(np.log(rel).mean(axis=1))
 rel *= 100
 rel = np.round(rel).astype(int)
 rel.index.name = "Bit Gen"
