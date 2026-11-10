@@ -21,7 +21,7 @@
     
     
       
-        <title>Performance - RandomGen v2.5.2 (+4)</title>
+        <title>Performance - RandomGen v2.5.2 (+8)</title>
       
     
     
@@ -87,7 +87,7 @@
 
 <header class="md-header md-header--shadow" data-md-component="header">
   <nav class="md-header__inner md-grid" aria-label="Header">
-    <a href="index.html" title="RandomGen v2.5.2 (+4)" class="md-header__button md-logo" aria-label="RandomGen v2.5.2 (+4)" data-md-component="logo">
+    <a href="index.html" title="RandomGen v2.5.2 (+8)" class="md-header__button md-logo" aria-label="RandomGen v2.5.2 (+8)" data-md-component="logo">
       <img src="_static/casino.svg" alt="logo">
     </a>
     <label class="md-header__button md-icon" for="__drawer">
@@ -98,7 +98,7 @@
       <div class="md-header__ellipsis">
         <div class="md-header__topic">
           <span class="md-ellipsis">
-            RandomGen v2.5.2 (+4)
+            RandomGen v2.5.2 (+8)
           </span>
         </div>
         <div class="md-header__topic" data-md-component="header-topic">
@@ -193,10 +193,10 @@
 
 <nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
   <label class="md-nav__title" for="__drawer">
-    <a href="index.html" title="RandomGen v2.5.2 (+4)" class="md-nav__button md-logo" aria-label="RandomGen v2.5.2 (+4)" data-md-component="logo">
+    <a href="index.html" title="RandomGen v2.5.2 (+8)" class="md-nav__button md-logo" aria-label="RandomGen v2.5.2 (+8)" data-md-component="logo">
       <img src="_static/casino.svg" alt="logo">
     </a>
-    RandomGen v2.5.2 (+4)
+    RandomGen v2.5.2 (+8)
   </label>
   
     <div class="md-nav__source">
@@ -752,11 +752,12 @@
 <h1 id="module-randomgen"><span id="performance"></span>Performance<a class="headerlink" href="#module-randomgen" title="Link to this heading">¶</a></h1>
 <h2 id="recommendation">Recommendation<a class="headerlink" href="#recommendation" title="Link to this heading">¶</a></h2>
 <p>The recommended generator for single use is <a class="reference internal" href="bit_generators/pcg64dxsm.html#randomgen.pcg64.PCG64DXSM" title="randomgen.pcg64.PCG64DXSM (Python class) — Container for the PCG-64 updated with a 64-bit mult using DXSM output func."><code class="xref py py-class docutils literal notranslate"><span class="pre">PCG64DXSM</span></code></a>
-although <a class="reference internal" href="bit_generators/sfc.html#randomgen.sfc.SFC64" title="randomgen.sfc.SFC64 (Python class) — Chris Doty-Humphrey's Small Fast Chaotic PRNG with optional Weyl Sequence"><code class="xref py py-class docutils literal notranslate"><span class="pre">SFC64</span></code></a> and <a class="reference internal" href="bit_generators/xoshiro256.html#randomgen.xoshiro256.Xoshiro256" title="randomgen.xoshiro256.Xoshiro256 (Python class) — Container for the xoshiro256** pseudo-random number generator."><code class="xref py py-class docutils literal notranslate"><span class="pre">Xoshiro256</span></code></a>
-are both excellent alternatives. <a class="reference internal" href="bit_generators/romu.html#randomgen.romu.Romu" title="randomgen.romu.Romu (Python class) — Mark A. Overton's quad and trio rotate-multiply-based generators"><code class="xref py py-class docutils literal notranslate"><span class="pre">Romu</span></code></a> is a newer generator that
+although <a class="reference internal" href="bit_generators/mwc192x.html#randomgen.mwcx.MWC192X" title="randomgen.mwcx.MWC192X (Python class) — Container for the MWC192X pseudo-random number generator."><code class="xref py py-class docutils literal notranslate"><span class="pre">MWC192X</span></code></a>, <a class="reference internal" href="bit_generators/sfc.html#randomgen.sfc.SFC64" title="randomgen.sfc.SFC64 (Python class) — Chris Doty-Humphrey's Small Fast Chaotic PRNG with optional Weyl Sequence"><code class="xref py py-class docutils literal notranslate"><span class="pre">SFC64</span></code></a> and <a class="reference internal" href="bit_generators/xoshiro256.html#randomgen.xoshiro256.Xoshiro256" title="randomgen.xoshiro256.Xoshiro256 (Python class) — Container for the xoshiro256** pseudo-random number generator."><code class="xref py py-class docutils literal notranslate"><span class="pre">Xoshiro256</span></code></a>
+are all excellent alternatives. <a class="reference internal" href="bit_generators/romu.html#randomgen.romu.Romu" title="randomgen.romu.Romu (Python class) — Mark A. Overton's quad and trio rotate-multiply-based generators"><code class="xref py py-class docutils literal notranslate"><span class="pre">Romu</span></code></a> is a newer generator that
 is also very fast.</p>
 <p>For very large scale
 applications – requiring 1,000+ streams –
+<a class="reference internal" href="bit_generators/mwc192x.html#randomgen.mwcx.MWC192X" title="randomgen.mwcx.MWC192X (Python class) — Container for the MWC192X pseudo-random number generator."><code class="xref py py-class docutils literal notranslate"><span class="pre">MWC192X</span></code></a> using <code class="docutils literal notranslate"><span class="pre">advance</span></code>,
 <a class="reference internal" href="bit_generators/pcg64dxsm.html#randomgen.pcg64.PCG64DXSM" title="randomgen.pcg64.PCG64DXSM (Python class) — Container for the PCG-64 updated with a 64-bit mult using DXSM output func."><code class="xref py py-class docutils literal notranslate"><span class="pre">PCG64DXSM</span></code></a> combined with a <a class="reference external" href="https://numpy.org/doc/stable/reference/random/bit_generators/generated/numpy.random.SeedSequence.html#numpy.random.SeedSequence" title="(in NumPy v2.5)"><code class="xref py py-class docutils literal notranslate"><span class="pre">SeedSequence</span></code></a> and <code class="docutils literal notranslate"><span class="pre">spawn</span></code>,
 <a class="reference internal" href="bit_generators/sfc.html#randomgen.sfc.SFC64" title="randomgen.sfc.SFC64 (Python class) — Chris Doty-Humphrey's Small Fast Chaotic PRNG with optional Weyl Sequence"><code class="xref py py-class docutils literal notranslate"><span class="pre">SFC64</span></code></a> initialized using distinct Weyl increments (<code class="docutils literal notranslate"><span class="pre">k</span></code>), or one of
 the cryptography-based generators <a class="reference internal" href="bit_generators/aesctr.html#randomgen.aes.AESCounter" title="randomgen.aes.AESCounter (Python class) — Container for the AES Counter pseudo-random number generator."><code class="xref py py-class docutils literal notranslate"><span class="pre">AESCounter</span></code></a> (if you have hardware acceleration),
@@ -768,8 +769,8 @@ of the Mersenne Twister PRNGS: <a class="reference internal" href="bit_generator
 <a class="reference internal" href="bit_generators/sfmt.html#randomgen.sfmt.SFMT" title="randomgen.sfmt.SFMT (Python class) — Container for the SIMD-based Mersenne Twister pseudo RNG."><code class="xref py py-class docutils literal notranslate"><span class="pre">SFMT</span></code></a>, and <a class="reference internal" href="bit_generators/dsfmt.html#randomgen.dsfmt.DSFMT" title="randomgen.dsfmt.DSFMT (Python class) — Container for the SIMD-based Mersenne Twister pseudo RNG."><code class="xref py py-class docutils literal notranslate"><span class="pre">DSFMT</span></code></a>.</p>
 <h2 id="timings">Timings<a class="headerlink" href="#timings" title="Link to this heading">¶</a></h2>
 <p>The timings below are the time in ns to produce 1 random value from a
-specific distribution. <a class="reference internal" href="bit_generators/sfc.html#randomgen.sfc.SFC64" title="randomgen.sfc.SFC64 (Python class) — Chris Doty-Humphrey's Small Fast Chaotic PRNG with optional Weyl Sequence"><code class="xref py py-class docutils literal notranslate"><span class="pre">SFC64</span></code></a> is the fastest,
-followed closely by  <a class="reference internal" href="bit_generators/xoshiro256.html#randomgen.xoshiro256.Xoshiro256" title="randomgen.xoshiro256.Xoshiro256 (Python class) — Container for the xoshiro256** pseudo-random number generator."><code class="xref py py-class docutils literal notranslate"><span class="pre">Xoshiro256</span></code></a>,
+specific distribution. <a class="reference internal" href="bit_generators/romu.html#randomgen.romu.Romu" title="randomgen.romu.Romu (Python class) — Mark A. Overton's quad and trio rotate-multiply-based generators"><code class="xref py py-class docutils literal notranslate"><span class="pre">Romu</span></code></a> and <a class="reference internal" href="bit_generators/sfc.html#randomgen.sfc.SFC64" title="randomgen.sfc.SFC64 (Python class) — Chris Doty-Humphrey's Small Fast Chaotic PRNG with optional Weyl Sequence"><code class="xref py py-class docutils literal notranslate"><span class="pre">SFC64</span></code></a> are the fastest,
+followed closely by  followed closely by  <a class="reference internal" href="bit_generators/mwc128x.html#randomgen.mwcx.MWC128X" title="randomgen.mwcx.MWC128X (Python class) — Container for the MWC128X pseudo-random number generator."><code class="xref py py-class docutils literal notranslate"><span class="pre">MWC128X</span></code></a> and <a class="reference internal" href="bit_generators/mwc192x.html#randomgen.mwcx.MWC192X" title="randomgen.mwcx.MWC192X (Python class) — Container for the MWC192X pseudo-random number generator."><code class="xref py py-class docutils literal notranslate"><span class="pre">MWC192X</span></code></a> (and related generators), <a class="reference internal" href="bit_generators/xoshiro256.html#randomgen.xoshiro256.Xoshiro256" title="randomgen.xoshiro256.Xoshiro256 (Python class) — Container for the xoshiro256** pseudo-random number generator."><code class="xref py py-class docutils literal notranslate"><span class="pre">Xoshiro256</span></code></a>,
 <a class="reference internal" href="bit_generators/pcg64dxsm.html#randomgen.pcg64.PCG64DXSM" title="randomgen.pcg64.PCG64DXSM (Python class) — Container for the PCG-64 updated with a 64-bit mult using DXSM output func."><code class="xref py py-class docutils literal notranslate"><span class="pre">PCG64DXSM</span></code></a>, <a class="reference internal" href="bit_generators/jsf.html#randomgen.jsf.JSF" title="randomgen.jsf.JSF (Python class) — Container for Jenkins's Fast Small (JSF) pseudo-random number generator"><code class="xref py py-class docutils literal notranslate"><span class="pre">JSF</span></code></a>,
 and <a class="reference internal" href="bit_generators/efiix64.html#randomgen.efiix64.EFIIX64" title="randomgen.efiix64.EFIIX64 (Python class) — Container for the EFIIX64x384 pseudo-random number generator."><code class="xref py py-class docutils literal notranslate"><span class="pre">EFIIX64</span></code></a>. The original
 NumPy <a class="reference internal" href="bit_generators/mt19937.html#randomgen.mt19937.MT19937" title="randomgen.mt19937.MT19937 (Python class) — Container for the Mersenne Twister pseudo-random number generator."><code class="xref py py-class docutils literal notranslate"><span class="pre">MT19937</span></code></a> generator is slower since
@@ -796,268 +797,300 @@ it requires 2 32-bit values to equal the output of the faster generators.</p>
 </thead>
 <tbody>
 <tr class="row-even"><td><p>Romu(variant=”trio”)</p></td>
-<td><p>1.9</p></td>
-<td><p>2.6</p></td>
-<td><p>2.4</p></td>
+<td><p>2.0</p></td>
+<td><p>2.2</p></td>
+<td><p>2.3</p></td>
+<td><p>3.8</p></td>
+<td><p>4.1</p></td>
+<td><p>17.6</p></td>
+</tr>
+<tr class="row-odd"><td><p>SFC64</p></td>
+<td><p>2.1</p></td>
+<td><p>2.5</p></td>
+<td><p>2.7</p></td>
+<td><p>3.6</p></td>
+<td><p>4.0</p></td>
+<td><p>16.8</p></td>
+</tr>
+<tr class="row-even"><td><p>MWC128X</p></td>
+<td><p>2.5</p></td>
+<td><p>2.5</p></td>
+<td><p>2.2</p></td>
 <td><p>3.9</p></td>
-<td><p>7.3</p></td>
-<td><p>18.4</p></td>
+<td><p>4.3</p></td>
+<td><p>17.5</p></td>
+</tr>
+<tr class="row-odd"><td><p>MWC192X</p></td>
+<td><p>2.8</p></td>
+<td><p>2.6</p></td>
+<td><p>2.6</p></td>
+<td><p>3.9</p></td>
+<td><p>4.6</p></td>
+<td><p>16.3</p></td>
+</tr>
+<tr class="row-even"><td><p>Xoshiro256</p></td>
+<td><p>2.3</p></td>
+<td><p>2.8</p></td>
+<td><p>3.1</p></td>
+<td><p>3.9</p></td>
+<td><p>4.1</p></td>
+<td><p>17.2</p></td>
 </tr>
 <tr class="row-odd"><td><p>Romu</p></td>
-<td><p>2.1</p></td>
-<td><p>2.6</p></td>
 <td><p>2.4</p></td>
-<td><p>4.2</p></td>
-<td><p>7.4</p></td>
-<td><p>19.4</p></td>
-</tr>
-<tr class="row-even"><td><p>SFC64</p></td>
-<td><p>2.1</p></td>
-<td><p>2.6</p></td>
 <td><p>2.5</p></td>
-<td><p>4.2</p></td>
-<td><p>7.6</p></td>
-<td><p>20.6</p></td>
-</tr>
-<tr class="row-odd"><td><p>Xoshiro256</p></td>
-<td><p>2.3</p></td>
-<td><p>2.8</p></td>
-<td><p>2.7</p></td>
+<td><p>3.8</p></td>
 <td><p>4.4</p></td>
-<td><p>8.0</p></td>
-<td><p>22.1</p></td>
+<td><p>4.3</p></td>
+<td><p>17.7</p></td>
 </tr>
-<tr class="row-even"><td><p>JSF</p></td>
+<tr class="row-even"><td><p>MWC64X32</p></td>
 <td><p>2.2</p></td>
+<td><p>3.3</p></td>
+<td><p>3.2</p></td>
+<td><p>4.5</p></td>
+<td><p>4.3</p></td>
+<td><p>18.8</p></td>
+</tr>
+<tr class="row-odd"><td><p>PCG64DXSM</p></td>
+<td><p>2.5</p></td>
+<td><p>3.3</p></td>
+<td><p>3.4</p></td>
+<td><p>4.2</p></td>
+<td><p>4.3</p></td>
+<td><p>18.7</p></td>
+</tr>
+<tr class="row-even"><td><p>MWC128X32</p></td>
+<td><p>2.5</p></td>
+<td><p>3.4</p></td>
+<td><p>3.3</p></td>
+<td><p>4.1</p></td>
+<td><p>4.4</p></td>
+<td><p>21.4</p></td>
+</tr>
+<tr class="row-odd"><td><p>JSF</p></td>
 <td><p>2.9</p></td>
+<td><p>3.3</p></td>
+<td><p>3.4</p></td>
+<td><p>4.8</p></td>
+<td><p>5.1</p></td>
+<td><p>19.6</p></td>
+</tr>
+<tr class="row-even"><td><p>EFIIX64</p></td>
 <td><p>2.7</p></td>
-<td><p>4.6</p></td>
-<td><p>8.1</p></td>
-<td><p>21.5</p></td>
+<td><p>4.1</p></td>
+<td><p>3.5</p></td>
+<td><p>4.4</p></td>
+<td><p>4.3</p></td>
+<td><p>22.7</p></td>
 </tr>
 <tr class="row-odd"><td><p>SFMT</p></td>
-<td><p>2.2</p></td>
-<td><p>2.8</p></td>
-<td><p>2.5</p></td>
-<td><p>4.7</p></td>
-<td><p>8.7</p></td>
-<td><p>21.5</p></td>
-</tr>
-<tr class="row-even"><td><p>PCG64DXSM</p></td>
-<td><p>2.3</p></td>
 <td><p>3.0</p></td>
-<td><p>2.8</p></td>
-<td><p>4.7</p></td>
-<td><p>9.2</p></td>
-<td><p>23.8</p></td>
-</tr>
-<tr class="row-odd"><td><p>PCG64</p></td>
-<td><p>2.3</p></td>
 <td><p>3.2</p></td>
-<td><p>2.9</p></td>
-<td><p>4.6</p></td>
-<td><p>9.0</p></td>
-<td><p>23.2</p></td>
-</tr>
-<tr class="row-even"><td><p>Xoshiro512</p></td>
-<td><p>2.6</p></td>
-<td><p>3.0</p></td>
-<td><p>2.9</p></td>
+<td><p>3.2</p></td>
 <td><p>5.3</p></td>
-<td><p>8.9</p></td>
-<td><p>21.9</p></td>
+<td><p>5.4</p></td>
+<td><p>19.8</p></td>
 </tr>
-<tr class="row-odd"><td><p>Squares</p></td>
-<td><p>2.4</p></td>
-<td><p>2.9</p></td>
-<td><p>2.8</p></td>
-<td><p>5.2</p></td>
-<td><p>11.3</p></td>
-<td><p>27.1</p></td>
-</tr>
-<tr class="row-even"><td><p>AESCounter</p></td>
-<td><p>2.8</p></td>
-<td><p>2.9</p></td>
-<td><p>3.0</p></td>
-<td><p>5.3</p></td>
-<td><p>10.4</p></td>
-<td><p>24.4</p></td>
-</tr>
-<tr class="row-odd"><td><p>PCG64(variant=”dxsm-128”)</p></td>
-<td><p>2.5</p></td>
-<td><p>3.4</p></td>
-<td><p>3.2</p></td>
-<td><p>4.8</p></td>
-<td><p>10.5</p></td>
-<td><p>25.5</p></td>
-</tr>
-<tr class="row-even"><td><p>LXM</p></td>
-<td><p>2.6</p></td>
-<td><p>3.4</p></td>
-<td><p>3.3</p></td>
-<td><p>5.8</p></td>
-<td><p>9.5</p></td>
-<td><p>24.6</p></td>
-</tr>
-<tr class="row-odd"><td><p>MT64</p></td>
-<td><p>2.6</p></td>
-<td><p>3.3</p></td>
-<td><p>3.2</p></td>
-<td><p>5.5</p></td>
-<td><p>10.4</p></td>
-<td><p>26.5</p></td>
-</tr>
-<tr class="row-even"><td><p>DSFMT</p></td>
-<td><p>2.8</p></td>
-<td><p>4.2</p></td>
-<td><p>2.5</p></td>
-<td><p>6.3</p></td>
-<td><p>10.1</p></td>
-<td><p>25.1</p></td>
-</tr>
-<tr class="row-odd"><td><p>JSF32</p></td>
+<tr class="row-even"><td><p>Squares</p></td>
 <td><p>2.8</p></td>
 <td><p>3.6</p></td>
 <td><p>3.8</p></td>
-<td><p>5.8</p></td>
-<td><p>9.4</p></td>
-<td><p>23.7</p></td>
+<td><p>5.1</p></td>
+<td><p>5.0</p></td>
+<td><p>19.5</p></td>
 </tr>
-<tr class="row-even"><td><p>MT19937</p></td>
-<td><p>2.5</p></td>
-<td><p>4.2</p></td>
-<td><p>4.0</p></td>
-<td><p>6.1</p></td>
-<td><p>10.5</p></td>
-<td><p>20.8</p></td>
-</tr>
-<tr class="row-odd"><td><p>EFIIX64</p></td>
-<td><p>2.4</p></td>
-<td><p>3.5</p></td>
-<td><p>3.4</p></td>
-<td><p>9.8</p></td>
-<td><p>12.3</p></td>
-<td><p>24.7</p></td>
-</tr>
-<tr class="row-even"><td><p>Philox</p></td>
+<tr class="row-odd"><td><p>PCG64</p></td>
 <td><p>3.1</p></td>
-<td><p>4.0</p></td>
-<td><p>4.5</p></td>
-<td><p>6.1</p></td>
-<td><p>10.6</p></td>
-<td><p>28.1</p></td>
-</tr>
-<tr class="row-odd"><td><p>Philox(n=2, w=64)</p></td>
-<td><p>3.0</p></td>
-<td><p>4.0</p></td>
-<td><p>4.1</p></td>
-<td><p>6.6</p></td>
-<td><p>12.3</p></td>
-<td><p>30.7</p></td>
-</tr>
-<tr class="row-even"><td><p>ThreeFry(n=2, w=64)</p></td>
+<td><p>3.9</p></td>
 <td><p>3.5</p></td>
-<td><p>5.4</p></td>
-<td><p>5.2</p></td>
-<td><p>7.7</p></td>
-<td><p>13.0</p></td>
-<td><p>31.0</p></td>
+<td><p>5.9</p></td>
+<td><p>6.1</p></td>
+<td><p>23.2</p></td>
+</tr>
+<tr class="row-even"><td><p>LXM</p></td>
+<td><p>3.3</p></td>
+<td><p>4.0</p></td>
+<td><p>4.0</p></td>
+<td><p>5.6</p></td>
+<td><p>5.7</p></td>
+<td><p>22.1</p></td>
+</tr>
+<tr class="row-odd"><td><p>AESCounter</p></td>
+<td><p>3.5</p></td>
+<td><p>3.9</p></td>
+<td><p>3.8</p></td>
+<td><p>5.8</p></td>
+<td><p>6.2</p></td>
+<td><p>21.0</p></td>
+</tr>
+<tr class="row-even"><td><p>DSFMT</p></td>
+<td><p>3.1</p></td>
+<td><p>4.8</p></td>
+<td><p>2.9</p></td>
+<td><p>6.7</p></td>
+<td><p>6.6</p></td>
+<td><p>19.5</p></td>
 </tr>
 <tr class="row-odd"><td><p>TycheOpenRand</p></td>
-<td><p>4.3</p></td>
-<td><p>5.5</p></td>
-<td><p>6.2</p></td>
-<td><p>8.3</p></td>
-<td><p>12.6</p></td>
-<td><p>27.5</p></td>
-</tr>
-<tr class="row-even"><td><p>ThreeFry</p></td>
+<td><p>3.0</p></td>
+<td><p>5.1</p></td>
 <td><p>4.7</p></td>
-<td><p>6.5</p></td>
-<td><p>6.4</p></td>
-<td><p>8.4</p></td>
-<td><p>12.2</p></td>
-<td><p>23.7</p></td>
-</tr>
-<tr class="row-odd"><td><p>HC128</p></td>
-<td><p>3.7</p></td>
-<td><p>5.9</p></td>
-<td><p>5.9</p></td>
-<td><p>8.2</p></td>
-<td><p>13.2</p></td>
-<td><p>34.8</p></td>
-</tr>
-<tr class="row-even"><td><p>SPECK128</p></td>
-<td><p>4.4</p></td>
-<td><p>6.4</p></td>
-<td><p>6.8</p></td>
-<td><p>8.5</p></td>
-<td><p>12.7</p></td>
-<td><p>24.7</p></td>
-</tr>
-<tr class="row-odd"><td><p>Philox(n=4, w=32)</p></td>
-<td><p>3.8</p></td>
-<td><p>6.5</p></td>
-<td><p>6.5</p></td>
-<td><p>9.2</p></td>
-<td><p>13.5</p></td>
-<td><p>32.8</p></td>
-</tr>
-<tr class="row-even"><td><p>ChaCha(rounds=8)</p></td>
-<td><p>4.2</p></td>
-<td><p>7.3</p></td>
-<td><p>7.2</p></td>
-<td><p>9.3</p></td>
-<td><p>13.9</p></td>
-<td><p>26.4</p></td>
-</tr>
-<tr class="row-odd"><td><p>Tyche</p></td>
+<td><p>5.7</p></td>
 <td><p>5.4</p></td>
-<td><p>8.2</p></td>
+<td><p>20.6</p></td>
+</tr>
+<tr class="row-even"><td><p>PCG64(variant=”dxsm-128”)</p></td>
+<td><p>3.1</p></td>
+<td><p>5.4</p></td>
+<td><p>3.9</p></td>
+<td><p>6.2</p></td>
+<td><p>6.2</p></td>
+<td><p>19.5</p></td>
+</tr>
+<tr class="row-odd"><td><p>JSF32</p></td>
+<td><p>3.0</p></td>
+<td><p>6.1</p></td>
+<td><p>5.4</p></td>
+<td><p>6.6</p></td>
+<td><p>6.5</p></td>
+<td><p>24.8</p></td>
+</tr>
+<tr class="row-even"><td><p>Xoshiro512</p></td>
+<td><p>4.4</p></td>
+<td><p>6.6</p></td>
+<td><p>6.6</p></td>
+<td><p>7.2</p></td>
+<td><p>7.5</p></td>
+<td><p>25.4</p></td>
+</tr>
+<tr class="row-odd"><td><p>MT19937</p></td>
+<td><p>3.7</p></td>
+<td><p>6.3</p></td>
+<td><p>7.0</p></td>
+<td><p>8.6</p></td>
+<td><p>8.6</p></td>
+<td><p>26.7</p></td>
+</tr>
+<tr class="row-even"><td><p>Philox</p></td>
+<td><p>5.0</p></td>
+<td><p>5.9</p></td>
+<td><p>6.9</p></td>
+<td><p>8.7</p></td>
+<td><p>7.9</p></td>
+<td><p>24.0</p></td>
+</tr>
+<tr class="row-odd"><td><p>MT64</p></td>
+<td><p>3.6</p></td>
+<td><p>7.3</p></td>
+<td><p>5.0</p></td>
+<td><p>10.4</p></td>
+<td><p>11.4</p></td>
+<td><p>24.9</p></td>
+</tr>
+<tr class="row-even"><td><p>Tyche</p></td>
+<td><p>4.3</p></td>
 <td><p>7.8</p></td>
-<td><p>9.8</p></td>
-<td><p>16.3</p></td>
-<td><p>30.7</p></td>
+<td><p>7.7</p></td>
+<td><p>8.7</p></td>
+<td><p>9.1</p></td>
+<td><p>25.3</p></td>
+</tr>
+<tr class="row-odd"><td><p>Philox(n=2, w=64)</p></td>
+<td><p>5.2</p></td>
+<td><p>7.2</p></td>
+<td><p>8.2</p></td>
+<td><p>9.2</p></td>
+<td><p>8.8</p></td>
+<td><p>28.6</p></td>
+</tr>
+<tr class="row-even"><td><p>HC128</p></td>
+<td><p>4.2</p></td>
+<td><p>7.9</p></td>
+<td><p>7.8</p></td>
+<td><p>9.6</p></td>
+<td><p>9.7</p></td>
+<td><p>31.1</p></td>
+</tr>
+<tr class="row-odd"><td><p>SPECK128</p></td>
+<td><p>6.1</p></td>
+<td><p>10.3</p></td>
+<td><p>10.7</p></td>
+<td><p>12.4</p></td>
+<td><p>13.3</p></td>
+<td><p>32.9</p></td>
 </tr>
 <tr class="row-even"><td><p>NumPy</p></td>
-<td><p>5.1</p></td>
-<td><p>5.2</p></td>
-<td><p>5.2</p></td>
-<td><p>18.9</p></td>
-<td><p>28.3</p></td>
-<td><p>37.9</p></td>
+<td><p>3.8</p></td>
+<td><p>7.2</p></td>
+<td><p>7.6</p></td>
+<td><p>17.7</p></td>
+<td><p>22.6</p></td>
+<td><p>44.5</p></td>
 </tr>
 <tr class="row-odd"><td><p>BlaBla</p></td>
-<td><p>7.6</p></td>
-<td><p>12.4</p></td>
-<td><p>12.7</p></td>
-<td><p>14.8</p></td>
-<td><p>17.9</p></td>
-<td><p>36.6</p></td>
+<td><p>6.7</p></td>
+<td><p>10.7</p></td>
+<td><p>10.8</p></td>
+<td><p>14.4</p></td>
+<td><p>14.4</p></td>
+<td><p>34.0</p></td>
 </tr>
-<tr class="row-even"><td><p>ChaCha</p></td>
-<td><p>6.9</p></td>
-<td><p>12.9</p></td>
-<td><p>12.7</p></td>
-<td><p>15.1</p></td>
-<td><p>19.4</p></td>
-<td><p>37.6</p></td>
+<tr class="row-even"><td><p>ChaCha(rounds=8)</p></td>
+<td><p>7.1</p></td>
+<td><p>14.0</p></td>
+<td><p>14.4</p></td>
+<td><p>14.5</p></td>
+<td><p>14.6</p></td>
+<td><p>42.6</p></td>
+</tr>
+<tr class="row-odd"><td><p>ThreeFry</p></td>
+<td><p>10.2</p></td>
+<td><p>14.9</p></td>
+<td><p>15.2</p></td>
+<td><p>16.6</p></td>
+<td><p>16.4</p></td>
+<td><p>45.7</p></td>
+</tr>
+<tr class="row-even"><td><p>Philox(n=4, w=32)</p></td>
+<td><p>7.6</p></td>
+<td><p>17.4</p></td>
+<td><p>21.3</p></td>
+<td><p>24.3</p></td>
+<td><p>25.0</p></td>
+<td><p>50.6</p></td>
+</tr>
+<tr class="row-odd"><td><p>ChaCha</p></td>
+<td><p>11.1</p></td>
+<td><p>19.6</p></td>
+<td><p>21.6</p></td>
+<td><p>20.9</p></td>
+<td><p>21.3</p></td>
+<td><p>55.7</p></td>
+</tr>
+<tr class="row-even"><td><p>ThreeFry(n=2, w=64)</p></td>
+<td><p>14.2</p></td>
+<td><p>24.0</p></td>
+<td><p>23.9</p></td>
+<td><p>26.3</p></td>
+<td><p>26.2</p></td>
+<td><p>63.7</p></td>
 </tr>
 <tr class="row-odd"><td><p>ThreeFry(n=4, w=32)</p></td>
-<td><p>6.2</p></td>
-<td><p>11.4</p></td>
-<td><p>12.8</p></td>
-<td><p>18.8</p></td>
-<td><p>22.4</p></td>
-<td><p>59.8</p></td>
+<td><p>15.3</p></td>
+<td><p>25.4</p></td>
+<td><p>26.2</p></td>
+<td><p>27.7</p></td>
+<td><p>27.8</p></td>
+<td><p>68.5</p></td>
 </tr>
 <tr class="row-even"><td><p>RDRAND</p></td>
-<td><p>882.5</p></td>
-<td><p>886.7</p></td>
-<td><p>883.7</p></td>
-<td><p>912.2</p></td>
-<td><p>903.3</p></td>
-<td><p>1929.9</p></td>
+<td><p>1618.4</p></td>
+<td><p>1581.0</p></td>
+<td><p>1595.3</p></td>
+<td><p>1855.4</p></td>
+<td><p>1966.9</p></td>
+<td><p>3409.9</p></td>
 </tr>
 </tbody>
 </table>
@@ -1086,301 +1119,328 @@ percentage. The overall performance is computed using a geometric mean.</p>
 </tr>
 </thead>
 <tbody>
-<tr class="row-even"><td><p>Bit Gen</p></td>
-<td><p>Uint32</p></td>
-<td><p>Uint64</p></td>
-<td><p>Uniform</p></td>
-<td><p>Expon</p></td>
-<td><p>Normal</p></td>
-<td><p>Gamma</p></td>
-<td><p>Overall</p></td>
-</tr>
-<tr class="row-odd"><td><p>Romu(variant=”trio”)</p></td>
-<td><p>267</p></td>
-<td><p>198</p></td>
-<td><p>217</p></td>
-<td><p>481</p></td>
-<td><p>389</p></td>
-<td><p>206</p></td>
-<td><p>276</p></td>
-</tr>
-<tr class="row-even"><td><p>Romu</p></td>
-<td><p>248</p></td>
-<td><p>203</p></td>
-<td><p>217</p></td>
-<td><p>455</p></td>
-<td><p>380</p></td>
-<td><p>196</p></td>
-<td><p>268</p></td>
+<tr class="row-even"><td><p>Romu(variant=”trio”)</p></td>
+<td><p>192</p></td>
+<td><p>326</p></td>
+<td><p>337</p></td>
+<td><p>469</p></td>
+<td><p>555</p></td>
+<td><p>253</p></td>
+<td><p>334</p></td>
 </tr>
 <tr class="row-odd"><td><p>SFC64</p></td>
-<td><p>242</p></td>
-<td><p>197</p></td>
-<td><p>206</p></td>
+<td><p>180</p></td>
+<td><p>286</p></td>
+<td><p>278</p></td>
+<td><p>493</p></td>
+<td><p>570</p></td>
+<td><p>265</p></td>
+<td><p>320</p></td>
+</tr>
+<tr class="row-even"><td><p>MWC128X</p></td>
+<td><p>154</p></td>
+<td><p>289</p></td>
+<td><p>344</p></td>
+<td><p>453</p></td>
+<td><p>527</p></td>
+<td><p>254</p></td>
+<td><p>312</p></td>
+</tr>
+<tr class="row-odd"><td><p>MWC192X</p></td>
+<td><p>137</p></td>
+<td><p>276</p></td>
+<td><p>292</p></td>
 <td><p>455</p></td>
-<td><p>370</p></td>
-<td><p>184</p></td>
-<td><p>259</p></td>
+<td><p>496</p></td>
+<td><p>273</p></td>
+<td><p>297</p></td>
 </tr>
 <tr class="row-even"><td><p>Xoshiro256</p></td>
-<td><p>219</p></td>
-<td><p>185</p></td>
-<td><p>195</p></td>
-<td><p>432</p></td>
-<td><p>353</p></td>
-<td><p>171</p></td>
-<td><p>243</p></td>
+<td><p>163</p></td>
+<td><p>259</p></td>
+<td><p>249</p></td>
+<td><p>448</p></td>
+<td><p>551</p></td>
+<td><p>259</p></td>
+<td><p>296</p></td>
 </tr>
-<tr class="row-odd"><td><p>JSF</p></td>
-<td><p>232</p></td>
-<td><p>183</p></td>
-<td><p>192</p></td>
-<td><p>407</p></td>
-<td><p>348</p></td>
-<td><p>177</p></td>
-<td><p>243</p></td>
+<tr class="row-odd"><td><p>Romu</p></td>
+<td><p>158</p></td>
+<td><p>288</p></td>
+<td><p>203</p></td>
+<td><p>404</p></td>
+<td><p>529</p></td>
+<td><p>251</p></td>
+<td><p>281</p></td>
 </tr>
-<tr class="row-even"><td><p>SFMT</p></td>
-<td><p>228</p></td>
-<td><p>187</p></td>
-<td><p>207</p></td>
-<td><p>400</p></td>
-<td><p>323</p></td>
-<td><p>177</p></td>
-<td><p>242</p></td>
+<tr class="row-even"><td><p>MWC64X32</p></td>
+<td><p>172</p></td>
+<td><p>218</p></td>
+<td><p>235</p></td>
+<td><p>394</p></td>
+<td><p>520</p></td>
+<td><p>237</p></td>
+<td><p>274</p></td>
 </tr>
 <tr class="row-odd"><td><p>PCG64DXSM</p></td>
-<td><p>219</p></td>
-<td><p>172</p></td>
-<td><p>186</p></td>
-<td><p>406</p></td>
-<td><p>309</p></td>
-<td><p>160</p></td>
-<td><p>228</p></td>
-</tr>
-<tr class="row-even"><td><p>PCG64</p></td>
-<td><p>224</p></td>
-<td><p>162</p></td>
-<td><p>177</p></td>
-<td><p>414</p></td>
-<td><p>313</p></td>
-<td><p>163</p></td>
-<td><p>227</p></td>
-</tr>
-<tr class="row-odd"><td><p>Xoshiro512</p></td>
-<td><p>195</p></td>
-<td><p>173</p></td>
-<td><p>177</p></td>
-<td><p>358</p></td>
-<td><p>319</p></td>
-<td><p>173</p></td>
-<td><p>221</p></td>
-</tr>
-<tr class="row-even"><td><p>Squares</p></td>
-<td><p>210</p></td>
-<td><p>179</p></td>
-<td><p>185</p></td>
-<td><p>364</p></td>
-<td><p>250</p></td>
-<td><p>140</p></td>
-<td><p>211</p></td>
-</tr>
-<tr class="row-odd"><td><p>AESCounter</p></td>
-<td><p>181</p></td>
-<td><p>179</p></td>
-<td><p>173</p></td>
-<td><p>354</p></td>
-<td><p>273</p></td>
-<td><p>155</p></td>
-<td><p>209</p></td>
-</tr>
-<tr class="row-even"><td><p>PCG64(variant=”dxsm-128”)</p></td>
-<td><p>201</p></td>
-<td><p>154</p></td>
-<td><p>165</p></td>
-<td><p>391</p></td>
-<td><p>270</p></td>
-<td><p>149</p></td>
-<td><p>208</p></td>
-</tr>
-<tr class="row-odd"><td><p>LXM</p></td>
-<td><p>193</p></td>
-<td><p>155</p></td>
-<td><p>159</p></td>
-<td><p>329</p></td>
-<td><p>298</p></td>
-<td><p>154</p></td>
-<td><p>204</p></td>
-</tr>
-<tr class="row-even"><td><p>MT64</p></td>
-<td><p>200</p></td>
-<td><p>157</p></td>
-<td><p>162</p></td>
-<td><p>343</p></td>
+<td><p>152</p></td>
+<td><p>222</p></td>
+<td><p>225</p></td>
+<td><p>423</p></td>
+<td><p>529</p></td>
+<td><p>238</p></td>
 <td><p>272</p></td>
-<td><p>143</p></td>
-<td><p>202</p></td>
 </tr>
-<tr class="row-odd"><td><p>DSFMT</p></td>
-<td><p>183</p></td>
-<td><p>125</p></td>
-<td><p>209</p></td>
-<td><p>298</p></td>
-<td><p>279</p></td>
-<td><p>151</p></td>
-<td><p>198</p></td>
+<tr class="row-even"><td><p>MWC128X32</p></td>
+<td><p>150</p></td>
+<td><p>214</p></td>
+<td><p>229</p></td>
+<td><p>428</p></td>
+<td><p>511</p></td>
+<td><p>208</p></td>
+<td><p>263</p></td>
 </tr>
-<tr class="row-even"><td><p>JSF32</p></td>
-<td><p>182</p></td>
-<td><p>144</p></td>
-<td><p>138</p></td>
-<td><p>324</p></td>
-<td><p>301</p></td>
-<td><p>160</p></td>
-<td><p>196</p></td>
-</tr>
-<tr class="row-odd"><td><p>MT19937</p></td>
-<td><p>201</p></td>
-<td><p>123</p></td>
-<td><p>128</p></td>
-<td><p>309</p></td>
-<td><p>269</p></td>
-<td><p>182</p></td>
-<td><p>191</p></td>
+<tr class="row-odd"><td><p>JSF</p></td>
+<td><p>132</p></td>
+<td><p>220</p></td>
+<td><p>223</p></td>
+<td><p>366</p></td>
+<td><p>441</p></td>
+<td><p>228</p></td>
+<td><p>249</p></td>
 </tr>
 <tr class="row-even"><td><p>EFIIX64</p></td>
-<td><p>212</p></td>
-<td><p>148</p></td>
-<td><p>155</p></td>
-<td><p>192</p></td>
-<td><p>229</p></td>
-<td><p>154</p></td>
-<td><p>179</p></td>
-</tr>
-<tr class="row-odd"><td><p>Philox</p></td>
-<td><p>163</p></td>
-<td><p>131</p></td>
-<td><p>116</p></td>
-<td><p>311</p></td>
-<td><p>266</p></td>
-<td><p>135</p></td>
-<td><p>174</p></td>
-</tr>
-<tr class="row-even"><td><p>Philox(n=2, w=64)</p></td>
-<td><p>170</p></td>
-<td><p>131</p></td>
-<td><p>126</p></td>
-<td><p>285</p></td>
-<td><p>231</p></td>
-<td><p>123</p></td>
-<td><p>168</p></td>
-</tr>
-<tr class="row-odd"><td><p>ThreeFry(n=2, w=64)</p></td>
-<td><p>145</p></td>
-<td><p>96</p></td>
-<td><p>101</p></td>
+<td><p>141</p></td>
+<td><p>176</p></td>
+<td><p>216</p></td>
+<td><p>400</p></td>
+<td><p>527</p></td>
+<td><p>196</p></td>
 <td><p>246</p></td>
-<td><p>217</p></td>
-<td><p>122</p></td>
-<td><p>145</p></td>
 </tr>
-<tr class="row-even"><td><p>TycheOpenRand</p></td>
-<td><p>118</p></td>
-<td><p>94</p></td>
-<td><p>84</p></td>
+<tr class="row-odd"><td><p>SFMT</p></td>
+<td><p>124</p></td>
 <td><p>227</p></td>
-<td><p>224</p></td>
-<td><p>138</p></td>
-<td><p>137</p></td>
-</tr>
-<tr class="row-odd"><td><p>ThreeFry</p></td>
-<td><p>109</p></td>
-<td><p>80</p></td>
-<td><p>81</p></td>
+<td><p>235</p></td>
+<td><p>334</p></td>
+<td><p>416</p></td>
 <td><p>225</p></td>
-<td><p>232</p></td>
-<td><p>160</p></td>
-<td><p>135</p></td>
+<td><p>243</p></td>
 </tr>
-<tr class="row-even"><td><p>HC128</p></td>
-<td><p>137</p></td>
-<td><p>88</p></td>
-<td><p>89</p></td>
-<td><p>229</p></td>
-<td><p>214</p></td>
-<td><p>109</p></td>
-<td><p>134</p></td>
-</tr>
-<tr class="row-odd"><td><p>SPECK128</p></td>
-<td><p>115</p></td>
-<td><p>82</p></td>
-<td><p>76</p></td>
-<td><p>222</p></td>
-<td><p>222</p></td>
-<td><p>154</p></td>
-<td><p>132</p></td>
-</tr>
-<tr class="row-even"><td><p>Philox(n=4, w=32)</p></td>
-<td><p>134</p></td>
-<td><p>80</p></td>
-<td><p>80</p></td>
-<td><p>206</p></td>
-<td><p>209</p></td>
-<td><p>116</p></td>
-<td><p>127</p></td>
-</tr>
-<tr class="row-odd"><td><p>ChaCha(rounds=8)</p></td>
-<td><p>122</p></td>
-<td><p>72</p></td>
-<td><p>73</p></td>
+<tr class="row-even"><td><p>Squares</p></td>
+<td><p>136</p></td>
 <td><p>202</p></td>
-<td><p>203</p></td>
-<td><p>144</p></td>
+<td><p>200</p></td>
+<td><p>347</p></td>
+<td><p>447</p></td>
+<td><p>228</p></td>
+<td><p>241</p></td>
+</tr>
+<tr class="row-odd"><td><p>PCG64</p></td>
+<td><p>122</p></td>
+<td><p>184</p></td>
+<td><p>220</p></td>
+<td><p>302</p></td>
+<td><p>370</p></td>
+<td><p>192</p></td>
+<td><p>217</p></td>
+</tr>
+<tr class="row-even"><td><p>LXM</p></td>
+<td><p>113</p></td>
+<td><p>180</p></td>
+<td><p>191</p></td>
+<td><p>316</p></td>
+<td><p>394</p></td>
+<td><p>201</p></td>
+<td><p>215</p></td>
+</tr>
+<tr class="row-odd"><td><p>AESCounter</p></td>
+<td><p>109</p></td>
+<td><p>188</p></td>
+<td><p>202</p></td>
+<td><p>303</p></td>
+<td><p>362</p></td>
+<td><p>213</p></td>
+<td><p>214</p></td>
+</tr>
+<tr class="row-even"><td><p>DSFMT</p></td>
+<td><p>121</p></td>
+<td><p>151</p></td>
+<td><p>259</p></td>
+<td><p>263</p></td>
+<td><p>340</p></td>
+<td><p>228</p></td>
+<td><p>214</p></td>
+</tr>
+<tr class="row-odd"><td><p>TycheOpenRand</p></td>
 <td><p>125</p></td>
+<td><p>142</p></td>
+<td><p>162</p></td>
+<td><p>310</p></td>
+<td><p>421</p></td>
+<td><p>216</p></td>
+<td><p>208</p></td>
+</tr>
+<tr class="row-even"><td><p>PCG64(variant=”dxsm-128”)</p></td>
+<td><p>122</p></td>
+<td><p>134</p></td>
+<td><p>194</p></td>
+<td><p>284</p></td>
+<td><p>363</p></td>
+<td><p>229</p></td>
+<td><p>205</p></td>
+</tr>
+<tr class="row-odd"><td><p>JSF32</p></td>
+<td><p>125</p></td>
+<td><p>118</p></td>
+<td><p>141</p></td>
+<td><p>267</p></td>
+<td><p>349</p></td>
+<td><p>179</p></td>
+<td><p>181</p></td>
+</tr>
+<tr class="row-even"><td><p>Xoshiro512</p></td>
+<td><p>86</p></td>
+<td><p>110</p></td>
+<td><p>115</p></td>
+<td><p>244</p></td>
+<td><p>300</p></td>
+<td><p>175</p></td>
+<td><p>155</p></td>
+</tr>
+<tr class="row-odd"><td><p>MT19937</p></td>
+<td><p>102</p></td>
+<td><p>115</p></td>
+<td><p>109</p></td>
+<td><p>207</p></td>
+<td><p>261</p></td>
+<td><p>167</p></td>
+<td><p>150</p></td>
+</tr>
+<tr class="row-even"><td><p>Philox</p></td>
+<td><p>76</p></td>
+<td><p>122</p></td>
+<td><p>111</p></td>
+<td><p>203</p></td>
+<td><p>286</p></td>
+<td><p>186</p></td>
+<td><p>149</p></td>
+</tr>
+<tr class="row-odd"><td><p>MT64</p></td>
+<td><p>105</p></td>
+<td><p>100</p></td>
+<td><p>151</p></td>
+<td><p>170</p></td>
+<td><p>197</p></td>
+<td><p>179</p></td>
+<td><p>146</p></td>
 </tr>
 <tr class="row-even"><td><p>Tyche</p></td>
-<td><p>95</p></td>
-<td><p>63</p></td>
-<td><p>66</p></td>
-<td><p>193</p></td>
-<td><p>173</p></td>
-<td><p>124</p></td>
-<td><p>109</p></td>
+<td><p>87</p></td>
+<td><p>93</p></td>
+<td><p>99</p></td>
+<td><p>203</p></td>
+<td><p>249</p></td>
+<td><p>176</p></td>
+<td><p>139</p></td>
 </tr>
-<tr class="row-odd"><td><p>BlaBla</p></td>
-<td><p>67</p></td>
-<td><p>42</p></td>
-<td><p>41</p></td>
-<td><p>128</p></td>
-<td><p>158</p></td>
-<td><p>104</p></td>
-<td><p>79</p></td>
-</tr>
-<tr class="row-even"><td><p>ChaCha</p></td>
-<td><p>74</p></td>
-<td><p>40</p></td>
-<td><p>41</p></td>
-<td><p>125</p></td>
-<td><p>146</p></td>
+<tr class="row-odd"><td><p>Philox(n=2, w=64)</p></td>
+<td><p>73</p></td>
 <td><p>101</p></td>
-<td><p>78</p></td>
+<td><p>92</p></td>
+<td><p>191</p></td>
+<td><p>257</p></td>
+<td><p>156</p></td>
+<td><p>132</p></td>
 </tr>
-<tr class="row-odd"><td><p>ThreeFry(n=4, w=32)</p></td>
-<td><p>83</p></td>
-<td><p>46</p></td>
-<td><p>41</p></td>
+<tr class="row-even"><td><p>HC128</p></td>
+<td><p>89</p></td>
+<td><p>92</p></td>
+<td><p>98</p></td>
+<td><p>185</p></td>
+<td><p>232</p></td>
+<td><p>143</p></td>
+<td><p>130</p></td>
+</tr>
+<tr class="row-odd"><td><p>SPECK128</p></td>
+<td><p>62</p></td>
+<td><p>71</p></td>
+<td><p>71</p></td>
+<td><p>143</p></td>
+<td><p>170</p></td>
+<td><p>135</p></td>
 <td><p>100</p></td>
-<td><p>126</p></td>
-<td><p>63</p></td>
+</tr>
+<tr class="row-even"><td><p>BlaBla</p></td>
+<td><p>57</p></td>
+<td><p>68</p></td>
+<td><p>71</p></td>
+<td><p>123</p></td>
+<td><p>157</p></td>
+<td><p>131</p></td>
+<td><p>94</p></td>
+</tr>
+<tr class="row-odd"><td><p>ChaCha(rounds=8)</p></td>
+<td><p>54</p></td>
+<td><p>52</p></td>
+<td><p>53</p></td>
+<td><p>122</p></td>
+<td><p>154</p></td>
+<td><p>105</p></td>
+<td><p>81</p></td>
+</tr>
+<tr class="row-even"><td><p>ThreeFry</p></td>
+<td><p>37</p></td>
+<td><p>49</p></td>
+<td><p>50</p></td>
+<td><p>106</p></td>
+<td><p>138</p></td>
+<td><p>97</p></td>
 <td><p>71</p></td>
 </tr>
-<tr class="row-even"><td><p>RDRAND</p></td>
+<tr class="row-odd"><td><p>Philox(n=4, w=32)</p></td>
+<td><p>50</p></td>
+<td><p>42</p></td>
+<td><p>36</p></td>
+<td><p>73</p></td>
+<td><p>90</p></td>
+<td><p>88</p></td>
+<td><p>59</p></td>
+</tr>
+<tr class="row-even"><td><p>ChaCha</p></td>
+<td><p>34</p></td>
+<td><p>37</p></td>
+<td><p>35</p></td>
+<td><p>85</p></td>
+<td><p>106</p></td>
+<td><p>80</p></td>
+<td><p>56</p></td>
+</tr>
+<tr class="row-odd"><td><p>ThreeFry(n=2, w=64)</p></td>
+<td><p>27</p></td>
+<td><p>30</p></td>
+<td><p>32</p></td>
+<td><p>67</p></td>
+<td><p>86</p></td>
+<td><p>70</p></td>
+<td><p>47</p></td>
+</tr>
+<tr class="row-even"><td><p>ThreeFry(n=4, w=32)</p></td>
+<td><p>25</p></td>
+<td><p>29</p></td>
+<td><p>29</p></td>
+<td><p>64</p></td>
+<td><p>81</p></td>
+<td><p>65</p></td>
+<td><p>44</p></td>
+</tr>
+<tr class="row-odd"><td><p>RDRAND</p></td>
+<td><p>0</p></td>
+<td><p>0</p></td>
+<td><p>0</p></td>
 <td><p>1</p></td>
 <td><p>1</p></td>
 <td><p>1</p></td>
-<td><p>2</p></td>
-<td><p>3</p></td>
-<td><p>2</p></td>
 <td><p>1</p></td>
 </tr>
 </tbody>
