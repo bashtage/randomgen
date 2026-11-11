@@ -133,9 +133,9 @@ jobs:
   - script: |
       echo "Testing site packages"
       mkdir test_run_dir
-      pushd test_run_dir
-      python -c "import randomgen; randomgen.test(['-n', 'auto', '--junitxml=../junit/test-results.xml'])"
-      popd
+      # Run in a subshell so that the step fails when the tests fail. Ending the
+      # script with popd would replace the test exit code with popd's (0).
+      (cd test_run_dir && python -c "import randomgen; randomgen.test(['-n', 'auto', '--junitxml=../junit/test-results.xml'])")
     displayName: 'Run tests (site-packages)'
     condition: and(ne(variables['pip.pre'], 'true'), eq(variables['test.wheel'], 'true'))
 
